@@ -8,13 +8,13 @@ function menu() {
 }
 
 window.onload = function() {
-    const articles = document.querySelectorAll('article');
+    const sections = document.querySelectorAll('section');
 
-    articles.forEach(article => {
+    sections.forEach(section => {
         let myIndex = 0;
 
         function slideshow() {
-            const slides = article.getElementsByClassName("slide");
+            const slides = section.getElementsByClassName("slide");
             for (let i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";
             }
