@@ -1,29 +1,39 @@
 function menu() {
-    var x = document.getElementById("links");
-    if (x.style.display === "block") {
-      x.style.display = "none";
+    const nav = document.querySelector('nav');
+    const contentElements = document.querySelectorAll('article, section, address');
+    
+    if (nav.style.display === 'none') {
+        nav.style.display = 'flex';        
+        contentElements.forEach(element => {
+            element.style.display = 'none';
+        });
     } else {
-      x.style.display = "block";
+        nav.style.display = 'none';        
+        contentElements.forEach(element => {
+            element.style.display = 'flex';
+        });
     }
 }
 
 window.onload = function() {
-    const sections = document.querySelectorAll('section');
+    const slideshows = document.querySelectorAll('.slideshow');
 
-    sections.forEach(section => {
-        let myIndex = 0;
+    slideshows.forEach(function(slideshow) {
+        const slides = slideshow.querySelectorAll('.slide');
+        let currentSlide = 0;
 
-        function slideshow() {
-            const slides = section.getElementsByClassName("slide");
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            myIndex++;
-            if (myIndex > slides.length) { myIndex = 1 }
-            slides[myIndex - 1].style.display = "block";
-            setTimeout(slideshow, 1000);
+        slides.forEach((slide, index) => {
+            slide.style.display = (index === 0) ? 'block' : 'none';
+        });
+
+        function showNextSlide() {
+            slides[currentSlide].style.display = 'none';
+
+            currentSlide = (currentSlide + 1) % slides.length;
+
+            slides[currentSlide].style.display = 'block';
         }
 
-        slideshow();
+        setInterval(showNextSlide, 1000);
     });
 };
