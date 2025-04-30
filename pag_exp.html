@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>xpan – archivo conectado</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .logo-xpan {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+      display: block;
+      width: 50px;
+      height: auto;
+    }
+
+    .logo-xpan img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      padding: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      overflow-y: scroll;
+    }
+
+    .channel-block {
+      position: relative;
+      width: 220px;
+      padding: 1rem;
+      text-align: left;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      transition: all 0.4s ease;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .channel-block h2 {
+      font-size: 0.7rem;
+      font-weight: normal;
+      text-transform: lowercase;
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+      transition: transform 0.3s ease;
+    }
+
+    .channel-block ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .channel-block li {
+      margin: 0.3rem 0;
+    }
+
+    .channel-block a {
+      text-decoration: none;
+      color: inherit;
+      font-size: 0.7rem;
+      line-height: 1.5;
+    }
+
+    .channel-block a:hover {
+      text-decoration: underline;
+    }
+
+    .channel-block::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: url('icono xpan.svg') center center no-repeat;
+      background-size: contain;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.4s ease;
+    }
+
+    .channel-block:hover::before {
+      opacity: 0.05;
+    }
+
+    .channel-block:hover h2 {
+      transform: translateY(-8px);
+    }
+
+    .channel-block:hover ul {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+
+    svg.lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="https://xpan.earth" class="logo-xpan">
+    <img src="./xpan.svg" alt="xpan">
+  </a>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container">
+    <!-- Aquí se insertan manualmente todos los canales -->
+    <div class="channel-block"><h2>Bibliotheque Vol.1</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/bibliotheque-vol1-msh-mid-dec-mid-jan" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.2</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/bibliotheque-dump-feb22-jul22" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.3</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/dektop-misc-waybefore-viernes-13-05-2022" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.4</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/fffff-rrrr-may22" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.5</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/relativo-dec21" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.6</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/dump-sun-3-jul-2022" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.7</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/mini-desktop-sun-22-oct-2023" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.8</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/tonight-is-the-night-00-30-thu-7-dec-2023a" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.9</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/paris-7-e4-24-01-25-finito-vvv" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Bibliotheque Vol.DKST</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/dk-22apr22" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>index_xpan [ hypersensoria ]</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/index-xpan-hypersensoria-02-2022" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>index_xpan [ ßtopa ]</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/index-xpan-btopa-04-2022" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>LEI FENG</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/lei-feng" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>PDF WORLD</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/pdf-world" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Preserved Memory [Vol.1]</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/preserved-memory-vol-1" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Preserved Memory [Vol.2]</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/preserved-memory-vol-2" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Preserved Memory [Vol.3]</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/preserved-memory-vol-3" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>Preserved Memory [Vol.4]</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/preserved-memory-vol-4" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>img repertoire apr22-mar23</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/img-repertoire-f-m-w-apr22-mar23" target="_blank">ver canal</a></li></ul></div>
+    <div class="channel-block"><h2>img repertoire apr23-dec23</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/img-repertoire-f-m-w-apr23-dec23" target="_blank">ver canal</a></li></ul></div>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      const blocks = [...document.querySelectorAll('.channel-block')];
+      const svg = document.getElementById('dynamic-lines');
+
+      function randomizeLines() {
+        svg.innerHTML = '';
+        blocks.forEach((blockA, i) => {
+          const rectA = blockA.getBoundingClientRect();
+          const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+          const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+          blocks.forEach((blockB, j) => {
+            if (i < j && Math.random() > 0.6) {
+              const rectB = blockB.getBoundingClientRect();
+              const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+              const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              line.setAttribute('x1', x1);
+              line.setAttribute('y1', y1);
+              line.setAttribute('x2', x2);
+              line.setAttribute('y2', y2);
+              line.style.stroke = Math.random() > 0.5 ? '#000' : '#333

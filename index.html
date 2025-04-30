@@ -16,6 +16,24 @@
     <meta property="og:image" content="./xpan.png"/>
     <meta property="og:url" content="https://xpan.earth/"/>
     <title>xpan</title>
+    <style>
+        .exp-link {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.6rem;
+            font-family: 'Times New Roman', serif;
+            color: black;
+            text-decoration: none;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        .exp-link:hover {
+            opacity: 0.6;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body id="index">
@@ -23,7 +41,9 @@
         <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9"></iframe>
     </noscript>
     <header>
-        <img src="./xpan.svg" alt="xpan">
+        <a href="https://xpan.earth">
+            <img src="./xpan.svg" alt="xpan">
+        </a>
     </header>
     <nav>
         <ul>
@@ -41,6 +61,9 @@
             </li>
         </ul>
     </nav>
+
+    <!-- Enlace discreto al archivo expandido -->
+    <a href="./pag_exp.html" class="exp-link">archivo expandido</a>
 </body>
 
 </html>
