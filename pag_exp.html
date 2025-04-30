@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>xpan – archivo conectado</title>
   <style>
     body {
@@ -14,18 +14,15 @@
       cursor: crosshair;
     }
 
-    .logo-xpan {
+    header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
-      display: block;
-      width: 50px;
-      height: auto;
     }
 
-    .logo-xpan img {
-      width: 100%;
+    header img {
+      width: 50px;
       height: auto;
       display: block;
     }
@@ -152,14 +149,18 @@
     }
   </style>
 </head>
+
 <body>
-  <a href="https://xpan.earth" class="logo-xpan">
-    <img src="./xpan.svg" alt="xpan">
-  </a>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+
   <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
   <svg class="lines" id="dynamic-lines"></svg>
+
   <div class="container" id="channels-container">
-    <!-- Aquí se insertan manualmente todos los canales -->
     <div class="channel-block"><h2>Bibliotheque Vol.1</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/bibliotheque-vol1-msh-mid-dec-mid-jan" target="_blank">ver canal</a></li></ul></div>
     <div class="channel-block"><h2>Bibliotheque Vol.2</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/bibliotheque-dump-feb22-jul22" target="_blank">ver canal</a></li></ul></div>
     <div class="channel-block"><h2>Bibliotheque Vol.3</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/dektop-misc-waybefore-viernes-13-05-2022" target="_blank">ver canal</a></li></ul></div>
@@ -181,27 +182,48 @@
     <div class="channel-block"><h2>img repertoire apr22-mar23</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/img-repertoire-f-m-w-apr22-mar23" target="_blank">ver canal</a></li></ul></div>
     <div class="channel-block"><h2>img repertoire apr23-dec23</h2><ul><li><a href="https://www.are.na/moises-sacal-hadid/img-repertoire-f-m-w-apr23-dec23" target="_blank">ver canal</a></li></ul></div>
   </div>
+
   <script>
     window.addEventListener('load', () => {
-      const blocks = [...document.querySelectorAll('.channel-block')];
-      const svg = document.getElementById('dynamic-lines');
+      requestAnimationFrame(() => {
+        const blocks = [...document.querySelectorAll('.channel-block')];
+        const svg = document.getElementById('dynamic-lines');
 
-      function randomizeLines() {
-        svg.innerHTML = '';
-        blocks.forEach((blockA, i) => {
-          const rectA = blockA.getBoundingClientRect();
-          const x1 = rectA.left + rectA.width / 2 + window.scrollX;
-          const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+        function randomizeLines() {
+          svg.innerHTML = '';
+          blocks.forEach((blockA, i) => {
+            const rectA = blockA.getBoundingClientRect();
+            const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+            const y1 = rectA.top + rectA.height / 2 + window.scrollY;
 
-          blocks.forEach((blockB, j) => {
-            if (i < j && Math.random() > 0.6) {
-              const rectB = blockB.getBoundingClientRect();
-              const x2 = rectB.left + rectB.width / 2 + window.scrollX;
-              const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+            blocks.forEach((blockB, j) => {
+              if (i < j && Math.random() > 0.6) {
+                const rectB = blockB.getBoundingClientRect();
+                const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+                const y2 = rectB.top + rectB.height / 2 + window.scrollY;
 
-              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              line.setAttribute('x1', x1);
-              line.setAttribute('y1', y1);
-              line.setAttribute('x2', x2);
-              line.setAttribute('y2', y2);
-              line.style.stroke = Math.random() > 0.5 ? '#000' : '#333
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2);
+                line.setAttribute('y2', y2);
+                line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+                line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+                line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+                svg.appendChild(line);
+              }
+            });
+          });
+        }
+
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+
+        randomizeLines();
+      });
+    });
+  </script>
+</body>
+</html>
