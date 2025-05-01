@@ -1,0 +1,174 @@
+<!-- Fragmento HTML completo con 25 imágenes con enlaces aleatorios y líneas de conexión -->
+<header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container">
+    <!-- (25 image blocks... mismos que antes) -->
+    <!-- Se insertan aquí automáticamente los bloques existentes -->
+    <a class="image-block" href="https://www.youtube.com/watch?v=BLl_gLkdcgs" target="_blank">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374500/original_c40dbe6632474e515cf44f86f455b2fa.jpg?1746058074?bc=0" alt="image 1">
+    </a>
+    <a class="image-block" href="https://www.youtube.com/watch?v=c4ChS2kCfj4" target="_blank">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374501/original_f8a746286dac79a2c79bae5b5fce20de.jpg?1746058075?bc=0" alt="image 2">
+    </a>
+    <a class="image-block" href="https://www.youtube.com/watch?v=GkSNj5slzCQ&list=RDGMEM6ijAnFTG9nX1G-kbWBUCJA&index=1" target="_blank">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374504/original_355aade945dbebb9b20127e0853dcb82.jpg?1746058083?bc=0" alt="image 3">
+    </a>
+    <a class="image-block" href="https://www.youtube.com/watch?v=I0j-8eFu42Q" target="_blank">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374505/original_79bac71ed2c8bab0d65634955e948192.jpg?1746058084?bc=0" alt="image 4">
+    </a>
+    <a class="image-block" href="https://www.youtube.com/watch?v=rYz_K4zlS7c" target="_blank">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374506/original_7e4ae9cad2702deb29950d00e0ac304c.jpg?1746058086?bc=0" alt="image 5">
+    </a>
+    <a class="image-block" href="https://www.youtube.com/watch?v=qCRTCqgAkfg" target="_blank">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374507/original_816a18d1d95700d918907e58086fecf1.jpg?1746058088?bc=0" alt="image 6">
+    </a>
+  </div>
+  
+<style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      padding: 2rem;
+      overflow: hidden;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+    }
+    .image-block img {
+      width: 100%;
+      height: auto;
+      max-height: 160px;
+      object-fit: contain;
+      display: block;
+    }
+    svg.lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        position: static;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+      }
+    }
+    </style>
+    
+    <script>
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+    
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+    
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+    
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+    
+    function randomizePositions() {
+      const container = document.querySelector('.container');
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const padding = 200;
+    
+      blocks.forEach(block => {
+        const x = Math.random() * (container.offsetWidth - padding);
+        const y = Math.random() * (container.offsetHeight - padding);
+        block.style.left = `${x}px`;
+        block.style.top = `${y}px`;
+      });
+    }
+    
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        randomizePositions();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        randomizeLines();
+        setInterval(randomizeLines, 5000); // auto redraw every 5s
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+    </script>
