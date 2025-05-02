@@ -41,20 +41,17 @@
       height: 100vh;
       padding: 2rem;
       overflow: hidden;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 1rem;
     }
     .image-block {
       width: 160px;
-      height: 160px;
+      height: auto;
+      max-height: 160px;
       display: block;
-      position: relative;
+      position: absolute;
       text-decoration: none;
       opacity: 0.5;
       transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
     }
     .image-block:hover {
       opacity: 0.8;
@@ -65,6 +62,17 @@
       height: 100%;
       object-fit: contain;
       display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
     }
     svg.lines {
       position: absolute;
@@ -82,20 +90,10 @@
       transition: stroke-width 0.3s, opacity 0.3s;
     }
     @media (max-width: 600px) {
-      .container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        justify-items: center;
-        align-items: center;
-        overflow-y: auto;
-        height: auto;
-        padding: 1rem;
-      }
       .image-block {
-        position: static;
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1 / 1;
+        position: absolute;
+        width: 120px;
+        height: 120px;
       }
     }
   </style>
@@ -109,9 +107,10 @@
   <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
   <svg class="lines" id="dynamic-lines"></svg>
   <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
 
   <script>
-    const media = [
+const media = [
       "https://attachments.are.na/36399254/a66b04e4f902052167a5e21c654fc125.mov?1746147888",
       "https://attachments.are.na/36399252/e5933a428a990c46833c36d4ed15a209.mov?1746147885",
       "https://attachments.are.na/36399250/794e20b16e74f2837e7e011ebf324adf.mp4?1746147880",
@@ -143,8 +142,9 @@
       "https://d2w9rnfcy7mm78.cloudfront.net/36399220/original_647a803f1332658b7a2a3693148541a1.jpg?1746147856?bc=0",
       "https://d2w9rnfcy7mm78.cloudfront.net/36399219/original_31aacd44eb45935a8dba37819a2c7c32.jpg?1746147856?bc=0"
     ];
-
     const container = document.getElementById('channels-container');
+    const notice = document.getElementById('audio-notice');
+
     media.forEach(url => {
       const a = document.createElement('a');
       a.className = 'image-block';
@@ -153,11 +153,11 @@
 
       if (url.endsWith('.mp4') || url.endsWith('.mov') || url.includes('.mp4?') || url.includes('.mov?')) {
         const video = document.createElement('video');
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = true;
-        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('preload', 'auto');
         video.src = url;
+        video.loop = true;
+        video.volume = 1.0;
         a.appendChild(video);
       } else {
         const img = document.createElement('img');
@@ -167,6 +167,51 @@
 
       container.appendChild(a);
     });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(v => {
+        v.muted = false;
+        v.play().catch(() => {});
+      });
+      if (notice) notice.style.display = 'none';
+    }, { once: true });
+
+    function randomizePositions() {
+      const container = document.querySelector('.container');
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const padding = 200;
+
+      blocks.forEach(block => {
+        const x = Math.random() * (container.offsetWidth - padding);
+        const y = Math.random() * (container.offsetHeight - padding);
+        block.style.left = `${x}px`;
+        block.style.top = `${y}px`;
+      });
+    }
+
+    function enforceSoftSeparation() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const threshold = 100;
+      const limit = 4;
+
+      blocks.forEach((a, i) => {
+        let count = 0;
+        blocks.forEach((b, j) => {
+          if (i !== j) {
+            const dx = a.offsetLeft - b.offsetLeft;
+            const dy = a.offsetTop - b.offsetTop;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < threshold) count++;
+          }
+        });
+        if (count >= limit) {
+          const offsetX = (Math.random() - 0.5) * 10;
+          const offsetY = (Math.random() - 0.5) * 10;
+          a.style.left = `${a.offsetLeft + offsetX}px`;
+          a.style.top = `${a.offsetTop + offsetY}px`;
+        }
+      });
+    }
 
     function randomizeLines() {
       const blocks = [...document.querySelectorAll('.image-block')];
@@ -200,6 +245,7 @@
 
     window.addEventListener('load', () => {
       requestAnimationFrame(() => {
+        randomizePositions();
         randomizeLines();
         const blocks = document.querySelectorAll('.image-block');
         blocks.forEach(block => {
@@ -209,6 +255,7 @@
         window.addEventListener('scroll', randomizeLines, { passive: true });
         window.addEventListener('touchstart', randomizeLines, { passive: true });
         setInterval(randomizeLines, 5000);
+        setInterval(enforceSoftSeparation, 1000);
         window.addEventListener('resize', randomizeLines);
       });
     });
