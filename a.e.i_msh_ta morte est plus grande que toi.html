@@ -109,6 +109,10 @@
   <div id="audio-notice">tocar para activar sonido</div>
 
   <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
 const media = [
       "https://attachments.are.na/36399254/a66b04e4f902052167a5e21c654fc125.mov?1746147888",
       "https://attachments.are.na/36399252/e5933a428a990c46833c36d4ed15a209.mov?1746147885",
@@ -142,95 +146,110 @@ const media = [
       "https://d2w9rnfcy7mm78.cloudfront.net/36399219/original_31aacd44eb45935a8dba37819a2c7c32.jpg?1746147856?bc=0"
     ];
 
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const container = document.getElementById('channels-container');
-const svg = document.getElementById('dynamic-lines');
-let videoRefs = [];
-
-function setupMedia() {
-  media.forEach((url) => {
-    const a = document.createElement('a');
-    a.className = 'image-block';
-    a.href = 'ta_morte.html';
-    a.target = '_self';
-
-    if (url.match(/\.(mp4|mov)(\?|$)/)) {
-      const video = document.createElement('video');
-      video.loop = true;
-      video.controls = false;
-      video.playsInline = true;
-      video.autoplay = true;
-      video.muted = true;
-      video.volume = 0.05;
-      video.src = url;
-      a.appendChild(video);
-      videoRefs.push(video);
-    } else {
-      const img = document.createElement('img');
-      img.src = url;
-      a.appendChild(img);
+    let selectedAudioIndex = -1;
+    if (isIOS) {
+      selectedAudioIndex = Math.floor(Math.random() * media.length);
     }
-    container.appendChild(a);
-  });
-}
 
-function activateAudio() {
-  videoRefs.forEach(v => {
-    v.muted = false;
-    v.volume = 0.05;
-    v.play().catch(() => {});
-  });
-  const notice = document.getElementById('audio-notice');
-  if (notice) notice.style.opacity = 0;
-}
+    media.forEach((url, index) => {
+      const a = document.createElement('a');
+      a.className = 'image-block';
+      a.href = 'ta_morte.html';
+      a.target = '_self';
 
-function randomizePositions() {
-  const blocks = [...document.querySelectorAll('.image-block')];
-  const padding = 200;
-  blocks.forEach(block => {
-    const x = Math.random() * (container.offsetWidth - padding);
-    const y = Math.random() * (container.offsetHeight - padding);
-    block.style.left = `${x}px`;
-    block.style.top = `${y}px`;
-  });
-}
+      if (url.match(/\.(mp4|mov)(\?|$)/)) {
+        const video = document.createElement('video');
+        video.loop = true;
+        video.controls = false;
+        video.playsInline = true;
+        video.src = url;
+        video.volume = 0.05;
 
-function randomizeLines() {
-  const blocks = [...document.querySelectorAll('.image-block')];
-  svg.innerHTML = '';
-  blocks.forEach((a, i) => {
-    const rectA = a.getBoundingClientRect();
-    const x1 = rectA.left + rectA.width / 2 + window.scrollX;
-    const y1 = rectA.top + rectA.height / 2 + window.scrollY;
-    blocks.forEach((b, j) => {
-      if (i < j && Math.random() > 0.6) {
-        const rectB = b.getBoundingClientRect();
-        const x2 = rectB.left + rectB.width / 2 + window.scrollX;
-        const y2 = rectB.top + rectB.height / 2 + window.scrollY;
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', x1);
-        line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2);
-        line.setAttribute('y2', y2);
-        line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
-        line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
-        line.style.opacity = `${0.1 + Math.random() * 0.3}`;
-        svg.appendChild(line);
+        if (isIOS) {
+          if (index === selectedAudioIndex) {
+            video.muted = false;
+          } else {
+            video.muted = true;
+          }
+        } else {
+          video.autoplay = true;
+          video.muted = false;
+        }
+
+        video.addEventListener('canplay', () => video.play().catch(() => {}));
+        a.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = url;
+        a.appendChild(img);
       }
+
+      container.appendChild(a);
     });
-  });
-}
 
-window.addEventListener('load', () => {
-  requestAnimationFrame(() => {
-    setupMedia();
-    randomizePositions();
-    randomizeLines();
-    setInterval(randomizeLines, 5000);
-  });
-});
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
 
-document.body.addEventListener('click', activateAudio, { once: true });
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    function randomizePositions() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const padding = 200;
+      blocks.forEach(block => {
+        const x = Math.random() * (window.innerWidth - padding);
+        const y = Math.random() * (window.innerHeight - padding);
+        block.style.left = `${x}px`;
+        block.style.top = `${y}px`;
+      });
+    }
+
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        randomizePositions();
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
   </script>
 </body>
 </html>
