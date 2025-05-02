@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i.index</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .floating-title {
+      position: absolute;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+      white-space: nowrap;
+      pointer-events: auto;
+      transition: color 0.3s ease;
+    }
+    .floating-title:hover {
+      color: #888;
+    }
+    svg.lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <svg class="lines" id="dynamic-lines"></svg>
+  
+  <script>
+    const titles = [
+      "a.e.i.1",
+      "a.e.i_msh_7+2[31.06.22]",
+      "a.e.i.tp.bibliografia",
+      // agrega más títulos aquí
+    ];
+
+    const container = document.body;
+    const lineCanvas = document.getElementById('dynamic-lines');
+    const nodes = [];
+    let paused = false;
+
+    // Crear nodos flotantes
+    titles.forEach(title => {
+      const el = document.createElement('a');
+      el.className = 'floating-title';
+      el.href = `${title}.html`;
+      el.textContent = title;
+      el.target = '_self';
+      container.appendChild(el);
+
+      const node = {
+        el,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5
+      };
+
+      el.addEventListener('mouseenter', () => paused = true);
+      el.addEventListener('mouseleave', () => paused = false);
+      el.addEventListener('touchstart', () => paused = true);
+      el.addEventListener('touchend', () => paused = false);
+
+      nodes.push(node);
+    });
+
+    function moveTitles() {
+      if (!paused) {
+        nodes.forEach(n => {
+          n.x += n.vx;
+          n.y += n.vy;
+
+          if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
+          if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
+
+          n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
+        });
+      }
+      requestAnimationFrame(moveTitles);
+    }
+
+    function drawLines() {
+      if (!paused) {
+        lineCanvas.innerHTML = '';
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            if (Math.random() < 0.2) {
+              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              line.setAttribute('x1', nodes[i].x);
+              line.setAttribute('y1', nodes[i].y);
+              line.setAttribute('x2', nodes[j].x);
+              line.setAttribute('y2', nodes[j].y);
+              lineCanvas.appendChild(line);
+            }
+          }
+        }
+      }
+    }
+
+    moveTitles();
+    setInterval(drawLines, 500);
+    window.addEventListener('resize', () => {
+      nodes.forEach(n => {
+        n.x = Math.random() * window.innerWidth;
+        n.y = Math.random() * window.innerHeight;
+      });
+    });
+
+    window.addEventListener('scroll', () => paused = true, { passive: true });
+  </script>
+</body>
+</html>
