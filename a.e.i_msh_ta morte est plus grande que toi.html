@@ -113,7 +113,7 @@
     const container = document.getElementById('channels-container');
     const audioNotice = document.getElementById('audio-notice');
 
-const media = [
+ const media = [
       "https://attachments.are.na/36399254/a66b04e4f902052167a5e21c654fc125.mov?1746147888",
       "https://attachments.are.na/36399252/e5933a428a990c46833c36d4ed15a209.mov?1746147885",
       "https://attachments.are.na/36399250/794e20b16e74f2837e7e011ebf324adf.mp4?1746147880",
@@ -146,10 +146,7 @@ const media = [
       "https://d2w9rnfcy7mm78.cloudfront.net/36399219/original_31aacd44eb45935a8dba37819a2c7c32.jpg?1746147856?bc=0"
     ];
 
-    let selectedAudioIndex = -1;
-    if (isIOS) {
-      selectedAudioIndex = Math.floor(Math.random() * media.length);
-    }
+    let selectedAudioIndex = isIOS ? Math.floor(Math.random() * media.length) : -1;
 
     media.forEach((url, index) => {
       const a = document.createElement('a');
@@ -166,11 +163,7 @@ const media = [
         video.volume = 0.05;
 
         if (isIOS) {
-          if (index === selectedAudioIndex) {
-            video.muted = false;
-          } else {
-            video.muted = true;
-          }
+          video.muted = index !== selectedAudioIndex;
         } else {
           video.autoplay = true;
           video.muted = false;
