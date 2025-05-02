@@ -1,0 +1,179 @@
+<!-- Fragmento HTML completo con 25 imágenes con enlaces aleatorios y líneas de conexión -->
+<header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+</header>
+<object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+<svg class="lines" id="dynamic-lines"></svg>
+<div class="container" id="channels-container">
+  <!-- Bloques multimedia -->
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Ciudad+de+México" target="_blank">
+    <video autoplay muted loop playsinline>
+      <source src="https://attachments.are.na/36398899/6033e32bcfad68903d88462899a243e6.mp4?1746146205" type="video/mp4">
+    </video>
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Madrid,+España" target="_blank">
+    <video autoplay muted loop playsinline>
+      <source src="https://attachments.are.na/36398853/f73c8c6d53cd8242a043fb0afe6284c7.mp4?1746145895" type="video/mp4">
+    </video>
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Buenos+Aires,+Argentina" target="_blank">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398851/original_218932628a361968995124998cd0407c.png?1746145829?bc=0" alt="versalles 3">
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Lima,+Perú" target="_blank">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398850/original_a0872ddcaf43f65db245f15181b23a61.jpg?1746145827?bc=0" alt="versalles 4">
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Santiago,+Chile" target="_blank">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398849/original_a740fa8c67cf5db0ac3b23387dfcfde2.jpg?1746145827?bc=0" alt="versalles 5">
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Montevideo,+Uruguay" target="_blank">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398848/original_f69d88283d0f0439f0f80948de175a39.jpg?1746145826?bc=0" alt="versalles 6">
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Caracas,+Venezuela" target="_blank">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398847/original_079dc39a8c6c770b6dcbf5d7b6bd25c3.jpg?1746145826?bc=0" alt="versalles 7">
+  </a>
+  <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Quito,+Ecuador" target="_blank">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398846/original_48cff1317fa2c62866cfc8bcdd93ce53.jpg?1746145826?bc=0" alt="versalles 8">
+  </a>
+</div>
+
+<style>
+  body {
+    margin: 0;
+    background: #fefefe;
+    font-family: 'Times New Roman', serif;
+    color: #000;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+  header {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+  }
+  header img {
+    width: 50px;
+    height: auto;
+    display: block;
+  }
+  .background-star {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100vmin;
+    max-width: 900px;
+    transform: translate(-50%, -50%);
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    padding: 2rem;
+    overflow: hidden;
+  }
+  .image-block {
+    width: 160px;
+    height: auto;
+    max-height: 160px;
+    display: block;
+    position: absolute;
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    aspect-ratio: 1/1;
+  }
+  .image-block:hover {
+    opacity: 0.8;
+  }
+  .image-block img,
+  .image-block video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  svg.lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+  svg.lines line {
+    stroke: black;
+    stroke-width: 0.3px;
+    opacity: 0.1;
+    transition: stroke-width 0.3s, opacity 0.3s;
+  }
+  @media (max-width: 600px) {
+    .image-block {
+      position: static;
+      width: 100%;
+      height: auto;
+    }
+  }
+</style>
+
+<script>
+function randomizeLines() {
+  const blocks = [...document.querySelectorAll('.image-block')];
+  const svg = document.getElementById('dynamic-lines');
+  svg.innerHTML = '';
+  blocks.forEach((blockA, i) => {
+    const rectA = blockA.getBoundingClientRect();
+    const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+    const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+    blocks.forEach((blockB, j) => {
+      if (i < j && Math.random() > 0.6) {
+        const rectB = blockB.getBoundingClientRect();
+        const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+        const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+        line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+        line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+        svg.appendChild(line);
+      }
+    });
+  });
+}
+
+function randomizePositions() {
+  const container = document.querySelector('.container');
+  const blocks = [...document.querySelectorAll('.image-block')];
+  const padding = 200;
+  blocks.forEach(block => {
+    const x = Math.random() * (container.offsetWidth - padding);
+    const y = Math.random() * (container.offsetHeight - padding);
+    block.style.left = `${x}px`;
+    block.style.top = `${y}px`;
+  });
+}
+
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => {
+    randomizePositions();
+    const blocks = document.querySelectorAll('.image-block');
+    blocks.forEach(block => {
+      block.addEventListener('mouseenter', randomizeLines);
+      block.addEventListener('click', randomizeLines);
+    });
+    window.addEventListener('scroll', randomizeLines, { passive: true });
+    window.addEventListener('touchstart', randomizeLines, { passive: true });
+    randomizeLines();
+    setInterval(randomizeLines, 5000);
+    window.addEventListener('resize', randomizeLines);
+  });
+});
+</script>
