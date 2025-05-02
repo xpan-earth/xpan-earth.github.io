@@ -1,0 +1,190 @@
+<!-- Fragmento HTML completo con 25 imágenes con enlaces aleatorios y líneas de conexión -->
+<header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container">
+    <!-- (25 image blocks... mismos que antes) -->
+    <!-- Se insertan aquí automáticamente los bloques existentes -->
+    <a class="image-block" href="https://www.pinterest.fr/pin/385128205627678958/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399434/original_d514041013251793ff4554e69ae4fd28.png?1746148687?bc=0" alt="George Clooney 1">
+      </a>
+      <a class="image-block" href="https://capuchinox.com/george-clooney-cafe-nespresso/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399435/original_4515a0704634b4b5420f502c68b4e157.jpg?1746148686?bc=0" alt="George Clooney 2">
+      </a>
+      <a class="image-block" href="https://capuchinox.com/los-3-mejores-anuncios-de-nespresso-con-george-clooney/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399433/original_e5753a4dc5fea2f95db0deb55f039ab2.jpg?1746148687?bc=0" alt="George Clooney 3">
+      </a>
+      <a class="image-block" href="https://www.pinterest.com/pin/335025659776387435/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399431/original_c699519a742427b0c0e3d9b9ca6af84d.jpg?1746148686?bc=0" alt="George Clooney 4">
+      </a>
+      <a class="image-block" href="https://www.pinterest.com/pin/george-clooney-coffee--108649409732370674/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399430/original_141485e92e09eefa367660eeb657897d.png?1746148686?bc=0" alt="George Clooney 5">
+      </a>
+      <a class="image-block" href="https://ar.pinterest.com/pin/6122149485444937/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399428/original_3625c7b228f682a74909a581a932cc15.jpg?1746148686?bc=0" alt="George Clooney 6">
+      </a>
+      <a class="image-block" href="https://www.marketingnews.es/marcas/noticia/1106993054305/nespresso-y-george-clooney-pareja-de-mayor-exito-comercial.1.html" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399429/original_7b1796ff4efabb2267a5a115ae02093a.png?1746148685?bc=0" alt="George Clooney 7">
+      </a>
+      <a class="image-block" href="https://www.flickr.com/photos/markgregory/11028537874" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399427/original_3463c7ff576675945ab6ed7907f86d15.jpg?1746148686?bc=0" alt="George Clooney 8">
+      </a>
+      <a class="image-block" href="https://www.instagram.com/georgeclooneyfansite/p/DFDjoDzobDN/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399426/original_f1faf4739ee91d82d16a02c7cbb90121.jpg?1746148686?bc=0" alt="George Clooney 9">
+      </a>
+      <a class="image-block" href="https://www.instagram.com/p/COvKY0OtyRO/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399425/original_677da7bcef324ef57b2e6e585c74789e.jpg?1746148686?bc=0" alt="George Clooney 10">
+      </a>
+      <a class="image-block" href="https://www.instagram.com/georgeclooneyfansite/reel/DE66AOWoD6r/" target="_blank">
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/36399424/original_662efdb7c7a016d230eb5019901d95f2.png?1746148686?bc=0" alt="George Clooney 11">
+      </a>
+      
+  </div>
+  
+<style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      padding: 2rem;
+      overflow: hidden;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+    }
+    .image-block img {
+      width: 100%;
+      height: auto;
+      max-height: 160px;
+      object-fit: contain;
+      display: block;
+    }
+    svg.lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        position: static;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1;
+      }
+    }
+    </style>
+    
+    <script>
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+    
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+    
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+    
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+    
+    function randomizePositions() {
+      const container = document.querySelector('.container');
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const padding = 200;
+    
+      blocks.forEach(block => {
+        const x = Math.random() * (container.offsetWidth - padding);
+        const y = Math.random() * (container.offsetHeight - padding);
+        block.style.left = `${x}px`;
+        block.style.top = `${y}px`;
+      });
+    }
+    
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => {
+        randomizePositions();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        randomizeLines();
+        setInterval(randomizeLines, 5000); // auto redraw every 5s
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+    </script>
