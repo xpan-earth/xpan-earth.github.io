@@ -46,9 +46,14 @@
     }
     svg.lines line {
       stroke: black;
-      stroke-width: 0.3px;
-      opacity: 0.1;
+      stroke-width: 0.6px;
+      opacity: 0.25;
       transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .floating-title {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
@@ -59,23 +64,24 @@
     </a>
   </header>
   <svg class="lines" id="dynamic-lines"></svg>
-  
+
   <script>
     const titles = [
       "a.e.i.1",
       "a.e.i_msh_7+2[31.06.22]",
       "a.e.i.tp.bibliografia",
       "a.e.i.arcangel.png",
-      "a.e.i_msh_ta morte est plus grande que toi",
-      // agrega más títulos aquí
+      "a.e.i_msh_ta morte est plus grande que toi"
     ];
 
     const container = document.body;
     const lineCanvas = document.getElementById('dynamic-lines');
     const nodes = [];
     let paused = false;
+    let nextLineUpdate = Date.now();
+    let nextDelay = 100 + Math.random() * 500; // entre 0.1s y 0.6s
+    let currentLines = [];
 
-    // Crear nodos flotantes
     titles.forEach(title => {
       const el = document.createElement('a');
       el.className = 'floating-title';
@@ -84,6 +90,7 @@
       el.target = '_self';
       container.appendChild(el);
 
+      const rect = el.getBoundingClientRect();
       const node = {
         el,
         x: Math.random() * window.innerWidth,
@@ -100,7 +107,7 @@
       nodes.push(node);
     });
 
-    function moveTitles() {
+    function animate() {
       if (!paused) {
         nodes.forEach(n => {
           n.x += n.vx;
@@ -111,30 +118,54 @@
 
           n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
         });
+
+        const now = Date.now();
+        if (now >= nextLineUpdate) {
+          generateNewLines();
+          nextDelay = 100 + Math.random() * 500;
+          nextLineUpdate = now + nextDelay;
+        }
+
+        redrawCurrentLines();
       }
-      requestAnimationFrame(moveTitles);
+      requestAnimationFrame(animate);
     }
 
-    function drawLines() {
-      if (!paused) {
-        lineCanvas.innerHTML = '';
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            if (Math.random() < 0.2) {
-              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              line.setAttribute('x1', nodes[i].x);
-              line.setAttribute('y1', nodes[i].y);
-              line.setAttribute('x2', nodes[j].x);
-              line.setAttribute('y2', nodes[j].y);
-              lineCanvas.appendChild(line);
-            }
+    function generateNewLines() {
+      currentLines = [];
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (Math.random() < 0.2) {
+            currentLines.push([i, j]);
           }
         }
       }
     }
 
-    moveTitles();
-    setInterval(drawLines, 500);
+    function getNodeCenter(node) {
+      const el = node.el;
+      const rect = el.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      return [node.x + width / 2, node.y + height / 2];
+    }
+
+    function redrawCurrentLines() {
+      lineCanvas.innerHTML = '';
+      currentLines.forEach(([i, j]) => {
+        const [x1, y1] = getNodeCenter(nodes[i]);
+        const [x2, y2] = getNodeCenter(nodes[j]);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        lineCanvas.appendChild(line);
+      });
+    }
+
+    animate();
+
     window.addEventListener('resize', () => {
       nodes.forEach(n => {
         n.x = Math.random() * window.innerWidth;
