@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_msh_ta morte est plus grande que toi</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      padding: 2rem;
+      overflow: hidden;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1/1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    svg.lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+
+  <script>
+    const media = [
+      "https://attachments.are.na/36399254/a66b04e4f902052167a5e21c654fc125.mov?1746147888",
+      "https://attachments.are.na/36399252/e5933a428a990c46833c36d4ed15a209.mov?1746147885",
+      "https://attachments.are.na/36399250/794e20b16e74f2837e7e011ebf324adf.mp4?1746147880",
+      "https://attachments.are.na/36399247/2687b1f82732c16b9863150f1458ebc8.mov?1746147875",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399245/original_9c3be71e63076842c6032c15e59297c0.jpg?1746147865?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399244/original_b8fcd182b8808e24a753af44cf108f57.jpg?1746147864?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399243/original_cfe94fa38bb307184a419700bc30f46c.jpg?1746147861?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399242/original_3e0f874729925801dd93489b05761020.png?1746147862?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399241/original_07fcd82e63b68c7920f7fb043cfdf530.jpg?1746147861?bc=0",
+      "https://attachments.are.na/36399240/dc217b4d1449d60d223db5bfc2762ea4.mov?1746147861",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399239/original_a824b229a4d2740fbfd14dd97a1c7105.jpg?1746147860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399238/original_d9d4472e91383628635a14fd3942b7be.jpg?1746147859?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399237/original_d6762dee8d275b6d6571d1f8cdaea3be.jpg?1746147860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399236/original_56d7bc509cd19b425394c4b169aeecd7.jpg?1746147859?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399235/original_17434505c34d71b1d9aae834a29752ee.webp?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399234/original_5c28e2b09e18ff8db92caa10d87c2093.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399233/original_7122fda18c0e1571320635d19615b8ec.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399232/original_047d92cbf3b08675b605a7933e0089a4.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399231/original_4eb539da05f49700592c3da8bf08c528.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399230/original_09e3431adf5a35b1341687214802fafb.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399229/original_1a9f1b03b81b110c8c358063810ef6bf.jpg?1746147857?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399228/original_4ecb91dc7fdd196301fc0e64360ddce5.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399227/original_a27a85246a4767b89536b16864df5498.jpg?1746147858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399226/original_4377e60505cadf820a2695e47d220e67.jpg?1746147857?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399225/original_aee715b47d5f24b092bc644c2f081c46.jpg?1746147855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399223/original_4dd76ee85b8f8cb96b0460eafe30436e.jpg?1746147856?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399222/original_e9e38b826c468410d099dea627a247db.jpg?1746147856?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399221/original_a2c5b9f3df2464549790472b9d8424dc.png?1746147856?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399220/original_647a803f1332658b7a2a3693148541a1.jpg?1746147856?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36399219/original_31aacd44eb45935a8dba37819a2c7c32.jpg?1746147856?bc=0"
+    ];
+
+    const container = document.getElementById('channels-container');
+    media.forEach(url => {
+      const a = document.createElement('a');
+      a.className = 'image-block';
+      a.href = 'ta_morte.html';
+      a.target = '_self';
+
+      if (url.endsWith('.mp4') || url.endsWith('.mov') || url.includes('.mp4?') || url.includes('.mov?')) {
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.src = url;
+        a.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = url;
+        a.appendChild(img);
+      }
+
+      container.appendChild(a);
+    });
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    function randomizePositions() {
+      const container = document.querySelector('.container');
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const padding = 200;
+
+      blocks.forEach(block => {
+        const x = Math.random() * (container.offsetWidth - padding);
+        const y = Math.random() * (container.offsetHeight - padding);
+        block.style.left = `${x}px`;
+        block.style.top = `${y}px`;
+      });
+    }
+
+    function enforceSoftSeparation() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const threshold = 100;
+      const limit = 4;
+
+      blocks.forEach((a, i) => {
+        let count = 0;
+        blocks.forEach((b, j) => {
+          if (i !== j) {
+            const dx = a.offsetLeft - b.offsetLeft;
+            const dy = a.offsetTop - b.offsetTop;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < threshold) count++;
+          }
+        });
+        if (count >= limit) {
+          const offsetX = (Math.random() - 0.5) * 10;
+          const offsetY = (Math.random() - 0.5) * 10;
+          a.style.left = `${a.offsetLeft + offsetX}px`;
+          a.style.top = `${a.offsetTop + offsetY}px`;
+        }
+      });
+    }
+
+    window.addEventListener('load', () => {
+  requestAnimationFrame(() => {
+    randomizePositions();
+    randomizeLines();
+    const blocks = document.querySelectorAll('.image-block');
+    blocks.forEach(block => {
+      block.addEventListener('mouseenter', randomizeLines);
+      block.addEventListener('click', randomizeLines);
+    });
+    window.addEventListener('scroll', randomizeLines, { passive: true });
+    window.addEventListener('touchstart', randomizeLines, { passive: true });
+    setInterval(randomizeLines, 5000);
+    setInterval(enforceSoftSeparation, 1000);
+    window.addEventListener('resize', randomizeLines);
+  });
+  });
+</script>
+</body>
+</html>
