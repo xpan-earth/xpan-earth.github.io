@@ -84,8 +84,6 @@
         width: 100%;
         height: auto;
         aspect-ratio: 1/1;
-        width: 100%;
-        height: auto;
       }
     }
   </style>
@@ -101,7 +99,7 @@
   <div class="container" id="channels-container"></div>
 
   <script>
-    const media = [
+     const media = [
       "https://attachments.are.na/36399254/a66b04e4f902052167a5e21c654fc125.mov?1746147888",
       "https://attachments.are.na/36399252/e5933a428a990c46833c36d4ed15a209.mov?1746147885",
       "https://attachments.are.na/36399250/794e20b16e74f2837e7e011ebf324adf.mp4?1746147880",
@@ -133,6 +131,7 @@
       "https://d2w9rnfcy7mm78.cloudfront.net/36399220/original_647a803f1332658b7a2a3693148541a1.jpg?1746147856?bc=0",
       "https://d2w9rnfcy7mm78.cloudfront.net/36399219/original_31aacd44eb45935a8dba37819a2c7c32.jpg?1746147856?bc=0"
     ];
+
 
     const container = document.getElementById('channels-container');
     media.forEach(url => {
@@ -226,21 +225,21 @@
     }
 
     window.addEventListener('load', () => {
-  requestAnimationFrame(() => {
-    randomizePositions();
-    randomizeLines();
-    const blocks = document.querySelectorAll('.image-block');
-    blocks.forEach(block => {
-      block.addEventListener('mouseenter', randomizeLines);
-      block.addEventListener('click', randomizeLines);
+      requestAnimationFrame(() => {
+        randomizePositions();
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        setInterval(enforceSoftSeparation, 1000);
+        window.addEventListener('resize', randomizeLines);
+      });
     });
-    window.addEventListener('scroll', randomizeLines, { passive: true });
-    window.addEventListener('touchstart', randomizeLines, { passive: true });
-    setInterval(randomizeLines, 5000);
-    setInterval(enforceSoftSeparation, 1000);
-    window.addEventListener('resize', randomizeLines);
-  });
-  });
-</script>
+  </script>
 </body>
 </html>
