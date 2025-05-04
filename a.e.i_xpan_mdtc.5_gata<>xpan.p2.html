@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_mdtc.5_gata<>xpan.p2</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+        const mediaItems = [
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401237/original_de96ad0e47a57539cd0f612f08cdfc9f.jpg?1746158104?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401236/original_c43271b3dacba0b19f9e799a08294928.jpg?1746158103?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401235/original_7d87e62aadb764824cab5c5570f962ff.jpg?1746158103?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401234/original_2471660fea6bf0bc69ff94fa4d04fb62.jpg?1746158102?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401233/original_e21c3a7609c65877063d991b81ec394c.jpg?1746158101?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401232/original_8ed369df7c55a41ea6442b61e7b3fd20.jpg?1746158101?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401231/original_19c6bc202a131f011bca1cdfaabd85af.jpg?1746158101?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401230/original_512dc0dcf17bb16989c1cae0db3af602.jpg?1746158099?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401229/original_e35b8e6fe0bd281441a1d761e254e6c9.jpg?1746158098?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401228/original_eb5bf91d8c711a0830bed63506397f78.jpg?1746158097?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401226/original_f83f810b7f83d1f626c9ebb9ddb3af7e.jpg?1746158096?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401225/original_ad17b4e049c063945ebfac7fab36b344.jpg?1746158096?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401224/original_620b262e3b259ccd1eefc01fb2871226.jpg?1746158096?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401223/original_0776f3e79ce2ad85ca6b7832d1ef9a11.jpg?1746158096?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  }
+];
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
