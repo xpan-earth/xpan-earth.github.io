@@ -184,4 +184,25 @@ header {
     height: auto;
     display: block;
   }
+
+  
+  :root {
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: #000;
+      color: #fff;
+    }
+    .floating-title:hover {
+      color: #aaa;
+    }
+    svg.lines line {
+      stroke: white;
+      opacity: 0.25;
+    }
+    header img {
+      filter: invert(1);
+    }
+  }
   
