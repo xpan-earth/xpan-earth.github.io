@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_mdtc.5_gata<>xpan.p3</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+        const mediaItems = [
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401258/original_49f221109f837c39586fccacd3fb2b79.jpg?1746158185?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401256/original_b22422d661ac1272de8a16385a2d56d6.jpg?1746158184?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401255/original_479d7057fc4daa6564e76e800bd0fb3b.jpg?1746158183?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401254/original_4f52c68ab618fce961c16019ba3d14d1.jpg?1746158182?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401253/original_6c6b88b4eec8845eb49df85c5d87f9e9.jpg?1746158181?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401252/original_cc96b5a84cba6e92c264cf0d7a116f72.jpg?1746158181?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401251/original_e1343e2ee21c7154458e37764b38da28.jpg?1746158180?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401250/original_f0abbe6e887d8cbd25ee242b9601d599.jpg?1746158179?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401249/original_4a532cf48daa8e8cb9ba8c4dbb9d5476.jpg?1746158179?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401248/original_3e28056f93453b26092059978c985962.jpg?1746158178?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401247/original_2fc7e16d9c3b7cc82b5fb842f057d3d0.jpg?1746158177?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401246/original_899897aaff1d56ec801658238c9dfdcb.jpg?1746158175?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  },
+  {
+    url: "https://d2w9rnfcy7mm78.cloudfront.net/36401245/original_30b6590da9d7633a7e15f0b5d4a69add.jpg?1746158174?bc=0",
+    link: "https://soundcloud.com/buy-xpan-model1-now/mixtape-final-mdtc-5-wav?ref=thirdParty&p=i&c=1&si=98BDE2765EE9414A92035AD5C144D418&utm_source=thirdParty&utm_medium=text&utm",
+    newTab: false
+  }
+];
+
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
