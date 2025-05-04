@@ -82,11 +82,10 @@
 
     const container = document.body;
     const lineCanvas = document.getElementById('dynamic-lines');
-    const nodesA = [];
-    const nodesB = [];
+    const nodes = [];
     let paused = false;
     let nextLineUpdate = Date.now();
-    let nextDelay = 100 + Math.random() * 500;
+    let nextDelay = 100 + Math.random() * 500; // entre 0.1s y 0.6s
     let currentLines = [];
 
     titles.forEach(title => {
@@ -97,35 +96,26 @@
       el.target = '_self';
       container.appendChild(el);
 
+      const rect = el.getBoundingClientRect();
       const node = {
         el,
-        x: 0,
-        y: 0,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5
       };
-
-      if (title.includes('_msh_') || title.includes('msh')) {
-        node.x = Math.random() * window.innerWidth * 0.4;
-        node.y = Math.random() * window.innerHeight;
-        nodesA.push(node);
-      } else {
-        node.x = Math.random() * window.innerWidth * 0.4 + window.innerWidth * 0.6;
-        node.y = Math.random() * window.innerHeight;
-        nodesB.push(node);
-      }
 
       el.addEventListener('mouseenter', () => paused = true);
       el.addEventListener('mouseleave', () => paused = false);
       el.addEventListener('touchstart', () => paused = true);
       el.addEventListener('touchend', () => paused = false);
-    });
 
-    const allNodes = [...nodesA, ...nodesB];
+      nodes.push(node);
+    });
 
     function animate() {
       if (!paused) {
-        allNodes.forEach(n => {
+        nodes.forEach(n => {
           n.x += n.vx;
           n.y += n.vy;
 
@@ -149,15 +139,13 @@
 
     function generateNewLines() {
       currentLines = [];
-      [nodesA, nodesB].forEach(group => {
-        for (let i = 0; i < group.length; i++) {
-          for (let j = i + 1; j < group.length; j++) {
-            if (Math.random() < 0.2) {
-              currentLines.push([group[i], group[j]]);
-            }
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (Math.random() < 0.2) {
+            currentLines.push([i, j]);
           }
         }
-      });
+      }
     }
 
     function getNodeCenter(node) {
@@ -170,9 +158,9 @@
 
     function redrawCurrentLines() {
       lineCanvas.innerHTML = '';
-      currentLines.forEach(([nodeA, nodeB]) => {
-        const [x1, y1] = getNodeCenter(nodeA);
-        const [x2, y2] = getNodeCenter(nodeB);
+      currentLines.forEach(([i, j]) => {
+        const [x1, y1] = getNodeCenter(nodes[i]);
+        const [x2, y2] = getNodeCenter(nodes[j]);
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1);
         line.setAttribute('y1', y1);
@@ -185,7 +173,7 @@
     animate();
 
     window.addEventListener('resize', () => {
-      [...nodesA, ...nodesB].forEach(n => {
+      nodes.forEach(n => {
         n.x = Math.random() * window.innerWidth;
         n.y = Math.random() * window.innerHeight;
       });
