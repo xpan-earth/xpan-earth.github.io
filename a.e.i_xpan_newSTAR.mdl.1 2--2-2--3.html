@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_newSTAR.mdl.1 2--2-2--3</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+        const mediaItems = [
+  { url: "https://attachments.are.na/36399087/ee1a1c986c25ec0db8f62558eaf9b8f3.mov?1746147083", link: "a.e.i.index.html", newTab: false },
+  { url: "https://attachments.are.na/36399083/dc533e06160059d5920d061b97aedd53.mov?1746147065", link: "a.e.i.index.html", newTab: false },
+  { url: "https://attachments.are.na/36399082/d7440f12a5ab7a26357e01ea32fb1019.mov?1746147062", link: "a.e.i.index.html", newTab: false },
+  { url: "https://attachments.are.na/36399080/9623680b0f083deb45a73d257e905f3d.mov?1746147058", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399079/original_af8efbfcd340f1eb5c46574d3a3b0583.jpg?1746147054?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399077/original_3e988ec51f53d74bf9d4acdcbd439aa5.jpg?1746147050?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399076/original_2689021f8423873ca3a2afece9753145.jpg?1746147050?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399075/original_5fc33b3ecc0129ca7ac8c81ba88b0b9a.jpg?1746147049?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399074/original_e729a3103a5075791092f744497f2d02.jpg?1746147050?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399073/original_9d7a782f96ffbb2a68be4a9f1758a3b1.jpg?1746147050?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399072/original_7f60e79d4f1a14d23a5d92889e9e0fab.jpg?1746147048?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399071/original_e4c8adb65e9de4caadd1e5abe5d2d135.jpg?1746147048?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://attachments.are.na/36399070/05b34c23c6efa17fb1dad2adfbc011f0.mov?1746147048", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399069/original_b95ab000ad452a950546df029365a646.jpg?1746147047?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399068/original_8718cd64db73d44c0f8f90160e1fda56.jpg?1746147045?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399067/original_dba9062e0e86ac6ebed2b1d953b982b4.jpg?1746147045?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399066/original_91dc4cfa760be1b0295df707b46465d7.jpg?1746147045?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399065/original_f7dadfbf73ebbd37d33dc78f5bcad100.jpg?1746147044?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399064/original_8d271e55cd1392810d6911186dd8cece.jpg?1746147044?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399063/original_0e38ab5a3c0879d5d5dafcff7ec10b17.jpg?1746147043?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399062/original_2c389d896a27dec160fb750ac6704f04.jpg?1746147041?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399061/original_0c0d73bbe553594210e5db3733a657af.jpg?1746147042?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399060/original_053f794d205b74e06ce97518e84432d3.jpg?1746147041?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399059/original_3246908da9a737061cb16e1f823d02f6.jpg?1746147041?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399058/original_a9de83a2a16b10191aacb31d4efb4557.jpg?1746147041?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399057/original_283a08529083bdb3100bfa6da8081960.jpg?1746147040?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399056/original_097893871855a08c5a9b4450d483ffd7.jpg?1746147040?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399055/original_aa6a171807118dd457dfb8acbb2cb9dd.jpg?1746147039?bc=0", link: "a.e.i.index.html", newTab: false },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36399054/original_cc11c1376549f75f7d8342cc5f5e4af1.jpg?1746147039?bc=0", link: "a.e.i.index.html", newTab: false }
+];
+
+
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
