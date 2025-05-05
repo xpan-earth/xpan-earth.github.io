@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_resolución gráfica feb.25</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+        const mediaItems = [
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401325/original_1da1ff84310087ee11da1f1d6bee3be9.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401324/original_d0e5074bf21400673ab22e5dc4f8244d.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401323/original_d003004021e314c3aa840999dad226fa.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401322/original_a262069bd53704ce01951d7e8638fde3.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401321/original_d17a1042ec4b248c0a89e183c3ec2e29.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401320/original_84655811089b6a12e0f917d0e890d751.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401319/original_5bf0696c0f3972b4cb8bef8f532e8e45.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401318/original_4de5fa0d05be736aa785127dbf5912be.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401317/original_d3a49c307c531b3737cfa366bfd0220b.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401316/original_9196bb16eb7759ebd42e6af03976ad21.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401315/original_444c588a1c135610f6abbc1592862e7e.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401314/original_b85df8ef4cc06c025556d3a0c50aed04.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401313/original_384831e3f078ab481a7fb610c5f940fa.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401312/original_1e91ac009ac969057be1f69cbc6321ed.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401311/original_e465a081a2ca41ed8bb351fa23f60294.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401310/original_5a269e6ac5e7edc5d455511801e692e2.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401309/original_57f61bc71c65d51a9778919c592fb4ae.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401308/original_8d86c7ef69117329fec48a3cb307e34c.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401307/original_8bb30f13c519dac636f4e5d1bb57ecd0.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401306/original_565ec3bd9dc5f0a99d1a8f1fed821d9d.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401305/original_67de483f08eb06b681902cbeab6f3fe6.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401304/original_3a7f21292ba77da64f9385660aa5888d.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401303/original_a31cbd61aa0a5e41a6d3fc712265b147.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401302/original_3d617b8195e4db5c5681c16e93d9130f.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401301/original_71ce7b512e0f86a274a3f48bfe72e7df.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401300/original_163312f0e6b476a7f4c76d4d79f3cce3.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401299/original_cb8eb3a94647ca98203f850c365f66b7.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401298/original_0a3c882f86fcffbe47a8671e9eb0d089.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401297/original_0f7c2371deffabe4d060fc2ed436d2c1.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401296/original_d9bade9bfed036cdf54ddd87f0ac3e43.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401295/original_1a96482aee3be834ff8ecbada15ca39a.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401294/original_2f181376f1ff4a21b37669997275052a.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401293/original_950466ba037338e1a2b1de5af6d4d06c.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401292/original_cd4a4c0a6392f98510576fa8c0dad811.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401291/original_91c672ed5e8e0938c5a409506e88995d.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401290/original_6b571c1ab849f753d11ff482c8ef42d5.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401289/original_865684a1a00743d0118b579216d43a30.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401288/original_ceb4c3d9c0d37ca2bc0cc3a98a574097.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401287/original_f37cf4a0dd974a4f83f2e18995401f28.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401286/original_953498ca36427203b2bfd08dc6d0b0c2.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401285/original_0790b8db111ca6b9e3d2a083c80ab66f.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36401283/original_6cda5e104a3c54640edc78622c865fa8.jpg",
+    "link": "https://xpan.earth/a.e.i.index.html",
+    "newTab": true
+  }
+];
+
+
+
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
