@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_resolución gráfica aug-sep.24</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+        const mediaItems = [
+  {
+    "url": "https://attachments.are.na/36452297/9c607a800755ac17f734c765bfcc5834.mp4?1746408232",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452295/78069d7503f442bd6cfef67434bc68b5.mp4?1746408233",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452294/22e1fe79cb5d2d06a3cd1f3edbf403f5.mp4?1746408231",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452293/e7089bed8f3981ed3d073357be5da91d.mp4?1746408226",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452291/a1d60d63e4bfb2eb664c97df2d5ef8cd.mp4?1746408225",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452290/93d6a93c8e448b01460b2df704b48f62.mp4?1746408223",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452286/c12f7fbf7383b02bade33a7b9d9df696.mov?1746408214",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452284/46e66b556fe9408de0523442499671dc.mov?1746408207",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452281/a9816f472ac4f2c7de1bf89b6b659e9a.mp4?1746408203",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452258/164a61df7f5df4b38ff261681d388718.mov?1746408132",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452257/c4e058a1f332ccc67f0ffcc8aeed5d1c.mov?1746408131",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452255/51a5f03b2bf36197a9151fd7842f6628.mov?1746408127",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452254/ef1e8a34a9b040567945870504f8ecde.mov?1746408126",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452250/52b80df5dd59baf73f17cff20da610cf.mov?1746408123",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452248/9332a6db395a7776cf8dd10f27063032.mov?1746408121",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452247/be97962aad025ec4f2ccd154eafb4011.mov?1746408114",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452244/625e0863b76968226eaa268224c2e5ce.mov?1746408107",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452241/8ee1840b854cd0bc4b773fded4fd6fa0.mov?1746408103",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452219/original_ea5e130676860f50b1c60b8d7bacddd8.jpg?1746408023?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452217/original_aebd5b6d89e2cca5f71f985673ebd399.jpg?1746408021?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452216/original_fe2d95fb3f6408ab3cdabbc4d4f5abba.jpg?1746408021?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452203/original_64289f890b167caf6d71caf52310597d.jpg?1746407931?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452201/original_f55ea63d366a38b6bc4f9d427b282f97.jpg?1746407924?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452200/original_86c557a41ae1b04572e481c30eabc28c.jpg?1746407923?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452195/original_811874d30a6883404634efee817ddc77.jpg?1746407917?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452189/original_ba3ca3fc1943ffbed93e3741f7dcfed7.jpg?1746407904?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452188/original_b6dcc62a693662c0a53d9581a27f9e68.jpg?1746407904?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452173/715d18235be186cca13f7f6431f8315b.mp4?1746407788",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452167/440d6cf3939181b4eaceb8d48ffaae9f.mp4?1746407758",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452166/bc6de7e75031f865254e135b4637d4e9.mp4?1746407757",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36452163/a723c356b5662eb5a91512b3c6214e08.mov?1746407751",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36452157/original_26dae26776071e671a0e2eb468257836.jpg?1746407735?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36399356/b4ea25bf877929349b0b364274ea333a.mp4?1746148194",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399355/original_87cafc2422e85540ff79f83528819f42.png?1746148183?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399354/original_be9bdd8095ba2f5034ed69439065dc3f.jpg?1746148183?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399353/original_83308500eb66f7079e861cb994c00a65.jpg?1746148182?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399352/original_bd7697461306be5b0d935a1c8822a179.jpg?1746148182?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399351/original_24e921fb50d25db3f68c6fa04cb80401.jpg?1746148182?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399350/original_be36da19ce72577beba47a53ca225adf.jpg?1746148182?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399349/original_1c5e8a6a8864d44a5b10eea38365bd08.jpg?1746148182?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399348/original_66b93f835b4349328243b00bca7c3895.jpg?1746148182?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://attachments.are.na/36399347/3124d7916cfdca8c365428058b17be29.mp4?1746148181",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399346/original_9072281f310bcd43fe4712aa67c412f1.jpg?1746148181?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399345/original_f16bfc922392921eae161c8e48a85972.jpg?1746148181?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399344/original_56f22bf9d44b4c442440d0d22e529444.jpg?1746148181?bc=0",
+    "link": "a.e.i.index.html",
+    "newTab": false
+  }
+];
+
+
+
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
