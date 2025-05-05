@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_studio.25</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+        const mediaItems = [
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399979/original_af0feccb1512d9e11c40bdc2df665505.jpg?1746150697?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399978/original_fb44d17fd590c462a86d1bdec09a97e9.jpg?1746150696?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399977/original_3efda84016d529da42c0381eb842eb21.jpg?1746150695?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399976/original_9fe857dbe1f5e40f8080033cbe672066.jpg?1746150694?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399975/original_589a867af727ebae15cf3ec111198bc1.jpg?1746150694?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399974/original_7a17203be24c2ae23e18c36845fdb655.jpg?1746150693?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399972/original_239533db1a5c94a4d2725ea70ae3a31f.jpg?1746150691?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399971/original_42eb9a95ff4d3801d9d054eb62720bf3.jpg?1746150690?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399970/original_5bbe01ff0b9ab47ef3c0f543cfe15aa6.jpg?1746150690?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399969/original_c1c7b683a84bb0e95060c0af6646f36f.jpg?1746150687?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/36399968/original_d9bab6f576c878e09865c4a327a42156.jpg?1746150686?bc=0",
+    "link": "https://www.google.com/maps/place/Calle+Gral.+Prim+32,+Juárez,+Cuauhtémoc,+06600+Ciudad+de+México,+CDMX/@19.4298619,-99.1555757,17z/data=!3m1!4b1!4m6!3m5!1s0x85d1ff2cf132f2f3:0x701e06258c13cae8!8m2!3d19.4298569!4d-99.1530008!16s%2Fg%2F11c1xgh961?entry=ttu&g_ep=EgoyMDI1MDQzMC4xIKXMDSoASAFQAw%3D%3D",
+    "newTab": true
+  }
+];
+
+
+
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
