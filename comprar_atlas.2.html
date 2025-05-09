@@ -25,17 +25,17 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6rem 1rem 8rem;
+      padding: 6rem 1rem 6rem;
       max-width: 700px;
       margin: auto;
       z-index: 2;
     }
     .book-image {
       width: 100%;
-      max-width: 480px;
+      max-width: 380px;
       height: auto;
       margin-bottom: 1rem;
-      filter: brightness(0.8) contrast(3.6) opacity(0.3);
+      filter: brightness(0.9) contrast(3.6) opacity(0.3);
       z-index: 1;
     }
     .buy-button {
@@ -55,11 +55,12 @@
     }
     .description {
       font-size: 1rem;
-      line-height: 1;
+      line-height: 1.5;
       text-align: center;
       white-space: pre-wrap;
-      padding: 0 -1rem -2rem;
+      padding: 0 1rem 2rem;
       z-index: 2;
+      max-width: 600px;
     }
     .floating-names {
       position: fixed;
@@ -79,10 +80,15 @@
     }
     @media (max-width: 600px) {
       .container {
-        padding: 4rem 1rem 6rem;
+        padding: 4rem 1rem 5rem;
+      }
+      .book-image {
+        max-width: 260px;
+        margin-bottom: 0.5rem;
       }
       .description {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        line-height: 1.4;
       }
       .buy-button {
         font-size: 0.85rem;
@@ -126,7 +132,15 @@
   </div>
 
   <script>
-    const names = [
+    const names = [...document.querySelectorAll('.name')].map(el => el.textContent);
+    const container = document.querySelector(".floating-names");
+    const canvas = document.getElementById("dynamic-lines");
+    const nodes = [];
+    let nextLineUpdate = Date.now();
+    let nextDelay = 100 + Math.random() * 500;
+    let currentLines = [];
+
+    const rawNames = [
       "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
       "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
       "krystal paniagua", "h1nase", "kevin linares", "lag switch", "zoo as zoo",
@@ -146,14 +160,7 @@
       "buried deep / milos mihajlov", "francis kanai"
     ];
 
-    const container = document.querySelector(".floating-names");
-    const canvas = document.getElementById("dynamic-lines");
-    const nodes = [];
-    let nextLineUpdate = Date.now();
-    let nextDelay = 100 + Math.random() * 500;
-    let currentLines = [];
-
-    names.forEach(name => {
+    rawNames.forEach(name => {
       const el = document.createElement("div");
       el.className = "name";
       el.textContent = name;
@@ -163,8 +170,8 @@
         el,
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6
       };
 
       nodes.push(node);
