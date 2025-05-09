@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>a.e.i.buy.atlas.2</title>
+  <title>a.e.i.index</title>
   <style>
     body {
       margin: 0;
@@ -13,199 +13,128 @@
       overflow: hidden;
       cursor: crosshair;
     }
-
     header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
     }
-
-    .container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 6rem 1rem 2rem;
-      max-width: 700px;
-      margin: auto;
-      z-index: 2;
-    }
-
-    .book-image {
-      width: 100%;
-      max-width: 480px;
+    header img {
+      width: 50px;
       height: auto;
-      margin-bottom: 1rem;
-      filter: brightness(0.8) contrast(0.5) opacity(0.6);
-      z-index: 1;
+      display: block;
     }
-
-    .buy-button {
-      display: inline-block;
-      margin-bottom: 2rem;
-      text-decoration: none;
-      font-size: 0.95rem;
+    .floating-title {
+      position: absolute;
+      font-size: 0.9rem;
       text-transform: lowercase;
-      border: 1px solid #000;
-      padding: 0.6rem 1.2rem;
-      transition: all 0.3s ease;
-      z-index: 2;
+      white-space: nowrap;
+      pointer-events: auto;
+      transition: color 0.3s ease;
     }
-
-    .buy-button:hover {
-      background: #000;
-      color: #fff;
+    .floating-title:hover {
+      color: #888;
     }
-
-    .description {
-      font-size: 1rem;
-      line-height: 1.6;
-      text-align: center;
-      white-space: pre-wrap;
-      padding: 0 1rem 2rem;
-      margin-top: -1rem;
-      z-index: 2;
-    }
-
-    .floating-names {
-      position: fixed;
+    svg.lines {
+      position: absolute;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      pointer-events: none;
-      overflow: hidden;
       z-index: 0;
+      pointer-events: none;
     }
-
-    .name {
-      position: absolute;
-      font-size: 0.85rem;
-      opacity: 0.45;
-      white-space: nowrap;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .name:hover {
-      opacity: 1;
-      transform: scale(2.15);
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 5rem 1rem 2rem;
-      }
-
-      .description {
-        font-size: 0.9rem;
-        padding-bottom: 2rem;
-      }
-
-      .buy-button {
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-      }
-    }
-
-    svg#dynamic-lines line {
+    svg.lines line {
       stroke: black;
-      stroke-width: 0.3;
+      stroke-width: 0.6px;
       opacity: 0.25;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .floating-title {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="xpan.svg" alt="xpan logo" width="50" height="auto" />
-  </header>
-  
-  <audio id="atlas-audio" autoplay loop preload="auto">
-    <source src="https://attachments.are.na/36557080/64b678be806137a3b9d5d1598ab82668.mp3?1746763521" type="audio/mpeg">
-    Tu navegador no soporta audio HTML5.
-  </audio>
-
-  <div class="floating-names">
-    <svg id="dynamic-lines" width="100%" height="100%" style="position:absolute; top:0; left:0; z-index:-1;"></svg>
-  </div>
-
-  <div class="container">
-    <video class="book-image" autoplay loop muted playsinline>
-      <source src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" type="video/mp4">
-      Tu navegador no soporta video HTML5.
-    </video>
-
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      comprar atlas.2
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
     </a>
-
-    <div class="description">
-      atlas.2
-
-      “una cartografía coral de la topología conectiva”
-
-      es una publicación de xpan. producida de forma independiente en la ciudad de méxico para explorar la multiplicidad de expresiones culturales alrededor del mundo y crear diversos diálogos entre las comunidades que las generan. 
-
-      400 pag.
-
-      $600.00 mxn pesos + envio
-    </div>
-  </div>
+  </header>
+  <svg class="lines" id="dynamic-lines"></svg>
 
   <script>
-    const names = [
-      "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
-      "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
-      "krystal paniagua", "h1nase", "kevin linares", "lag switch", "zoo as zoo",
-      "lucia serrano machado", "gio peiro", "gogy", "gustavo martinez",
-      "anna kalinina / polina tarasova / alisa dyundik", "asahi jin", "victor barragan",
-      "corridos ketamina", "friendsindifferentareacodes / nthedude.", "mika ben amar",
-      "kyo jwa", "arno bouchard / 16071.9969", "gimena bustamante domínguez",
-      "ines villoro", "miracle fan", "lalin vva", "lorenza molina", "millennium actress",
-      "dallae", "emiliano danis", "escali l.", "paola castelli bugna", "philipp henri kern",
-      "rafaello zeloncini", "steph barragán", "tsutomu yamagata by zen photo gallery",
-      "maria josé cruz", "cch", "danna rangel", "eli pastore", "marie hazard",
-      "fernanda sánchez yerena", "nicolas ballet", "yang seung-woo by zen photo gallery",
-      "miguel reyes", "pepe islas", "msh", "ttt400", "luis arenas", "tot",
-      "saúl milla de león", "tomas altamirano", "samantha rue llorente villegas",
-      "tommaso posch", "emilíanio valdez", "marta espinosa", "héctor aguilera gavica",
-      "la sala de té (layla fassa y guillermo martínez de velasco)", "adrian rosas",
-      "buried deep / milos mihajlov", "francis kanai"
-    ];// mantener lista original
-    const container = document.querySelector(".floating-names");
-    const canvas = document.getElementById("dynamic-lines");
-    const nodes = [];
+    const titles = [
+      "a.e.i.1",
+      "a.e.i_msh_7+2[31.06.22]",
+      "a.e.i.tp.bibliografia",
+      "a.e.i.arcangel.png",
+      "a.e.i_msh_ta morte est plus grande que toi",
+      "a.e.i_msh_matdumat.jun.23",
+      "a.e.i_xpan_ep.t paris 15.01.25",
+      "a.e.i_xpan.fps_select.21.apr_29.apr",
+      "a.e.i_msh_firekillsfireheals 19.feb.23",
+      "a.e.i_msh_redimensionamiento_13.dic.24",
+      "a.e.i_msh_vvv9 may.23",
+      "a.e.i_xpan_apr 23 w.x",
+      "a.e.i_xpan_atlas.1.ep1",
+      "a.e.i_xpan_ep.1 select 24.feb.25",
+      "a.e.i_xpan_mdtc.5_gata<>xpan.p2",
+      "a.e.i_xpan_mdtc.5_gata<>xpan.p3",
+      "a.e.i_xpan_newSTAR.mdl.1 2--2-2--3",
+      "a.e.i_xpan_resolución gráfica aug-sep.24",
+      "a.e.i_xpan_resolución gráfica feb.25",
+      "a.e.i_xpan_studio.25"
+    ];
+
+    const container = document.body;
+    const lineCanvas = document.getElementById('dynamic-lines');
+    const nodesA = [];
+    const nodesB = [];
     let paused = false;
     let nextLineUpdate = Date.now();
     let nextDelay = 100 + Math.random() * 500;
     let currentLines = [];
 
-    names.forEach(name => {
-      const el = document.createElement("div");
-      el.className = "name";
-      el.textContent = name;
+    titles.forEach(title => {
+      const el = document.createElement('a');
+      el.className = 'floating-title';
+      el.href = `${title}.html`;
+      el.textContent = title;
+      el.target = '_self';
       container.appendChild(el);
 
       const node = {
         el,
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
+        x: 0,
+        y: 0,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5
       };
+
+      if (title.includes('_msh_') || title.includes('msh')) {
+        node.x = Math.random() * window.innerWidth * 0.4;
+        node.y = Math.random() * window.innerHeight;
+        nodesA.push(node);
+      } else {
+        node.x = Math.random() * window.innerWidth * 0.4 + window.innerWidth * 0.6;
+        node.y = Math.random() * window.innerHeight;
+        nodesB.push(node);
+      }
 
       el.addEventListener('mouseenter', () => paused = true);
       el.addEventListener('mouseleave', () => paused = false);
       el.addEventListener('touchstart', () => paused = true);
       el.addEventListener('touchend', () => paused = false);
-
-      nodes.push(node);
     });
+
+    const allNodes = [...nodesA, ...nodesB];
 
     function animate() {
       if (!paused) {
-        nodes.forEach(n => {
+        allNodes.forEach(n => {
           n.x += n.vx;
           n.y += n.vy;
 
@@ -229,38 +158,43 @@
 
     function generateNewLines() {
       currentLines = [];
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          if (Math.random() < 0.15) {
-            currentLines.push([nodes[i], nodes[j]]);
+      [nodesA, nodesB].forEach(group => {
+        for (let i = 0; i < group.length; i++) {
+          for (let j = i + 1; j < group.length; j++) {
+            if (Math.random() < 0.2) {
+              currentLines.push([group[i], group[j]]);
+            }
           }
         }
-      }
+      });
     }
 
     function getNodeCenter(node) {
-      const rect = node.el.getBoundingClientRect();
-      return [node.x + rect.width / 2, node.y + rect.height / 2];
+      const el = node.el;
+      const rect = el.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      return [node.x + width / 2, node.y + height / 2];
     }
 
     function redrawCurrentLines() {
-      canvas.innerHTML = '';
-      currentLines.forEach(([a, b]) => {
-        const [x1, y1] = getNodeCenter(a);
-        const [x2, y2] = getNodeCenter(b);
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-        canvas.appendChild(line);
+      lineCanvas.innerHTML = '';
+      currentLines.forEach(([nodeA, nodeB]) => {
+        const [x1, y1] = getNodeCenter(nodeA);
+        const [x2, y2] = getNodeCenter(nodeB);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        lineCanvas.appendChild(line);
       });
     }
 
     animate();
 
     window.addEventListener('resize', () => {
-      nodes.forEach(n => {
+      [...nodesA, ...nodesB].forEach(n => {
         n.x = Math.random() * window.innerWidth;
         n.y = Math.random() * window.innerHeight;
       });

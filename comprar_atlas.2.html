@@ -19,25 +19,13 @@
       left: 1rem;
       z-index: 10;
     }
-    #audio-notice {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fefefe;
-      border: 1px solid #000;
-      padding: 0.5rem 1rem;
-      font-size: 0.75rem;
-      z-index: 999;
-      cursor: pointer;
-    }
     .container {
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6rem 1rem 6rem; /* aumentamos bottom padding */
+      padding: 6rem 1rem 8rem;
       max-width: 700px;
       margin: auto;
       z-index: 2;
@@ -47,7 +35,7 @@
       max-width: 480px;
       height: auto;
       margin-bottom: 1rem;
-      filter: brightness(0.8) contrast(0.5) opacity(0.6);
+      filter: brightness(0.8) contrast(3.6) opacity(0.3);
       z-index: 1;
     }
     .buy-button {
@@ -67,11 +55,10 @@
     }
     .description {
       font-size: 1rem;
-      line-height: 1.6;
+      line-height: 1;
       text-align: center;
       white-space: pre-wrap;
-      padding: 0 1rem;
-      margin-top: -1rem;
+      padding: 0 -1rem -2rem;
       z-index: 2;
     }
     .floating-names {
@@ -89,19 +76,13 @@
       font-size: 0.85rem;
       opacity: 0.45;
       white-space: nowrap;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .name:hover {
-      opacity: 1;
-      transform: scale(2.15);
     }
     @media (max-width: 600px) {
       .container {
-        padding: 5rem 1rem 8rem;
+        padding: 4rem 1rem 6rem;
       }
       .description {
         font-size: 0.9rem;
-        padding-bottom: 2rem;
       }
       .buy-button {
         font-size: 0.85rem;
@@ -120,22 +101,12 @@
     <img src="xpan.svg" alt="xpan logo" width="50" height="auto" />
   </header>
 
-  <div id="audio-notice">tocar para activar sonido</div>
-
-  <audio id="atlas-audio" loop preload="auto">
-    <source src="https://attachments.are.na/36557080/64b678be806137a3b9d5d1598ab82668.mp3?1746763521" type="audio/mpeg">
-    Tu navegador no soporta audio HTML5.
-  </audio>
-
   <div class="floating-names">
     <svg id="dynamic-lines" width="100%" height="100%" style="position:absolute; top:0; left:0; z-index:-1;"></svg>
   </div>
 
   <div class="container">
-    <video class="book-image" autoplay loop muted playsinline>
-      <source src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" type="video/mp4">
-      Tu navegador no soporta video HTML5.
-    </video>
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
 
     <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
       comprar atlas.2
@@ -146,7 +117,7 @@
 
       “una cartografía coral de la topología conectiva”
 
-      es una publicación de xpan. producida de forma independiente en la ciudad de méxico para explorar la multiplicidad de expresiones culturales alrededor del mundo y crear diversos diálogos entre las comunidades que las generan. 
+      es una publicación de xpan. producida de forma independiente en la ciudad de méxico para explorar la multiplicidad de expresiones culturales alrededor del mundo y crear diversos diálogos entre las comunidades que las generan.
 
       400 pag.
 
@@ -155,13 +126,6 @@
   </div>
 
   <script>
-    const audio = document.getElementById('atlas-audio');
-    const audioNotice = document.getElementById('audio-notice');
-    audioNotice.addEventListener('click', () => {
-      audio.play();
-      audioNotice.style.display = 'none';
-    });
-
     const names = [
       "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
       "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
@@ -181,10 +145,10 @@
       "la sala de té (layla fassa y guillermo martínez de velasco)", "adrian rosas",
       "buried deep / milos mihajlov", "francis kanai"
     ];
+
     const container = document.querySelector(".floating-names");
     const canvas = document.getElementById("dynamic-lines");
     const nodes = [];
-    let paused = false;
     let nextLineUpdate = Date.now();
     let nextDelay = 100 + Math.random() * 500;
     let currentLines = [];
@@ -199,39 +163,32 @@
         el,
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3
       };
-
-      el.addEventListener('mouseenter', () => paused = true);
-      el.addEventListener('mouseleave', () => paused = false);
-      el.addEventListener('touchstart', () => paused = true);
-      el.addEventListener('touchend', () => paused = false);
 
       nodes.push(node);
     });
 
     function animate() {
-      if (!paused) {
-        nodes.forEach(n => {
-          n.x += n.vx;
-          n.y += n.vy;
+      nodes.forEach(n => {
+        n.x += n.vx;
+        n.y += n.vy;
 
-          if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
-          if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
+        if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
+        if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
 
-          n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
-        });
+        n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
+      });
 
-        const now = Date.now();
-        if (now >= nextLineUpdate) {
-          generateNewLines();
-          nextDelay = 100 + Math.random() * 500;
-          nextLineUpdate = now + nextDelay;
-        }
-
-        redrawCurrentLines();
+      const now = Date.now();
+      if (now >= nextLineUpdate) {
+        generateNewLines();
+        nextDelay = 100 + Math.random() * 500;
+        nextLineUpdate = now + nextDelay;
       }
+
+      redrawCurrentLines();
       requestAnimationFrame(animate);
     }
 
@@ -239,7 +196,7 @@
       currentLines = [];
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
-          if (Math.random() < 0.15) {
+          if (Math.random() < 0.1) {
             currentLines.push([nodes[i], nodes[j]]);
           }
         }
@@ -266,15 +223,6 @@
     }
 
     animate();
-
-    window.addEventListener('resize', () => {
-      nodes.forEach(n => {
-        n.x = Math.random() * window.innerWidth;
-        n.y = Math.random() * window.innerHeight;
-      });
-    });
-
-    window.addEventListener('scroll', () => paused = true, { passive: true });
   </script>
 </body>
 </html>
