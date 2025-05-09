@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>a.e.i.buy.atlas.2</title>
+  <title>comprar_atlas.2</title>
   <style>
     body {
       margin: 0;
@@ -13,14 +13,24 @@
       overflow: hidden;
       cursor: crosshair;
     }
-
     header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
     }
-
+    #audio-notice {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fefefe;
+      border: 1px solid #000;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      z-index: 999;
+      cursor: pointer;
+    }
     .container {
       position: relative;
       display: flex;
@@ -32,7 +42,6 @@
       margin: auto;
       z-index: 2;
     }
-
     .book-image {
       width: 100%;
       max-width: 480px;
@@ -41,7 +50,6 @@
       filter: brightness(0.8) contrast(0.5) opacity(0.6);
       z-index: 1;
     }
-
     .buy-button {
       display: inline-block;
       margin-bottom: 2rem;
@@ -53,12 +61,10 @@
       transition: all 0.3s ease;
       z-index: 2;
     }
-
     .buy-button:hover {
       background: #000;
       color: #fff;
     }
-
     .description {
       font-size: 1rem;
       line-height: 1.6;
@@ -68,7 +74,6 @@
       margin-top: -1rem;
       z-index: 2;
     }
-
     .floating-names {
       position: fixed;
       top: 0;
@@ -79,7 +84,6 @@
       overflow: hidden;
       z-index: 0;
     }
-
     .name {
       position: absolute;
       font-size: 0.85rem;
@@ -87,28 +91,23 @@
       white-space: nowrap;
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
-
     .name:hover {
       opacity: 1;
       transform: scale(2.15);
     }
-
     @media (max-width: 600px) {
       .container {
         padding: 5rem 1rem 2rem;
       }
-
       .description {
         font-size: 0.9rem;
         padding-bottom: 2rem;
       }
-
       .buy-button {
         font-size: 0.85rem;
         padding: 0.5rem 1rem;
       }
     }
-
     svg#dynamic-lines line {
       stroke: black;
       stroke-width: 0.3;
@@ -120,8 +119,10 @@
   <header>
     <img src="xpan.svg" alt="xpan logo" width="50" height="auto" />
   </header>
-  
-  <audio id="atlas-audio" autoplay loop preload="auto">
+
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <audio id="atlas-audio" loop preload="auto">
     <source src="https://attachments.are.na/36557080/64b678be806137a3b9d5d1598ab82668.mp3?1746763521" type="audio/mpeg">
     Tu navegador no soporta audio HTML5.
   </audio>
@@ -154,6 +155,13 @@
   </div>
 
   <script>
+    const audio = document.getElementById('atlas-audio');
+    const audioNotice = document.getElementById('audio-notice');
+    audioNotice.addEventListener('click', () => {
+      audio.play();
+      audioNotice.style.display = 'none';
+    });
+
     const names = [
       "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
       "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
@@ -172,7 +180,7 @@
       "tommaso posch", "emilíanio valdez", "marta espinosa", "héctor aguilera gavica",
       "la sala de té (layla fassa y guillermo martínez de velasco)", "adrian rosas",
       "buried deep / milos mihajlov", "francis kanai"
-    ];// mantener lista original
+    ];
     const container = document.querySelector(".floating-names");
     const canvas = document.getElementById("dynamic-lines");
     const nodes = [];
