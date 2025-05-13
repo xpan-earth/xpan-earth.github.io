@@ -19,6 +19,11 @@
       left: 1rem;
       z-index: 10;
     }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
     .container {
       position: relative;
       display: flex;
@@ -111,125 +116,420 @@
     <svg id="dynamic-lines" width="100%" height="100%" style="position:absolute; top:0; left:0; z-index:-1;"></svg>
   </div>
 
-  <div class="container">
+  <div class="container" id="language-block">
+    <!-- Contenido multilingüe dinámico se inyectará aquí -->
+  </div>
+
+  
+<script>
+  const translations = [
+    {
+      lang: "español",
+      content: `
+        <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+          comprar atlas.2
+        </a>
+        <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+          * elige tu zona de envío en el siguiente paso
+        </p>
+        <div class="description">
+          atlas.2
+
+          “una cartografía coral de la topología conectiva”
+
+          publicación impresa de xpan  
+          400 páginas
+
+          $600.00 mxn pesos + envío
+        </div>
+      `
+    },
+    {
+      lang: "english",
+      content: `
+        <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+          buy atlas.2
+        </a>
+        <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+          * select your shipping zone in the next step
+        </p>
+        <div class="description">
+          atlas.2
+
+          “a coral cartography of the connective topology”
+
+          printed publication by xpan  
+          400 pages
+
+          $600.00 mxn + shipping
+        </div>
+      `
+    },
+    {
+      lang: "日本語",
+      content: `
+        <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+          アトラス.2 を購入
+        </a>
+        <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+          * 次のステップで配送地域を選択してください
+        </p>
+        <div class="description">
+          atlas.2
+
+          「接続トポロジーのコーラル地図」
+
+          xpan による印刷出版物  
+          全400ページ
+
+          600メキシコペソ + 配送料
+        </div>
+      `
+    },
+    {
+  lang: "français",
+  content: `
     <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-
     <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      comprar atlas.2
+      acheter atlas.2
     </a>
-
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * sélectionnez votre zone d’expédition à l’étape suivante
+    </p>
     <div class="description">
       atlas.2
 
-      “una cartografía coral de la topología conectiva”
+      “une cartographie chorale de la topologie connective”
 
-      es una publicación de xpan. producida de forma independiente en la ciudad de méxico para explorar la multiplicidad de expresiones culturales alrededor del mundo y crear diversos diálogos entre las comunidades que las generan.
+      publication imprimée par xpan  
+      400 pages
 
-      400 pag.
-
-      $600.00 mxn pesos + envio
+      600,00 mxn pesos + frais de port
     </div>
-  </div>
+  `
+},
+{
+  lang: "deutsch",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      atlas.2 kaufen
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * wählen Sie Ihre Versandregion im nächsten Schritt
+    </p>
+    <div class="description">
+      atlas.2
 
-  <script>
-    const names = [...document.querySelectorAll('.name')].map(el => el.textContent);
-    const container = document.querySelector(".floating-names");
-    const canvas = document.getElementById("dynamic-lines");
-    const nodes = [];
-    let nextLineUpdate = Date.now();
-    let nextDelay = 100 + Math.random() * 500;
-    let currentLines = [];
+      “eine chorale Kartographie der verbindenden Topologie”
 
-    const rawNames = [
-      "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
-      "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
-      "krystal paniagua", "h1nase", "kevin linares", "lag switch", "zoo as zoo",
-      "lucia serrano machado", "gio peiro", "gogy", "gustavo martinez",
-      "anna kalinina / polina tarasova / alisa dyundik", "asahi jin", "victor barragan",
-      "corridos ketamina", "friendsindifferentareacodes / nthedude.", "mika ben amar",
-      "kyo jwa", "arno bouchard / 16071.9969", "gimena bustamante domínguez",
-      "ines villoro", "miracle fan", "lalin vva", "lorenza molina", "millennium actress",
-      "dallae", "emiliano danis", "escali l.", "paola castelli bugna", "philipp henri kern",
-      "rafaello zeloncini", "steph barragán", "tsutomu yamagata by zen photo gallery",
-      "maria josé cruz", "cch", "danna rangel", "eli pastore", "marie hazard",
-      "fernanda sánchez yerena", "nicolas ballet", "yang seung-woo by zen photo gallery",
-      "miguel reyes", "pepe islas", "msh", "ttt400", "luis arenas", "tot",
-      "saúl milla de león", "tomas altamirano", "samantha rue llorente villegas",
-      "tommaso posch", "emilíanio valdez", "marta espinosa", "héctor aguilera gavica",
-      "la sala de té (layla fassa y guillermo martínez de velasco)", "adrian rosas",
-      "buried deep / milos mihajlov", "francis kanai"
-    ];
+      gedruckte Publikation von xpan  
+      400 Seiten
 
-    rawNames.forEach(name => {
-      const el = document.createElement("div");
-      el.className = "name";
-      el.textContent = name;
-      container.appendChild(el);
+      600,00 mxn pesos + Versand
+    </div>
+  `
+},
+{
+  lang: "italiano",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      acquista atlas.2
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * seleziona la tua zona di spedizione nel passaggio successivo
+    </p>
+    <div class="description">
+      atlas.2
 
-      const node = {
-        el,
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6
-      };
+      “una cartografia corale della topologia connettiva”
 
-      nodes.push(node);
+      pubblicazione stampata da xpan  
+      400 pagine
+
+      600,00 mxn pesos + spedizione
+    </div>
+  `
+},
+{
+  lang: "português",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      comprar atlas.2
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * selecione sua região de envio na próxima etapa
+    </p>
+    <div class="description">
+      atlas.2
+
+      “uma cartografia coral da topologia conectiva”
+
+      publicação impressa por xpan  
+      400 páginas
+
+      R$600,00 mxn + frete
+    </div>
+  `
+},
+{
+  lang: "中文",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      购买 atlas.2
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * 请在下一步选择您的送货地区
+    </p>
+    <div class="description">
+      atlas.2
+
+      “连接拓扑的合唱式地图绘制”
+
+      xpan 出版的印刷刊物  
+      共400页
+
+      600.00 墨西哥比索 + 运费
+    </div>
+  `
+},
+{
+  lang: "한국어",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      atlas.2 구매하기
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * 다음 단계에서 배송 지역을 선택하세요
+    </p>
+    <div class="description">
+      atlas.2
+
+      “연결 위상의 합창 지도”
+
+      xpan의 인쇄 출판물  
+      총 400쪽
+
+      600.00 MXN + 배송비
+    </div>
+  `
+},
+{
+  lang: "العربية",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      شراء atlas.2
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * يرجى اختيار منطقتك للشحن في الخطوة التالية
+    </p>
+    <div class="description" dir="rtl">
+      أطلس.2
+
+      “خريطة كورالية لطوبولوجيا الاتصال”
+
+      منشور مطبوع من xpan  
+      ٤٠٠ صفحة
+
+      600.00 بيزو مكسيكي + الشحن
+    </div>
+  `
+},
+{
+  lang: "हिन्दी",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      atlas.2 खरीदें
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * अगले चरण में अपना शिपिंग क्षेत्र चुनें
+    </p>
+    <div class="description">
+      atlas.2
+
+      “कनेक्टिव टोपोलॉजी की एक कोरल मानचित्रण”
+
+      xpan द्वारा मुद्रित प्रकाशन  
+      400 पृष्ठ
+
+      ₹600.00 mxn + शिपिंग
+    </div>
+  `
+},
+{
+  lang: "русский",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      купить atlas.2
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * выберите ваш регион доставки на следующем этапе
+    </p>
+    <div class="description">
+      atlas.2
+
+      “хоровая картография связной топологии”
+
+      печатное издание от xpan  
+      400 страниц
+
+      600.00 мексиканских песо + доставка
+    </div>
+  `
+},
+{
+  lang: "türkçe",
+  content: `
+    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
+    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
+      atlas.2 satın al
+    </a>
+    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
+      * sonraki adımda gönderim bölgenizi seçin
+    </p>
+    <div class="description">
+      atlas.2
+
+      “bağlayıcı topolojinin koro haritası”
+
+      xpan tarafından basılı yayın  
+      400 sayfa
+
+      600.00 mxn pesos + kargo
+    </div>
+  `
+}
+  ];
+
+  const container = document.getElementById("language-block");
+  let current = 0;
+
+  function renderLanguage() {
+    container.innerHTML = translations[current].content;
+  }
+
+  container.addEventListener("click", () => {
+    current = (current + 1) % translations.length;
+    renderLanguage();
+  });
+
+  container.addEventListener("mouseenter", () => {
+    if (window.matchMedia("(hover: hover)").matches) {
+      current = (current + 1) % translations.length;
+      renderLanguage();
+    }
+  });
+
+  renderLanguage();
+</script>
+
+<script>
+  const rawNames = [
+    "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
+    "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
+    "krystal paniagua", "h1nase", "kevin linares", "lag switch", "zoo as zoo",
+    "lucia serrano machado", "gio peiro", "gogy", "gustavo martinez",
+    "anna kalinina / polina tarasova / alisa dyundik", "asahi jin", "victor barragan",
+    "corridos ketamina", "friendsindifferentareacodes / nthedude.", "mika ben amar",
+    "kyo jwa", "arno bouchard / 16071.9969", "gimena bustamante domínguez",
+    "ines villoro", "miracle fan", "lalin vva", "lorenza molina", "millennium actress",
+    "dallae", "emiliano danis", "escali l.", "paola castelli bugna", "philipp henri kern",
+    "rafaello zeloncini", "steph barragán", "tsutomu yamagata by zen photo gallery",
+    "maria josé cruz", "cch", "danna rangel", "eli pastore", "marie hazard",
+    "fernanda sánchez yerena", "nicolas ballet", "yang seung-woo by zen photo gallery",
+    "miguel reyes", "pepe islas", "msh", "ttt400", "luis arenas", "tot",
+    "saúl milla de león", "tomas altamirano", "samantha rue llorente villegas",
+    "tommaso posch", "emilíanio valdez", "marta espinosa", "héctor aguilera gavica",
+    "la sala de té (layla fassa y guillermo martínez de velasco)", "adrian rosas",
+    "buried deep / milos mihajlov", "francis kanai"
+  ];
+
+  const containerNames = document.querySelector(".floating-names");
+  const canvas = document.getElementById("dynamic-lines");
+  const nodes = [];
+  let nextLineUpdate = Date.now();
+  let nextDelay = 100 + Math.random() * 500;
+  let currentLines = [];
+
+  rawNames.forEach(name => {
+    const el = document.createElement("div");
+    el.className = "name";
+    el.textContent = name;
+    containerNames.appendChild(el);
+
+    const node = {
+      el,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6
+    };
+
+    nodes.push(node);
+  });
+
+  function animate() {
+    nodes.forEach(n => {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
+      if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
+      n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
     });
 
-    function animate() {
-      nodes.forEach(n => {
-        n.x += n.vx;
-        n.y += n.vy;
-
-        if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
-        if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
-
-        n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
-      });
-
-      const now = Date.now();
-      if (now >= nextLineUpdate) {
-        generateNewLines();
-        nextDelay = 100 + Math.random() * 500;
-        nextLineUpdate = now + nextDelay;
-      }
-
-      redrawCurrentLines();
-      requestAnimationFrame(animate);
+    const now = Date.now();
+    if (now >= nextLineUpdate) {
+      generateNewLines();
+      nextDelay = 100 + Math.random() * 500;
+      nextLineUpdate = now + nextDelay;
     }
 
-    function generateNewLines() {
-      currentLines = [];
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          if (Math.random() < 0.1) {
-            currentLines.push([nodes[i], nodes[j]]);
-          }
+    redrawCurrentLines();
+    requestAnimationFrame(animate);
+  }
+
+  function generateNewLines() {
+    currentLines = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        if (Math.random() < 0.1) {
+          currentLines.push([nodes[i], nodes[j]]);
         }
       }
     }
+  }
 
-    function getNodeCenter(node) {
-      const rect = node.el.getBoundingClientRect();
-      return [node.x + rect.width / 2, node.y + rect.height / 2];
-    }
+  function getNodeCenter(node) {
+    const rect = node.el.getBoundingClientRect();
+    return [node.x + rect.width / 2, node.y + rect.height / 2];
+  }
 
-    function redrawCurrentLines() {
-      canvas.innerHTML = '';
-      currentLines.forEach(([a, b]) => {
-        const [x1, y1] = getNodeCenter(a);
-        const [x2, y2] = getNodeCenter(b);
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-        canvas.appendChild(line);
-      });
-    }
+  function redrawCurrentLines() {
+    canvas.innerHTML = '';
+    currentLines.forEach(([a, b]) => {
+      const [x1, y1] = getNodeCenter(a);
+      const [x2, y2] = getNodeCenter(b);
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", x1);
+      line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2);
+      line.setAttribute("y2", y2);
+      canvas.appendChild(line);
+    });
+  }
 
-    animate();
-  </script>
+  animate();
+</script>
+
 </body>
 </html>
