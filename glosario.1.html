@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>glosario.1</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      padding: 3rem 2rem;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .term-block {
+      background: #000;
+      color: #fff;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .term-block:hover {
+      transform: scale(1.02);
+    }
+
+    .term-title {
+      font-size: 1rem;
+      text-transform: lowercase;
+      margin: 0;
+      font-weight: normal;
+    }
+
+    .term-definition {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .term-block.active .term-definition {
+      display: block;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+   <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+
+  <div class="grid" id="glossary"></div>
+
+  <script>
+    const terms = [
+      { title: "a.e.i.", content: "archivo expandido irracional. formato digital experimental para presentar contenidos interconectados. cada a.e.i. es una unidad activa del archivo, no lineal ni jerárquica." },
+      { title: "activación", content: "evento o proceso que pone en marcha un espacio, red o archivo. en xpan, las activaciones no inauguran ni clausuran: intensifican." },
+      { title: "anclaje", content: "punto de entrada o soporte físico-conceptual que permite fijar temporalmente un sistema en flujo. no es estático: se activa o desactiva según condiciones." },
+      { title: "archivo conectado", content: "sistema digital que aloja múltiples a.e.i. y los vincula mediante líneas animadas. más que un archivo cerrado, es un campo en mutación." },
+      { title: "arquitectura situacional", content: "diseño espacial adaptativo y contextual. cada estructura emerge de las condiciones específicas del entorno, no de una tipología previa." },
+      { title: "atlas", content: "publicación impresa de xpan. funciona como cartografía coral que documenta y expande la topología conectiva. cada volumen articula nodos y voces globales." },
+      { title: "biombos modulares", content: "sistema de cancelería móvil desarrollado por xpan. reorganiza el flujo espacial sin construir muros fijos. diseñado para activarse, desmontarse y reconfigurarse." },
+      { title: "cimática", content: "visualización de sonido mediante materia (agua, polvo, etc.). en xpan, se explora con bowls vibrantes que traducen audio en geometría efímera." },
+      { title: "conectividad", content: "relación activa entre nodos. no se limita al vínculo técnico o visible: implica resonancia, desplazamiento y mutación." },
+      { title: "curaduría algorítmica", content: "selección y reorganización automatizada de materiales a partir de patrones relacionales. aplicada en sistemas como 'proximidades dinámicas'." },
+      { title: "densidad relacional", content: "grado de conexiones activas en un sistema. no equivale a acumulación: una red puede ser densa con pocos nodos, si estos están intensamente vinculados." },
+      { title: "dispositivo", content: "no es un objeto, sino una configuración operativa. en xpan, cada dispositivo (espacial, sonoro, digital) produce condiciones de relación y pensamiento." },
+      { title: "ep.1 / ep.t", content: "espacios intermitentes de xpan en ciudad de méxico y parís. no son sedes fijas, sino estructuras reactivas que se activan con cada intervención." },
+      { title: "feedback estructural", content: "retroalimentación que modifica el sistema que la recibe. en xpan, no se trata de opinión, sino de transformación operativa a partir de la experiencia." },
+      { title: "formato", content: "más que una plantilla, es un modo de estructurar lo que ocurre. los formatos de xpan (atlas, a.e.i., mdtc) son matrices abiertas, no formularios." },
+      { title: "frecuencia infralingüística", content: "vibración o mensaje que opera por debajo del lenguaje verbal. explorada en 12.e y otros proyectos sonoros como forma de conexión no racional." },
+      { title: "HBT", content: "siglas internas para hospitalidad, uno de los ejes de trabajo de xpan. no se refiere a servicio, sino a la apertura estructural de cada sistema a lo inesperado." },
+      { title: "interfaz orgánica", content: "superficie de contacto no binaria entre usuario y sistema. en xpan, cada interfaz (espacial, digital, sonora) es una membrana, no una pantalla." },
+      { title: "intervención", content: "no es una acción decorativa o temporal, sino un proceso continuo de transformación de coordenadas materiales y simbólicas." },
+      { title: "línea de fuga", content: "término deleuziano adoptado por xpan. vía de escape creativa que no huye del sistema, sino lo desborda desde dentro. motor de todo devenir." },
+      { title: "manifiesto", content: "documento teórico que establece los principios activos de la topología conectiva. no clausura, sino que abre múltiples líneas de desarrollo." },
+      { title: "mdtc", content: "materialización de la topología conectiva. intervenciones físicas y conceptuales que cristalizan, deforman y expanden las ideas de xpan en el espacio." },
+      { title: "mixtape", content: "forma editorial sonora. no es un playlist: es una estructura narrativa fragmentada, donde cada pista funciona como un nodo en tensión." },
+      { title: "nodo", content: "unidad relacional activa dentro de la topología conectiva. no es un punto aislado: su identidad depende de las conexiones que sostiene y transforma." },
+      { title: "plus code", content: "sistema de codificación geográfica alternativo. utilizado por xpan para marcar posiciones sin depender de direcciones postales. ej: V4CW+2W." },
+      { title: "programa de residencias", content: "plataforma de invitación situada. artistas y agentes culturales son convocados a intervenir o activar nodos dentro del ecosistema xpan." },
+      { title: "proximidades dinámicas", content: "mapa animado donde los países se reordenan por relaciones y no por fronteras. redibujar el mundo desde la conectividad, no desde el poder." },
+      { title: "repositorio", content: "archivo digital no lineal. recoge, clasifica y redistribuye materiales producidos en xpan. cada imagen, audio o texto es evidencia de un proceso en curso." },
+      { title: "resonancia", content: "respuesta vibratoria que no replica, sino que transforma. en xpan, la resonancia no es eco sino sintonía expandida." },
+      { title: "ritmo estructural", content: "patrón temporal no lineal que organiza la operación de un sistema. en lugar de calendario, xpan opera desde ritmos situados." },
+      { title: "sistema vivo", content: "forma organizativa de xpan. no es jerárquico ni modular. cambia, muta y se reconfigura según sus condiciones internas y externas." },
+      { title: "topología conectiva", content: "eje filosófico de xpan. herramienta para pensar relaciones, estructuras no fijas, mapas mutantes, sistemas sin centro. toda acción de xpan se deriva de este principio." },
+      { title: "xpan", content: "entidad cultural radical. funciona como sistema abierto que articula arquitectura, sonido, edición, tecnología y pensamiento experimental desde una perspectiva conectiva y post-geográfica." },
+
+      // Segunda parte desde entrada 34 a 66
+      { title: "acción reticular", content: "operación que no apunta a un objetivo único sino que activa múltiples trayectorias simultáneamente." },
+      { title: "alineación vectorial", content: "organización estructural donde elementos diversos se orientan hacia una fuerza común sin perder autonomía." },
+      { title: "ambiente operativo", content: "conjunto de condiciones materiales, perceptuales y técnicas que permiten la existencia de un sistema." },
+      { title: "análisis de latencia", content: "estudio del desfase temporal entre estímulo y respuesta, útil para calibrar sistemas." },
+      { title: "anotación activa", content: "marca que transforma lo que toca. cada nota abre una nueva ruta." },
+      { title: "archivo inestable", content: "colección que no busca estabilizar la memoria sino activar el presente." },
+      { title: "campo sensorial", content: "zona expandida de percepción: el cuerpo percibe desde una red vibrante." },
+      { title: "cartografía especulativa", content: "mapa que no representa lo real sino que propone nuevas realidades." },
+      { title: "código comportamental", content: "conjunto de reglas que rigen la interacción entre sistemas, visible o no." },
+      { title: "colisión productiva", content: "encuentro que no busca consenso, sino fricción generativa." },
+      { title: "construcción no-lineal", content: "acumulación divergente de decisiones en lugar de progresión lógica." },
+      { title: "convergencia transdisciplinaria", content: "cruce de saberes sin síntesis, en coexistencia radical." },
+      { title: "cristalización temporal", content: "forma efímera que se suspende momentáneamente." },
+      { title: "deformación estratégica", content: "alteración deliberada para abrir nuevas posibilidades." },
+      { title: "desacople controlado", content: "separación temporal para liberar tensiones del sistema." },
+      { title: "desbordamiento táctico", content: "estrategia que atraviesa los bordes desde los márgenes." },
+      { title: "desfase operativo", content: "diferencia entre intención y ejecución como potencia." },
+      { title: "dimensión inmanente", content: "todo ocurre sin trascendencia externa. todo está ya implicado." },
+      { title: "disolución de autoría", content: "lo colectivo disuelve la firma. importa la relación, no la propiedad." },
+      { title: "doble indexación", content: "un nodo puede pertenecer a múltiples sistemas simultáneamente." },
+      { title: "efecto topológico", content: "transformación que reconfigura sin romper la materia." },
+      { title: "elasticidad estructural", content: "adaptabilidad sin colapso. núcleo del diseño xpan." },
+      { title: "encuentro vectorial", content: "intersección no-fusional entre trayectorias autónomas." },
+      { title: "entrelazamiento conceptual", content: "conceptos que se definen por cruce, no por diccionario." },
+      { title: "error significativo", content: "el error no se corrige: se integra como potencia." },
+      { title: "estado transitorio", content: "fase intermedia productiva entre fases." },
+      { title: "fisura cognitiva", content: "grieta entre percepción y comprensión. fértil para el pensamiento." },
+      { title: "geometría no-euclideana", content: "relaciones espaciales que rompen lógica cartesiana." },
+      { title: "host unit", content: "unidad anfitriona que recibe y transforma." },
+      { title: "inestabilidad calibrada", content: "diseño que incorpora azar, error y mutación como norma." },
+      { title: "intensidad distribuida", content: "fuerza que se dispersa por la red, no se concentra." },
+      { title: "memoria procesual", content: "registro de procesos, no de datos. el archivo como organismo." },
+      { title: "traducción transversal", content: "pasaje de un lenguaje a otro sin equivalencia, solo resonancia." }
+    ];
+
+    const glossary = document.getElementById("glossary");
+
+    terms.forEach(term => {
+      const block = document.createElement("div");
+      block.className = "term-block";
+      block.innerHTML = `
+        <h3 class="term-title">${term.title}</h3>
+        <div class="term-definition">${term.content}</div>
+      `;
+      block.addEventListener("click", () => {
+        block.classList.toggle("active");
+      });
+      glossary.appendChild(block);
+    });
+  </script>
+</body>
+</html>
