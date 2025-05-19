@@ -82,16 +82,18 @@
 
     .carousel-wrapper {
       margin-top: 0.5rem;
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      position: relative;
     }
 
     .carousel-track {
       display: flex;
       gap: var(--gap);
-      padding-bottom: 0.5rem;
+      will-change: transform;
+      touch-action: none;
+      cursor: grab;
     }
 
     .carousel-track img {
@@ -158,67 +160,64 @@
       </div>
     </div>
 
-    <!-- Puedes duplicar más entradas aquí -->
-
   </div>
 
   <script>
-    document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
-      const track = wrapper.querySelector('.carousel-track');
+    document.querySelectorAll('.carousel-track').forEach(track => {
       const images = Array.from(track.children);
+      images.forEach(img => track.appendChild(img.cloneNode(true)));
 
-      // Duplicar imágenes para simular loop
-      images.forEach(img => {
-        const clone = img.cloneNode(true);
-        track.appendChild(clone);
-      });
+      let scrollX = 0;
+      const speed = 0.3;
+      let isDragging = false;
+      let startX = 0;
+      let scrollStart = 0;
 
-      // Scroll automático suave
-      let autoScroll = true;
-      let speed = 0.3;
-
-      function autoScrollStep() {
-        if (autoScroll) {
-          wrapper.scrollLeft += speed;
-          if (wrapper.scrollLeft >= track.scrollWidth / 2) {
-            wrapper.scrollLeft = 0;
-          }
+      function animate() {
+        if (!isDragging) {
+          scrollX += speed;
+          if (scrollX >= track.scrollWidth / 2) scrollX = 0;
+          track.style.transform = `translateX(-${scrollX}px)`;
         }
-        requestAnimationFrame(autoScrollStep);
+        requestAnimationFrame(animate);
       }
 
-      autoScrollStep();
+      animate();
 
-      // Pausar temporalmente si usuario interactúa
-      let timeout;
-      wrapper.addEventListener('pointerdown', () => {
-        autoScroll = false;
-        clearTimeout(timeout);
-      });
-      wrapper.addEventListener('pointerup', () => {
-        timeout = setTimeout(() => autoScroll = true, 1000);
-      });
-      wrapper.addEventListener('touchend', () => {
-        timeout = setTimeout(() => autoScroll = true, 1000);
+      track.addEventListener('pointerdown', e => {
+        isDragging = true;
+        startX = e.clientX;
+        scrollStart = scrollX;
+        track.setPointerCapture(e.pointerId);
+        track.style.cursor = 'grabbing';
       });
 
-      // Resaltar imagen más a la izquierda visible
+      track.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        scrollX = scrollStart - dx;
+        if (scrollX >= track.scrollWidth / 2) scrollX = 0;
+        if (scrollX < 0) scrollX = track.scrollWidth / 2 + scrollX;
+        track.style.transform = `translateX(-${scrollX}px)`;
+      });
+
+      track.addEventListener('pointerup', () => {
+        isDragging = false;
+        track.style.cursor = 'grab';
+      });
+
       function highlight() {
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const imgs = wrapper.querySelectorAll('img');
+        const trackRect = track.parentElement.getBoundingClientRect();
+        const imgs = track.querySelectorAll('img');
         let bestImg = null;
         let minLeftDiff = Infinity;
 
         imgs.forEach(img => {
           const rect = img.getBoundingClientRect();
-          const fullyVisible = rect.left >= wrapperRect.left && rect.right <= wrapperRect.right;
-          const leftDiff = Math.abs(rect.left - wrapperRect.left);
-
-          if ((fullyVisible || leftDiff < minLeftDiff)) {
-            if (fullyVisible || bestImg === null) {
-              minLeftDiff = leftDiff;
-              bestImg = img;
-            }
+          const leftDiff = Math.abs(rect.left - trackRect.left);
+          if (leftDiff < minLeftDiff) {
+            minLeftDiff = leftDiff;
+            bestImg = img;
           }
         });
 
