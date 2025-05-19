@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan — inicio</title>
+  <title>xpan</title>
   <style>
     body {
       margin: 0;
@@ -14,6 +14,7 @@
       position: relative;
       height: 100vh;
     }
+
     .logo {
       position: absolute;
       top: 50%;
@@ -24,6 +25,7 @@
       z-index: 2;
       animation: fadeIn 1.5s ease-out;
     }
+
     .link {
       position: absolute;
       font-size: 0.85rem;
@@ -34,9 +36,11 @@
       transition: opacity 0.2s;
       transform: translate(-50%, -50%);
     }
+
     .link:hover {
       opacity: 0.6;
     }
+
     svg.lines {
       position: absolute;
       top: 0;
@@ -46,6 +50,7 @@
       z-index: 1;
       pointer-events: none;
     }
+
     line {
       stroke: url(#line-texture);
       stroke-width: 1.5;
@@ -53,27 +58,35 @@
       stroke-dashoffset: 1000;
       animation: draw 2s ease-out forwards;
     }
+
     @keyframes draw {
       to {
         stroke-dashoffset: 0;
       }
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div class="logo">
-    <!-- Logo desde archivo externo -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 2226.96">
       <image width="8000" height="9279" transform="scale(.24)" xlink:href="xpan.svg"/>
     </svg>
   </div>
 
-  <!-- Enlaces posicionados -->
+  <!-- Enlaces -->
   <a href="12.e.html" class="link" style="top:10%; left:50%;">12.e</a>
   <a href="comprar_atlas.2.html" class="link" style="top:25%; left:80%;">atlas</a>
   <a href="https://instagram.com/xpan.earth" class="link" style="top:75%; left:80%;">arquitectura</a>
@@ -81,19 +94,19 @@
   <a href="https://instagram.com/xpan.earth" class="link" style="top:75%; left:20%;">mdtc</a>
   <a href="a.e.i.index.html" class="link" style="top:25%; left:20%;">a.e.i.</a>
 
-  <!-- Líneas SVG con textura y animación conectando al centro exacto de los textos -->
+  <!-- Líneas conectadas -->
   <svg class="lines">
     <defs>
       <pattern id="line-texture" patternUnits="userSpaceOnUse" width="4" height="4">
         <path d="M0,0 L4,4 M4,0 L0,4" stroke="black" stroke-width="0.2" />
       </pattern>
     </defs>
-    <line x1="50%" y1="50%" x2="50%" y2="10%" /> <!-- 12.e -->
-    <line x1="50%" y1="50%" x2="80%" y2="25%" /> <!-- atlas -->
-    <line x1="50%" y1="50%" x2="80%" y2="75%" /> <!-- arquitectura -->
-    <line x1="50%" y1="50%" x2="50%" y2="90%" /> <!-- marco teórico corregido -->
-    <line x1="50%" y1="50%" x2="20%" y2="75%" /> <!-- mdtc -->
-    <line x1="50%" y1="50%" x2="20%" y2="25%" /> <!-- a.e.i. -->
+    <line x1="50%" y1="50%" x2="50%" y2="10%" />
+    <line x1="50%" y1="50%" x2="80%" y2="25%" />
+    <line x1="50%" y1="50%" x2="80%" y2="75%" />
+    <line x1="50%" y1="50%" x2="50%" y2="90%" />
+    <line x1="50%" y1="50%" x2="20%" y2="75%" />
+    <line x1="50%" y1="50%" x2="20%" y2="25%" />
   </svg>
 
 </body>
