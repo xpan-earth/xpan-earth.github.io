@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — umbral</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+      height: auto;
+    }
+
+    .line {
+      position: absolute;
+      width: 1px;
+      height: 120vh;
+      background: #000;
+      opacity: 0.03;
+      top: -10vh;
+      animation: floatLine 14s infinite ease-in-out;
+      z-index: 1;
+      transition: transform 0.3s ease-out;
+    }
+
+    @keyframes floatLine {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 5;
+      width: 90vw;
+      max-width: 800px;
+    }
+
+    .phrase {
+      font-size: 1.05rem;
+      text-transform: lowercase;
+      opacity: 0;
+      line-height: 1.6;
+      transition: opacity 1.8s ease-in-out;
+    }
+
+    .visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="mc_index.html">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+
+  <!-- líneas verticales -->
+  <script>
+    const totalLines = 14;
+    const lines = [];
+
+    for (let i = 0; i < totalLines; i++) {
+      const line = document.createElement('div');
+      line.className = 'line';
+      line.style.left = `${(i / totalLines) * 100}vw`;
+      document.body.appendChild(line);
+      lines.push(line);
+    }
+
+    document.addEventListener('mousemove', e => {
+      const center = window.innerWidth / 2;
+      const offset = (e.clientX - center) / center;
+      lines.forEach((line, i) => {
+        const strength = (i - totalLines / 2) / (totalLines / 2);
+        line.style.transform = `translateY(${Math.sin(Date.now() / 3000 + i) * 10}px) translateX(${strength * offset * 10}px)`;
+      });
+    });
+  </script>
+
+  <!-- contenedor de frases -->
+  <div class="container">
+    <div id="text" class="phrase"></div>
+  </div>
+
+  <script>
+    const frases = [
+      'el umbral es una condición, no una forma',
+      'nada atraviesa intacto',
+      'todo cruce implica pérdida',
+      'la entrada no es reversible',
+      'el umbral tensiona lo que aún no sucede',
+      'todo inicio real es un corte',
+      'el borde no limita: transforma',
+      'si hay paso, hay mutación'
+    ];
+
+    let index = 0;
+    const text = document.getElementById('text');
+
+    function mostrarFrase() {
+      text.classList.remove('visible');
+      setTimeout(() => {
+        text.innerText = frases[index];
+        text.classList.add('visible');
+        index = (index + 1) % frases.length;
+      }, 1800);
+    }
+
+    mostrarFrase();
+    setInterval(mostrarFrase, 6000);
+  </script>
+</body>
+</html>

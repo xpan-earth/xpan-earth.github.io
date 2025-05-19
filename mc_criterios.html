@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — criterios de intervención</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+      height: auto;
+    }
+
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90vw;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    .criterio {
+      font-size: 1.1rem;
+      text-transform: lowercase;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="mc_index.html">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+
+  <div class="container">
+    <div id="criterio" class="criterio"></div>
+  </div>
+
+  <script>
+    const criterios = [
+      'no se interviene un espacio, se interviene una relación',
+      'la escala no determina la potencia',
+      'toda intervención modifica el sistema',
+      'si no hay tensión, no hay activación',
+      'lo inútil puede ser estructurante',
+      'los tiempos no se programan, se revelan',
+      'una intervención no representa: produce',
+      'el archivo no es el fin, sino el umbral',
+      'intervenir no es ocupar: es desplegar',
+      'si ya existe, debe mutar',
+      'lo que no puede sostenerse solo, no debe sostenerse',
+      'el ruido también es un criterio'
+    ];
+
+    let index = 0;
+    const el = document.getElementById('criterio');
+
+    function showNext() {
+      el.classList.remove('visible');
+      setTimeout(() => {
+        el.innerText = criterios[index];
+        el.classList.add('visible');
+        index = (index + 1) % criterios.length;
+      }, 2000); // tiempo de fade-out
+    }
+
+    showNext();
+    setInterval(showNext, 4000); // cada 7s cambia criterio
+  </script>
+</body>
+</html>

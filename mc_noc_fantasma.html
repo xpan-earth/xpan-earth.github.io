@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — nociones fantasma</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Times New Roman', serif;
+      color: #fff;
+      cursor: crosshair;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+      height: auto;
+      filter: invert(1);
+    }
+
+    .noise {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
+      opacity: 0.04;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .word {
+      position: absolute;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+      color: #fff;
+      opacity: 0.05;
+      animation: glitchText 6s infinite ease-in-out alternate;
+      pointer-events: none;
+    }
+
+    @keyframes glitchText {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.03; filter: blur(2px); }
+      30% { opacity: 0.12; filter: blur(0.5px); }
+      50% { transform: translate(-3px, 2px) scale(1.1) rotate(1deg); opacity: 0.2; filter: blur(0px); }
+      70% { opacity: 0.08; filter: blur(1px); }
+      100% { transform: translate(3px, -2px) scale(0.95) rotate(-1deg); opacity: 0.05; filter: blur(2px); }
+    }
+
+    .image {
+      position: absolute;
+      width: 120px;
+      opacity: 0.03;
+      mix-blend-mode: screen;
+      filter: grayscale(1) blur(2px);
+      animation: pulseImage 8s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes pulseImage {
+      0%   { transform: scale(1) rotate(0deg); opacity: 0.02; filter: blur(2px); }
+      50%  { transform: scale(1.05) rotate(1deg); opacity: 0.15; filter: blur(0.5px); }
+      100% { transform: scale(1) rotate(-1deg); opacity: 0.04; filter: blur(2px); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="mc_index.html">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+
+  <div class="noise"></div>
+
+  <!-- palabras -->
+  <script>
+    const words = [
+      'residuo', 'excedente', 'no dicho', 'idea no nacida', 'error operativo', 'bifurcación fallida',
+      'potencia interrumpida', 'pérdida', 'reverso conceptual', 'colapso útil', 'intervalo muerto',
+      'intención sin forma', 'código omitido', 'evento inexacto', 'conexión rota', 'afecto no formulado',
+      'proyecto latente', 'desfase permanente', 'estructura sin cuerpo', 'síntoma sonoro', 'negativo activo',
+      'condición fuera de campo', 'afirmación ilegible', 'subarchivo oculto', 'lenguaje sin canal',
+      'forma abortada', 'retícula desequilibrada', 'eco desplazado', 'intensidad huérfana', 'lógica inconsistente'
+    ];
+
+    words.forEach(() => {
+      const el = document.createElement('div');
+      el.className = 'word';
+      el.innerText = words[Math.floor(Math.random() * words.length)];
+      el.style.top = `${Math.random() * 100}vh`;
+      el.style.left = `${Math.random() * 100}vw`;
+      el.style.animationDuration = `${4 + Math.random() * 6}s`;
+      document.body.appendChild(el);
+    });
+  </script>
+
+  <!-- imágenes -->
+  <script>
+    const images = [
+      'https://d2w9rnfcy7mm78.cloudfront.net/21758295/original_b13e65572f009b5bf69c8725ee381aa1.png?1683669966?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/18254621/original_f8cbecea781b5d97f5daecaa9ce10f5e.jpg?1664335643?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/16996043/original_c1a36bb29d806fb11fc6bcabcd5c635e.jpg?1656194182?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/20875940/original_e2abd50d419abc2a9f3fbba8a87ecb11.jpg?1678841870?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/24664153/original_c1b9e6b19c2063009803a9c499c8b7cc.jpg?1699749703?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/34926025/original_67d9827dd2dc5b543f2e820fd2665a44.jpg?1740942522?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/36399557/original_a5c7ae31c80736b7a4703b57d51c0760.png?1746149265?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/29326498/original_d57d1fdc05a6f10b3f565db6633ffe1e.jpg?1720584010?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/20390669/original_9d6eee12f37b55c1da55a3148cb46a13.jpg?1676413521?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/24664474/original_be0e5405f5b5b750e2ddb54995aac691.jpg?1699750953?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/24431883/original_495a289dca66a4007ee8a579b88f251e.png?1698674137?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/36399828/original_9a520e97106fa02c79eb0f8543ead37a.jpg?1746150024?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/29322994/original_1dff7f7d63b60d33940dfdf3dba2a46b.jpg?1720568533?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/25374514/original_155673eb91ca534e2126969ebcb361c3.jpg?1703518085?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/36770014/original_fa760e2bd0e4c88e1db29e51d536469b.jpg?1747508310?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/18254610/original_b27d7f327cef56fd08dd2f76ad90cfcc.jpg?1664335639?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/25374546/original_e33092eb72c90b7eb709054d5e626bbb.png?1703518133?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/18254689/original_e439e855a03106319e3a1eb5bf9620b3.jpg?1664335701?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/31753977/original_5304a35bf0cb524b587773cf82b3cf89.jpg?1730100448?bc=0',
+      'https://d2w9rnfcy7mm78.cloudfront.net/16177884/original_9d329e3df9e9fe051610274c1b6cbccc.jpg?1650691731?bc=0'
+    ];
+
+    images.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url;
+      img.className = 'image';
+      img.style.top = `${Math.random() * 90}vh`;
+      img.style.left = `${Math.random() * 90}vw`;
+      img.style.animationDuration = `${6 + Math.random() * 6}s`;
+      img.style.transform = `rotate(${Math.random() * 360}deg)`;
+      document.body.appendChild(img);
+    });
+  </script>
+</body>
+</html>

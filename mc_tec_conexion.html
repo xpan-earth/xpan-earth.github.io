@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — tecnologías de conexión</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+      height: auto;
+    }
+
+    .main-container {
+      padding: 7rem 2rem 4rem 2rem;
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      text-transform: lowercase;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      text-transform: lowercase;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    .image-block {
+      position: absolute;
+      width: 180px;
+      height: auto;
+      z-index: 1;
+      opacity: 0.1;
+      pointer-events: none;
+      animation-name: pulseOpacity;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+
+    .image-block img {
+      width: 100%;
+      display: block;
+    }
+
+    @keyframes pulseOpacity {
+      0%   { opacity: 0.1; }
+      5%   { opacity: 0.25; }
+      10%  { opacity: 0.45; }
+      15%  { opacity: 0.25; }
+      20%  { opacity: 0.1; }
+      100% { opacity: 0.1; }
+    }
+
+    svg#lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="mc_index.html">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+
+  <svg id="lines"></svg>
+
+  <div class="main-container">
+    <h1>tecnologías de conexión</h1>
+
+    <p>
+      las tecnologías de conexión no son meramente herramientas auxiliares dentro de un sistema mayor. en el contexto de <em>xpan</em>, son elementos primordiales que moldean la posibilidad misma de existencia, afecto y transmisión. no hay conexión sin una forma de tecnología —ni siquiera en lo simbólico.
+    </p>
+
+    <p>
+      más que dispositivos técnicos, son estructuras intermedias que operan entre lo físico, lo sensible y lo lógico. son códigos, infraestructuras, arquitecturas de acceso, canales de modulación. cada cable, cada protocolo de red, cada riel móvil, cada transductor son trazos materiales de una intención relacional.
+    </p>
+
+    <p>
+      en <em>xpan</em>, conectar no es unir —es tensionar. y para ello se construyen artefactos específicos: un archivo no es una base de datos, sino un campo en expansión; un sistema de sonido no es una salida, sino una superficie de vibración; un sitio web no es una pantalla, sino una coordenada viva.
+    </p>
+
+    <p>
+      estas tecnologías se diseñan, se desvían o se corrompen para operar desde otro lugar. se articulan desde lo mínimo: un delay, un desfase, un eco, un desfibramiento de la señal. también desde lo estructural: marcos de montaje, mecanismos de suspensión, tipologías móviles. son tecnologías de lo posible.
+    </p>
+
+    <p>
+      conectividad, para <em>xpan</em>, es siempre una pregunta sobre la forma. ¿cómo se produce un encuentro? ¿qué lo permite? ¿qué se filtra, qué se amplifica, qué se apaga? las respuestas no son conceptuales. son operativas. y se encuentran encarnadas en las tecnologías que sostienen cada activación.
+    </p>
+
+    <p>
+      por eso, todo proyecto de <em>xpan</em> —editorial, sonoro, arquitectónico, digital— lleva consigo una arqueología tecnológica. un subsuelo invisible que condiciona las relaciones, los accesos, las intensidades. un entramado que no representa, sino que materializa.
+    </p>
+
+    <p>
+      las tecnologías de conexión, entonces, no son lo que se ve. son lo que hace que algo suceda.
+    </p>
+  </div>
+
+  <!-- visuales interlineados -->
+  <div class="image-block" style="top: 22vh; left: 68vw;">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/19190880/original_0ecbbbd17b6f75ed0337207b288b6824.jpg?1669675725?bc=0" alt="visual" />
+  </div>
+  <div class="image-block" style="top: 55vh; left: 15vw;">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/19616659/original_c1887b6b8c6816df01f07c42e940cced.png?1672374327?bc=0" alt="visual" />
+  </div>
+  <div class="image-block" style="top: 75vh; left: 65vw;">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/29326488/original_2839c110e8b107f8aebc03339d11790f.jpg?1720584007?bc=0" alt="visual" />
+  </div>
+
+  <script>
+    const blocks = document.querySelectorAll('.image-block');
+    const svg = document.getElementById('lines');
+
+    function connectBlocks() {
+      svg.innerHTML = '';
+      const rects = [...blocks].map(el => el.getBoundingClientRect());
+      for (let i = 0; i < rects.length; i++) {
+        for (let j = i + 1; j < rects.length; j++) {
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', rects[i].left + rects[i].width / 2);
+          line.setAttribute('y1', rects[i].top + rects[i].height / 2);
+          line.setAttribute('x2', rects[j].left + rects[j].width / 2);
+          line.setAttribute('y2', rects[j].top + rects[j].height / 2);
+          line.setAttribute('stroke', '#000');
+          line.setAttribute('stroke-opacity', '0.05');
+          line.setAttribute('stroke-width', '1');
+          svg.appendChild(line);
+        }
+      }
+    }
+
+    // conexión + animación aleatoria
+    window.addEventListener('load', () => {
+      connectBlocks();
+      blocks.forEach(block => {
+        const delay = Math.random() * 10;
+        const duration = 6 + Math.random() * 6;
+        block.style.animationDelay = `${delay}s`;
+        block.style.animationDuration = `${duration}s`;
+      });
+    });
+
+    window.addEventListener('resize', connectBlocks);
+  </script>
+</body>
+</html>
