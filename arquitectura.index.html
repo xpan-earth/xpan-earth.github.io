@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — arquitectura</title>
+  <style>
+    :root {
+      --gap: 0.5rem;
+    }
+
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+      height: auto;
+    }
+
+    .main-container {
+      padding: 7rem 1.5rem 4rem;
+      position: relative;
+    }
+
+    .entry {
+      margin-bottom: 3.5rem;
+      max-width: 800px;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .entry::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.4rem;
+      width: 4px;
+      height: 100%;
+      background: #000;
+      opacity: 0.1;
+    }
+
+    .entry strong {
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-transform: lowercase;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .entry span {
+      font-size: 0.85rem;
+      opacity: 0.5;
+      font-style: italic;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .entry a {
+      color: black;
+      text-decoration: underline;
+      font-size: 0.9rem;
+    }
+
+    .entry a:hover {
+      background: #000;
+      color: #fff;
+      transition: 0.2s;
+    }
+
+    .carousel-wrapper {
+      margin-top: 0.5rem;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      position: relative;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: var(--gap);
+      will-change: transform;
+    }
+
+    .carousel-track img {
+      width: calc((100% - 2 * var(--gap)) / 3);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 4px;
+      opacity: 0.3;
+      flex-shrink: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .carousel-track img.highlight {
+      opacity: 1 !important;
+    }
+
+    @media (max-width: 768px) {
+      .carousel-track img {
+        width: calc((100% - var(--gap)) / 2);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .carousel-track img {
+        width: 100%;
+      }
+
+      .main-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .main-container {
+        padding-left: 6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="https://xpan.earth" target="_blank">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+
+  <div class="main-container">
+
+    <!-- Proyecto ejemplo -->
+    <div class="entry">
+      <strong>xpan.ep.1, [espacio público uno]</strong>
+      <span>octubre 2024 — desarrollo de espacio / sistema</span>
+      <a href="arq.xpan.ep.1.html">ver proyecto</a>
+
+      <div class="carousel-wrapper">
+        <div class="carousel-track">
+          <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792462/original_17009a3d11bbca70f5eb4211b33a34ac.jpg?1747625333" />
+          <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336" />
+          <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338" />
+          <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340" />
+          <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792454/original_38d1abf821f07b04a621ebdf338cb22f.jpg?1747625329" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Copia y pega más bloques .entry aquí -->
+
+  </div>
+
+  <script>
+    document.querySelectorAll('.carousel-track').forEach(track => {
+      const images = Array.from(track.children);
+      images.forEach(img => {
+        const clone = img.cloneNode(true);
+        track.appendChild(clone);
+      });
+
+      let scrollX = 0;
+      const speed = 0.3;
+
+      function animate() {
+        scrollX += speed;
+        if (scrollX >= track.scrollWidth / 2) {
+          scrollX = 0;
+        }
+        track.style.transform = `translateX(-${scrollX}px)`;
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      function highlight() {
+        const wrapperRect = track.parentElement.getBoundingClientRect();
+        const imgs = track.querySelectorAll('img');
+        let bestImg = null;
+        let minLeftDiff = Infinity;
+
+        imgs.forEach(img => {
+          const rect = img.getBoundingClientRect();
+          const fullyVisible = rect.left >= wrapperRect.left && rect.right <= wrapperRect.right;
+          const leftDiff = Math.abs(rect.left - wrapperRect.left);
+
+          if ((fullyVisible || leftDiff < minLeftDiff)) {
+            if (fullyVisible || bestImg === null) {
+              minLeftDiff = leftDiff;
+              bestImg = img;
+            }
+          }
+        });
+
+        imgs.forEach(img => img.classList.remove('highlight'));
+        if (bestImg) bestImg.classList.add('highlight');
+      }
+
+      setInterval(highlight, 200);
+    });
+  </script>
+
+</body>
+</html>
