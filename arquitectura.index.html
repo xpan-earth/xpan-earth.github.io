@@ -82,18 +82,16 @@
 
     .carousel-wrapper {
       margin-top: 0.5rem;
-      overflow: hidden;
-      width: 100%;
-      max-width: 100%;
-      position: relative;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
     }
 
     .carousel-track {
       display: flex;
       gap: var(--gap);
-      will-change: transform;
-      touch-action: pan-x;
-      cursor: grab;
+      padding-bottom: 0.5rem;
     }
 
     .carousel-track img {
@@ -160,60 +158,54 @@
       </div>
     </div>
 
-    <!-- Copia y pega más proyectos aquí -->
+    <!-- Puedes duplicar más entradas aquí -->
 
   </div>
 
   <script>
-    document.querySelectorAll('.carousel-track').forEach(track => {
+    document.querySelectorAll('.carousel-wrapper').forEach(wrapper => {
+      const track = wrapper.querySelector('.carousel-track');
       const images = Array.from(track.children);
+
+      // Duplicar imágenes para simular loop
       images.forEach(img => {
         const clone = img.cloneNode(true);
         track.appendChild(clone);
       });
 
-      let scrollX = 0;
-      const speed = 0.3;
-      let isDragging = false;
-      let startX = 0;
-      let scrollStart = 0;
+      // Scroll automático suave
+      let autoScroll = true;
+      let speed = 0.3;
 
-      function animate() {
-        if (!isDragging) {
-          scrollX += speed;
-          if (scrollX >= track.scrollWidth / 2) scrollX = 0;
-          track.style.transform = `translateX(-${scrollX}px)`;
+      function autoScrollStep() {
+        if (autoScroll) {
+          wrapper.scrollLeft += speed;
+          if (wrapper.scrollLeft >= track.scrollWidth / 2) {
+            wrapper.scrollLeft = 0;
+          }
         }
-        requestAnimationFrame(animate);
+        requestAnimationFrame(autoScrollStep);
       }
 
-      animate();
+      autoScrollStep();
 
-      track.addEventListener('pointerdown', e => {
-        isDragging = true;
-        track.setPointerCapture(e.pointerId);
-        startX = e.clientX;
-        scrollStart = scrollX;
-        track.style.cursor = 'grabbing';
+      // Pausar temporalmente si usuario interactúa
+      let timeout;
+      wrapper.addEventListener('pointerdown', () => {
+        autoScroll = false;
+        clearTimeout(timeout);
+      });
+      wrapper.addEventListener('pointerup', () => {
+        timeout = setTimeout(() => autoScroll = true, 1000);
+      });
+      wrapper.addEventListener('touchend', () => {
+        timeout = setTimeout(() => autoScroll = true, 1000);
       });
 
-      track.addEventListener('pointermove', e => {
-        if (!isDragging) return;
-        const dx = e.clientX - startX;
-        scrollX = scrollStart - dx;
-        if (scrollX >= track.scrollWidth / 2) scrollX = 0;
-        if (scrollX < 0) scrollX = track.scrollWidth / 2 + scrollX;
-        track.style.transform = `translateX(-${scrollX}px)`;
-      });
-
-      track.addEventListener('pointerup', () => {
-        isDragging = false;
-        track.style.cursor = 'grab';
-      });
-
+      // Resaltar imagen más a la izquierda visible
       function highlight() {
-        const wrapperRect = track.parentElement.getBoundingClientRect();
-        const imgs = track.querySelectorAll('img');
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const imgs = wrapper.querySelectorAll('img');
         let bestImg = null;
         let minLeftDiff = Infinity;
 
