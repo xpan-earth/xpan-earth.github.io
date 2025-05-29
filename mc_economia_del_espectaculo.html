@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — economía del espectáculo</title>
+  <style>
+    body {
+      background: #fff;
+      color: #000;
+      font-family: 'Times New Roman', serif;
+      margin: 0;
+      padding: 3rem 1.5rem;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 60px;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    canvas#background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      display: block;
+      touch-action: none;
+    }
+    section:first-of-type {
+  margin-top: 5rem;
+}
+
+    .floating-image {
+  position: fixed;
+  width: 120px;
+  opacity: 0.007;
+  pointer-events: none;
+  z-index: -1;
+  filter: brightness(15) contrast(3) saturate(10);
+}
+
+    h1, h2, p {
+      max-width: 800px;
+      margin: 0 auto 2rem auto;
+      line-height: 1.6;
+    }
+
+    .tooltip {
+      position: relative;
+      cursor: help;
+    }
+
+    .tooltiptext {
+      visibility: hidden;
+      background-color: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      text-align: left;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      position: absolute;
+      z-index: 1;
+      bottom: 1.5em;
+      left: 0;
+      font-size: 0.8rem;
+      width: 250px;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 2rem 1rem; }
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1rem; }
+      p { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+
+
+<header>
+  <a href="index.html">
+    <img src="xpan.svg" alt="xpan logo">
+  </a>
+</header>
+
+<canvas id="background"></canvas>
+
+
+<section>
+  <h1>economía del espectáculo</h1>
+  <h2>un régimen donde la visibilidad reemplaza la estructura</h2>
+</section>
+
+<section>
+  <p>
+    es el régimen que transforma todo en imagen y experiencia empaquetada.<br>
+    un modelo donde la visibilidad se vuelve más valiosa que la estructura.<br>
+    no importa si algo es sólido, solo si puede venderse, fotografiarse, replicarse.
+  </p>
+</section>
+
+<section>
+  <p>
+    en méxico, en latinoamérica, se repite la fórmula:<br>
+    lugares que se “activan”, barrios que se “ponen de moda”, proyectos que se “reconocen”.<br>
+    pero detrás del escaparate no hay fondo: solo réplicas vacías de lo que alguna vez fue real.<br>
+    formatos exportables, narrativas diseñadas para durar lo que dura una tendencia.
+  </p>
+</section>
+
+<section>
+  <p>
+    se estetiza la precariedad, se romantiza la cultura popular, se empaca la diferencia.<br>
+    el otro se convierte en recurso visual.<br>
+    la violencia sistémica se disfraza de identidad local.<br>
+    todo se vuelve decorado funcional.
+  </p>
+</section>
+
+<section>
+  <p>
+    la economía del espectáculo desplaza a quienes no producen contenido.<br>
+    es una maquinaria que recompensa la representación y castiga la permanencia.<br>
+    los que sostienen el territorio no aparecen.<br>
+    los que aparecen no permanecen.
+  </p>
+</section>
+
+<section>
+  <p>
+    xpan no se sitúa fuera de este sistema, pero tampoco lo celebra.<br>
+    la tarea es evidenciar su lógica, cortar sus flujos, construir desde otro ritmo.<br>
+    no basta con intervenir la superficie: hay que diseñar estructuras que resistan la repetición.<br>
+    lo no espectacular también puede sostener el futuro.
+  </p>
+</section>
+
+<section>
+  <p>
+    la economía del espectáculo también opera en lo profesional y lo estético.<br>
+    se replica lo que parece funcionar: estudios clonados, estéticas neutras, discursos calcados.<br>
+    no es para agradar, sino porque se cree que parecerse al 
+    <span class="tooltip">norte global
+      <span class="tooltiptext">referencia simbólica de validación en el sistema cultural dominante</span>
+    </span>
+    es garantía de sofisticación.<br>
+    pero el resultado no es ni lo uno ni lo otro: ni local ni universal, ni denso ni claro.<br>
+    carece de arraigo, de contexto, de autenticidad.<br>
+    y sin autenticidad, no hay permanencia. solo reciclaje de fórmulas.
+  </p>
+</section>
+
+<section class="frase-final">
+  <p>
+    intervenir el espectáculo no es destruir la imagen.<br>
+    es construir algo que no dependa de ella.
+  </p>
+</section>
+
+<script>
+const urls = [
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058991/original_44ebae11eda81d43727a8fcb7032a1ec.jpg?1748551604?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058990/original_199c69b2d123b8cd24a3e2650bda36c8.jpg?1748551603?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058989/original_5d6616b10a4d4071146e9557da89d9d5.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058988/original_cc4c589a56f06a84dfb93cc71d0bfa66.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058987/original_4d2c633d84006df7d9ca3c5e4f2d8136.jpg?1748551603?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058986/original_03fdb14e8c0d558bcfa469f67fbd1f37.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058985/original_a2143ef2e31a489cfce0c5df420561d5.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058984/original_adf6d7c46a588d14b6f686fe796edb2e.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058983/original_5ce7c13e18f267c26dcfffef122fba89.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058982/original_6b8123643f20aadc707eafb6b6c9a680.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058981/original_178b176496a4f5457d681e3fae762d77.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058980/original_0e7ec5006ddbdaaa6ad307824b7d49dc.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058979/original_1648e36e04571a69edfac3114b72b0c4.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058978/original_bcffeb9434c4eafba5624b8efb1160e5.webp?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058977/original_9ab38e1435252fb03a43c1a74721148a.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058976/original_94845d8efc18b479f9914ebd2dd3dfa4.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058975/original_10528ef1c4046b311212628f7a764759.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058974/original_5cde0e72decf3bf9e42fe855bbefef69.jpg?1748551601?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058973/original_0aa965d05e1f3b93b78cdf4341a51cca.jpg?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058972/original_7cc457aa52ec60d01f3ba352f92997b4.png?1748551602?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058957/original_7c91bf0819513e9bc36d5c1d59aad518.png?1748551586?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058967/original_22abcf5e8abea74627fa1050b2416f1c.png?1748551586?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058961/original_bc0085d901a49079c3a63c8ddaac0ab6.png?1748551586?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058966/original_cffa97863237d10135c4dd63bacb2ad7.png?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058968/original_e28642aebb3d56a2f61c2fa41229b757.png?1748551586?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058937/original_73c50c55d8ff23615254033a54304d22.jpg?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058938/original_8b9ce2d376ed311afbbe68203b9a6a51.jpg?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058964/original_5bed8ee6deeded51dae93748fc86f810.png?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058960/original_02caa8fbabd40d8785a0d1d698f52394.png?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058965/original_794dcc316b277c78645a0f808eb4a416.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058944/original_1b09e60a9a25aef461c5254d78d4914b.jpg?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058962/original_0dee829c957533e1da78c5ca42e609de.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058949/original_6ea738020ac7aa77d97fa9d23f52614e.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058939/original_f2136ec70a7973eea4f24b96837ac05a.jpg?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058952/original_74d2f39c9f1d908cfc9d41c856b791d1.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058943/original_114e568f2d3ea55b3af77f967675cf5a.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058959/original_d38089f3e23f2ae6867ac21bafbaaf83.png?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058963/original_0cf75571e7e00021aabdd369d4d0ae60.png?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058940/original_6c379fe48adb6891835e1617f0d7bd33.jpg?1748551585?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058956/original_f9dc392afee9aa55a1dca38644ebee04.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058955/original_28ef534b8d5dfb76a575184f668e832a.png?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058958/original_16044632415acfa498df0713f0125232.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058946/original_73ef80b10bd511ad7566082583890cd8.png?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058953/original_d0be13c0e261aec871c55baedf381b64.jpg?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058951/original_cc7db1cdfb32abc84437bca1b9c72bdd.jpg?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058945/original_2b9e5c121645cb03dd6d424ee17409f4.jpg?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058954/original_178cd66bff7ba8a05e095f61ff764d66.png?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058941/original_f64d8bec1aa000105b5ed3276fff5f66.jpg?1748551584?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058942/original_e8936b9a01e237c90d86fba6d31374f9.jpg?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058947/original_51d345ac7aaef766dcdaf93e1c033889.png?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058935/original_68d5e5398e861a9453e6615d9345495a.png?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058936/original_9d504bc1f555397f72209e48e57c2518.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058934/original_6553ee7829f63d5720e2a2a190a0fbc5.png?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058933/original_f82462c0363b49934aafa60ed303322b.jpg?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058932/original_6ed6f0819e1a47a25552a35a4663c58d.png?1748551581?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058931/original_07df9cb08de41b71f610b26b6e5f3094.png?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058930/original_8a63af9b89ffbb5e7d8c826311fc752f.png?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058929/original_fa01021efe2132c4d88b32667dcf6276.jpg?1748551581?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058928/original_fbbb36e2348d2f4a468f43cc937f2c08.png?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058927/original_73b783e010932a795102ca17ba9b34b5.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058926/original_09410854df94b791895f95aa52b2d292.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058925/original_123903b560179e75bfed3cff423a9d2c.png?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058924/original_e753986323cfdd02f220a1ee196dbcdd.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058923/original_20dc3945f5bcaa881041da037d90785c.png?1748551583?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058922/original_5d7f2a573aa1332fd390b9b60268aab4.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058921/original_bf76f152af1b2015deb6406230eebea5.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058920/original_d51025a58312cc548772fb55b8f7e8ed.jpg?1748551582?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/37058919/original_c99aed2f04cb0ed2d10853ecc94f4dae.jpg?1748551582?bc=0"
+];
+
+const canvas = document.getElementById("background");
+const ctx = canvas.getContext("2d");
+let imgIndex = 0;
+const glitchImage = new Image();
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function drawGlitch(img) {
+  ctx.clearRect(10, 0, canvas.width, canvas.height);
+  const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+  const w = img.width * scale;
+  const h = img.height * scale;
+  const x = (canvas.width - w) / 23;
+  const y = (canvas.height - h) / 2;
+  ctx.drawImage(img, x, y, w, h);
+  const glitchLevel = window.innerWidth < 8000 ? 105 : 430;
+  for (let i = 50; i < glitchLevel; i++) {
+    const sx = Math.random() * w;
+    const sy = Math.random() * h;
+    const sw = Math.random() * (w - sx);
+    const sh = .21;
+    const dx = sx + (Math.random() - 5) * 0;
+    const dy = sy + (Math.random() - 225) * 0;
+    ctx.drawImage(canvas, sx + x, sy + y, sw, sh, dx + x, dy + y, sw, sh);
+  }
+}
+
+function loadNextImage() {
+  glitchImage.src = urls[imgIndex % urls.length];
+  glitchImage.onload = () => drawGlitch(glitchImage);
+  imgIndex++;
+}
+setInterval(loadNextImage, 200);
+
+// floating images reciclables
+const floatingSet = urls.slice(0, 50);
+function createFloatingImage(src) {
+  const img = document.createElement('img');
+  img.src = src;
+  img.className = 'floating-image';
+  document.body.appendChild(img);
+
+  function animate() {
+    img.style.top = `${Math.random() * 100}vh`;
+    img.style.left = `${Math.random() * 100}vw`;
+    img.style.transition = `transform 0s, top 0s, left 0s`;
+    const duration = 10000 + Math.random() * 20000;
+
+    requestAnimationFrame(() => {
+      img.style.transition = `transform ${duration}ms linear`;
+      img.style.transform = `translate(${Math.random() * 200 - 100}vw, ${Math.random() * 200 - 100}vh)`;
+    });
+
+    setTimeout(animate, duration);
+  }
+
+  animate();
+}
+floatingSet.forEach(createFloatingImage);
+</script>
+
+</body>
+</html>
