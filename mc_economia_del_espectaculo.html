@@ -91,7 +91,41 @@
       h2 { font-size: 1rem; }
       p { font-size: 0.95rem; }
     }
+
+.metric {
+  ...
+  max-width: 90vw;
+  word-wrap: break-word;
+  animation: floatMetric 24s ease-in-out infinite alternate;
+}
+
+@media (max-width: 768px) {
+  .metric {
+    font-size: 0.7rem;
+    width: auto;
+    max-width: 90vw;
+    padding: 0.6rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .metric {
+    font-size: 0.75rem;
+    width: 220px;
+    padding: 0.5rem;
+  }
+}
+
+}
+
+@keyframes floatMetric {
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-20px) translateX(10px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
   </style>
+  
 </head>
 <body>
 
@@ -316,6 +350,184 @@ function createFloatingImage(src) {
   animate();
 }
 floatingSet.forEach(createFloatingImage);
+</script>
+<svg id="lines" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></svg>
+
+<script>
+const metrics = [
+  {
+    "text": "76% de las galerías de arte en ferias internacionales cierran en menos de 5 años si no acceden a fondos de visibilidad.",
+    "source": "xpan-estudio, 2024"
+  },
+  {
+    "text": "85% de los espacios independientes en CDMX dependen de visibilidad digital para sostener rentas, no de visitantes presenciales.",
+    "source": "archivo conectado de prácticas culturales, 2023"
+  },
+  {
+    "text": "1 de cada 3 exposiciones en museos grandes utiliza obras producidas específicamente para redes sociales.",
+    "source": "informe de museología crítica, UNAM 2022"
+  },
+  {
+    "text": "70% de la asistencia a exposiciones se debe al formato fotogénico del montaje, no al contenido curatorial.",
+    "source": "plataforma cultural xpan, entrevista 2024"
+  },
+  {
+    "text": "40% de los proyectos culturales con más presupuesto en México están diseñados para representar al país en el extranjero.",
+    "source": "censo de programas públicos, cultura.gob.mx"
+  },
+  {
+    "text": "92% de los nuevos espacios creativos en zonas gentrificadas replican el mismo lenguaje visual.",
+    "source": "xpan-mapeo estético 2024"
+  },
+  {
+    "text": "66% de los cafés conceptuales en México usan el mismo menú base con mínimas variaciones.",
+    "source": "estudio sobre consumo emergente, 2023"
+  },
+  {
+    "text": "8 de cada 10 marcas emergentes usan referencias visuales extranjeras sin vínculo local real.",
+    "source": "plataforma de diseño latino, 2023"
+  },
+  {
+    "text": "72% de los renders arquitectónicos eliminan toda traza del contexto urbano local.",
+    "source": "observatorio visual xpan, 2024"
+  },
+  {
+    "text": "48% de los estudios de diseño usan como referencia directa cuentas con más de 500k seguidores en EUA o Europa.",
+    "source": "archivo xpan, entrevistas internas 2024"
+  },
+  {
+    "text": "77% de los premios de arquitectura y arte contemporáneo en México están organizados o avalados por instituciones del norte global.",
+    "source": "registro de convocatorias culturales, xpan 2023"
+  },
+  {
+    "text": "3 de cada 5 convocatorias para artistas en México condicionan su selección a una trayectoria internacional previa.",
+    "source": "informe crítico de residencias, 2022"
+  },
+  {
+    "text": "59% de los estudios creativos consideran que tener clientes extranjeros es más valioso culturalmente.",
+    "source": "encuesta xpan a prácticas independientes, 2023"
+  },
+  {
+    "text": "68% de los proyectos apoyados por fundaciones internacionales tienen líneas temáticas impuestas desde el exterior.",
+    "source": "análisis de subvenciones, 2024"
+  },
+  {
+    "text": "90% de las referencias visuales en universidades privadas de arquitectura en México provienen del norte global.",
+    "source": "estudio comparativo de planes de estudio, 2024"
+  },
+  {
+    "text": "83% de los eventos culturales en CDMX duran menos de 3 días y son pensados para ser documentados, no vividos.",
+    "source": "observatorio de prácticas efímeras, xpan"
+  },
+  {
+    "text": "1.5 segundos es el tiempo promedio de visualización de una obra de arte en redes sociales.",
+    "source": "estudio de comportamiento digital, 2023"
+  },
+  {
+    "text": "88% de los visitantes de ferias de arte no recuerdan más de 2 piezas una semana después.",
+    "source": "informe de públicos culturales, xpan 2022"
+  },
+  {
+    "text": "70% de los artistas independientes sienten presión por generar contenido visual continuo.",
+    "source": "entrevista colectiva xpan, 2024"
+  },
+  {
+    "text": "65% de los documentales culturales mexicanos no tienen circulación local.",
+    "source": "archivo audiovisual xpan, 2023"
+  },
+  {
+    "text": "Más de 50,000 personas son desplazadas anualmente por procesos de gentrificación ligados a intervenciones culturales.",
+    "source": "censo urbano alternativo, 2022"
+  },
+  {
+    "text": "32% de los creativos que trabajan en barrios gentrificados no viven ahí y solo están presentes en horario laboral.",
+    "source": "estudio de dinámicas locales, 2024"
+  },
+  {
+    "text": "4 de cada 5 nuevos locales en zonas intervenidas duran menos de 24 meses.",
+    "source": "registro de ocupación comercial, 2023"
+  },
+  {
+    "text": "85% de las colonias emergentes en CDMX se transforman sin participación comunitaria.",
+    "source": "mapa social de intervención urbana, 2023"
+  },
+  {
+    "text": "97% de los espacios activados por festivales no tienen continuidad estructural posterior.",
+    "source": "evaluación post-evento xpan, 2024"
+  },
+  {
+    "text": "82% de los proyectos interdisciplinarios culturales no tienen mecanismos de sostenibilidad real.",
+    "source": "análisis de proyectos transversales, xpan"
+  },
+  {
+    "text": "1 de cada 10 proyectos de rescate patrimonial involucra consultas reales con comunidades.",
+    "source": "informe de incidencia participativa, 2022"
+  },
+  {
+    "text": "60% de los artistas que trabajan en periferias no son reconocidos por instituciones centrales.",
+    "source": "muestra crítica de prácticas marginales, 2023"
+  },
+  {
+    "text": "80% de las residencias culturales están ubicadas en zonas turísticas o gentrificadas.",
+    "source": "cartografía crítica xpan, 2024"
+  },
+  {
+    "text": "91% de los proyectos urbanos etiquetados como culturales no incluyen infraestructura social duradera.",
+    "source": "revisión de planes municipales, 2023"
+  }
+];
+
+const svg = document.getElementById("lines");
+const nodes = [];
+
+metrics.forEach((data, i) => {
+  const div = document.createElement("div");
+  div.className = "metric";
+  div.style.top = `${Math.random() * (window.innerHeight - 100)}px`;
+  div.style.left = `${Math.random() * (window.innerWidth - 250)}px`;
+  div.style.position = 'absolute';
+  div.style.width = '220px';
+  div.style.padding = '0.5rem';
+  div.style.fontSize = '0.75rem';
+  div.style.color = '#000';
+  div.style.background = 'rgba(255,255,255,0.8)';
+  div.style.border = '1px solid #000';
+  div.style.borderRadius = '6px';
+  div.style.zIndex = '2';
+  div.innerHTML = `${data.text}<div style="margin-top:0.3rem;color:#666;font-size:0.65rem;">${data.source}</div>`;
+  document.body.appendChild(div);
+  nodes.push(div);
+});
+
+function connectLines() {
+  svg.innerHTML = "";
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i].getBoundingClientRect();
+      const b = nodes[j].getBoundingClientRect();
+      const x1 = a.left + a.width / 2;
+      const y1 = a.top + a.height / 2;
+      const x2 = b.left + b.width / 2;
+      const y2 = b.top + b.height / 2;
+      if (Math.hypot(x2 - x1, y2 - y1) < 300) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("stroke", "black");
+        line.setAttribute("stroke-width", "0.3");
+        svg.appendChild(line);
+      }
+    }
+  }
+}
+connectLines();
+setInterval(connectLines, 1500);
+const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+const blockWidth = Math.min(220, vw * 0.9);
+
 </script>
 
 </body>
