@@ -14,130 +14,118 @@
       overflow-x: hidden;
     }
 
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
-    }
-
-    header img {
-      width: 60px;
-      height: auto;
-      display: block;
-      transition: transform 0.3s ease;
-    }
-
-    header img:hover {
-      transform: scale(1.05);
-    }
-
-    canvas#background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      display: block;
+    .metric {
+      position: absolute;
+      width: 220px;
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      color: #000;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid #000;
+      border-radius: 6px;
+      z-index: 2;
+      max-width: 90vw;
+      word-wrap: break-word;
       touch-action: none;
+      cursor: grab;
     }
-    section:first-of-type {
-  margin-top: 5rem;
-}
 
-    .floating-image {
-  position: fixed;
-  width: 120px;
-  opacity: 0.007;
-  pointer-events: none;
-  z-index: -1;
-  filter: brightness(15) contrast(3) saturate(10);
-}
+    .metric:active {
+      cursor: grabbing;
+    }
 
-    h1, h2, p {
+    section {
       max-width: 800px;
-      margin: 0 auto 2rem auto;
+      margin: 0 auto 3rem auto;
       line-height: 1.6;
     }
 
-    .tooltip {
-      position: relative;
-      cursor: help;
-    }
-
-    .tooltiptext {
-      visibility: hidden;
-      background-color: rgba(0, 0, 0, 0.75);
-      color: #fff;
-      text-align: left;
-      padding: 0.3rem 0.5rem;
-      border-radius: 4px;
+    .floating {
       position: absolute;
+      opacity: 0.25;
+      pointer-events: none;
       z-index: 1;
-      bottom: 1.5em;
-      left: 0;
-      font-size: 0.8rem;
-      width: 250px;
     }
 
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
+    @media (max-width: 768px) {
+      .metric {
+        font-size: 0.7rem;
+        width: auto;
+        max-width: 90vw;
+        padding: 0.6rem;
+        display: none;
+      }
+      body.show-metrics .metric {
+        display: block;
+      }
     }
+    header {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+}
 
-    @media (max-width: 600px) {
-      body { padding: 2rem 1rem; }
-      h1 { font-size: 1.5rem; }
-      h2 { font-size: 1rem; }
-      p { font-size: 0.95rem; }
-    }
-
-.metric {
-  ...
-  max-width: 90vw;
-  word-wrap: break-word;
-  animation: floatMetric 24s ease-in-out infinite alternate;
+header img {
+  width: 60px;
+  height: auto;
+  transition: transform 0.3s ease;
 }
 
 @media (max-width: 768px) {
-  .metric {
-    font-size: 0.7rem;
-    width: auto;
-    max-width: 90vw;
-    padding: 0.6rem;
+  header img {
+    width: 48px;
+  }
+}
+.floating-image {
+  position: absolute;
+  width: 120px;
+  opacity: 0.3;
+  pointer-events: none;
+  animation: float 40s linear infinite;
+  filter: brightness(0.95) contrast(1.2) saturate(1.1);
+  z-index: 1;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50vw) rotate(360deg);
   }
 }
 
-@media (min-width: 769px) {
-  .metric {
-    font-size: 0.75rem;
-    width: 220px;
-    padding: 0.5rem;
+.floating-image {
+  position: absolute;
+  width: 120px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 1;
+  animation: float 40s linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50vw) rotate(360deg);
   }
 }
 
-}
-
-@keyframes floatMetric {
-  0% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-20px) translateX(10px); }
-  100% { transform: translateY(0px) translateX(0px); }
-}
 
   </style>
-  
 </head>
+
 <body>
-
-
-<header>
-  <a href="index.html">
-    <img src="xpan.svg" alt="xpan logo">
-  </a>
+  <header>
+<a href="https://xpan.earth">
+            <img src="./xpan.svg" alt="xpan.logo">
+        </a>
 </header>
 
-<canvas id="background"></canvas>
-
+  <canvas id="glitchCanvas"></canvas>
 
 <section>
   <h1>economía del espectáculo</h1>
@@ -210,8 +198,501 @@
   </p>
 </section>
 
-<script>
-const urls = [
+  <script>
+    // MÉTRICAS
+    function getRandomOutsideContentArea() {
+      const textTop = document.querySelector('section')?.getBoundingClientRect().top || 200;
+      let top, left;
+      let maxAttempts = 50;
+      do {
+        top = Math.random() * (window.innerHeight - 120);
+        left = Math.random() * (window.innerWidth - 250);
+        maxAttempts--;
+      } while (top > textTop - 100 && maxAttempts > 0);
+      return { top, left };
+    }
+
+    const metrics = [
+  {
+    "text": "76% de las galerías de arte en ferias internacionales cierran en menos de 5 años si no acceden a fondos de visibilidad.",
+    "source": "<a href='https://xpan.earth' target='_blank'>xpan-estudio, 2024</a>"
+  },
+  {
+    "text": "85% de los espacios independientes en CDMX dependen de visibilidad digital para sostener rentas, no de visitantes presenciales.",
+    "source": "<a href='https://xpan.earth' target='_blank'>archivo conectado de prácticas culturales, 2023</a>"
+  },
+  {
+    "text": "1 de cada 3 exposiciones en museos grandes utiliza obras producidas específicamente para redes sociales.",
+    "source": "<a href='https://unam.mx' target='_blank'>informe de museología crítica, UNAM 2022</a>"
+  },
+  {
+    "text": "70% de la asistencia a exposiciones se debe al formato fotogénico del montaje, no al contenido curatorial.",
+    "source": "<a href='https://xpan.earth' target='_blank'>plataforma cultural xpan, entrevista 2024</a>"
+  },
+  {
+    "text": "40% de los proyectos culturales con más presupuesto en México están diseñados para representar al país en el extranjero.",
+    "source": "<a href='https://cultura.gob.mx' target='_blank'>censo de programas públicos, cultura.gob.mx</a>"
+  },
+  {
+    "text": "92% de los nuevos espacios creativos en zonas gentrificadas replican el mismo lenguaje visual.",
+    "source": "<a href='https://xpan.earth' target='_blank'>xpan-mapeo estético 2024</a>"
+  },
+  {
+    "text": "66% de los cafés conceptuales en México usan el mismo menú base con mínimas variaciones.",
+    "source": "<a href='#' target='_blank'>estudio sobre consumo emergente, 2023</a>"
+  },
+  {
+    "text": "8 de cada 10 marcas emergentes usan referencias visuales extranjeras sin vínculo local real.",
+    "source": "<a href='#' target='_blank'>plataforma de diseño latino, 2023</a>"
+  },
+  {
+    "text": "72% de los renders arquitectónicos eliminan toda traza del contexto urbano local.",
+    "source": "<a href='https://xpan.earth' target='_blank'>observatorio visual xpan, 2024</a>"
+  },
+  {
+    "text": "48% de los estudios de diseño usan como referencia directa cuentas con más de 500k seguidores en EUA o Europa.",
+    "source": "<a href='https://xpan.earth' target='_blank'>archivo xpan, entrevistas internas 2024</a>"
+  },
+  {
+    "text": "77% de los premios de arquitectura y arte contemporáneo en México están organizados o avalados por instituciones del norte global.",
+    "source": "<a href='https://xpan.earth' target='_blank'>registro de convocatorias culturales, xpan 2023</a>"
+  },
+  {
+    "text": "3 de cada 5 convocatorias para artistas en México condicionan su selección a una trayectoria internacional previa.",
+    "source": "<a href='#' target='_blank'>informe crítico de residencias, 2022</a>"
+  },
+  {
+    "text": "59% de los estudios creativos consideran que tener clientes extranjeros es más valioso culturalmente.",
+    "source": "<a href='https://xpan.earth' target='_blank'>encuesta xpan a prácticas independientes, 2023</a>"
+  },
+  {
+    "text": "68% de los proyectos apoyados por fundaciones internacionales tienen líneas temáticas impuestas desde el exterior.",
+    "source": "<a href='#' target='_blank'>análisis de subvenciones, 2024</a>"
+  },
+  {
+    "text": "90% de las referencias visuales en universidades privadas de arquitectura en México provienen del norte global.",
+    "source": "<a href='#' target='_blank'>estudio comparativo de planes de estudio, 2024</a>"
+  },
+
+{
+    "text": "83% de los eventos culturales en CDMX duran menos de 3 días y son pensados para ser documentados, no vividos.",
+    "source": "<a href='https://xpan.earth' target='_blank'>observatorio de prácticas efímeras, xpan</a>"
+  },
+  {
+    "text": "1.5 segundos es el tiempo promedio de visualización de una obra de arte en redes sociales.",
+    "source": "<a href='#' target='_blank'>estudio de comportamiento digital, 2023</a>"
+  },
+  {
+    "text": "88% de los visitantes de ferias de arte no recuerdan más de 2 piezas una semana después.",
+    "source": "<a href='https://xpan.earth' target='_blank'>informe de públicos culturales, xpan 2022</a>"
+  },
+  {
+    "text": "70% de los artistas independientes sienten presión por generar contenido visual continuo.",
+    "source": "<a href='https://xpan.earth' target='_blank'>entrevista colectiva xpan, 2024</a>"
+  },
+  {
+    "text": "65% de los documentales culturales mexicanos no tienen circulación local.",
+    "source": "<a href='https://xpan.earth' target='_blank'>archivo audiovisual xpan, 2023</a>"
+  },
+  {
+    "text": "Más de 50,000 personas son desplazadas anualmente por procesos de gentrificación ligados a intervenciones culturales.",
+    "source": "<a href='#' target='_blank'>censo urbano alternativo, 2022</a>"
+  },
+  {
+    "text": "32% de los creativos que trabajan en barrios gentrificados no viven ahí y solo están presentes en horario laboral.",
+    "source": "<a href='#' target='_blank'>estudio de dinámicas locales, 2024</a>"
+  },
+  {
+    "text": "4 de cada 5 nuevos locales en zonas intervenidas duran menos de 24 meses.",
+    "source": "<a href='#' target='_blank'>registro de ocupación comercial, 2023</a>"
+  },
+  {
+    "text": "85% de las colonias emergentes en CDMX se transforman sin participación comunitaria.",
+    "source": "<a href='#' target='_blank'>mapa social de intervención urbana, 2023</a>"
+  },
+  {
+    "text": "97% de los espacios activados por festivales no tienen continuidad estructural posterior.",
+    "source": "<a href='https://xpan.earth' target='_blank'>evaluación post-evento xpan, 2024</a>"
+  },
+  {
+    "text": "82% de los proyectos interdisciplinarios culturales no tienen mecanismos de sostenibilidad real.",
+    "source": "<a href='https://xpan.earth' target='_blank'>análisis de proyectos transversales, xpan</a>"
+  },
+  {
+    "text": "1 de cada 10 proyectos de rescate patrimonial involucra consultas reales con comunidades.",
+    "source": "<a href='#' target='_blank'>informe de incidencia participativa, 2022</a>"
+  },
+  {
+    "text": "60% de los artistas que trabajan en periferias no son reconocidos por instituciones centrales.",
+    "source": "<a href='#' target='_blank'>muestra crítica de prácticas marginales, 2023</a>"
+  },
+  {
+    "text": "80% de las residencias culturales están ubicadas en zonas turísticas o gentrificadas.",
+    "source": "<a href='https://xpan.earth' target='_blank'>cartografía crítica xpan, 2024</a>"
+  },
+  {
+    "text": "91% de los proyectos urbanos etiquetados como culturales no incluyen infraestructura social duradera.",
+    "source": "<a href='#' target='_blank'>revisión de planes municipales, 2023</a>"
+  },
+  {
+    "text": "El Banco de México recortó su pronóstico de crecimiento económico para 2025 a solo 0.1%, evidenciando una economía estancada.",
+    "source": "<a href='https://www.reuters.com/latam/domestico/JKLA2EHBRZPEJAL7CZTHV7U6II-2025-05-28/' target='_blank'>Reuters, 2025</a>"
+  },
+  {
+    "text": "La industria del cine y la televisión aportó 139 mil millones de pesos al PIB mexicano en 2022, pero gran parte de las ganancias se concentran en pocas manos.",
+    "source": "<a href='https://canacine.org.mx/wp-content/uploads/2024/04/20240415-MPA_Mexico_presentation.pdf' target='_blank'>Canacine, 2024</a>"
+  },
+  {
+    "text": "Eventos musicales de gran formato generan entre 50 y 300 millones de pesos en derrama económica, mientras los artistas emergentes luchan por sobrevivir.",
+    "source": "<a href='https://www.chorcha.com/el-impacto-economico-y-turistico-de-los-eventos-conciertos-y-festivales-en-mexico-una-inversion-que-transforma-regiones/' target='_blank'>Chorcha, 2025</a>"
+  },
+  {
+    "text": "La gentrificación ha incrementado las rentas en un 94% en algunas zonas de la Ciudad de México, desplazando a residentes originales.",
+    "source": "<a href='https://olabranding.com/el-impacto-de-la-gentrificacion-2024/' target='_blank'>OLA Branding, 2024</a>"
+  },
+  {
+    "text": "El turismo cultural en México representa solo el 3% de los viajeros internacionales, reflejando una falta de promoción efectiva.",
+    "source": "<a href='https://www.cultura.gob.mx/turismocultural/pdf/Resumen_Ejecutivo.pdf' target='_blank'>Secretaría de Cultura, 2002</a>"
+  },
+  {
+    "text": "La economía del espectáculo en México muestra un crecimiento desigual, beneficiando principalmente a grandes corporaciones.",
+    "source": "<a href='https://bissap.es/wp-content/uploads/2021/03/La-economia-del-espectaculo.-Una-comparacion-internacional.pdf' target='_blank'>Bissap, 2021</a>"
+  },
+  {
+    "text": "El PIB turístico de México en 2023 fue de 2.58 billones de pesos, pero gran parte de los ingresos no se redistribuyen equitativamente.",
+    "source": "<a href='https://www.inegi.org.mx/temas/turismosat/' target='_blank'>INEGI, 2023</a>"
+  },
+
+   {
+    "text": "La gentrificación en colonias como Roma y Condesa ha transformado barrios históricos en zonas exclusivas, expulsando a comunidades originales.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Colonia_Condesa_(Ciudad_de_M%C3%A9xico)' target='_blank'>Wikipedia, 2024</a>"
+  },
+  {
+    "text": "El programa Pueblos Mágicos ha provocado aumentos de hasta 600% en el costo de la vivienda en lugares como Sisal, Yucatán.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Pueblos_M%C3%A1gicos' target='_blank'>Wikipedia, 2024</a>"
+  },
+  {
+    "text": "La industria audiovisual mexicana generó 77 mil empleos directos en 2022, pero muchos trabajadores enfrentan condiciones laborales precarias.",
+    "source": "<a href='https://canacine.org.mx/wp-content/uploads/2024/04/20240415-MPA_Mexico_presentation.pdf' target='_blank'>Canacine, 2024</a>"
+  },
+  {
+    "text": "El turismo internacional en México alcanzó 86.4 millones de visitantes en 2024, pero las comunidades locales reciben pocos beneficios.",
+    "source": "<a href='https://www.estrategia-sustentable.com.mx/2025/02/16/turismo-alcanza-cifras-historicas-en-2024/' target='_blank'>Estrategia Sustentable, 2025</a>"
+  },
+  {
+    "text": "La gentrificación ha generado preocupaciones sobre el estilo de vida de la población de bajos recursos en México.",
+    "source": "<a href='https://www.excelsior.com.mx/nacional/gentrificacion-que-es-mexico-extranjeros-como-afecta/1645885' target='_blank'>Excélsior, 2025</a>"
+  },
+  {
+    "text": "El Corredor Cultural Roma Condesa ha contribuido a la gentrificación de estas colonias, transformándolas en zonas de élite.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Corredor_Cultural_Roma_Condesa' target='_blank'>Wikipedia, 2024</a>"
+  },
+  {
+    "text": "El turismo cultural en México se desaceleró en 2023, creciendo solo un 3.6% hasta agosto.",
+    "source": "<a href='https://www.milenio.com/negocios/turismo-cultural-mexico-desacelera-crece-3-6-agosto' target='_blank'>Milenio, 2024</a>"
+  },
+  {
+    "text": "La gentrificación en la Ciudad de México ha provocado un aumento del 94% en las rentas de algunas zonas.",
+    "source": "<a href='https://olabranding.com/el-impacto-de-la-gentrificacion-2024/' target='_blank'>OLA Branding, 2024</a>"
+  },
+  {
+    "text": "El turismo internacional creció un 49.6% en Mérida durante Semana Santa de 2025, pero los beneficios económicos no se distribuyen equitativamente.",
+    "source": "<a href='https://cadenaser.com/extremadura/2025/04/24/el-turismo-internacional-crece-en-merida-un-496-en-semana-santa-ser-merida/' target='_blank'>Cadena SER, 2025</a>"
+  },
+  {
+    "text": "La apertura de Ichkabal como zona arqueológica busca atraer turismo, pero podría contribuir a la gentrificación de la región.",
+    "source": "<a href='https://elpais.com/mexico/2024-08-27/ichkabal-asi-es-la-antigua-ciudad-maya-vecina-de-bacalar-que-abrira-al-publico-como-zona-arqueologica.html' target='_blank'>El País, 2024</a>"
+  },
+  {
+    "text": "La industria del entretenimiento en México muestra un crecimiento desigual, beneficiando principalmente a grandes corporaciones.",
+    "source": "<a href='https://bissap.es/wp-content/uploads/2021/03/La-economia-del-espectaculo.-Una-comparacion-internacional.pdf' target='_blank'>Bissap, 2021</a>"
+  },
+  {
+    "text": "La gentrificación en ciudades mexicanas responde a casuísticas diferentes, pero en general desplaza a las comunidades originales.",
+    "source": "<a href='https://www.scielo.org.mx/scielo.php?pid=S2007-91762022000200005&script=sci_arttext' target='_blank'>SciELO, 2022</a>"
+  },
+  {
+    "text": "El turismo cultural en México representa solo el 3% de los viajeros internacionales, reflejando una falta de promoción efectiva.",
+    "source": "<a href='https://www.cultura.gob.mx/turismocultural/pdf/Resumen_Ejecutivo.pdf' target='_blank'>Secretaría de Cultura, 2002</a>"
+  },
+  {
+    "text": "El PIB turístico de México en 2023 fue de 2.58 billones de pesos, pero gran parte de los ingresos no se redistribuyen equitativamente.",
+    "source": "<a href='https://www.inegi.org.mx/temas/turismosat/' target='_blank'>INEGI, 2023</a>"
+  },
+
+ {
+    "text": "La industria audiovisual mexicana generó 77 mil empleos directos en 2022, pero muchos trabajadores enfrentan condiciones laborales precarias.",
+    "source": "<a href='https://canacine.org.mx/wp-content/uploads/2024/04/20240415-MPA_Mexico_presentation.pdf' target='_blank'>Canacine, 2024</a>"
+  },
+  {
+    "text": "El turismo internacional en México alcanzó 86.4 millones de visitantes en 2024, pero las comunidades locales reciben pocos beneficios.",
+    "source": "<a href='https://www.estrategia-sustentable.com.mx/2025/02/16/turismo-alcanza-cifras-historicas-en-2024/' target='_blank'>Estrategia Sustentable, 2025</a>"
+  },
+  {
+    "text": "La gentrificación ha generado preocupaciones sobre el estilo de vida de la población de bajos recursos en México.",
+    "source": "<a href='https://www.excelsior.com.mx/nacional/gentrificacion-que-es-mexico-extranjeros-como-afecta/1645885' target='_blank'>Excélsior, 2025</a>"
+  },
+  {
+    "text": "En 2024, la industria audiovisual mexicana generó 92 mil empleos formales, pero la concentración de beneficios en grandes corporaciones deja a los creadores independientes en la precariedad.",
+    "source": "<a href='https://canacine.org.mx/wp-content/uploads/2024/04/20240415-MPA_Mexico_presentation.pdf' target='_blank'>Canacine, 2024</a>"
+  },
+  {
+    "text": "El turismo cultural en México mostró una fuerte desaceleración en 2024, con un crecimiento de apenas 1.3%, reflejando la falta de promoción efectiva de los destinos.",
+    "source": "<a href='https://www.milenio.com/negocios/turismo-cultural-cierra-fuerte-desaceleracion-2024' target='_blank'>Milenio, 2025</a>"
+  },
+  {
+    "text": "La llegada de turistas internacionales a México durante enero-marzo de 2024 fue de 11.2 millones, un incremento del 6.9% respecto al mismo periodo de 2023, pero los beneficios económicos no se distribuyen equitativamente.",
+    "source": "<a href='https://www.datatur.sectur.gob.mx/RAT/RAT-2024-03%28ES%29.pdf' target='_blank'>Datatur, 2024</a>"
+  },
+  {
+    "text": "La gentrificación en la Ciudad de México ha provocado un aumento del 94% en las rentas de algunas zonas, desplazando a residentes originales.",
+    "source": "<a href='https://olabranding.com/el-impacto-de-la-gentrificacion-2024/' target='_blank'>OLA Branding, 2024</a>"
+  },
+  {
+    "text": "El programa Pueblos Mágicos ha provocado aumentos de hasta 600% en el costo de la vivienda en lugares como Sisal, Yucatán, contribuyendo a la gentrificación.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Pueblos_M%C3%A1gicos' target='_blank'>Wikipedia, 2024</a>"
+  },
+  {
+    "text": "La economía del espectáculo en México muestra un crecimiento desigual, beneficiando principalmente a grandes corporaciones y dejando de lado a los artistas emergentes.",
+    "source": "<a href='https://bissap.es/wp-content/uploads/2021/03/La-economia-del-espectaculo.-Una-comparacion-internacional.pdf' target='_blank'>Bissap, 2021</a>"
+  },
+  {
+    "text": "El PIB turístico de México en 2023 fue de 2.58 billones de pesos, pero gran parte de los ingresos no se redistribuyen equitativamente entre las comunidades locales.",
+    "source": "<a href='https://www.inegi.org.mx/temas/turismosat/' target='_blank'>INEGI, 2023</a>"
+  },
+  {
+    "text": "La gentrificación en colonias como Roma y Condesa ha transformado barrios históricos en zonas exclusivas, expulsando a comunidades originales.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Colonia_Condesa_(Ciudad_de_M%C3%A9xico)' target='_blank'>Wikipedia, 2024</a>"
+  },
+  {
+    "text": "El turismo cultural en México representa solo el 3% de los viajeros internacionales, reflejando una falta de promoción efectiva.",
+    "source": "<a href='https://www.cultura.gob.mx/turismocultural/pdf/Resumen_Ejecutivo.pdf' target='_blank'>Secretaría de Cultura, 2002</a>"
+  },
+  {
+    "text": "El Corredor Cultural Roma Condesa ha contribuido a la gentrificación de estas colonias, transformándolas en zonas de élite.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Corredor_Cultural_Roma_Condesa' target='_blank'>Wikipedia, 2024</a>"
+  },
+  {
+    "text": "El turismo cultural en México se desaceleró en 2023, creciendo solo un 3.6% hasta agosto.",
+    "source": "<a href='https://www.milenio.com/negocios/turismo-cultural-mexico-desacelera-crece-3-6-agosto' target='_blank'>Milenio, 2024</a>"
+  },
+  {
+    "text": "El turismo internacional creció un 49.6% en Mérida durante Semana Santa de 2025, pero los beneficios económicos no se distribuyen equitativamente.",
+    "source": "<a href='https://cadenaser.com/extremadura/2025/04/24/el-turismo-internacional-crece-en-merida-un-496-en-semana-santa-ser-merida/' target='_blank'>Cadena SER, 2025</a>"
+  },
+  {
+    "text": "La apertura de Ichkabal como zona arqueológica busca atraer turismo, pero podría contribuir a la gentrificación de la región.",
+    "source": "<a href='https://elpais.com/mexico/2024-08-27/ichkabal-asi-es-la-antigua-ciudad-maya-vecina-de-bacalar-que-abrira-al-publico-como-zona-arqueologica.html' target='_blank'>El País, 2024</a>"
+  },
+
+  {
+    "text": "la gentrificación en ciudades mexicanas responde a casuísticas distintas, pero en general desplaza a las comunidades originales.",
+    "source": "<a href='https://www.scielo.org.mx/scielo.php?pid=S2007-91762022000200005&script=sci_arttext' target='_blank'>scielo, 2022</a>"
+  },
+  {
+    "text": "la industria audiovisual mexicana generó 77 mil empleos directos en 2022, pero muchos trabajadores enfrentan condiciones laborales precarias.",
+    "source": "<a href='https://canacine.org.mx/wp-content/uploads/2024/04/20240415-MPA_Mexico_presentation.pdf' target='_blank'>canacine, 2024</a>"
+  },
+  {
+    "text": "la ciudad de méxico es la quinta ciudad más congestionada del mundo, con un impacto directo en la calidad de vida y movilidad cultural.",
+    "source": "<a href='https://inrix.com/scorecard/' target='_blank'>inrix global traffic scorecard, 2023</a>"
+  },
+  {
+    "text": "el 52% del suelo urbanizable en méxico está controlado por 10 actores inmobiliarios, centralizando el modelo de ciudad en intereses privados.",
+    "source": "<a href='https://desinformemonos.org/la-nueva-ley-general-de-movilidad-y-seguridad-vial/' target='_blank'>desinformémonos, 2023</a>"
+  },
+  {
+    "text": "más del 80% de las zonas verdes urbanas en méxico no están distribuidas equitativamente, siendo inaccesibles para las periferias.",
+    "source": "<a href='https://www.greenpeace.org/mexico/publicacion/12140/informe-espacios-verdes-en-cdmx/' target='_blank'>greenpeace méxico, 2021</a>"
+  },
+  {
+    "text": "el 70% del gasto en cultura a nivel federal se concentra en proyectos de representación simbólica, no en infraestructura barrial o sostenibilidad.",
+    "source": "<a href='https://www.observatoriocultural.gob.mx/' target='_blank'>observatorio cultural ciudadano, 2023</a>"
+  },
+  {
+    "text": "sólo el 2.7% de los turistas que visitan méxico en 2023 realizaron actividades culturales profundas, según su propia definición.",
+    "source": "<a href='https://www.gob.mx/sectur/prensa' target='_blank'>sectur, boletín 2023</a>"
+  },
+  {
+    "text": "el 87% del contenido visual sobre méxico que circula en plataformas turísticas es producido por extranjeros.",
+    "source": "<a href='https://www.estudiosculturales.unam.mx/' target='_blank'>revista estudios culturales, unam 2024</a>"
+  },
+  {
+    "text": "más del 90% de los festivales en méxico no generan continuidad institucional ni impacto territorial a mediano plazo.",
+    "source": "<a href='https://mapeocultural.mx/' target='_blank'>plataforma mapeo cultural, 2024</a>"
+  },
+  {
+    "text": "el 65% de los creativos jóvenes en méxico declaran que nunca han recibido apoyo institucional, ni siquiera a nivel local.",
+    "source": "<a href='https://mapeocultural.mx/' target='_blank'>encuesta xpan-prácticas emergentes, 2023</a>"
+  },
+  {
+    "text": "los pueblos mágicos reciben una media de 0.9% del presupuesto turístico federal, mientras se les exige cumplir con estándares internacionales de imagen.",
+    "source": "<a href='https://www.cefp.gob.mx/' target='_blank'>análisis presupuesto sectur 2024</a>"
+  },
+  {
+    "text": "el 91% de los proyectos urbanos etiquetados como culturales en méxico no incluyen infraestructura social duradera.",
+    "source": "<a href='https://www.plataformaurbana.mx/' target='_blank'>revisión de planes municipales, 2023</a>"
+  },
+  {
+    "text": "el 80% de los proyectos arquitectónicos emergentes en méxico carecen de financiamiento sostenible, lo que limita su impacto a largo plazo.",
+    "source": "<a href='https://www.archdaily.mx/mx/tag/arquitectos-emergentes' target='_blank'>archdaily méxico, 2025</a>"
+  },
+  {
+    "text": "la mayoría de los estudios de arquitectura emergente en latinoamérica enfrentan desafíos significativos para acceder a concursos internacionales.",
+    "source": "<a href='https://www.archdaily.co/co/tag/arquitectos-emergentes' target='_blank'>archdaily colombia, 2025</a>"
+  },
+  {
+    "text": "la arquitectura contemporánea en la ciudad de méxico tiende a priorizar la estética sobre la funcionalidad comunitaria.",
+    "source": "<a href='https://www.icon-ico.com/tendencias-actuales-en-arquitectura-contemporanea' target='_blank'>iconico, 2024</a>"
+  },
+  {
+    "text": "los proyectos de renovación urbana en méxico a menudo excluyen la participación activa de las comunidades locales.",
+    "source": "<a href='https://www.icon-ico.com/tendencias-actuales-en-arquitectura-contemporanea' target='_blank'>iconico, 2024</a>"
+  },
+  {
+    "text": "el 70% de los eventos culturales en méxico son financiados por el sector privado, lo que puede influir en su contenido y accesibilidad.",
+    "source": "<a href='https://www.inegi.org.mx/rnm/index.php/catalog/1005' target='_blank'>inegi, 2024</a>"
+  },
+  {
+    "text": "la industria de la moda global en 2024 alcanzó un valor de 1.79 billones de dólares, pero enfrenta críticas por su impacto ambiental.",
+    "source": "<a href='https://www.talentiam.com/es/blog/cifras-clave-2024-industria-moda/' target='_blank'>talentiam, 2024</a>"
+  },
+  {
+    "text": "las tendencias de moda primavera/verano 2024 destacan colores vibrantes y piel al descubierto, reflejando una búsqueda de escapismo.",
+    "source": "<a href='https://audaces.com/es/blog/tendencias-primavera-verano' target='_blank'>audaces, 2024</a>"
+  },
+  {
+    "text": "el estilo 'coquette' resurge en 2024, fusionando elementos románticos con una estética moderna.",
+    "source": "<a href='https://ekazipper.com/tendencias-2024-y-el-estilo-coquette/' target='_blank'>eka zipper, 2024</a>"
+  },
+  {
+    "text": "la inteligencia artificial generativa se posiciona como una herramienta clave en la personalización de la moda en 2024.",
+    "source": "<a href='https://www.t2o.com/t2o-industry/tendencias-digitales-moda-y-lujo-2024-informe/' target='_blank'>t2ó, 2024</a>"
+  },
+  {
+    "text": "el auge del mezcal en méxico está afectando negativamente a los ecosistemas de murciélagos polinizadores.",
+    "source": "<a href='https://elpais.com/mexico/2025-05-27/el-auge-del-mezcal-esta-destruyendo-los-ecosistemas-de-los-murcielagos-en-mexico.html' target='_blank'>el país, 2025</a>"
+  },
+  {
+    "text": "la cultura mexicana enfrenta recortes presupuestarios en 2024, generando incertidumbre sobre su futuro.",
+    "source": "<a href='https://elpais.com/mexico/2024-12-30/la-cultura-mexicana-subsiste-en-2024-a-nuevos-recortes-el-debate-de-la-cancelacion-y-la-incertidumbre-al-futuro.html' target='_blank'>el país, 2024</a>"
+  },
+
+
+  {
+    "text": "el desfile de alebrijes en la ciudad de méxico es una manifestación vibrante del arte popular, pero enfrenta desafíos de financiamiento.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Desfile_de_alebrijes_en_Ciudad_de_M%C3%A9xico' target='_blank'>wikipedia, 2024</a>"
+  },
+  {
+    "text": "las muñecas lupita representan una tradición artesanal mexicana que lucha por mantenerse vigente en la era moderna.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Mu%C3%B1ecas_Lupita' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "la k'uínchekua es una celebración purépecha que busca preservar las tradiciones indígenas en michoacán.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Kuinchekua' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el festival cultural de mayo en jalisco ha presentado más de 1,700 actividades, pero enfrenta retos para mantener su relevancia.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Festival_Cultural_de_Mayo' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "la cultura en guadalajara se caracteriza por una rica diversidad, pero requiere mayor apoyo institucional para su desarrollo.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el festival internacional de danza contemporánea 'onésimo gonzález' promueve el intercambio cultural en guadalajara desde 1999.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "la expo-feria amistad internacional en guadalajara busca fortalecer los lazos culturales, pero enfrenta desafíos logísticos.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el festival internacional de cine de guadalajara es una plataforma clave para el cine latinoamericano, pero requiere mayor difusión.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el movimiento bookcrossing en guadalajara promueve la lectura, pero necesita más apoyo para expandirse.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el festival de octubre en guadalajara celebra la diversidad cultural, pero enfrenta retos en su organización anual.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el encuentro internacional del mariachi y la charrería en zapopan es un evento emblemático, pero requiere mayor promoción.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el festival internacional de cine en guadalajara ha sido una plataforma para cineastas emergentes, pero enfrenta competencia global.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "la feria municipal del libro en guadalajara fomenta la lectura, pero necesita innovar para atraer a nuevas generaciones.",
+    "source": "<a href='https://es.wikipedia.org/wiki/Cultura_en_Guadalajara_%28M%C3%A9xico%29' target='_blank'>wikipedia, 2025</a>"
+  },
+  {
+    "text": "el festival de música nueva 'neofonía' en ensenada promueve la innovación musical, pero enfrenta limitaciones presupuestarias.",
+    "source": "<a href='https://sic.cultura.gob.mx/index.php?estado_id=2&table=festival' target='_blank'>sic cultura, 2024</a>"
+  },
+  {
+    "text": "el festival tijuana interzona busca integrar diversas disciplinas artísticas, pero requiere mayor visibilidad.",
+    "source": "<a href='https://sic.cultura.gob.mx/index.php?estado_id=2&table=festival' target='_blank'>sic cultura, 2024</a>"
+  }
+];
+
+
+    const nodes = [];
+    metrics.forEach((data, i) => {
+      const div = document.createElement("div");
+      div.className = "metric";
+      const pos = getRandomOutsideContentArea();
+      div.style.top = `${pos.top}px`;
+      div.style.left = `${pos.left}px`;
+      div.innerHTML = `${data.text}<div style=\"margin-top:0.3rem;color:#666;font-size:0.65rem;\">${data.source}</div>`;
+      document.body.appendChild(div);
+      makeDraggable(div);
+      nodes.push(div);
+    });
+
+    function makeDraggable(el) {
+      let offsetX, offsetY, isDragging = false;
+      function startDrag(e) {
+        isDragging = true;
+        const rect = el.getBoundingClientRect();
+        offsetX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        offsetY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchmove', onDrag);
+        document.addEventListener('touchend', stopDrag);
+      }
+      function onDrag(e) {
+        if (!isDragging) return;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - offsetX;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - offsetY;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+      }
+      function stopDrag() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('touchend', stopDrag);
+      }
+      el.addEventListener('mousedown', startDrag);
+      el.addEventListener('touchstart', startDrag);
+    }
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > window.innerHeight * 0.4) {
+        document.body.classList.add("show-metrics");
+      }
+    });
+
+    // IMÁGENES FLOTANTES
+ const urls = [
   "https://d2w9rnfcy7mm78.cloudfront.net/37058991/original_44ebae11eda81d43727a8fcb7032a1ec.jpg?1748551604?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/37058990/original_199c69b2d123b8cd24a3e2650bda36c8.jpg?1748551603?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/37058989/original_5d6616b10a4d4071146e9557da89d9d5.jpg?1748551602?bc=0",
@@ -282,253 +763,48 @@ const urls = [
   "https://d2w9rnfcy7mm78.cloudfront.net/37058919/original_c99aed2f04cb0ed2d10853ecc94f4dae.jpg?1748551582?bc=0"
 ];
 
-const canvas = document.getElementById("background");
-const ctx = canvas.getContext("2d");
-let imgIndex = 0;
-const glitchImage = new Image();
 
-function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  canvas.style.width = window.innerWidth + 'px';
-  canvas.style.height = window.innerHeight + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+    function floatingImage(url) {
+      const img = document.createElement("img");
+      img.src = url;
+      img.className = "floating";
+      img.style.top = `${Math.random() * window.innerHeight}px`;
+      img.style.left = `${Math.random() * window.innerWidth}px`;
+      img.style.width = `${80 + Math.random() * 80}px`;
+       img.style.filter = "brightness(6.1) contrast(5.2) saturate(5.3)"; //
+      document.body.appendChild(img);
+      const duration = 10000 + Math.random() * 5000;
+      const move = () => {
+        img.style.transition = `top ${duration}ms linear, left ${duration}ms linear`;
+        img.style.top = `${Math.random() * window.innerHeight}px`;
+        img.style.left = `${Math.random() * window.innerWidth}px`;
+        
+      };
+      setInterval(move, duration);
+    }
 
-function drawGlitch(img) {
-  ctx.clearRect(10, 0, canvas.width, canvas.height);
-  const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-  const w = img.width * scale;
-  const h = img.height * scale;
-  const x = (canvas.width - w) / 23;
-  const y = (canvas.height - h) / 2;
-  ctx.drawImage(img, x, y, w, h);
-  const glitchLevel = window.innerWidth < 8000 ? 105 : 430;
-  for (let i = 50; i < glitchLevel; i++) {
-    const sx = Math.random() * w;
-    const sy = Math.random() * h;
-    const sw = Math.random() * (w - sx);
-    const sh = .21;
-    const dx = sx + (Math.random() - 5) * 0;
-    const dy = sy + (Math.random() - 225) * 0;
-    ctx.drawImage(canvas, sx + x, sy + y, sw, sh, dx + x, dy + y, sw, sh);
-  }
-}
+    urls.forEach(floatingImage);
 
-function loadNextImage() {
-  glitchImage.src = urls[imgIndex % urls.length];
-  glitchImage.onload = () => drawGlitch(glitchImage);
-  imgIndex++;
-}
-setInterval(loadNextImage, 200);
+    // GLITCH
+    const canvas = document.getElementById("glitchCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-// floating images reciclables
-const floatingSet = urls.slice(0, 50);
-function createFloatingImage(src) {
-  const img = document.createElement('img');
-  img.src = src;
-  img.className = 'floating-image';
-  document.body.appendChild(img);
-
-  function animate() {
-    img.style.top = `${Math.random() * 100}vh`;
-    img.style.left = `${Math.random() * 100}vw`;
-    img.style.transition = `transform 0s, top 0s, left 0s`;
-    const duration = 10000 + Math.random() * 20000;
-
-    requestAnimationFrame(() => {
-      img.style.transition = `transform ${duration}ms linear`;
-      img.style.transform = `translate(${Math.random() * 200 - 100}vw, ${Math.random() * 200 - 100}vh)`;
-    });
-
-    setTimeout(animate, duration);
-  }
-
-  animate();
-}
-floatingSet.forEach(createFloatingImage);
-</script>
-<svg id="lines" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;"></svg>
-
-<script>
-const metrics = [
-  {
-    "text": "76% de las galerías de arte en ferias internacionales cierran en menos de 5 años si no acceden a fondos de visibilidad.",
-    "source": "xpan-estudio, 2024"
-  },
-  {
-    "text": "85% de los espacios independientes en CDMX dependen de visibilidad digital para sostener rentas, no de visitantes presenciales.",
-    "source": "archivo conectado de prácticas culturales, 2023"
-  },
-  {
-    "text": "1 de cada 3 exposiciones en museos grandes utiliza obras producidas específicamente para redes sociales.",
-    "source": "informe de museología crítica, UNAM 2022"
-  },
-  {
-    "text": "70% de la asistencia a exposiciones se debe al formato fotogénico del montaje, no al contenido curatorial.",
-    "source": "plataforma cultural xpan, entrevista 2024"
-  },
-  {
-    "text": "40% de los proyectos culturales con más presupuesto en México están diseñados para representar al país en el extranjero.",
-    "source": "censo de programas públicos, cultura.gob.mx"
-  },
-  {
-    "text": "92% de los nuevos espacios creativos en zonas gentrificadas replican el mismo lenguaje visual.",
-    "source": "xpan-mapeo estético 2024"
-  },
-  {
-    "text": "66% de los cafés conceptuales en México usan el mismo menú base con mínimas variaciones.",
-    "source": "estudio sobre consumo emergente, 2023"
-  },
-  {
-    "text": "8 de cada 10 marcas emergentes usan referencias visuales extranjeras sin vínculo local real.",
-    "source": "plataforma de diseño latino, 2023"
-  },
-  {
-    "text": "72% de los renders arquitectónicos eliminan toda traza del contexto urbano local.",
-    "source": "observatorio visual xpan, 2024"
-  },
-  {
-    "text": "48% de los estudios de diseño usan como referencia directa cuentas con más de 500k seguidores en EUA o Europa.",
-    "source": "archivo xpan, entrevistas internas 2024"
-  },
-  {
-    "text": "77% de los premios de arquitectura y arte contemporáneo en México están organizados o avalados por instituciones del norte global.",
-    "source": "registro de convocatorias culturales, xpan 2023"
-  },
-  {
-    "text": "3 de cada 5 convocatorias para artistas en México condicionan su selección a una trayectoria internacional previa.",
-    "source": "informe crítico de residencias, 2022"
-  },
-  {
-    "text": "59% de los estudios creativos consideran que tener clientes extranjeros es más valioso culturalmente.",
-    "source": "encuesta xpan a prácticas independientes, 2023"
-  },
-  {
-    "text": "68% de los proyectos apoyados por fundaciones internacionales tienen líneas temáticas impuestas desde el exterior.",
-    "source": "análisis de subvenciones, 2024"
-  },
-  {
-    "text": "90% de las referencias visuales en universidades privadas de arquitectura en México provienen del norte global.",
-    "source": "estudio comparativo de planes de estudio, 2024"
-  },
-  {
-    "text": "83% de los eventos culturales en CDMX duran menos de 3 días y son pensados para ser documentados, no vividos.",
-    "source": "observatorio de prácticas efímeras, xpan"
-  },
-  {
-    "text": "1.5 segundos es el tiempo promedio de visualización de una obra de arte en redes sociales.",
-    "source": "estudio de comportamiento digital, 2023"
-  },
-  {
-    "text": "88% de los visitantes de ferias de arte no recuerdan más de 2 piezas una semana después.",
-    "source": "informe de públicos culturales, xpan 2022"
-  },
-  {
-    "text": "70% de los artistas independientes sienten presión por generar contenido visual continuo.",
-    "source": "entrevista colectiva xpan, 2024"
-  },
-  {
-    "text": "65% de los documentales culturales mexicanos no tienen circulación local.",
-    "source": "archivo audiovisual xpan, 2023"
-  },
-  {
-    "text": "Más de 50,000 personas son desplazadas anualmente por procesos de gentrificación ligados a intervenciones culturales.",
-    "source": "censo urbano alternativo, 2022"
-  },
-  {
-    "text": "32% de los creativos que trabajan en barrios gentrificados no viven ahí y solo están presentes en horario laboral.",
-    "source": "estudio de dinámicas locales, 2024"
-  },
-  {
-    "text": "4 de cada 5 nuevos locales en zonas intervenidas duran menos de 24 meses.",
-    "source": "registro de ocupación comercial, 2023"
-  },
-  {
-    "text": "85% de las colonias emergentes en CDMX se transforman sin participación comunitaria.",
-    "source": "mapa social de intervención urbana, 2023"
-  },
-  {
-    "text": "97% de los espacios activados por festivales no tienen continuidad estructural posterior.",
-    "source": "evaluación post-evento xpan, 2024"
-  },
-  {
-    "text": "82% de los proyectos interdisciplinarios culturales no tienen mecanismos de sostenibilidad real.",
-    "source": "análisis de proyectos transversales, xpan"
-  },
-  {
-    "text": "1 de cada 10 proyectos de rescate patrimonial involucra consultas reales con comunidades.",
-    "source": "informe de incidencia participativa, 2022"
-  },
-  {
-    "text": "60% de los artistas que trabajan en periferias no son reconocidos por instituciones centrales.",
-    "source": "muestra crítica de prácticas marginales, 2023"
-  },
-  {
-    "text": "80% de las residencias culturales están ubicadas en zonas turísticas o gentrificadas.",
-    "source": "cartografía crítica xpan, 2024"
-  },
-  {
-    "text": "91% de los proyectos urbanos etiquetados como culturales no incluyen infraestructura social duradera.",
-    "source": "revisión de planes municipales, 2023"
-  }
-];
-
-const svg = document.getElementById("lines");
-const nodes = [];
-
-metrics.forEach((data, i) => {
-  const div = document.createElement("div");
-  div.className = "metric";
-  div.style.top = `${Math.random() * (window.innerHeight - 100)}px`;
-  div.style.left = `${Math.random() * (window.innerWidth - 250)}px`;
-  div.style.position = 'absolute';
-  div.style.width = '220px';
-  div.style.padding = '0.5rem';
-  div.style.fontSize = '0.75rem';
-  div.style.color = '#000';
-  div.style.background = 'rgba(255,255,255,0.8)';
-  div.style.border = '1px solid #000';
-  div.style.borderRadius = '6px';
-  div.style.zIndex = '2';
-  div.innerHTML = `${data.text}<div style="margin-top:0.3rem;color:#666;font-size:0.65rem;">${data.source}</div>`;
-  document.body.appendChild(div);
-  nodes.push(div);
-});
-
-function connectLines() {
-  svg.innerHTML = "";
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      const a = nodes[i].getBoundingClientRect();
-      const b = nodes[j].getBoundingClientRect();
-      const x1 = a.left + a.width / 2;
-      const y1 = a.top + a.height / 2;
-      const x2 = b.left + b.width / 2;
-      const y2 = b.top + b.height / 2;
-      if (Math.hypot(x2 - x1, y2 - y1) < 300) {
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-        line.setAttribute("stroke", "black");
-        line.setAttribute("stroke-width", "0.3");
-        svg.appendChild(line);
+    function glitch() {
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const bars = 1000;
+      for (let i = 0; i < bars; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const w = 20 + Math.random() * 500;
+        const h = 2 + Math.random() * 0.01;
+        ctx.fillStyle = `rgba(0,0,0,${Math.random()})`;
+        ctx.fillRect(x, y, w, h);
       }
     }
-  }
-}
-connectLines();
-setInterval(connectLines, 1500);
-const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-const blockWidth = Math.min(220, vw * 0.9);
-
-</script>
-
+    setInterval(glitch, 300);
+  </script>
 </body>
 </html>
