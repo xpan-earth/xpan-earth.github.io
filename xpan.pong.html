@@ -12,6 +12,7 @@
       overflow: hidden;
       font-family: 'Times New Roman', serif;
       touch-action: none;
+      height: 100vh;
     }
     canvas {
       display: block;
@@ -71,18 +72,11 @@
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+
 let width = window.innerWidth;
 let height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
-
-window.addEventListener("resize", () => {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-  paddle.y = height - 30;
-});
 
 const paddle = {
   width: 100,
@@ -90,6 +84,15 @@ const paddle = {
   x: width / 2 - 50,
   y: height - 30,
 };
+
+function resize() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+  paddle.y = height - 30;
+}
+window.addEventListener("resize", resize);
 
 canvas.addEventListener("mousemove", e => {
   paddle.x = e.clientX - paddle.width / 2;
@@ -103,7 +106,8 @@ let score = 0;
 let balls = [];
 let sparkles = [];
 let nextBallScore = 6;
-let ballImg = new Image();
+
+const ballImg = new Image();
 ballImg.src = "xpan.svg";
 
 ballImg.onload = () => {
@@ -117,27 +121,26 @@ function addBall() {
     width / 2, height / 2,
     (Math.random() < 0.5 ? -1 : 1) * speed,
     -speed,
-    ballImg,
-    ballImg.naturalWidth,
-    ballImg.naturalHeight
+    ballImg
   ));
 }
 
 class Ball {
-  constructor(x, y, dx, dy, img, w, h) {
+  constructor(x, y, dx, dy, img) {
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
     this.img = img;
-    this.naturalWidth = w;
-    this.naturalHeight = h;
     this.scale = 0.03;
+    this.naturalWidth = img.naturalWidth;
+    this.naturalHeight = img.naturalHeight;
+    this.aspectRatio = img.naturalWidth / img.naturalHeight;
   }
 
   draw() {
-    const w = this.naturalWidth * this.scale;
     const h = this.naturalHeight * this.scale;
+    const w = this.aspectRatio * h;
     ctx.drawImage(this.img, this.x - w / 2, this.y - h / 2, w, h);
   }
 
@@ -148,8 +151,8 @@ class Ball {
     if (this.x < 0 || this.x > width) this.dx *= -1;
     if (this.y < 0) this.dy *= -1;
 
-    const w = this.naturalWidth * this.scale;
     const h = this.naturalHeight * this.scale;
+    const w = this.aspectRatio * h;
 
     if (
       this.y + h / 2 >= paddle.y &&
@@ -242,7 +245,6 @@ function updateScoreDisplay() {
   scoreBar.style.width = `${(score % 10) * 10}%`;
 }
 
-// Pausa automática
 let paused = false;
 document.addEventListener("visibilitychange", () => {
   paused = document.hidden;
