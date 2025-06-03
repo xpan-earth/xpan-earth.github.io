@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,7 +13,6 @@
       overflow: hidden;
       font-family: 'Times New Roman', serif;
       touch-action: none;
-      height: 100vh;
     }
     canvas {
       display: block;
@@ -72,18 +72,10 @@
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-
 let width = window.innerWidth;
 let height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
-
-const paddle = {
-  width: 100,
-  height: 12,
-  x: width / 2 - 50,
-  y: height - 30,
-};
 
 function resize() {
   width = window.innerWidth;
@@ -93,6 +85,16 @@ function resize() {
   paddle.y = height - 30;
 }
 window.addEventListener("resize", resize);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", resize);
+}
+
+const paddle = {
+  width: 100,
+  height: 12,
+  x: width / 2 - 50,
+  y: height - 30,
+};
 
 canvas.addEventListener("mousemove", e => {
   paddle.x = e.clientX - paddle.width / 2;
@@ -106,8 +108,7 @@ let score = 0;
 let balls = [];
 let sparkles = [];
 let nextBallScore = 6;
-
-const ballImg = new Image();
+let ballImg = new Image();
 ballImg.src = "xpan.svg";
 
 ballImg.onload = () => {
@@ -133,12 +134,24 @@ class Ball {
     this.dy = dy;
     this.img = img;
     this.scale = 0.03;
-    this.naturalWidth = img.naturalWidth;
-    this.naturalHeight = img.naturalHeight;
-    this.aspectRatio = img.naturalWidth / img.naturalHeight;
+    this.ready = false;
+
+    if (img.complete) {
+      this.setDimensions();
+    } else {
+      img.onload = () => this.setDimensions();
+    }
+  }
+
+  setDimensions() {
+    this.naturalWidth = this.img.naturalWidth || 100;
+    this.naturalHeight = this.img.naturalHeight || 100;
+    this.aspectRatio = this.naturalWidth / this.naturalHeight;
+    this.ready = true;
   }
 
   draw() {
+    if (!this.ready) return;
     const h = this.naturalHeight * this.scale;
     const w = this.aspectRatio * h;
     ctx.drawImage(this.img, this.x - w / 2, this.y - h / 2, w, h);

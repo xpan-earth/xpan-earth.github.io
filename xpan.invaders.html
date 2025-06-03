@@ -8,15 +8,13 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: #fff;
       overflow: hidden;
-      height: 100%;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
       touch-action: none;
     }
     canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
+      display: block;
       width: 100vw;
       height: 100vh;
     }
@@ -50,29 +48,31 @@
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-
 let width = window.innerWidth;
 let height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
 
-window.addEventListener("resize", () => {
+const paddle = { width: 80, height: 10, x: width / 2 - 40, y: height - 40 };
+
+function resizeCanvasAndPaddle() {
   width = window.innerWidth;
   height = window.innerHeight;
   canvas.width = width;
   canvas.height = height;
   paddle.y = height - 40;
-});
-
-const paddle = { width: 80, height: 10, x: width / 2 - 40, y: height - 40 };
+  paddle.x = Math.min(Math.max(0, paddle.x), width - paddle.width);
+}
+window.addEventListener("resize", resizeCanvasAndPaddle);
+resizeCanvasAndPaddle();
 
 canvas.addEventListener("mousemove", (e) => {
-  paddle.x = e.clientX - paddle.width / 2;
+  paddle.x = Math.min(Math.max(0, e.clientX - paddle.width / 2), width - paddle.width);
 });
 canvas.addEventListener("touchmove", (e) => {
-  paddle.x = e.touches[0].clientX - paddle.width / 2;
+  paddle.x = Math.min(Math.max(0, e.touches[0].clientX - paddle.width / 2), width - paddle.width);
   e.preventDefault();
-}, { passive: true });
+}, { passive: false });
 canvas.addEventListener("click", () => shoot());
 
 const enemyImg = new Image();
@@ -100,7 +100,7 @@ function triggerExplosion(x, y) {
 
 function initEnemies() {
   enemies = [];
-  const count = Math.floor(Math.random() * 55) + 6; // 6–60
+  const count = Math.floor(Math.random() * 55) + 6;
   totalEnemies = count;
   for (let i = 0; i < count; i++) {
     const side = Math.random() < 0.5 ? "left" : "top";
@@ -153,13 +153,10 @@ function update() {
     enemies.forEach(e => {
       if (e.alive &&
           b.x >= e.x && b.x <= e.x + naturalW * e.scale &&
-          b.y >= e.y && b.y <= e.y + (naturalW / naturalH) * naturalW * e.scale) {
+          b.y >= e.y && b.y <= e.y + naturalH * e.scale) {
         e.alive = false;
         b.y = -10;
-        triggerExplosion(
-          e.x + (naturalW * e.scale) / 2,
-          e.y + ((naturalW / naturalH) * naturalW * e.scale) / 2
-        );
+        triggerExplosion(e.x + (naturalW * e.scale) / 2, e.y + (naturalH * e.scale) / 2);
       }
     });
   });
@@ -189,8 +186,9 @@ function draw() {
   enemies.forEach(e => {
     if (!e.alive) return;
     const w = naturalW * e.scale;
-    const h = (naturalH / naturalW) * w;
-    ctx.drawImage(enemyImg, e.x, e.y, w, h);
+    const h = naturalH * e.scale;
+    const aspectRatio = naturalW / naturalH;
+    ctx.drawImage(enemyImg, e.x, e.y, h * aspectRatio, h);
   });
 
   explosions.forEach(ex => {
