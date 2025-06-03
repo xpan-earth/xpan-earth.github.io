@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan pong</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+    }
+    canvas {
+      display: block;
+    }
+
+    #score {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      font-size: 2.2rem;
+      font-weight: normal;
+      transition: all 0.3s ease;
+      color: #000;
+      z-index: 10;
+    }
+
+    #score-bar {
+      position: fixed;
+      top: 4.4rem;
+      left: 1rem;
+      height: 2px;
+      background: #000;
+      width: 0%;
+      transition: width 0.3s ease;
+      z-index: 10;
+    }
+
+    #score-flash {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3.2rem;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+<div id="score">00</div>
+<div id="score-bar"></div>
+<div id="score-flash">+1</div>
+<canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let width, height;
+function resize() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const paddle = {
+  width: 100,
+  height: 12,
+  x: width / 2 - 50,
+  y: height - 30,
+};
+
+let isTouch = false;
+canvas.addEventListener("mousemove", e => {
+  if (!isTouch) paddle.x = e.clientX - paddle.width / 2;
+});
+canvas.addEventListener("touchmove", e => {
+  isTouch = true;
+  paddle.x = e.touches[0].clientX - paddle.width / 2;
+  e.preventDefault();
+}, { passive: false });
+
+class Ball {
+  constructor(x, y, dx, dy, img, naturalWidth, naturalHeight) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.img = img;
+    this.naturalWidth = naturalWidth;
+    this.naturalHeight = naturalHeight;
+    this.scale = 0.03;
+  }
+
+  draw() {
+    const w = this.naturalWidth * this.scale;
+    const h = this.naturalHeight * this.scale;
+    ctx.drawImage(this.img, this.x - w / 2, this.y - h / 2, w, h);
+  }
+
+  update() {
+    this.x += this.dx;
+    this.y += this.dy;
+
+    if (this.x < 0 || this.x > width) this.dx *= -1;
+    if (this.y < 0) this.dy *= -1;
+
+    const w = this.naturalWidth * this.scale;
+    const h = this.naturalHeight * this.scale;
+
+    if (
+      this.y + h / 2 >= paddle.y &&
+      this.x >= paddle.x &&
+      this.x <= paddle.x + paddle.width &&
+      this.dy > 0
+    ) {
+      this.dy *= -1;
+      score++;
+      updateScoreDisplay();
+      if (score % 5 === 0) {
+        this.dx *= 1.1;
+        this.dy *= 1.1;
+      }
+
+      if (score === nextBallScore) {
+        addBall();
+        nextBallScore += 5 + Math.floor(Math.random() * 9);
+      }
+
+      if (score % 10 === 6) {
+        triggerSparkles();
+      }
+
+      triggerScoreFlash();
+    }
+
+    if (this.y > height + 100) {
+      this.x = width / 2;
+      this.y = height / 2;
+      this.dx = (Math.random() < 0.5 ? -1 : 1) * 3;
+      this.dy = -3;
+    }
+  }
+}
+
+let score = 0;
+let balls = [];
+let nextBallScore = 7 + Math.floor(Math.random() * 7);
+let sparkles = [];
+
+let ballImg = new Image();
+ballImg.src = "xpan.svg";
+ballImg.onload = () => {
+  addBall();
+  requestAnimationFrame(gameLoop);
+};
+
+function addBall() {
+  const newBall = new Ball(
+    width / 2,
+    height / 2,
+    (Math.random() < 0.5 ? -1 : 1) * 3,
+    -3,
+    ballImg,
+    ballImg.naturalWidth,
+    ballImg.naturalHeight
+  );
+  balls.push(newBall);
+}
+
+function drawPaddle() {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+}
+
+class Sparkle {
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height / 2;
+    this.size = 2 + Math.random() * 4;
+    this.opacity = 1;
+    this.fade = 0.02 + Math.random() * 0.02;
+  }
+
+  update() {
+    this.opacity -= this.fade;
+  }
+
+  draw() {
+    if (this.opacity <= 0) return;
+    ctx.fillStyle = `rgba(0,0,0,${this.opacity})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function triggerSparkles() {
+  for (let i = 0; i < 50; i++) {
+    sparkles.push(new Sparkle());
+  }
+}
+
+function triggerScoreFlash() {
+  const flash = document.getElementById("score-flash");
+  flash.textContent = `+1`;
+  flash.style.opacity = 1;
+  setTimeout(() => {
+    flash.style.opacity = 0;
+  }, 800);
+}
+
+function updateScoreDisplay() {
+  const scoreText = document.getElementById("score");
+  const scoreBar = document.getElementById("score-bar");
+  scoreText.textContent = score.toString().padStart(2, "0");
+  scoreBar.style.width = `${(score % 10) * 10}%`;
+}
+
+// Pausa automática
+let paused = false;
+document.addEventListener("visibilitychange", () => {
+  paused = document.hidden;
+  if (!paused) requestAnimationFrame(gameLoop);
+});
+
+function gameLoop() {
+  if (paused) return;
+  ctx.clearRect(0, 0, width, height);
+  drawPaddle();
+  balls.forEach(b => {
+    b.update();
+    b.draw();
+  });
+  sparkles.forEach(s => {
+    s.update();
+    s.draw();
+  });
+  sparkles = sparkles.filter(s => s.opacity > 0);
+  requestAnimationFrame(gameLoop);
+}
+</script>
+</body>
+</html>

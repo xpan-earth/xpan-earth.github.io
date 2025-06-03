@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>xpan invaders</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #fff;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: #000;
+      width: 0%;
+      z-index: 10;
+      transition: width 0.3s ease;
+    }
+    #flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: white;
+      opacity: 0;
+      z-index: 20;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="flash"></div>
+<canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
+
+window.addEventListener("resize", () => {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+  paddle.y = height - 40;
+});
+
+const paddle = { width: 80, height: 10, x: width / 2 - 40, y: height - 40 };
+
+canvas.addEventListener("mousemove", (e) => {
+  paddle.x = e.clientX - paddle.width / 2;
+});
+canvas.addEventListener("touchmove", (e) => {
+  paddle.x = e.touches[0].clientX - paddle.width / 2;
+  e.preventDefault();
+}, { passive: true });
+canvas.addEventListener("click", () => shoot());
+
+const enemyImg = new Image();
+enemyImg.src = "xpan.svg";
+let naturalW = 1, naturalH = 1;
+
+enemyImg.onload = () => {
+  naturalW = enemyImg.naturalWidth;
+  naturalH = enemyImg.naturalHeight;
+  startGame();
+};
+
+let bullets = [], enemies = [], explosions = [];
+let level = 1;
+let totalEnemies = 0;
+const progressBar = document.getElementById("progress-bar");
+
+function shoot() {
+  bullets.push({ x: paddle.x + paddle.width / 2, y: paddle.y, speed: 8 });
+}
+
+function triggerExplosion(x, y) {
+  explosions.push({ x, y, radius: 0, opacity: 1 });
+}
+
+function initEnemies() {
+  enemies = [];
+  const count = Math.floor(Math.random() * 55) + 6; // 6–60
+  totalEnemies = count;
+  for (let i = 0; i < count; i++) {
+    const side = Math.random() < 0.5 ? "left" : "top";
+    const scale = 0.03 + Math.random() * 0.04;
+    enemies.push({
+      x: side === "left" ? 0 : Math.random() * (width - 40),
+      y: side === "top" ? 0 : Math.random() * 100,
+      dx: (Math.random() * 1.5 + 0.2) * (Math.random() < 0.5 ? -1 : 1),
+      dy: 0.3 + Math.random() * 0.5,
+      scale: scale,
+      alive: true
+    });
+  }
+  updateProgressBar();
+}
+
+function updateProgressBar() {
+  const remaining = enemies.filter(e => e.alive).length;
+  const completed = totalEnemies - remaining;
+  const percentage = (completed / totalEnemies) * 100;
+  progressBar.style.width = `${percentage}%`;
+}
+
+function loseGame() {
+  const flash = document.getElementById("flash");
+  flash.style.opacity = 1;
+  setTimeout(() => {
+    flash.style.opacity = 0;
+    level = 1;
+    initEnemies();
+  }, 600);
+}
+
+function update() {
+  paddle.x = Math.max(0, Math.min(width - paddle.width, paddle.x));
+  bullets.forEach(b => b.y -= b.speed);
+  bullets = bullets.filter(b => b.y > 0);
+
+  let enemiesAlive = 0;
+  enemies.forEach(e => {
+    if (!e.alive) return;
+    enemiesAlive++;
+    e.x += e.dx;
+    e.y += e.dy;
+    if (e.x < 0 || e.x > width - 20) e.dx *= -1;
+    if (e.y > height - 40) loseGame();
+  });
+
+  bullets.forEach(b => {
+    enemies.forEach(e => {
+      if (e.alive &&
+          b.x >= e.x && b.x <= e.x + naturalW * e.scale &&
+          b.y >= e.y && b.y <= e.y + naturalH * e.scale) {
+        e.alive = false;
+        b.y = -10;
+        triggerExplosion(e.x + (naturalW * e.scale) / 2, e.y + (naturalH * e.scale) / 2);
+      }
+    });
+  });
+
+  updateProgressBar();
+
+  if (enemiesAlive === 0) {
+    level++;
+    setTimeout(() => initEnemies(), 400);
+  }
+
+  explosions.forEach(ex => {
+    ex.radius += 1.5;
+    ex.opacity -= 0.05;
+  });
+  explosions = explosions.filter(ex => ex.opacity > 0);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#000";
+  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+  ctx.fillStyle = "#000";
+  bullets.forEach(b => ctx.fillRect(b.x - 1, b.y, 2, 10));
+
+  enemies.forEach(e => {
+    if (!e.alive) return;
+    const w = naturalW * e.scale;
+    const h = naturalH * e.scale;
+    ctx.drawImage(enemyImg, e.x, e.y, w, h);
+  });
+
+  explosions.forEach(ex => {
+    ctx.beginPath();
+    ctx.arc(ex.x, ex.y, ex.radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = `rgba(0,0,0,${ex.opacity})`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+}
+
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+function startGame() {
+  initEnemies();
+  gameLoop();
+}
+</script>
+</body>
+</html>
