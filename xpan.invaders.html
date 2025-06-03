@@ -8,11 +8,15 @@
     html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       background: #fff;
+      overflow: hidden;
+      height: 100%;
+      touch-action: none;
     }
     canvas {
-      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
     }
@@ -46,6 +50,7 @@
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+
 let width = window.innerWidth;
 let height = window.innerHeight;
 canvas.width = width;
@@ -148,10 +153,13 @@ function update() {
     enemies.forEach(e => {
       if (e.alive &&
           b.x >= e.x && b.x <= e.x + naturalW * e.scale &&
-          b.y >= e.y && b.y <= e.y + naturalH * e.scale) {
+          b.y >= e.y && b.y <= e.y + (naturalW / naturalH) * naturalW * e.scale) {
         e.alive = false;
         b.y = -10;
-        triggerExplosion(e.x + (naturalW * e.scale) / 2, e.y + (naturalH * e.scale) / 2);
+        triggerExplosion(
+          e.x + (naturalW * e.scale) / 2,
+          e.y + ((naturalW / naturalH) * naturalW * e.scale) / 2
+        );
       }
     });
   });
@@ -181,7 +189,7 @@ function draw() {
   enemies.forEach(e => {
     if (!e.alive) return;
     const w = naturalW * e.scale;
-    const h = naturalH * e.scale;
+    const h = (naturalH / naturalW) * w;
     ctx.drawImage(enemyImg, e.x, e.y, w, h);
   });
 
