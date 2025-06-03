@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>a.e.i.index</title>
+  <title>a.e.i.fps.index</title>
   <style>
     body {
       margin: 0;
@@ -55,6 +55,56 @@
         font-size: 0.8rem;
       }
     }
+    #fps-description {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80vw;
+  width: 400px;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.3rem;
+  color: #000;
+  opacity: 0.15;
+  z-index: 1;
+  pointer-events: none;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  #fps-description {
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+    width: 90vw;
+  }
+}
+
+#fps-description {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80vw;
+  width: 400px;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.3rem;
+  color: #000;
+  opacity: 0.55;
+  z-index: 1;
+  font-style: italic;
+  pointer-events: auto; 
+}
+
+@media (max-width: 600px) {
+  #fps-description {
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+    width: 90vw;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -65,32 +115,22 @@
   </header>
   <svg class="lines" id="dynamic-lines"></svg>
 
+  <div id="fps-description">
+<p>
+  <a href="https://instagram.com/xpan.fps" target="_self" style="color: inherit; text-decoration: underline; font-weight: bold;">
+    xpan.fps
+  </a>
+  es un archivo que funciona como herramienta de trazabilidad y memoria activa.<br>
+  mantiene el vínculo operativo con lo que hacemos y sostiene una conversación continua en feedback.
+</p>
+
+</div>
+
+
   <script>
     const titles = [
-      "a.e.i.1",
-      "a.e.i_msh_7+2[31.06.22]",
-      "a.e.i.tp.bibliografia",
-      "a.e.i.arcangel.png",
-      "a.e.i_msh_ta morte est plus grande que toi",
-      "a.e.i_msh_matdumat.jun.23",
-      "a.e.i_xpan_ep.t paris 15.01.25",
       "a.e.i_xpan.fps_select.21.apr_29.apr",
-      "a.e.i_msh_firekillsfireheals 19.feb.23",
-      "a.e.i_msh_redimensionamiento_13.dic.24",
-      "a.e.i_msh_vvv9 may.23",
-      "a.e.i_xpan_apr 23 w.x",
-      "a.e.i_xpan_atlas.1.ep1",
-      "a.e.i_xpan_ep.1 select 24.feb.25",
-      "a.e.i_xpan_mdtc.5_gata<>xpan.p2",
-      "a.e.i_xpan_mdtc.5_gata<>xpan.p3",
-      "a.e.i_xpan_newSTAR.mdl.1 2--2-2--3",
-      "a.e.i_xpan_resolución gráfica aug-sep.24",
-      "a.e.i_xpan_resolución gráfica feb.25",
-      "a.e.i_xpan_studio.25",
-      "a.e.i_msh_11.may.25 [yes no more]",
       "a.e.i_xpan.fps_select.sem.12.may.25",
-      "a.e.i_msh_gwm_[gesturewithoutmotion]_lineadefuga",
-      "a.e.i_msh_e",
       "a.e.i_xpan.fps_select.sem.19.may.25",
       "a.e.i_xpan.fps_select.sem.02.jun.25"
     ];
