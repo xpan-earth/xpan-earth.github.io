@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan.fps_select.sem.19.may.25</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    const mediaItems = [
+  {"url":"https://attachments.are.na/37164320/572b22963c62b6b62008e0b13e48bc8f.mp4?1748982041","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164201/23e53ea360a3b09fa603fc204f63f1af.mp4?1748981740","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164199/daa94ecd3834d24c596cfc4ff2748a22.mp4?1748981734","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164198/b2f85d37551b8935f0cb1335587381f9.mpeg?1748981731","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164196/e713a673bcab26e65b11ee53ee1fbb00.mpeg?1748981725","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164195/d26ddb817f68c92a95a4a32a1867f064.mp4?1748981721","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164193/24f9d766ce7be7bb731ef05be06285ca.mpeg?1748981694","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164192/16f4f5136e6f82df04a9035bba6a6c61.mov?1748981693","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164189/a9efe6540467e121cdbd54867b21b4bd.mp4?1748981692","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164190/dfd6e3a51a9c45bacc540584a994be96.mp4?1748981692","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164188/eb6d7dd351110ded41e47001f5d410a0.mov?1748981692","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164187/1c61c6c870da820beb928f463f33ed01.mp4?1748981686","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164186/e1554eebc1f4bebfac5b283996971c8e.mp4?1748981685","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164185/4adb44216a2d629cbe105fcfb71508bb.mp4?1748981684","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164181/2adbc6c46f869336b62d780a85e345b2.mp4?1748981674","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164180/7e502311b65a01160032fe827ed8b0d5.mp4?1748981674","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164179/50eec995ba4c84e11778ff5bdc685aaa.mp4?1748981672","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164172/9af15ee2b4f6d9dd6234d1e0644fb551.mp4?1748981647","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164168/f7a34a1d2d0fda379192c158c442bbeb.mp4?1748981637","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37164167/0d9f6315a220e8f821934a78d42067a1.mp4?1748981637","link":"https://www.instagram.com/xpan.fps","newTab":true}
+];
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+          video.autoplay = !isIOS;
+          video.muted = isIOS ? index !== selectedAudioIndex : false;
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
