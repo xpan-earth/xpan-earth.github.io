@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>xpan pong</title>
   <style>
     html, body {
@@ -13,6 +12,7 @@
       overflow: hidden;
       font-family: 'Times New Roman', serif;
       touch-action: none;
+      height: 100%;
     }
     canvas {
       display: block;
@@ -77,30 +77,29 @@ let height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
 
-function resize() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-  paddle.y = height - 30;
-}
-window.addEventListener("resize", resize);
-if (window.visualViewport) {
-  window.visualViewport.addEventListener("resize", resize);
-}
-
 const paddle = {
   width: 100,
   height: 12,
   x: width / 2 - 50,
-  y: height - 30,
+  y: height - 40,
 };
 
+function resizeCanvasAndPaddle() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+  paddle.y = height - 40;
+  paddle.x = Math.min(Math.max(0, paddle.x), width - paddle.width);
+}
+window.addEventListener("resize", resizeCanvasAndPaddle);
+resizeCanvasAndPaddle();
+
 canvas.addEventListener("mousemove", e => {
-  paddle.x = e.clientX - paddle.width / 2;
+  paddle.x = Math.min(Math.max(0, e.clientX - paddle.width / 2), width - paddle.width);
 });
 canvas.addEventListener("touchmove", e => {
-  paddle.x = e.touches[0].clientX - paddle.width / 2;
+  paddle.x = Math.min(Math.max(0, e.touches[0].clientX - paddle.width / 2), width - paddle.width);
   e.preventDefault();
 }, { passive: false });
 
@@ -110,8 +109,11 @@ let sparkles = [];
 let nextBallScore = 6;
 let ballImg = new Image();
 ballImg.src = "xpan.svg";
+let naturalW = 1, naturalH = 1;
 
 ballImg.onload = () => {
+  naturalW = ballImg.naturalWidth;
+  naturalH = ballImg.naturalHeight;
   addBall();
   requestAnimationFrame(gameLoop);
 };
@@ -134,26 +136,11 @@ class Ball {
     this.dy = dy;
     this.img = img;
     this.scale = 0.03;
-    this.ready = false;
-
-    if (img.complete) {
-      this.setDimensions();
-    } else {
-      img.onload = () => this.setDimensions();
-    }
-  }
-
-  setDimensions() {
-    this.naturalWidth = this.img.naturalWidth || 100;
-    this.naturalHeight = this.img.naturalHeight || 100;
-    this.aspectRatio = this.naturalWidth / this.naturalHeight;
-    this.ready = true;
   }
 
   draw() {
-    if (!this.ready) return;
-    const h = this.naturalHeight * this.scale;
-    const w = this.aspectRatio * h;
+    const h = naturalH * this.scale;
+    const w = h * (naturalW / naturalH);
     ctx.drawImage(this.img, this.x - w / 2, this.y - h / 2, w, h);
   }
 
@@ -164,8 +151,8 @@ class Ball {
     if (this.x < 0 || this.x > width) this.dx *= -1;
     if (this.y < 0) this.dy *= -1;
 
-    const h = this.naturalHeight * this.scale;
-    const w = this.aspectRatio * h;
+    const h = naturalH * this.scale;
+    const w = h * (naturalW / naturalH);
 
     if (
       this.y + h / 2 >= paddle.y &&
@@ -229,9 +216,7 @@ function triggerScoreFlash() {
   const flash = document.getElementById("score-flash");
   flash.textContent = `+1`;
   flash.style.opacity = 1;
-  setTimeout(() => {
-    flash.style.opacity = 0;
-  }, 800);
+  setTimeout(() => flash.style.opacity = 0, 800);
 }
 
 function triggerLoss() {
@@ -252,10 +237,8 @@ function resetGame() {
 }
 
 function updateScoreDisplay() {
-  const scoreText = document.getElementById("score");
-  const scoreBar = document.getElementById("score-bar");
-  scoreText.textContent = score.toString().padStart(2, "0");
-  scoreBar.style.width = `${(score % 10) * 10}%`;
+  document.getElementById("score").textContent = score.toString().padStart(2, "0");
+  document.getElementById("score-bar").style.width = `${(score % 10) * 10}%`;
 }
 
 let paused = false;
