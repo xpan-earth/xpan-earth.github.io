@@ -13,12 +13,14 @@
       color: #000;
       cursor: crosshair;
     }
+
     header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
     }
+
     header img {
       width: 50px;
       height: auto;
@@ -26,9 +28,11 @@
       transition: transform 0.3s ease;
       margin-bottom: 1rem;
     }
+
     header img:hover {
       transform: rotate(5deg) scale(1.05);
     }
+
     @media (max-width: 768px) {
       body {
         padding-top: 6rem;
@@ -42,6 +46,7 @@
         margin-bottom: 2rem;
       }
     }
+
     .password-screen {
       position: fixed;
       top: 0; left: 0;
@@ -54,6 +59,7 @@
       align-items: center;
       z-index: 999;
     }
+
     .password-screen input {
       font-size: 1rem;
       padding: 0.5rem;
@@ -61,7 +67,9 @@
       outline: none;
       margin-top: 1rem;
     }
+
     .hidden { display: none; }
+
     .text-section {
       display: flex;
       justify-content: space-between;
@@ -70,23 +78,28 @@
       max-width: 1200px;
       margin: auto;
     }
+
     .text-block {
       width: 48%;
       margin-bottom: 2rem;
     }
+
     .text-block h2 {
       text-transform: lowercase;
       font-size: 1.2rem;
     }
+
     .text-block p {
       font-size: 1rem;
       line-height: 1.5;
     }
+
     @media (max-width: 768px) {
       .text-block {
         width: 100%;
       }
     }
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -94,20 +107,24 @@
       padding: 5vw;
       animation: floatGrid 15s infinite ease-in-out alternate;
     }
+
     .gallery img {
       width: 100%;
       height: auto;
       object-fit: cover;
       animation: imageWobble 10s infinite ease-in-out;
     }
+
     @keyframes floatGrid {
       0% { transform: translateY(0); }
       100% { transform: translateY(-10px); }
     }
+
     @keyframes imageWobble {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.03); }
     }
+
     .graph-section, .projections {
       padding: 5vw;
       display: grid;
@@ -116,6 +133,7 @@
       max-width: 1200px;
       margin: auto;
     }
+
     .indicator {
       background: #000;
       color: #fff;
@@ -123,24 +141,29 @@
       text-align: center;
       animation: popIn 2s infinite alternate;
     }
+
     .indicator h3 {
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
     }
+
     .indicator p {
       font-size: 1rem;
       margin: 0;
     }
+
     @keyframes popIn {
       0% { transform: scale(1); opacity: 0.9; }
       100% { transform: scale(1.05); opacity: 1; }
     }
+
     .projection-bar {
       background: #eee;
       height: 160px;
       position: relative;
       overflow: hidden;
     }
+
     .projection-bar::before {
       content: '';
       position: absolute;
@@ -150,6 +173,7 @@
       background: #000;
       animation: growBar 5s infinite ease-in-out;
     }
+
     @keyframes growBar {
       0% { height: 10%; }
       25% { height: 30%; }
@@ -157,6 +181,7 @@
       75% { height: 90%; }
       100% { height: 100%; }
     }
+
     .roi-section {
       padding: 5vw;
       display: grid;
@@ -165,6 +190,7 @@
       max-width: 1200px;
       margin: auto;
     }
+
     .roi-block {
       background: #111;
       color: #fff;
@@ -173,24 +199,29 @@
       border: 1px solid #000;
       animation: bounce 4s infinite ease-in-out;
     }
+
     .roi-block h4 {
       margin: 0;
       font-size: 1rem;
       text-transform: uppercase;
     }
+
     .roi-block p {
       font-size: 1.25rem;
       font-weight: bold;
       margin: 0.5rem 0 0;
     }
+
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
+
     .map-section {
       padding: 5vw;
       text-align: center;
     }
+
     .map-section iframe {
       width: 100%;
       height: 400px;
@@ -202,48 +233,8 @@
 <body>
   <header>
     <a href="/"><img src="xpan.svg" alt="xpan logo" /></a>
+    
   </header>
-
-  <section style="padding: 8vw 5vw 4vw; max-width: 1200px; margin: auto; font-family: 'Times New Roman', serif; font-size: 1rem; line-height: 1.6; color: #000; text-align: left;">
-    <p><strong>fierro: lentes de lujo. modelo probado. expansión controlada.</strong></p>
-    <p>estamos transformando una joya del retail en masaryk, cdmx — partimos de una tienda operativa con +$8m mxn en ventas mensuales, crecimiento anual compuesto del 60% (2021–2025) y un fundador con 30 años en el juego.</p>
-    <p>nuestro siguiente paso:<br>
-    ● nueva ubicación<br>
-    ● operación fortalecida<br>
-    ● administración de precisión<br>
-    con un objetivo claro: maximizar el retorno sobre la construcción, escalar el modelo y consolidar la eficiencia.</p>
-    <p><strong>club fierro: inversión con diseño y visión.</strong><br>
-    tres socios con experiencia en fintech, e-commerce, arquitectura y retail de lujo. no solo invertimos: dirigimos, ejecutamos, vivimos los KPIs.</p>
-    <p>nuestro modelo de alineación:<br>
-    ● capital propio invertido<br>
-    ● control operativo directo<br>
-    ● retornos solo si el negocio crece</p>
-    <p><strong>aprendizajes del modelo actual:</strong><br>
-    ● CAGR 2021–2025e: 60%<br>
-    ● ticket promedio: $15,000<br>
-    ● selección que convierte: jmm, kuboraum, innerraum, ch, etc.</p>
-    <p><strong>estructura financiera:</strong><br>
-    ● aportaciones: 15 jun – 15 jul 2025<br>
-    ● monto buscado: $4M MXN<br>
-    ● ticket mínimo: $100K MXN<br>
-    ● interés pactado: 20%<br>
-    ● inicio de operaciones: agosto 2025<br>
-    ● ingreso proyectado mes 7: $3M MXN<br>
-    ● margen operativo estimado: 40%</p>
-    <p><strong>recuperación estructurada:</strong><br>
-    ● repago prioritario al inversionista: capital + 20%<br>
-    ● flujo libre se destina 100% al repago<br>
-    ● posibilidad de repago anticipado si se alcanzan 3M/mes por 3 meses consecutivos<br>
-    ● retorno estimado completo antes de mes 12 (proyección optimista: marzo 2026)</p>
-    <p><strong>estructura legal y transparencia:</strong><br>
-    ● s.a.p.i. de c.v. como vehículo operativo<br>
-    ● pagarés firmados por la s.a.p.i.<br>
-    ● informe mensual de resultados y proyecciones</p>
-  </section>
-
-  <section style="padding: 4vw 5vw; max-width: 1200px; margin: auto; text-align: center;">
-    <img src="fierro_graph_cropped.png" alt="gráfica fierro" style="width: 100%; height: auto; border: 1px solid #000;">
-  </section>
 
   <div class="password-screen" id="passwordScreen">
     <p>introduce la contraseña:</p>
@@ -251,7 +242,8 @@
   </div>
 
   <div class="hidden" id="mainContent">
-<div class="text-section">
+
+    <div class="text-section">
   <div class="text-block">
     <h2><u><em>oportunidad</em></u></h2>
     <p>
@@ -329,7 +321,6 @@
       <div class="projection-bar"></div>
       <div class="projection-bar"></div>
     </div>
-  </div>
   </div>
 
   <script>
