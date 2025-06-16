@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan.fps_select.sem.16.jun.25</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    const mediaItems = [
+  {"url":"https://attachments.are.na/37473713/be89c0791509ee2944b553906a26d93e.mp4?1750093620","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473712/a8d84bb88227d7d8895f7a3c2cd1a0d2.mp4?1750093617","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473709/fd633dc22a7b899bdb417215792d6f1c.mp4?1750093607","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473708/94191b4008930f582fa18ba6cf924e9a.mp4?1750093606","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473704/7284998cfab2992ebbceb5e75394483a.mp4?1750093592","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473697/74766429dc6cd4832970b8c40618c941.mp4?1750093582","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473692/c2cc787df8f341f66a3f2e973b2f033c.mp4?1750093574","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473688/94e18118f205005b14db25be702f5b7d.mp4?1750093570","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473685/a08cf31c69668ac5ee6304b57bc69c0e.mp4?1750093559","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473682/1566bfaf3ba24f0e61d511a1bf7bbf79.mp4?1750093543","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473679/e7d1300f94d120a3801710afdb067d07.mp4?1750093537","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473675/7eddd9a1e7d4d8711104477384d34442.mp4?1750093524","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473673/8464ac4aa65eb045647ab6541e1855b1.mp4?1750093519","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473672/fbb9e92bc537964e9f40e9be816b0a36.mp4?1750093506","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473670/873ca91d6010ffa9c0647f0d22583969.mp4?1750093498","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473667/ccdd6f81785e7215a17ff91c06eac7f0.mp4?1750093495","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473658/5086abc7062cc3e4223bbb0733b09988.mp4?1750093469","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473636/d10a6f3427322d67fee2dd60ce1880b2.mp4?1750093430","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473635/1a0ccf178df3c42ca6b81df3a4b8b27f.mp4?1750093428","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473634/53108b2d4f26dd86c2f871ca432bbb85.mp4?1750093426","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473629/29e58d23f64de989a0ffa50b43c5a907.mp4?1750093403","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473623/f5af1867b506b8a60d7238658fdc78f8.mp4?1750093386","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473622/cd0e71443dfc30130da8266cb685bac4.mp4?1750093377","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473615/d1cac68994bf7082cdb779b104c72887.mp4?1750093361","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37473608/9f1cf88bb74b8586be4d7c39fe5b5ef5.mp4?1750093351","link":"https://www.instagram.com/xpan.fps","newTab":true}
+];
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+          video.autoplay = !isIOS;
+          video.muted = isIOS ? index !== selectedAudioIndex : false;
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
