@@ -163,6 +163,34 @@
   .glossary-link:hover {
     background: #f0f0f0;
   }
+  .carousel-video {
+  width: calc((100% - 2 * var(--gap)) / 3);
+  aspect-ratio: 4 / 3;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  opacity: 0.3;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .carousel-video {
+    width: calc((100% - var(--gap)) / 2);
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-video {
+    width: 100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -275,6 +303,34 @@
         </div>
       </div>
     </div>
+
+    <div class="entry">
+  <strong>xpan.mdl.1, [sistema completo]</strong>
+  <span>junio 2022 — desarrollo de objeto / sistema</span>
+  <a href="arq.xpan.mdl.1.html">ver proyecto</a>
+
+  <div class="carousel-wrapper">
+    <div class="carousel-track">
+      <div class="carousel-video">
+        <video autoplay muted loop playsinline>
+          <source src="https://attachments.are.na/37759561/c66c37e489a52d657a6a70a3e91be586.mp4?1751244494" type="video/mp4" />
+        </video>
+      </div>
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988?bc=0" alt="stool chico" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759699/original_7b1e3cacccc1d4647d09ca56a2ca2148.png?1751245262?bc=0" alt="sub.t frontal" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759750/original_0f935bb4252eeab9b8653126361ef1d8.png?1751245644?bc=0" alt="detalle g.2" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" alt="g.8 frontal" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759952/original_735a6a1f4ef4b46359786019e25b6cf0.jpg?1751246963?bc=0" alt="primer set stereo" />
+      
+      <div class="carousel-video">
+        <video autoplay muted loop playsinline>
+          <source src="https://attachments.are.na/37759944/84599332f21fdd420362e4ca85017c52.mp4?1751246911" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   </div>
 
