@@ -58,31 +58,45 @@
     }
     img, video, iframe {
       width: 100%;
+      max-width: 100%;
       border-radius: 4px;
     }
+    video {
+      max-height: 80vh;
+    }
     iframe {
-      height: 600px;
+      height: 80vh;
       border: none;
     }
     @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+      video {
+        max-height: 50vh;
+      }
       iframe {
-        height: auto;
-        aspect-ratio: 4 / 3;
+        height: 60vh;
       }
     }
   </style>
 </head>
+
 <body>
   <header>
     <a href="https://xpan.earth" target="_blank">
       <img src="xpan.svg" alt="xpan logo" />
     </a>
   </header>
-  <div class="container">
-    <h1>mdl.1 — sistema completo</h1>
 
-    <div class="description">
-      <p><strong>mdl.1 — sistema base</strong><br>
+  <div class="container">
+<h1>mdl.1 — sistema completo</h1>
+
+<div class="description">
+<p><strong>mdl.1 — sistema base</strong><br>
       la mdl.1 es el primer sistema desarrollado por xpan.<br>
       su construcción estableció una forma de operar, de conectar y de intervenir el espacio.<br>
       no fue diseñada como objeto utilitario ni como sistema de sonido convencional. fue pensada como medio, como dispositivo de transmisión.</p>
@@ -152,103 +166,93 @@
       el punto de partida siempre es el mismo: <strong>mdl.1</strong></p>
     </div>
 
-    <!-- BLOQUE INICIAL -->
-    <div class="component">
-      <div class="media">
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759457/original_092676d62886ca27c30dbcfca9a92bfd.png?1751243832?bc=0" alt="mdl.1 en stool" />
-        <video autoplay muted loop>
-          <source src="https://attachments.are.na/37759561/c66c37e489a52d657a6a70a3e91be586.mp4?1751244494" type="video/mp4">
-        </video>
-        <iframe src="https://attachments.are.na/37759632/f875051f91f7703c7fdb3656a89dccba.pdf?1751244925"></iframe>
-      </div>
+<!-- BLOQUES MULTIMEDIA -->
+
+<div class="component">
+  <div class="media">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759457/original_092676d62886ca27c30dbcfca9a92bfd.png?1751243832?bc=0" alt="mdl.1 en stool" />
+    <video autoplay muted loop playsinline>
+      <source src="https://attachments.are.na/37759561/c66c37e489a52d657a6a70a3e91be586.mp4?1751244494" type="video/mp4">
+    </video>
+    <iframe src="https://attachments.are.na/37759632/f875051f91f7703c7fdb3656a89dccba.pdf?1751244925"></iframe>
+  </div>
+</div>
+
+<div class="component">
+  <h2>stools [mdl.1]</h2>
+  <div class="gallery">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988?bc=0" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759662/original_f78ba27ec70089bdefa3950bb8b6aaf7.png?1751244989?bc=0" />
+  </div>
+  <div class="media">
+    <iframe src="https://attachments.are.na/37759690/87676c8d80c1e2e86b15ee46ef24cc3f.pdf?1751245157"></iframe>
+    <iframe src="https://attachments.are.na/37759693/80f2ccda9b9e10fe0e12d33a16b4d14a.pdf?1751245187"></iframe>
+  </div>
+</div>
+
+<div class="component">
+  <h2>sub.t [subwoofer]</h2>
+  <div class="media">
+    <video autoplay muted loop playsinline>
+      <source src="https://attachments.are.na/37759700/bcea87da1bdb6db45efef667765959a3.mp4?1751245266" type="video/mp4">
+    </video>
+    <iframe src="https://attachments.are.na/37759717/df93c8e2d34654f12bbf46df541bcd6f.pdf?1751245416"></iframe>
+  </div>
+</div>
+
+<div class="component">
+  <h2>g.2 [amplificador]</h2>
+  <div class="media">
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759748/original_299900b600b68e527953cf8c4a42bfc4.png?1751245644?bc=0" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759750/original_0f935bb4252eeab9b8653126361ef1d8.png?1751245644?bc=0" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759752/original_15321f990bfd63495c7e9bf12ed25678.png?1751245644?bc=0" />
     </div>
+    <video autoplay muted loop playsinline>
+      <source src="https://attachments.are.na/37759755/f478e75b0e84d56929fa954c496cc0b0.mp4?1751245656" type="video/mp4">
+    </video>
+    <iframe src="https://attachments.are.na/37759782/cb7dc183f225bf9ef14e70d279485266.pdf?1751245856"></iframe>
+  </div>
+</div>
 
-    <!-- STOOLS -->
-    <div class="component">
-      <h2>stools [mdl.1]</h2>
-      <div class="gallery">
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988?bc=0" />
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759662/original_f78ba27ec70089bdefa3950bb8b6aaf7.png?1751244989?bc=0" />
-      </div>
-      <div class="media">
-        <iframe src="https://attachments.are.na/37759690/87676c8d80c1e2e86b15ee46ef24cc3f.pdf?1751245157"></iframe>
-        <iframe src="https://attachments.are.na/37759693/80f2ccda9b9e10fe0e12d33a16b4d14a.pdf?1751245187"></iframe>
-      </div>
-    </div>
+<div class="component">
+  <h2>g.sub [amplificador]</h2>
+  <div class="media">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759721/original_611113c84751490aaae1d677fb9bea35.png?1751245479?bc=0" />
+    <iframe src="https://attachments.are.na/37759741/af9098fd47a1e2f548fe0b8a6283fddf.pdf?1751245608"></iframe>
+  </div>
+</div>
 
-    <!-- SUB.T -->
-    <div class="component">
-      <h2>sub.t [subwoofer]</h2>
-      <div class="media">
-        <video autoplay muted loop>
-          <source src="https://attachments.are.na/37759700/bcea87da1bdb6db45efef667765959a3.mp4?1751245266" type="video/mp4">
-        </video>
-        <iframe src="https://attachments.are.na/37759717/df93c8e2d34654f12bbf46df541bcd6f.pdf?1751245416"></iframe>
-      </div>
-    </div>
+<div class="component">
+  <h2>g.8 / g.12 [amplificador]</h2>
+  <div class="gallery">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759827/original_738e3c799f89a15b4c856de3c9782480.png?1751246255?bc=0" />
+  </div>
+  <div class="media">
+    <iframe src="https://attachments.are.na/37759853/c62e8088256bd68fd4fecdf67c7fc5c4.pdf?1751246413"></iframe>
+    <iframe src="https://attachments.are.na/37759854/096c3336e1ac5629d004951005f12930.pdf?1751246413"></iframe>
+  </div>
+</div>
 
-    <!-- AMPLIFICADORES -->
+<div class="component">
+  <div class="media">
+    <video controls playsinline>
+      <source src="https://attachments.are.na/37759931/0336cb748be53a42420de82a2480976b.mp4?1751246789" type="video/mp4">
+    </video>
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759937/original_eca52d2992fff7f02f98be2f41dbccdf.png?1751246840?bc=0" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759938/original_b165a085c00fdca2ec14cff7c37f657b.png?1751246840?bc=0" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759952/original_735a6a1f4ef4b46359786019e25b6cf0.jpg?1751246963?bc=0" />
+  </div>
+</div>
 
-    <div class="component">
-      <h2>g.2 [amplificador]</h2>
-      <div class="media">
-        <div class="gallery">
-          <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759748/original_299900b600b68e527953cf8c4a42bfc4.png?1751245644?bc=0" />
-          <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759750/original_0f935bb4252eeab9b8653126361ef1d8.png?1751245644?bc=0" />
-          <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759752/original_15321f990bfd63495c7e9bf12ed25678.png?1751245644?bc=0" />
-        </div>
-        <video autoplay muted loop>
-          <source src="https://attachments.are.na/37759755/f478e75b0e84d56929fa954c496cc0b0.mp4?1751245656" type="video/mp4">
-        </video>
-        <iframe src="https://attachments.are.na/37759782/cb7dc183f225bf9ef14e70d279485266.pdf?1751245856"></iframe>
-      </div>
-    </div>
-
-        <div class="component">
-      <h2>g.sub [amplificador]</h2>
-      <div class="media">
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759721/original_611113c84751490aaae1d677fb9bea35.png?1751245479?bc=0" />
-        <iframe src="https://attachments.are.na/37759741/af9098fd47a1e2f548fe0b8a6283fddf.pdf?1751245608"></iframe>
-      </div>
-    </div>
-
-
-    <div class="component">
-      <h2>g.8 / g.12 [amplificador]</h2>
-      <div class="gallery">
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" />
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759827/original_738e3c799f89a15b4c856de3c9782480.png?1751246255?bc=0" />
-      </div>
-      <div class="media">
-        <iframe src="https://attachments.are.na/37759853/c62e8088256bd68fd4fecdf67c7fc5c4.pdf?1751246413"></iframe>
-        <iframe src="https://attachments.are.na/37759854/096c3336e1ac5629d004951005f12930.pdf?1751246413"></iframe>
-      </div>
-    </div>
-
-    <!-- OTROS REGISTROS -->
-    <div class="component">
-
-      <div class="media">
-        <video controls>
-          <source src="https://attachments.are.na/37759931/0336cb748be53a42420de82a2480976b.mp4?1751246789" type="video/mp4">
-        </video>
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759937/original_eca52d2992fff7f02f98be2f41dbccdf.png?1751246840?bc=0" />
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759938/original_b165a085c00fdca2ec14cff7c37f657b.png?1751246840?bc=0" />
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/37759952/original_735a6a1f4ef4b46359786019e25b6cf0.jpg?1751246963?bc=0" />
-      </div>
-    </div>
-
-    <!-- CIERRE -->
-    <div class="component">
-
-      <div class="media">
-        <video autoplay muted loop>
-          <source src="https://attachments.are.na/37759944/84599332f21fdd420362e4ca85017c52.mp4?1751246911" type="video/mp4">
-        </video>
-      </div>
-    </div>
-
+<div class="component">
+  <div class="media">
+    <video autoplay muted loop playsinline>
+      <source src="https://attachments.are.na/37759944/84599332f21fdd420362e4ca85017c52.mp4?1751246911" type="video/mp4">
+    </video>
+  </div>
+</div>
   </div>
 </body>
 </html>
-
