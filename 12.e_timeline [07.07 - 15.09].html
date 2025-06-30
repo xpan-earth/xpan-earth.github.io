@@ -12,7 +12,6 @@
       background: white;
       color: black;
       line-height: 1.6;
-      padding: 4rem 1rem 6rem; /* espacio para header fijo */
     }
 
     header {
@@ -25,22 +24,23 @@
     header img {
       width: 50px;
       height: auto;
-      display: block;
     }
 
     .timeline {
       position: relative;
       max-width: 700px;
-      margin: 0 auto;
+      margin: 6rem auto 10rem auto;
       padding-left: 3.5rem;
+      padding-right: 1rem;
     }
 
+    /* Línea vertical */
     .line {
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 1rem;
-      width: 4px;
+      left: 1.5rem;
+      width: 3px;
       background: black;
       border-radius: 2px;
       animation: pulseLine 3s infinite;
@@ -63,14 +63,14 @@
 
     .entry {
       position: relative;
-      max-width: 100%;
+      max-width: 650px;
       margin-bottom: 4rem;
-      padding-left: 3rem;
+      padding-left: 3.5rem;
       opacity: 0;
       transform: translateY(-40px) scale(0.9);
       transition: opacity 0.8s ease, transform 0.8s ease;
       box-sizing: border-box;
-      z-index: 2;
+      text-align: justify;
     }
 
     .entry.visible {
@@ -78,10 +78,11 @@
       transform: translateY(0) scale(1);
     }
 
+    /* Punto circular */
     .entry::before {
       content: '';
       position: absolute;
-      top: 1.1rem;
+      top: 0.8rem;
       left: 0;
       width: 16px;
       height: 16px;
@@ -89,7 +90,7 @@
       border-radius: 50%;
       border: 3px solid white;
       box-sizing: border-box;
-      z-index: 3;
+      z-index: 2;
     }
 
     .entry h2 {
@@ -98,7 +99,6 @@
       font-weight: normal;
       line-height: 1.2;
       text-transform: lowercase;
-      text-align: center;
     }
 
     .entry h3 {
@@ -108,46 +108,50 @@
       font-weight: normal;
       line-height: 1.2;
       text-transform: lowercase;
-      text-align: center;
     }
 
     .entry p {
       margin: 0;
       font-size: 1rem;
       white-space: pre-wrap;
-      text-align: justify;
     }
 
-    /* Responsive */
+    /* Ajustes para móviles */
     @media (max-width: 600px) {
-      body {
-        padding: 3rem 1rem 4rem;
-      }
       .timeline {
-        padding-left: 2.5rem;
         max-width: 90vw;
+        padding-left: 2.5rem;
+        padding-right: 1rem;
       }
+
       .line {
-        left: 0.8rem;
-        width: 3px;
+        left: 1rem;
+        width: 2.5px;
       }
+
       .entry {
+        max-width: 100%;
         padding-left: 2.5rem;
         margin-bottom: 3rem;
+        font-size: 0.95rem;
       }
+
       .entry::before {
-        width: 12px;
-        height: 12px;
-        top: 1rem;
+        width: 14px;
+        height: 14px;
+        top: 0.7rem;
+        border-width: 2.5px;
         left: 0;
-        border-width: 2px;
       }
+
       .entry h2 {
         font-size: 0.95rem;
       }
+
       .entry h3 {
         font-size: 1.1rem;
       }
+
       .entry p {
         font-size: 0.95rem;
       }
