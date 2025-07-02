@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan.fps_select.sem.02.jul.25</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    const mediaItems = [
+  {"url":"https://attachments.are.na/37837559/44feab7cd76a699eaae48c0873dde73f.mpeg?1751492483","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837562/adc16b14dbc4b586e2101ea5d04031f9.mpeg?1751492487","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837567/7362ffcb1e8738134baa75fdc51dde5a.mp4?1751492499","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837568/1586da9500c356a31656780e73f25807.mpeg?1751492500","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837578/f5e5772ea992cb72f2222df3cf3d4cc8.mp4?1751492506","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837583/94d713bbf1dd93abdcdf2d2eb018f02c.mp4?1751492514","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837585/76094f4c59ad954420bd24ca389c4832.mov?1751492519","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837589/6965197b30fc2727e31e95b91fa01b0f.mp4?1751492526","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837600/190dbc7289fa7f1fbf1f857dee629524.mpeg?1751492529","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837602/46027b6e1a8e6672f773bb9babb07d63.mp4?1751492539","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837604/df68f94c99ef396374d4f24e5ea5ba36.mov?1751492542","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837605/1d4129606351b1c24b9101dbdf8ed8bc.mp4?1751492543","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837609/ad84d468e8934af2201ba460312afa26.mp4?1751492550","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837621/00b991ea0b3ada7fac29d94e67ac778f.mp4?1751492591","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837636/2fd78ec19b903513b2642bce12cb16f0.mp4?1751492648","link":"https://www.instagram.com/xpan.fps","newTab":true},
+  {"url":"https://attachments.are.na/37837653/32194fcbd381127d0c49c2d03f7ab5db.mp4?1751492669","link":"https://www.instagram.com/xpan.fps","newTab":true}
+];
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+          video.autoplay = !isIOS;
+          video.muted = isIOS ? index !== selectedAudioIndex : false;
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
