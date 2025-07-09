@@ -10,18 +10,32 @@
       background: #fff;
       font-family: 'Times New Roman', serif;
       color: #000;
-      overflow-x: hidden;
       cursor: crosshair;
     }
     header {
       position: fixed;
       top: 1rem;
-      left: 1rem;
+      left: 0;
+      right: 0;
       z-index: 10;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-container {
+      position: absolute;
+      left: 1rem;
+    }
+    .insta-link {
+      font-size: 1rem;
+      text-decoration: underline;
+      color: blue;
     }
     header img {
       width: 50px;
       height: auto;
+      display: block;
     }
     .container {
       max-width: 1000px;
@@ -38,17 +52,19 @@
     .columns {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 2rem;
       margin-bottom: 4rem;
     }
     .column {
-      flex: 1 1 300px;
+      flex: 1 1 clamp(180px, 40%, 480px);
       max-width: 480px;
     }
     .column img {
       width: 100%;
       height: auto;
-      border-radius: 4px;
+      border-radius: 2px;
+      display: block;
       margin-bottom: 1rem;
     }
     .meta {
@@ -63,14 +79,14 @@
     }
     .colaboradores {
       font-size: 0.85rem;
-      line-height: 1.4;
+      line-height: 1.5;
       column-count: 1;
       column-gap: 1.5rem;
       list-style: none;
       padding-left: 0;
     }
     .colaboradores li {
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
     footer {
       text-align: center;
@@ -80,29 +96,17 @@
       position: relative;
       z-index: 10;
     }
-    @media (max-width: 768px) {
-      .columns {
-        flex-direction: column;
-        gap: 3rem;
-      }
-      .colaboradores {
-        column-count: 1;
-      }
-    }
   </style>
 </head>
 <body>
   <header>
-    <a href="https://xpan.earth" target="_blank">
-      <img src="xpan.svg" alt="xpan logo" />
+    <div class="logo-container">
+      <a href="https://xpan.earth" target="_blank">
+        <img src="xpan.svg" alt="xpan logo" />
+      </a>
+    </div>
+    <a class="insta-link" href="https://www.instagram.com/xpan.atlas" target="_blank">@xpan.atlas</a>
   </header>
-
-  <div style="text-align: center; margin-top: 2rem;">
-  <a href="https://www.instagram.com/xpan.atlas" target="_blank" style="font-size: 0.9rem; color: blue; text-decoration: underline;">
-    @xpan.atlas
-  </a>
-</div>
-
   <div class="container">
     <div class="intro">
       <p>atlas es una publicación periódica de xpan que conecta prácticas culturales a través de un sistema editorial independiente.</p>
