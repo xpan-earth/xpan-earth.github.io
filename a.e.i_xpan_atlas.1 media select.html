@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a.e.i_xpan_atlas.1 media select</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: auto;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .background-star {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100vmin;
+      max-width: 900px;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .image-block {
+      width: 160px;
+      height: auto;
+      max-height: 160px;
+      display: block;
+      position: absolute;
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      aspect-ratio: 1 / 1;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+    .image-block:hover {
+      opacity: 0.8;
+      z-index: 5;
+    }
+    .image-block img,
+    .image-block video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #audio-notice {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      font-style: italic;
+      pointer-events: none;
+      opacity: 0.8;
+      transition: opacity 1s ease;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: stroke-width 0.3s, opacity 0.3s;
+    }
+    @media (max-width: 600px) {
+      .image-block {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+  <svg class="lines" id="dynamic-lines"></svg>
+  <div class="container" id="channels-container"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    function randomizeLines() {
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
+        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
+
+        blocks.forEach((blockB, j) => {
+          if (i < j && Math.random() > 0.6) {
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
+            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
+            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
+            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(randomizeLines);
+    });
+
+    window.addEventListener('load', () => {
+          const mediaItems = [
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001783/original_4825b5e8b3ed652f342ce1a5a4a58d4b.jpg?1752096903?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001778/original_7bb9f63fa155545fec45408fae54a467.jpg?1752096860?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001776/original_1f869446c95f04a00eb06f84c4171ec2.jpg?1752096856?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001775/original_c8d80626ae39bc980972e88f7a271459.png?1752096851?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001773/original_f641a2eb2a815ad2dffbfb18ceb5ac4a.jpg?1752096849?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001772/original_77ac99206583ad234d444b682fcdf90e.jpg?1752096848?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001771/original_0286fbf04608b7f371c07d8a0900e31f.jpg?1752096848?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001769/original_7723268066c4a037aa19ba247e35efac.jpg?1752096847?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001768/original_9202a00f080da692ffb654ebfae149c5.jpg?1752096846?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001767/original_e498be30da5236069dd9c20db97bde7e.jpg?1752096845?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001765/original_d0ae6952bcfb9dd7f4b70d0c7dad5074.jpg?1752096843?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001762/original_bf092560c594906a995706d320cd4854.png?1752096841?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001760/original_2ea280b7bae575aa7403ef48d3265e44.jpg?1752096841?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001758/original_facf526859bb8154a6076f904816b5c2.jpg?1752096839?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001757/original_9065e3a793e65212a1c11f19515a3282.jpg?1752096838?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001756/original_f9afe01bc61453a25379b78946cc8824.jpg?1752096836?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001753/original_774cd7b46b80a6679881e96a19745371.jpg?1752096833?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001750/original_3b47306974f91698a4b1ff18de04aaf8.svg?1752096831?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001749/original_33b2c26ce09ef2ec3927cd70337e0439.jpg?1752096831?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001747/original_c817b195c00961fded21f8817d490206.png?1752096827?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://attachments.are.na/38001746/d7839467468bc08c422db3231aa2cafc.mov?1752096824",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://attachments.are.na/38001744/327308d5f3ab68fd05cbbeb1acf5c84d.mov?1752096823",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001736/original_c377fc4cdb8952a4fca91d2d680460fe.svg?1752096813?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001734/original_6c48fc0943b2b94d1b450bbdab6ea73a.png?1752096812?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001732/original_78eb99f478ae02bde4febf73908f1f94.png?1752096810?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001731/original_873ecbcba5aa6970c75a3e431f7ce6a9.png?1752096808?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001727/original_53f91dbafb2038e85297ebf27d8907b2.png?1752096802?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001726/original_7d7e7122f5b7e402ff31c85bc5df8bc4.png?1752096801?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001723/original_b47d637ea218f403e7b2c492fe678b2e.png?1752096788?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001721/original_d6bc3b45027212bde3c77af033c5fa52.jpg?1752096773?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001720/original_42981988f556a3410324a9fcd129f311.jpg?1752096773?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001719/original_07aec26b6d9159049db7018f01bc29a5.png?1752096772?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  },
+  {
+    "url": "https://d2w9rnfcy7mm78.cloudfront.net/38001718/original_d4058a2b0d8d3a386dfb585f51544379.jpg?1752096766?bc=0",
+    "link": "https://www.instagram.com/xpan.atlas/",
+    "newTab": true
+  }
+]
+;
+
+
+
+
+
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true;
+          video.controls = false;
+          video.playsInline = true;
+          video.src = item.url;
+          video.volume = 0.05;
+
+          if (isIOS) {
+            video.muted = index !== selectedAudioIndex;
+          } else {
+            video.autoplay = true;
+            video.muted = false;
+          }
+
+          video.addEventListener('canplay', () => video.play().catch(() => {}));
+          a.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+
+        const x = Math.random() * (window.innerWidth - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>
