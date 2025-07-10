@@ -19,7 +19,7 @@
       left: 1rem;
       z-index: 10;
     }
-        .logo-container {
+    .logo-container {
       position: absolute;
       left: 1rem;
     }
@@ -108,9 +108,8 @@
       .progress-fill { background: white; }
       canvas { background: black; }
       .tooltip { background: white; color: black; }
-      .play-button { color: white;}
-       header img { filter: invert(1); }
-
+      .play-button { color: white; }
+      header img { filter: invert(1); }
     }
 
     @media (max-width: 600px) {
@@ -127,6 +126,8 @@
       <img src="./xpan.svg" alt="xpan">
     </a>
   </header>
+
+
 
   <div class="xpan-audio-block audio-local">
     <div class="audio-meta">
@@ -192,13 +193,45 @@
     <canvas></canvas>
   </div>
 
+    <div class="xpan-audio-block audio-local">
+    <div class="audio-meta">
+      <div class="title">mdtc.4 [méxico] eli pastore / mario alore <> xpan [mixtape]</div>
+      <div class="info">eden garden cinema</div>
+    </div>
+    <div class="audio-controls">
+      <button class="play-button">play</button>
+      <div class="time-display">0:00 / 0:00</div>
+      <div class="progress-container"><div class="progress-fill"></div></div>
+      <audio crossorigin="anonymous">
+        <source src="https://ia601404.us.archive.org/15/items/mixtape-mdtc.-4/mixtape%20mdtc.4%20.wav" type="audio/wav">
+      </audio>
+    </div>
+    <canvas></canvas>
+  </div>
+
+    <div class="xpan-audio-block audio-local">
+    <div class="audio-meta">
+      <div class="title">mdtc.6 [méxico] cculdesacc <> xpan [mixtape]</div>
+      <div class="info">materialización de la topología conectiva 4 [harcha.ep.1]</div>
+    </div>
+    <div class="audio-controls">
+      <button class="play-button">play</button>
+      <div class="time-display">0:00 / 0:00</div>
+      <div class="progress-container"><div class="progress-fill"></div></div>
+      <audio crossorigin="anonymous">
+        <source src="https://ia903202.us.archive.org/27/items/mdtc.-6-mixtape-msh/mdtc.6%20mixtape%20msh.wav" type="audio/wav">
+      </audio>
+    </div>
+    <canvas></canvas>
+  </div>
+
+
+
   <div style="margin-top: 3rem;">
     <a class="sc-link" href="https://soundcloud.com/buy-xpan-model1-now" target="_blank">soundcloud</a>
   </div>
 
 <script>
-let globalAudioContext = null;
-
 document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
   const audio = block.querySelector('audio');
   const button = block.querySelector('.play-button');
@@ -246,11 +279,7 @@ document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
   };
 
   const setupVisualizer = () => {
-    if (globalAudioContext && globalAudioContext.state !== 'closed') {
-      globalAudioContext.close();
-    }
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    globalAudioContext = audioContext;
     source = audioContext.createMediaElementSource(audio);
     analyser = audioContext.createAnalyser();
     analyser.fftSize = 2048;
