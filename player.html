@@ -52,7 +52,7 @@
       font-size: 1rem;
       cursor: pointer;
       text-transform: lowercase;
-      padding: 0;
+      padding: 0.4rem 0.6rem;
     }
     .time-display {
       font-size: 0.85rem;
@@ -72,13 +72,35 @@
       width: 0%;
     }
     canvas {
-      display: block;
-      margin: 2rem auto 0 auto;
       width: 100%;
-      max-width: 100%;
-      height: 120px;
+      height: 100px;
+      display: block;
+      margin-top: 1rem;
       background: white;
     }
+    .tooltip {
+      position: absolute;
+      font-size: 0.75rem;
+      background: black;
+      color: white;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      transform: translateX(-50%);
+      top: -1.5rem;
+      display: none;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: black; color: white; }
+      .xpan-audio-block { border-color: white; }
+      .progress-container { background: #666; }
+      .progress-fill { background: white; }
+      canvas { background: black; }
+      .tooltip { background: white; color: black; }
+    }
+
     @media (max-width: 600px) {
       .audio-controls {
         flex-direction: column;
@@ -97,7 +119,7 @@
   <div class="xpan-audio-block audio-local">
     <div class="audio-meta">
       <div class="title">09.jul.24 — 8:48pm</div>
-      <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
+      <div class="info">archivo .wav con visualizador de onda</div>
     </div>
     <div class="audio-controls">
       <button class="play-button">play</button>
@@ -110,181 +132,177 @@
     <canvas></canvas>
   </div>
 
-    <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">mdtc.5 — mixtape final</div>
-      <div class="info">archivo .wav desde archive.org</div>
-    </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://ia600907.us.archive.org/2/items/mixtape-final-mdtc.-5/mixtape%20final%20mdtc.5.wav" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
-
 <script>
-  let globalAudioContext = null;
+let globalAudioContext = null;
 
-  document.querySelectorAll('.audio-local').forEach((block) => {
-    const audio = block.querySelector('audio');
-    const button = block.querySelector('.play-button');
-    const fill = block.querySelector('.progress-fill');
-    const canvas = block.querySelector('canvas');
-    const ctx = canvas.getContext('2d');
-    const timeDisplay = block.querySelector('.time-display');
-    const progressContainer = block.querySelector('.progress-container');
-    const tooltip = document.createElement('div');
+document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
+  const audio = block.querySelector('audio');
+  const button = block.querySelector('.play-button');
+  const fill = block.querySelector('.progress-fill');
+  const canvas = block.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  const timeDisplay = block.querySelector('.time-display');
+  const progressContainer = block.querySelector('.progress-container');
 
-    tooltip.style.position = 'absolute';
-    tooltip.style.fontSize = '0.75rem';
-    tooltip.style.background = 'white';
-    tooltip.style.padding = '0.1rem 0.4rem';
-    tooltip.style.border = '1px solid black';
-    tooltip.style.pointerEvents = 'none';
-    tooltip.style.transform = 'translateX(-50%)';
-    tooltip.style.display = 'none';
-    tooltip.style.zIndex = '100';
-    document.body.appendChild(tooltip);
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tooltip';
+  progressContainer.appendChild(tooltip);
 
-    let audioContext = null, source, analyser, dataArray, animationId;
+  let audioContext = null, source, analyser, dataArray, animationId;
 
-    const formatTime = (seconds) => {
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return `${m}:${s < 10 ? '0' : ''}${s}`;
-    };
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
 
-    const resizeCanvas = () => {
-      canvas.width = canvas.clientWidth * window.devicePixelRatio;
-      canvas.height = canvas.clientHeight * window.devicePixelRatio;
-      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
-    };
+  const resizeCanvas = () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  };
 
-    const draw = () => {
-      analyser.getByteTimeDomainData(dataArray);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      const sliceWidth = canvas.width / dataArray.length;
-      let x = 0;
-      const centerY = canvas.height / 2;
-      const amplitude = canvas.height / 2;
-      const safeFactor = 0.9;
-      for (let i = 0; i < dataArray.length; i++) {
-        const v = dataArray[i] / 128.0 - 1;
-        const y = centerY + v * amplitude * safeFactor;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-        x += sliceWidth;
-      }
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = 'red';
-      ctx.stroke();
-      animationId = requestAnimationFrame(draw);
-    };
+  const draw = () => {
+    if (!analyser) return;
+    analyser.getByteTimeDomainData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    const sliceWidth = canvas.width / dataArray.length;
+    let x = 0;
+    for (let i = 0; i < dataArray.length; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = (v * canvas.height) / 2;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+      x += sliceWidth;
+    }
+    ctx.strokeStyle = `rgb(${Math.floor(dataArray[0] * 1.5)},0,0)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    animationId = requestAnimationFrame(draw);
+  };
 
-    const setupVisualizer = () => {
-      if (globalAudioContext && globalAudioContext.state !== 'closed') {
-        globalAudioContext.close();
-      }
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      globalAudioContext = audioContext;
-      source = audioContext.createMediaElementSource(audio);
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048;
-      dataArray = new Uint8Array(analyser.fftSize);
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      resizeCanvas();
-      draw();
-    };
+  const setupVisualizer = () => {
+    if (globalAudioContext && globalAudioContext.state !== 'closed') {
+      globalAudioContext.close();
+    }
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    globalAudioContext = audioContext;
+    source = audioContext.createMediaElementSource(audio);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    dataArray = new Uint8Array(analyser.fftSize);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+    resizeCanvas();
+    draw();
+  };
 
-    button.addEventListener('click', async () => {
-      if (audio.paused) {
-        try {
-          if (!audioContext) setupVisualizer();
-          else {
-            if (audioContext.state === 'suspended') await audioContext.resume();
-            animationId = requestAnimationFrame(draw);
-          }
-          await audio.play();
-          button.innerText = 'pause';
-        } catch (err) {
-          console.warn('Error al reproducir audio:', err);
-        }
+  const playAudio = async () => {
+    try {
+      if (!audioContext) {
+        setupVisualizer();
+      } else if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+        animationId = requestAnimationFrame(draw);
       } else {
-        audio.pause();
-        button.innerText = 'play';
-        cancelAnimationFrame(animationId);
+        animationId = requestAnimationFrame(draw);
       }
-    });
+      await audio.play();
+      button.innerText = 'pause';
+    } catch (err) {
+      console.warn('Error al reproducir audio:', err);
+    }
+  };
 
-    audio.addEventListener('timeupdate', () => {
-      const duration = isNaN(audio.duration) ? 0 : audio.duration;
-      if (duration > 0) {
-        fill.style.width = (audio.currentTime / duration) * 100 + '%';
-        timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
-      }
-    });
+  const pauseAudio = () => {
+    audio.pause();
+    button.innerText = 'play';
+    cancelAnimationFrame(animationId);
+  };
 
-    audio.addEventListener('ended', () => {
-      button.innerText = 'play';
-      fill.style.width = '0%';
-      cancelAnimationFrame(animationId);
-    });
+  button.addEventListener('click', () => {
+    if (audio.paused) {
+      playAudio();
+    } else {
+      pauseAudio();
+    }
+  });
 
-    const seek = (e) => {
-      const rect = progressContainer.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const x = clientX - rect.left;
-      const percent = Math.max(0, Math.min(1, x / rect.width));
-      audio.currentTime = percent * (isNaN(audio.duration) ? 0 : audio.duration);
-    };
+  audio.addEventListener('timeupdate', () => {
+    const duration = isNaN(audio.duration) ? 0 : audio.duration;
+    if (duration > 0) {
+      fill.style.width = (audio.currentTime / duration) * 100 + '%';
+      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
+    }
+  });
 
-    const showTooltip = (e) => {
-      const rect = progressContainer.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const x = clientX - rect.left;
-      const percent = Math.max(0, Math.min(1, x / rect.width));
-      const time = percent * (isNaN(audio.duration) ? 0 : audio.duration);
-      tooltip.textContent = formatTime(time);
-      tooltip.style.left = `${clientX}px`;
-      tooltip.style.top = `${rect.top - 30}px`;
-      tooltip.style.display = 'block';
-    };
+  audio.addEventListener('ended', () => {
+    button.innerText = 'play';
+    fill.style.width = '0%';
+    cancelAnimationFrame(animationId);
 
-    const hideTooltip = () => {
-      tooltip.style.display = 'none';
-    };
+    // Autoplay siguiente bloque
+    const next = allBlocks[index + 1];
+    if (next) {
+      const nextButton = next.querySelector('.play-button');
+      if (nextButton) nextButton.click();
+    }
+  });
 
-    progressContainer.addEventListener('click', seek);
-    progressContainer.addEventListener('touchstart', seek);
-    progressContainer.addEventListener('mousemove', showTooltip);
-    progressContainer.addEventListener('mouseleave', hideTooltip);
+  const seek = (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const x = clientX - rect.left;
+    const percent = Math.max(0, Math.min(1, x / rect.width));
+    audio.currentTime = percent * (isNaN(audio.duration) ? 0 : audio.duration);
+  };
 
-    window.addEventListener('resize', resizeCanvas);
+  const showTooltip = (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const x = clientX - rect.left;
+    const percent = Math.max(0, Math.min(1, x / rect.width));
+    const time = percent * (isNaN(audio.duration) ? 0 : audio.duration);
+    tooltip.textContent = formatTime(time);
+    tooltip.style.left = `${x}px`;
+    tooltip.style.display = 'block';
+  };
 
-    canvas.addEventListener('dblclick', () => {
+  const hideTooltip = () => {
+    tooltip.style.display = 'none';
+  };
+
+  progressContainer.addEventListener('click', seek);
+  progressContainer.addEventListener('mousemove', showTooltip);
+  progressContainer.addEventListener('mouseleave', hideTooltip);
+  progressContainer.addEventListener('touchstart', (e) => {
+    seek(e);
+    showTooltip(e);
+  });
+  progressContainer.addEventListener('touchmove', showTooltip);
+  progressContainer.addEventListener('touchend', hideTooltip);
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  canvas.addEventListener('dblclick', () => {
+    if (!document.fullscreenElement) {
+      canvas.requestFullscreen().catch(err => console.warn(err));
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'f') {
       if (!document.fullscreenElement) {
         canvas.requestFullscreen().catch(err => console.warn(err));
       } else {
         document.exitFullscreen();
       }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'f') {
-        if (!document.fullscreenElement) {
-          canvas.requestFullscreen().catch(err => console.warn(err));
-        } else {
-          document.exitFullscreen();
-        }
-      }
-    });
+    }
   });
+});
 </script>
 </body>
 </html>
