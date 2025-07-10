@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,7 +6,6 @@
   <title>xpan — reproductor</title>
   <style>
     * { box-sizing: border-box; }
-
     body {
       font-family: 'Times New Roman', serif;
       background: white;
@@ -15,46 +13,39 @@
       margin: 0;
       padding: 2rem;
     }
-
     header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
     }
-
     header img {
       width: 50px;
       height: auto;
     }
-
     .xpan-audio-block {
       border: 1px solid black;
       padding: 1rem;
       margin-top: 6rem;
       margin-bottom: 3rem;
     }
-
     .audio-meta .title {
       font-size: 1rem;
       font-weight: bold;
       text-transform: lowercase;
       margin-bottom: 0.2rem;
     }
-
     .audio-meta .info {
       font-size: 0.85rem;
       opacity: 0.6;
       margin-bottom: 1rem;
     }
-
     .audio-controls {
       display: flex;
       align-items: center;
       gap: 1rem;
       flex-wrap: wrap;
     }
-
     .play-button {
       background: none;
       border: none;
@@ -63,12 +54,10 @@
       text-transform: lowercase;
       padding: 0;
     }
-
     .time-display {
       font-size: 0.85rem;
       min-width: 60px;
     }
-
     .progress-container {
       position: relative;
       flex-grow: 1;
@@ -77,36 +66,23 @@
       cursor: pointer;
       touch-action: none;
     }
-
     .progress-fill {
       height: 2px;
       background: black;
       width: 0%;
     }
-
     canvas {
-      width: 100%;
-      height: 100px;
       display: block;
-      margin-top: 1rem;
+      margin: 2rem auto 0 auto;
+      width: 100%;
+      max-width: 100%;
+      height: 120px;
       background: white;
     }
-
-    .soundcloud-embed iframe {
-      width: 100%;
-      height: 80px;
-      border: none;
-      margin-top: 1rem;
-    }
-
     @media (max-width: 600px) {
       .audio-controls {
         flex-direction: column;
         align-items: flex-start;
-      }
-
-      .progress-container {
-        width: 100%;
       }
     }
   </style>
@@ -121,7 +97,7 @@
   <div class="xpan-audio-block audio-local">
     <div class="audio-meta">
       <div class="title">09.jul.24 — 8:48pm</div>
-      <div class="info">archivo .wav con visualizador</div>
+      <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
     </div>
     <div class="audio-controls">
       <button class="play-button">play</button>
@@ -134,19 +110,25 @@
     <canvas></canvas>
   </div>
 
-  <div class="xpan-audio-block">
+    <div class="xpan-audio-block audio-local">
     <div class="audio-meta">
-      <div class="title">kanedavision — vision_mixtape v2</div>
-      <div class="info">soundcloud embed</div>
+      <div class="title">mdtc.5 — mixtape final</div>
+      <div class="info">archivo .wav desde archive.org</div>
     </div>
-    <div class="soundcloud-embed">
-      <iframe scrolling="no" allow="autoplay"
-        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/buy-xpan-model1-now/kanedavision-vision_mixtape-v2-2025&color=%23000000&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
-      </iframe>
+    <div class="audio-controls">
+      <button class="play-button">play</button>
+      <div class="time-display">0:00 / 0:00</div>
+      <div class="progress-container"><div class="progress-fill"></div></div>
+      <audio crossorigin="anonymous">
+        <source src="https://ia600907.us.archive.org/2/items/mixtape-final-mdtc.-5/mixtape%20final%20mdtc.5.wav" type="audio/wav">
+      </audio>
     </div>
+    <canvas></canvas>
   </div>
 
 <script>
+  let globalAudioContext = null;
+
   document.querySelectorAll('.audio-local').forEach((block) => {
     const audio = block.querySelector('audio');
     const button = block.querySelector('.play-button');
@@ -165,14 +147,21 @@
     tooltip.style.pointerEvents = 'none';
     tooltip.style.transform = 'translateX(-50%)';
     tooltip.style.display = 'none';
-    block.appendChild(tooltip);
+    tooltip.style.zIndex = '100';
+    document.body.appendChild(tooltip);
 
-    let audioContext, source, analyser, dataArray, animationId;
+    let audioContext = null, source, analyser, dataArray, animationId;
 
     const formatTime = (seconds) => {
       const m = Math.floor(seconds / 60);
       const s = Math.floor(seconds % 60);
       return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
+
+    const resizeCanvas = () => {
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
     };
 
     const draw = () => {
@@ -181,37 +170,51 @@
       ctx.beginPath();
       const sliceWidth = canvas.width / dataArray.length;
       let x = 0;
+      const centerY = canvas.height / 2;
+      const amplitude = canvas.height / 2;
+      const safeFactor = 0.9;
       for (let i = 0; i < dataArray.length; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = (v * canvas.height) / 2;
-        const vol = Math.abs(v - 1);
-        ctx.strokeStyle = `rgb(${100 + vol * 155}, 0, 0)`;
+        const v = dataArray[i] / 128.0 - 1;
+        const y = centerY + v * amplitude * safeFactor;
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
         x += sliceWidth;
       }
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'red';
       ctx.stroke();
       animationId = requestAnimationFrame(draw);
     };
 
     const setupVisualizer = () => {
+      if (globalAudioContext && globalAudioContext.state !== 'closed') {
+        globalAudioContext.close();
+      }
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      globalAudioContext = audioContext;
       source = audioContext.createMediaElementSource(audio);
       analyser = audioContext.createAnalyser();
       analyser.fftSize = 2048;
       dataArray = new Uint8Array(analyser.fftSize);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
+      resizeCanvas();
       draw();
     };
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', async () => {
       if (audio.paused) {
-        audio.play();
-        button.innerText = 'pause';
-        if (!audioContext) setupVisualizer();
-        else animationId = requestAnimationFrame(draw);
+        try {
+          if (!audioContext) setupVisualizer();
+          else {
+            if (audioContext.state === 'suspended') await audioContext.resume();
+            animationId = requestAnimationFrame(draw);
+          }
+          await audio.play();
+          button.innerText = 'pause';
+        } catch (err) {
+          console.warn('Error al reproducir audio:', err);
+        }
       } else {
         audio.pause();
         button.innerText = 'play';
@@ -220,8 +223,11 @@
     });
 
     audio.addEventListener('timeupdate', () => {
-      fill.style.width = (audio.currentTime / audio.duration) * 100 + '%';
-      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+      const duration = isNaN(audio.duration) ? 0 : audio.duration;
+      if (duration > 0) {
+        fill.style.width = (audio.currentTime / duration) * 100 + '%';
+        timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
+      }
     });
 
     audio.addEventListener('ended', () => {
@@ -232,19 +238,21 @@
 
     const seek = (e) => {
       const rect = progressContainer.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
       const percent = Math.max(0, Math.min(1, x / rect.width));
-      audio.currentTime = percent * audio.duration;
+      audio.currentTime = percent * (isNaN(audio.duration) ? 0 : audio.duration);
     };
 
     const showTooltip = (e) => {
       const rect = progressContainer.getBoundingClientRect();
-      const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
       const percent = Math.max(0, Math.min(1, x / rect.width));
-      const time = percent * audio.duration;
+      const time = percent * (isNaN(audio.duration) ? 0 : audio.duration);
       tooltip.textContent = formatTime(time);
-      tooltip.style.left = `${x + rect.left}px`;
-      tooltip.style.top = `${rect.top - 25}px`;
+      tooltip.style.left = `${clientX}px`;
+      tooltip.style.top = `${rect.top - 30}px`;
       tooltip.style.display = 'block';
     };
 
@@ -257,23 +265,8 @@
     progressContainer.addEventListener('mousemove', showTooltip);
     progressContainer.addEventListener('mouseleave', hideTooltip);
 
-    // Resizing + fullscreen robust handling
-    const resizeCanvas = () => {
-      cancelAnimationFrame(animationId);
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-      if (!audio.paused) animationId = requestAnimationFrame(draw);
-    };
+    window.addEventListener('resize', resizeCanvas);
 
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(resizeCanvas, 150);
-    });
-
-    resizeCanvas();
-
-    // Fullscreen mode
     canvas.addEventListener('dblclick', () => {
       if (!document.fullscreenElement) {
         canvas.requestFullscreen().catch(err => console.warn(err));
@@ -293,7 +286,5 @@
     });
   });
 </script>
-    
-
 </body>
 </html>
