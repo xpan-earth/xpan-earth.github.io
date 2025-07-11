@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>xpan — reproductor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Times New Roman', serif;
+      background: white;
+      color: black;
+      margin: 0;
+      padding: 2rem;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    .logo-container {
+      position: absolute;
+      left: 1rem;
+    }
+    .sc-link {
+      font-size: 1rem;
+      text-decoration: underline;
+      color: blue;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+    }
+    .xpan-audio-block {
+      border: 1px solid black;
+      padding: 1rem;
+      margin-top: 6rem;
+      margin-bottom: 3rem;
+    }
+    .audio-meta .title {
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: lowercase;
+      margin-bottom: 0.2rem;
+    }
+    .audio-meta .info {
+      font-size: 0.85rem;
+      opacity: 0.6;
+      margin-bottom: 1rem;
+    }
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .play-button {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      text-transform: lowercase;
+      padding: 0.4rem 0.6rem;
+    }
+    .time-display {
+      font-size: 0.85rem;
+      min-width: 60px;
+    }
+    .progress-container {
+      position: relative;
+      flex-grow: 1;
+      height: 2px;
+      background: #ddd;
+      cursor: pointer;
+      touch-action: none;
+    }
+    .progress-fill {
+      height: 2px;
+      background: black;
+      width: 0%;
+    }
+    canvas {
+      width: 100%;
+      height: 100px;
+      display: block;
+      margin-top: 1rem;
+      background: white;
+    }
+    .tooltip {
+      position: absolute;
+      font-size: 0.75rem;
+      background: black;
+      color: white;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      transform: translateX(-50%);
+      top: -1.5rem;
+      display: none;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: black; color: white; }
+      .xpan-audio-block { border-color: white; }
+      .progress-container { background: #666; }
+      .progress-fill { background: white; }
+      canvas { background: black; }
+      .tooltip { background: white; color: black; }
+      .play-button { color: white; }
+      header img { filter: invert(1); }
+    }
+
+    @media (max-width: 600px) {
+      .audio-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://open.spotify.com/intl-es/artist/4vbhLEpAsKTT75OvBXWKyY?si=P4oaBVIPTXK0kIz05Bm5CQ">
+      <img src="./f3 msh junstar.svg" alt="xpan">
+    </a>
+  </header>
+
+
+
+  <div class="xpan-audio-block audio-local">
+    <div class="audio-meta">
+      <div class="title">ftres [f3]</div>
+      <div class="info">山口組の関さん الزمن الجميل .. انت عمرى 𓆝 𓆟 𓆞 𓆝 𓆟</div>
+    </div>
+    <div class="audio-controls">
+      <button class="play-button">play</button>
+      <div class="time-display">0:00 / 0:00</div>
+      <div class="progress-container"><div class="progress-fill"></div></div>
+      <audio crossorigin="anonymous">
+        <source src="https://attachments.are.na/38032887/b327640891801bebbeb002481a6fa2ad.wav?1752194425" type="audio/wav">
+      </audio>
+    </div>
+    <canvas></canvas>
+  </div>
+
+
+
+<script>
+document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
+  const audio = block.querySelector('audio');
+  const button = block.querySelector('.play-button');
+  const fill = block.querySelector('.progress-fill');
+  const canvas = block.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  const timeDisplay = block.querySelector('.time-display');
+  const progressContainer = block.querySelector('.progress-container');
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tooltip';
+  progressContainer.appendChild(tooltip);
+
+  let audioContext = null, source, analyser, dataArray, animationId;
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
+  const resizeCanvas = () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  };
+
+  const draw = () => {
+    if (!analyser) return;
+    analyser.getByteTimeDomainData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    const sliceWidth = canvas.width / dataArray.length;
+    let x = 0;
+    for (let i = 0; i < dataArray.length; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = (v * canvas.height) / 2;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+      x += sliceWidth;
+    }
+    ctx.strokeStyle = `rgb(${Math.floor(dataArray[0] * 1.5)},0,0)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    animationId = requestAnimationFrame(draw);
+  };
+
+  const setupVisualizer = () => {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    source = audioContext.createMediaElementSource(audio);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    dataArray = new Uint8Array(analyser.fftSize);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+    resizeCanvas();
+    draw();
+  };
+
+  const playAudio = async () => {
+    try {
+      if (!audioContext) {
+        setupVisualizer();
+      } else if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+        animationId = requestAnimationFrame(draw);
+      } else {
+        animationId = requestAnimationFrame(draw);
+      }
+      await audio.play();
+      button.innerText = 'pause';
+    } catch (err) {
+      console.warn('Error al reproducir audio:', err);
+    }
+  };
+
+  const pauseAudio = () => {
+    audio.pause();
+    button.innerText = 'play';
+    cancelAnimationFrame(animationId);
+  };
+
+  button.addEventListener('click', () => {
+    if (audio.paused) {
+      playAudio();
+    } else {
+      pauseAudio();
+    }
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    const duration = isNaN(audio.duration) ? 0 : audio.duration;
+    if (duration > 0) {
+      fill.style.width = (audio.currentTime / duration) * 100 + '%';
+      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
+    }
+  });
+
+  audio.addEventListener('ended', () => {
+    button.innerText = 'play';
+    fill.style.width = '0%';
+    cancelAnimationFrame(animationId);
+
+    // Autoplay siguiente bloque
+    const next = allBlocks[index + 1];
+    if (next) {
+      const nextButton = next.querySelector('.play-button');
+      if (nextButton) nextButton.click();
+    }
+  });
+
+  const seek = (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const x = clientX - rect.left;
+    const percent = Math.max(0, Math.min(1, x / rect.width));
+    audio.currentTime = percent * (isNaN(audio.duration) ? 0 : audio.duration);
+  };
+
+  const showTooltip = (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const x = clientX - rect.left;
+    const percent = Math.max(0, Math.min(1, x / rect.width));
+    const time = percent * (isNaN(audio.duration) ? 0 : audio.duration);
+    tooltip.textContent = formatTime(time);
+    tooltip.style.left = `${x}px`;
+    tooltip.style.display = 'block';
+  };
+
+  const hideTooltip = () => {
+    tooltip.style.display = 'none';
+  };
+
+  progressContainer.addEventListener('click', seek);
+  progressContainer.addEventListener('mousemove', showTooltip);
+  progressContainer.addEventListener('mouseleave', hideTooltip);
+  progressContainer.addEventListener('touchstart', (e) => {
+    seek(e);
+    showTooltip(e);
+  });
+  progressContainer.addEventListener('touchmove', showTooltip);
+  progressContainer.addEventListener('touchend', hideTooltip);
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  canvas.addEventListener('dblclick', () => {
+    if (!document.fullscreenElement) {
+      canvas.requestFullscreen().catch(err => console.warn(err));
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'f') {
+      if (!document.fullscreenElement) {
+        canvas.requestFullscreen().catch(err => console.warn(err));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>
