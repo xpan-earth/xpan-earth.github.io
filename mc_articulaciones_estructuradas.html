@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan</title>
+  <link rel="stylesheet" href="./style.css" media="screen" />
+  <style>
+    body {
+      margin: 0;
+      background: #fefefe;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 20;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    article {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+      z-index: 10;
+    }
+    p {
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    svg.lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+    svg.lines line {
+      stroke: black;
+      stroke-width: 0.3px;
+      opacity: 0.1;
+      transition: opacity 1s ease;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+
+  <svg class="lines" id="dynamic-lines"></svg>
+
+  <article>
+    <p>
+      [articulaciones estructuradas]<br>
+      ---<br>
+      xpan articula relaciones estructurales entre elementos que normalmente no coexisten.<br>
+      esa articulación produce fricción, que genera formas nuevas y procesos activos.
+    </p>
+
+    <p>
+      “conexión” se repite en discursos institucionales, tecnológicos y creativos sin producir estructuras reales.<br>
+      en xpan, conectar no es un gesto estético. es una operación arquitectónica, conceptual y técnica.<br>
+      cada proyecto articula relaciones entre elementos que rara vez conviven en un mismo sistema.<br>
+      la pregunta no es qué se articula, sino qué se produce cuando eso sucede.
+    </p>
+
+    <p>
+      el objetivo de xpan es producir esas articulaciones: uniones entre disciplinas, formatos, contextos y lenguajes que normalmente permanecen aislados.<br>
+      arquitectura, sonido, diseño técnico, crítica cultural.<br>
+      instituciones, espacios independientes, comunidades sin acceso.<br>
+      objetos, sistemas, publicaciones, imágenes, prendas.<br>
+      lenguajes visuales, sonoros, espaciales, lingüísticos y algorítmicos.<br>
+      procesos de largo plazo, estructuras abiertas, tiempos no lineales.
+    </p>
+
+    <p>
+      estas articulaciones generan fricciones activas que abren nuevas posibilidades, caminos y configuraciones.<br>
+      la forma es consecuencia directa de lo que estas relaciones permiten construir.<br>
+      generalmente no es prevista, pero la fricción sí: las iniciativas de xpan se basan en esa lógica.
+    </p>
+
+    <p>
+      xpan orienta sus recursos directamente a producir estas condiciones.<br>
+      cada recurso obtenido alimenta su desarrollo práctico, activa proyectos y habilita configuraciones no posibles bajo estructuras convencionales.<br>
+      esto impacta tanto al interior de xpan como en sus bordes.<br>
+      se generan aperturas concretas para quienes participan, y efectos colaterales para los nodos que orbitan alrededor.
+    </p>
+
+    <p>
+      atlas articula nodos globales y locales sin jerarquías de validación.<br>
+      mdl.1 opera como sistema técnico, espacial y sonoro en simultáneo, generando nuevas formas de uso, circulación y relación.
+    </p>
+
+    <p>
+      cada sistema producido por xpan alimenta el desarrollo continuo del proceso y sostiene su lógica:<br>
+      construir sistemas generativos por medio de articulaciones estructuradas.
+    </p>
+  </article>
+
+  <script>
+    const svg = document.getElementById('dynamic-lines');
+    let points = [];
+
+    function generatePoints(count = 40) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      points = [];
+      for (let i = 0; i < count; i++) {
+        points.push({ x: Math.random() * w, y: Math.random() * h });
+      }
+    }
+
+    function drawLinesAnimated() {
+      const oldLines = svg.querySelectorAll('line');
+      oldLines.forEach(line => {
+        line.style.opacity = '0';
+        setTimeout(() => line.remove(), 1000);
+      });
+
+      const animations = [];
+      for (let i = 0; i < points.length; i++) {
+        for (let j = i + 1; j < points.length; j++) {
+          if (Math.random() < 0.3) {
+            const p1 = points[i];
+            const p2 = points[j];
+            const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', p1.x);
+            line.setAttribute('y1', p1.y);
+            line.setAttribute('x2', p2.x);
+            line.setAttribute('y2', p2.y);
+            line.setAttribute('stroke-dasharray', length);
+            line.setAttribute('stroke-dashoffset', length);
+            line.style.stroke = 'black';
+            line.style.strokeWidth = '0.3px';
+            line.style.opacity = '0.1';
+            svg.appendChild(line);
+
+            const duration = 800 + Math.random() * 1000;
+            const delay = Math.random() * 500;
+            animations.push({ line, length, duration, delay });
+          }
+        }
+      }
+
+      animations.forEach(({ line, length, duration, delay }) => {
+        line.animate([
+          { strokeDashoffset: length },
+          { strokeDashoffset: 0 }
+        ], {
+          duration: duration,
+          delay: delay,
+          fill: 'forwards',
+          easing: 'ease-out'
+        });
+      });
+
+      const maxDelay = Math.max(...animations.map(a => a.delay + a.duration));
+      setTimeout(() => {
+        generatePoints(40);
+        drawLinesAnimated();
+      }, maxDelay + 1200);
+    }
+
+    window.addEventListener('resize', () => {
+      generatePoints(40);
+      drawLinesAnimated();
+    });
+
+    generatePoints(40);
+    drawLinesAnimated();
+  </script>
+</body>
+</html>
