@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>estructuras auxiliares — xpan</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+    }
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 7rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-transform: lowercase;
+    }
+    .description {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+    .subsection {
+      margin-top: 4rem;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .gallery img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .pdf-embed iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 4px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+      .pdf-embed iframe {
+        height: auto;
+        aspect-ratio: 4/3;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth" target="_blank">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+  <div class="language-selector">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
+  <div class="container">
+    <!-- BLOQUES COMPLETOS DE IDIOMAS CON CONTENIDO, GALERÍAS Y PDFS -->
+    <!-- Contenido completo insertado desde el mensaje anterior del usuario -->
+    <!-- lang-es, lang-en, lang-fr, lang-jp -->
+    <!-- Cada bloque incluye las galerías y medios específicos, según confirmado -->
+    <div class="lang lang-es">
+  <h1>estructuras auxiliares</h1>
+  <div class="description">
+    tres objetos diseñados por xpan operan como extensiones estructurales en cualquier sistema espacial.<br>
+    más que mobiliario o piezas aisladas, cada una actúa de manera funcional como soporte técnico y gesto arquitectónico.<br>
+    son estructuras auxiliares: artefactos mínimos que amplifican, organizan o alojan el despliegue de otras capas del sistema.<br><br>
+    diseñadas y fabricadas en la ciudad de méxico, todas comparten una lógica común:<br>
+    ensambles de barras de aluminio o acero, geometrías mínimas y una estructura abierta a reconfiguración contextual.
+  </div>
+
+  <div class="subsection">
+    <h2>estructura ep.t [paris.25]</h2>
+    <div class="description">
+      ensamblaje maquinado de barras cuadradas de aluminio,<br>
+      material que ha trazado un hilo continuo en la sintaxis de xpan.<br>
+      estructura diseñada para contener y dar forma a un eje material de la topología conectiva:<br>
+      árbol, antena, receptáculo y transmisor al mismo tiempo.<br><br>
+      su construcción se basa en cuatro elementos clave:<br>
+      – 5 barras cuadradas de 35 cm con barrenos laterales (br.1)<br>
+      – 3 amplificadores g.2 como contrapeso y balance<br>
+      – barras perpendiculares redondas (br.3) y barras verticales de 260 cm (br.4)<br>
+      – poros de acero de 6 mm para soporte y anclaje<br><br>
+      desde esta pieza se emitieron y presentaron 122 obras durante ep.t — parís, 2025.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321954/original_f88196aeba4e24d62bf79f59e9902793.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321956/original_7e857bc37d51751ef34c77ddc97b4e25.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321962/original_ea01ab4ecc00cff031c569a9fa426a3d.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321963/original_ae81497c10ea01206206261f6c45eb2b.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321969/original_56953c3b71fb133533ab914f82fc5afe.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321971/original_5e662fa33f3e0399e1c413045cd2a01e.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>módulo atlas</h2>
+    <div class="description">
+      volumen desarrollado para alojar y desplegar *xpan.atlas*.<br>
+      formado por tres niveles estructurales, el módulo utiliza barras de acero de ½” soldadas entre sí,<br>
+      generando una composición estable, sólida y sutil.<br><br>
+      – base estructural de 185 × 40 cm<br>
+      – niveles intermedios de 182.5 × 40 cm y 182.5 × 58.7 cm<br>
+      – seis perfiles verticales conectan los niveles, reforzados por placas soldadas internas<br><br>
+      la disposición permite la exhibición de publicaciones, objetos o archivo visual-sonoro.<br>
+      funciona como contenedor, archivo y estación de lectura dentro del espacio.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322106/original_f1165ffc37fb6441594d2e76ab10f946.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322113/original_735445cab2e13d840e7bfd349ce511f5.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322116/original_0548c939b11583cb45c30a58d867cd66.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322120/original_400cbe733ff6aaba63a0ec3a0997e433.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322121/original_4368a6a238773f23f34ea205b8939650.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322122/original_38f43755a5e4b862285fa2e32247e088.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322123/original_95257fce6e18aa4ffda393ed9d26585f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>mueble para monitor</h2>
+    <div class="description">
+      estructura modular para alojar monitores o pantallas dentro de intervenciones espaciales.<br>
+      configurada por barras cuadradas de acero de ½” con uniones soldadas en múltiples niveles.<br>
+      el diseño permite ocultar cableado, elevar visuales y soportar peso sin añadir masa visual.<br>
+      sus dos plataformas laterales soportan una laptop y un florero interconectado con el monitor central.<br><br>
+      – base a 20 cm del suelo<br>
+      – plataformas a 80, 95 y 120 cm<br>
+      – altura total: 1.27 m<br>
+      – profundidad y ancho: 63 cm<br><br>
+      su presencia no distrae del contenido visual que soporta,<br>
+      pero mantiene una geometría técnica deliberada que lo inserta en la lógica del sistema general.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322005/original_d1922b0cc7368718d4ac4b5db7161dbf.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322009/original_5f8e7d8e3527d5e959b00071d6c271b2.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322011/original_0fb1eb31672ba7167216e34b812cda18.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322012/original_c917c42b235565f7f4b468e713f9bd74.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322026/original_5ce7545f996042d0c0059a9608b1af5f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+    </div>
+  </div>
+</div>
+<div class="lang lang-en" style="display: none">
+  <h1>auxiliary structures</h1>
+  <div class="description">
+    three objects designed by xpan operate as structural extensions within any spatial system.<br>
+    more than furniture or isolated pieces, each functions technically and architecturally.<br>
+    they are auxiliary structures: minimal artifacts that amplify, organize, or host other system layers.<br><br>
+    designed and fabricated in mexico city, all share a common logic:<br>
+    aluminum or steel bar assemblies, minimal geometries, and an open structure for contextual reconfiguration.
+  </div>
+
+  <div class="subsection">
+    <h2>estructura ep.t [paris.25]</h2>
+    <div class="description">
+      machined assembly of square aluminum bars,<br>
+      a material that traces a continuous line through xpan’s syntax.<br>
+      designed to shape a material axis of the connective topology:<br>
+      at once tree, antenna, receptacle, and transmitter.<br><br>
+      built from four key components:<br>
+      – 5 square bars of 35 cm with lateral drill holes (br.1)<br>
+      – 3 g.2 amplifiers as counterweight and balance<br>
+      – round perpendicular bars (br.3) and 260 cm vertical bars (br.4)<br>
+      – 6 mm steel plates for support and anchoring<br><br>
+      this piece hosted the transmission and presentation of 122 works during ep.t — paris, 2025.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321954/original_f88196aeba4e24d62bf79f59e9902793.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321956/original_7e857bc37d51751ef34c77ddc97b4e25.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321962/original_ea01ab4ecc00cff031c569a9fa426a3d.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321963/original_ae81497c10ea01206206261f6c45eb2b.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321969/original_56953c3b71fb133533ab914f82fc5afe.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321971/original_5e662fa33f3e0399e1c413045cd2a01e.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>atlas module</h2>
+    <div class="description">
+      volume developed to host and deploy *xpan.atlas*.<br>
+      composed of three structural levels, the module uses ½” welded steel bars,<br>
+      forming a stable, solid, and subtle composition.<br><br>
+      – structural base of 185 × 40 cm<br>
+      – intermediate levels of 182.5 × 40 cm and 182.5 × 58.7 cm<br>
+      – six vertical profiles connect the levels, reinforced by internal welded plates<br><br>
+      the arrangement enables the display of publications, objects, or visual-sonic archives.<br>
+      it functions as container, archive, and reading station within the space.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322106/original_f1165ffc37fb6441594d2e76ab10f946.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322113/original_735445cab2e13d840e7bfd349ce511f5.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322116/original_0548c939b11583cb45c30a58d867cd66.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322120/original_400cbe733ff6aaba63a0ec3a0997e433.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322121/original_4368a6a238773f23f34ea205b8939650.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322122/original_38f43755a5e4b862285fa2e32247e088.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322123/original_95257fce6e18aa4ffda393ed9d26585f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>monitor stand</h2>
+    <div class="description">
+      modular structure for mounting monitors or screens within spatial interventions.<br>
+      configured with ½” square steel bars welded at multiple levels.<br>
+      the design allows for hidden cabling, elevated visuals, and weight support without visual mass.<br>
+      its two lateral platforms support a laptop and a flower vase interconnected with the central screen.<br><br>
+      – base at 20 cm from the ground<br>
+      – platforms at 80, 95, and 120 cm<br>
+      – total height: 1.27 m<br>
+      – depth and width: 63 cm<br><br>
+      its presence does not distract from the content it supports,<br>
+      but asserts a technical geometry embedded in the system’s logic.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322005/original_d1922b0cc7368718d4ac4b5db7161dbf.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322009/original_5f8e7d8e3527d5e959b00071d6c271b2.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322011/original_0fb1eb31672ba7167216e34b812cda18.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322012/original_c917c42b235565f7f4b468e713f9bd74.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322026/original_5ce7545f996042d0c0059a9608b1af5f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+    </div>
+  </div>
+</div>
+<div class="lang lang-fr" style="display: none">
+  <h1>structures auxiliaires</h1>
+  <div class="description">
+    trois objets conçus par xpan fonctionnent comme des extensions structurelles dans tout système spatial.<br>
+    plus que du mobilier ou des pièces isolées, chacun agit comme support technique et geste architectural.<br>
+    ce sont des structures auxiliaires : des artefacts minimaux qui amplifient, organisent ou accueillent d'autres couches du système.<br><br>
+    conçus et fabriqués à mexico, ils partagent tous une logique commune :<br>
+    assemblages de barres en aluminium ou en acier, géométries minimales, structures ouvertes à la reconfiguration contextuelle.
+  </div>
+
+  <div class="subsection">
+    <h2>estructura ep.t [paris.25]</h2>
+    <div class="description">
+      assemblage usiné de barres carrées en aluminium,<br>
+      matériau qui trace un fil continu dans la syntaxe de xpan.<br>
+      conçu pour incarner un axe matériel de la topologie connective :<br>
+      arbre, antenne, réceptacle et transmetteur à la fois.<br><br>
+      sa construction repose sur quatre éléments clés :<br>
+      – 5 barres carrées de 35 cm avec perçages latéraux (br.1)<br>
+      – 3 amplificateurs g.2 comme contrepoids et équilibre<br>
+      – barres rondes perpendiculaires (br.3) et barres verticales de 260 cm (br.4)<br>
+      – plaques d’acier de 6 mm pour le support et l’ancrage<br><br>
+      cette pièce a permis la diffusion et la présentation de 122 œuvres pendant ep.t — paris, 2025.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321954/original_f88196aeba4e24d62bf79f59e9902793.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321956/original_7e857bc37d51751ef34c77ddc97b4e25.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321962/original_ea01ab4ecc00cff031c569a9fa426a3d.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321963/original_ae81497c10ea01206206261f6c45eb2b.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321969/original_56953c3b71fb133533ab914f82fc5afe.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321971/original_5e662fa33f3e0399e1c413045cd2a01e.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>module atlas</h2>
+    <div class="description">
+      volume conçu pour accueillir et déployer *xpan.atlas*.<br>
+      composé de trois niveaux structurels, le module utilise des barres en acier de ½” soudées entre elles,<br>
+      formant une composition stable, solide et subtile.<br><br>
+      – base structurelle de 185 × 40 cm<br>
+      – niveaux intermédiaires de 182.5 × 40 cm et 182.5 × 58.7 cm<br>
+      – six profils verticaux relient les niveaux, renforcés par des plaques soudées internes<br><br>
+      cette disposition permet l’exposition de publications, objets ou archives visuelles et sonores.<br>
+      il fonctionne comme conteneur, archive et station de lecture dans l’espace.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322106/original_f1165ffc37fb6441594d2e76ab10f946.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322113/original_735445cab2e13d840e7bfd349ce511f5.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322116/original_0548c939b11583cb45c30a58d867cd66.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322120/original_400cbe733ff6aaba63a0ec3a0997e433.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322121/original_4368a6a238773f23f34ea205b8939650.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322122/original_38f43755a5e4b862285fa2e32247e088.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322123/original_95257fce6e18aa4ffda393ed9d26585f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>meuble pour moniteur</h2>
+    <div class="description">
+      structure modulaire pour accueillir des moniteurs ou écrans dans des interventions spatiales.<br>
+      composée de barres carrées en acier de ½” soudées à différents niveaux.<br>
+      le design permet de dissimuler les câbles, surélever les visuels et supporter du poids sans masse visuelle excessive.<br>
+      ses deux plateformes latérales accueillent un ordinateur portable et un vase connecté à l’écran central.<br><br>
+      – base à 20 cm du sol<br>
+      – plateformes à 80, 95 et 120 cm<br>
+      – hauteur totale : 1.27 m<br>
+      – profondeur et largeur : 63 cm<br><br>
+      sa présence ne détourne pas de ce qu’elle soutient,<br>
+      mais affirme une géométrie technique intégrée dans la logique du système.
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322005/original_d1922b0cc7368718d4ac4b5db7161dbf.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322009/original_5f8e7d8e3527d5e959b00071d6c271b2.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322011/original_0fb1eb31672ba7167216e34b812cda18.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322012/original_c917c42b235565f7f4b468e713f9bd74.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322026/original_5ce7545f996042d0c0059a9608b1af5f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+    </div>
+  </div>
+</div>
+<!-- BLOQUE JAPONES INICIADO -->
+<div class="lang lang-jp" style="display: none">
+  <h1>補助構造体</h1>
+  <div class="description">
+    xpan によって設計された3つのオブジェクトは、あらゆる空間システムにおいて構造的な拡張として機能します。<br>
+    単なる家具や孤立したピースではなく、それぞれが技術的なサポートであり、建築的なジェスチャーでもあります。<br>
+    それらは補助構造体：最小限の構造物であり、システムの他の層を拡張・整理・保持する役割を果たします。<br><br>
+    メキシコシティで設計・製作され、アルミまたはスチールバーの組立て、最小限の形態、文脈に応じた再構成が可能な構造という共通の論理を備えています。
+  </div>
+
+  <div class="subsection">
+    <h2>estructura ep.t [paris.25]</h2>
+    <div class="description">
+      アルミニウム角棒の機械加工によるアセンブリ。<br>
+      この素材は xpan の構文において継続的な軸を形成してきました。<br>
+      トポロジー接続体の物質的な軸として、<br>
+      樹・アンテナ・レセプタクル・トランスミッターとしての機能を同時に持ちます。<br><br>
+      構成要素：<br>
+      – 側面に穴のある 35cm の角棒 ×5 (br.1)<br>
+      – カウンターウェイトおよびバランスとしての g.2 アンプ ×3<br>
+      – 丸棒 (br.3)、260cm の垂直角棒 (br.4)<br>
+      – 6mm 厚スチールプレート（支持と固定用）<br><br>
+      この構造体から、ep.t（パリ、2025）において122作品の発信と提示が行われました。
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321954/original_f88196aeba4e24d62bf79f59e9902793.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321956/original_7e857bc37d51751ef34c77ddc97b4e25.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321962/original_ea01ab4ecc00cff031c569a9fa426a3d.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321963/original_ae81497c10ea01206206261f6c45eb2b.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321969/original_56953c3b71fb133533ab914f82fc5afe.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321971/original_5e662fa33f3e0399e1c413045cd2a01e.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>atlas モジュール</h2>
+    <div class="description">
+      *xpan.atlas* を収納・展開するために設計された構造体。<br>
+      3つの構造レベルから成り、1/2 インチの鋼材バーで溶接構成されています。<br>
+      安定性・堅牢性・静かな存在感を持つ構成。<br><br>
+      – ベース寸法：185 × 40 cm<br>
+      – 中間レベル：182.5 × 40 cm および 182.5 × 58.7 cm<br>
+      – 6 本の垂直バーで各レベルを接続、内部に補強プレートを溶接<br><br>
+      書籍、オブジェクト、視覚・音声アーカイブを展示可能。<br>
+      コンテナ・アーカイブ・リーディングステーションとして空間内で機能します。
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322106/original_f1165ffc37fb6441594d2e76ab10f946.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322113/original_735445cab2e13d840e7bfd349ce511f5.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322116/original_0548c939b11583cb45c30a58d867cd66.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322120/original_400cbe733ff6aaba63a0ec3a0997e433.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322121/original_4368a6a238773f23f34ea205b8939650.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322122/original_38f43755a5e4b862285fa2e32247e088.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322123/original_95257fce6e18aa4ffda393ed9d26585f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h2>モニター用スタンド</h2>
+    <div class="description">
+      空間インスタレーション内でモニターやスクリーンを設置するためのモジュール構造体。<br>
+      複数レベルに溶接された 1/2 インチの角型鋼材で構成。<br>
+      ケーブルを隠しつつ視覚要素を持ち上げ、質量を増やすことなく耐荷重性を確保します。<br>
+      側面の2つのプラットフォームは、ラップトップとモニターに接続された花器を支えます。<br><br>
+      – 底面高さ：地面から20cm<br>
+      – プラットフォーム高さ：80cm, 95cm, 120cm<br>
+      – 全高：1.27m<br>
+      – 奥行と幅：63cm<br><br>
+      コンテンツを邪魔せず、システム論理に組み込まれた技術的な幾何学を明確に示します。
+    </div>
+    <div class="gallery">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322005/original_d1922b0cc7368718d4ac4b5db7161dbf.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322009/original_5f8e7d8e3527d5e959b00071d6c271b2.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322011/original_0fb1eb31672ba7167216e34b812cda18.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322012/original_c917c42b235565f7f4b468e713f9bd74.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322026/original_5ce7545f996042d0c0059a9608b1af5f.jpg" />
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg" />
+    </div>
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+    </div>
+  </div>
+</div>
+  </div>
+  <script>
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      document.documentElement.lang = lang;
+      document.querySelectorAll('.lang').forEach(el => {
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('lang') || navigator.language.slice(0, 2) || 'es';
+      setLang(savedLang);
+    });
+  </script>
+</body>
+</html>
