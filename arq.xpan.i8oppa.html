@@ -21,6 +21,26 @@
       width: 50px;
       height: auto;
     }
+    .lang-select {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      font-size: 0.9rem;
+    }
+    .lang-select button {
+      background: none;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      color: #000;
+      opacity: 0.6;
+    }
+    .lang-select button.active {
+      opacity: 1;
+      font-weight: bold;
+    }
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
@@ -43,6 +63,10 @@
       line-height: 1.6;
       max-width: 700px;
       margin-bottom: 2rem;
+      display: none;
+    }
+    .description.active {
+      display: block;
     }
     .gallery {
       display: grid;
@@ -92,18 +116,47 @@
     </a>
   </header>
 
+  <div class="lang-select">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
+
   <div class="container">
     <h1>i8oppa</h1>
     <div class="meta">mayo 2022 — ciudad de méxico</div>
 
-    <div class="description">
+    <!-- Descripciones por idioma -->
+    <div class="description active" lang="es">
       i8oppa [sistema octofónico oscilatorio para piezas acusmáticas] fue desarrollado por sound + (xpan) como parte del programa público de material art fair 2022. un sistema multicanal compuesto por ocho bocinas mdl.1 suspendidas sobre cuatro niveles de rieles de acero, diseñado para ser manipulado físicamente por el espectador.<br><br>
       cada bocina podía desplazarse horizontalmente mediante rodamientos instalados sobre la estructura metálica. el espacio —de 6 x 6 x 2.4 metros— estaba recubierto por una membrana acústica de fibra de vidrio empotrada en malla metálica, definiendo un contorno poroso y absorbente.<br><br>
       se presentaron cinco piezas octofónicas seleccionadas mediante convocatoria abierta, reproducidas en un entorno donde la obra no era fija ni pasiva. el público habitaba la instalación, transformando activamente la espacialización sonora.<br><br>
       i8oppa propone una democratización activa del arte sonoro: una infraestructura técnica que articula escucha, desplazamiento, decisión y vibración en un sistema físico de múltiples entradas perceptuales.
     </div>
 
-    <!-- Animación SVG integrada -->
+    <div class="description" lang="en">
+      i8oppa [octophonic oscillatory system for acousmatic pieces] was developed by sound + (xpan) as part of the public program of material art fair 2022. a multichannel system composed of eight mdl.1 speakers suspended on four levels of steel rails, designed to be physically manipulated by the viewer.<br><br>
+      each speaker could move horizontally using ball bearings installed on the metal structure. the space —6 x 6 x 2.4 meters— was lined with a fiberglass acoustic membrane embedded in metal mesh, creating a porous and absorbent boundary.<br><br>
+      five octophonic pieces were presented, selected through an open call, played in an environment where the work was neither fixed nor passive. the audience inhabited the installation, actively transforming the spatialization of sound.<br><br>
+      i8oppa proposes an active democratization of sound art: a technical infrastructure that articulates listening, movement, decision, and vibration in a physical system of multiple perceptual inputs.
+    </div>
+
+    <div class="description" lang="fr">
+      i8oppa [système octophonique oscillant pour pièces acousmatiques] a été développé par sound + (xpan) dans le cadre du programme public de material art fair 2022. un système multicanal composé de huit haut-parleurs mdl.1 suspendus sur quatre niveaux de rails en acier, conçu pour être manipulé physiquement par le spectateur.<br><br>
+      chaque haut-parleur pouvait se déplacer horizontalement grâce à des roulements à billes installés sur la structure métallique. l’espace —6 x 6 x 2.4 mètres— était recouvert d’une membrane acoustique en fibre de verre enchâssée dans un treillis métallique, définissant une limite poreuse et absorbante.<br><br>
+      cinq pièces octophoniques sélectionnées par appel ouvert ont été présentées, jouées dans un environnement où l’œuvre n’était ni fixe ni passive. le public habitait l’installation, transformant activement la spatialisation sonore.<br><br>
+      i8oppa propose une démocratisation active de l’art sonore : une infrastructure technique qui articule écoute, déplacement, décision et vibration dans un système physique à entrées perceptuelles multiples.
+    </div>
+
+    <div class="description" lang="jp">
+      i8oppa（アクスマティック作品のためのオクトフォニック振動システム）は、material art fair 2022 の公共プログラムの一環として sound +（xpan）によって開発されました。スチールレール4層に吊るされた8つの mdl.1 スピーカーからなるマルチチャンネルシステムで、観客が物理的に操作できるように設計されています。<br><br>
+      各スピーカーは金属構造上のベアリングによって水平移動が可能でした。空間（6 x 6 x 2.4 メートル）はガラス繊維の音響膜と金網で覆われ、吸音性と通気性のある輪郭が形成されました。<br><br>
+      公募で選ばれた5つのオクトフォニック作品が提示され、作品は固定されることなく、観客によって空間化が能動的に変化しました。<br><br>
+      i8oppa は音響芸術の能動的民主化を提案します。聴覚・移動・判断・振動を物理的に統合した多感覚的なシステムです。
+    </div>
+
+    <!-- Animación SVG -->
     <svg viewBox="0 0 800 600" width="100%" height="400" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2rem;">
       <defs>
         <path id="rail1" d="M700,100 C500,100 300,200 100,300" />
@@ -111,58 +164,34 @@
         <path id="rail3" d="M700,260 C500,260 300,360 100,460" />
         <path id="rail4" d="M700,340 C500,340 300,440 100,540" />
       </defs>
-
       <use href="#rail1" stroke="#ddd" fill="none" stroke-width="1" />
       <use href="#rail2" stroke="#ddd" fill="none" stroke-width="1" />
       <use href="#rail3" stroke="#ddd" fill="none" stroke-width="1" />
       <use href="#rail4" stroke="#ddd" fill="none" stroke-width="1" />
-
-      <!-- Rail 1 -->
+      <!-- Bocinas en movimiento -->
       <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="6s" repeatCount="indefinite" rotate="auto">
-          <mpath href="#rail1"/>
-        </animateMotion>
+        <animateMotion dur="6s" repeatCount="indefinite" rotate="auto"><mpath href="#rail1"/></animateMotion>
       </image>
       <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="8s" repeatCount="indefinite" begin="2s" rotate="auto">
-          <mpath href="#rail1"/>
-        </animateMotion>
-      </image>
-
-      <!-- Rail 2 -->
-      <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="7s" repeatCount="indefinite" begin="1s" rotate="auto">
-          <mpath href="#rail2"/>
-        </animateMotion>
+        <animateMotion dur="8s" repeatCount="indefinite" begin="2s" rotate="auto"><mpath href="#rail1"/></animateMotion>
       </image>
       <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="6.5s" repeatCount="indefinite" begin="0.5s" rotate="auto">
-          <mpath href="#rail2"/>
-        </animateMotion>
-      </image>
-
-      <!-- Rail 3 -->
-      <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="7.2s" repeatCount="indefinite" begin="3s" rotate="auto">
-          <mpath href="#rail3"/>
-        </animateMotion>
+        <animateMotion dur="7s" repeatCount="indefinite" begin="1s" rotate="auto"><mpath href="#rail2"/></animateMotion>
       </image>
       <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="5.8s" repeatCount="indefinite" begin="0.3s" rotate="auto">
-          <mpath href="#rail3"/>
-        </animateMotion>
-      </image>
-
-      <!-- Rail 4 -->
-      <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="6.2s" repeatCount="indefinite" begin="1.7s" rotate="auto">
-          <mpath href="#rail4"/>
-        </animateMotion>
+        <animateMotion dur="6.5s" repeatCount="indefinite" begin="0.5s" rotate="auto"><mpath href="#rail2"/></animateMotion>
       </image>
       <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
-        <animateMotion dur="7.8s" repeatCount="indefinite" begin="4s" rotate="auto">
-          <mpath href="#rail4"/>
-        </animateMotion>
+        <animateMotion dur="7.2s" repeatCount="indefinite" begin="3s" rotate="auto"><mpath href="#rail3"/></animateMotion>
+      </image>
+      <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
+        <animateMotion dur="5.8s" repeatCount="indefinite" begin="0.3s" rotate="auto"><mpath href="#rail3"/></animateMotion>
+      </image>
+      <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
+        <animateMotion dur="6.2s" repeatCount="indefinite" begin="1.7s" rotate="auto"><mpath href="#rail4"/></animateMotion>
+      </image>
+      <image href="xpan.svg" width="30" height="30" transform="rotate(180)">
+        <animateMotion dur="7.8s" repeatCount="indefinite" begin="4s" rotate="auto"><mpath href="#rail4"/></animateMotion>
       </image>
     </svg>
 
@@ -175,11 +204,19 @@
 
     <div class="pdf-embed">
       <iframe src="https://attachments.are.na/38004245/223ae6825a6387b8c3c44810c88b519b.pdf?1752106540"></iframe>
-    </div>
-    <div class="pdf-embed">
       <iframe src="https://attachments.are.na/38004272/edc67bb9603941e5a1af0aeacd71c734.pdf?1752106586"></iframe>
     </div>
-    
   </div>
+
+  <script>
+    function setLang(lang) {
+      document.querySelectorAll('.description').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('lang') === lang);
+      });
+      document.querySelectorAll('.lang-select button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+  </script>
 </body>
 </html>

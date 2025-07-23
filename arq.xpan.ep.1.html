@@ -11,89 +11,99 @@
       font-family: 'Times New Roman', serif;
       color: #000;
     }
-
     header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
     }
-
     header img {
       width: 50px;
       height: auto;
     }
-
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
-      padding: 0 1.5rem;
+      padding: 0 3rem;
     }
-
     h1 {
       font-size: 1.5rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
       text-transform: lowercase;
     }
-
     .meta {
       font-size: 0.85rem;
       opacity: 0.5;
       font-style: italic;
       margin-bottom: 1.5rem;
     }
-
     .description {
       font-size: 1rem;
       line-height: 1.6;
       max-width: 700px;
       margin-bottom: 2rem;
     }
-
     .glossary-link {
       text-decoration: underline;
       cursor: pointer;
       color: inherit;
       transition: background 0.2s ease;
     }
-
     .glossary-link:hover {
       background: #f0f0f0;
     }
-
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1rem;
       margin-bottom: 2rem;
     }
-
     .gallery img {
       width: 100%;
       height: auto;
       border-radius: 4px;
       object-fit: cover;
     }
-
     .pdf-embed {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 1rem;
       margin-bottom: 2rem;
     }
-
     .pdf-embed iframe {
       width: 100%;
       height: 500px;
       border: none;
       border-radius: 4px;
     }
-
     @media (max-width: 768px) {
       .container {
         margin-top: 6rem;
-        padding: 0 1rem;
+        padding: 0 1.5rem;
       }
       .pdf-embed {
         grid-template-columns: 1fr;
@@ -107,28 +117,83 @@
   </style>
 </head>
 <body>
-
   <header>
     <a href="https://xpan.earth" target="_blank">
       <img src="xpan.svg" alt="xpan logo" />
     </a>
   </header>
-
+  <div class="language-selector">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
   <div class="container">
-    <h1>xpan.ep.1 [espacio público uno]</h1>
-    <div class="meta">octubre 2024 — ciudad de méxico</div>
+    <!-- Español -->
+    <div class="lang lang-es">
+      <h1>xpan.ep.1 [espacio público uno]</h1>
+      <div class="meta">octubre 2024 — ciudad de méxico</div>
+      <div class="description">
+ xpan.ep.1 es un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistema-de-poros'">sistema modular</span> ubicado en roma norte, ciudad de méxico. diseñado, desarrollado y construido por xpan, fue la primera iteración del <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">sistema de poros</span>. abrió el 17 de octubre del 2024 como punto de partida para una serie de <span class="glossary-link" onclick="location.href='mc_glosario.1.html#activación'">activaciones</span> vinculadas a la <span class="glossary-link" onclick="location.href='mc_glosario.1.html#topología-conectiva'">topología conectiva</span>.
 
-    <div class="description">
-      xpan.ep.1 es un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistema-de-poros'">sistema modular</span> ubicado en roma norte, ciudad de méxico. diseñado, desarrollado y construido por xpan, fue la primera iteración del <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">sistema de poros</span>. abrió el 17 de octubre del 2024 como punto de partida para una serie de <span class="glossary-link" onclick="location.href='mc_glosario.1.html#activación'">activaciones</span> vinculadas a la <span class="glossary-link" onclick="location.href='mc_glosario.1.html#topología-conectiva'">topología conectiva</span>.
+    <br><br>
 
-      <br><br>
+    la estructura se compone de 61 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#bastidores'">bastidores</span> de acero y aluminio, organizados en una retícula que define el esqueleto espacial. una <span class="glossary-link" onclick="location.href='mc_glosario.1.html#envolvente'">envolvente</span> translúcida de policarbonato perforado genera 436 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">poros</span> en muros y techo, operando como interfaz activa entre interior y exterior.
 
-      la estructura se compone de 61 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#bastidores'">bastidores</span> de acero y aluminio, organizados en una retícula que define el esqueleto espacial. una <span class="glossary-link" onclick="location.href='mc_glosario.1.html#envolvente'">envolvente</span> translúcida de policarbonato perforado genera 436 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">poros</span> en muros y techo, operando como interfaz activa entre interior y exterior.
+    <br><br>
 
-      <br><br>
-
-      el diseño de iluminación utiliza el policarbonato como <span class="glossary-link" onclick="location.href='mc_glosario.1.html#pantalla-difusora'">pantalla difusora</span>, modulando la percepción espacial y la intensidad lumínica según la configuración. el sistema responde a distintas densidades, ritmos y formas de ocupación, alojando eventos, encuentros y ensamblajes producidos por la comunidad extendida de xpan.
+    el diseño de iluminación utiliza el policarbonato como <span class="glossary-link" onclick="location.href='mc_glosario.1.html#pantalla-difusora'">pantalla difusora</span>, modulando la percepción espacial y la intensidad lumínica según la configuración. el sistema responde a distintas densidades, ritmos y formas de ocupación, alojando eventos, encuentros y ensamblajes producidos por la comunidad extendida de xpan.
+        </div>
     </div>
+    <!-- English -->
+    <div class="lang lang-en" style="display: none;">
+      <h1>xpan.ep.1 [public space one]</h1>
+      <div class="meta">october 2024 — mexico city</div>
+      <div class="description">
+        xpan.ep.1 is a <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistema-de-poros'">modular system</span> located in Roma Norte, Mexico City. Designed, developed, and built by xpan, it was the first iteration of the <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">porous system</span>. It opened on October 17, 2024, as a starting point for a series of <span class="glossary-link" onclick="location.href='mc_glosario.1.html#activación'">activations</span> linked to the <span class="glossary-link" onclick="location.href='mc_glosario.1.html#topología-conectiva'">connective topology</span>.
+
+<br><br>
+
+the structure is composed of 61 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#bastidores'">frames</span> made of steel and aluminum, arranged in a grid that defines the spatial skeleton. a translucent <span class="glossary-link" onclick="location.href='mc_glosario.1.html#envolvente'">envelope</span> of perforated polycarbonate generates 436 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">pores</span> across walls and ceiling, operating as an active interface between interior and exterior.
+
+<br><br>
+
+the lighting design uses the polycarbonate as a <span class="glossary-link" onclick="location.href='mc_glosario.1.html#pantalla-difusora'">diffusing screen</span>, modulating spatial perception and light intensity according to configuration. the system adapts to varying densities, rhythms, and modes of occupation, hosting events, gatherings, and assemblies produced by xpan's extended community.
+      </div>
+    </div>
+    <!-- Français -->
+    <div class="lang lang-fr" style="display: none;">
+      <h1>xpan.ep.1 [espace public un]</h1>
+      <div class="meta">octobre 2024 — mexico</div>
+      <div class="description">
+        xpan.ep.1 est un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistema-de-poros'">système modulaire</span> situé à Roma Norte, Mexico. Conçu, développé et construit par xpan, il constitue la première itération du <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">système de pores</span>. Il a ouvert ses portes le 17 octobre 2024 comme point de départ pour une série <span class="glossary-link" onclick="location.href='mc_glosario.1.html#activación'">d'activations</span> liées à la <span class="glossary-link" onclick="location.href='mc_glosario.1.html#topología-conectiva'">topologie connective</span>.
+
+<br><br>
+
+la structure se compose de 61 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#bastidores'">cadres</span> en acier et aluminium, organisés en une grille définissant le squelette spatial. une <span class="glossary-link" onclick="location.href='mc_glosario.1.html#envolvente'">enveloppe</span> translucide en polycarbonate perforé génère 436 <span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">pores</span> dans les murs et le plafond, agissant comme une interface active entre l’intérieur et l’extérieur.
+
+<br><br>
+
+le dispositif d’éclairage utilise le polycarbonate comme <span class="glossary-link" onclick="location.href='mc_glosario.1.html#pantalla-difusora'">écran diffuseur</span>, modulant la perception spatiale et l’intensité lumineuse selon la configuration. le système répond à diverses densités, rythmes et formes d’occupation, accueillant événements, rencontres et assemblages produits par la communauté étendue de xpan.
+      </div>
+    </div>
+    <!-- 日本語 -->
+    <div class="lang lang-jp" style="display: none;">
+      <h1>xpan.ep.1［パブリックスペース１］</h1>
+      <div class="meta">2024年10月 — メキシコシティ</div>
+      <div class="description">
+        xpan.ep.1は、メキシコシティのローマ・ノルテに位置する<span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistema-de-poros'">モジュール型システム</span>です。xpanによって設計・開発・施工され、<span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">ポーラスシステム</span>の最初の実装として2024年10月17日にオープンしました。これは<span class="glossary-link" onclick="location.href='mc_glosario.1.html#topología-conectiva'">トポロジー・コネクティブ</span>に連動した<span class="glossary-link" onclick="location.href='mc_glosario.1.html#activación'">アクティベーション</span>の連続の起点として機能します。
+
+<br><br>
+
+構造体はスチールとアルミニウム製の<span class="glossary-link" onclick="location.href='mc_glosario.1.html#bastidores'">フレーム</span>61本で構成され、空間的骨格を定義するグリッドとして配置されています。半透明の<span class="glossary-link" onclick="location.href='mc_glosario.1.html#envolvente'">ポリカーボネート被膜</span>には壁と天井に合計436個の<span class="glossary-link" onclick="location.href='mc_glosario.1.html#poros'">ポア</span>が施され、内外を接続するインターフェースとして機能します。
+
+<br><br>
+
+照明設計ではポリカーボネートを<span class="glossary-link" onclick="location.href='mc_glosario.1.html#pantalla-difusora'">拡散スクリーン</span>として活用し、構成に応じて空間認識と光強度を調整します。このシステムはさまざまな密度、リズム、使用形態に対応し、xpanの拡張されたコミュニティによるイベントや集合、構築的介入を受け入れます。
+      </div>
+    </div>
+    <!-- Galería -->
 
     <div class="gallery">
       <!-- Imágenes principales -->
@@ -147,9 +212,9 @@
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794117/original_9b78c0133d9714cf1538ee3a11f536f6.jpg?1747633364" />
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363" />
     </div>
+    <!-- PDF -->
 
   <div class="pdf-embed">
-      <h3 style="font-size: 1rem; font-weight: normal; margin-bottom: 0.5rem; grid-column: 1 / -1;">planos técnicos</h3>
       <iframe src="https://attachments.are.na/36794273/31c710cbdc2ca30c9fb66638d4ea224c.pdf?1747634363"></iframe>
       <iframe src="https://attachments.are.na/36794272/d62dd6c04e7afd32b9317e3798c2b589.pdf?1747634362"></iframe>
       <iframe src="https://attachments.are.na/36794271/3f84529d746199ed84c4ccf3f5dcc043.pdf?1747634362"></iframe>
@@ -169,6 +234,18 @@
       <iframe src="https://attachments.are.na/36794257/b3bad571ea513bc4dd52af01b3250614.pdf?1747634361"></iframe>
     </div>
   </div>
-
+  <script>
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el => {
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+    const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
+    setLang(savedLang);
+  </script>
 </body>
 </html>

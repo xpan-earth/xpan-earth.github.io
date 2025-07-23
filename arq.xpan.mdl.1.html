@@ -21,6 +21,26 @@
       width: 50px;
       height: auto;
     }
+    .lang-select {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      font-size: 0.9rem;
+    }
+    .lang-select button {
+      background: none;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      color: #000;
+      opacity: 0.6;
+    }
+    .lang-select button.active {
+      opacity: 1;
+      font-weight: bold;
+    }
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
@@ -36,10 +56,16 @@
       font-size: 1rem;
       line-height: 1.6;
       max-width: 700px;
-      margin-bottom: 3rem;
+      margin: 0 auto 3rem;
+      display: none;
+    }
+    .description.active {
+      display: block;
     }
     .component {
-      margin-bottom: 4rem;
+      margin: 4rem auto;
+      max-width: 1000px;
+      padding: 0 1.5rem;
     }
     .component h2 {
       font-size: 1.2rem;
@@ -57,10 +83,11 @@
       gap: 1rem;
     }
     img, video, iframe {
-      width: 100%;
-      max-width: 100%;
-      border-radius: 4px;
-    }
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 4px;
+}
     video {
       max-height: 80vh;
     }
@@ -70,6 +97,9 @@
     }
     @media (max-width: 768px) {
       .container {
+        padding: 0 1rem;
+      }
+      .component {
         padding: 0 1rem;
       }
       .gallery {
@@ -92,10 +122,17 @@
     </a>
   </header>
 
-  <div class="container">
-<h1>mdl.1 — sistema completo</h1>
+  <div class="lang-select">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
 
-<div class="description">
+  <div class="container">
+    <h1>mdl.1 — sistema completo</h1>
+
+    <div class="description active" lang="es">
 <p><strong>mdl.1 — sistema base</strong><br>
       la mdl.1 es el primer sistema desarrollado por xpan.<br>
       su construcción estableció una forma de operar, de conectar y de intervenir el espacio.<br>
@@ -164,9 +201,222 @@
       <p>cada configuración responde al espacio, al uso y al número de transmisores requeridos.<br>
       la lógica es clara: modularidad, precisión, adaptabilidad.<br>
       el punto de partida siempre es el mismo: <strong>mdl.1</strong></p>
-    </div>
+    </div>    </div>
 
-<!-- BLOQUES MULTIMEDIA -->
+    <div class="description" lang="en">
+<p><strong>mdl.1 — base system</strong><br>
+mdl.1 is the first system developed by xpan.<br>
+its construction established a way of operating, connecting, and intervening in space.<br>
+it was not designed as a utilitarian object or a conventional sound system. it was conceived as a medium, a transmission device.</p>
+
+<p>the speaker here is not understood as a simple emitter, but as an open channel: a device that converts signal into presence, vibration into structure, sound into message.<br>
+since its first appearance, mdl.1 has functioned as a physical interface between xpan and its environment. through it, collaborations are activated, connections are formed, and spatial, sonic, and cultural systems are constructed.</p>
+
+<p>unlike systems designed to amplify generically, mdl.1 proposes situated propagation.<br>
+its strength lies not in its volume, but in its ability to mark a point of action within a given environment.</p>
+
+<p>its silhouette gave rise to the xpan logo.<br>
+its logic originated all other developed systems.<br>
+it remains active. it remains relevant.</p>
+
+<hr>
+
+<h2>mdl.1 system</h2>
+<p><strong>mdl.1</strong> is a passive two-way speaker.<br>
+its body is made of wood with a semi-matte black polyurethane finish.<br>
+dimensions: 35 × 30 × 30 cm<br>
+weight: 9.6 kg</p>
+
+<p><strong>internal components:</strong><br>
+– 6.5” midrange driver<br>
+– 4” bullet tweeter<br>
+– two-way passive crossover<br>
+– frequency response: 25 hz – 20 khz<br>
+– sensitivity: 96 db<br>
+– nominal impedance: 8 ohms<br>
+– recommended power: 66 w</p>
+
+<p>mdl.1 always operates in conjunction. its structure is designed to scale, adapt, and configure precisely.</p>
+
+<hr>
+
+<h2>system components</h2>
+
+<p><strong>stools</strong><br>
+pedestals designed exclusively for mdl.1<br>
+made of ½” square aluminum bar<br>
+available in two heights:<br>
+– 120 cm (tall)<br>
+– 30 cm (short)</p>
+
+<p><strong>sub.t</strong><br>
+passive 15” subwoofer<br>
+dimensions: 80 × 60 × 60 cm<br>
+weight: 24 kg<br>
+response: 10 hz – 200 hz<br>
+sensitivity: 120 db<br>
+impedance: 4 ohms<br>
+recommended power: 1200 w</p>
+
+<p><strong>g.sub</strong><br>
+dedicated amplifier for sub.t</p>
+
+<p><strong>g.2 / g.4 / g.8 / g.12</strong><br>
+modular amplifiers built from aluminum flat bar<br>
+input/output panels made of machined nylamid<br>
+– audio input: 3.5 mm jack<br>
+– output: 120 w per channel<br>
+– operating voltage: 110v 60hz or 220v 50hz<br>
+– models with 2, 4, 8, or 12 channels depending on requirements</p>
+
+<p>each configuration responds to the space, use, and number of transmitters needed.<br>
+the logic is clear: modularity, precision, adaptability.<br>
+the starting point is always the same: <strong>mdl.1</strong></p>
+</div>
+
+    <div class="description" lang="fr">
+<p><strong>mdl.1 — système de base</strong><br>
+mdl.1 est le premier système développé par xpan.<br>
+sa construction a établi une manière d'opérer, de connecter et d'intervenir dans l'espace.<br>
+il ne s'agit pas d'un objet utilitaire ni d'un système sonore conventionnel. il a été conçu comme un médium, un dispositif de transmission.</p>
+
+<p>le haut-parleur n'est pas ici compris comme un simple émetteur, mais comme un canal ouvert : un appareil qui transforme le signal en présence, la vibration en structure, le son en message.<br>
+depuis sa première apparition, la mdl.1 agit comme une interface physique entre xpan et son environnement. elle permet d’activer des collaborations, de générer des liens, de construire des systèmes spatiaux, sonores et culturels.</p>
+
+<p>contrairement aux systèmes conçus pour amplifier de manière générique, la mdl.1 propose une propagation située.<br>
+sa puissance ne réside pas dans son volume, mais dans sa capacité à marquer un point d'action dans l'environnement.</p>
+
+<p>sa silhouette a donné naissance au logo de xpan.<br>
+sa logique a initié le reste des systèmes développés.<br>
+elle est toujours active. toujours pertinente.</p>
+
+<hr>
+
+<h2>système mdl.1</h2>
+<p><strong>mdl.1</strong> est une enceinte passive à deux voies.<br>
+son corps est en bois avec une finition en polyuréthane noir semi-mat.<br>
+dimensions : 35 × 30 × 30 cm<br>
+poids : 9,6 kg</p>
+
+<p><strong>composants internes :</strong><br>
+– haut-parleur médium 6,5”<br>
+– tweeter type bullet 4”<br>
+– filtre passif deux voies<br>
+– réponse en fréquence : 25 hz – 20 khz<br>
+– sensibilité : 96 db<br>
+– impédance nominale : 8 ohms<br>
+– puissance recommandée : 66 w</p>
+
+<p>la mdl.1 fonctionne toujours en ensemble. sa structure est conçue pour être scalable, adaptable et configurée avec précision.</p>
+
+<hr>
+
+<h2>composants du système</h2>
+
+<p><strong>stools</strong><br>
+pieds conçus exclusivement pour la mdl.1<br>
+fabriqués en barre carrée d’aluminium de ½”<br>
+disponibles en deux hauteurs :<br>
+– 120 cm (haut)<br>
+– 30 cm (bas)</p>
+
+<p><strong>sub.t</strong><br>
+sous-grave passif de 15”<br>
+dimensions : 80 × 60 × 60 cm<br>
+poids : 24 kg<br>
+réponse : 10 hz – 200 hz<br>
+sensibilité : 120 db<br>
+impédance : 4 ohms<br>
+puissance recommandée : 1200 w</p>
+
+<p><strong>g.sub</strong><br>
+amplificateur dédié au sub.t</p>
+
+<p><strong>g.2 / g.4 / g.8 / g.12</strong><br>
+amplificateurs modulaires en solera d’aluminium<br>
+panneaux d'entrée et sortie en nylamid usiné<br>
+– entrée audio : jack 3,5 mm<br>
+– sortie : 120 w par canal<br>
+– tension de fonctionnement : 110v 60hz ou 220v 50hz<br>
+– modèles à 2, 4, 8 ou 12 canaux selon les besoins</p>
+
+<p>chaque configuration s’adapte à l’espace, à l’usage et au nombre d’émetteurs requis.<br>
+la logique est claire : modularité, précision, adaptabilité.<br>
+le point de départ est toujours le même : <strong>mdl.1</strong></p>
+</div>
+
+    <div class="description" lang="jp">
+<p><strong>mdl.1 — ベースシステム</strong><br>
+mdl.1 は xpan によって開発された最初のシステムです。<br>
+その構造は、空間に介入し、接続し、操作する方法を定義しました。<br>
+それは実用的な物体や一般的なサウンドシステムとしてではなく、メディアとして、伝達装置として設計されました。</p>
+
+<p>スピーカーは単なる音の発信源ではなく、開かれたチャンネルとして捉えられています：信号を存在へ、振動を構造へ、音をメッセージへと変換する装置です。<br>
+mdl.1 は初登場以来、xpan と環境との間の物理的なインターフェースとして機能してきました。これを通じて協働が生まれ、つながりが形成され、空間的・音響的・文化的なシステムが構築されます。</p>
+
+<p>一般的な増幅システムとは異なり、mdl.1 は「状況に応じた伝播（situated propagation）」を提案します。<br>
+その力は音量ではなく、環境の中に「行為の起点」を明確に刻む能力にあります。</p>
+
+<p>そのシルエットは xpan のロゴの元となり、<br>
+その論理は他のすべてのシステムの原型となりました。<br>
+今なお稼働中であり、有効です。</p>
+
+<hr>
+
+<h2>mdl.1 システム</h2>
+<p><strong>mdl.1</strong> はパッシブ型の2ウェイスピーカーです。<br>
+本体は木製で、半艶の黒色ポリウレタン仕上げです。<br>
+サイズ：35 × 30 × 30 cm<br>
+重量：9.6 kg</p>
+
+<p><strong>内部構成：</strong><br>
+– 6.5インチ中音ドライバー<br>
+– 4インチバレットツイーター<br>
+– 2ウェイパッシブクロスオーバー<br>
+– 再生周波数：25 hz – 20 khz<br>
+– 感度：96 db<br>
+– 公称インピーダンス：8 ohm<br>
+– 推奨出力：66 w</p>
+
+<p>mdl.1 は常に複数台で運用されます。<br>
+その構造はスケーラブルであり、状況に応じて精密に構成・調整可能です。</p>
+
+<hr>
+
+<h2>システム構成要素</h2>
+
+<p><strong>stools</strong><br>
+mdl.1 専用のスピーカースタンド。<br>
+1/2インチ角のアルミ角棒で製作。<br>
+高さ2種：<br>
+– 120 cm（高）<br>
+– 30 cm（低）</p>
+
+<p><strong>sub.t</strong><br>
+15インチ・パッシブサブウーファー<br>
+サイズ：80 × 60 × 60 cm<br>
+重量：24 kg<br>
+再生範囲：10 hz – 200 hz<br>
+感度：120 db<br>
+インピーダンス：4 ohm<br>
+推奨出力：1200 w</p>
+
+<p><strong>g.sub</strong><br>
+sub.t 用の専用アンプ</p>
+
+<p><strong>g.2 / g.4 / g.8 / g.12</strong><br>
+アルミ材から構成されたモジュール式アンプ群<br>
+入出力パネルはナイラミド削り出し加工<br>
+– 入力：3.5 mm ジャック<br>
+– 出力：120 w / チャンネル<br>
+– 電源：110v 60hz または 220v 50hz<br>
+– 必要に応じて2/4/8/12チャンネルのモデルを用意</p>
+
+<p>構成は空間や用途、必要な発信数に応じて選択されます。<br>
+原理は明快です：モジュール性、精密さ、適応性。<br>
+出発点は常に <strong>mdl.1</strong> です。</p>
+</div>
+
 
 <div class="component">
   <div class="media">
@@ -252,7 +502,18 @@
       <source src="https://attachments.are.na/37759944/84599332f21fdd420362e4ca85017c52.mp4?1751246911" type="video/mp4">
     </video>
   </div>
-</div>
-  </div>
+</div>  </div>
+
+  <script>
+    function setLang(lang) {
+      document.querySelectorAll('.description').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('lang') === lang);
+      });
+      document.querySelectorAll('.lang-select button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+  </script>
 </body>
 </html>
+

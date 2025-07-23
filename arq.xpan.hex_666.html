@@ -21,6 +21,29 @@
       width: 50px;
       height: auto;
     }
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
@@ -92,17 +115,63 @@
     </a>
   </header>
 
-  <div class="container">
-    <h1>hex_666</h1>
-    <div class="meta">febrero 2024 — ciudad de méxico</div>
+  <div class="language-selector">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
 
-    <div class="description">
-      hex_666 es una estructura suspendida desde un solo punto de anclaje, equilibrada mediante seis cables de acero y el peso de seis bocinas mdl.01-r. la forma general replica una estrella de seis puntas, construida con perfiles de acero cuadrado de 1½", dispuestos en ángulo de 18° y unidos a una pieza central de acero rolado.<br><br>
-      el sistema se completa con un aro flotante de 3 metros de diámetro, soportado por tensión cruzada, donde se distribuyeron 30 velas. todo el conjunto se mantuvo en acabado natural, con perfiles rojos, soldaduras visibles y uniones expuestas.<br><br>
-      la instalación funcionó como matriz física y sonora. durante seis horas, seis colaboradores activaron las seis bocinas de forma continua, generando una vibración circular sostenida. el montaje se realizó en equilibrio simétrico, con precisión en cada tensión y contrapeso.<br><br>
-      hex_666 articula geometría, sonido y gravedad. una figura técnica y simbólica, activa en todos sus niveles.
+  <div class="container">
+    <!-- Español -->
+    <div class="lang lang-es">
+      <h1>hex_666</h1>
+      <div class="meta">febrero 2024 — ciudad de méxico</div>
+      <div class="description">
+        hex_666 es una estructura suspendida desde un solo punto de anclaje, equilibrada mediante seis cables de acero y el peso de seis bocinas mdl.01-r. la forma general replica una estrella de seis puntas, construida con perfiles de acero cuadrado de 1½", dispuestos en ángulo de 18° y unidos a una pieza central de acero rolado.<br><br>
+        el sistema se completa con un aro flotante de 3 metros de diámetro, soportado por tensión cruzada, donde se distribuyeron 30 velas. todo el conjunto se mantuvo en acabado natural, con perfiles rojos, soldaduras visibles y uniones expuestas.<br><br>
+        la instalación funcionó como matriz física y sonora. durante seis horas, seis colaboradores activaron las seis bocinas de forma continua, generando una vibración circular sostenida. el montaje se realizó en equilibrio simétrico, con precisión en cada tensión y contrapeso.<br><br>
+        hex_666 articula geometría, sonido y gravedad. una figura técnica y simbólica, activa en todos sus niveles.
+      </div>
     </div>
 
+    <!-- English -->
+    <div class="lang lang-en" style="display: none;">
+      <h1>hex_666</h1>
+      <div class="meta">february 2024 — mexico city</div>
+      <div class="description">
+        hex_666 is a structure suspended from a single anchor point, balanced by six steel cables and the weight of six mdl.01-r speakers. its overall shape replicates a six-pointed star, built from 1½" square steel profiles arranged at 18° angles and joined to a central rolled steel hub.<br><br>
+        the system is completed with a 3-meter diameter floating ring, supported by cross-tensioned cables, where 30 candles were distributed. the entire assembly remained in raw finish, with red profiles, exposed welds, and visible joints.<br><br>
+        the installation operated as both a physical and sonic matrix. for six hours, six collaborators continuously activated the six speakers, generating a sustained circular vibration. the structure was assembled in symmetric balance, with precise tension and counterweights.<br><br>
+        hex_666 articulates geometry, sound, and gravity. a technical and symbolic figure, active on every level.
+      </div>
+    </div>
+
+    <!-- Français -->
+    <div class="lang lang-fr" style="display: none;">
+      <h1>hex_666</h1>
+      <div class="meta">février 2024 — mexico</div>
+      <div class="description">
+        hex_666 est une structure suspendue à partir d’un seul point d’ancrage, équilibrée par six câbles en acier et le poids de six haut-parleurs mdl.01-r. sa forme générale reproduit une étoile à six branches, construite à partir de profilés carrés en acier de 1½", disposés à un angle de 18° et reliés à une pièce centrale en acier cintré.<br><br>
+        le système est complété par un anneau flottant de 3 mètres de diamètre, soutenu par tension croisée, où 30 bougies ont été réparties. l’ensemble est resté brut : profils rouges, soudures visibles et jonctions exposées.<br><br>
+        l’installation a fonctionné comme matrice physique et sonore. pendant six heures, six collaborateurs ont activé les six haut-parleurs en continu, générant une vibration circulaire soutenue. le montage a été réalisé en équilibre symétrique, avec précision dans chaque tension et contrepoids.<br><br>
+        hex_666 articule géométrie, son et gravité. une figure technique et symbolique, active à tous les niveaux.
+      </div>
+    </div>
+
+    <!-- 日本語 -->
+    <div class="lang lang-jp" style="display: none;">
+      <h1>hex_666</h1>
+      <div class="meta">2024年2月 — メキシコシティ</div>
+      <div class="description">
+        hex_666は、1つのアンカーポイントから吊り下げられた構造で、6本のスチールケーブルと6台のmdl.01-rスピーカーの重量によってバランスを保っています。全体の形状は6つの頂点を持つ星を模しており、1½インチ角の鋼材を18度の角度で配置し、中央の曲げ加工された鋼部品に接合しています。<br><br>
+        構造は直径3メートルの浮遊リングで完成されており、交差する張力で支えられ、そこに30本のキャンドルが配置されました。全体は赤い鋼材、露出した溶接部、むき出しの接合部といった自然仕上げのままで保たれています。<br><br>
+        このインスタレーションは物理的かつ音響的なマトリクスとして機能しました。6時間にわたり6人の協力者が6つのスピーカーを連続的に作動させ、持続的な円形振動を生み出しました。構造は対称的なバランスで組み立てられ、それぞれの張力と重りが正確に調整されています。<br><br>
+        hex_666は幾何学、音、重力を結びつけた技術的かつ象徴的な構造です。全てのレベルで活動する存在です。
+      </div>
+    </div>
+
+    <!-- Galería -->
     <div class="gallery">
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/37811425/original_53b19dd284ba329438496d3cc69c405e.jpg?1751423363?bc=0" />
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/37811427/original_97ba81be1056212cbfb5a1ffedcd6709.jpg?1751423374?bc=0" />
@@ -127,13 +196,30 @@
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/37811585/original_6981566671b9cc078a6e3c760e216931.png?1751424135?bc=0" />
     </div>
 
+    <!-- PDF -->
     <div class="pdf-embed">
       <iframe src="https://attachments.are.na/37811414/cc46d9a5f82a1bd3e1773162f1dfe799.pdf?1751423223"></iframe>
     </div>
 
+    <!-- Video -->
     <div class="video-embed">
       <iframe src="https://www.youtube.com/embed/pdncvO2FJZM" allowfullscreen></iframe>
     </div>
   </div>
+
+  <script>
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el => {
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+
+    const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
+    setLang(savedLang);
+  </script>
 </body>
 </html>

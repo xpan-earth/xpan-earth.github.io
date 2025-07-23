@@ -11,45 +11,79 @@
       font-family: 'Times New Roman', serif;
       color: #000;
     }
+
     header {
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 10;
     }
+
     header img {
       width: 50px;
       height: auto;
     }
+
+    .lang-switcher {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      font-size: 0.9rem;
+    }
+
+    .lang-switcher button {
+      background: none;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      text-transform: lowercase;
+    }
+
+    .lang-switcher button.active {
+      text-decoration: underline;
+    }
+
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
       padding: 0 1.5rem;
     }
+
     h1 {
       font-size: 1.5rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
       text-transform: lowercase;
     }
+
     .meta {
       font-size: 0.85rem;
       opacity: 0.5;
       font-style: italic;
       margin-bottom: 1.5rem;
     }
+
     .description {
       font-size: 1rem;
       line-height: 1.6;
       max-width: 700px;
       margin-bottom: 2rem;
+      display: none;
     }
+
+    .description.active {
+      display: block;
+    }
+
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 0.5rem;
       margin-bottom: 2rem;
     }
+
     .gallery img,
     .gallery video {
       width: 100%;
@@ -59,6 +93,7 @@
       display: block;
       aspect-ratio: auto;
     }
+
     .pdf-embed iframe {
       width: 100%;
       height: 600px;
@@ -66,28 +101,33 @@
       border-radius: 4px;
       margin-bottom: 2rem;
     }
+
     .xpan-audio-block {
       border: 1px solid black;
       padding: 1rem;
       margin-bottom: 3rem;
     }
+
     .audio-meta .title {
       font-size: 1rem;
       font-weight: bold;
       text-transform: lowercase;
       margin-bottom: 0.2rem;
     }
+
     .audio-meta .info {
       font-size: 0.85rem;
       opacity: 0.6;
       margin-bottom: 1rem;
     }
+
     .audio-controls {
       display: flex;
       align-items: center;
       gap: 1rem;
       flex-wrap: wrap;
     }
+
     .play-button {
       background: none;
       border: none;
@@ -96,10 +136,12 @@
       text-transform: lowercase;
       padding: 0.4rem 0.6rem;
     }
+
     .time-display {
       font-size: 0.85rem;
       min-width: 60px;
     }
+
     .progress-container {
       position: relative;
       flex-grow: 1;
@@ -108,11 +150,13 @@
       cursor: pointer;
       touch-action: none;
     }
+
     .progress-fill {
       height: 2px;
       background: black;
       width: 0%;
     }
+
     canvas {
       width: 100%;
       height: 100px;
@@ -120,6 +164,7 @@
       margin-top: 1rem;
       background: white;
     }
+
     .tooltip {
       position: absolute;
       font-size: 0.75rem;
@@ -133,6 +178,7 @@
       pointer-events: none;
       z-index: 100;
     }
+
     @media (prefers-color-scheme: dark) {
       body { background: black; color: white; }
       .xpan-audio-block { border-color: white; }
@@ -142,7 +188,9 @@
       .tooltip { background: white; color: black; }
       .play-button { color: white; }
       header img { filter: invert(1); }
+      .lang-switcher button { color: white; 
     }
+
     @media (max-width: 768px) {
       .container {
         margin-top: 6rem;
@@ -165,18 +213,49 @@
       <img src="xpan.svg" alt="xpan logo" />
     </a>
   </header>
+
+  <div class="lang-switcher">
+    <button onclick="switchLang('es')" class="active">es</button>
+    <button onclick="switchLang('en')">en</button>
+    <button onclick="switchLang('fr')">fr</button>
+    <button onclick="switchLang('jp')">jp</button>
+  </div>
+
   <div class="container">
     <h1>mdtc.4 [ eden garden cinema ]</h1>
     <div class="meta">abril 2025 — hotel reforma, ciudad de méxico</div>
-    <div class="description">
+
+    <!-- descripciones multilngües -->
+    <div class="description active" lang="es">[
       intervención espacial desarrollada por xpan junto a mario alore y eli pastore.<br><br>
       estructura principal: estrella de seis puntas construida con 132 reflectores de alta intensidad, unidos mediante cable de acero. el conjunto —de más de 3 metros de diámetro— fue suspendido en el centro del espacio. su trazo continuo forma una figura cerrada y expansiva. la proyección lumínica es directa, sin dispersión: genera un volumen denso, agresivo y frontal.<br><br>
       el sistema se completa con una lámina de aluminio pulido alineada al centro geométrico de la estrella, y un mixtape en reproducción continua.<br><br>
       el público accede a memorias usb metálicas con el audio. cada unidad está diseñada con una punta afilada, permitiendo inscribir trazos sobre la lámina. los desplazamientos físicos durante la escucha activan un protocolo de intervención: gesto, vibración y registro convergen en un único plano.<br><br>
       este proyecto define una plataforma de exposición extrema, donde la memoria se acumula como residuo material.
-    </div>
+    ]</div>
+    <div class="description" lang="en">[
+      spatial intervention developed by xpan with mario alore and eli pastore.<br><br>
+      main structure: six-pointed star built with 132 high-intensity reflectors, connected by steel cable. the assembly —over 3 meters in diameter— was suspended at the center of the space. its continuous stroke forms a closed and expansive figure. light projection is direct, without dispersion: it generates a dense, aggressive, and frontal volume.<br><br>
+      the system is completed by a polished aluminum sheet aligned to the geometric center of the star, and a mixtape in continuous playback.<br><br>
+      the audience receives metallic usb drives with the audio. each unit is designed with a sharp tip, enabling inscriptions on the sheet. physical movement during listening activates an intervention protocol: gesture, vibration, and trace converge on a single plane.<br><br>
+      this project defines a platform of extreme exhibition, where memory accumulates as material residue.
+   ]</div>
+    <div class="description" lang="fr">[
+      intervention spatiale développée par xpan avec mario alore et eli pastore.<br><br>
+      structure principale : étoile à six branches construite avec 132 projecteurs haute intensité, reliés par des câbles en acier. l’ensemble — de plus de 3 mètres de diamètre — était suspendu au centre de l’espace. son tracé continu forme une figure fermée et expansive. la projection lumineuse est directe, sans dispersion : elle génère un volume dense, agressif et frontal.<br><br>
+      le système est complété par une feuille d’aluminium poli alignée au centre géométrique de l’étoile, et une mixtape diffusée en boucle.<br><br>
+      le public reçoit des clés usb métalliques contenant l’audio. chaque unité est conçue avec une pointe acérée, permettant de tracer sur la feuille. les déplacements physiques pendant l’écoute activent un protocole d’intervention : geste, vibration et inscription convergent sur un même plan.<br><br>
+      ce projet définit une plateforme d’exposition extrême, où la mémoire s’accumule en tant que résidu matériel.
+    ]</div>
+    <div class="description" lang="jp">[
+      空間インスタレーションは、xpanがmario aloreおよびeli pastoreと共同で開発。<br><br>
+      主構造は132個の高強度リフレクターで構成され、スチールケーブルで接続された六芒星。直径3メートル以上の構造体が空間中央に吊るされ、連続的な軌跡が閉じた拡張形態を形成する。光の投影は拡散せず直接的で、密度が高く攻撃的で正面から迫るようなボリュームを生み出す。<br><br>
+      システムは、幾何学的中心に配置された研磨アルミニウム板と、連続再生されるミックステープで構成される。<br><br>
+      観客は音源が収録された金属製USBを受け取り、それぞれのデバイスには鋭い先端があり、アルミ板に刻みを入れることができる。鑑賞中の身体的な移動が、介入のプロトコルを起動させる：ジェスチャー、振動、記録が一つの平面に収束する。<br><br>
+      本プロジェクトは、記憶が物質的残滓として蓄積される極限的展示プラットフォームを提示する。
+   ]</div>
 
-
+    <!-- audio -->
     <div class="xpan-audio-block audio-local">
       <div class="audio-meta">
         <div class="title">mdtc.4 — mixtape</div>
@@ -193,7 +272,8 @@
       <canvas></canvas>
     </div>
 
-    <div class="gallery">
+    <!-- galería -->
+<div class="gallery">
   <video autoplay muted loop playsinline><source src="https://attachments.are.na/38029171/c70f2ec676db10432d4df5e8b4edfda3.mov?1752183654" type="video/mp4" /></video>
   <img src="https://d2w9rnfcy7mm78.cloudfront.net/38029070/original_e7b6d2edeaec7c33f7e398a967b4ff0c.jpg?1752183429?bc=0" />
     <video autoplay muted loop playsinline><source src="https://attachments.are.na/38029238/3f48480f6d82c26d60073d5b95e9f7ce.mov?1752183909" type="video/mp4" /></video>
@@ -217,11 +297,25 @@
   <img src="https://d2w9rnfcy7mm78.cloudfront.net/38029311/original_9cffb18cbf52c14e9a010d3040181b8b.jpg?1752184200?bc=0" />
 </div>
 
-<div class="pdf-embed">
-  <iframe src="https://attachments.are.na/38029628/56538178c853b0114f35557bb16f250e.pdf?1752185245"></iframe>
-</div>
-
+    <!-- PDF -->
+    <div class="pdf-embed">
+      <iframe src="https://attachments.are.na/38029628/56538178c853b0114f35557bb16f250e.pdf?1752185245"></iframe>
+    </div>
   </div>
+
+  <!-- scripts -->
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.description[lang]').forEach(el => el.classList.remove('active'));
+      const selected = document.querySelector(`.description[lang="${lang}"]`);
+      if (selected) selected.classList.add('active');
+
+      document.querySelectorAll('.lang-switcher button').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.querySelector(`.lang-switcher button[onclick*="${lang}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+  </script>
+
 <script>
 let globalAudioContext = null;
 
@@ -372,14 +466,8 @@ document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
       <source src="https://ia601404.us.archive.org/15/items/mixtape-mdtc.-4/mixtape%20mdtc.4%20.wav" type="audio/wav" />
     </audio>
   </div>
-  <canvas></canvas>
-</div>
 
+  </div>
   </script>
-
-<script>
-
-</script>
 </body>
 </html>
-

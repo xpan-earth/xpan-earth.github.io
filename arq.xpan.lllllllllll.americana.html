@@ -24,6 +24,29 @@
       height: auto;
     }
 
+    .lang-select {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      font-size: 0.9rem;
+    }
+
+    .lang-select button {
+      background: none;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      color: #000;
+      opacity: 0.6;
+    }
+
+    .lang-select button.active {
+      opacity: 1;
+      font-weight: bold;
+    }
+
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
@@ -49,6 +72,11 @@
       line-height: 1.6;
       max-width: 700px;
       margin-bottom: 2rem;
+      display: none;
+    }
+
+    .description.active {
+      display: block;
     }
 
     .gallery {
@@ -101,11 +129,18 @@
     </a>
   </header>
 
+  <div class="lang-select">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
+
   <div class="container">
     <h1>lllllllllll.americana</h1>
     <div class="meta">junio 2025 — guadalajara, jalisco</div>
 
-    <div class="description">
+    <div class="description active" lang="es">
       diseño, desarrollo y construcción de lllllllllll.americana para lllllllllll, en la colonia americana, guadalajara, méxico.
       <br><br>
       el proyecto parte de una retícula de bastidores de acero que recorre el perímetro del espacio. esta estructura envolvente opera mediante el sistema de poros: una matriz de perforaciones atravesadas por barras de aluminio que permiten la inserción de repisas, racks y aditamentos. el resultado es una plataforma modular, adaptable y reconfigurable según las necesidades del uso.
@@ -115,6 +150,42 @@
       el sistema se complementa con una plataforma elevada que introduce un segundo nivel operativo dentro del mismo contenedor, acentuando el carácter tridimensional del espacio.
       <br><br>
       la iluminación fue diseñada como parte integral del sistema: una serie de luminarias verticales con pantallas de policarbonato actúan como difusores de luz. el policarbonato, al ser atravesado por fuentes concentradas, genera un fenómeno de refracción y dispersión que suaviza y expande la luz de forma direccional, multiplicando su volumen y produciendo una atmósfera envolvente.
+    </div>
+
+    <div class="description" lang="en">
+      design, development, and construction of lllllllllll.americana for lllllllllll, in the americana neighborhood of guadalajara, mexico.
+      <br><br>
+      the project is based on a grid of steel frames that runs along the perimeter of the space. this enveloping structure operates through a pore system: a matrix of perforations crossed by aluminum bars that allow for the insertion of shelves, racks, and attachments. the result is a modular, adaptable, and reconfigurable platform according to use needs.
+      <br><br>
+      at the center of the space hangs an isostructure — a symbolic and structural piece made of steel and aluminum. this functional core articulates the overall system, suspending mdl.1 speakers, vases, and fabric curtains that allow partial subdivision or enclosure of specific areas of the volume.
+      <br><br>
+      the system is complemented by an elevated platform that introduces a second operative level within the same container, enhancing the space’s three-dimensional character.
+      <br><br>
+      the lighting was designed as an integral part of the system: a series of vertical luminaires with polycarbonate screens act as light diffusers. the polycarbonate, pierced by concentrated sources, generates a phenomenon of refraction and dispersion that softens and expands the light directionally, multiplying its volume and producing an enveloping atmosphere.
+    </div>
+
+    <div class="description" lang="fr">
+      conception, développement et construction de lllllllllll.americana pour lllllllllll, dans le quartier americana de guadalajara, mexique.
+      <br><br>
+      le projet repose sur une grille de cadres en acier qui parcourt le périmètre de l’espace. cette structure enveloppante fonctionne grâce à un système de pores : une matrice de perforations traversées par des barres en aluminium permettant l’insertion d’étagères, de racks et d’accessoires. le résultat est une plateforme modulaire, adaptable et reconfigurable selon les besoins d’usage.
+      <br><br>
+      au centre de l’espace est suspendue une isostructure — pièce symbolique et structurelle en acier et aluminium. ce noyau fonctionnel articule le système général, suspendant des haut-parleurs mdl.1, des vases et des rideaux en tissu permettant de subdiviser ou de fermer partiellement certaines zones du volume.
+      <br><br>
+      le système est complété par une plateforme surélevée qui introduit un deuxième niveau opérationnel dans le même conteneur, accentuant le caractère tridimensionnel de l’espace.
+      <br><br>
+      l’éclairage a été conçu comme partie intégrante du système : une série de luminaires verticaux avec des écrans en polycarbonate agissent comme diffuseurs de lumière. le polycarbonate, traversé par des sources concentrées, génère un phénomène de réfraction et de dispersion qui adoucit et étend la lumière de manière directionnelle, multipliant son volume et produisant une atmosphère enveloppante.
+    </div>
+
+    <div class="description" lang="jp">
+      lllllllllll.americana は、メキシコ・グアダラハラのアメリカーナ地区にて lllllllllll のために設計・開発・施工されました。
+      <br><br>
+      プロジェクトは、空間の周囲を走るスチールフレームのグリッド構造を基盤としています。この包み込むような構造は、アルミニウムバーが通る孔のマトリクスによって機能し、棚やラック、アタッチメントの挿入が可能です。その結果、用途に応じてモジュール式で適応・再構成できるプラットフォームが形成されます。
+      <br><br>
+      空間の中心には、象徴的かつ構造的な鋼とアルミニウム製の「イソストラクチャー」が吊り下げられています。この機能的なコアは、システム全体を構成し、mdl.1 スピーカー、花瓶、布のカーテンを吊り下げることで、空間の一部を仕切ったり閉じたりすることが可能です。
+      <br><br>
+      システムは、空間内に第二の操作レベルを導入する高床式プラットフォームによって補完され、空間の三次元的な性格を強調します。
+      <br><br>
+      照明はシステムの一部として設計され、ポリカーボネート製のディフューザー付き垂直型照明器具が光を柔らかく拡散させる役割を担います。ポリカーボネートは集中光源を通過することで屈折と拡散の現象を生み出し、光の体積を増幅し、包み込むような雰囲気を作り出します。
     </div>
 
     <div class="gallery">
@@ -145,7 +216,7 @@
 <img src="https://d2w9rnfcy7mm78.cloudfront.net/37732514/original_77209de271557bb0c6d55740dc384aa3.jpg?1751080343" />
 <img src="https://d2w9rnfcy7mm78.cloudfront.net/37732517/original_b4ef416dcce234456a024614a5244660.jpg?1751080348" />
 <img src="https://d2w9rnfcy7mm78.cloudfront.net/37732518/original_ab7aeac47fa1e22ca50482dcba9f41ae.jpg?1751080356" />      ...
-    </div>
+     </div>
 
     <div class="pdf-embed">
       <iframe src="https://attachments.are.na/37732426/74bd6e314b576f3ab7c95208b27d6c36.pdf?1751079811"></iframe>
@@ -162,5 +233,15 @@
     </div>
   </div>
 
+  <script>
+    function setLang(lang) {
+      document.querySelectorAll('.description').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('lang') === lang);
+      });
+      document.querySelectorAll('.lang-select button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+  </script>
 </body>
 </html>

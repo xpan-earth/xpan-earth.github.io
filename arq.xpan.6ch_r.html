@@ -24,6 +24,32 @@
       height: auto;
     }
 
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
     .container {
       max-width: 1000px;
       margin: 7rem auto 4rem;
@@ -97,26 +123,75 @@
     </a>
   </header>
 
+  <div class="language-selector">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
+
   <div class="container">
-    <h1>6ch_r</h1>
-    <div class="meta">marzo 2023 — ciudad de méxico</div>
-
-    <div class="description">
-      sistema de espacialización sonora compuesto por un aro de acero suspendido de 3 metros de diámetro, con seis bocinas incrustadas equidistantemente sobre su estructura. cada unidad cuenta con canal independiente, permitiendo una distribución espacial activa y dinámica del sonido.
-
-      <br><br>
-
-      el ensamble de cada bocina utiliza un sistema exagerado de anclaje: placas (poros) de acero de 6 mm soldadas directamente al tubo circular y fijadas a los laterales perforados de cada bocina mediante espárragos de ¾”.
-
-      <br><br>
-
-      esta lógica de ensamblaje —excesiva, rudimentaria y frontal— opera como antítesis de la estética depurada del diseño industrial actual. el resultado es un sistema de presencia cruda, crítica, deliberadamente desequilibrado: una declaración técnica que subvierte las convenciones del montaje sonoro.
-
-      <br><br>
-
-      6ch_r es al mismo tiempo infraestructura acústica y gesto escultórico. su configuración física no busca desaparecer, sino que, enuncia su presencia, densifica el espacio y lo vuelve instrumento.
+    <!-- Español -->
+    <div class="lang lang-es">
+      <h1>6ch_r</h1>
+      <div class="meta">marzo 2023 — ciudad de méxico</div>
+      <div class="description">
+        sistema de espacialización sonora compuesto por un aro de acero suspendido de 3 metros de diámetro, con seis bocinas incrustadas equidistantemente sobre su estructura. cada unidad cuenta con canal independiente, permitiendo una distribución espacial activa y dinámica del sonido.
+        <br><br>
+        el ensamble de cada bocina utiliza un sistema exagerado de anclaje: placas (poros) de acero de 6 mm soldadas directamente al tubo circular y fijadas a los laterales perforados de cada bocina mediante espárragos de ¾”.
+        <br><br>
+        esta lógica de ensamblaje —excesiva, rudimentaria y frontal— opera como antítesis de la estética depurada del diseño industrial actual. el resultado es un sistema de presencia cruda, crítica, deliberadamente desequilibrado: una declaración técnica que subvierte las convenciones del montaje sonoro.
+        <br><br>
+        6ch_r es al mismo tiempo infraestructura acústica y gesto escultórico. su configuración física no busca desaparecer, sino que, enuncia su presencia, densifica el espacio y lo vuelve instrumento.
+      </div>
     </div>
 
+    <!-- English -->
+    <div class="lang lang-en" style="display: none;">
+      <h1>6ch_r</h1>
+      <div class="meta">march 2023 — mexico city</div>
+      <div class="description">
+        sound spatialization system composed of a suspended steel ring with a 3-meter diameter, featuring six speakers embedded equidistantly around its structure. each unit has an independent channel, enabling active and dynamic spatial sound distribution.
+        <br><br>
+        each speaker is mounted using an exaggerated anchoring system: 6mm steel plates (pores) welded directly to the circular tube and fixed to the perforated sides of each speaker using ¾” threaded rods.
+        <br><br>
+        this assembly logic — excessive, rudimentary, and frontal — operates as an antithesis to the polished aesthetics of contemporary industrial design. the result is a raw, critical, deliberately unbalanced system: a technical statement that subverts conventions of sound mounting.
+        <br><br>
+        6ch_r is both acoustic infrastructure and sculptural gesture. its physical configuration does not seek to disappear, but instead asserts its presence, densifies the space, and transforms it into an instrument.
+      </div>
+    </div>
+
+    <!-- Français -->
+    <div class="lang lang-fr" style="display: none;">
+      <h1>6ch_r</h1>
+      <div class="meta">mars 2023 — ville de mexico</div>
+      <div class="description">
+        système de spatialisation sonore composé d’un anneau en acier suspendu de 3 mètres de diamètre, avec six haut-parleurs intégrés équidistants sur sa structure. chaque unité dispose d’un canal indépendant, permettant une diffusion spatiale active et dynamique du son.
+        <br><br>
+        chaque haut-parleur est monté avec un système d’ancrage exagéré : des plaques d’acier (pores) de 6 mm soudées directement au tube circulaire et fixées aux côtés perforés de chaque enceinte avec des tiges filetées de ¾”.
+        <br><br>
+        cette logique d’assemblage — excessive, rudimentaire et frontale — s’oppose à l’esthétique épurée du design industriel contemporain. le résultat est un système brut, critique et délibérément déséquilibré : une déclaration technique qui subvertit les conventions du montage sonore.
+        <br><br>
+        6ch_r est à la fois infrastructure acoustique et geste sculptural. sa configuration physique ne cherche pas à disparaître, mais à affirmer sa présence, densifier l’espace et en faire un instrument.
+      </div>
+    </div>
+
+    <!-- 日本語 -->
+    <div class="lang lang-jp" style="display: none;">
+      <h1>6ch_r</h1>
+      <div class="meta">2023年3月 — メキシコシティ</div>
+      <div class="description">
+        直径3メートルのスチール製リングに6つのスピーカーを等間隔に取り付けた、吊り下げ型の音響空間化システム。各ユニットは独立したチャンネルを持ち、音を空間的に動的に分布させることができる。
+        <br><br>
+        各スピーカーは過剰なアンカー方式で固定されている：6mm厚のスチールプレート（ポア）がリングに直接溶接され、¾インチのスタッドボルトでスピーカーの側面に固定されている。
+        <br><br>
+        この組み立ての論理は、過剰で、粗野で、正面から迫るものであり、現代の洗練されたインダストリアルデザインの美学に対するアンチテーゼとして機能する。その結果、荒々しく、批評的で、意図的に不均衡な存在が生まれる。音響構造の常識を覆す技術的な声明である。
+        <br><br>
+        6ch_rは音響インフラであると同時に彫刻的なジェスチャーでもある。その物理的な構成は消えることを目的とせず、むしろその存在を強調し、空間に密度を与え、それ自体が楽器となる。
+      </div>
+    </div>
+
+    <!-- Galería -->
     <div class="gallery">
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/38298553/original_53681747704e2f19671e0e3ed2281bc4.jpg?1753226668" />
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/38298556/original_5ef33fb52b046d779f348045e73dfd32.jpg?1753226674" />
@@ -129,11 +204,25 @@
       <img src="https://d2w9rnfcy7mm78.cloudfront.net/38298725/original_16183ea3b2f6e74ae092bf869c5e72f4.jpg?1753227348" />
     </div>
 
+    <!-- PDF -->
     <div class="pdf-embed">
-     
       <iframe src="https://attachments.are.na/38299959/62a32d29cdddaeecd77c2610b70d8023.pdf?1753232443"></iframe>
     </div>
   </div>
 
+  <script>
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el => {
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === lang);
+      });
+    }
+
+    const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
+    setLang(savedLang);
+  </script>
 </body>
 </html>
