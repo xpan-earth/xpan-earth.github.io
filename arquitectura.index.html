@@ -190,6 +190,47 @@
     width: 100%;
   }
 }
+.lang-select {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-select button {
+  background: none;
+  border: none;
+  font-family: 'Times New Roman', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  opacity: 0.5;
+  transition: background 0.2s ease;
+}
+
+.lang-select button.active {
+  font-weight: bold;
+  opacity: 1;
+  background: #000;
+  color: #fff;
+}
+.description {
+  display: none;
+}
+
+.description.active {
+  display: block;
+}
+.description {
+  display: none;
+}
+
+.description.active {
+  display: block;
+}
+
 
 </style>
 </head>
@@ -203,32 +244,104 @@
 
   <div class="main-container">
 
-    <div class="intro-block">
-  <h2>arquitectura como medio</h2>
+    <div class="lang-select">
+  <button onclick="setLang('es')" class="active">es</button>
+  <button onclick="setLang('en')">en</button>
+  <button onclick="setLang('fr')">fr</button>
+  <button onclick="setLang('jp')">jp</button>
+</div>
 
-  <p>
-    xpan desarrolla sistemas arquitectónicos que funcionan como estructuras activas.
-    el espacio se comporta como <span class="glossary-link" onclick="location.href='mc_glosario.1.html#medio'">medio</span>: reorganizable, sensible, transmisivo.
-  </p>
+<div class="intro-block">
+  <div class="description active" lang="es">
+    <h2>arquitectura como medio</h2>
+    <p>
+      xpan desarrolla sistemas arquitectónicos que funcionan como estructuras activas.
+      el espacio se comporta como <span class="glossary-link" onclick="location.href='mc_glosario.1.html#medio'">medio</span>: reorganizable, sensible, transmisivo.
+    </p>
+    <p>
+      su diseño se vincula a <span class="glossary-link" onclick="location.href='mc_glosario.1.html#procesos-culturales'">procesos culturales</span> abiertos, actuando como agente dentro de una <span class="glossary-link" onclick="location.href='mc_glosario.1.html#red'">red</span> más amplia.
+      la arquitectura canaliza relaciones, delimita condiciones, intensifica el cruce entre cuerpos, tiempos y tecnologías.
+    </p>
+    <p>
+      cada sistema funciona como un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#aparato-técnico'">aparato técnico</span> que modula la percepción.
+      su estructura, materialidad y distribución espacial están calibradas para interferir en la experiencia ordinaria del entorno.
+    </p>
+    <p>
+      estos desplazamientos responden a una intención precisa: desplazar hábitos, generar estados, inducir nuevas perspectivas y formas de lectura del espacio.
+    </p>
+    <p>
+      más allá de estructuras espaciales, xpan desarrolla <span class="glossary-link" onclick="location.href='mc_glosario.1.html#objetos'">objetos</span> y <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistemas'">sistemas</span> que actúan como dispositivos arquitectónicos autónomos.
+      cada uno puede operar de forma autónoma o integrada, alterando localmente la experiencia, el flujo o la percepción.
+    </p>
+  </div>
 
-  <p>
-    su diseño se vincula a <span class="glossary-link" onclick="location.href='mc_glosario.1.html#procesos-culturales'">procesos culturales</span> abiertos, actuando como agente dentro de una <span class="glossary-link" onclick="location.href='mc_glosario.1.html#red'">red</span> más amplia.
-    la arquitectura canaliza relaciones, delimita condiciones, intensifica el cruce entre cuerpos, tiempos y tecnologías.
-  </p>
+  <div class="description" lang="en">
+    <h2>architecture as medium</h2>
+    <p>
+      xpan develops architectural systems that function as active structures.
+      space behaves as a <span class="glossary-link" onclick="location.href='mc_glosario.1.html#medio'">medium</span>: reorganizable, responsive, transmissive.
+    </p>
+    <p>
+      its design links to open <span class="glossary-link" onclick="location.href='mc_glosario.1.html#procesos-culturales'">cultural processes</span>, acting as an agent within a broader <span class="glossary-link" onclick="location.href='mc_glosario.1.html#red'">network</span>.
+      architecture channels relationships, sets conditions, and intensifies the intersection between bodies, times, and technologies.
+    </p>
+    <p>
+      each system functions as a <span class="glossary-link" onclick="location.href='mc_glosario.1.html#aparato-técnico'">technical apparatus</span> that modulates perception.
+      its structure, materiality, and spatial layout are calibrated to interfere with ordinary experience.
+    </p>
+    <p>
+      these shifts respond to a precise intention: to displace habits, generate states, and induce new spatial readings.
+    </p>
+    <p>
+      beyond spatial structures, xpan develops <span class="glossary-link" onclick="location.href='mc_glosario.1.html#objetos'">objects</span> and <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistemas'">systems</span> that operate as autonomous architectural devices.
+      each can function independently or in integration, locally altering experience, flow, or perception.
+    </p>
+  </div>
 
-  <p>
-    cada sistema funciona como un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#aparato-técnico'">aparato técnico</span> que modula la percepción.
-    su estructura, materialidad y distribución espacial están calibradas para interferir en la experiencia ordinaria del entorno.
-  </p>
+  <div class="description" lang="fr">
+    <h2>architecture comme médium</h2>
+    <p>
+      xpan développe des systèmes architecturaux qui fonctionnent comme des structures actives.
+      l’espace agit comme un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#medio'">médium</span> : réorganisable, sensible, transmissif.
+    </p>
+    <p>
+      leur conception est liée à des <span class="glossary-link" onclick="location.href='mc_glosario.1.html#procesos-culturales'">processus culturels</span> ouverts, agissant comme agent au sein d’un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#red'">réseau</span> plus large.
+      l’architecture canalise des relations, délimite des conditions, intensifie la rencontre entre corps, temporalités et technologies.
+    </p>
+    <p>
+      chaque système agit comme un <span class="glossary-link" onclick="location.href='mc_glosario.1.html#aparato-técnico'">appareil technique</span> modulant la perception.
+      sa structure, sa matérialité et sa disposition spatiale sont calibrées pour perturber l’expérience ordinaire.
+    </p>
+    <p>
+      ces déplacements répondent à une intention précise : déplacer les habitudes, générer des états, induire de nouvelles lectures de l’espace.
+    </p>
+    <p>
+      au-delà des structures spatiales, xpan développe des <span class="glossary-link" onclick="location.href='mc_glosario.1.html#objetos'">objets</span> et des <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistemas'">systèmes</span> qui agissent comme des dispositifs architecturaux autonomes.
+      chacun peut fonctionner seul ou intégré, modifiant localement l’expérience, le flux ou la perception.
+    </p>
+  </div>
 
-  <p>
-    estos desplazamientos responden a una intención precisa: desplazar hábitos, generar estados, inducir nuevas perspectivas y formas de lectura del espacio.
-  </p>
-
-  <p>
-    más allá de estructuras espaciales, xpan desarrolla <span class="glossary-link" onclick="location.href='mc_glosario.1.html#objetos'">objetos</span> y <span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistemas'">sistemas</span> que actúan como dispositivos arquitectónicos autónomos.
-    cada uno puede operar de forma autónoma o integrada, alterando localmente la experiencia, el flujo o la percepción.
-  </p>
+  <div class="description" lang="jp">
+    <h2>メディウムとしての建築</h2>
+    <p>
+      xpanは、能動的な構造として機能する建築システムを開発しています。
+      空間は<span class="glossary-link" onclick="location.href='mc_glosario.1.html#medio'">メディウム</span>として振る舞います：再編可能、感応的、伝達的。
+    </p>
+    <p>
+      設計は、より広い<span class="glossary-link" onclick="location.href='mc_glosario.1.html#red'">ネットワーク</span>の中での<span class="glossary-link" onclick="location.href='mc_glosario.1.html#procesos-culturales'">文化的プロセス</span>と結びつき、空間は能動的なエージェントとして作用します。
+    </p>
+    <p>
+      各システムは<span class="glossary-link" onclick="location.href='mc_glosario.1.html#aparato-técnico'">技術的装置</span>として知覚を調整します。
+      その構造、素材、空間的配置は、日常的な環境体験に介入するよう調整されています。
+    </p>
+    <p>
+      こうした移動は意図的です：習慣をずらし、状態を生み出し、空間の読み取り方を変化させる。
+    </p>
+    <p>
+      空間構造を超えて、xpanは<span class="glossary-link" onclick="location.href='mc_glosario.1.html#objetos'">オブジェクト</span>や<span class="glossary-link" onclick="location.href='mc_glosario.1.html#sistemas'">システム</span>を開発し、建築的デバイスとして自律的に機能させています。
+      それぞれは独立して、あるいは統合的に動作し、体験や流れ、知覚を局所的に変化させます。
+    </p>
+  </div>
 </div>
 
     <div class="entry">
@@ -476,5 +589,27 @@
     });
   </script>
 
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.description').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('lang') === lang);
+    });
+
+    document.querySelectorAll('.lang-select button').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang);
+    });
+
+    localStorage.setItem('lang', lang);
+
+    document.documentElement.setAttribute('lang', lang);
+  }
+
+  const storedLang = localStorage.getItem('lang') || 'es';
+  setLang(storedLang);
+</script>
+
+
+
 </body>
 </html>
+
