@@ -153,9 +153,19 @@
     });
   }
 
-  window.addEventListener("load", drawLines);
+    window.addEventListener("load", () => {
+    requestAnimationFrame(() => {
+      drawLines();
+      setTimeout(drawLines, 50); // doble ejecución por seguridad en móviles
+    });
+  });
+
+  let resizeTimeout;
   window.addEventListener("resize", () => {
-    setTimeout(drawLines, 100); // pequeña espera para asegurar layout estable
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      requestAnimationFrame(drawLines);
+    }, 150);
   });
 </script>
 
