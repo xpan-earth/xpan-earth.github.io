@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan.studio.2025 — arquitectura</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+    }
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 7rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-transform: lowercase;
+    }
+    .meta {
+      font-size: 0.85rem;
+      opacity: 0.5;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+    .description {
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-bottom: 2rem;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+    .pdf-embed {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    .pdf-embed iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 4px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 6rem;
+        padding: 0 1rem;
+      }
+      .pdf-embed iframe {
+        height: auto;
+        aspect-ratio: 4 / 3;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <a href="https://xpan.earth" target="_blank">
+    <img src="xpan.svg" alt="xpan logo" />
+  </a>
+</header>
+<div class="language-selector">
+  <button onclick="setLang('es')" class="active">es</button>
+  <button onclick="setLang('en')">en</button>
+  <button onclick="setLang('fr')">fr</button>
+  <button onclick="setLang('jp')">jp</button>
+</div>
+<div class="container">
+  <div class="lang lang-es">
+    <h1>xpan.studio.2025</h1>
+    <div class="meta">febrero 2025 — proyectos públicos, ciudad de méxico</div>
+    <div class="description">
+      xpan.studio.2025 es la intervención espacial desarrollada para alojar el estudio de xpan en “proyectos públicos”, ciudad de méxico. el sistema fue construido en febrero de 2025 y se diseñó íntegramente como una infraestructura desmontable, suspendida y modular.<br><br>
+      una retícula aérea de cables de acero tensada entre armellas permite colgar luminarias, pantallas de policarbonato, dispositivos de sonido y elementos de control espacial sin fijaciones permanentes. toda la intervención puede desmontarse rápidamente soltando los cables de acero de su punto de anclaje.<br><br>
+      además del sistema suspendido, se diseñaron piezas auxiliares específicas: mesas de trabajo, muebles de almacenaje, lámparas, sillones individuales y mesas bajas. todos los objetos siguen una misma lógica estructural a partir de perfiles metálicos delgados y materiales translúcidos, lo que permite que el conjunto se mantenga liviano, permeable y reconfigurable.<br><br>
+      el espacio funciona como núcleo operativo de xpan: alberga sesiones de análisis, edición editorial, desarrollo técnico y archivo. su diseño permite adaptarse a distintas funciones sin clausurar el espacio ni fijar una distribución única. el estudio es, a la vez, una herramienta de trabajo y una forma de pensamiento espacial.
+    </div>
+  </div>
+  <div class="lang lang-en" style="display:none">
+    <h1>xpan.studio.2025</h1>
+    <div class="meta">february 2025 — proyectos públicos, mexico city</div>
+    <div class="description">
+      xpan.studio.2025 is the spatial intervention developed to house xpan’s studio inside “proyectos públicos”, mexico city. the system was built in february 2025 and fully designed as a suspended, modular, and removable infrastructure.<br><br>
+      a ceiling grid of steel cables tensioned between eye bolts allows the suspension of luminaires, polycarbonate panels, sound devices and spatial control elements without permanent fixtures. the entire system can be disassembled quickly by releasing the cable from its single anchor point.<br><br>
+      in addition to the suspended system, specific auxiliary pieces were designed: work tables, storage furniture, lamps, individual chairs and low tables. all components follow a common structural logic based on slender metal profiles and translucent materials, keeping the entire setup light, permeable and reconfigurable.<br><br>
+      the space functions as xpan’s operational core: hosting analysis sessions, editorial editing, technical development and archiving. its design allows multiple functions without fixing a single layout. the studio operates both as a tool for production and a spatial mode of thinking.
+    </div>
+  </div>
+  <div class="lang lang-fr" style="display:none">
+    <h1>xpan.studio.2025</h1>
+    <div class="meta">février 2025 — proyectos públicos, mexico</div>
+    <div class="description">
+      xpan.studio.2025 est l’intervention spatiale développée pour accueillir le studio de xpan au sein de “projets publics”, à mexico. le système a été réalisé en février 2025 et conçu entièrement comme une infrastructure suspendue, modulaire et démontable.<br><br>
+      une trame aérienne de câbles en acier tendus entre des pitons permet de suspendre des luminaires, des panneaux en polycarbonate, des dispositifs sonores et des éléments de contrôle spatial sans fixation permanente. l’ensemble peut être démonté rapidement en détachant simplement les câbles de leur point d’ancrage.<br><br>
+      en complément du système suspendu, des pièces auxiliaires spécifiques ont été conçues : tables de travail, meubles de rangement, lampes, fauteuils individuels et tables basses. tous les éléments suivent une même logique structurelle à base de profils métalliques fins et de matériaux translucides, garantissant légèreté, perméabilité et modularité.<br><br>
+      l’espace fonctionne comme noyau opératif de xpan : il accueille des sessions d’analyse, de montage éditorial, de développement technique et d’archivage. sa configuration permet d’accueillir différentes fonctions sans fixer une disposition unique. le studio agit à la fois comme outil de travail et comme forme de pensée spatiale.
+    </div>
+  </div>
+  <div class="lang lang-jp" style="display:none">
+    <h1>xpan.studio.2025</h1>
+    <div class="meta">2025年2月 — proyectos públicos、メキシコシティ</div>
+    <div class="description">
+      xpan.studio.2025は、メキシコシティの“proyectos públicos”内にあるxpanのスタジオのために開発された空間的介入である。2025年2月に構築され、完全に吊り下げ可能で、モジュール式かつ分解可能なインフラとして設計された。<br><br>
+      スチールケーブルをアームエラ間で張った天井グリッドにより、照明器具、ポリカーボネートのパネル、音響機器、空間制御の要素を、恒久的な固定なしに吊るすことができる。すべての構成要素は、アンカーからケーブルを外すだけで迅速に取り外し可能。<br><br>
+      吊り構造に加えて、作業机、収納家具、ランプ、個人用チェア、ローテーブルなど、専用の補助家具が設計された。すべてのオブジェクトは、細い金属フレームと半透明素材を基盤とする共通の構造ロジックに基づいており、軽量で透過性があり再構成可能な空間を形成している。<br><br>
+      この空間は、xpanの中核的な運用拠点として機能する。分析セッション、編集作業、技術開発、アーカイブなどが行われ、固定されたレイアウトなしに複数の機能へ柔軟に対応する。スタジオは、作業のための道具であると同時に、空間的思考の一形態でもある。
+    </div>
+  </div>
+  <div class="gallery">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343252/original_548f5e7b418d08e99159978de9b26803.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343251/original_1b2a3f3b6fb4504f4289363013b4aa07.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343250/original_fa76e5f5b8e3d706f252e5485347379a.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343285/original_f8f0c9099d64311925d2ca800df9b882.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343292/original_dbb679d5d0c48a678a0e72e7bca26d5a.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343239/original_aa4b5d929f7b4b8fad3c1f897cbd5108.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343294/original_467dfb97c71865d5c8268e9ecbddc490.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343246/original_2d0d047dd8d8fed83c5243abf0ed55e3.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343293/original_0414f67a1997a640d479ae689e6c3297.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343247/original_fe35642530420ad47cdbb3d87ce54665.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343249/original_46ffa33fe5f2bda6c2c40a200c2c7d55.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343256/original_2c6e4bae2e07b1859baf643bdebb6830.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343261/original_4f2c2b3e3d03d1ba2a39dc81754fac7b.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343244/original_76c0eaf8b5410f81087df4493f74e266.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343268/original_3ee88feb43b4f38792b83eefebfd484b.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343276/original_d354999a9c44f2ba8ecbc3faa9f3e02f.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343280/original_93991fb482ad24cfcb0a4e3296fa7c87.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343288/original_6f31c0fba718671229279ef65a561515.jpg" />
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/38343290/original_74a8612a387f7f576a3fb20b0b1cd694.jpg" />
+  </div>
+  <div class="pdf-embed">
+    <iframe src="https://attachments.are.na/38343730/659d9ab328c986b8ec2d5028c2fe67f1.pdf?1753387464"></iframe>
+    <iframe src="https://attachments.are.na/38343220/e47c177706d87762c7ff3fb3a3b16a37.pdf"></iframe>
+    <iframe src="https://attachments.are.na/38343219/fb54bc6701bd92cdae817010160e99fe.pdf"></iframe>
+    <iframe src="https://attachments.are.na/38343218/d8dd277d0560ad14f431103c0ec62868.pdf"></iframe>
+  </div>
+</div>
+<script>
+  function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('.lang').forEach(el => {
+      el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.language-selector button').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang);
+    });
+  }
+  const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
+  setLang(savedLang);
+</script>
+</body>
+</html>
