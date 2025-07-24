@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>desidia — arquitectura</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+
+    header img {
+      width: 50px;
+      height: auto;
+    }
+
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 7rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-transform: lowercase;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      opacity: 0.5;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+
+    .description {
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-bottom: 2rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+
+    .pdf-embed {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .pdf-embed iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 6rem;
+        padding: 0 1rem;
+      }
+      .pdf-embed iframe {
+        height: auto;
+        aspect-ratio: 4 / 3;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="https://xpan.earth" target="_blank">
+    <img src="xpan.svg" alt="xpan logo" />
+  </a>
+</header>
+
+<div class="language-selector">
+  <button onclick="setLang('es')" class="active">es</button>
+  <button onclick="setLang('en')">en</button>
+  <button onclick="setLang('fr')">fr</button>
+  <button onclick="setLang('jp')">jp</button>
+</div>
+
+<div class="container">
+  <!-- Español -->
+  <div class="lang lang-es">
+    <h1>desidia</h1>
+    <div class="meta">junio 2024 — ciudad de méxico</div>
+    <div class="description">
+      instalada en el antiguo hotel reforma durante junio de 2024, la intervención se articula a partir de una retícula superior de cable de acero tensada sobre el vacío central del recinto.  
+      desde ella se suspendió un cubo de plástico delgado de 6 × 6 × 6 metros. en su interior se colocó un cilindro de malla electrosoldada de 6 metros de alto y 3.89 metros de diámetro. este doble sistema espacial genera un umbral semitranslúcido y un núcleo expositivo-habitado.  
+      <br><br>
+      el cilindro funcionó como espacio para una serie de actividades públicas —conversatorios, mesas redondas y discusiones— enfocadas en prácticas culturales contemporáneas en méxico. la malla permitió a lxs participantes colocar prendas, obras, publicaciones, objetos y materiales propios mediante alambre, generando una curaduría colectiva en constante transformación.  
+      <br><br>
+      toda la estructura fue montada específicamente para el espacio y operó tanto como foro como contenedor expositivo. el sistema completo fue desmontable y se diseñó para instalarse sin fijaciones permanentes, utilizando únicamente tensión, gravedad y anclajes reversibles.  
+      <br><br>
+      desidia no funciona como exhibición tradicional ni como contenedor neutro. su estructura busca tensionar los límites entre espacio, cuerpo y contenido, activando una presencia inestable que resiste definiciones cerradas y abre condiciones de encuentro.
+    </div>
+  </div>
+
+  <!-- English -->
+  <div class="lang lang-en" style="display: none;">
+    <h1>desidia</h1>
+    <div class="meta">june 2024 — mexico city</div>
+    <div class="description">
+      installed in the former hotel reforma during june 2024, the intervention was built from a suspended steel cable grid stretched across the central void of the building.  
+      from this grid, a thin plastic cube measuring 6 × 6 × 6 meters was suspended. inside it, a welded mesh cylinder measuring 6 meters in height and 3.89 meters in diameter was placed, creating a translucent threshold and an inhabitable core.  
+      <br><br>
+      the cylinder served as a space for public activities —conversations, roundtables, and discussions— focused on contemporary cultural practices in mexico. the mesh allowed participants to attach garments, artworks, publications, objects, and other materials using wire, generating a collective and constantly evolving curatorial display.  
+      <br><br>
+      the entire structure was designed specifically for the site and functioned as both a forum and an exhibition container. the system was fully removable and installed without permanent fixings, using only tension, gravity, and reversible anchors.  
+      <br><br>
+      desidia does not operate as a traditional exhibition or neutral container. its structure challenges the boundaries between space, body, and content, creating an unstable presence that resists fixed definitions and opens conditions for encounter.
+    </div>
+  </div>
+
+  <!-- Français -->
+  <div class="lang lang-fr" style="display: none;">
+    <h1>desidia</h1>
+    <div class="meta">juin 2024 — mexico</div>
+    <div class="description">
+      installée dans l’ancien hôtel reforma en juin 2024, l’intervention s’organise autour d’une grille de câbles en acier tendue au-dessus du vide central du bâtiment.  
+      depuis cette grille, un cube en plastique fin de 6 × 6 × 6 mètres a été suspendu. à l’intérieur, un cylindre en treillis soudé de 6 mètres de haut et 3.89 mètres de diamètre a été installé, formant un seuil semi-translucide et un noyau habité.  
+      <br><br>
+      le cylindre a accueilli des activités publiques —conversations, tables rondes, discussions— portant sur les pratiques culturelles contemporaines au mexique. le treillis a permis aux participant·e·s de fixer vêtements, œuvres, publications, objets et matériaux divers avec du fil, créant une exposition collective en transformation constante.  
+      <br><br>
+      la structure entière a été conçue spécifiquement pour le lieu, fonctionnant à la fois comme forum et espace d’exposition. l’installation a été pensée pour être démontable, sans fixations permanentes, uniquement par tension, gravité et ancrages réversibles.  
+      <br><br>
+      desidia ne fonctionne ni comme une exposition traditionnelle ni comme un simple conteneur. sa structure cherche à questionner les limites entre espace, corps et contenu, activant une présence instable qui résiste aux définitions closes et favorise la rencontre.
+    </div>
+  </div>
+
+  <!-- 日本語 -->
+  <div class="lang lang-jp" style="display: none;">
+    <h1>desidia</h1>
+    <div class="meta">2024年6月 — メキシコシティ</div>
+    <div class="description">
+      2024年6月、メキシコシティの旧ホテル・レフォルマに設置されたこのインスタレーションは、建物中央の吹き抜け部分に張り巡らされたスチールケーブルの格子構造から成り立っている。  
+      その構造からは、6×6×6メートルの薄いプラスチック製キューブが吊り下げられ、その内部には、高さ6メートル・直径3.89メートルの溶接メッシュ製シリンダーが設置された。半透明のしきいと居住可能なコアが形成される。  
+      <br><br>
+      このシリンダーは、メキシコにおける現代文化実践をテーマにした公開イベント（対話、円卓会議、討論）の場として機能した。メッシュ構造により、参加者はワイヤーで衣服、作品、出版物、オブジェ、素材などを取り付けることができ、絶えず変化する集団的なキュレーション空間が生まれた。  
+      <br><br>
+      この構造は場所に合わせて設計され、フォーラムであり展示空間としても機能した。恒久的な固定具を使用せず、張力と重力、取り外し可能なアンカーのみで設置された可動式の構造体である。  
+      <br><br>
+      desidiaは、従来の展示や中立的な容器としては機能しない。空間・身体・内容の境界を揺るがし、固定された定義を拒み、出会いの条件を開く不安定な存在を作り出す。
+    </div>
+  </div>
+
+<div class="gallery">
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342310/original_a75dd959bf469d671762851ee29e7c36.jpg?1753383379" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342328/original_54601161d04cb5b7d9afaa9bd8d65735.jpg?1753383410" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342333/original_aaa648fa0b29b7c68a01a102939c1aa8.jpg?1753383415" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342503/original_18ff7088fd08edb133c35190808f9f3d.jpg?1753383797" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342523/original_3b1f1bd4d6e34a1a2571556e66fc5634.jpg?1753383841" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342287/original_9be5d272086163c92a676ef9f16292b8.jpg?1753383338" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342293/original_dde611acd93910dd1788ec22e0cb9501.jpg?1753383350" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342391/original_45d6b17edb799e919dee0ac570e12c0b.jpg?1753383534" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342423/original_fcc7c6406a3db10e7f72b835c71e9392.jpg?1753383605" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38342449/original_998b2f92c1960d3bcbf4ffd43e8e9ddb.jpg?1753383664" />
+</div>
+
+<div class="pdf-embed">
+  <iframe src="https://attachments.are.na/38342207/07b721c016d2d97e43f3befc01b5b4c6.pdf?1753383201"></iframe>
+</div>
+
+</div>
+
+<script>
+  function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('.lang').forEach(el => {
+      el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.language-selector button').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang);
+    });
+  }
+
+  const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
+  setLang(savedLang);
+</script>
+
+</body>
+</html>
