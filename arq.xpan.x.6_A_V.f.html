@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>x.6_A/V.f — arquitectura</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+    }
+    .language-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      text-transform: lowercase;
+    }
+    .language-selector button {
+      background: none;
+      border: none;
+      margin-left: 0.5rem;
+      cursor: pointer;
+      color: #000;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+    .language-selector button.active,
+    .language-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 7rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-transform: lowercase;
+    }
+    .meta {
+      font-size: 0.85rem;
+      opacity: 0.5;
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+    .description {
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-bottom: 2rem;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+    .pdf-embed {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    .pdf-embed iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 4px;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 6rem;
+        padding: 0 1rem;
+      }
+      .pdf-embed iframe {
+        height: auto;
+        aspect-ratio: 4 / 3;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <a href="https://xpan.earth" target="_blank">
+    <img src="xpan.svg" alt="xpan" />
+  </a>
+</header>
+<div class="language-selector">
+  <button onclick="setLang('es')" class="active">es</button>
+  <button onclick="setLang('en')">en</button>
+  <button onclick="setLang('fr')">fr</button>
+  <button onclick="setLang('jp')">jp</button>
+</div>
+<div class="container">
+
+  <!-- Español -->
+  <div class="lang lang-es">
+    <h1>x.6_A/V.f</h1>
+    <div class="meta">febrero 2024 — ciudad de méxico</div>
+    <div class="description">
+      x.6_A/V.f [xpan 6channel audiovisual forum] es un sistema espacial diseñado como infraestructura autónoma de exhibición, proyección y escucha multicanal. desarrollado por xpan en febrero de 2024, el sistema parte de un arco estructural autoestable fabricado en acero ptr, que actúa como soporte de suspensión para bocinas xpan.mdl.1 y una pantalla frontal.<br><br>
+      la pieza se compone de tres componentes principales: una membrana visual tensada con impresión gráfica difusa, una serie de bocinas mdl.1 suspendidas distribuidas a lo largo del arco en una configuración envolvente de 6 canales, y un conjunto de anclajes y contrapesos fabricados en acero macizo que estabilizan la estructura sin requerir fijaciones al suelo.<br><br>
+      el sistema fue desarrollado para activaciones efímeras, espacios institucionales y foros de presentación que requieren condiciones técnicas precisas sin comprometer su desmontaje. su geometría abierta permite visibilidad frontal y posterior, mientras su espacialidad sonora crea un campo inmersivo que amplifica la narrativa visual. el sistema opera como infraestructura portátil, foro intervenible y medio de articulación audiovisual.
+    </div>
+  </div>
+
+  <!-- English -->
+  <div class="lang lang-en" style="display:none">
+    <h1>x.6_A/V.f</h1>
+    <div class="meta">february 2024 — mexico city</div>
+    <div class="description">
+      x.6_A/V.f [xpan 6channel audiovisual forum] is a spatial system designed as a self-standing infrastructure for multichannel projection, exhibition, and listening. developed by xpan in february 2024, the system is based on a self-supporting steel arch (PTR profile), which acts as a suspension support for xpan.mdl.1 speakers and a frontal screen.<br><br>
+      the piece consists of three main components: a tensioned visual membrane with diffuse printed graphics, a set of suspended mdl.1 speakers distributed along the arch in a 6-channel immersive configuration, and a group of anchoring blocks and solid steel counterweights that stabilize the structure without floor fixings.<br><br>
+      the system was developed for ephemeral activations, institutional spaces, and presentation forums that demand precise technical conditions without compromising its removability. its open geometry allows for both front and rear visibility, while the spatial audio field generates an immersive atmosphere that enhances the visual narrative. the system operates as portable infrastructure, an intervenable forum, and a medium for audiovisual articulation.
+    </div>
+  </div>
+
+  <!-- Français -->
+  <div class="lang lang-fr" style="display:none">
+    <h1>x.6_A/V.f</h1>
+    <div class="meta">février 2024 — mexico</div>
+    <div class="description">
+      x.6_A/V.f [xpan 6channel audiovisual forum] est un système spatial conçu comme une infrastructure autonome pour l’exposition, la projection et l’écoute multicanal. développé par xpan en février 2024, le système repose sur un arc structurel autoportant en acier PTR, servant de support suspendu pour les enceintes xpan.mdl.1 et un écran frontal.<br><br>
+      la pièce se compose de trois éléments principaux : une membrane visuelle tendue avec graphismes diffus imprimés, une série de haut-parleurs mdl.1 suspendus le long de l’arc dans une configuration immersive à 6 canaux, et un ensemble d’ancrages et de contrepoids en acier massif assurant la stabilité de l’ensemble sans fixation au sol.<br><br>
+      le système a été conçu pour des activations éphémères, des espaces institutionnels et des forums de présentation nécessitant des conditions techniques précises sans compromettre son démontage. sa géométrie ouverte permet une visibilité frontale et arrière, tandis que son champ sonore spatial crée une immersion qui renforce la narration visuelle. le système fonctionne comme infrastructure mobile, forum activable et médium d’articulation audiovisuelle.
+    </div>
+  </div>
+
+  <!-- 日本語 -->
+  <div class="lang lang-jp" style="display:none">
+    <h1>x.6_A/V.f</h1>
+    <div class="meta">2024年2月 — メキシコシティ</div>
+    <div class="description">
+      x.6_A/V.f［xpan 6ch オーディオビジュアル・フォーラム］は、マルチチャンネルの投影・展示・リスニングのために設計された自立型の空間システムである。2024年2月にxpanによって開発され、スチールPTR製の自立アーチ構造を基盤とし、xpan.mdl.1スピーカーと前面スクリーンのサスペンション支持体として機能する。<br><br>
+      この作品は、半透明グラフィックを施したテンションビジュアル膜、アーチ全体に6ch構成で吊るされたmdl.1スピーカー、床に固定することなく構造を安定させる鋼製のアンカーとカウンターウェイトという3つの主要要素で構成されている。<br><br>
+      本システムは、一時的なアクティベーション、制度的空間、高度な技術条件を必要とするプレゼンテーションのために開発された。前後方向の視認性を確保しながら、空間音響によって視覚的なナラティブを拡張する没入的な環境を生み出す。このシステムは、ポータブルインフラ、介入可能なフォーラム、そしてオーディオビジュアルの表現媒体として機能する。
+    </div>
+  </div>
+<div class="gallery">
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376758/original_b95df38401a25ab8a462d5652cdb4a0d.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376755/original_685195aeb3338c340d3349b92a5fa461.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376756/original_7ac5d3f9b4449265567d979c16a07b7f.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376757/original_f1e915703f2350e1a8796cb092ae0761.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376759/original_cc76a4fda0aec0ee2fb0cd2afa4a9c16.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376760/original_8a242c12d83ba80ae8b3bb70b9784075.jpg?1753559879?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376761/original_178634838e5edd277fe7d4a7867e7e9d.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376764/original_f1f9fc776cbeb4280b2044a8081361c4.jpg?1753559895?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376770/original_9291fd9c73303dacfa0dac99c67c5733.jpg?1753559911?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376754/original_10883b84058c79c26038f09f13c12dab.jpg?1753559880?bc=0" />
+  <img src="https://d2w9rnfcy7mm78.cloudfront.net/38376771/original_ca67f9f94f55c49a6893bb0c9af32303.jpg?1753559922?bc=0" />
+</div>
+
+
+<div class="pdf-embed">
+  <iframe src="https://attachments.are.na/38376740/90a32ba5c0921fb9a07475874bb3fe86.pdf?1753559833"></iframe>
+</div>
+</div>
+
+<script>
+  function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('.lang').forEach(el => {
+      el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.language-selector button').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang);
+    });
+  }
+  window.onload = () => {
+    const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
+    setLang(savedLang);
+  };
+</script>
+</body>
+</html>
