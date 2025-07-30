@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — media index avanzado v2</title>
+  <style>
+    :root {
+      --gap: 0.5rem;
+      --bg-light: #fff;
+      --bg-dark: #000;
+      --text-light: #000;
+      --text-dark: #fff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Times New Roman', serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: var(--bg-dark);
+        color: var(--text-dark);
+      }
+      .media-item .caption {
+        background: rgba(0,0,0,0.6);
+        color: white;
+      }
+    }
+
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 20;
+    }
+    header img { width: 50px; height: auto; display: block; }
+
+    .controls {
+      position: fixed;
+      top: 1rem;
+      left: 5rem;
+      z-index: 21;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    select, input, button {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.4rem;
+      cursor: pointer;
+    }
+
+    .grid {
+      column-count: 5;
+      column-gap: var(--gap);
+      padding: 7rem 1rem 3rem;
+    }
+    @media (max-width: 1200px) { .grid { column-count: 4; } }
+    @media (max-width: 992px) { .grid { column-count: 3; } }
+    @media (max-width: 768px) { .grid { column-count: 2; } }
+    @media (max-width: 480px) { .grid { column-count: 1; } }
+
+    .media-item {
+      break-inside: avoid;
+      margin-bottom: var(--gap);
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+      animation: fade-in 0.6s ease forwards;
+      opacity: 0;
+    }
+    .media-item img,
+    .media-item video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .media-item .caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.3rem;
+      background: rgba(255,255,255,0.8);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .media-item:hover .caption { opacity: 1; }
+
+    .selected::after, .favorite::before {
+      position: absolute;
+      top: 5px;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      color: white;
+    }
+    .selected::after {
+      content: "✓";
+      right: 5px;
+      background: rgba(0,0,0,0.7);
+    }
+    .favorite::before {
+      content: "★";
+      left: 5px;
+      background: rgba(255,165,0,0.7);
+    }
+
+    /* Panel lateral */
+    #selection-panel {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 280px;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #000;
+      padding: 1rem;
+      font-size: 0.85rem;
+      z-index: 30;
+    }
+    #selection-panel strong { display:block; margin-bottom:0.3rem; }
+    #selection-panel ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem; }
+    #selection-panel li { display:flex; align-items:center; gap:0.3rem; cursor:pointer; }
+    #selection-panel img { width:24px; height:24px; object-fit:cover; border:1px solid #000; }
+    #selection-panel button { margin-top:0.3rem; width:100%; cursor:pointer; }
+
+    /* Modal */
+    #modal-view {
+      position: fixed;
+      top:0;left:0;width:100%;height:100%;
+      background: rgba(0,0,0,0.9);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+      z-index:999;
+      transition:opacity 0.3s;
+    }
+    #modal-view.show { display:flex; animation:fade-in 0.3s; }
+    #modal-view img, #modal-view video { max-width:90%; max-height:80%; }
+    #modal-caption { color:#fff; font-size:1rem; margin-top:1rem; text-align:center; }
+
+    #modal-prev,#modal-next,#modal-close {
+      position:absolute; top:50%; transform:translateY(-50%);
+      background:rgba(255,255,255,0.2); color:white;
+      font-size:2rem; padding:0.2rem 0.5rem; cursor:pointer; border:none;
+    }
+    #modal-prev { left:1rem; }
+    #modal-next { right:1rem; }
+    #modal-close { top:1rem; right:1rem; transform:none; }
+
+    @media (max-width:768px){
+      #selection-panel { width:180px; font-size:0.75rem; padding:0.5rem; }
+    }
+    @keyframes fade-in{from{opacity:0;transform:scale(0.97);}to{opacity:1;transform:scale(1);}}
+  </style>
+</head>
+<body>
+  <header>
+    <img src="xpan.svg" alt="xpan logo">
+  </header>
+
+  <div class="controls">
+    <select id="project-filter"><option value="all">Todos</option></select>
+    <input type="text" id="search-box" placeholder="Buscar...">
+    <select id="sort-box">
+      <option value="shuffle">Aleatorio</option>
+      <option value="project">Por proyecto</option>
+      <option value="caption">Por nombre</option>
+    </select>
+    <button onclick="clearSelection()">Limpiar selección</button>
+    <button onclick="copyShareLink()">Copiar link estado</button>
+  </div>
+
+  <main class="grid" id="media-grid"></main>
+
+  <aside id="selection-panel">
+    <strong>Seleccionados (<span id="sel-count">0</span>)</strong>
+    <ul id="selected-list"></ul>
+    <button onclick="exportCaptions()">Exportar captions</button>
+    <button onclick="downloadCaptions()">Descargar .txt</button>
+    <button onclick="openModalView()">Abrir galería</button>
+    <hr>
+    <strong>Favoritos (<span id="fav-count">0</span>)</strong>
+    <ul id="favorites-list"></ul>
+  </aside>
+
+  <div id="modal-view">
+    <button id="modal-close">✕</button>
+    <button id="modal-prev">◀</button>
+    <button id="modal-next">▶</button>
+    <div id="modal-content"></div>
+    <div id="modal-caption"></div>
+  </div>
+
+<script>
+/* Datos de ejemplo */
+const mediaProjects = [
+     {
+    "title": "6ch_r",
+    "meta": "marzo 2023 — ciudad de méxico",
+    "description": "sistema de espacialización sonora compuesto por un aro de acero suspendido de 3 metros de diámetro, con seis bocinas incrustadas equidistantemente sobre su estructura. cada unidad cuenta con canal independiente, permitiendo una distribución espacial activa y dinámica del sonido.\n\nel ensamble de cada bocina utiliza un sistema exagerado de anclaje: placas (poros) de acero de 6 mm soldadas directamente al tubo circular y fijadas a los laterales perforados de cada bocina mediante espárragos de ¾”.\n\nesta lógica de ensamblaje —excesiva, rudimentaria y frontal— opera como antítesis de la estética depurada del diseño industrial actual. el resultado es un sistema de presencia cruda, crítica, deliberadamente desequilibrado: una declaración técnica que subvierte las convenciones del montaje sonoro.\n\n6ch_r es al mismo tiempo infraestructura acústica y gesto escultórico. su configuración física no busca desaparecer, sino que, enuncia su presencia, densifica el espacio y lo vuelve instrumento.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298553/original_53681747704e2f19671e0e3ed2281bc4.jpg?1753226668",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298556/original_5ef33fb52b046d779f348045e73dfd32.jpg?1753226674",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298558/original_d3153f50d3deb911faf72db9dab68703.jpg?1753226679",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298559/original_16b3c9024b1bbb0f0dc808614d7e8d9d.jpg?1753226679",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298562/original_c029e7456903553649dae97a66c1430c.jpg?1753226683",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298564/original_1a1bba965dc0bb7f2a36a25798d8ccd0.jpg?1753226685",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298710/original_d89172cf805e5967bcd2c0b9194e7f77.jpg?1753227311",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298719/original_4500128902da154ca0644d9bb5a0560c.jpg?1753227335",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38298725/original_16183ea3b2f6e74ae092bf869c5e72f4.jpg?1753227348"
+    ]
+  },
+   {
+    "title": "12.e",
+    "meta": "ciudad de méxico — activo desde 2024",
+    "description": "12.e es un sistema inmersivo de escucha profunda desarrollado por xpan. construido en ciudad de méxico dentro del espacio de proyectos públicos, aloja una esfera de 12.2 canales que permite una espacialización precisa del sonido.\n\nla experiencia auditiva tridimensional es posible gracias a un ensamblaje de objetos sonoros ubicados con precisión. el sistema cubre un rango completo de frecuencias, permitiendo que cada detalle sea percibido con claridad.\n\ncada semana, xpan activa 12.e con una selección de piezas cuidadosamente curadas, abiertas al público. su existencia plantea nuevas formas de relación entre cuerpo, espacio y tecnología auditiva.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203295/original_1b82d9f9ea745a014cda67e32628d4d3.jpg?1749077473?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203296/original_fc3401c615c7b259f675f51da01f5ccf.jpg?1749077474?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203297/original_5f02650e8c7d23a106c7b43d11d86312.jpg?1749077475?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203302/original_d5ef5ac3cadac0cbad8820fda6bf54b5.jpg?1749077521?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203303/original_bdc78dae1b6daf6557a4f4afa5d1b1c6.jpg?1749077521?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203304/original_1d12bfafc283053e7a0ce02460a2812f.jpg?1749077520?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203308/original_62621529c4f2da14a2ba3c924e0e6d3d.jpg?1749077541?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203314/original_d8fdbd1aece1cb72a814f05b5ae44e8a.jpg?1749077598?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203315/original_df198d0e799af71e00dd5f77a456b062.jpg?1749077598?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203316/original_5d35fb271f4049adb5d2c6c722853636.jpg?1749077599?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203317/original_7f4214fa8049a41f5cc0ea4cd46b70a7.jpg?1749077599?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203318/original_e6469363e8e4c757bce903d2a56822d1.jpg?1749077599?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203319/original_f70bd5ddd64406d365cb3f224cda956a.jpg?1749077599?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203320/original_e914cf8a3cf2fe2997c6a1c764dbaea9.jpg?1749077599?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203321/original_2e0958c097adbbed1a2d3bcff0f7a082.jpg?1749077600?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203322/original_a0c68de4ca6d520e494b4d1cc324b50a.jpg?1749077599?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203324/original_6e81f83e2221b7dde2d0634bab68f8bb.png?1749077614?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203325/original_fa334242a9d140e372360705f5b380b3.png?1749077614?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203327/original_683340015b51ed41aa84978750041b87.png?1749077640?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203328/original_a4200aa5a68987dd30df6feca632a79e.png?1749077640?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203330/original_7eadbb39218e870936eda325cc37bc67.png?1749077640?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203329/original_b303c5f14b423d8fb30c4110991f0f19.png?1749077641?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203333/original_9d37c6ab2621c8f549f7a5ae79bae249.png?1749077641?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203332/original_0a95e2bd13d4fc46a4799598104a2891.png?1749077640?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203334/original_4d1a2f190780b5761fa8a7b5448dd7e8.png?1749077641?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203335/original_e9fa31484f142b2326ccfa8f0410723a.png?1749077641?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37203331/original_31aabd153bf43ac47381bb82cda0dae4.png?1749077641?bc=0"
+    ]
+  },
+  {
+    "title": "desidia",
+    "meta": "junio 2024 — ciudad de méxico",
+    "description": "instalada en el antiguo hotel reforma durante junio de 2024, la intervención se articula a partir de una retícula superior de cable de acero tensada sobre el vacío central del recinto. desde ella se suspendió un cubo de plástico delgado de 6 × 6 × 6 metros. en su interior se colocó un cilindro de malla electrosoldada de 6 metros de alto y 3.89 metros de diámetro. este doble sistema espacial genera un umbral semitranslúcido y un núcleo expositivo-habitado.\n\nel cilindro funcionó como espacio para una serie de actividades públicas —conversatorios, mesas redondas y discusiones— enfocadas en prácticas culturales contemporáneas en méxico. la malla permitió a lxs participantes colocar prendas, obras, publicaciones, objetos y materiales propios mediante alambre, generando una curaduría colectiva en constante transformación.\n\ntoda la estructura fue montada específicamente para el espacio y operó tanto como foro como contenedor expositivo. el sistema completo fue desmontable y se diseñó para instalarse sin fijaciones permanentes, utilizando únicamente tensión, gravedad y anclajes reversibles.\n\ndesidia no funciona como exhibición tradicional ni como contenedor neutro. su estructura busca tensionar los límites entre espacio, cuerpo y contenido, activando una presencia inestable que resiste definiciones cerradas y abre condiciones de encuentro.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342310/original_a75dd959bf469d671762851ee29e7c36.jpg?1753383379",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342328/original_54601161d04cb5b7d9afaa9bd8d65735.jpg?1753383410",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342333/original_aaa648fa0b29b7c68a01a102939c1aa8.jpg?1753383415",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342503/original_18ff7088fd08edb133c35190808f9f3d.jpg?1753383797",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342523/original_3b1f1bd4d6e34a1a2571556e66fc5634.jpg?1753383841",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342287/original_9be5d272086163c92a676ef9f16292b8.jpg?1753383338",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342293/original_dde611acd93910dd1788ec22e0cb9501.jpg?1753383350",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342391/original_45d6b17edb799e919dee0ac570e12c0b.jpg?1753383534",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342423/original_fcc7c6406a3db10e7f72b835c71e9392.jpg?1753383605",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38342449/original_998b2f92c1960d3bcbf4ffd43e8e9ddb.jpg?1753383664"
+    ]
+  },
+  {
+    "title": "xpan.ep.1",
+    "meta": "octubre 2024 — ciudad de méxico",
+    "description": "xpan.ep.1 es un sistema modular ubicado en roma norte, ciudad de méxico. diseñado, desarrollado y construido por xpan, fue la primera iteración del sistema de poros. abrió el 17 de octubre del 2024 como punto de partida para una serie de activaciones vinculadas a la topología conectiva.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792475/original_7490285aa05acdab621f22ba6c1e429f.jpg?1747625341",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792469/original_8d03afe9f867abc31de44b6108ad445a.jpg?1747625338",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792466/original_2ae3f0c655beb094434461d91e86d2bf.jpg?1747625336",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36792458/original_201d055b783aa4a610e329a23fcc0968.jpg?1747625331",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36794123/original_5a43036d33a9ac72aed7a14c1450f68c.jpg?1747633367",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36794120/original_61b8534028a7c86a88ee95950a9ef07c.jpg?1747633366",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36794119/original_e99bc8ad613c89a09f6dbc0aaee5e628.jpg?1747633364",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36794117/original_9b78c0133d9714cf1538ee3a11f536f6.jpg?1747633364",
+      "https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363"
+    ]
+  },
+  {
+    "title": "ep.t [paris.25]",
+    "meta": "enero 2025 — parís, francia",
+    "description": "el proyecto ep.t [paris.25] configuró un espacio autónomo insertado en el núcleo de la paris fashion week enero 2025. su arquitectura, desarrollada y tejida en sitio durante 10 días consecutivos, operó como un dispositivo físico, político y simbólico de interrupción crítica.\n\nun sistema interior completo fue construido con malla electrosoldada y manta de cielo, materiales con carga cultural, simbólica y estructural. la malla, elemento industrial común en periferias urbanas, y la manta, textil asociado al patrimonio doméstico mexicano, fueron ensambladas mediante alambre recocido, generando una doble piel interior que recubrió muros y techos del espacio original.\n\nla intervención no fue decorativa ni ornamental. se trató de una inserción forzada, deliberadamente expuesta en sus uniones, bordes, moños de acero y púa visibles. esta lógica de remate crudo operó como gesto de confrontación: una ocupación no neutral de un entorno dominado por estructuras eurocentristas, de moda, de capital y exclusión.\n\nel tejido fue realizado manualmente, durante jornadas continuas de más de 15 horas diarias. esa acumulación de esfuerzo configura una densidad energética visible en el volumen resultante. la luz, filtrada por la manta, emana desde el interior, proyectando sombra y calor hacia afuera, invirtiendo las jerarquías tradicionales de iluminación en espacios de exhibición.\n\nsobre la piel interior se instalaron seis bocinas model.1, dirigidas hacia el centro, construyendo una cámara acústica cerrada que reforzaba la idea de un cuarto dentro de otro cuarto: un espacio autónomo, replegado, deliberadamente separado de las lógicas de espectáculo, consumo y visibilidad acrítica.\n\nla intervención acompañó un programa de exhibiciones y acciones activas durante 15 días, reuniendo a 117 colaboradores y más de 700 personas. su narrativa se posicionó como una respuesta colectiva, crítica y horizontal frente a los circuitos de validación, estética y representación dominantes. ep.t [paris.25] operó como espacio seguro y común, un entorno de comunidad temporal en el centro mismo del capital cultural europeo, activado desde lo independiente, lo precario y lo insurgente.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741154/original_1ad58ebc79c9c5517312b3a1cf8d7633.png?1751128171",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741152/original_f7970615c0d5850581a8c5c96e5cb52a.jpg?1751128171",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741151/original_213c0baa1bde2babf3a02c96db686cc1.jpg?1751128172",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741150/original_4aa927f8788c9a710d685c30799fcb07.jpg?1751128172",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741149/original_17f6a76ccae4c01453e30b98e42b9eba.jpg?1751128172",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741148/original_9e4d2c66045e4fbfaac15f438e4aed81.jpg?1751128171",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741133/original_9bd050f8af08f10104715cc7761d5f77.jpg?1751128080",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741132/original_4a0c9f2806107c41ce3a71c3cbcfca5e.jpg?1751128080",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741131/original_67d99dcdd748cf1d9ccdf5f26b58267f.jpg?1751128080",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741130/original_42b90db4bbf0a4f454335f2cfd596c52.jpg?1751128079",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741129/original_00512a002d9a4de3b859313d5be27d40.jpg?1751128079",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741128/original_fab5f5b61012ad4691ad99ca673d09df.jpg?1751128079",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37741127/original_d4ee291b52ef62e4fa6fb9e7009b3cdb.jpg?1751128078"
+    ]
+  },
+   {
+    "title": "estructura ep.t [paris.25]",
+    "meta": "parís — 2025",
+    "description": "ensamblaje maquinado de barras cuadradas de aluminio, material que ha trazado un hilo continuo en la sintaxis de xpan. estructura diseñada para contener y dar forma a un eje material de la topología conectiva: árbol, antena, receptáculo y transmisor al mismo tiempo.\n\nsu construcción se basa en cuatro elementos clave:\n– 5 barras cuadradas de 35 cm con barrenos laterales (br.1)\n– 3 amplificadores g.2 como contrapeso y balance\n– barras perpendiculares redondas (br.3) y barras verticales de 260 cm (br.4)\n– poros de acero de 6 mm para soporte y anclaje\n\ndesde esta pieza se emitieron y presentaron 122 obras durante ep.t — parís, 2025.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321954/original_f88196aeba4e24d62bf79f59e9902793.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321956/original_7e857bc37d51751ef34c77ddc97b4e25.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321962/original_ea01ab4ecc00cff031c569a9fa426a3d.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321963/original_ae81497c10ea01206206261f6c45eb2b.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321969/original_56953c3b71fb133533ab914f82fc5afe.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321971/original_5e662fa33f3e0399e1c413045cd2a01e.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg"
+    ]
+  },
+  {
+    "title": "módulo atlas",
+    "meta": "ciudad de méxico — 2025",
+    "description": "volumen desarrollado para alojar y desplegar xpan.atlas. formado por tres niveles estructurales, el módulo utiliza barras de acero de ½” soldadas entre sí, generando una composición estable, sólida y sutil.\n\n– base estructural de 185 × 40 cm\n– niveles intermedios de 182.5 × 40 cm y 182.5 × 58.7 cm\n– seis perfiles verticales conectan los niveles, reforzados por placas soldadas internas\n\nla disposición permite la exhibición de publicaciones, objetos o archivo visual-sonoro. funciona como contenedor, archivo y estación de lectura dentro del espacio.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322106/original_f1165ffc37fb6441594d2e76ab10f946.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322113/original_735445cab2e13d840e7bfd349ce511f5.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322116/original_0548c939b11583cb45c30a58d867cd66.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322120/original_400cbe733ff6aaba63a0ec3a0997e433.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322121/original_4368a6a238773f23f34ea205b8939650.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322122/original_38f43755a5e4b862285fa2e32247e088.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322123/original_95257fce6e18aa4ffda393ed9d26585f.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg"
+    ]
+  },
+  {
+    "title": "mueble para monitor",
+    "meta": "ciudad de méxico — 2025",
+    "description": "estructura modular para alojar monitores o pantallas dentro de intervenciones espaciales. configurada por barras cuadradas de acero de ½” con uniones soldadas en múltiples niveles. el diseño permite ocultar cableado, elevar visuales y soportar peso sin añadir masa visual.\n\nsus dos plataformas laterales soportan una laptop y un florero interconectado con el monitor central.\n\n– base a 20 cm del suelo\n– plataformas a 80, 95 y 120 cm\n– altura total: 1.27 m\n– profundidad y ancho: 63 cm\n\nsu presencia no distrae del contenido visual que soporta, pero mantiene una geometría técnica deliberada que lo inserta en la lógica del sistema general.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322005/original_d1922b0cc7368718d4ac4b5db7161dbf.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322009/original_5f8e7d8e3527d5e959b00071d6c271b2.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322011/original_0fb1eb31672ba7167216e34b812cda18.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322012/original_c917c42b235565f7f4b468e713f9bd74.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322026/original_5ce7545f996042d0c0059a9608b1af5f.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg"
+    ]
+  },
+  {
+  "title": "hex_666",
+  "meta": "febrero 2024 — ciudad de méxico",
+  "description": "hex_666 es una estructura suspendida desde un solo punto de anclaje, equilibrada mediante seis cables de acero y el peso de seis bocinas mdl.01-r. la forma general replica una estrella de seis puntas, construida con perfiles de acero cuadrado de 1½\", dispuestos en ángulo de 18° y unidos a una pieza central de acero rolado.\n\nel sistema se completa con un aro flotante de 3 metros de diámetro, soportado por tensión cruzada, donde se distribuyeron 30 velas. todo el conjunto se mantuvo en acabado natural, con perfiles rojos, soldaduras visibles y uniones expuestas.\n\nla instalación funcionó como matriz física y sonora. durante seis horas, seis colaboradores activaron las seis bocinas de forma continua, generando una vibración circular sostenida. el montaje se realizó en equilibrio simétrico, con precisión en cada tensión y contrapeso.\n\nhex_666 articula geometría, sonido y gravedad. una figura técnica y simbólica, activa en todos sus niveles.",
+  "media": [
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811425/original_53b19dd284ba329438496d3cc69c405e.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811427/original_97ba81be1056212cbfb5a1ffedcd6709.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811428/original_fc26fe7ccb2ee3b35ae173eaf3a99c5f.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811430/original_890c3f49ee312aba6bcb1f8810f6eda9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811431/original_5a146e93ad1a359ecddb75a28d7aa75b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811433/original_e7b9854b000d8b733cc2b93d06f8624d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811435/original_bd7257485429b69abb87a583c2e32157.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811436/original_dc8b429e93a07bcb294eef66154f9d84.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811438/original_7eddca9e7b6bdce01ff653f8d5b692a9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811565/original_deaee14989db4033fd00477e64958567.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811566/original_13eca9fabf51ccc24d7436c332303c88.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811571/original_ff571f67a64507f2ac9fae970b873eaf.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811575/original_5cf7ba0dc074a4a8dab79186b3e00e6a.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811576/original_5bcb95e7ceaf6670cf1ad90a172ceefc.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811577/original_e1b4e9b6a2f7d177b750586019dfb060.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811578/original_233b27da8068c2b5113e0431e48af2eb.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811579/original_18952181e6d7b1cf2b68e4cf680b95cf.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811580/original_d0ee9a31efc8593d22ea1e6c3a3e92f7.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811582/original_01a75cbeb1c69dbdfdc8d23b0f4165e4.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811583/original_e5b9c82d68d90df85a59bb250d918a14.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37811585/original_6981566671b9cc078a6e3c760e216931.png"
+  ]
+},
+{
+  "title": "lllllllllll.americana",
+  "meta": "junio 2025 — guadalajara, jalisco",
+  "description": "diseño, desarrollo y construcción de espacio en la colonia americana, guadalajara, méxico.\n\nel proyecto parte de una retícula de bastidores de acero que recorre el perímetro del espacio. esta estructura envolvente opera mediante el sistema de poros: una matriz de perforaciones atravesadas por barras de aluminio que permiten la inserción de repisas, racks y aditamentos. el resultado es una plataforma modular, adaptable y reconfigurable según las necesidades del uso.\n\nen el centro del espacio se suspende una isoestructura, pieza simbólica y estructural fabricada en acero y aluminio. este núcleo funcional articula el sistema general, suspendiendo bocinas mdl.1, floreros y cortinas de tela que permiten subdividir o cerrar parcialmente ciertas áreas del volumen.\n\nel sistema se complementa con una plataforma elevada que introduce un segundo nivel operativo dentro del mismo contenedor, acentuando el carácter tridimensional del espacio.\n\nla iluminación fue diseñada como parte integral del sistema: una serie de luminarias verticales con pantallas de policarbonato actúan como difusores de luz. el policarbonato, al ser atravesado por fuentes concentradas, genera un fenómeno de refracción y dispersión que suaviza y expande la luz de forma direccional, multiplicando su volumen y produciendo una atmósfera envolvente.",
+  "media": [
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732475/original_bdce083f058ef01aba42c7ff9008d869.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732476/original_6fefc576bb41163bc2732cdef709c7d0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732477/original_215ba7dbf81197d08f7e525b8cbf8334.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732478/original_9f891339662385746399f7fd311dc9aa.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732479/original_1b11c5ecd3cb8bd055e1a1ed41a3a3d5.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732481/original_2e1bca9d0a2f4b62d8761a9235cd6e64.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732482/original_23e971b19176780b722dac82fc598559.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732483/original_75ed82473eb97aa319d4c2cd4869eb23.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732484/original_05ebd40cbd55b3c3b6279e4a1079352e.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732485/original_5f0e0f0781842ccc038af7a287277b7d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732486/original_ddfe7acab2aad1d2e4d69076833c3275.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732487/original_61c3f0bb03a5b6dcd24ba4c12f6e43bf.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732496/original_fff396fdd0142b88cca48076f34e9e66.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732497/original_4cd18fc3ebd161d2b5daab598f8761d0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732500/original_2073f0865fe7c1724838f25f00484adf.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732501/original_cd7d81741dadcb78d02d555cc3269153.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732502/original_331a06ca4437a72abe0c1e15d3dcbd3a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732503/original_62d73abb48a7d125a2a3e867dd9d4881.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732504/original_16df31df6d548a37c1d5d47b722b473c.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732505/original_f5aa5f18eb1a06fe1cddae66dbebcb9e.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732506/original_11a6284cd70e4a16b896291e1472f492.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732507/original_5e07b17ad355519decb9bac22b68a061.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732510/original_3e311272637658d0cc126ed2a67a8481.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732511/original_7ccd99e5ea4bc9bf2cb8cd8850d3833e.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732514/original_77209de271557bb0c6d55740dc384aa3.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732517/original_b4ef416dcce234456a024614a5244660.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/37732518/original_ab7aeac47fa1e22ca50482dcba9f41ae.jpg"
+  ]
+},
+{
+    "title": "mdl.1 — sistema completo",
+    "meta": "sistema base desarrollado por xpan",
+    "description": "la mdl.1 es el primer sistema desarrollado por xpan. su construcción estableció una forma de operar, de conectar y de intervenir el espacio. no fue diseñada como objeto utilitario ni como sistema de sonido convencional. fue pensada como medio, como dispositivo de transmisión.\n\nla bocina se entiende aquí no como un simple emisor, sino como un canal abierto: un aparato que convierte señal en presencia, vibración en estructura, sonido en mensaje. desde su primera aparición, la mdl.1 ha funcionado como interfaz física entre xpan y el entorno. a través de ella se activan colaboraciones, se generan vínculos, se construyen sistemas espaciales, sonoros y culturales.\n\na diferencia de los sistemas diseñados para amplificar de forma genérica, la mdl.1 propone una propagación situada. su fuerza no radica en el volumen, sino en su capacidad de marcar un punto de acción dentro del entorno.\n\nsu silueta originó el logotipo de xpan. su lógica dio origen al resto de los sistemas desarrollados. sigue vigente. sigue activa.\n\nsistema mdl.1:\n– bocina pasiva de dos vías.\n– cuerpo de madera con acabado en poliuretano negro semi mate.\n– dimensiones: 35 × 30 × 30 cm\n– peso: 9.6 kg\n– componentes internos: driver medio 6.5”, tweeter bullet 4”, crossover pasivo 2 vías\n– respuesta de frecuencia: 25 hz – 20 khz\n– sensibilidad: 96 db\n– impedancia nominal: 8 ohms\n– potencia recomendada: 66 w\n\ncomponentes del sistema:\n– stools: pedestales en barra cuadrada de aluminio ½”, 120 cm y 30 cm\n– sub.t: subwoofer pasivo 15”, 80 × 60 × 60 cm, 24 kg, 10 hz – 200 hz, 120 db, 4 ohms, 1200 w\n– g.sub: amplificador dedicado para sub.t\n– g.2 / g.4 / g.8 / g.12: amplificadores modulares en aluminio, entrada 3.5 mm, salida 120 w/canal, 110v-220v, modelos de 2, 4, 8 y 12 canales\n\ncada configuración responde al espacio, uso y número de transmisores requeridos. la lógica: modularidad, precisión, adaptabilidad. el punto de partida siempre es la mdl.1.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759457/original_092676d62886ca27c30dbcfca9a92bfd.png?1751243832?bc=0",
+      "https://attachments.are.na/37759561/c66c37e489a52d657a6a70a3e91be586.mp4?1751244494",
+      "https://attachments.are.na/37759632/f875051f91f7703c7fdb3656a89dccba.pdf?1751244925",
+      "https://attachments.are.na/37759931/0336cb748be53a42420de82a2480976b.mp4?1751246789",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759937/original_eca52d2992fff7f02f98be2f41dbccdf.png?1751246840?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759938/original_b165a085c00fdca2ec14cff7c37f657b.png?1751246840?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759952/original_735a6a1f4ef4b46359786019e25b6cf0.jpg?1751246963?bc=0",
+      "https://attachments.are.na/37759944/84599332f21fdd420362e4ca85017c52.mp4?1751246911"
+    ]
+  },
+  {
+    "title": "stools [mdl.1]",
+    "meta": "pedestales para bocina mdl.1",
+    "description": "pedestales diseñados exclusivamente para la mdl.1. fabricados en barra cuadrada de aluminio de ½”. disponibles en dos alturas: 120 cm y 30 cm.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759662/original_f78ba27ec70089bdefa3950bb8b6aaf7.png?1751244989?bc=0",
+      "https://attachments.are.na/37759690/87676c8d80c1e2e86b15ee46ef24cc3f.pdf?1751245157",
+      "https://attachments.are.na/37759693/80f2ccda9b9e10fe0e12d33a16b4d14a.pdf?1751245187"
+    ]
+  },
+  {
+    "title": "sub.t [subwoofer]",
+    "meta": "subwoofer pasivo de 15”",
+    "description": "subwoofer pasivo de 15”. dimensiones: 80 × 60 × 60 cm. peso: 24 kg. respuesta: 10 hz – 200 hz. sensibilidad: 120 db. impedancia: 4 ohms. potencia recomendada: 1200 w.",
+    "media": [
+      "https://attachments.are.na/37759700/bcea87da1bdb6db45efef667765959a3.mp4?1751245266",
+      "https://attachments.are.na/37759717/df93c8e2d34654f12bbf46df541bcd6f.pdf?1751245416"
+    ]
+  },
+  {
+    "title": "g.2 [amplificador]",
+    "meta": "amplificador modular 2 canales",
+    "description": "amplificador modular en solera de aluminio. paneles de entrada y salida en nylamid torneado. entrada jack 3.5 mm, salida 120 w por canal. tensión 110v 60hz o 220v 50hz.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759748/original_299900b600b68e527953cf8c4a42bfc4.png?1751245644?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759750/original_0f935bb4252eeab9b8653126361ef1d8.png?1751245644?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759752/original_15321f990bfd63495c7e9bf12ed25678.png?1751245644?bc=0",
+      "https://attachments.are.na/37759755/f478e75b0e84d56929fa954c496cc0b0.mp4?1751245656",
+      "https://attachments.are.na/37759782/cb7dc183f225bf9ef14e70d279485266.pdf?1751245856"
+    ]
+  },
+  {
+    "title": "g.sub [amplificador]",
+    "meta": "amplificador dedicado sub.t",
+    "description": "amplificador dedicado para el sub.t.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759721/original_611113c84751490aaae1d677fb9bea35.png?1751245479?bc=0",
+      "https://attachments.are.na/37759741/af9098fd47a1e2f548fe0b8a6283fddf.pdf?1751245608"
+    ]
+  },
+  {
+    "title": "g.8 / g.12 [amplificador]",
+    "meta": "amplificadores modulares",
+    "description": "amplificadores modulares en solera de aluminio. entrada jack 3.5 mm, salida 120 w por canal, 110v-220v. modelos de 8 y 12 canales.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/37759827/original_738e3c799f89a15b4c856de3c9782480.png?1751246255?bc=0",
+      "https://attachments.are.na/37759853/c62e8088256bd68fd4fecdf67c7fc5c4.pdf?1751246413",
+      "https://attachments.are.na/37759854/096c3336e1ac5629d004951005f12930.pdf?1751246413"
+    ]
+  },
+  {
+    "title": "mdtc.4 [ eden garden cinema ]",
+    "meta": "abril 2025 — hotel reforma, ciudad de méxico",
+    "description": "intervención espacial desarrollada por xpan junto a mario alore y eli pastore.\n\nestructura principal: estrella de seis puntas construida con 132 reflectores de alta intensidad, unidos mediante cable de acero. el conjunto —de más de 3 metros de diámetro— fue suspendido en el centro del espacio. su trazo continuo forma una figura cerrada y expansiva. la proyección lumínica es directa, sin dispersión: genera un volumen denso, agresivo y frontal.\n\nel sistema se completa con una lámina de aluminio pulido alineada al centro geométrico de la estrella, y un mixtape en reproducción continua.\n\nel público accede a memorias usb metálicas con el audio. cada unidad está diseñada con una punta afilada, permitiendo inscribir trazos sobre la lámina. los desplazamientos físicos durante la escucha activan un protocolo de intervención: gesto, vibración y registro convergen en un único plano.\n\neste proyecto define una plataforma de exposición extrema, donde la memoria se acumula como residuo material.",
+    "media": [
+      "https://attachments.are.na/38029171/c70f2ec676db10432d4df5e8b4edfda3.mov?1752183654",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029070/original_e7b6d2edeaec7c33f7e398a967b4ff0c.jpg?1752183429?bc=0",
+      "https://attachments.are.na/38029238/3f48480f6d82c26d60073d5b95e9f7ce.mov?1752183909",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029309/original_9b731ba68e2eee8f5fc5a7f7c2ae1aa1.jpg?1752184198?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029073/original_8efbcaddd954b94114d53a98103ae916.png?1752183431?bc=0",
+      "https://attachments.are.na/38029305/0b03a0fcd3349e3340a51dee746606a2.mov?1752184195",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029063/original_6dc8153cd9404303dbb7d10b4b2ba71e.jpg?1752183401?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029530/original_b2473108c7785c385e659428680d3887.jpg?1752184871?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029298/original_6383db92fd1058962f1855501f3dc537.jpg?1752184179?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029526/original_e141e42e930bcc010214eaddaa87222d.jpg?1752184858?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029065/original_4f9cd38172ebf608aba3bdf4cde8dbdd.jpg?1752183404?bc=0",
+      "https://attachments.are.na/38029479/51a54b5ed88d49310f98303da9d81377.mov?1752184717",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029310/original_980215c234f48d7c0ecfd74acccdd07c.jpg?1752184199?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029306/original_63036ac71993e962e9701801d37e9a9b.jpg?1752184196?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029522/original_fc49d4c595fec3f3769bf235fa116d2d.png?1752184840?bc=0",
+      "https://attachments.are.na/38029066/b88d096a5dcffba1eb922cba46b7fa27.mov?1752183405",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029524/original_37675df1822eca5b1ec28d3e8df188fa.png?1752184848?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029529/original_9d6908ca7a8a3e6a89a1492fd4499c28.jpg?1752184864?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029062/original_136f026e2847b72a83d20ab88a090049.jpg?1752183401?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029061/original_7627c13569114443cb23dc40f1f47fff.jpg?1752183400?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38029311/original_9cffb18cbf52c14e9a010d3040181b8b.jpg?1752184200?bc=0"
+    ]
+  },
+   {
+    "title": "xpan.studio.2025",
+    "meta": "febrero 2025 — proyectos públicos, ciudad de méxico",
+    "description": "xpan.studio.2025 es la intervención espacial desarrollada para alojar el estudio de xpan en “proyectos públicos”, ciudad de méxico. el sistema fue construido en febrero de 2025 y se diseñó íntegramente como una infraestructura desmontable, suspendida y modular.\n\nuna retícula aérea de cables de acero tensada entre armellas permite colgar luminarias, pantallas de policarbonato, dispositivos de sonido y elementos de control espacial sin fijaciones permanentes. toda la intervención puede desmontarse rápidamente soltando los cables de acero de su punto de anclaje.\n\nademás del sistema suspendido, se diseñaron piezas auxiliares específicas: mesas de trabajo, muebles de almacenaje, lámparas, sillones individuales y mesas bajas. todos los objetos siguen una misma lógica estructural a partir de perfiles metálicos delgados y materiales translúcidos, lo que permite que el conjunto se mantenga liviano, permeable y reconfigurable.\n\nel espacio funciona como núcleo operativo de xpan: alberga sesiones de análisis, edición editorial, desarrollo técnico y archivo. su diseño permite adaptarse a distintas funciones sin clausurar el espacio ni fijar una distribución única. el estudio es, a la vez, una herramienta de trabajo y una forma de pensamiento espacial.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343252/original_548f5e7b418d08e99159978de9b26803.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343251/original_1b2a3f3b6fb4504f4289363013b4aa07.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343250/original_fa76e5f5b8e3d706f252e5485347379a.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343285/original_f8f0c9099d64311925d2ca800df9b882.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343292/original_dbb679d5d0c48a678a0e72e7bca26d5a.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343239/original_aa4b5d929f7b4b8fad3c1f897cbd5108.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343294/original_467dfb97c71865d5c8268e9ecbddc490.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343246/original_2d0d047dd8d8fed83c5243abf0ed55e3.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343293/original_0414f67a1997a640d479ae689e6c3297.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343247/original_fe35642530420ad47cdbb3d87ce54665.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343249/original_46ffa33fe5f2bda6c2c40a200c2c7d55.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343256/original_2c6e4bae2e07b1859baf643bdebb6830.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343261/original_4f2c2b3e3d03d1ba2a39dc81754fac7b.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343244/original_76c0eaf8b5410f81087df4493f74e266.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343268/original_3ee88feb43b4f38792b83eefebfd484b.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343276/original_d354999a9c44f2ba8ecbc3faa9f3e02f.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343280/original_93991fb482ad24cfcb0a4e3296fa7c87.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343288/original_6f31c0fba718671229279ef65a561515.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38343290/original_74a8612a387f7f576a3fb20b0b1cd694.jpg"
+    ]
+  },
+   {
+    "title": "x.6_A/V.f",
+    "meta": "febrero 2024 — ciudad de méxico",
+    "description": "x.6_A/V.f [xpan 6channel audiovisual forum] es un sistema espacial diseñado como infraestructura autónoma de exhibición, proyección y escucha multicanal. desarrollado por xpan en febrero de 2024, el sistema parte de un arco estructural autoestable fabricado en acero ptr, que actúa como soporte de suspensión para bocinas xpan.mdl.1 y una pantalla frontal.\n\nla pieza se compone de tres componentes principales: una membrana visual tensada con impresión gráfica difusa, una serie de bocinas mdl.1 suspendidas distribuidas a lo largo del arco en una configuración envolvente de 6 canales, y un conjunto de anclajes y contrapesos fabricados en acero macizo que estabilizan la estructura sin requerir fijaciones al suelo.\n\nel sistema fue desarrollado para activaciones efímeras, espacios institucionales y foros de presentación que requieren condiciones técnicas precisas sin comprometer su desmontaje. su geometría abierta permite visibilidad frontal y posterior, mientras su espacialidad sonora crea un campo inmersivo que amplifica la narrativa visual. el sistema opera como infraestructura portátil, foro intervenible y medio de articulación audiovisual.",
+    "media": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376758/original_b95df38401a25ab8a462d5652cdb4a0d.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376755/original_685195aeb3338c340d3349b92a5fa461.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376756/original_7ac5d3f9b4449265567d979c16a07b7f.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376757/original_f1e915703f2350e1a8796cb092ae0761.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376759/original_cc76a4fda0aec0ee2fb0cd2afa4a9c16.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376760/original_8a242c12d83ba80ae8b3bb70b9784075.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376761/original_178634838e5edd277fe7d4a7867e7e9d.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376764/original_f1f9fc776cbeb4280b2044a8081361c4.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376770/original_9291fd9c73303dacfa0dac99c67c5733.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376754/original_10883b84058c79c26038f09f13c12dab.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38376771/original_ca67f9f94f55c49a6893bb0c9af32303.jpg"
+    ]
+  }
+      
+    ];
+
+
+const grid=document.getElementById('media-grid');
+const selectedList=document.getElementById('selected-list');
+const favoritesList=document.getElementById('favorites-list');
+const projectFilter=document.getElementById('project-filter');
+const searchBox=document.getElementById('search-box');
+const sortBox=document.getElementById('sort-box');
+let selectedItems=JSON.parse(localStorage.getItem('selectedItems')||'[]');
+let favoriteItems=JSON.parse(localStorage.getItem('favoriteItems')||'[]');
+let currentMedia=[], modalIndex=0, page=0, pageSize=20;
+
+/* Inicialización filtros */
+mediaProjects.forEach(p=>{
+  const o=document.createElement('option');o.value=p.title;o.textContent=p.title;projectFilter.appendChild(o);
+});
+[projectFilter, searchBox, sortBox].forEach(el=>el.addEventListener('change',()=>{page=0;renderGrid();updateURLState();}));
+searchBox.addEventListener('input',()=>{page=0;renderGrid();updateURLState();});
+
+/* Funciones de construcción */
+function shuffleArray(arr){return arr.sort(()=>Math.random()-0.5);}
+function buildMediaArray(){
+  const f=projectFilter.value, q=searchBox.value.toLowerCase();let all=[];
+  mediaProjects.forEach(project=>{
+    if(f==='all'||f===project.title){
+      project.media.forEach(url=>{
+        const item={project:project.title,url,caption:`${project.title} — ${project.meta}`,description:project.description};
+        if(item.caption.toLowerCase().includes(q)||item.description.toLowerCase().includes(q)) all.push(item);
+      });
+    }
+  });
+  const sort=sortBox.value;
+  if(sort==='caption') all.sort((a,b)=>a.caption.localeCompare(b.caption));
+  else if(sort==='project') all.sort((a,b)=>a.project.localeCompare(b.project));
+  else shuffleArray(all);
+  return all;
+}
+function renderGrid(skipBuild=false){
+  if(!skipBuild) currentMedia=buildMediaArray();
+  const slice=currentMedia.slice(0,(++page)*pageSize);
+  grid.innerHTML='';
+  slice.forEach((item,index)=>{
+    const div=document.createElement('div');div.className='media-item';div.dataset.index=index;
+    div.title=item.caption;
+    div.innerHTML=item.url.endsWith('.mp4')?
+      `<video src="${item.url}" muted playsinline preload="metadata"></video>`:
+      `<img src="${item.url}" loading="lazy" alt=""><span class="caption">${item.caption}</span>`;
+    div.addEventListener('click',e=>{
+      if(e.shiftKey) toggleFavorite(item,div);
+      else toggleSelect(item,div);
+    });
+    if(selectedItems.find(i=>i.url===item.url)) div.classList.add('selected');
+    if(favoriteItems.find(i=>i.url===item.url)) div.classList.add('favorite');
+    grid.appendChild(div);
+  });
+  updateCounts();
+}
+
+/* Selección y favoritos */
+function toggleSelect(item,element){
+  const idx=selectedItems.findIndex(i=>i.url===item.url);
+  if(idx>=0){selectedItems.splice(idx,1);element.classList.remove('selected');}
+  else {selectedItems.push(item);element.classList.add('selected');}
+  localStorage.setItem('selectedItems',JSON.stringify(selectedItems));
+  renderSelectedList();updateCounts();
+}
+function toggleFavorite(item,element){
+  const idx=favoriteItems.findIndex(i=>i.url===item.url);
+  if(idx>=0){favoriteItems.splice(idx,1);element.classList.remove('favorite');}
+  else {favoriteItems.push(item);element.classList.add('favorite');}
+  localStorage.setItem('favoriteItems',JSON.stringify(favoriteItems));
+  renderFavoriteList();updateCounts();
+}
+function renderSelectedList(){
+  selectedList.innerHTML='';
+  selectedItems.forEach((item,idx)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<img src="${item.url}"><span>${item.caption}</span>`;
+    li.addEventListener('click',()=>openModal(idx));selectedList.appendChild(li);
+  });
+}
+function renderFavoriteList(){
+  favoritesList.innerHTML='';
+  favoriteItems.forEach(item=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<img src="${item.url}"><span>${item.caption}</span>`;
+    favoritesList.appendChild(li);
+  });
+}
+function clearSelection(){selectedItems=[];localStorage.removeItem('selectedItems');renderSelectedList();renderGrid(true);updateCounts();}
+function updateCounts(){
+  document.getElementById('sel-count').textContent=selectedItems.length;
+  document.getElementById('fav-count').textContent=favoriteItems.length;
+}
+
+/* Export/Descarga */
+function exportCaptions(){const t=selectedItems.map(i=>i.caption+"\n"+i.description).join('\n\n');navigator.clipboard.writeText(t);alert('Captions copiados.');}
+function downloadCaptions(){
+  const t=selectedItems.map(i=>i.caption+"\n"+i.description).join('\n\n');
+  const blob=new Blob([t],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download='xpan_captions.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+/* Modal */
+const modal=document.getElementById('modal-view');
+const modalContent=document.getElementById('modal-content');
+const modalCaption=document.getElementById('modal-caption');
+document.getElementById('modal-prev').onclick=()=>navigateModal(-1);
+document.getElementById('modal-next').onclick=()=>navigateModal(1);
+document.getElementById('modal-close').onclick=closeModal;
+function openModal(idx){modal.classList.add('show');modalIndex=idx;showModalItem();}
+function openModalView(){if(selectedItems.length>0)openModal(0);else alert('No hay ítems seleccionados.');}
+function showModalItem(){
+  const item=selectedItems[modalIndex];
+  modalContent.innerHTML=item.url.endsWith('.mp4')?`<video src="${item.url}" controls autoplay></video>`:`<img src="${item.url}" alt="">`;
+  modalCaption.textContent=item.caption;
+}
+function navigateModal(step){modalIndex=(modalIndex+step+selectedItems.length)%selectedItems.length;showModalItem();}
+function closeModal(){modal.classList.remove('show');}
+
+/* Gestos táctiles */
+let startX=0;
+modal.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+modal.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-startX;
+  if(dx>50) navigateModal(-1); else if(dx<-50) navigateModal(1);
+});
+
+/* Lazy load on scroll */
+window.addEventListener('scroll',()=>{
+  if(window.innerHeight+window.scrollY>=document.body.offsetHeight-50 && page*pageSize<currentMedia.length){
+    renderGrid(true);
+  }
+});
+
+/* Estado en URL */
+function updateURLState(){
+  const params=new URLSearchParams();
+  params.set('filter',projectFilter.value);
+  params.set('search',searchBox.value);
+  params.set('sort',sortBox.value);
+  history.replaceState(null,'','?'+params.toString());
+}
+function restoreFromURL(){
+  const params=new URLSearchParams(location.search);
+  if(params.has('filter')) projectFilter.value=params.get('filter');
+  if(params.has('search')) searchBox.value=params.get('search');
+  if(params.has('sort')) sortBox.value=params.get('sort');
+}
+function copyShareLink(){navigator.clipboard.writeText(location.href);alert('Link copiado.');}
+
+/* Inicialización */
+restoreFromURL();
+currentMedia=buildMediaArray();
+renderSelectedList();renderFavoriteList();renderGrid(true);updateCounts();
+</script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — mdl.1 fusion multilang interactive media</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 20;
+    }
+    header img {
+      width: 50px;
+      height: auto;
+      display: block;
+    }
+    .lang-selector {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 30;
+    }
+    .lang-selector button {
+      background: none;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.3s;
+    }
+    .lang-selector button.active,
+    .lang-selector button:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .media-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% - 320px);
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      overflow-y: auto;
+      padding: 1.5rem;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      z-index: 10;
+    }
+    details {
+      margin-bottom: 1rem;
+    }
+    details summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+    details ul {
+      list-style: none;
+      padding-left: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 4px;
+      font-size: 0.8rem;
+    }
+    details ul li img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+      display: block;
+    }
+    .media-node {
+      position: absolute;
+      max-width: 200px;
+      max-height: 150px;
+      cursor: pointer;
+      transition: transform 0.3s, opacity 0.3s;
+      opacity: 0;
+      z-index: 5;
+    }
+    .media-node.show {
+      opacity: 1;
+    }
+    .media-node:hover {
+      transform: scale(1.05);
+    }
+    .media-node img,
+    .media-node video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .media-node audio {
+      width: 100%;
+    }
+    .modal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      max-width: 80%;
+      max-height: 80%;
+    }
+    .modal-content img,
+    .modal-content video,
+    .modal-content iframe {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 2rem;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .description-block {
+      margin-bottom: 1.5rem;
+    }
+    .lang-block {
+      display: none;
+    }
+    .lang-block.active {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+      .media-node {
+        max-width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth">
+      <img src="xpan.svg" alt="xpan logo" />
+    </a>
+  </header>
+
+  <div class="lang-selector">
+    <button data-lang="es" class="active">es</button>
+    <button data-lang="en">en</button>
+    <button data-lang="fr">fr</button>
+    <button data-lang="jp">jp</button>
+  </div>
+
+  <div class="media-container">
+    <canvas id="connections"></canvas>
+  </div>
+
+  <div class="sidebar" id="sidebar"></div>
+
+  <div class="modal" id="modal">
+    <div class="modal-close" onclick="closeModal()">×</div>
+    <div class="modal-content" id="modal-content"></div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('connections');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = window.innerWidth - 320;
+    let h = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth - 320;
+      h = canvas.height = window.innerHeight;
+    });
+
+    const groups = { principal: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445895/original_588c05160e05cdbd5239607c1502e12c.jpg?1753837433?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445898/original_8a69dfb94945dc2510b3115ad9a88606.png?1753837495?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445912/original_086c3d9df86785f120614b590e0dea5a.png?1753837549?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445950/original_dad9943a5e22ded6666a2cd3b5464dcf.jpg?1753837732?bc=0",
+    "https://attachments.are.na/38445951/a5dc0570d6e3336e3847d3d57eb07733.mp4?1753837741",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445955/original_4fd954e27397d0ef0c57acef8343909a.png?1753837761?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445958/original_978838e64db5b7ea2ef562d9c2d1f306.png?1753837770?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445964/original_22fceb940aeede6e831c6f2328be4d1c.png?1753837786?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445969/original_8980d8697b7f8923acd2812f042479b3.png?1753837808?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445920/original_0935539f62451c7c0b421c342e967457.png?1753837570?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445931/original_aa8495a986e814cde445b3f46c57cae3.png?1753837618?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445944/original_9eb335036391b0d032ce1783cc8e7b20.jpg?1753837681?bc=0"
+  ], 
+  secundaria: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445980/original_65362a79046d609f57efc51e40ae7618.jpg?1753837949?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445981/original_07155691a288930145f7d6949efcf603.jpg?1753837949?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445982/original_679c42b38a604ac68d4a5595a7513b5b.jpg?1753837949?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445983/original_75fcd9801104c9e846cf9cf8160cec02.jpg?1753837949?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445984/original_27f4680fba7c7df92491ca830d0b46b2.jpg?1753837949?bc=0",
+    "https://attachments.are.na/38445986/006128c80f5b948d38d097fb64eef6d7.mp4?1753837950",
+    "https://attachments.are.na/38445987/e8c08ed0ad05442972691169a6fd2bf9.mov?1753837951"
+ ],
+  terciaria: [
+    "https://attachments.are.na/38445990/9808dfd192f87c95bc4bdc3fe074d3fd.m4a?1753837960",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445992/original_7350e61df1aeddda4efc231e3ed59b09.jpg?1753837963?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445994/original_a40c41f6f948110b64ed1a55ceb2204f.jpg?1753837965?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445995/original_68dca9b812fe705e5f81d25f8fb1f93b.jpg?1753837966?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445996/original_8119c74265f31f2fb0ad225373e73e18.png?1753837967?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445998/original_acb5b9238a12f4eb257338aa86bda0c9.jpg?1753837969?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38445999/original_05e430b5ab366e0b74e25cc5c39f1a9c.jpg?1753837970?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446000/original_aff41416f43fdc715748e18486a17ced.jpg?1753837971?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446002/original_7681aff4e30a507b9a55be71cde7fb92.jpg?1753837971?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446003/original_4097f99753f3b5eae59339eedd86b708.jpg?1753837972?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446004/original_7d5aa296d9ca064cfadaeaa8161694ce.jpg?1753837973?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446005/original_7a21f4c7100617f30390a2dc965b1da7.jpg?1753837973?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446008/original_464cfd661c9a35d4cdbf41b5a9a94c1e.jpg?1753837979?bc=0",
+    "https://attachments.are.na/38446010/c3e342fbbc34940aa5003251ebd60825.mp4?1753837981",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446011/original_d1b94f044f00b921d5a15c9d06a2ee38.jpg?1753837986?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446012/original_256565569da20222f34f65f1f88e31fe.png?1753837987?bc=0",
+    "https://attachments.are.na/38446013/e191fb2baf96f86a808cdb1f83db9709.mp4?1753837989",
+    "https://attachments.are.na/38446014/8b575ea12467a03a1888246a8fde9bad.pdf?1753837993",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446015/original_e5695d514014bc252b5fa4c4dceb94a7.jpg?1753837993?bc=0",
+    "https://attachments.are.na/38446016/0d3c222c5ac74411448417ef2dad1a63.mp4?1753837993",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446017/original_7dba62249e3fbb7df1b03b222cf66779.jpg?1753837994?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38446019/original_c0e35d30c96006502b7ec2a1565e68fe.jpg?1753838011?bc=0",
+    "https://attachments.are.na/38446041/47beab4cc59795157036bbe633a81c18.mov?1753838118"
+  ] }; // Se llenarán dinámicamente
+
+    function detectType(url) {
+      const ext = url.split('?')[0].split('.').pop().toLowerCase();
+      if(['mp4','mov','webm'].includes(ext)) return 'video';
+      if(['mp3','m4a','wav','ogg'].includes(ext)) return 'audio';
+      if(ext==='pdf') return 'pdf';
+      return 'image';
+    }
+
+    const container = document.querySelector('.media-container');
+    let nodes = [];
+
+    function createMediaNode(media) {
+      const node = document.createElement('div');
+      node.className = 'media-node';
+      if(media.type==='video') node.innerHTML=`<video src="${media.url}" autoplay loop muted playsinline></video>`;
+      else if(media.type==='audio') node.innerHTML=`<audio src="${media.url}" controls></audio>`;
+      else if(media.type==='pdf') node.innerHTML=`<span>[PDF]</span>`;
+      else node.innerHTML=`<img src="${media.url}" loading="lazy" alt="media"/>`;
+      node.style.top = Math.random()*(h-150)+'px';
+      node.style.left = Math.random()*(w-200)+'px';
+      node.addEventListener('click',()=>openModal(media));
+      container.appendChild(node);
+      setTimeout(()=>node.classList.add('show'),50);
+      nodes.push(node);
+    }
+
+    function loadGroup(name){
+      container.querySelectorAll('.media-node').forEach(n=>n.remove());
+      nodes=[];
+      groups[name].forEach(url=>createMediaNode({url,type:detectType(url)}));
+    }
+
+    function drawConnections(){
+      ctx.clearRect(0,0,w,h);
+      const rectContainer = container.getBoundingClientRect();
+      const centers = nodes.map(node=>{
+        const r = node.getBoundingClientRect();
+        return [r.left+r.width/2-rectContainer.left, r.top+r.height/2];
+      });
+      for(let i=0;i<centers.length;i++){
+        for(let j=i+1;j<centers.length;j++){
+          ctx.beginPath();
+          ctx.moveTo(...centers[i]);
+          ctx.lineTo(...centers[j]);
+          ctx.strokeStyle='rgba(0,0,0,0.15)';
+          ctx.lineWidth=1;
+          ctx.stroke();
+        }
+      }
+      requestAnimationFrame(drawConnections);
+    }
+    drawConnections();
+
+    function openModal(media){
+      const modal=document.getElementById('modal');
+      const modalContent=document.getElementById('modal-content');
+      modalContent.innerHTML='';
+      if(media.type==='image') modalContent.innerHTML=`<img src="${media.url}" alt="media"/>`;
+      else if(media.type==='video') modalContent.innerHTML=`<video src="${media.url}" controls autoplay></video>`;
+      else if(media.type==='audio') modalContent.innerHTML=`<audio src="${media.url}" controls autoplay></audio>`;
+      else if(media.type==='pdf') modalContent.innerHTML=`<iframe src="${media.url}" frameborder="0"></iframe>`;
+      modal.classList.add('show');
+    }
+
+    function closeModal(){
+      document.getElementById('modal').classList.remove('show');
+    }
+
+    const sidebar=document.getElementById('sidebar');
+    const descriptions={
+      es:`<strong>mdtc.pjt.mdl.1</strong><br>junio 2022 — ciudad de méxico<br><br>primera activación de xpan y presentación de la mdl.1.`
+    };
+
+    Object.entries(descriptions).forEach(([lang,desc])=>{
+      const block=document.createElement('div');
+      block.className='lang-block';
+      block.dataset.lang=lang;
+      if(lang==='es') block.classList.add('active');
+      block.innerHTML=`<div class="description-block">${desc}</div>`+
+        ['principal','secundaria','terciaria'].map(gr=>`<details><summary>${gr}</summary><ul></ul></details>`).join('');
+      sidebar.appendChild(block);
+    });
+
+    function fillLists(){
+      document.querySelectorAll('.lang-block').forEach(block=>{
+        const details=block.querySelectorAll('details');
+        ['principal','secundaria','terciaria'].forEach((gr,i)=>{
+          const ul=details[i].querySelector('ul');
+          groups[gr].forEach(url=>{
+            const li=document.createElement('li');
+            if(detectType(url)==='image') li.innerHTML=`<img src="${url}" loading="lazy" alt="media"/>`;
+            else li.innerHTML=`<span>[${detectType(url)}]</span>`;
+            li.addEventListener('click',()=>openModal({url,type:detectType(url)}));
+            ul.appendChild(li);
+          });
+          details[i].addEventListener('toggle',()=>{if(details[i].open) loadGroup(gr);});
+        });
+      });
+    }
+    fillLists();
+
+    const langButtons=document.querySelectorAll('.lang-selector button');
+    langButtons.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        langButtons.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.lang-block').forEach(block=>block.classList.toggle('active',block.dataset.lang===btn.dataset.lang));
+      });
+    });
+
+    loadGroup('principal');
+  </script>
+</body>
+</html>
