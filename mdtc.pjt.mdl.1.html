@@ -113,7 +113,7 @@
       </div>
     </div>
 
-    <!-- Galería Principal -->
+<!-- Galería Principal -->
 <div class="gallery">
   <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445895/original_588c05160e05cdbd5239607c1502e12c.jpg?1753837433" />
   <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445898/original_8a69dfb94945dc2510b3115ad9a88606.png?1753837495" />
@@ -146,17 +146,16 @@
   </video>
 </div>
 
-  <!-- Galería experimental -->
-  <section class="experimental-gallery">
-    <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
-    <div class="container" id="experimental-container">
-      <svg class="lines" id="dynamic-lines"></svg>
-    </div>
-    <div id="audio-notice">tocar para activar sonido</div>
-  </section>
+    <!-- Galería experimental -->
+    <section class="experimental-gallery">
+      <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+      <div class="container" id="experimental-container">
+        <svg class="lines" id="dynamic-lines"></svg>
+      </div>
+      <div id="audio-notice">tocar para activar sonido</div>
+    </section>
 
   <script>
-    /* Idiomas */
     function setLang(lang){
       localStorage.setItem('lang', lang);
       document.querySelectorAll('.lang').forEach(el=>el.style.display=el.classList.contains(`lang-${lang}`)?'block':'none');
@@ -164,12 +163,12 @@
     }
     setLang(localStorage.getItem('lang') || navigator.language.slice(0,2) || 'es');
 
-    /* Experimental Gallery */
     const expContainer=document.getElementById('experimental-container'),
           audioNotice=document.getElementById('audio-notice'),
           svgLines=document.getElementById('dynamic-lines'),
           blocks=[];
-    const expMedia = [
+
+        const expMedia = [
   "https://attachments.are.na/38445990/9808dfd192f87c95bc4bdc3fe074d3fd.m4a?1753837960",
   "https://d2w9rnfcy7mm78.cloudfront.net/38445992/original_7350e61df1aeddda4efc231e3ed59b09.jpg?1753837963",
   "https://d2w9rnfcy7mm78.cloudfront.net/38445994/original_a40c41f6f948110b64ed1a55ceb2204f.jpg?1753837965",
@@ -195,15 +194,16 @@
   "https://attachments.are.na/38446041/47beab4cc59795157036bbe633a81c18.mov?1753838118"
 ];
 
-
     expMedia.forEach(url=>{
       const block=document.createElement('div');block.className='image-block';
-      if(url.match(/\.(mp4|mov)$/i)){let v=document.createElement('video');v.src=url;v.loop=true;v.muted=true;v.autoplay=true;v.playsInline=true;block.appendChild(v);}
-      else if(url.match(/\.pdf$/i)){let i=document.createElement('iframe');i.src=url;block.appendChild(i);}
-      else if(url.match(/\.m4a$/i)){let a=document.createElement('audio');a.src=url;a.controls=true;block.appendChild(a);}
-      else {let img=document.createElement('img');img.src=url;block.appendChild(img);}
-      block.x=Math.random()*(window.innerWidth-200);block.y=Math.random()*(window.innerHeight-200);block.vx=0;block.vy=0;
-      block.style.transform=`translate3d(${block.x}px,${block.y}px,0)`;makeDraggable(block);
+      let el;if(url.match(/\.(mp4|mov)$/i)){el=document.createElement('video');el.src=url;el.loop=true;el.muted=true;el.autoplay=true;el.playsInline=true;}
+      else if(url.match(/\.m4a$/i)){el=document.createElement('audio');el.src=url;el.controls=true;}
+      else{el=document.createElement('img');el.src=url;}
+      block.appendChild(el);
+      block.x=Math.random()*(window.innerWidth-200);
+      block.y=Math.random()*(window.innerHeight-200);
+      block.style.transform=`translate3d(${block.x}px,${block.y}px,0)`;
+      makeDraggable(block);
       expContainer.appendChild(block);blocks.push(block);
     });
 
@@ -214,32 +214,27 @@
       window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
       window.addEventListener('mouseup',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
       el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;lastX=t.clientX;lastY=t.clientY;});
-      el.addEventListener('touchmove',e=>{if(!isDragging)return;const t=e.touches[0];move(t.clientX,t.clientY);});
+      el.addEventListener('touchmove',e=>{if(!isDragging)return;e.preventDefault();const t=e.touches[0];move(t.clientX,t.clientY);},{passive:false});
       el.addEventListener('touchend',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
     }
 
-    function animate(){
-      blocks.forEach(el=>{
-        if(!el.vx&&!el.vy)return;
-        el.x+=el.vx;el.y+=el.vy;el.vx*=0.95;el.vy*=0.95;
-        el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`;
-      });
-      drawLines();requestAnimationFrame(animate);
-    }requestAnimationFrame(animate);
-
     function drawLines(){
-      svgLines.innerHTML='';const rect=expContainer.getBoundingClientRect();
+      svgLines.innerHTML='';
+      const rect=expContainer.getBoundingClientRect();
       for(let i=0;i<blocks.length;i++){
         const a=blocks[i],ax=a.x+a.offsetWidth/2-rect.left,ay=a.y+a.offsetHeight/2-rect.top;
         for(let j=i+1;j<blocks.length;j++){
           if(Math.random()>0.65){
             const b=blocks[j],bx=b.x+b.offsetWidth/2-rect.left,by=b.y+b.offsetHeight/2-rect.top;
             const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',ax);line.setAttribute('y1',ay);line.setAttribute('x2',bx);line.setAttribute('y2',by);svgLines.appendChild(line);
+            line.setAttribute('x1',ax);line.setAttribute('y1',ay);line.setAttribute('x2',bx);line.setAttribute('y2',by);
+            svgLines.appendChild(line);
           }
         }
       }
     }
+
+    requestAnimationFrame(function animate(){drawLines();requestAnimationFrame(animate)});
 
     document.body.addEventListener('click',()=>{
       document.querySelectorAll('video').forEach(v=>{v.muted=false;v.play().catch(()=>{});});
@@ -247,8 +242,6 @@
       audioNotice.style.opacity='0';
     },{once:true});
 
-    window.addEventListener('resize',drawLines);
-    window.addEventListener('load',drawLines);
   </script>
 </body>
 </html>
