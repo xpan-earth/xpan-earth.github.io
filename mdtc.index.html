@@ -1,14 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan — mdtc.index</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>xpan — mdtc</title>
+<style>
+    :root {
+      --gap: 0.5rem;
+    }
+
     body {
       margin: 0;
-      font-family: "Times New Roman", serif;
-      background-color: #fff;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
       color: #000;
       overflow-x: hidden;
     }
@@ -17,194 +22,396 @@
       position: fixed;
       top: 1rem;
       left: 1rem;
-      z-index: 20;
+      z-index: 10;
     }
 
     header img {
-      width: 60px;
+      width: 50px;
       height: auto;
     }
 
-    /* Fondo animado */
-    #animated-bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-    }
-
-    /* Contenedor principal */
     .main-container {
+      padding: 7rem 1.5rem 4rem;
       position: relative;
-      z-index: 10;
-      padding-top: 7rem;
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
     }
 
-    /* Grid de proyectos */
-    .project-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 2rem;
-      padding: 2rem;
+    .entry {
+      margin-bottom: 3.5rem;
+      max-width: 800px;
+      position: relative;
+      padding-left: 1rem;
     }
 
-    .project-card {
-      background-color: #fff;
-      box-shadow: 0 0 20px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      overflow: hidden;
-      border-radius: 2px;
-      display: flex;
-      flex-direction: column;
+    .entry::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.4rem;
+      width: 4px;
+      height: 100%;
+      background: #000;
+      opacity: 0.1;
     }
 
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px rgba(0,0,0,0.12);
-    }
-
-    .project-card img {
-      width: 100%;
+    .entry strong {
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-transform: lowercase;
       display: block;
+      margin-bottom: 0.25rem;
     }
 
-    .project-info {
-      padding: 1rem;
+    .entry span {
+      font-size: 0.85rem;
+      opacity: 0.5;
+      font-style: italic;
+      display: block;
+      margin-bottom: 0.25rem;
     }
 
-    .project-info h3 {
-      font-weight: normal;
-      font-size: 1.2rem;
-      margin: 0 0 0.5rem;
-    }
-
-    .project-info span {
+    .entry a {
+      color: black;
+      text-decoration: underline;
       font-size: 0.9rem;
-      color: #444;
+    }
+
+    .entry a:hover {
+      background: #000;
+      color: #fff;
+      transition: 0.2s;
+    }
+
+    .carousel-wrapper {
+      margin-top: 0.5rem;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      position: relative;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: var(--gap);
+      will-change: transform;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .carousel-track img {
+      width: calc((100% - 2 * var(--gap)) / 3);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 4px;
+      opacity: 0.3;
+      flex-shrink: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .carousel-track img.highlight {
+      opacity: 1 !important;
     }
 
     @media (max-width: 768px) {
-      .project-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-        padding: 1rem;
+      .carousel-track img {
+        width: calc((100% - var(--gap)) / 2);
       }
     }
-  </style>
+
+    @media (max-width: 480px) {
+      .carousel-track img {
+        width: 100%;
+      }
+
+      .main-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .main-container {
+        padding-left: 6rem;
+      }
+    }
+    .intro-block {
+  max-width: 800px;
+  margin-bottom: 6rem;
+  padding-left: 1rem;
+  border-left: 4px solid #000;
+}
+
+  .intro-block h2 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-transform: lowercase;
+  margin-bottom: 1.25rem;
+}
+
+  .intro-block p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  opacity: 1;
+}
+
+  .glossary-link {
+    text-decoration: underline;
+    cursor: pointer;
+    color: inherit;
+    transition: background 0.2s ease;
+  }
+
+  .glossary-link:hover {
+    background: #f0f0f0;
+  }
+  .carousel-video {
+  width: calc((100% - 2 * var(--gap)) / 3);
+  aspect-ratio: 4 / 3;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  opacity: 0.3;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .carousel-video {
+    width: calc((100% - var(--gap)) / 2);
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-video {
+    width: 100%;
+  }
+}
+.lang-select {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-select button {
+  background: none;
+  border: none;
+  font-family: 'Times New Roman', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  opacity: 0.5;
+  transition: background 0.2s ease;
+}
+
+.lang-select button.active {
+  font-weight: bold;
+  opacity: 1;
+  background: #000;
+  color: #fff;
+}
+.description {
+  display: none;
+}
+
+.description.active {
+  display: block;
+}
+.description {
+  display: none;
+}
+
+.description.active {
+  display: block;
+}
+
+
+</style>
 </head>
 <body>
+<header>
+<a href="https://xpan.earth" target="_blank">
+<img alt="xpan logo" loading="lazy" src="xpan.svg" style="min-height: 1px;"/>
+</a>
+</header>
+<div class="main-container">
+<div class="lang-select">
+<button class="active" onclick="setLang('es')">es</button>
+<button onclick="setLang('en')">en</button>
+<button onclick="setLang('fr')">fr</button>
+<button onclick="setLang('jp')">jp</button>
+</div>
+<div class="intro-block">
+<div class="description active" lang="es">
+<h2>mdtc — materializaciones de la topología conectiva</h2>
+<p>
+  mdtc reúne las activaciones y sistemas que conforman el proceso en desarrollo de xpan. este archivo se construye y expande de manera continua, integrando intervenciones espaciales, objetuales, sonoras, culturales, de lenguaje y de tecnologías de interconexión.
+</p>
+<p>
+  cada materialización es parte de la construcción activa de xpan: el desarrollo de su propio lenguaje, la generación de comunidad, la apertura de nuevas puertas y canales, y la articulación de lazos que permiten que el sistema siga creciendo. mdtc no es una serie cerrada, sino un proceso en constante transformación.
+</p>
+</div>
 
-  <header>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/X_logo_2023.svg" alt="xpan logo">
-  </header>
+<div class="description" lang="en">
+<h2>mdtc — materializations of the connective topology</h2>
+<p>
+  mdtc brings together the activations and systems that form xpan’s ongoing process. this archive is built and continuously expanded, integrating spatial, object-based, sonic, cultural, linguistic, and interconnection technology interventions.
+</p>
+<p>
+  each materialization is part of xpan’s active construction: developing its own language, generating community, opening new doors and channels, and articulating links that allow the system to keep growing. mdtc is not a closed series, but a process in constant transformation.
+</p>
+</div>
 
-  <canvas id="animated-bg"></canvas>
+<div class="description" lang="fr">
+<h2>mdtc — matérialisations de la topologie connective</h2>
+<p>
+  mdtc rassemble les activations et systèmes qui composent le processus en cours de xpan. cet archive se construit et s’étend continuellement, intégrant des interventions spatiales, objectuelles, sonores, culturelles, linguistiques et liées aux technologies d’interconnexion.
+</p>
+<p>
+  chaque matérialisation participe à la construction active de xpan : développement de son propre langage, création de communauté, ouverture de nouvelles portes et canaux, et articulation de liens qui permettent au système de continuer à croître. mdtc n’est pas une série close, mais un processus en transformation constante.
+</p>
+</div>
 
-  <div class="main-container">
-    <div class="project-grid">
-      <!-- Placeholder de proyectos -->
-      <div class="project-card">
-        <img src="https://picsum.photos/600/400?random=1" alt="mdtc project">
-        <div class="project-info">
-          <h3>mdtc.4 — eden garden cinema</h3>
-          <span>abril 2025 — hotel reforma, ciudad de méxico</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <img src="https://picsum.photos/600/400?random=2" alt="mdtc project">
-        <div class="project-info">
-          <h3>mdtc.3 — umbral</h3>
-          <span>diciembre 2024 — instalación lumínica</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <img src="https://picsum.photos/600/400?random=3" alt="mdtc project">
-        <div class="project-info">
-          <h3>mdtc.2 — resonancias</h3>
-          <span>junio 2024 — intervención sonora</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <img src="https://picsum.photos/600/400?random=4" alt="mdtc project">
-        <div class="project-info">
-          <h3>mdtc.1 — génesis</h3>
-          <span>enero 2024 — activación inaugural</span>
-        </div>
-      </div>
+<div class="description" lang="jp">
+<h2>mdtc — 接続トポロジーの具現化</h2>
+<p>
+  mdtcは、xpanの進行中のプロセスを構成するアクティベーションやシステムを集約しています。このアーカイブは継続的に構築・拡張され、空間的・物的・音響的・文化的・言語的・接続技術的な介入を統合しています。
+</p>
+<p>
+  各マテリアライゼーションは、xpanの能動的な構築の一部です。独自の言語の開発、コミュニティの形成、新たな扉やチャネルの開放、そしてシステムの成長を可能にする結びつきの形成。mdtcは閉じたシリーズではなく、絶えず変化し続けるプロセスです。
+</p>
+</div>
+
+</div>
+<div class="entry">
+  <strong>mdtc.pjt.mdl.1</strong>
+  <span>junio 2022 — primera activación / dispositivo sonoro-espacial</span>
+  <a href="arq.xpan.mdtc.pjt.mdl.1.html">ver proyecto</a>
+  <div class="carousel-wrapper">
+    <div class="carousel-track">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445895/original_588c05160e05cdbd5239607c1502e12c.jpg?1753837433" style="min-height: 1px;"/>
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445898/original_8a69dfb94945dc2510b3115ad9a88606.png?1753837495" style="min-height: 1px;"/>
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445912/original_086c3d9df86785f120614b590e0dea5a.png?1753837549" style="min-height: 1px;"/>
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445950/original_dad9943a5e22ded6666a2cd3b5464dcf.jpg?1753837732" style="min-height: 1px;"/>
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38445944/original_9eb335036391b0d032ce1783cc8e7b20.jpg?1753837681" style="min-height: 1px;"/>
     </div>
   </div>
+</div>
 
-  <script>
-    // Animación de líneas y nodos
-    const canvas = document.getElementById("animated-bg");
-    const ctx = canvas.getContext("2d");
-    let width, height;
-    let nodes = [];
 
-    function resize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-      initNodes();
-    }
+<script>
+    document.querySelectorAll('.carousel-track').forEach(track => {
+      const images = Array.from(track.children);
+      images.forEach(img => track.appendChild(img.cloneNode(true)));
 
-    function initNodes() {
-      nodes = [];
-      for (let i = 0; i < 50; i++) {
-        nodes.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3
-        });
-      }
-    }
+      let scrollX = 0;
+      const speed = 0.3;
+      let isDragging = false;
+      let startX = 0;
+      let scrollStart = 0;
 
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-
-      // Dibujar líneas
-      ctx.strokeStyle = "rgba(0,0,0,0.15)";
-      ctx.lineWidth = 1;
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 180) {
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.stroke();
-          }
+      function animate() {
+        if (!isDragging) {
+          scrollX += speed;
+          if (scrollX >= track.scrollWidth / 2) scrollX = 0;
+          track.style.transform = `translateX(-${scrollX}px)`;
         }
+        requestAnimationFrame(animate);
       }
 
-      // Mover nodos
-      for (let node of nodes) {
-        node.x += node.vx;
-        node.y += node.vy;
+      animate();
 
-        if (node.x < 0 || node.x > width) node.vx *= -1;
-        if (node.y < 0 || node.y > height) node.vy *= -1;
+      track.addEventListener('pointerdown', e => {
+        isDragging = true;
+        startX = e.clientX;
+        scrollStart = scrollX;
+        track.setPointerCapture(e.pointerId);
+        track.style.cursor = 'grabbing';
+      });
 
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "#000";
-        ctx.fill();
+      track.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        scrollX = scrollStart - dx;
+        if (scrollX >= track.scrollWidth / 2) scrollX = 0;
+        if (scrollX < 0) scrollX = track.scrollWidth / 2 + scrollX;
+        track.style.transform = `translateX(-${scrollX}px)`;
+      });
+
+      track.addEventListener('pointerup', () => {
+        isDragging = false;
+        track.style.cursor = 'grab';
+      });
+
+      function highlight() {
+        const trackRect = track.parentElement.getBoundingClientRect();
+        const imgs = track.querySelectorAll('img');
+        let bestImg = null;
+        let minLeftDiff = Infinity;
+
+        imgs.forEach(img => {
+          const rect = img.getBoundingClientRect();
+          const leftDiff = Math.abs(rect.left - trackRect.left);
+          if (leftDiff < minLeftDiff) {
+            minLeftDiff = leftDiff;
+            bestImg = img;
+          }
+        });
+
+        imgs.forEach(img => img.classList.remove('highlight'));
+        if (bestImg) bestImg.classList.add('highlight');
       }
 
-      requestAnimationFrame(animate);
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
-    animate();
+      setInterval(highlight, 100);
+    });
   </script>
+<script>
+  function setLang(lang) {
+    document.querySelectorAll('.description').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('lang') === lang);
+    });
 
+    document.querySelectorAll('.lang-select button').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === lang);
+    });
+
+    localStorage.setItem('lang', lang);
+
+    document.documentElement.setAttribute('lang', lang);
+  }
+
+  const storedLang = localStorage.getItem('lang') || 'es';
+  setLang(storedLang);
+</script>
+
+<script>
+  const isDesktop = window.innerWidth > 768;
+
+  // Clone only on desktop, preserving existing animation logic
+  if (isDesktop) {
+    document.querySelectorAll('.carousel-track').forEach(track => {
+      const children = Array.from(track.children);
+      children.forEach(el => {
+        if (el.tagName === 'IMG' || el.classList.contains('carousel-video')) {
+          track.appendChild(el.cloneNode(true));
+        }
+      });
+    });
+  }
+
+  // Remove autoplay on videos for non-desktop devices
+  if (!isDesktop) {
+    document.querySelectorAll('video[autoplay]').forEach(video => {
+      video.removeAttribute('autoplay');
+    });
+  }
+</script>
 </body>
 </html>
