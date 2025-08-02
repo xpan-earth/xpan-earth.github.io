@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan.ep.t [paris.25] — mdtc</title>
+  <style>
+    body { margin:0; background:#fff; font-family:'Times New Roman',serif; color:#000; overflow-x:hidden; }
+    header { position:fixed; top:1rem; left:1rem; z-index:10; }
+    header img { width:50px; height:auto; }
+
+    .language-selector { position:fixed; top:1rem; right:1rem; z-index:20; font-size:.9rem; text-transform:lowercase; }
+    .language-selector button { background:none; border:none; margin-left:.5rem; cursor:pointer; color:#000; opacity:.5; transition:.2s; }
+    .language-selector button.active, .language-selector button:hover { opacity:1; text-decoration:underline; }
+
+    .container { max-width:1000px; margin:7rem auto 4rem; padding:0 3rem; }
+    h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase; }
+    .meta { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem; }
+    .description { font-size:1rem; line-height:1.6; max-width:700px; margin-bottom:2rem; }
+
+    /* Artistas participantes */
+    .artists-list { margin:3rem 0; }
+    .artists-toggle { cursor:pointer; color:#000; text-decoration:underline; font-size:.9rem; margin-bottom:1rem; display:inline-block; }
+    .artists-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.5rem; max-height:0; overflow:hidden; transition:max-height .6s ease; }
+    .artists-grid.expanded { max-height:800px; overflow:auto; }
+    .artists-grid span { font-size:.85rem; opacity:.7; }
+
+    /* Galería principal */
+    .main-cycle { margin: 3rem 0; }
+    .main-video video {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      border-radius: 4px;
+      object-fit: cover;
+    }
+    .main-thumbs {
+      display: flex;
+      gap: .5rem;
+      overflow-x: auto;
+      margin-top: .5rem;
+    }
+    .main-thumbs img {
+      flex-shrink: 0;
+      height: auto;
+      border-radius: 4px;
+      object-fit: contain; /* mantiene proporción */
+      max-height: 350px;
+      width: auto;
+    }
+
+    /* Activaciones */
+    .activations { margin:4rem 0; }
+    .activation-tabs { display:flex; gap:1rem; overflow-x:auto; margin-bottom:1rem; }
+    .activation-tabs button { background:none; border:none; font-size:.9rem; cursor:pointer; opacity:.5; text-transform:lowercase; white-space:nowrap; }
+    .activation-tabs button.active { opacity:1; text-decoration:underline; }
+    .activation-gallery { display:none; margin-bottom:3rem; }
+    .activation-gallery.active { display:block; }
+    .activation-gallery .meta { font-size:.8rem; opacity:.6; margin-bottom:.5rem; line-height:1.4; }
+
+    .activation-media { display:flex; flex-direction:column; gap:.5rem; }
+    .activation-main-video video {
+      width:100%;
+      height:auto;
+      max-height:60vh;
+      border-radius:4px;
+      object-fit:cover; /* hero principal sí cubre */
+    }
+    .activation-thumbs {
+      display:flex;
+      gap:.5rem;
+      overflow-x:auto;
+    }
+    .activation-thumbs img,
+    .activation-thumbs video {
+      flex-shrink:0;
+      height:auto;
+      border-radius:4px;
+      object-fit:contain;  /* mantiene proporción */
+      max-height: 350px;
+      width: auto;
+    }
+
+    @media(max-width:768px){
+      .container{margin-top:6rem;padding:0 1.5rem;}
+      .main-thumbs img { max-height: 200px; }
+      .activation-thumbs img,
+      .activation-thumbs video { max-height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <header><a href="https://xpan.earth" target="_blank"><img src="xpan.svg" alt="xpan logo"/></a></header>
+  <div class="language-selector">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
+
+  <div class="container">
+
+<div class="lang lang-es">
+  <h1>xpan.ep.t [paris.25]</h1>
+  <div class="meta">enero 2025 — parís</div>
+  <div class="description">
+    xpan.ep.t [paris.25] configuró un espacio autónomo y radical en el núcleo de la paris fashion week, enero 2025.<br><br>
+    durante diez días de trabajo continuo, un cuarto dentro de un cuarto emergió: un sistema interior tejido con malla electrosoldada y manta de cielo, materiales cargados de memoria industrial y doméstica, ensamblados manualmente con alambre recocido.  
+    su presencia, cruda y deliberadamente expuesta en uniones y bordes, operó como una interrupción crítica frente a la lógica de espectáculo, consumo y validación eurocentrista.<br><br>
+
+    en el centro de esta cápsula autónoma se presentó un ciclo de obras de más de cien artistas, principalmente de méxico, américa latina y el sur global.  
+    este gesto convirtió al espacio en un nodo cultural insólito: un lugar donde voces y lenguajes históricamente periféricos ocuparon el núcleo simbólico del capital cultural europeo.<br><br>
+
+    durante quince días, el ciclo de piezas en tres canales convivió con nueve activaciones que intervinieron el espacio bajo sus propios universos, extendiendo la red de la topología conectiva de xpan.  
+    cada activación reunió a comunidades distintas, generando un flujo de presencias cambiantes y un punto de encuentro versátil en medio del circuito de moda internacional.  
+    esta circulación orgánica entre artistas, públicos y contextos produjo una densidad cultural que contrastó radicalmente con el entorno que la contenía.<br><br>
+
+    xpan.ep.t [paris.25] es un fenómeno cultural autónomo, desligado de estructuras comerciales e institucionales.  
+    su fuerza reside en la independencia radical, en la creación de un espacio que despliega una energía propia, aerodinámica y expansiva.<br><br>
+
+    no es un lugar, es un intervalo.<br>
+    un nodo en la red global que emerge desde lo independiente, lo precario y lo insurgente.<br>
+    un espacio que solo existe cuando se activa, que fractura las jerarquías establecidas y abre nuevas posibilidades para la comunidad, la cultura y el tiempo.
+  </div>
+</div>
+
+<div class="lang lang-en" style="display:none;">
+  <h1>xpan.ep.t [paris.25]</h1>
+  <div class="meta">january 2025 — paris</div>
+  <div class="description">
+    xpan.ep.t [paris.25] configured an autonomous and radical space at the core of paris fashion week, january 2025.<br><br>
+    over ten days of continuous work, a room within a room emerged: an interior system woven with welded mesh and “manta de cielo,” materials loaded with industrial and domestic memory, manually assembled with annealed wire.  
+    its raw presence, deliberately exposed in joints and edges, acted as a critical interruption to the logic of spectacle, consumption, and eurocentric validation.<br><br>
+
+    at the center of this autonomous capsule, a cycle of works by more than one hundred artists—mainly from mexico, latin america, and the global south—was presented.  
+    this gesture transformed the space into an unusual cultural node: a place where historically peripheral voices and languages occupied the symbolic core of european cultural capital.<br><br>
+
+    for fifteen days, the three-channel piece cycle coexisted with nine activations that intervened in the space with their own universes, extending xpan’s connective topology.  
+    each activation gathered different communities, generating a flow of shifting presences and a versatile meeting point in the middle of the international fashion circuit.  
+    this organic circulation between artists, audiences, and contexts produced a cultural density that radically contrasted with the environment that contained it.<br><br>
+
+    xpan.ep.t [paris.25] is an autonomous cultural phenomenon, detached from commercial and institutional structures.  
+    its strength lies in radical independence, in the creation of a space that unfolds its own energy—streamlined and expansive.<br><br>
+
+    it is not a place, it is an interval.<br>
+    a node in the global network emerging from the independent, the precarious, and the insurgent.<br>
+    a space that only exists when activated, fracturing established hierarchies and opening new possibilities for community, culture, and time.
+  </div>
+</div>
+
+<div class="lang lang-fr" style="display:none;">
+  <h1>xpan.ep.t [paris.25]</h1>
+  <div class="meta">janvier 2025 — paris</div>
+  <div class="description">
+    xpan.ep.t [paris.25] a configuré un espace autonome et radical au cœur de la paris fashion week, janvier 2025.<br><br>
+    pendant dix jours de travail continu, une pièce dans la pièce a émergé : un système intérieur tissé de treillis soudé et de “manta de cielo”, matériaux chargés de mémoire industrielle et domestique, assemblés manuellement avec du fil recuit.  
+    sa présence brute, délibérément exposée dans ses jonctions et ses arêtes, a agi comme une interruption critique face aux logiques de spectacle, de consommation et de validation eurocentrée.<br><br>
+
+    au centre de cette capsule autonome, un cycle d’œuvres de plus de cent artistes — principalement du mexique, d’amérique latine et du sud global — a été présenté.  
+    ce geste a transformé l’espace en un nœud culturel insolite : un lieu où des voix et des langages historiquement périphériques ont occupé le cœur symbolique du capital culturel européen.<br><br>
+
+    pendant quinze jours, le cycle de pièces en trois canaux a cohabité avec neuf activations qui ont investi l’espace avec leurs propres univers, étendant la topologie connective de xpan.  
+    chaque activation a rassemblé des communautés différentes, générant un flux de présences changeantes et un point de rencontre polyvalent au sein du circuit international de la mode.  
+    cette circulation organique entre artistes, publics et contextes a produit une densité culturelle qui a contrasté radicalement avec l’environnement qui l’abritait.<br><br>
+
+    xpan.ep.t [paris.25] est un phénomène culturel autonome, détaché des structures commerciales et institutionnelles.  
+    sa force réside dans une indépendance radicale, dans la création d’un espace qui déploie sa propre énergie, aérodynamique et expansive.<br><br>
+
+    ce n’est pas un lieu, c’est un intervalle.<br>
+    un nœud dans le réseau global qui émerge de l’indépendant, du précaire et de l’insurgent.<br>
+    un espace qui n’existe que lorsqu’il est activé, fracturant les hiérarchies établies et ouvrant de nouvelles possibilités pour la communauté, la culture et le temps.
+  </div>
+</div>
+
+<div class="lang lang-jp" style="display:none;">
+  <h1>xpan.ep.t [paris.25]</h1>
+  <div class="meta">2025年1月 — パリ</div>
+  <div class="description">
+    xpan.ep.t [paris.25] は、2025年1月のパリ・ファッションウィークの中心において、自律的で急進的な空間を構築しました。<br><br>
+    10日間にわたる連続作業の末、部屋の中にもう一つの部屋が出現しました。電気溶接メッシュと「manta de cielo」で織り上げられた内部システムは、工業的かつ家庭的な記憶を帯び、焼きなまし線で手作業で組み立てられました。  
+    その生々しい存在感は、接合部や縁が意図的に露出し、スペクタクル・消費・ユーロセントリックな承認の論理に対する批評的介入として機能しました。<br><br>
+
+    この自律的なカプセルの中心では、100名を超えるアーティスト（主にメキシコ、ラテンアメリカ、グローバルサウス）の作品サイクルが展示されました。  
+    この行為により、歴史的に周縁化されてきた声や言語が、ヨーロッパ文化資本の象徴的な中心を占める異例の文化的ノードが誕生しました。<br><br>
+
+    15日間にわたり、3チャンネルの作品群は9つのアクティベーションと共存し、それぞれが独自の世界観で空間を介入し、xpanの接続的トポロジーを拡張しました。  
+    各アクティベーションは異なるコミュニティを集め、国際的なファッションの回路の中で、変化する存在の流れと多目的な出会いの場を生み出しました。  
+    この有機的な循環は、空間を取り巻く環境と鮮烈に対比する文化的密度を生み出しました。<br><br>
+
+    xpan.ep.t [paris.25] は、商業的・制度的構造から切り離された自律的な文化現象です。  
+    その力は、急進的な独立性にあり、独自のエネルギーを展開する空間の創造にあります。軽やかで拡張的なエネルギーが放たれます。<br><br>
+
+    これは場所ではなく、間（インターバル）です。<br>
+    独立、プレカリティ、反抗から生まれるグローバルネットワークのノード。<br>
+    活性化されることでのみ存在し、既存のヒエラルキーを裂き、コミュニティ、文化、時間に新たな可能性を開きます。
+  </div>
+</div>
+
+    
+    <!-- Lista de artistas -->
+    <section class="artists-list">
+      <span class="artists-toggle" onclick="toggleArtists()">artistas participantes en el ciclo permanente</span>
+      <div class="artists-grid" id="artists-grid">
+        <!-- Lista completa de artistas -->
+        <span>agnes leclaire</span>
+        <span>alcérreca chelsea</span>
+        <span>alejandra díaz / wendy hernández "abrupto per se"</span>
+        <span>alejandro jacinto torres</span>
+        <span>alicia nieto</span>
+        <span>alonso hernández</span>
+        <span>ana espinosa</span>
+        <span>andrea sígales</span>
+        <span>arno bouchard</span>
+        <span>asahi jin</span>
+        <span>alo gorozpe</span>
+        <span>attention whores</span>
+        <span>augusta lardy micheli</span>
+        <span>alfredo galeana</span>
+        <span>bibiana perez colmenares</span>
+        <span>bleu281</span>
+        <span>bluecommand / trauma</span>
+        <span>bad criado</span>
+        <span>camila kei</span>
+        <span>car.omr (by.ambien)</span>
+        <span>carolina andrade</span>
+        <span>casa marvin</span>
+        <span>carlos didier</span>
+        <span>castro lobato</span>
+        <span>chema torres</span>
+        <span>cursed flesh</span>
+        <span>daniel aleman</span>
+        <span>dani paranoia</span>
+        <span>eden blood supply</span>
+        <span>egroj</span>
+        <span>emiliano cerda</span>
+        <span>emiliano danis</span>
+        <span>emiliano aguijosa</span>
+        <span>emmanuel v.</span>
+        <span>enrique alcántara</span>
+        <span>escali l.</span>
+        <span>eterno tumbao</span>
+        <span>eunsoo choi</span>
+        <span>eyibra</span>
+        <span>flora yin-wong</span>
+        <span>francesco de gallo</span>
+        <span>frndlrrn</span>
+        <span>gimena bustamante</span>
+        <span>g.os</span>
+        <span>gata magazine</span>
+        <span>goma xantana</span>
+        <span>gustavo pérez</span>
+        <span>henshuu</span>
+        <span>hipnos</span>
+        <span>héctor aguilera gavica</span>
+        <span>ines villoro</span>
+        <span>iñigo salcedo</span>
+        <span>jameson pepper</span>
+        <span>jax</span>
+        <span>jiaxuan he</span>
+        <span>jos martín martínez</span>
+        <span>josue medina</span>
+        <span>kaneda / departamento de arte felicia</span>
+        <span>l’atelier de liz</span>
+        <span>lorenza molina</span>
+        <span>lucia serrano</span>
+        <span>louis f. cota</span>
+        <span>luis arenas</span>
+        <span>luis rodrigo lara meza</span>
+        <span>maison maria</span>
+        <span>manuella lozada</span>
+        <span>marg0</span>
+        <span>maria jose cruz</span>
+        <span>marie dubus</span>
+        <span>maría josé valencia esparza</span>
+        <span>mario alore</span>
+        <span>mauricio méndez sosa</span>
+        <span>maxito futura</span>
+        <span>miguel reyes</span>
+        <span>millennium actress</span>
+        <span>msh</span>
+        <span>mvd0ae</span>
+        <span>n.h.d (new heart design)</span>
+        <span>natalie tischler</span>
+        <span>outdoor council</span>
+        <span>owen pradipta golim</span>
+        <span>pamela corzo</span>
+        <span>patricio rivera velázquez</span>
+        <span>resurrected 666</span>
+        <span>rey ángeles</span>
+        <span>rodrigo arenas</span>
+        <span>rodrigo diaz / alexia escobedo / tamara beller</span>
+        <span>rue</span>
+        <span>saint</span>
+        <span>sam vimore</span>
+        <span>samuel fasse</span>
+        <span>sullivan garcía najera</span>
+        <span>saskia</span>
+        <span>sofía tormenta / isaac soto</span>
+        <span>sound ninja</span>
+        <span>steph barragán</span>
+        <span>suabebe</span>
+        <span>sush.i</span>
+        <span>ultratierna</span>
+        <span>xiomara ximena rodríguez marín</span>
+        <span>yulibeth adalid / piedad yáñez</span>
+        <span>gio peiro</span>
+      </div>
+    </section>
+
+    <!-- Galería principal -->
+    <section class="main-cycle">
+      <div class="main-video">
+        <video autoplay loop muted playsinline preload="none"
+          poster="https://d2w9rnfcy7mm78.cloudfront.net/38509044/original_039d37c3c2270c6aba5fda4249311f1e.jpg?1754087059">
+          <source src="https://attachments.are.na/38509087/9706fe192bc1f6edd1cd4d2ea40eabae.mp4?1754087252" type="video/mp4">
+        </video>
+      </div>
+      <div class="main-thumbs">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509997/original_8b9e6796f96ea39b6b6a7ca0eb18048e.png?1754091907" 
+    alt="ciclo principal frame 1">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509996/original_c031ab58eb7d09a293c64c7cc1ed4cfb.jpg?1754091906" 
+    alt="ciclo principal frame 2">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509993/original_58b816db1949e82fd8c140878bfb7ef7.jpg?1754091903" 
+    alt="ciclo principal frame 3">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509991/original_8eeea6028fe283902511772c488a11e5.jpg?1754091902" 
+    alt="ciclo principal frame 4">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509990/original_53d28908de1452b5d384e49ba778d198.jpg?1754091902" 
+    alt="ciclo principal frame 5">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509989/original_f06461982d221c8e345afe015955911b.jpg?1754091901" 
+    alt="ciclo principal frame 6">
+  <img loading="lazy" 
+    src="https://d2w9rnfcy7mm78.cloudfront.net/38509988/original_c8599abe3cbb6c4aadbf9bf330b65fec.jpg?1754091900" 
+    alt="ciclo principal frame 7">
+</div>
+
+    </section>
+
+   <!-- Activaciones con tabs -->
+<section class="activations">
+  <div class="activation-tabs" id="activation-tabs">
+    <button class="active" onclick="showActivation(0)">18.01.25</button>
+    <button onclick="showActivation(1)">19.01.25</button>
+    <button onclick="showActivation(2)">22-23.01.25</button>
+    <button onclick="showActivation(3)">24.01.25</button>
+    <button onclick="showActivation(4)">25-26.01.25</button>
+    <button onclick="showActivation(5)">27-28.01.25</button>
+    <button onclick="showActivation(6)">29.01.25</button>
+    <button onclick="showActivation(7)">30.01.25</button>
+    <button onclick="showActivation(8)">31.01.25</button>
+  </div>
+
+  <!-- 1. 18.01.25 -->
+<div class="activation-gallery active">
+  <div class="meta">
+    registro 18.01.25 — curaduría y piezas: @samuelfasse<br>
+    performance sonoro: @lowlov__<br>
+    proyección de patmos: @woherwowohin
+  </div>
+  <div class="activation-media">
+    <!-- Video principal horizontal -->
+    <div class="activation-main-video">
+      <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509316/original_86593e1d5f8a14ffe411f3a58c3094eb.jpg?1754087983">
+        <source src="https://attachments.are.na/38509465/d5b51ac73a9e1ecf83b53da394e1386c.mp4?1754088478" type="video/mp4">
+      </video>
+    </div>
+
+    <!-- Carrusel secundario horizontal -->
+    <div class="activation-thumbs">
+      <!-- Video vertical -->
+      <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509317/original_e6d854ab38f8e34242e8b2e7d46f83cc.jpg?1754087991">
+        <source src="https://attachments.are.na/38509370/0ab52359997426228fb9097cf0eb4c5a.mp4?1754088172" type="video/mp4">
+      </video>
+
+      <!-- Fotos -->
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509316/original_86593e1d5f8a14ffe411f3a58c3094eb.jpg?1754087983" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509317/original_e6d854ab38f8e34242e8b2e7d46f83cc.jpg?1754087991" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509320/original_1da32b63fbb342875eda53719cd9edae.jpg?1754088002" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509328/original_75fab1ab2f473aae3323bfb148e4ac9b.jpg?1754088028" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509329/original_6ecbb223eb373a7037363b0e44d01a95.jpg?1754088034" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509339/original_de12b2d8e17747a20af16f354121f710.jpg?1754088061" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509341/original_a4af6a8d19cf573ce7d2dd172738e8ce.jpg?1754088072" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509345/original_54435326e8f4e677c516735431dffd79.jpg?1754088098" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509349/original_188b965d032b764036fb9e417a7664e3.jpg?1754088113" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509351/original_9479858d7d537dd39410309f5d31799e.jpg?1754088119" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509353/original_aad18ed8e79c8b11e78cf08ed17be539.jpg?1754088122" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509356/original_2dda46cd04fc5f9bda7674a8d42116a9.jpg?1754088134" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509360/original_5b0af21f04649bf4c820cabcfab47e31.jpg?1754088147" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509364/original_adabc8f451e758c6fcfce0f088bee823.jpg?1754088152" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509365/original_7de78ff66e23e31cd7b4a51267852afa.jpg?1754088157" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509366/original_ca32ae9fb5367d649ebd078f888d0daa.jpg?1754088158" alt="">
+    </div>
+  </div>
+</div>
+
+
+<!-- 2. 19.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 19.01.25 — instalaciones textiles:<br>
+    “collective dressmaking” @__marg0<br>
+    “encarnación:entramado” @hddn_grdn
+  </div>
+  <div class="activation-media">
+    <!-- Video principal horizontal -->
+    <div class="activation-main-video">
+      <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509495/original_9514245aba3e20b6928bbade1db79d01.jpg?1754088656">
+        <source src="https://attachments.are.na/38509513/d12d6aa0ee2cb73c7a8df57123930e52.mp4?1754088675" type="video/mp4">
+      </video>
+    </div>
+
+    <!-- Carrusel secundario horizontal -->
+    <div class="activation-thumbs">
+      <!-- Video vertical -->
+      <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509496/original_f4b162b72ca674fede3aaa9e619481d2.jpg?1754088657">
+        <source src="https://attachments.are.na/38509514/4d1253a79fb32ba611e963b70aa6a107.mp4?1754088685" type="video/mp4">
+      </video>
+
+      <!-- Fotos -->
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509495/original_9514245aba3e20b6928bbade1db79d01.jpg?1754088656" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509496/original_f4b162b72ca674fede3aaa9e619481d2.jpg?1754088657" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509497/original_8e39b518e3089899822d0000c9048402.jpg?1754088657" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509498/original_11a952edee4b539fed82bb7b7085315e.jpg?1754088657" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509499/original_d21de6712bee2912ccd4a0665601f140.jpg?1754088657" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509500/original_a3bc149f4eb4e540907bcbc724d4a06f.jpg?1754088657" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509501/original_d5c780aca5e5e1ccf3325c7268b58c70.jpg?1754088658" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509503/original_a33de1b3915b1af9b38a1d16eb88d585.jpg?1754088658" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509505/original_f50a2ae0382591b349da62a7fda9aa4a.jpg?1754088658" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509506/original_c300a07fe7f9237f5bfa4024b9f5dce0.jpg?1754088659" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509509/original_f8dc846189441b3d21557bcda8eb52a4.jpg?1754088659" alt="">
+    </div>
+  </div>
+</div>
+
+
+<!-- 3. 22-23.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 22-23.01.25 — showcase de colección, screening e instalación:<br>
+    “inked memories” @maisondesorphelins
+  </div>
+  <div class="activation-media">
+    <!-- Video principal horizontal -->
+    <div class="activation-main-video">
+      <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509567/original_f302b9754938c06337f98c618b6e8d66.jpg?1754088954">
+        <source src="https://attachments.are.na/38509568/c431487fac3d14a9630a6d53f0396632.mov?1754088961" type="video/mp4">
+      </video>
+    </div>
+
+    <!-- Carrusel secundario horizontal -->
+    <div class="activation-thumbs">
+      <!-- Fotos -->
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509567/original_f302b9754938c06337f98c618b6e8d66.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509566/original_94bfb5cc47f751d6d5eb416aecc02d20.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509564/original_c6cb1861c2573434c5fa78a09fe1299d.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509565/original_8b6902c41d3f1c867816380ee9e3d562.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509563/original_7f1c96d0c02242c6d3a29ea2018125e7.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509562/original_99bd81e39aa21e107c22bf498e29ed07.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509560/original_037b5bcd5206a62426f60aeb8ba14a78.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509559/original_56213a9796e33f44637e5970efda039c.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509558/original_5fdd498aa58d9305ea8c46230f11d609.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509557/original_9d6cfae7e3a6f66d0c5a5f129c7cdac4.jpg?1754088954" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509556/original_57beb22fbd2811dfb513c2457a3c7951.jpg?1754088953" alt="">
+    </div>
+  </div>
+</div>
+
+
+<!-- 4. 24.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 24.01.25 — “snet” short film screening: @_tcp_tcp_ by @louisferc<br>
+    drone guitar and percussion performance: @4tune________
+  </div>
+  <div class="activation-media">
+    <!-- Video principal horizontal -->
+    <div class="activation-main-video">
+      <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509606/original_8118bd40f690fa7892f43bc2fd63aa08.jpg?1754089227">
+        <source src="https://attachments.are.na/38509633/3ff2434f1815c223badfb52f087e3b87.mp4?1754089268" type="video/mp4">
+      </video>
+    </div>
+
+    <!-- Carrusel secundario horizontal -->
+    <div class="activation-thumbs">
+      <!-- Fotos -->
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509606/original_8118bd40f690fa7892f43bc2fd63aa08.jpg?1754089227" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509607/original_dde3cf06437f8bcac3ec0929a63622cf.jpg?1754089228" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509608/original_30239c735d76ebd3892e54d4403dcb33.jpg?1754089229" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509609/original_d6e40cc88da1a74946b4da2312257db3.jpg?1754089230" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509610/original_417324d73f9667c9de79f6bd35795b80.jpg?1754089230" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509611/original_e5e01cfa5bf2d520aeea20fffbfe21b9.jpg?1754089230" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509612/original_433fb2b0e42bcefadb3e05c3c739f966.jpg?1754089231" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509613/original_109a41c4f4897fcb2799f416f6eb0819.jpg?1754089231" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509614/original_e93ebe676f4f2bbbeef06151c213323f.jpg?1754089231" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509615/original_0ef845afac583e42d0f15de1bf2bee4a.jpg?1754089231" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509617/original_295869b46e32eb17397a06f6f49e144c.jpg?1754089232" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509618/original_080ab598b7bd658ffb0464368f7a6c6a.jpg?1754089238" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509619/original_6465754b964e519e09021837bc7166a8.jpg?1754089238" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509620/original_f5402f48ba96bfe721f18a69c3d9de75.jpg?1754089239" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509621/original_0d20fe06bbbb613d397fbc3ae1e8c3aa.jpg?1754089239" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509622/original_5bffaf513b22a6f38fec6f9dfbeb572f.jpg?1754089239" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509623/original_2a43528725d6b3c8c036ee0aab4c56b3.jpg?1754089239" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509624/original_a8fe5fcb04143d760346bec5309e2ddc.jpg?1754089240" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509625/original_e95348786f44ebf170743ca79fcb9985.jpg?1754089241" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509626/original_51c602e22e6ca3f6f256d3865eb0e17d.jpg?1754089240" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509627/original_8e5070d4001a4975ec5bb095d3ef668c.jpg?1754089240" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509628/original_536c28e3406998bcb3e098f517068281.jpg?1754089241" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509629/original_ef294a06893fc69fb2a99eca09a6bc2b.jpg?1754089241" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509630/original_e561433b035c5215dd386f163c2aa30b.jpg?1754089241" alt="">
+      <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509631/original_3038c2981560cce7e26d9876809feb35.jpg?1754089241" alt="">
+    </div>
+  </div>
+</div>
+
+
+<!-- 5. 25-26.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 25-26.01.25 — julian-jakob kneer @artde666enerate presents: [prodigy listening event]<br><br>
+    25.01.25 — live performance: @crave__________ / dj set: @buried__deep / julian-jakob kneer’s prodigy score @artde666enerate<br>
+    26.01.25 — playlist: @david.fichtner / dj set: @ballet_nicolas / dj set: @martaespinosa__ b2b @moisessacalhadid / julian-jakob kneer’s prodigy score @artde666enerate
+  </div>
+
+  <div class="activation-media">
+    <!-- Video horizontal -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509678/original_334ff574d92defedb6d9b2d802fb53c2.jpg?1754089643">
+      <source src="https://attachments.are.na/38509697/e3d713bf97f708bf4cf0fa18b89da0b6.mp4?1754089700" type="video/mp4">
+    </video>
+
+    <!-- Video vertical -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509679/original_6ce0ff2126c75fa34d603e95ef0e3217.jpg?1754089644">
+      <source src="https://attachments.are.na/38509699/2a2bea4c978821cc407d474b46161405.mp4?1754089703" type="video/mp4">
+    </video>
+
+    <!-- Carrusel de fotos -->
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509678/original_334ff574d92defedb6d9b2d802fb53c2.jpg?1754089643" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509679/original_6ce0ff2126c75fa34d603e95ef0e3217.jpg?1754089644" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509680/original_4b60fd0b68c749864a77a6159fe3927e.jpg?1754089644" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509681/original_a5fe79dc1e10e327fbe6223e42fca2da.jpg?1754089644" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509682/original_f2cc6ef029306c6ce801150939b9594e.jpg?1754089645" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509683/original_07bc2af6c622dbf4c910f8a66e8d9045.jpg?1754089644" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509684/original_f5f7219094b5c3993f3a58a447addae5.jpg?1754089645" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509685/original_636ee19c4de1d12c82165750b12d9b75.jpg?1754089646" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509686/original_1b7a54e86b0cc750a3ec02fa37e64d53.jpg?1754089645" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509687/original_0dafdc83aaccc1bdd39e8786238289a7.jpg?1754089647" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509688/original_c52e101afca49baa5510c94d3bebc65d.jpg?1754089647" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509689/original_5dd392fc36ffbbb20b98e0fa6565a12d.jpg?1754089648" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509690/original_c2312882d82b3c281426353f7b5d8979.jpg?1754089649" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509691/original_34e00fc15ebe57e7ad5b359426725d9e.jpg?1754089647" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509692/original_c5f39f158528c8adcaeab64c44b91904.jpg?1754089647" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509693/original_8e5ae28ee83b95028f284f7d07463a00.jpg?1754089648" alt="">
+  </div>
+</div>
+
+
+<!-- 6. 27-28.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 27-28.01.25 — @rememberyouweremadetobeused presents: [15 minutes you probably won’t remember]<br>
+    instalación: still + moving memories
+  </div>
+
+  <div class="activation-media">
+    <!-- Video horizontal -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509739/original_cfa31462c77fb851bb1db9ef4a93ccc4.jpg?1754089878">
+      <source src="https://attachments.are.na/38509747/c3494180d48ce79c86d341187cb845d5.mp4?1754089890" type="video/mp4">
+    </video>
+
+    <!-- Carrusel de fotos -->
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509739/original_cfa31462c77fb851bb1db9ef4a93ccc4.jpg?1754089878" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509740/original_20665e13062d0903ae691a894ab15c12.jpg?1754089881" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509741/original_a3b1b3c8bc94a206d131aa79bc0db19c.jpg?1754089881" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509742/original_dd6466eb46fbdf17649f5747a870cacd.jpg?1754089881" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509743/original_1436b53c024614aba50143a089397a9b.jpg?1754089881" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509744/original_0ae9fbd7b9d82cceb47ac8379316258f.jpg?1754089882" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509745/original_d952219a792832264ae379f99754d748.jpg?1754089882" alt="">
+  </div>
+</div>
+
+
+<!-- 7. 29.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 29.01.25 — @sad_italian_bakery @ines_menasilva<br>
+    instalación + screening: [a world on a wire] fassbinder
+  </div>
+
+  <div class="activation-media">
+    <!-- Video horizontal -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509761/original_e64fd77f469ec47d51e07e69490da87a.jpg?1754090017">
+      <source src="https://attachments.are.na/38509769/57081e0eb9d4bd3cc48719185f7044f2.mp4?1754090032" type="video/mp4">
+    </video>
+
+    <!-- Video vertical -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509762/original_f35eb05e5472d0ec118280fc320f4422.jpg?1754090017">
+      <source src="https://attachments.are.na/38509770/3d57280a57095afe276923d7af15a19c.mp4?1754090033" type="video/mp4">
+    </video>
+
+    <!-- Galería de fotos -->
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509761/original_e64fd77f469ec47d51e07e69490da87a.jpg?1754090017" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509762/original_f35eb05e5472d0ec118280fc320f4422.jpg?1754090017" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509763/original_917d7d607ccab1aea90b9010186c74a9.jpg?1754090018" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509764/original_12a552ccb3bddfa861110124598535e8.jpg?1754090019" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509765/original_21773bf896e088423051a99ed46a7716.jpg?1754090020" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509766/original_ec8aa0d3bb99f31ba58475f4394bd9bf.jpg?1754090020" alt="">
+  </div>
+</div>
+
+
+<!-- 8. 30.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 30.01.25 — @cculdesacc @maximpolsikov<br>
+    performative dinner: [big fish]
+  </div>
+
+  <div class="activation-media">
+    <!-- Video horizontal -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509841/original_8a5a59c75ba245467cc46e40a7f3ea2c.jpg?1754090621">
+      <source src="https://attachments.are.na/38509855/70040e1891a86d6a239ac5c33bf25c98.mp4?1754090651" type="video/mp4">
+    </video>
+
+    <!-- Galería de fotos -->
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509841/original_8a5a59c75ba245467cc46e40a7f3ea2c.jpg?1754090621" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509842/original_f93b91a5ba42ee10c9eadd92683ffbdc.jpg?1754090621" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509843/original_52b4ce59dd0c119c03f830f30ab7af94.jpg?1754090622" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509844/original_4e0b116adac2c750f469bbb40c4f87d2.jpg?1754090622" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509845/original_1388d416dad1d7275d8f0272397f2dd3.jpg?1754090622" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509846/original_5f194ff549ddc547cf2aeb2d4c152539.jpg?1754090622" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509847/original_091447c9ecf40dca765d14f90c037b4b.jpg?1754090623" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509848/original_5e210cbc4745711a3cc431b8c375df7f.jpg?1754090623" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509849/original_7560cfe6e23cb822b14f1d369acdac12.jpg?1754090623" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509850/original_42285341f5d3e5718a971051002680db.jpg?1754090623" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509851/original_82d67c9e45dc442cd3842f0ebb188e56.jpg?1754090624" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509852/original_9c9080866e7c9bb27668cf5a1ff18da6.jpg?1754090625" alt="">
+  </div>
+</div>
+
+
+<!-- 9. 31.01.25 -->
+<div class="activation-gallery">
+  <div class="meta">
+    registro 31.01.25 — @woherwowohin / @16071.9969 @eugene_blove @moyodemonio @tristan.jpeg<br>
+    the night that never happened: [encore / résurgence]
+  </div>
+
+  <div class="activation-media">
+    <!-- Video horizontal principal -->
+    <video autoplay loop muted playsinline preload="none" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509858/original_3a466788f421679b0e1bde5c0777e8ed.jpg?1754090736">
+      <source src="https://attachments.are.na/38509906/ab65fc8b56deb516f50109cc849760de.mp4?1754090914" type="video/mp4">
+    </video>
+
+    <!-- Galería de fotos -->
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509858/original_3a466788f421679b0e1bde5c0777e8ed.jpg?1754090736" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509859/original_fdf83de451c3bfb26f0999268cd1f7fa.jpg?1754090737" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509860/original_26ceafe81ad07b54f5935df9ec061e9f.jpg?1754090737" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509861/original_265664d59af3132178148eaa01cb1899.jpg?1754090737" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509862/original_8da1b07b1dc04a9ebaff5c0bc80a2180.jpg?1754090737" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509863/original_2315dc0ed3bad6bc9eb49cfa5801b77f.jpg?1754090738" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509864/original_98964e3e4e95763b309c70e3a61c6749.jpg?1754090738" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509866/original_eba2e81b18923f163d012f23bf69ec29.jpg?1754090740" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509867/original_042601743b28dc37b7e43bd0fa8534d5.jpg?1754090740" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509869/original_a5f564d7a518bcd0dab60613c39427f7.jpg?1754090739" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509870/original_2ba250b70f4efe2fae433766119541d9.jpg?1754090741" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509872/original_d342686cc00d7b32d6bac32b19c91d13.jpg?1754090741" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509873/original_2619a0f27f8060d7df394126ac0cad4b.jpg?1754090743" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509874/original_1adbe617efd83e27af67a19271bccdb7.jpg?1754090742" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509875/original_335d54b9ca5503c116e495eba1ead779.jpg?1754090743" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509876/original_656677bc27ee380cb694a2b55ad58acd.jpg?1754090744" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509877/original_8e96cd1b41c06d6c710910353ad6d55d.jpg?1754090744" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509878/original_bfaf292b87352a454d1b5e3ff473f5c2.jpg?1754090744" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509879/original_6af61f574330ee2ea07be6e12c332fd1.jpg?1754090743" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509880/original_4cabe34073bf002a6f8ca4dc42770535.jpg?1754090745" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509881/original_7d7e2672156b4f222d94a64021708366.jpg?1754090746" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509882/original_f811fe85d3124e2d076eeca20b353c5f.jpg?1754090746" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509883/original_537b0f6078558610656f6eb0d8ab99ee.jpg?1754090747" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509884/original_d0d7444c6f800e5ad941188dc78d6231.jpg?1754090748" alt="">
+    <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38509885/original_0e6242e79d563d0b9ec055e45c6baecb.jpg?1754090748" alt="">
+  </div>
+</div>
+
+
+</section>
+
+  </div>
+
+  <script>
+    // Multiidioma
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el=>el.style.display=el.classList.contains(`lang-${lang}`)?'block':'none');
+      document.querySelectorAll('.language-selector button').forEach(btn=>btn.classList.toggle('active',btn.textContent===lang));
+    }
+    setLang(localStorage.getItem('lang') || 'es');
+
+    // Toggle artistas
+    function toggleArtists(){
+      document.getElementById('artists-grid').classList.toggle('expanded');
+    }
+
+    // Tabs activaciones
+    function showActivation(index){
+      const tabs=document.querySelectorAll('.activation-tabs button');
+      const galleries=document.querySelectorAll('.activation-gallery');
+      tabs.forEach((tab,i)=>tab.classList.toggle('active',i===index));
+      galleries.forEach((gal,i)=>gal.classList.toggle('active',i===index));
+    }
+  </script>
+
+  <script>
+  // Quita el mute solo al video principal visible
+  function updateVideoAudio() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => video.muted = true);
+
+    // Video principal de la activación visible
+    const activeGallery = document.querySelector('.activation-gallery.active');
+    if(activeGallery){
+      const mainVideo = activeGallery.querySelector('.activation-main-video video, .activation-media > video');
+      if(mainVideo){
+        mainVideo.muted = false;
+        mainVideo.volume = 1.0;
+        mainVideo.play();
+      }
+    }
+
+    // También el video principal de la sección main-cycle si está visible
+    const mainCycleVideo = document.querySelector('.main-cycle .main-video video');
+    if(mainCycleVideo){
+      const rect = mainCycleVideo.getBoundingClientRect();
+      const inView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+      if(inView){
+        mainCycleVideo.muted = false;
+        mainCycleVideo.volume = 1.0;
+        mainCycleVideo.play();
+      }
+    }
+  }
+
+  // Revisa cada vez que se cambia activación o se hace scroll
+  document.querySelectorAll('.activation-tabs button').forEach((btn,i)=>{
+    btn.addEventListener('click',()=>{
+      showActivation(i);
+      setTimeout(updateVideoAudio, 300);
+    });
+  });
+
+  window.addEventListener('scroll', updateVideoAudio);
+  window.addEventListener('load', updateVideoAudio);
+</script>
+
+</body>
+</html>
