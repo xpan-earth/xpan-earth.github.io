@@ -3,204 +3,186 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan — media index avanzado v2</title>
+  <title>xpan — media index optimizado</title>
   <style>
-    :root {
-      --gap: 0.5rem;
-      --bg-light: #fff;
-      --bg-dark: #000;
-      --text-light: #000;
-      --text-dark: #fff;
-    }
+    body { margin:0; background:#fff; font-family:'Times New Roman',serif; color:#000; overflow-x:hidden; }
+    header { position:fixed; top:1rem; left:1rem; z-index:50; display:flex; align-items:center; gap:1rem; }
+    header img { width:50px; height:auto; display:block; }
 
-    body {
-      margin: 0;
-      font-family: 'Times New Roman', serif;
-      background: var(--bg-light);
-      color: var(--text-light);
-      overflow-x: hidden;
-      transition: background 0.3s, color 0.3s;
+    /* Menú minimalista rotatorio */
+    .menu-container { position:relative; z-index:60; }
+    .menu-button {
+      display:flex; flex-direction:column; justify-content:center; align-items:center;
+      width:24px; height:24px;
+      cursor:pointer;
+      background:rgba(255,255,255,0.85);
+      border:1px solid #000;
+      padding:0.3rem;
+      transform-origin:center;
+      transition:transform 0.35s ease, background 0.25s ease;
+      position:relative;
     }
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: var(--bg-dark);
-        color: var(--text-dark);
-      }
-      .media-item .caption {
-        background: rgba(0,0,0,0.6);
-        color: white;
-      }
+    .menu-button:hover { background:#000; }
+    .menu-button span {
+      display:block;
+      width:2px;
+      height:12px;
+      background:#000;
+      margin:1px 0;
+      transition:background 0.25s ease;
     }
-
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 20;
-    }
-    header img { width: 50px; height: auto; display: block; }
-
-    .controls {
-      position: fixed;
-      top: 1rem;
-      left: 5rem;
-      z-index: 21;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    select, input, button {
-      font-size: 0.8rem;
-      padding: 0.2rem 0.4rem;
-      cursor: pointer;
-    }
-
-    .grid {
-      column-count: 5;
-      column-gap: var(--gap);
-      padding: 7rem 1rem 3rem;
-    }
-    @media (max-width: 1200px) { .grid { column-count: 4; } }
-    @media (max-width: 992px) { .grid { column-count: 3; } }
-    @media (max-width: 768px) { .grid { column-count: 2; } }
-    @media (max-width: 480px) { .grid { column-count: 1; } }
-
-    .media-item {
-      break-inside: avoid;
-      margin-bottom: var(--gap);
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.2s;
-      animation: fade-in 0.6s ease forwards;
-      opacity: 0;
-    }
-    .media-item img,
-    .media-item video {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .media-item .caption {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.3rem;
-      background: rgba(255,255,255,0.8);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .media-item:hover .caption { opacity: 1; }
-
-    .selected::after, .favorite::before {
-      position: absolute;
-      top: 5px;
-      font-size: 0.8rem;
-      padding: 0.2rem 0.4rem;
-      border-radius: 3px;
-      color: white;
-    }
-    .selected::after {
-      content: "✓";
-      right: 5px;
-      background: rgba(0,0,0,0.7);
-    }
-    .favorite::before {
-      content: "★";
-      left: 5px;
-      background: rgba(255,165,0,0.7);
-    }
-
-    /* Panel lateral */
-    #selection-panel {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      width: 280px;
-      max-height: 85vh;
-      overflow-y: auto;
-      background: rgba(255,255,255,0.95);
-      border: 1px solid #000;
-      padding: 1rem;
-      font-size: 0.85rem;
-      z-index: 30;
-    }
-    #selection-panel strong { display:block; margin-bottom:0.3rem; }
-    #selection-panel ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem; }
-    #selection-panel li { display:flex; align-items:center; gap:0.3rem; cursor:pointer; }
-    #selection-panel img { width:24px; height:24px; object-fit:cover; border:1px solid #000; }
-    #selection-panel button { margin-top:0.3rem; width:100%; cursor:pointer; }
-
-    /* Modal */
-    #modal-view {
-      position: fixed;
-      top:0;left:0;width:100%;height:100%;
-      background: rgba(0,0,0,0.9);
-      display:none;
-      justify-content:center;
-      align-items:center;
-      flex-direction:column;
-      z-index:999;
+    .menu-button:hover span { background:#fff; }
+    .menu-button::after {
+      content:"ordenar";
+      position:absolute;
+      top:-1.4rem; left:50%;
+      transform:translateX(-50%);
+      font-size:0.7rem;
+      font-family:'Times New Roman',serif;
+      white-space:nowrap;
+      opacity:0;
       transition:opacity 0.3s;
+      pointer-events:none;
     }
-    #modal-view.show { display:flex; animation:fade-in 0.3s; }
-    #modal-view img, #modal-view video { max-width:90%; max-height:80%; }
-    #modal-caption { color:#fff; font-size:1rem; margin-top:1rem; text-align:center; }
+    .menu-button:hover::after { opacity:1; }
+    .menu-button.active { transform: rotate(90deg); }
 
-    #modal-prev,#modal-next,#modal-close {
-      position:absolute; top:50%; transform:translateY(-50%);
-      background:rgba(255,255,255,0.2); color:white;
-      font-size:2rem; padding:0.2rem 0.5rem; cursor:pointer; border:none;
+    .menu-options {
+      position:absolute;
+      top:120%;
+      left:0;
+      display:none;
+      flex-direction:column;
+      border:1px solid #000;
+      background:rgba(255,255,255,0.95);
+      min-width:140px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      animation:fadeDown 0.3s ease forwards;
     }
-    #modal-prev { left:1rem; }
-    #modal-next { right:1rem; }
-    #modal-close { top:1rem; right:1rem; transform:none; }
+    .menu-options button {
+      font-family:'Times New Roman',serif;
+      font-size:0.85rem;
+      padding:0.4rem 0.8rem;
+      border:none;
+      background:transparent;
+      text-align:left;
+      cursor:pointer;
+      transition:all 0.25s ease;
+    }
+    .menu-options button:hover { background:#000; color:#fff; }
 
-    @media (max-width:768px){
-      #selection-panel { width:180px; font-size:0.75rem; padding:0.5rem; }
+    @keyframes fadeDown {
+      from { opacity:0; transform:translateY(-5px); }
+      to { opacity:1; transform:translateY(0); }
     }
-    @keyframes fade-in{from{opacity:0;transform:scale(0.97);}to{opacity:1;transform:scale(1);}}
+
+    @media(max-width:768px){
+      .menu-button { width:20px; height:20px; }
+      .menu-button span { height:10px; }
+      .menu-options { min-width:120px; }
+    }
+
+    /* GRID */
+    .grid { display:flex; flex-wrap:wrap; gap:0.5rem; padding:7rem 0.5rem 3rem; justify-content:center; }
+    .media-item { 
+      flex:1 1 300px; max-width:calc(20% - 0.5rem); position:relative; cursor:pointer;
+      opacity:0; transform:translateY(15px) scale(0.97);
+      transition:opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+    }
+    .media-item.visible { opacity:1; transform:translateY(0) scale(1); }
+    .media-item:hover { box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+
+    @media(max-width:1600px){.media-item{max-width:calc(25% - 0.5rem);}}
+    @media(max-width:1200px){.media-item{max-width:calc(33.33% - 0.5rem);}}
+    @media(max-width:992px){.media-item{max-width:calc(50% - 0.5rem);}}
+    @media(max-width:600px){.media-item{max-width:100%;}}
+
+    .media-item img, .media-item video { width:100%; height:auto; display:block; object-fit:contain; }
+    .caption { position:absolute; bottom:0; left:0; right:0;
+               font-size:0.75rem; padding:0.2rem 0.3rem;
+               background:rgba(0,0,0,0.6); color:#fff; opacity:0; transition:opacity 0.3s; }
+    .media-item:hover .caption { opacity:1; }
+
+    /* Panel Matrix */
+    #info-panel { 
+      position:fixed; bottom:0; left:0; width:100%; max-height:35vh;
+      background:rgba(17,17,17,0.8); color:#0f0; 
+      font-size:clamp(0.7rem, 1vw, 0.85rem); 
+      line-height:1.4;
+      padding:0.8rem 1rem 1.2rem;
+      box-sizing:border-box; z-index:100; 
+      overflow-y:auto; white-space: pre-wrap; word-break: break-word;
+      backdrop-filter: blur(2px);
+      opacity:0; transform:translateY(20px);
+      pointer-events:none; transition: all 0.4s ease;
+    }
+    #info-panel.active { opacity:1; transform:translateY(0); pointer-events:auto; }
+    #info-panel.closing { opacity:0; transform:translateY(20px); pointer-events:none; }
+    #info-panel .close-btn { 
+      position:absolute; top:0.2rem; right:0.5rem; 
+      cursor:pointer; color:#f00; font-weight:bold; font-size:1rem;
+    }
+    @media(max-width:600px){ 
+      #info-panel{font-size:0.7rem; max-height:45vh; padding:0.6rem 0.7rem 1rem;}
+    }
+
+    /* Loader flotante */
+    #floating-loader {
+      position: fixed; bottom: 1rem; right: 1rem;
+      background: rgba(0,0,0,0.7); color: #fff;
+      font-size: 0.7rem; padding: 0.4rem 0.6rem;
+      border-radius: 4px; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none; z-index: 200;
+    }
+    #floating-loader.visible { opacity: 1; }
   </style>
 </head>
 <body>
-  <header>
-    <img src="xpan.svg" alt="xpan logo">
-  </header>
-
-  <div class="controls">
-    <select id="project-filter"><option value="all">Todos</option></select>
-    <input type="text" id="search-box" placeholder="Buscar...">
-    <select id="sort-box">
-      <option value="shuffle">Aleatorio</option>
-      <option value="project">Por proyecto</option>
-      <option value="caption">Por nombre</option>
-    </select>
-    <button onclick="clearSelection()">Limpiar selección</button>
-    <button onclick="copyShareLink()">Copiar link estado</button>
+<header>
+  <a href="https://xpan.earth" target="_blank"><img src="xpan.svg" alt="xpan"></a>
+  <div class="menu-container">
+    <div class="menu-button" id="menu-btn">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="menu-options" id="menu-options">
+      <button data-sort="shuffle">aleatorio</button>
+      <button data-sort="chrono">cronológico</button>
+      <button data-sort="title">por título</button>
+    </div>
   </div>
+</header>
 
-  <main class="grid" id="media-grid"></main>
+<main class="grid" id="media-grid"></main>
+<div id="floating-loader">Cargando…</div>
 
-  <aside id="selection-panel">
-    <strong>Seleccionados (<span id="sel-count">0</span>)</strong>
-    <ul id="selected-list"></ul>
-    <button onclick="exportCaptions()">Exportar captions</button>
-    <button onclick="downloadCaptions()">Descargar .txt</button>
-    <button onclick="openModalView()">Abrir galería</button>
-    <hr>
-    <strong>Favoritos (<span id="fav-count">0</span>)</strong>
-    <ul id="favorites-list"></ul>
-  </aside>
-
-  <div id="modal-view">
-    <button id="modal-close">✕</button>
-    <button id="modal-prev">◀</button>
-    <button id="modal-next">▶</button>
-    <div id="modal-content"></div>
-    <div id="modal-caption"></div>
-  </div>
+<div id="info-panel">
+  <span class="close-btn">×</span>
+  <pre id="info-content"></pre>
+</div>
 
 <script>
-/* Datos de ejemplo */
+/* ==== Menú interactivo ==== */
+const menuBtn = document.getElementById('menu-btn');
+const menuOptions = document.getElementById('menu-options');
+menuBtn.addEventListener('click', ()=>{
+  const isOpen = menuOptions.style.display === 'flex';
+  menuOptions.style.display = isOpen ? 'none' : 'flex';
+  menuBtn.classList.toggle('active', !isOpen);
+});
+document.addEventListener('click', e=>{
+  if(!menuOptions.contains(e.target) && !menuBtn.contains(e.target)){
+    menuOptions.style.display='none';
+    menuBtn.classList.remove('active');
+  }
+});
+menuOptions.querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    menuOptions.style.display='none';
+    menuBtn.classList.remove('active');
+    applySort(btn.dataset.sort);
+  });
+});
+
 const mediaProjects = [
      {
     "title": "6ch_r",
@@ -552,164 +534,173 @@ const mediaProjects = [
       "https://d2w9rnfcy7mm78.cloudfront.net/38376754/original_10883b84058c79c26038f09f13c12dab.jpg",
       "https://d2w9rnfcy7mm78.cloudfront.net/38376771/original_ca67f9f94f55c49a6893bb0c9af32303.jpg"
     ]
-  }
+  },
+
+  {
+  title: "mdtc.ep.t [paris.25]",
+  meta: "2025-01-18",
+  description: "xpan.ep.t [paris.25] configuró un espacio autónomo y radical en el núcleo de la paris fashion week, enero 2025. \
+Durante quince días, un ciclo de obras en tres canales y nueve activaciones convirtió al espacio en un nodo cultural insólito, \
+donde lenguajes históricamente periféricos ocuparon el núcleo simbólico del capital cultural europeo.",
+  tags: ["mdtc","ep.t","paris","instalación","performance"],
+  media: [
+    // Main cycle video y thumbs
+    "https://attachments.are.na/38509087/9706fe192bc1f6edd1cd4d2ea40eabae.mp4?1754087252",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509997/original_8b9e6796f96ea39b6b6a7ca0eb18048e.png?1754091907",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509996/original_c031ab58eb7d09a293c64c7cc1ed4cfb.jpg?1754091906",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509993/original_58b816db1949e82fd8c140878bfb7ef7.jpg?1754091903",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509991/original_8eeea6028fe283902511772c488a11e5.jpg?1754091902",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509990/original_53d28908de1452b5d384e49ba778d198.jpg?1754091902",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509989/original_f06461982d221c8e345afe015955911b.jpg?1754091901",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509988/original_c8599abe3cbb6c4aadbf9bf330b65fec.jpg?1754091900",
+
+    // Ejemplo de activaciones 
+    "https://attachments.are.na/38509465/d5b51ac73a9e1ecf83b53da394e1386c.mp4?1754088478",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509316/original_86593e1d5f8a14ffe411f3a58c3094eb.jpg?1754087983",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509317/original_e6d854ab38f8e34242e8b2e7d46f83cc.jpg?1754087991",
+    "https://attachments.are.na/38509513/d12d6aa0ee2cb73c7a8df57123930e52.mp4?1754088675",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509567/original_f302b9754938c06337f98c618b6e8d66.jpg?1754088954",
+    "https://attachments.are.na/38509633/3ff2434f1815c223badfb52f087e3b87.mp4?1754089268",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509678/original_334ff574d92defedb6d9b2d802fb53c2.jpg?1754089643",
+    "https://attachments.are.na/38509747/c3494180d48ce79c86d341187cb845d5.mp4?1754089890",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509761/original_e64fd77f469ec47d51e07e69490da87a.jpg?1754090017",
+    "https://attachments.are.na/38509855/70040e1891a86d6a239ac5c33bf25c98.mp4?1754090651",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509841/original_8a5a59c75ba245467cc46e40a7f3ea2c.jpg?1754090621",
+    "https://attachments.are.na/38509906/ab65fc8b56deb516f50109cc849760de.mp4?1754090914",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38509858/original_3a466788f421679b0e1bde5c0777e8ed.jpg?1754090736"
+  ]
+},
+
       
     ];
 
 
-const grid=document.getElementById('media-grid');
-const selectedList=document.getElementById('selected-list');
-const favoritesList=document.getElementById('favorites-list');
-const projectFilter=document.getElementById('project-filter');
-const searchBox=document.getElementById('search-box');
-const sortBox=document.getElementById('sort-box');
-let selectedItems=JSON.parse(localStorage.getItem('selectedItems')||'[]');
-let favoriteItems=JSON.parse(localStorage.getItem('favoriteItems')||'[]');
-let currentMedia=[], modalIndex=0, page=0, pageSize=20;
+const grid = document.getElementById('media-grid');
+const infoPanel = document.getElementById('info-panel');
+const infoContent = document.getElementById('info-content');
+const closeBtn = document.querySelector('.close-btn');
+const floatingLoader = document.getElementById('floating-loader');
 
-/* Inicialización filtros */
-mediaProjects.forEach(p=>{
-  const o=document.createElement('option');o.value=p.title;o.textContent=p.title;projectFilter.appendChild(o);
-});
-[projectFilter, searchBox, sortBox].forEach(el=>el.addEventListener('change',()=>{page=0;renderGrid();updateURLState();}));
-searchBox.addEventListener('input',()=>{page=0;renderGrid();updateURLState();});
+let flatList=[]; let currentIndex=0; 
+let BATCH_SIZE = window.innerWidth<768 ? 60 : 150;
+let activeVideos = new Set();
+const MAX_ACTIVE_VIDEOS = 3;
 
-/* Funciones de construcción */
-function shuffleArray(arr){return arr.sort(()=>Math.random()-0.5);}
-function buildMediaArray(){
-  const f=projectFilter.value, q=searchBox.value.toLowerCase();let all=[];
-  mediaProjects.forEach(project=>{
-    if(f==='all'||f===project.title){
-      project.media.forEach(url=>{
-        const item={project:project.title,url,caption:`${project.title} — ${project.meta}`,description:project.description};
-        if(item.caption.toLowerCase().includes(q)||item.description.toLowerCase().includes(q)) all.push(item);
-      });
+/* ==== Build flat list ==== */
+function buildFlatList(){
+  flatList=[];
+  mediaProjects.forEach(p=>p.media.forEach((src,i)=>flatList.push({src,project:p,index:i})));
+}
+function shuffleArray(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+/* ==== Crear item optimizado ==== */
+function createMediaItem(item){
+  const el=document.createElement('div'); el.className='media-item';
+  const isVideo = item.src.match(/\.(mp4|mov|webm)$/i);
+  el.innerHTML = isVideo
+    ? `<video preload="metadata" muted playsinline loop><source src="${item.src}" type="video/mp4"></video><div class="caption">${item.project.title}</div>`
+    : `<img loading="lazy" src="${item.src}" alt="${item.project.title}"><div class="caption">${item.project.title}</div>`;
+
+  // Panel Matrix
+  el.addEventListener('click',()=>{
+    infoContent.textContent=`TÍTULO: ${item.project.title}\nFECHA: ${item.project.meta}\n\n${item.project.description}\n\nMEDIA: ${item.index+1}/${item.project.media.length}`;
+    infoPanel.classList.remove('closing');
+    infoPanel.classList.add('active');
+  });
+
+  // Video control
+  const video = el.querySelector('video');
+  if(video){
+    observerPreload.observe(video);
+    observerVisibility.observe(el);
+  } else {
+    observerVisibility.observe(el);
+  }
+  return el;
+}
+
+/* ==== Panel Matrix con fade-out ==== */
+function closePanel(){ 
+  infoPanel.classList.remove('active'); 
+  infoPanel.classList.add('closing'); 
+  setTimeout(()=> infoPanel.classList.remove('closing'), 400); 
+}
+infoPanel.addEventListener('click',closePanel); 
+closeBtn.addEventListener('click', e=>{e.stopPropagation(); closePanel();});
+document.addEventListener('keydown',e=>{if(e.key==="Escape")closePanel();});
+
+/* ==== Observers ==== */
+const observerVisibility = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    const el = entry.target;
+    if(entry.isIntersecting){
+      el.classList.add('visible');
+      const video = el.querySelector('video');
+      if(video && activeVideos.size < MAX_ACTIVE_VIDEOS){
+        video.play();
+        activeVideos.add(video);
+      }
+    } else {
+      const video = el.querySelector('video');
+      if(video){
+        video.pause();
+        activeVideos.delete(video);
+      }
     }
   });
-  const sort=sortBox.value;
-  if(sort==='caption') all.sort((a,b)=>a.caption.localeCompare(b.caption));
-  else if(sort==='project') all.sort((a,b)=>a.project.localeCompare(b.project));
-  else shuffleArray(all);
-  return all;
-}
-function renderGrid(skipBuild=false){
-  if(!skipBuild) currentMedia=buildMediaArray();
-  const slice=currentMedia.slice(0,(++page)*pageSize);
-  grid.innerHTML='';
-  slice.forEach((item,index)=>{
-    const div=document.createElement('div');div.className='media-item';div.dataset.index=index;
-    div.title=item.caption;
-    div.innerHTML=item.url.endsWith('.mp4')?
-      `<video src="${item.url}" muted playsinline preload="metadata"></video>`:
-      `<img src="${item.url}" loading="lazy" alt=""><span class="caption">${item.caption}</span>`;
-    div.addEventListener('click',e=>{
-      if(e.shiftKey) toggleFavorite(item,div);
-      else toggleSelect(item,div);
-    });
-    if(selectedItems.find(i=>i.url===item.url)) div.classList.add('selected');
-    if(favoriteItems.find(i=>i.url===item.url)) div.classList.add('favorite');
-    grid.appendChild(div);
+},{threshold:0.25});
+
+const observerPreload = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    const video = entry.target;
+    if(entry.isIntersecting){
+      video.preload = "auto";
+      observerPreload.unobserve(video);
+    }
   });
-  updateCounts();
-}
+},{rootMargin:"500px"});
 
-/* Selección y favoritos */
-function toggleSelect(item,element){
-  const idx=selectedItems.findIndex(i=>i.url===item.url);
-  if(idx>=0){selectedItems.splice(idx,1);element.classList.remove('selected');}
-  else {selectedItems.push(item);element.classList.add('selected');}
-  localStorage.setItem('selectedItems',JSON.stringify(selectedItems));
-  renderSelectedList();updateCounts();
-}
-function toggleFavorite(item,element){
-  const idx=favoriteItems.findIndex(i=>i.url===item.url);
-  if(idx>=0){favoriteItems.splice(idx,1);element.classList.remove('favorite');}
-  else {favoriteItems.push(item);element.classList.add('favorite');}
-  localStorage.setItem('favoriteItems',JSON.stringify(favoriteItems));
-  renderFavoriteList();updateCounts();
-}
-function renderSelectedList(){
-  selectedList.innerHTML='';
-  selectedItems.forEach((item,idx)=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<img src="${item.url}"><span>${item.caption}</span>`;
-    li.addEventListener('click',()=>openModal(idx));selectedList.appendChild(li);
+/* ==== Render batch ==== */
+function renderNextBatch(){
+  if(currentIndex>=flatList.length) return;
+  floatingLoader.classList.add('visible');
+  const slice = flatList.slice(currentIndex,currentIndex+BATCH_SIZE);
+  slice.forEach((item,i)=>{
+    const el=createMediaItem(item);
+    el.style.transitionDelay=`${i*15}ms`;
+    grid.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('visible'));
   });
-}
-function renderFavoriteList(){
-  favoritesList.innerHTML='';
-  favoriteItems.forEach(item=>{
-    const li=document.createElement('li');
-    li.innerHTML=`<img src="${item.url}"><span>${item.caption}</span>`;
-    favoritesList.appendChild(li);
-  });
-}
-function clearSelection(){selectedItems=[];localStorage.removeItem('selectedItems');renderSelectedList();renderGrid(true);updateCounts();}
-function updateCounts(){
-  document.getElementById('sel-count').textContent=selectedItems.length;
-  document.getElementById('fav-count').textContent=favoriteItems.length;
-}
+  currentIndex+=BATCH_SIZE;
+  setTimeout(()=>floatingLoader.classList.remove('visible'),500);
 
-/* Export/Descarga */
-function exportCaptions(){const t=selectedItems.map(i=>i.caption+"\n"+i.description).join('\n\n');navigator.clipboard.writeText(t);alert('Captions copiados.');}
-function downloadCaptions(){
-  const t=selectedItems.map(i=>i.caption+"\n"+i.description).join('\n\n');
-  const blob=new Blob([t],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download='xpan_captions.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);
-}
-
-/* Modal */
-const modal=document.getElementById('modal-view');
-const modalContent=document.getElementById('modal-content');
-const modalCaption=document.getElementById('modal-caption');
-document.getElementById('modal-prev').onclick=()=>navigateModal(-1);
-document.getElementById('modal-next').onclick=()=>navigateModal(1);
-document.getElementById('modal-close').onclick=closeModal;
-function openModal(idx){modal.classList.add('show');modalIndex=idx;showModalItem();}
-function openModalView(){if(selectedItems.length>0)openModal(0);else alert('No hay ítems seleccionados.');}
-function showModalItem(){
-  const item=selectedItems[modalIndex];
-  modalContent.innerHTML=item.url.endsWith('.mp4')?`<video src="${item.url}" controls autoplay></video>`:`<img src="${item.url}" alt="">`;
-  modalCaption.textContent=item.caption;
-}
-function navigateModal(step){modalIndex=(modalIndex+step+selectedItems.length)%selectedItems.length;showModalItem();}
-function closeModal(){modal.classList.remove('show');}
-
-/* Gestos táctiles */
-let startX=0;
-modal.addEventListener('touchstart',e=>startX=e.touches[0].clientX);
-modal.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-startX;
-  if(dx>50) navigateModal(-1); else if(dx<-50) navigateModal(1);
-});
-
-/* Lazy load on scroll */
-window.addEventListener('scroll',()=>{
-  if(window.innerHeight+window.scrollY>=document.body.offsetHeight-50 && page*pageSize<currentMedia.length){
-    renderGrid(true);
+  if(currentIndex<flatList.length && document.body.scrollHeight<window.innerHeight*1.5){
+    setTimeout(renderNextBatch,50);
   }
-});
-
-/* Estado en URL */
-function updateURLState(){
-  const params=new URLSearchParams();
-  params.set('filter',projectFilter.value);
-  params.set('search',searchBox.value);
-  params.set('sort',sortBox.value);
-  history.replaceState(null,'','?'+params.toString());
 }
-function restoreFromURL(){
-  const params=new URLSearchParams(location.search);
-  if(params.has('filter')) projectFilter.value=params.get('filter');
-  if(params.has('search')) searchBox.value=params.get('search');
-  if(params.has('sort')) sortBox.value=params.get('sort');
-}
-function copyShareLink(){navigator.clipboard.writeText(location.href);alert('Link copiado.');}
 
-/* Inicialización */
-restoreFromURL();
-currentMedia=buildMediaArray();
-renderSelectedList();renderFavoriteList();renderGrid(true);updateCounts();
+function checkScroll(){ 
+  if(window.innerHeight+window.scrollY>=document.body.scrollHeight-300){ 
+    setTimeout(renderNextBatch,50);
+  } 
+}
+window.addEventListener('scroll',checkScroll);
+window.addEventListener('resize',checkScroll);
+
+function applySort(type){
+  grid.innerHTML=''; currentIndex=0;
+  activeVideos.clear();
+  buildFlatList();
+  if(type==='shuffle') shuffleArray(flatList);
+  if(type==='title') flatList.sort((a,b)=>a.project.title.localeCompare(b.project.title));
+  if(type==='chrono') flatList.sort((a,b)=>new Date(a.project.meta)-new Date(b.project.meta));
+  renderNextBatch();
+}
+
+/* ==== Init ==== */
+buildFlatList();
+shuffleArray(flatList);
+renderNextBatch();
 </script>
 </body>
 </html>
