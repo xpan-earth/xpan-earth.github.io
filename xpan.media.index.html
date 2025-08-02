@@ -76,31 +76,40 @@
       to { opacity:1; transform:translateY(0); }
     }
 
-    @media(max-width:768px){
-      .menu-button { width:20px; height:20px; }
-      .menu-button span { height:10px; }
-      .menu-options { min-width:120px; }
+    /* GRID RESPONSIVO */
+    .grid { 
+      column-count: 5;
+      column-gap: 0.5rem;
+      padding: 7rem 0.5rem 3rem;
     }
+    @media(max-width:1600px){.grid{column-count:4;}}
+    @media(max-width:1200px){.grid{column-count:3;}}
+    @media(max-width:992px){.grid{column-count:2;}}
+    @media(max-width:600px){.grid{column-count:1;}}
 
-    /* GRID */
-    .grid { display:flex; flex-wrap:wrap; gap:0.5rem; padding:7rem 0.5rem 3rem; justify-content:center; }
-    .media-item { 
-      flex:1 1 300px; max-width:calc(20% - 0.5rem); position:relative; cursor:pointer;
-      opacity:0; transform:translateY(15px) scale(0.97);
-      transition:opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+    .media-item {
+      break-inside: avoid;
+      margin-bottom: 0.5rem;
+      position: relative;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(15px) scale(0.97);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
     .media-item.visible { opacity:1; transform:translateY(0) scale(1); }
-    .media-item:hover { box-shadow:0 4px 12px rgba(0,0,0,0.15); }
 
-    @media(max-width:1600px){.media-item{max-width:calc(25% - 0.5rem);}}
-    @media(max-width:1200px){.media-item{max-width:calc(33.33% - 0.5rem);}}
-    @media(max-width:992px){.media-item{max-width:calc(50% - 0.5rem);}}
-    @media(max-width:600px){.media-item{max-width:100%;}}
+    .media-item img, .media-item video { 
+      width:100%; 
+      height:auto; 
+      display:block; 
+      object-fit:contain; /* Mantiene proporción sin cortar */
+    }
 
-    .media-item img, .media-item video { width:100%; height:auto; display:block; object-fit:contain; }
-    .caption { position:absolute; bottom:0; left:0; right:0;
-               font-size:0.75rem; padding:0.2rem 0.3rem;
-               background:rgba(0,0,0,0.6); color:#fff; opacity:0; transition:opacity 0.3s; }
+    .caption { 
+      position:absolute; bottom:0; left:0; right:0;
+      font-size:0.75rem; padding:0.2rem 0.3rem;
+      background:rgba(0,0,0,0.6); color:#fff; opacity:0; transition:opacity 0.3s; 
+    }
     .media-item:hover .caption { opacity:1; }
 
     /* Panel Matrix */
@@ -574,52 +583,48 @@ donde lenguajes históricamente periféricos ocuparon el núcleo simbólico del 
       
     ];
 
-
 const grid = document.getElementById('media-grid');
 const infoPanel = document.getElementById('info-panel');
 const infoContent = document.getElementById('info-content');
 const closeBtn = document.querySelector('.close-btn');
 const floatingLoader = document.getElementById('floating-loader');
 
-let flatList=[]; let currentIndex=0; 
-let BATCH_SIZE = window.innerWidth<768 ? 60 : 150;
-let activeVideos = new Set();
-const MAX_ACTIVE_VIDEOS = 3;
+let flatList=[], currentIndex=0;
+let activeVideos = new Set(), MAX_ACTIVE_VIDEOS = 3;
+const BATCH_SIZE = window.innerWidth<768 ? 5 : 15;
 
-/* ==== Build flat list ==== */
+/* ==== Generar lista plana e ignorar PDFs ==== */
 function buildFlatList(){
   flatList=[];
-  mediaProjects.forEach(p=>p.media.forEach((src,i)=>flatList.push({src,project:p,index:i})));
+  mediaProjects.forEach(p => {
+    p.media.forEach((src,i)=>{
+      if (!src.match(/\.pdf$/i)) { // ignorar PDFs
+        flatList.push({src, project:p, index:i});
+      }
+    });
+  });
 }
-function shuffleArray(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+function shuffleArray(arr){ 
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} 
+  return arr; 
+}
 
-/* ==== Crear item optimizado ==== */
+/* ==== Crear item ==== */
 function createMediaItem(item){
   const el=document.createElement('div'); el.className='media-item';
   const isVideo = item.src.match(/\.(mp4|mov|webm)$/i);
   el.innerHTML = isVideo
     ? `<video preload="metadata" muted playsinline loop><source src="${item.src}" type="video/mp4"></video><div class="caption">${item.project.title}</div>`
     : `<img loading="lazy" src="${item.src}" alt="${item.project.title}"><div class="caption">${item.project.title}</div>`;
-
-  // Panel Matrix
   el.addEventListener('click',()=>{
     infoContent.textContent=`TÍTULO: ${item.project.title}\nFECHA: ${item.project.meta}\n\n${item.project.description}\n\nMEDIA: ${item.index+1}/${item.project.media.length}`;
     infoPanel.classList.remove('closing');
     infoPanel.classList.add('active');
   });
-
-  // Video control
-  const video = el.querySelector('video');
-  if(video){
-    observerPreload.observe(video);
-    observerVisibility.observe(el);
-  } else {
-    observerVisibility.observe(el);
-  }
   return el;
 }
 
-/* ==== Panel Matrix con fade-out ==== */
+/* ==== Panel Matrix ==== */
 function closePanel(){ 
   infoPanel.classList.remove('active'); 
   infoPanel.classList.add('closing'); 
@@ -629,63 +634,36 @@ infoPanel.addEventListener('click',closePanel);
 closeBtn.addEventListener('click', e=>{e.stopPropagation(); closePanel();});
 document.addEventListener('keydown',e=>{if(e.key==="Escape")closePanel();});
 
-/* ==== Observers ==== */
-const observerVisibility = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    const el = entry.target;
-    if(entry.isIntersecting){
-      el.classList.add('visible');
-      const video = el.querySelector('video');
-      if(video && activeVideos.size < MAX_ACTIVE_VIDEOS){
-        video.play();
-        activeVideos.add(video);
-      }
-    } else {
-      const video = el.querySelector('video');
-      if(video){
-        video.pause();
-        activeVideos.delete(video);
-      }
-    }
-  });
-},{threshold:0.25});
-
-const observerPreload = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    const video = entry.target;
-    if(entry.isIntersecting){
-      video.preload = "auto";
-      observerPreload.unobserve(video);
-    }
-  });
-},{rootMargin:"500px"});
-
-/* ==== Render batch ==== */
-function renderNextBatch(){
-  if(currentIndex>=flatList.length) return;
+/* ==== Render incremental ==== */
+function renderBatch(){
+  if(currentIndex>=flatList.length) { 
+    floatingLoader.classList.remove('visible'); 
+    return; 
+  }
   floatingLoader.classList.add('visible');
-  const slice = flatList.slice(currentIndex,currentIndex+BATCH_SIZE);
-  slice.forEach((item,i)=>{
-    const el=createMediaItem(item);
-    el.style.transitionDelay=`${i*15}ms`;
+  const slice = flatList.slice(currentIndex, currentIndex+BATCH_SIZE);
+  let i = 0;
+  function processNext(){
+    if(i >= slice.length){ 
+      currentIndex += BATCH_SIZE; 
+      floatingLoader.classList.remove('visible'); 
+      return; 
+    }
+    const item = slice[i++];
+    const el = createMediaItem(item);
     grid.appendChild(el);
     requestAnimationFrame(()=>el.classList.add('visible'));
-  });
-  currentIndex+=BATCH_SIZE;
-  setTimeout(()=>floatingLoader.classList.remove('visible'),500);
-
-  if(currentIndex<flatList.length && document.body.scrollHeight<window.innerHeight*1.5){
-    setTimeout(renderNextBatch,50);
+    setTimeout(processNext, 30); // liberar el hilo
   }
+  processNext();
 }
 
 function checkScroll(){ 
-  if(window.innerHeight+window.scrollY>=document.body.scrollHeight-300){ 
-    setTimeout(renderNextBatch,50);
-  } 
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 600;
+  if(nearBottom) renderBatch();
 }
-window.addEventListener('scroll',checkScroll);
-window.addEventListener('resize',checkScroll);
+window.addEventListener('scroll', checkScroll);
+window.addEventListener('resize', checkScroll);
 
 function applySort(type){
   grid.innerHTML=''; currentIndex=0;
@@ -694,13 +672,13 @@ function applySort(type){
   if(type==='shuffle') shuffleArray(flatList);
   if(type==='title') flatList.sort((a,b)=>a.project.title.localeCompare(b.project.title));
   if(type==='chrono') flatList.sort((a,b)=>new Date(a.project.meta)-new Date(b.project.meta));
-  renderNextBatch();
+  renderBatch();
 }
 
 /* ==== Init ==== */
 buildFlatList();
 shuffleArray(flatList);
-renderNextBatch();
+renderBatch();
 </script>
 </body>
 </html>
