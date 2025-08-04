@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <link rel="stylesheet" href="./style.css" media="screen"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="xpan"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="./xpan.png"/>
+    <meta property="og:url" content="https://xpan.earth/"/>
+    <title>xpan.12.e</title>
+
+    <style>
+html, body {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+article {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 1rem 2rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+article img.portada-img {
+  max-width: 100%;
+  height: auto;
+}
+
+form {
+  width: 100%;
+  max-width: 600px;
+}
+
+#mensaje {
+  display:none; 
+  margin-top:1rem; 
+  font-weight:bold;
+}
+    </style>
+</head>
+
+<body id="ls">
+    <header>
+        <a href="https://xpan.earth">
+            <img src="./xpan.svg" alt="xpan">
+        </a>
+    </header>
+    <article>
+        <h1>
+            <em>xpan.12.e</em> presenta<br>
+            <em>ls.37</em> [sesión de escucha n.º 37]
+        </h1>
+        <p>
+            [álbum] prueba<br>
+            [artista] abul prueba<br>
+            [año] prueba<br>
+            [fecha] 04.08.25 / 18:00 hrs <br>
+            [ubicación] <em> proyectos públicos</em>
+        </p>
+        <img src="https://d2w9rnfcy7mm78.cloudfront.net/38422156/original_ef3521affb0268d2ac040c6dff3cf9aa.png?1753751815?bc=0" alt="vision" class="portada-img">
+
+        <!-- FORMULARIO UNIFICADO -->
+        <form id="registroForm" enctype="multipart/form-data">
+            <h1>registro</h1>
+            <ul>
+                <li>
+                    <label for="nombre">nombre completo:</label>
+                    <input type="text" name="nombre" maxlength="256" required>
+                </li>
+                <li>
+                    <label for="correo">correo electrónico:</label>
+                    <input type="email" name="correo" maxlength="254" required>
+                </li>
+                <li>
+                    <label for="foto">imagen (tomar o subir):</label>
+                    <input type="file" name="foto" accept="image/*" capture="environment">
+                </li>
+                <li>
+                    <button type="submit">enviar</button>
+                </li>
+            </ul>
+            <p id="mensaje"></p>
+        </form>
+    </article>
+
+    <script>
+const form = document.getElementById("registroForm");
+const mensaje = document.getElementById("mensaje");
+
+// URLS de tus Web Apps
+const sheetURL = "https://script.google.com/macros/s/AKfycbxVBYDPBPqY9OO2om-CseZdYgThhWoHowZUpgAp1iKj8tlg1BSZNNxcwKDJYHdTOh_S/exec"; // original para Sheets
+const fotoURL = "https://script.google.com/macros/s/AKfycbxxowQ3t7bQrB84ggGFDfE19C13g5w-ZTazd8vHbXLHwfH9CR6tdETrdcsYCRHOlwL6PA/exec"; // nuevo para fotos
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    mensaje.style.display = "block";
+    mensaje.style.color = "black";
+    mensaje.textContent = "Enviando registro...";
+
+    const formData = new FormData(form);
+
+    try {
+        // 1. Enviar a Sheets (solo nombre y correo)
+        const dataSheet = new FormData();
+        dataSheet.append("nombre", formData.get("nombre"));
+        dataSheet.append("correo", formData.get("correo"));
+        await fetch(sheetURL, { method: "POST", body: dataSheet });
+
+        // 2. Enviar foto a Drive
+        if (formData.get("foto").size > 0) {
+            await fetch(fotoURL, { method: "POST", body: formData });
+        }
+
+        mensaje.style.color = "green";
+        mensaje.textContent = "✔ Registro completado. ¡Gracias!";
+        form.reset();
+
+    } catch (error) {
+        mensaje.style.color = "red";
+        mensaje.textContent = "Hubo un error al enviar. Intenta de nuevo.";
+    }
+});
+    </script>
+</body>
+</html>
