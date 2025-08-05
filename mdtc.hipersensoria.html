@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mdtc.hipersensoria — xpan</title>
+  <style>
+    body { margin:0; background:#fff; font-family:'Times New Roman',serif; color:#000; overflow-x:hidden; }
+    header { position:fixed; top:1rem; left:1rem; z-index:10; }
+    header img { width:50px; height:auto; }
+    .language-selector { position:fixed; top:1rem; right:1rem; z-index:20; font-size:.9rem; text-transform:lowercase; }
+    .language-selector button { background:none; border:none; margin-left:.5rem; cursor:pointer; color:#000; opacity:.5; transition:.2s; }
+    .language-selector button.active, .language-selector button:hover { opacity:1; text-decoration:underline; }
+
+    .container { max-width:1000px; margin:7rem auto 4rem; padding:0 3rem; }
+    h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase; }
+    .meta { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem; }
+    .description { font-size:1rem; line-height:1.6; max-width:700px; margin-bottom:2rem; }
+
+    .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; margin-bottom:3rem; }
+    .gallery img,.gallery video { width:100%; height:auto; border-radius:4px; object-fit:cover; aspect-ratio:4/3; transition:.3s; }
+    .gallery img:hover,.gallery video:hover { transform:scale(1.02); opacity:.9; }
+
+    /* Audio blocks */
+    .xpan-audio-block { border: 1px solid black; padding: 0.5rem 1rem 1rem 1rem; margin-bottom: 2rem; }
+    .audio-meta .title { font-size:0.95rem; font-weight:bold; text-transform:lowercase; margin-bottom:0.2rem; }
+    .audio-meta .info { font-size:0.75rem; opacity:0.6; margin-bottom:0.6rem; line-height:1.2; }
+    .audio-controls { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+    .play-button { background:none; border:none; font-size:0.9rem; cursor:pointer; text-transform:lowercase; padding:0.3rem 0.5rem; }
+    .time-display { font-size:0.75rem; min-width:50px; }
+    .progress-container { position:relative; flex-grow:1; height:2px; background:#ddd; cursor:pointer; touch-action:none; }
+    .progress-fill { height:2px; background:black; width:0%; }
+    canvas { width:100%; height:60px; display:block; margin-top:0.5rem; background:white; }
+    .tooltip { position:absolute; font-size:0.7rem; background:black; color:white; padding:0.15rem 0.35rem; border-radius:3px; transform:translateX(-50%); top:-1.3rem; display:none; pointer-events:none; z-index:100; }
+
+    .video-credits { font-size:0.75rem; opacity:0.6; margin-top:0.3rem; line-height:1.2; }
+
+    .experimental-gallery { position: relative; width: 100%; min-height: 100vh; overflow: hidden; background: #fff; cursor: crosshair; margin-top:3rem;}
+    .experimental-gallery .background-star { position: absolute; top: 50%; left: 50%; width: 100vmin; max-width: 900px; transform: translate(-50%,-50%); opacity: .05; pointer-events: none; }
+    .experimental-gallery .container { position: relative; width: 100%; min-height: 100vh; }
+    .image-block { width:160px; height:160px; position:absolute; opacity:.6; transition:opacity .3s ease; cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
+    .image-block:active { cursor:grabbing; }
+    .image-block:hover { opacity:.85; z-index:5; }
+    .image-block img,.image-block video,.image-block audio { max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; }
+    #audio-notice { position:fixed; bottom:.5rem; right:.5rem; background:rgba(255,255,255,.8); padding:.4rem .7rem; font-size:.8rem; font-style:italic; cursor:pointer; border:1px solid #000; border-radius:3px; opacity:.9; transition:opacity 0.8s ease; z-index:999; }
+    svg.lines { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+    svg.lines line { stroke:#000; stroke-width:.3px; opacity:.15; }
+
+    @media(max-width:768px){
+      .container{margin-top:6rem;padding:0 1.5rem;}
+      .gallery img,.gallery video{aspect-ratio:auto;}
+      .audio-controls{flex-direction:column;align-items:flex-start;}
+      .image-block{width:100px;height:100px;}
+    }
+  </style>
+</head>
+<body>
+  <header><a href="https://xpan.earth" target="_blank"><img src="xpan.svg" alt="xpan logo"/></a></header>
+  <div class="language-selector">
+    <button onclick="setLang('es')" class="active">es</button>
+    <button onclick="setLang('en')">en</button>
+    <button onclick="setLang('fr')">fr</button>
+    <button onclick="setLang('jp')">jp</button>
+  </div>
+
+  
+  <div class="container">
+    <h1>hipersensoria</h1>
+    <div class="meta">febrero 2022 — torre de los vientos, ciudad de méxico</div>
+
+<!-- Español -->
+    <div class="lang lang-es description">
+      en febrero de 2022, xpan activó la torre de los vientos con <strong>hipersensoria</strong>.<br>
+      se desplegó un <strong>circuito multicanal de 16 inputs</strong>: micrófonos en la calle, debajo de los asientos del público, alrededor y dentro de la torre.<br>
+      la escultura funcionó como sensor y emisor.<br><br>
+      todas las señales fueron procesadas en vivo mediante rutas análogas y digitales, generando un flujo de inputs/outputs que amplificó la sensibilidad de la torre.<br>
+      el acto consistió en forzar a la escultura a escuchar su propio entorno y devolverlo en tiempo real.<br><br>
+      <strong>hipersensoria</strong> operó como intervención directa: activación estructural, sin narrativa, solo lectura y emisión cruda de contexto.<br>
+      el resultado fue un estado temporal de hipersensibilidad arquitectónica, donde la torre absorbió, procesó y devolvió su entorno como señal.
+    </div>
+
+    <!-- English -->
+    <div class="lang lang-en description" style="display:none;">
+      in february 2022, xpan activated the torre de los vientos with <strong>hipersensoria</strong>.<br>
+      a <strong>16-channel input circuit</strong> was deployed: microphones on the street, under audience seats, around and inside the tower.<br>
+      the sculpture functioned as both sensor and emitter.<br><br>
+      all signals were processed live through analog and digital paths, generating an input/output flow that amplified the tower’s sensitivity.<br>
+      the action forced the sculpture to listen to its own environment and return it in real time.<br><br>
+      <strong>hipersensoria</strong> operated as a direct intervention: structural activation, without narrative, only raw reading and emission of context.<br>
+      the result was a temporary state of architectural hypersensitivity, where the tower absorbed, processed, and emitted its surroundings as signal.
+    </div>
+
+    <!-- Français -->
+    <div class="lang lang-fr description" style="display:none;">
+      en février 2022, xpan a activé la torre de los vientos avec <strong>hipersensoria</strong>.<br>
+      un <strong>circuit d'entrée multicanal 16 voies</strong> a été déployé : microphones dans la rue, sous les sièges du public, autour et à l’intérieur de la tour.<br>
+      la sculpture a fonctionné comme capteur et émetteur.<br><br>
+      tous les signaux ont été traités en direct via des chemins analogiques et numériques, générant un flux entrée/sortie qui a amplifié la sensibilité de la tour.<br>
+      l’action a forcé la sculpture à écouter son propre environnement et à le renvoyer en temps réel.<br><br>
+      <strong>hipersensoria</strong> a fonctionné comme une intervention directe : activation structurelle, sans récit, uniquement lecture et émission brute du contexte.<br>
+      le résultat fut un état temporaire d’hypersensibilité architecturale, où la tour a absorbé, traité et renvoyé son environnement comme signal.
+    </div>
+
+    <!-- 日本語 -->
+    <div class="lang lang-jp description" style="display:none;">
+      2022年2月、xpanは<strong>hipersensoria</strong>によってトーレ・デ・ロス・ビエントスを起動しました。<br>
+      <strong>16チャンネルの入力回路</strong>を展開し、街路、観客席の下、塔の周囲、塔の内部にマイクを設置。<br>
+      彫刻はセンサーであり、同時にエミッターとして機能しました。<br><br>
+      すべての信号はアナログとデジタルの経路でリアルタイム処理され、塔の感度を増幅する入出力フローを形成しました。<br>
+      行為は彫刻自身にその環境を聴かせ、即時に返すことを強制しました。<br><br>
+      <strong>hipersensoria</strong>は直接的な介入として機能し、構造的活性化であり、物語はなく、文脈の生の読み取りと出力のみ。<br>
+      結果として塔は周囲を吸収し、処理し、信号として返す建築的過敏状態を一時的に生み出しました。
+    </div>
+
+    <!-- 4 Audio blocks -->
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">hs-tdlv pt.1 (0.00–8.56) — 08:56</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous"><source src="https://ia601007.us.archive.org/18/items/excrpt-pt.-1-tdlv-0.00-8.56/EXCRPT%20PT.%201%20TDLV%280.00_8.56%29.wav" type="audio/wav" /></audio>
+      </div>
+      <canvas></canvas>
+    </div>
+
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">hs-tdlv pt.2 (8.56–21.00) — 12:03</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous"><source src="https://ia600908.us.archive.org/4/items/excrpt-pt.-2-tdlv-8.56-21.00/EXCRPT%20PT.%202%20TDLV%288.56_21.00%29.wav" type="audio/wav" /></audio>
+      </div>
+      <canvas></canvas>
+    </div>
+
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">hs-tdlv pt.3 (21.00–35.13) — 14:13</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous"><source src="https://ia601003.us.archive.org/0/items/excrpt-pt.-3-tdlv-21.00-35.13/EXCRPT%20PT.%203%20TDLV%2821.00_35.13%29.wav" type="audio/wav" /></audio>
+      </div>
+      <canvas></canvas>
+    </div>
+
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">hs-tdlv pt.4 (35.13–50.34) — 15:20</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous"><source src="https://ia600906.us.archive.org/8/items/excrpt-pt.-4-tdlv-35.13-50.34/EXCRPT%20PT.%204%20TDLV%2835.13_50.34%29.wav" type="audio/wav" /></audio>
+      </div>
+      <canvas></canvas>
+    </div>
+
+    <!-- Registro en video -->
+    <div class="gallery">
+      <video autoplay muted loop playsinline controls>
+        <source src="https://ia600902.us.archive.org/7/items/torre-de-sonido-edit-h-264/TORRE%20DE%20SONIDO%20EDIT%20H264.mp4" type="video/mp4">
+        tu navegador no soporta video html5.
+      </video>
+      <div class="video-credits">
+        video realizado, grabado y editado por magaly ugarte de pablo<br>
+        sonido: extracto de la acción en torre de los vientos por sites, ramón saturnino y moisés sacal hadid
+      </div>
+    </div>
+
+    <!-- Galería principal -->
+    <div class="gallery">
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591095/original_d1882f5ac3cb0ea4ad6e14a29cea0730.jpg?1754420550?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591096/original_1e9a79f10e9fb307784ad6343fbc0afa.jpg?1754420550?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591097/original_4da4d21c57e2f35fe586678731bd9378.jpg?1754420550?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591098/original_4dcc84e872a3c3e78356f58d47d29011.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591099/original_ad1c99a44eb493daecbc27fa9657ed4d.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591100/original_61c8b13788e7770af8e993acc6f5aeb8.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591101/original_e5c2ac76900061912f4c31f8e3ac1605.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591102/original_4f525fe8f9463d73d4e3ef3485a73f18.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591103/original_ba6002b200708a501fc6cff39a528e93.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591104/original_1d211e56c4dfd0a99575c54b6b3171e0.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591105/original_f380d62dc7ce4637b88f78a802be2ba7.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591106/original_888c885d350897ec8df2a06d01432b29.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591107/original_edaa9536f3282a45e46132b88af7355a.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591108/original_76383cc36ffc9c3438c986524d1d5d36.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591109/original_cab0061516e61fddee24b497a51e1e11.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591110/original_b47fb308284ac1c70cdf8dc60261e41f.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591111/original_bee60b4992cd39abc04bfb0bfd640634.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591112/original_582feb55341a08e7b95f85f58b972876.jpg?1754420551?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591113/original_ecce8636e9853759a0bc34c6a16a1072.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591114/original_3c252f0dbe9de924b67194a34f4bba4c.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591115/original_245c5e8b48668e92a81077b82e589b13.jpg?1754420552?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591116/original_a84a316b18ff2858a8ce4114418f9a13.jpg?1754420553?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591117/original_284f1f9c15ef2c0711ac89b8bd67a2d5.jpg?1754420553?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591118/original_359629658aadccdb956949f6a9cdb906.jpg?1754420554?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591125/original_4243fb93b7131abd980756e5b913d848.jpg?1754420554?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591119/original_e96dd3c989fa9b1c82f4d008ecc78c16.jpg?1754420555?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591124/original_7cac81f3d2e2647e56529c38b888afe6.jpg?1754420555?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591122/original_46f3d86520148e8a197827d190145444.jpg?1754420555?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591121/original_205dfcc1a93979e55db2bbbe1cd19b92.jpg?1754420555?bc=0" />
+<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591132/original_e9f6a700bd4cd7572dca8af9c9fcd975.png?1754420555?bc=0" />
+    </div>
+  </div>
+  </div>
+
+  
+  <section class="experimental-gallery">
+    <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
+    <div class="container" id="experimental-container">
+      <svg class="lines" id="dynamic-lines"></svg>
+    </div>
+  </section>
+
+  <script>
+    function setLang(lang){
+      document.querySelectorAll('.lang').forEach(l => l.style.display='none');
+      document.querySelectorAll('.lang-'+lang).forEach(l => l.style.display='block');
+      document.querySelectorAll('.language-selector button').forEach(b => b.classList.remove('active'));
+      document.querySelector('.language-selector button[onclick="setLang(\''+lang+'\')"]').classList.add('active');
+    }
+    setLang('es');
+
+    /* ---- Audio Players con Web Audio API para ondas reales ---- */
+    document.querySelectorAll('.xpan-audio-block').forEach(block => {
+      const audio = block.querySelector('audio');
+      const playBtn = block.querySelector('.play-button');
+      const timeDisplay = block.querySelector('.time-display');
+      const progressFill = block.querySelector('.progress-fill');
+      const progressContainer = block.querySelector('.progress-container');
+      const canvas = block.querySelector('canvas');
+      const ctx = canvas.getContext('2d');
+      let audioCtx, source, analyser, dataArray, bufferLength, rafId;
+
+      function initAnalyser(){
+        if(audioCtx) return;
+        audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+        source = audioCtx.createMediaElementSource(audio);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize=256;
+        bufferLength = analyser.frequencyBinCount;
+        dataArray=new Uint8Array(bufferLength);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+      }
+
+      function draw(){
+        rafId=requestAnimationFrame(draw);
+        analyser.getByteTimeDomainData(dataArray);
+        ctx.fillStyle='white';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.lineWidth=1;
+        ctx.strokeStyle='black';
+        ctx.beginPath();
+        let slice=canvas.width*1.0/bufferLength;
+        let x=0;
+        for(let i=0;i<bufferLength;i++){
+          let v=dataArray[i]/128.0;
+          let y=v*canvas.height/2;
+          if(i===0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+          x+=slice;
+        }
+        ctx.lineTo(canvas.width,canvas.height/2);
+        ctx.stroke();
+      }
+
+      playBtn.addEventListener('click',()=>{
+        if(audio.paused){
+          initAnalyser();
+          audio.play();
+          audioCtx.resume();
+          playBtn.textContent='pause';
+          draw();
+        }else{
+          audio.pause();
+          playBtn.textContent='play';
+          cancelAnimationFrame(rafId);
+        }
+      });
+
+      audio.addEventListener('timeupdate',()=>{
+        if(audio.duration){
+          timeDisplay.textContent=formatTime(audio.currentTime)+' / '+formatTime(audio.duration);
+          progressFill.style.width=(audio.currentTime/audio.duration*100)+'%';
+        }
+      });
+      progressContainer.addEventListener('click',e=>{
+        const rect=progressContainer.getBoundingClientRect();
+        const pct=(e.clientX-rect.left)/rect.width;
+        audio.currentTime=pct*audio.duration;
+      });
+
+      function formatTime(sec){
+        const m=Math.floor(sec/60)||0;
+        const s=Math.floor(sec%60)||0;
+        return m+":"+(s<10?"0":"")+s;
+      }
+    });
+
+    /* ---- Galería experimental igual que antes ---- */
+    const expContainer=document.getElementById('experimental-container'),svgLines=document.getElementById('dynamic-lines'),blocks=[];
+
+const expMedia = [
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591128/original_60e5592b74ebf7c7d7e10233e561f9b2.jpg?1754420556?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591130/original_7d2650a26ea4625d0208933f15603ce0.png?1754420555?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591134/original_b5aae0d6b69150023374c6b9c6642b55.png?1754420555?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591133/original_0015396318e0148df9328cbf9c6392cf.png?1754420555?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591127/original_97dbc9ea7f73384197dbd0e9d0483400.png?1754420555?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591129/original_feaa773337bbd0c1d7b442890bb27600.png?1754420554?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591131/original_334e89145e01b62156c1c23a12f4afeb.jpg?1754420555?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591123/original_da9a4f3b39464a4c3c0831b15c7e753c.jpg?1754420556?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38591136/original_e9704baad051670450c99571960aaa3c.png?1754420556?bc=0",
+  "https://attachments.are.na/38591138/fb00232fbde656ab05397b229c0fac73.mov?1754420564",
+  "https://attachments.are.na/38590872/e4b21f088a28f58c7d706f10970d1231.mov?1754419955",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590871/original_cb1dc1ad1bee3d1031b69e40273445e9.png?1754419947?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590870/original_be5f21483e7b0b7d80455d47747e2402.png?1754419947?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590869/original_571db1ddefa27debd1f36fe517fd6351.png?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590868/original_64736cffb0780a6e5a803ec77ae65649.png?1754419947?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590867/original_39c0f4498e39e47809f3d01ae3139ed0.jpg?1754419947?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590866/original_acc6614b8efbdd2e64e8fe478ca67d33.png?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590865/original_3989b3958d3bc094b50372c82a0c5709.png?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590864/original_fda50541706f03490dec0009799f00f4.jpg?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590863/original_2c9f0ac6d7991ed5014737581e399890.png?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590862/original_4763226b77943ae091e4ef3f8d04bcaa.jpg?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590861/original_b35c0ee9ddee1721be4f39283d476797.jpg?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590860/original_6c704ff913f45ed5db2852fb7a38b977.png?1754419946?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590859/original_8623d23f57bc6bc3f0f1b106cbff190d.jpg?1754419945?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590852/original_48f5d5bed62e0d99ff5d0cf2f752fee1.png?1754419920?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590851/original_5e9c0f6125fb42f136e47e87671d8a16.png?1754419920?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590850/original_0545b741dcf7cbf338496263fe35c609.png?1754419920?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590849/original_8e4438509687e28b6cbc9dfd3bac3fa5.png?1754419920?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590848/original_130ef121eeefe7e4767824433c2d6f01.png?1754419974?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590847/original_c7001d2402ba5dffe28f76c206d95058.png?1754419974?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590846/original_727b5cd9ce9c0025fb3320078ff485ae.png?1754419916?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590845/original_eedde49f7bb4e8187decd4b337cc1d89.png?1754419918?bc=0",
+  "https://attachments.are.na/38590844/e8b9035ec7e49d5546c1c7d7c3ca04f0.mov?1754419918",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590843/original_0fdfed890126c6adaf9235dbb19290ba.png?1754419915?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590842/original_519a98e586fbfd16096587748c35d741.png?1754419915?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590841/original_4eebfd73911036d3164fc118c14a12a7.png?1754419916?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590840/original_6c10a9f315b39d31cea6826ec86b334e.jpg?1754419915?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590839/original_6c1c4ba4d4d042674ce78834a458317f.jpg?1754419915?bc=0",
+  "https://attachments.are.na/38590838/7410172b62655425d83917aae0671473.mov?1754419914",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590837/original_e43fe919dc79852031b006c0cc0db225.jpg?1754419917?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590836/original_7ff09655caa47674a6373eaeef3c32d5.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590835/original_5dcc68d42dadedfe84664d594772515c.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590834/original_80d7ac2147543a921a276341e7ffbadd.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590833/original_841775bb8ce111e6fcc886c014b5af72.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590832/original_4934e7c6af8f98d9caee121c74226c98.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590831/original_7939858ca54dfb06d4432e0dbcda98c7.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590830/original_eda771fdf6b43c543e584177af9fc6c1.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590829/original_ba216cb632a31bdbb4d55281f102125c.jpg?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590828/original_7fc4f465a2eb33c48eedb72e70c878d0.png?1754419914?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590824/original_323b0103109f2326ae5bc311f34c624b.png?1754419976?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590823/original_c67ef6379c1ac5edbf7eccdd3622ebb1.jpg?1754419900?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590822/original_56892e9f580ecdeae14cf43039a5bb64.jpg?1754419898?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590821/original_25c8c8c58e1cdcfec7d60e32e649353d.jpg?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590820/original_112d84e97db346a0bfa3e2121f5afccb.jpg?1754419897?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590819/original_01a72230b6ca44606d4ef147802a8c03.jpg?1754419898?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590818/original_7cd0832d38facf70d1d3cb5b9832dfda.jpg?1754419897?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590817/original_d7d0d99a6a1c98049c3550fccbbdf126.jpg?1754419898?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590816/original_ec88a2a19ea98ed6e3bcfecde8f280ff.jpg?1754419897?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590815/original_173bc815f2383257a0f986c912a32b77.png?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590814/original_484f2cf598268705824292a6530c0d6f.jpg?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590813/original_fb9ca94ee6033f4968a52234b6ab6415.jpg?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590812/original_83ae52046f4ad691caa1b4badf64fbc3.jpg?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590811/original_db78db13e73936b710ba7f7ba73467e2.jpg?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590810/original_c84e3072251dda624b6b9b22e12cc3dc.jpg?1754419896?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590809/original_6237ec901c356e8415337b1b55f47c63.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590808/original_4b26a0c486cdccaa0796af19c59e2068.png?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590807/original_f2ffe7432980f700905f942cfb786b86.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590806/original_d8f4f3475ea4dc0a355bdd902e564c74.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590805/original_cf5ba0f5c3bd7695a7cb089cb8a65b54.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590804/original_36720fddc7f03e116473548d4e716d81.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590803/original_ef24c4949d01bf504f954fa0d2b25b42.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590802/original_dba50103ef2f27ec5c0c4311f2829812.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590801/original_0e45c9095f82d89da812d22000595083.jpg?1754419895?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590800/original_52d5c3d1b534843870047965b7a0b3e5.jpg?1754419895?bc=0",
+  "https://attachments.are.na/38590794/ef28aa7ce9891253b6dc29f9c6556b8f.mov?1754419879",
+  "https://attachments.are.na/38590792/44f27ee838324bc54218556fdbaedd54.mp4?1754419877",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590791/original_2cea5dd43c7d559fef9eeef81967ad69.jpg?1754419877?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590790/original_01c12a40c9e3d54da33f38ed10f7eb2b.jpg?1754419877?bc=0",
+  "https://attachments.are.na/38590789/588505034fe960c416dce927d417349e.mov?1754419877",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590788/original_462480136b52cf5004ffd14de156b5e6.jpg?1754419876?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590787/original_ecd0fedf1842bf399e4d857d2748cef1.jpg?1754419876?bc=0",
+  "https://attachments.are.na/38590785/0557d13c3cb1ece1bc8e37f238e735e4.mov?1754419875",
+  "https://attachments.are.na/38590784/07ad1931983ce9d911e00819cc2e589a.mp4?1754419875",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590783/original_ce44216a94936e51ab2f3e612d55a0bf.jpg?1754419875?bc=0",
+  "https://attachments.are.na/38590781/d1e92290bafba0cf6166ad81be56be39.mov?1754419874",
+  "https://attachments.are.na/38590779/85dad8f89379315679ff60014a454654.mp4?1754419873",
+  "https://attachments.are.na/38590776/5cb4fc61478c32bcebf668873feb5aa9.mp4?1754419872",
+  "https://attachments.are.na/38590777/259b22a1e403e2f23df0917335012aad.mov?1754419872",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590775/original_3d06f09e118226d148deb2c2c5f81a9c.jpg?1754419871?bc=0",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590774/original_a53629a72bb55073d19796d56e28de2e.jpg?1754419870?bc=0",
+  "https://attachments.are.na/38590773/2716ba80690fc4e21ea837a72ee7a112.mp4?1754419870",
+  "https://attachments.are.na/38590771/8ef9ab72ed0f0d79ea592abed576b1e4.mp4?1754419869",
+  "https://attachments.are.na/38590770/5cfda96ee2a17a75c3a602508ee44af3.mp4?1754419869",
+  "https://attachments.are.na/38590769/e7e6b71e7518c8394dcad88d4b14a3bf.mp4?1754419868",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590768/original_887f693604c39d920b4145cb15436d30.jpg?1754419867?bc=0",
+  "https://attachments.are.na/38590767/cdb8029ee65feb36aab8a434f1c7c339.mp4?1754419867",
+  "https://attachments.are.na/38590766/643d97e477f63c2154796d669e81f853.mov?1754419867",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590765/original_9cb07f6b753f33212f604de28d418124.jpg?1754419866?bc=0",
+  "https://attachments.are.na/38590759/ab964a836e5022c874b21c3ce1fe9f41.mp4?1754419841",
+  "https://attachments.are.na/38590758/fc84e789b57abf120f6d2a0d9fb5d7c6.mp4?1754419841",
+  "https://attachments.are.na/38590756/c60c10fe792d2624a9d56baaaf21c618.mp4?1754419839",
+  "https://attachments.are.na/38590755/6ceb3db742dc6a2be17b5cef1a0ef82b.mp4?1754419839",
+  "https://attachments.are.na/38590754/985ca4b49dd30176b40a02fcaf6d0e88.mov?1754419838",
+  "https://attachments.are.na/38590753/42891ce272034442d2966b7aa9642747.mp4?1754419837",
+  "https://attachments.are.na/38590752/b0f5c165806984b081b48d274e26f172.mp4?1754419837",
+  "https://attachments.are.na/38590751/4e98ba21d698d6fa3f0498670c0e611e.mp4?1754419837",
+  "https://attachments.are.na/38590750/15571acab111c0a7f57fcb1aab4574a2.mp4?1754419836",
+  "https://attachments.are.na/38590747/f16dfcdb116cdbdaa741b50ea4e34bde.mp4?1754419835",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590746/original_44905bf89b16a24683ff7cf3a9ccd524.jpg?1754419835?bc=0",
+  "https://attachments.are.na/38590745/c4064a063fde8d86ca1cd689eaca5c26.mov?1754419834",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590744/original_5a24a1404e9d771f2a7970cbbeb5af80.jpg?1754419834?bc=0",
+  "https://attachments.are.na/38590743/77b5eae80bb943c009e51c74446537f3.mov?1754419834",
+  "https://attachments.are.na/38590742/2534103d5623e57e631743d9b1bea56d.mov?1754419834",
+  "https://attachments.are.na/38590741/0cf54e52ae8adcfe61bc3253f1e311cc.mp4?1754419833",
+  "https://attachments.are.na/38590740/f83dd9d5e63d182fa2578ac95a486916.mp4?1754419832",
+  "https://d2w9rnfcy7mm78.cloudfront.net/38590739/original_7df8a797b17ec7268f2806ac14258da0.jpg?1754419832?bc=0",
+  "https://attachments.are.na/38590738/48a442658b60bb44986e87f4694bb061.mov?1754419832",
+  "https://attachments.are.na/38590737/15a7c5bbfe069a1c234e89d1882ed076.mp4?1754419831",
+  "https://attachments.are.na/38590736/51b5956525e8c9675d20a60366e3c980.mov?1754419831",
+  "https://attachments.are.na/38590735/3db49a7dd414229a7066c5e2885f2cf4.mov?1754419831",
+  "https://attachments.are.na/38590734/4bdaaa10b6c61f66bfb1c61d66bae166.mov?1754419831",
+  "https://attachments.are.na/38590733/b5fad9bc05c5e33d3fa59e5f9ca3f8b5.mp4?1754419829",
+  "https://attachments.are.na/38590732/817fc93a17c5dc994666a4247f089348.mp4?1754419828"
+];
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const el=entry.target;if(el.dataset.src){el.src=el.dataset.src;el.removeAttribute('data-src');}observer.unobserve(el);}})},{rootMargin:'200px'});
+    expMedia.forEach(url=>{
+      const block=document.createElement('div');block.className='image-block';
+      let el;
+      if(url.match(/\.(mp4|mov)$/i)){el=document.createElement('video');el.loop=true;el.muted=true;el.autoplay=true;el.playsInline=true;el.dataset.src=url;}
+      else if(url.match(/\.m4a$/i)){el=document.createElement('audio');el.controls=true;el.dataset.src=url;}
+      else{el=document.createElement('img');el.loading="lazy";el.dataset.src=url;}
+      block.appendChild(el);
+      block.x=Math.random()*(window.innerWidth-200);
+      block.y=Math.random()*(window.innerHeight-200);
+      block.style.transform=`translate3d(${block.x}px,${block.y}px,0)`;
+      makeDraggable(block);
+      expContainer.appendChild(block);blocks.push(block);
+      observer.observe(el);
+    });
+
+    function makeDraggable(el){
+      let isDragging=false,lastX,lastY,vx=0,vy=0;
+      const move=(cx,cy)=>{const dx=cx-lastX,dy=cy-lastY;el.x+=dx;el.y+=dy;vx=dx;vy=dy;el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`;lastX=cx;lastY=cy;drawLines();};
+      el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true;lastX=e.clientX;lastY=e.clientY;});
+      window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
+      window.addEventListener('mouseup',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
+      el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;lastX=t.clientX;lastY=t.clientY;});
+      el.addEventListener('touchmove',e=>{if(!isDragging)return;e.preventDefault();const t=e.touches[0];move(t.clientX,t.clientY);},{passive:false});
+      el.addEventListener('touchend',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
+    }
+
+    function drawLines(){
+      svgLines.innerHTML='';
+      const rect=expContainer.getBoundingClientRect();
+      for(let i=0;i<blocks.length;i++){
+        const a=blocks[i],ax=a.x+a.offsetWidth/2-rect.left,ay=a.y+a.offsetHeight/2-rect.top;
+        for(let j=i+1;j<blocks.length;j++){
+          if(Math.random()>0.8){
+            const b=blocks[j],bx=b.x+b.offsetWidth/2-rect.left,by=b.y+b.offsetHeight/2-rect.top;
+            const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+            line.setAttribute('x1',ax);line.setAttribute('y1',ay);line.setAttribute('x2',bx);line.setAttribute('y2',by);
+            svgLines.appendChild(line);
+          }
+        }
+      }
+    }
+    requestAnimationFrame(function animate(){drawLines();requestAnimationFrame(animate)});
+  </script>
+</body>
+</html>
