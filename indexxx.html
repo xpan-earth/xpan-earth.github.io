@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan</title>
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Times New Roman', serif;
+      color: #000;
+      position: relative;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: auto;
+      z-index: 2;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    .link {
+      position: absolute;
+      font-size: 0.85rem;
+      text-transform: lowercase;
+      text-decoration: none;
+      color: black;
+      z-index: 3;
+      transition: opacity 0.2s;
+      transform: translate(-50%, -50%);
+    }
+
+    .link:hover {
+      opacity: 0.6;
+    }
+
+    svg.lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    line {
+      stroke: url(#line-texture);
+      stroke-width: 1.5;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: draw 2s ease-out forwards;
+    }
+
+    @keyframes draw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .logo {
+        width: 65px;
+      }
+
+      .link {
+        font-size: 0.75rem;
+      }
+
+      /* Posiciones corregidas para móvil */
+      a[href="12.e.html"]                    { top: 15%; left: 50%; }
+      a[href="comprar_atlas.2.html"]        { top: 30%; left: 75%; }
+      a[href="https://instagram.com/xpan.earth"]:nth-of-type(1) { top: 65%; left: 75%; }
+      a[href="marco_teorico.index.html"]    { top: 80%; left: 50%; }
+      a[href="mdtc.index.html"]:nth-of-type(2) { top: 65%; left: 25%; }
+      a[href="a.e.i.index.html"]            { top: 30%; left: 25%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 2226.96">
+      <image width="8000" height="9279" transform="scale(.24)" xlink:href="xpan.svg"/>
+    </svg>
+  </div>
+
+
+  <a href="12.e.html" class="link" style="top:10%; left:50%;">12.e</a>
+  <a href="atlas.index.html" class="link" style="top:25%; left:80%;">atlas</a>
+  <a href="arquitectura.index.html" class="link" style="top:75%; left:80%;">sistemas espaciales</a>
+  <a href="marco_teorico.index.html" class="link" style="top:90%; left:50%;">marco teórico</a>
+  <a href="mdtc.index.html" class="link" style="top:75%; left:20%;">mdtc</a>
+  <a href="a.e.i.index.html" class="link" style="top:25%; left:20%;">a.e.i.</a>
+
+  <!-- SVG para líneas -->
+  <svg class="lines">
+    <defs>
+      <pattern id="line-texture" patternUnits="userSpaceOnUse" width="4" height="4">
+        <path d="M0,0 L4,4 M4,0 L0,4" stroke="black" stroke-width="0.2" />
+      </pattern>
+    </defs>
+  </svg>
+
+<script>
+  const linesContainer = document.querySelector("svg.lines");
+
+  function drawLines() {
+    linesContainer.innerHTML = `
+      <defs>
+        <pattern id="line-texture" patternUnits="userSpaceOnUse" width="4" height="4">
+          <path d="M0,0 L4,4 M4,0 L0,4" stroke="black" stroke-width="0.2" />
+        </pattern>
+      </defs>
+    `;
+
+    const center = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    };
+
+    const links = Array.from(document.querySelectorAll(".link"));
+
+    links.forEach(link => {
+      const rect = link.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", center.x);
+      line.setAttribute("y1", center.y);
+      line.setAttribute("x2", x);
+      line.setAttribute("y2", y);
+      linesContainer.appendChild(line);
+    });
+  }
+
+    window.addEventListener("load", () => {
+    requestAnimationFrame(() => {
+      drawLines();
+      setTimeout(drawLines, 50); // doble ejecución por seguridad en móviles
+    });
+  });
+
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      requestAnimationFrame(drawLines);
+    }, 150);
+  });
+</script>
+
+</body>
+</html>
+
