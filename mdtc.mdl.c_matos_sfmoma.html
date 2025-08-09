@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>mdl.c — xpan × c. h. matos — sfmoma — mdtc</title>
+  <!-- Performance: preconnect to CDNs -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <style>
+    :root{
+      --fg:#000; --bg:#fff; --muted:0.6;
+      --card:rgba(255,255,255,.85); --line:rgba(0,0,0,.08);
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+      --car-h: clamp(180px, 32vh, 340px);
+      --radius: 10px;
+    }
+    html,body{ margin:0; padding:0; background:transparent; color:var(--fg); font-family:"Times New Roman", serif; }
+    a{ color:inherit; }
+    body{ overflow-x:hidden; }
+
+    /* ===== Header / Lang ===== */
+    header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+    header img{ width:50px; height:auto; display:block; }
+    .language-selector{ position:fixed; top:1rem; right:1rem; z-index:30; font-size:.9rem; text-transform:lowercase; }
+    .language-selector button{ background:none; border:none; margin-left:.5rem; cursor:pointer; color:var(--fg); opacity:.5; transition:.2s; }
+    .language-selector button.active, .language-selector button:hover{ opacity:1; text-decoration:underline; }
+
+    /* ===== Background video (beam) ===== */
+    .bg-video{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+    .bg-video video{ width:100%; height:100%; object-fit:cover; opacity:1; filter:contrast(120%) saturate(210%); }
+
+    /* ===== Mini-player ===== */
+    .mini-player{ position:fixed; right:1rem; bottom:1rem; z-index:40; backdrop-filter:blur(6px); background:rgba(255,255,255,.6); border:1px solid var(--line); border-radius:999px; padding:.35rem .6rem; display:flex; align-items:center; gap:.6rem; box-shadow:var(--shadow); }
+    .mini-btn{ width:34px; height:34px; border-radius:999px; border:1px solid #000; background:transparent; display:grid; place-items:center; cursor:pointer; }
+    .mini-btn:active{ transform:scale(.98); }
+    .mini-icon{ width:9px; height:9px; display:block; }
+    .mini-label{ font-size:.85rem; opacity:.7; text-transform:lowercase; }
+    .mini-sep{ width:1px; height:18px; background:var(--line); }
+    .mini-toggle{ font-size:.8rem; border:none; background:transparent; cursor:pointer; opacity:.7; }
+    .mini-toggle.active{ opacity:1; text-decoration:underline; }
+
+    /* ===== Layout ===== */
+    .container{ max-width:1100px; margin:7rem auto 6rem; padding:0 3rem; }
+    .entry{ content-visibility:auto; contain-intrinsic-size: 1px 800px; }
+    h1{ font-size:1.5rem; font-weight:700; margin:.25rem 0 .5rem; text-transform:lowercase; }
+    .meta{ font-size:.95rem; opacity:.7; font-style:italic; margin-bottom:1.25rem; }
+    .description{ font-size:1rem; line-height:1.6; max-width:820px; margin-bottom:2rem; }
+
+    /* ===== Hero ===== */
+    .hero{ margin:2rem 0; }
+    .hero figure{ margin:0; }
+    .hero img{ max-height:92vh; width:auto; max-width:100%; height:auto; border-radius:8px; object-fit:contain; box-shadow:var(--shadow); margin:0 auto; display:block; }
+
+    /* ===== Carousel (triptych) ===== */
+    .carousel{ display:flex; gap:.5rem; overflow-x:auto; padding:.25rem 0 1rem; margin:1rem 0 2rem; scroll-snap-type:x mandatory; }
+    .carousel img{ flex-shrink:0; height:var(--car-h); width:auto; border-radius:6px; object-fit:cover; box-shadow:var(--shadow); scroll-snap-align:center; }
+
+    /* ===== Tech spec ===== */
+    .techspec{ border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.25rem; background:var(--card); max-width:820px; margin:1rem 0 2.25rem; box-shadow:var(--shadow); }
+    .techspec h2{ font-size:1.05rem; text-transform:lowercase; margin:0 0 .5rem; }
+    .techspec ul{ margin:.25rem 0 0 1.1rem; }
+    .techspec li{ margin:.15rem 0; }
+
+    /* ===== Galleries (CSS grid, solid) ===== */
+    .gallery{ margin:2.5rem 0; }
+    .gallery h2{ font-size:1.05rem; text-transform:lowercase; margin:0 0 .75rem; opacity:.9; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:.75rem; }
+    .grid .item{ position:relative; cursor:zoom-in; }
+    .grid .item img{ width:100%; height:auto; border-radius:8px; display:block; box-shadow:var(--shadow); background:#f6f6f6; }
+    .cap{ position:absolute; left:.5rem; bottom:.5rem; background:rgba(255,255,255,.75); padding:.15rem .35rem; border-radius:4px; font-size:.8rem; opacity:.85; }
+
+    @media (max-width: 640px){ .container{ padding:0 1.25rem; margin-top:6rem; } }
+
+    /* ===== Lightbox ===== */
+    .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:50; }
+    .lightbox.open{ display:flex; }
+    .lightbox img{ max-width:92vw; max-height:90vh; border-radius:8px; }
+    .lb-close, .lb-prev, .lb-next{ position:fixed; top:50%; transform:translateY(-50%); border:none; background:rgba(255,255,255,.8); padding:.5rem .7rem; border-radius:999px; cursor:pointer; z-index:60; }
+    .lb-close{ top:1.25rem; right:1rem; transform:none; }
+    .lb-prev{ left:1rem; }
+    .lb-next{ right:1rem; }
+  </style>
+</head>
+<body>
+  <!-- Fondo: beam azul (lazy) -->
+  <div class="bg-video entry" aria-hidden="true">
+    <video id="bgvid" autoplay muted loop playsinline preload="metadata" webkit-playsinline>
+      <source data-src="https://attachments.are.na/38646554/ae68710eb2a2fed493586842a9804a7e.mp4?1754605242" type="video/mp4"/>
+    </video>
+  </div>
+
+  <!-- Header + selector de idioma -->
+  <header>
+    <a href="https://xpan.earth" rel="noopener" target="_blank">
+      <img src="xpan.svg" alt="xpan logo" fetchpriority="high"/>
+    </a>
+  </header>
+  <div class="language-selector" role="navigation" aria-label="selector de idioma">
+    <button class="active" data-lang="es">es</button>
+    <button data-lang="en">en</button>
+    <button data-lang="fr">fr</button>
+    <button data-lang="jp">jp</button>
+  </div>
+
+  <!-- Mini reproductor sonoro flotante -->
+  <div aria-label="reproductor sonoro breve" class="mini-player" role="region">
+    <button aria-label="play/pause" class="mini-btn" id="playToggle">
+      <svg class="mini-icon" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="#000" stroke="#000"/></svg>
+    </button>
+    <span class="mini-label">motivo sonoro — xcv2</span>
+    <span class="mini-sep"></span>
+    <button id="reverbToggle" class="mini-toggle" aria-pressed="false">reverb</button>
+    <audio id="motif" preload="none" crossorigin="anonymous">
+      <source data-src="https://attachments.are.na/38646553/d3816ba77916894a7b94edd622d0b705.wav?1754605242" type="audio/wav"/>
+    </audio>
+  </div>
+
+  <main class="container">
+    <!-- ES -->
+    <section class="lang lang-es entry intro-block">
+      <h1>mdl.c — xpan × c. h. matos</h1>
+      <div class="meta">2024 — san francisco, california — colección permanente del sfmoma</div>
+      <div class="description">
+        En 2024, la bocina <strong>mdl.c — xpan × c. h. matos</strong>, desarrollada en colaboración con el artista y diseñador C. H. Matos como parte de la serie <em>XCV2</em> (2023), fue adquirida por el <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> para su colección permanente. Esta incorporación consolida a xpan dentro de uno de los museos de arte contemporáneo más relevantes a nivel internacional.<br/><br/>
+        La pieza se presentó en la exposición <em>Art of Noise</em> (4 de mayo – 18 de agosto de 2024), curada por Joseph Becker, una muestra multisensorial dedicada a explorar cómo el diseño ha transformado la experiencia musical en los últimos cien años.
+      </div>
+    </section>
+    <section class="lang lang-en entry intro-block" style="display:none;">
+      <h1>mdl.c — xpan × c. h. matos</h1>
+      <div class="meta">2024 — San Francisco, California — SFMOMA permanent collection</div>
+      <div class="description">
+        In 2024, the <strong>mdl.c — xpan × c. h. matos</strong> speaker, developed in collaboration with artist and designer C. H. Matos as part of the <em>XCV2</em> series (2023), was acquired by the <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> for its permanent collection. This acquisition marks xpan’s inclusion in one of the world’s leading contemporary art institutions.<br/><br/>
+        The piece was featured in <em>Art of Noise</em> (May 4 – August 18, 2024), curated by Joseph Becker, a multisensory exhibition exploring how design has shaped the way we experience music over the past century.
+      </div>
+    </section>
+    <section class="lang lang-fr entry intro-block" style="display:none;">
+      <h1>mdl.c — xpan × c. h. matos</h1>
+      <div class="meta">2024 — San Francisco, Californie — collection permanente du SFMOMA</div>
+      <div class="description">
+        En 2024, l’enceinte <strong>mdl.c — xpan × c. h. matos</strong>, développée en collaboration avec l’artiste et designer C. H. Matos dans le cadre de la série <em>XCV2</em> (2023), a été acquise par le <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> pour sa collection permanente. Cette acquisition inscrit xpan au sein de l’un des musées d’art contemporain les plus influents au monde.<br/><br/>
+        La pièce a été présentée dans l’exposition <em>Art of Noise</em> (4 mai – 18 août 2024), commissariée par Joseph Becker, une expérience multisensorielle explorant comment le design a transformé notre manière de vivre la musique depuis un siècle.
+      </div>
+    </section>
+    <section class="lang lang-jp entry intro-block" style="display:none;">
+      <h1>mdl.c — xpan × c. h. matos</h1>
+      <div class="meta">2024年 — サンフランシスコ（カリフォルニア）— SFMOMA 永久コレクション</div>
+      <div class="description">
+        2024年、<strong>mdl.c — xpan × c. h. matos</strong> スピーカーは、アーティスト兼デザイナーの C. H. Matos と協働し、<em>XCV2</em> シリーズ（2023年）の一環として制作された作品であり、<strong>サンフランシスコ近代美術館（SFMOMA）</strong> の永久コレクションに収蔵されました。この収蔵は、世界有数の現代美術館における xpan の位置づけを確固たるものにします。<br/><br/>
+        本作は、ジョセフ・ベッカーのキュレーションによる展覧会 <em>Art of Noise</em>（2024年5月4日〜8月18日）で展示され、過去100年間にわたる音楽体験をデザインがどのように変革してきたかを探る多感覚的な構成となっています。
+      </div>
+    </section>
+
+    <!-- Hero principal -->
+    <section class="hero entry">
+      <figure>
+        <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671201/original_1a7de3de9e18b0c19cb156cc78d99334.jpg?1754696653?bc=0" alt="mdl.c — xpan × c. h. matos — main"/>
+      </figure>
+    </section>
+
+    <!-- Tríptico de la pieza -->
+    <div class="carousel entry" aria-label="tríptico de la pieza" data-autoscroll>
+      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646397/original_f39777de1906936885d806c60cd8a348.jpg?1754604545?bc=0" alt="vista 1"/>
+      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646399/original_3535dfe3c69dc41415d145b8c7ef1589.jpg?1754604546?bc=0" alt="vista 2"/>
+      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646395/original_a532380ca32e09f2e14d7cc6bc093b83.jpg?1754604543?bc=0" alt="vista 3"/>
+    </div>
+
+    <!-- Enlace a la expo de SFMOMA -->
+    <div class="linkout entry">
+      <span class="lang lang-es">exhibición:</span>
+      <span class="lang lang-en" style="display:none;">exhibition:</span>
+      <span class="lang lang-fr" style="display:none;">exposition :</span>
+      <span class="lang lang-jp" style="display:none;">展覧会：</span>
+      <em>Art of Noise</em> — SFMOMA (2024-05-04 – 2024-08-18) ·
+      <a href="https://www.sfmoma.org/exhibition/art-of-noise/" target="_blank" rel="noopener">sfmoma.org/exhibition/art-of-noise</a>
+    </div>
+
+    <!-- Ficha técnica -->
+    <section class="techspec entry">
+      <h2>
+        <span class="lang lang-es">ficha técnica</span>
+        <span class="lang lang-en" style="display:none;">technical specs</span>
+        <span class="lang lang-fr" style="display:none;">fiche technique</span>
+        <span class="lang lang-jp" style="display:none;">仕様</span>
+      </h2>
+      <ul>
+        <li><span class="lang lang-es">tipo: bocina pasiva</span><span class="lang lang-en" style="display:none;">type: passive loudspeaker</span><span class="lang lang-fr" style="display:none;">type : enceinte passive</span><span class="lang lang-jp" style="display:none;">タイプ：パッシブ・スピーカー</span></li>
+        <li>65Hz–20kHz · 4Ω · 96dB · <span class="lang lang-es">100W máx</span><span class="lang lang-en" style="display:none;">100W max</span><span class="lang lang-fr" style="display:none;">100W max</span><span class="lang lang-jp" style="display:none;">最大100W</span></li>
+        <li><span class="lang lang-es">desarrollada por xpan en colaboración con c. h. matos (xcv2, 2023)</span><span class="lang lang-en" style="display:none;">developed by xpan in collaboration with c. h. matos (xcv2, 2023)</span><span class="lang lang-fr" style="display:none;">développée par xpan en collaboration avec c. h. matos (xcv2, 2023)</span><span class="lang lang-jp" style="display:none;">xpan と c. h. matos による協働制作（xcv2, 2023）</span></li>
+      </ul>
+    </section>
+
+    <!-- Galería 1: principales (sin duplicar el tríptico del carrusel) + flyer -->
+    <section class="gallery entry" id="gallery-tier-1">
+      <div class="grid" data-gallery="tier1">
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671199/original_f07b82ae7636bdbf56656e7134fc26fe.jpg?1754696644?bc=0" alt="flyer Art of Noise"></div>
+      </div>
+    </section>
+
+    <!-- Galería 2: snapshots celular -->
+    <section class="gallery entry" id="gallery-tier-2">
+      <div class="grid" data-gallery="tier2">
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671196/original_e264922727e948a612b00e128edb3008.jpg?1754696634?bc=0" alt="snap 1"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671197/original_d966226f971d07c81b750da30f3ee2a1.jpg?1754696635?bc=0" alt="snap 2"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671198/original_7a51676c79fbab129056ed00ead5188d.jpg?1754696638?bc=0" alt="snap 3"></div>
+      </div>
+    </section>
+
+    <!-- Galería 3: proceso -->
+    <section class="gallery entry" id="gallery-tier-3">
+      <div class="grid" data-gallery="tier3">
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671195/original_fccb9db2f501eeec657b05a620017b8b.jpg?1754696633?bc=0" alt="proc 1"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671192/original_6e1911dae7eae513bd512c375d7d9ddd.jpg?1754696623?bc=0" alt="proc 2"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671191/original_f7b7f061aa7d7d4b50bcffa9793813a3.jpg?1754696623?bc=0" alt="proc 3"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671190/original_47ca48bd67dc832060db250ceb10e988.jpg?1754696623?bc=0" alt="proc 4"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671189/original_e159801cbf9e3544f25178374aed0086.jpg?1754696623?bc=0" alt="proc 5"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671188/original_76a4fa6e2a4eb38f9f42a6188e220e52.jpg?1754696623?bc=0" alt="proc 6"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671187/original_8b6c7734802a9ae1a56516335604deae.jpg?1754696623?bc=0" alt="proc 7"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671186/original_6cda644d284066dd925f4c8fbb66420e.jpg?1754696622?bc=0" alt="proc 8"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="visor de imagen">
+    <button class="lb-close" id="lbClose" aria-label="cerrar">✕</button>
+    <button class="lb-prev" id="lbPrev" aria-label="anterior">‹</button>
+    <img id="lbImg" alt="preview"/>
+    <button class="lb-next" id="lbNext" aria-label="siguiente">›</button>
+  </div>
+
+  <script>
+    // ===== Utilities =====
+    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+    // ===== Multiidioma =====
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      $$('.lang').forEach(el=>{ el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none'; });
+      $$('.language-selector button').forEach(btn=>{ btn.classList.toggle('active', btn.dataset.lang===lang); btn.setAttribute('aria-pressed', btn.dataset.lang===lang); });
+    }
+    document.querySelector('.language-selector').addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-lang]'); if(!btn) return; setLang(btn.dataset.lang);
+    });
+    setLang(localStorage.getItem('lang') || 'es');
+
+    // ===== Lazy media (images & sources) =====
+    const tiny = 'data:image/gif;base64,R0lGODlhAQABAAAAACw='; // 1x1
+    $$('img[data-src]').forEach(img=>{ img.src = tiny; });
+    const io = new IntersectionObserver((entries, obs)=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting) return;
+        const el = e.target;
+        if(el.tagName === 'IMG' && el.dataset.src){ el.src = el.dataset.src; el.removeAttribute('data-src'); }
+        if(el.tagName === 'SOURCE' && el.dataset.src){ el.src = el.dataset.src; el.removeAttribute('data-src'); const p = el.parentElement; if(p && p.tagName==='VIDEO'){ p.load(); } }
+        obs.unobserve(el);
+      });
+    }, { rootMargin: '200px 0px' });
+    $$('img[data-src], source[data-src]').forEach(el=> io.observe(el));
+
+    // ===== Mini player + WebAudio reverb =====
+    const audioEl = document.getElementById('motif');
+    const aSrc = audioEl.querySelector('source[data-src]');
+    const toggle = document.getElementById('playToggle');
+    const iconPath = document.getElementById('iconPath');
+    const revBtn = document.getElementById('reverbToggle');
+    let playing = false;
+
+    let ctx, srcNode, gainDry, gainWet, convolver;
+
+    function makeImpulse(ctx, duration=2.8, decay=3.5){
+      const rate = ctx.sampleRate; const length = rate * duration; const buf = ctx.createBuffer(2, length, rate);
+      for(let c=0;c<2;c++){ const ch = buf.getChannelData(c); for(let i=0;i<length;i++){ ch[i] = (Math.random()*2-1) * Math.pow(1 - i/length, decay); } }
+      return buf;
+    }
+
+    async function initAudio(){
+      if(ctx) return;
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      srcNode = ctx.createMediaElementSource(audioEl);
+      gainDry = ctx.createGain(); gainWet = ctx.createGain();
+      convolver = ctx.createConvolver(); convolver.buffer = makeImpulse(ctx);
+      gainDry.gain.value = 0.8; gainWet.gain.value = 0.0; // default off // reverb off by default
+      srcNode.connect(gainDry).connect(ctx.destination);
+      srcNode.connect(convolver).connect(gainWet).connect(ctx.destination);
+    }
+
+    function ensureAudioSrc(){ if(aSrc && aSrc.dataset.src && !aSrc._set){ aSrc.src = aSrc.dataset.src; aSrc._set=true; audioEl.load(); } }
+    function setIcon(){ iconPath.setAttribute('d', playing ? 'M8 5 H11 V19 H8 Z M13 5 H16 V19 H13 Z' : 'M8 5 L19 12 L8 19 Z'); }
+
+    toggle.addEventListener('click', async ()=>{
+      ensureAudioSrc(); await initAudio();
+      try{ if(!playing){ await audioEl.play(); playing = true; } else { audioEl.pause(); playing = false; } setIcon(); }catch(e){ console.warn('autoplay blocked', e); }
+    });
+
+    let reverbOn = false;
+    revBtn.addEventListener('click', async ()=>{
+      await initAudio();
+      reverbOn = !reverbOn;
+      if(reverbOn){
+        gainWet.gain.value = 0.9; // exagerado para que se note
+        gainDry.gain.value = 0.3;
+      } else {
+        gainWet.gain.value = 0.0;
+        gainDry.gain.value = 0.8;
+      }
+      revBtn.classList.toggle('active', reverbOn);
+      revBtn.setAttribute('aria-pressed', String(reverbOn));
+    }); 
+
+    // defaults
+    audioEl.volume = 0.6; audioEl.loop = true;
+
+    // ===== Video lazy play/pause & source swap =====
+    const v = document.getElementById('bgvid');
+    const vsrc = v.querySelector('source[data-src]');
+    function enableInline(v){ v.muted = true; v.setAttribute('muted',''); v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); }
+    enableInline(v);
+    const vio = new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{
+        if(!vsrc) return;
+        if(en.isIntersecting){ if(vsrc.dataset.src){ vsrc.src=vsrc.dataset.src; vsrc.removeAttribute('data-src'); v.load(); } v.play().catch(()=>{}); }
+        else { v.pause(); }
+      });
+    }, { threshold: 0.1 });
+    vio.observe(v);
+
+    // ===== Pause carousel autoscroll when offscreen (if enabled) =====
+    const carousels = $$('.carousel[data-autoscroll]');
+    const rafState = new Map();
+    function autoscroll(el){
+      const s = rafState.get(el); if(!s || !s.running) return;
+      el.scrollLeft += 0.4; // gentle
+      s.raf = requestAnimationFrame(()=>autoscroll(el));
+    }
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!prefersReduced){
+      const cio = new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{
+          const el = en.target; let s = rafState.get(el) || { running:false, raf:null };
+          if(en.isIntersecting){ if(!s.running){ s.running=true; rafState.set(el,s); s.raf=requestAnimationFrame(()=>autoscroll(el)); } }
+          else { s.running=false; if(s.raf) cancelAnimationFrame(s.raf); rafState.set(el,s); }
+        });
+      }, { threshold: 0.2 });
+      carousels.forEach(el=> cio.observe(el));
+    }
+
+    // ===== Lightbox minimal =====
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+    const lbPrev = document.getElementById('lbPrev');
+    const lbNext = document.getElementById('lbNext');
+
+    const galleryImgs = $$('.grid .item img');
+    galleryImgs.forEach(img=> io.observe(img)); // ensure lazy
+
+    let idx = -1;
+    function openLB(i){ idx = i; lbImg.src = galleryImgs[idx].src || galleryImgs[idx].dataset.src; lb.classList.add('open'); }
+    function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
+    function prev(){ if(idx>0){ openLB(idx-1); } }
+    function next(){ if(idx<galleryImgs.length-1){ openLB(idx+1); } }
+
+    galleryImgs.forEach((im,i)=> im.addEventListener('click', ()=> openLB(i)) );
+    lbClose.addEventListener('click', closeLB);
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
+    lbPrev.addEventListener('click', prev);
+    lbNext.addEventListener('click', next);
+    window.addEventListener('keydown', (e)=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') closeLB();
+      if(e.key==='ArrowLeft') prev();
+      if(e.key==='ArrowRight') next();
+    });
+
+    // Lower motif volume when any video plays
+    $$('video').forEach(vv=>{
+      vv.addEventListener('play', ()=>{ audioEl.volume = 0.25; });
+      vv.addEventListener('pause', ()=>{ audioEl.volume = 0.6; });
+    });
+  </script>
+</body>
+</html>
