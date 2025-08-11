@@ -379,5 +379,67 @@
       vv.addEventListener('pause', ()=>{ audioEl.volume = 0.6; });
     });
   </script>
+<script>
+(function iOSInlineAutoplayFix(){
+  // all variables live inside this IIFE to avoid re-declaration conflicts
+  const bgv = document.getElementById('bgvid');
+  const bgvSrc = bgv ? bgv.querySelector('source[data-src]') : null;
+
+  function ensureInlineAutoplay(vid){
+    if(!vid) return;
+    vid.muted = true; vid.setAttribute('muted','');
+    vid.playsInline = true; vid.setAttribute('playsinline',''); vid.setAttribute('webkit-playsinline','');
+    vid.autoplay = true; vid.setAttribute('autoplay','');
+    vid.loop = true; vid.setAttribute('loop','');
+  }
+
+  function ensureVideoSrc(){
+    if (bgv && bgvSrc && bgvSrc.dataset.src) {
+      bgvSrc.src = bgvSrc.dataset.src;
+      bgvSrc.removeAttribute('data-src');
+      bgv.load();
+    }
+  }
+
+  function attemptPlay(){
+    if(!bgv) return Promise.resolve();
+    return bgv.play().catch(()=>{});
+  }
+
+  function wireAutoplayRetries(){
+    if(!bgv) return;
+    bgv.addEventListener('loadeddata', attemptPlay, { once:true });
+
+    const onceEvents = ['pageshow','visibilitychange','focus'];
+    onceEvents.forEach(ev => window.addEventListener(ev, attemptPlay, { once:true }));
+
+    const gesture = () => attemptPlay();
+    ['touchstart','pointerdown','mousedown','keydown','scroll','mousemove']
+      .forEach(ev => window.addEventListener(ev, gesture, { once:true, passive:true }));
+
+    const t0 = Date.now();
+    const tick = () => {
+      if (!bgv || !bgv.paused || (Date.now()-t0)>3000) return;
+      attemptPlay().finally(()=> setTimeout(tick, 400));
+    };
+    tick();
+  }
+
+  if (typeof IntersectionObserver !== 'undefined'){
+    const vio = new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{
+        if (!bgv) return;
+        if (!en.isIntersecting) { bgv.pause(); return; }
+        ensureVideoSrc(); attemptPlay();
+      });
+    }, { threshold: 0.1 });
+    if (bgv) vio.observe(bgv);
+  }
+
+  ensureInlineAutoplay(bgv);
+  ensureVideoSrc();
+  wireAutoplayRetries();
+})();
+</script>
 </body>
 </html>
