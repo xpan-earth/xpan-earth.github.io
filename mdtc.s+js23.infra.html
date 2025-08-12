@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>s+js23 — infra — xpan — mdtc</title>
+<!-- Performance: preconnect to CDNs -->
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<style>
+    :root{
+      --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+      --radius:14px; --gap:.8rem; --gap-lg:1rem;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --tile-max-h:72vh;
+      --aei-block:140px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:auto; }
+    body{ overflow-x:hidden; }
+
+    header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+    header img{ width:50px; height:auto; display:block; }
+
+    .language-selector{ position:fixed; top:1rem; right:1rem; z-index:35; font-size:.9rem; text-transform:lowercase; letter-spacing:.02em; }
+    .language-selector button{ background:none; border:none; margin-left:.6rem; cursor:pointer; color:#000; opacity:.55; transition:opacity .2s var(--ease), text-decoration-color .2s var(--ease); text-decoration:underline transparent; text-underline-offset:3px; }
+    .language-selector button.active, .language-selector button:hover{ opacity:.9; text-decoration-color:#000; }
+
+    main{ max-width:1440px; margin:72px auto 5rem; padding:0 1.25rem; }
+
+    /* encabezado */
+    .lang h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; letter-spacing:.01em; }
+    .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+    .description{ font-size:1rem; line-height:1.65; max-width:980px; margin-bottom:2.2rem; }
+    .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+    .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+    /* tarjetas */
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+    .card.ready{ opacity:1; transform:none; }
+    .frame{ position:relative; background:#fff; }
+    .frame::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); max-height:var(--tile-max-h); }
+    .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    @media (hover:hover){
+      .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+      .card:active{ transform:translateY(1px); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .card{ transition:none; }
+      .card:hover .frame > *{ transform:none !important; }
+    }
+
+    /* grids */
+    .grid{ display:grid; gap:var(--gap); }
+    .grid.destacados{ grid-template-columns: repeat(3, 1fr); gap:var(--gap-lg); }
+    .grid.uniform-3{ grid-template-columns: repeat(3, 1fr); }
+    @media (max-width:1200px){ .grid.destacados{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width:640px){ .grid.destacados{ grid-template-columns: 1fr; } }
+
+    /* retículas pegadas */
+    .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .tight-grid{ display:grid; gap:0; }
+    .tight-grid.cols-6{ grid-template-columns: repeat(6, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(4, 1fr); }
+    @media (max-width:1100px){
+      .tight-grid.cols-6{ grid-template-columns: repeat(5, 1fr); }
+      .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); }
+      .tight-grid.cols-4{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width:640px){
+      .tight-grid.cols-6{ grid-template-columns: repeat(3, 1fr); }
+      .tight-grid.cols-5{ grid-template-columns: repeat(3, 1fr); }
+      .tight-grid.cols-4{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .tight-item{ position:relative; background:#fff; }
+    .tight-item .media-box{ position:relative; }
+    .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+    .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    .section-controls{ display:flex; justify-content:flex-end; margin-top:.6rem; }
+    .btn{ background:#fff; border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; font-size:.9rem; cursor:pointer; }
+    .btn[hidden]{ display:none; }
+
+    /* lightbox */
+    .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; z-index:50; backdrop-filter:saturate(120%) blur(2px); }
+    .lightbox.open{ display:flex; }
+    .lightbox figure{ margin:0; max-width:92vw; max-height:92vh; }
+    .lightbox img, .lightbox video{ width:100%; height:100%; object-fit:contain; background:#000; }
+    .lb-close{ position:fixed; top:1rem; right:1rem; background:#fff; border:1px solid var(--line); border-radius:999px; padding:.45rem .65rem; cursor:pointer; }
+
+    /* a.e.i embebido */
+    .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; }
+    .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .aei-block{ width:var(--aei-block); height:var(--aei-block); position:absolute; opacity:.72; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
+    .aei-block:active{ cursor:grabbing; }
+    .aei-block:hover{ opacity:.9; z-index:5; }
+    .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+    .aei-hint{ position:absolute; inset:auto 1rem 1rem auto; font-size:.8rem; opacity:.35; user-select:none; }
+
+    [data-lazy-section] { content-visibility:auto; contain-intrinsic-size: 1px 1000px; }
+  
+/* === retículas y destacados (xpan tune) === */
+/* destacados: video rellena contenedor manteniendo proporción real */
+.grid.destacados .frame{ background:#000; border-radius:var(--radius); overflow:hidden; }
+.grid.destacados .frame > video{ width:100%; height:100%; object-fit:contain; display:block; }
+/* retículas pegadas: 8 (vertical) y 22 (vertical) en 9:16 exacto */
+[data-section="vertical8"] .media-box::before,
+[data-section="videos22"] .media-box::before{ aspect-ratio: 9/16; }
+[data-section="vertical8"] .media-box > video,
+[data-section="videos22"] .media-box > video{ width:100%; height:100%; object-fit:contain; background:#000; }
+/* retícula 15 imágenes: 9:16 uniforme y limpio (sin barras blancas) */
+[data-section="images15"] .media-box::before{ aspect-ratio: 9/16; }
+[data-section="images15"] .media-box > img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* sin espacios en retículas */
+.tight-grid{ gap:0 !important; }
+/* quitar hint a.e.i */
+.aei-hint{ display:none !important; }
+
+/* === destacados desktop layout === */
+@media (min-width: 1024px){
+  .grid.destacados{
+    grid-template-columns: 1fr 1.15fr 1fr !important;
+    align-items: center; /* centra verticalmente el contenido dentro de cada celda */
+  }
+  .grid.destacados .card{ height: 100%; }
+}
+/* asegurar que el frame toma exactamente la proporción del video */
+.grid.destacados .frame::before{ content:""; display:block; aspect-ratio: var(--ar, 16/9); }
+.grid.destacados .frame > video{ width:100%; height:100%; object-fit:contain; display:block; background:#000; }
+/* margen del main para que el logo no se encime en texto */
+main{ margin-top: 118px !important; }
+
+/* === Fix destacados: evitar "caja más grande que video" y centrar === */
+@media (min-width: 1024px){
+  .grid.destacados{
+    grid-template-columns: 1fr 1.15fr 1fr !important;
+    align-items: center !important;
+  }
+  .grid.destacados .card{
+    height: auto !important;
+    align-self: center !important;
+  }
+}
+/* margen superior consistente para que el logo no tape texto */
+main{ margin-top: 124px !important; }
+
+/* === Fix: sin barras negras en destacados === */
+.grid.destacados .frame{ background:transparent !important; }
+.grid.destacados .frame > video{ background:transparent !important; }
+
+/* Opcional: bordes y sombra siguen */
+</style>
+<link as="video" href="https://attachments.are.na/38723815/4ec7809024ffe39984bb63e36587c098.mov?1754952685" rel="preload"/></head>
+<body>
+<header>
+<a aria-label="xpan" href="/">
+<img alt="xpan" fetchpriority="high" src="xpan.svg"/>
+</a>
+</header>
+<div aria-label="selector de idioma" class="language-selector" role="navigation">
+<button aria-pressed="true" class="active" data-lang="es">es</button>
+<button aria-pressed="false" data-lang="en">en</button>
+<button aria-pressed="false" data-lang="fr">fr</button>
+<button aria-pressed="false" data-lang="jp">jp</button>
+</div>
+<main>
+<!-- ES -->
+<section class="lang lang-es">
+<h1>s+js23 — infra</h1>
+<div class="meta">7—19 febrero 2023 — ciudad de méxico (proyectos públicos, córdoba 87)</div>
+<div class="description">
+        s+js23 (infra) activó una casa completa como cuerpo resonante. el dispositivo trabajó con presión sonora controlada, cálculo y análisis de distribución y fase para convertir la arquitectura en instrumento resonante.<br/><br/>
+        el sistema desplegó un arreglo 0.10ch: diez subwoofers sub.t de 15" de xpan distribuidos por habitaciones y circulaciones. cada módulo se calibró para excitar la frecuencia estacionaria dominante de su cuarto, llevando a vibración extrema muros, duela, vitrales, ventanales, cancelería, molduras y ornamentos. la experiencia fue entrar en una masa de sonido: intensa, envolvente e invisible.<br/><br/>
+        los subwoofers se apoyaron en piso sobre un tapete circular negro de 3 m de diámetro. sobre cada uno, en paralelo al techo, una retícula de cable de acero de la que colgaba un cubo translúcido de lámina plástica con iluminación interior. la membrana respondió al aire y a la presión acústica generando patrones sutiles: el desplazamiento visible fue mínimo frente a la fuerza física percibida en el cuerpo. el efecto en sala fue marcadamente intenso.<br/><br/>
+        la operación se centralizó en un nodo de control con diez amplificadores xpan.g.sub (1200 w, 120 dB de sensibilidad), coordinando distribución, niveles y fase en tiempo real.<br/><br/>
+        infra activó por primera vez la casa de margarita quijano —antigua residencia de la escritora e investigadora feminista en córdoba 87, roma norte, ciudad de méxico, rescatada por proyectos públicos. margarita quijano —maestra e investigadora— hizo de esta casa un cruce para intelectuales y conversaciones de época. infra reabrió ese campo desde la práctica de xpan.
+      </div>
+</section>
+<!-- EN -->
+<section class="lang lang-en" style="display:none;">
+<h1>s+js23 — infra</h1>
+<div class="meta">7—19 february 2023 — mexico city (proyectos públicos, córdoba 87)</div>
+<div class="description">
+        s+js23 (infra) activated an entire house as a resonant body. the device operated with controlled sound pressure, distribution calculation, and phase analysis to transform the architecture into a resonant instrument.<br/><br/>
+        the system deployed a 0.10ch array: ten xpan sub.t 15" subwoofers distributed across rooms and circulation. each module was calibrated to excite the dominant standing frequency of its room, driving walls, wooden floors, stained glass, windows, frames, moldings, and ornaments into extreme vibration. the experience was to enter a mass of sound: intense, enveloping, and invisible.<br/><br/>
+        the subwoofers rested on a 3 m-diameter black circular mat. above each one, parallel to the ceiling, a steel-cable grid suspended a translucent plastic-sheet cube with internal lighting. the membrane responded to air and acoustic pressure, generating subtle patterns: visible displacement was minimal compared to the physical force perceived in the body. the room effect was markedly intense.<br/><br/>
+        operation was centralized at a control node with ten xpan.g.sub amplifiers (1200 w, 120 dB sensitivity), coordinating distribution, levels, and phase in real time.<br/><br/>
+        for its first activation, infra engaged the house of margarita quijano — former residence of the feminist writer and researcher — at córdoba 87, roma norte, mexico city, recovered by proyectos públicos. margarita quijano — a teacher and researcher — made this house a crossing point for intellectuals and conversations of its time. infra reopened that field through xpan’s practice.
+      </div>
+</section>
+<!-- FR -->
+<section class="lang lang-fr" style="display:none;">
+<h1>s+js23 — infra</h1>
+<div class="meta">7—19 février 2023 — mexico (proyectos públicos, córdoba 87)</div>
+<div class="description">
+        s+js23 (infra) a activé une maison entière comme corps résonant. le dispositif a fonctionné avec une pression sonore contrôlée, un calcul de distribution et une analyse de phase pour transformer l’architecture en instrument résonant.<br/><br/>
+        le système a déployé un réseau 0.10ch : dix subwoofers xpan sub.t de 15" répartis entre les pièces et les circulations. chaque module a été calibré pour exciter la fréquence stationnaire dominante de sa pièce, mettant en vibration extrême murs, plancher en bois, vitraux, fenêtres, menuiseries, moulures et ornements. l’expérience consistait à entrer dans une masse sonore : intense, enveloppante et invisible.<br/><br/>
+        les subwoofers reposaient sur un tapis circulaire noir de 3 m de diamètre. au-dessus de chacun, parallèlement au plafond, une trame de câbles d’acier suspendait un cube translucide en feuille plastique avec éclairage interne. la membrane répondait à l’air et à la pression acoustique en générant des motifs subtils : le déplacement visible était minime face à la force physique perçue dans le corps. l’effet en salle était nettement intense.<br/><br/>
+        l’opération était centralisée dans un nœud de contrôle avec dix amplificateurs xpan.g.sub (1200 w, 120 dB de sensibilité), coordonnant distribution, niveaux et phase en temps réel.<br/><br/>
+        pour sa première activation, infra a investi la maison de margarita quijano — ancienne résidence de l’écrivaine et chercheuse féministe — au 87 córdoba, roma norte, mexico, réhabilitée par proyectos públicos. margarita quijano — enseignante et chercheuse — fit de cette maison un carrefour d’intellectuels et de conversations de son époque. infra a rouvert ce champ à partir de la pratique de xpan.
+      </div>
+</section>
+<!-- JP -->
+<section class="lang lang-jp" style="display:none;">
+<h1>s+js23 — infra</h1>
+<div class="meta">2023年2月7日—19日 — メキシコシティ（proyectos públicos、コルドバ87）</div>
+<div class="description">
+        s+js23（infra）は、家全体を共鳴体として作動させた。装置は制御された音圧、分布計算と位相解析により、建築そのものを共鳴する楽器へと変換した。<br/><br/>
+        システムは0.10chのアレイを展開。xpan製15インチのサブウーファー sub.t を10台、各室と通路に分散配置した。各モジュールはその部屋の支配的な定在周波数を励起するように調整され、壁、木床、ステンドグラス、窓、建具、モールディングや装飾を強く振動させた。体験は、見えない音の塊の中へ入ること——強烈で包囲的、そして不可視。<br/><br/>
+        サブウーファーは直径3mの黒い円形マットの上に設置。各ユニットの上、天井と平行に張られたスチールケーブルのグリッドから、内部照明を持つ半透明のプラスチック板の立方体を吊り下げた。膜は空気と音圧に反応して微細なパターンを生み、目に見える変位は最小でありながら、身体に感じる物理的な力は大きかった。室内効果は際立って強烈だった。<br/><br/>
+        運用は制御ノードに集約し、xpan.g.sub アンプ10台（1200W、感度120dB）で分配・レベル・位相をリアルタイムに調整した。<br/><br/>
+        初回の実装として、infra はフェミニストの作家・研究者マルガリータ・キハーノの旧邸（メキシコシティ、ローマ・ノルテ、コルドバ87。proyectos públicos により再生）を起動した。キハーノはこの家を、当時の知識人と対話が交差する場所にした。infra は xpan の実践から、その場を再び開いた。
+      </div>
+</section>
+<!-- destacados -->
+<section class="section" data-lazy-section="" id="destacados">
+<h2 class="sr-only">destacados</h2>
+<div class="grid destacados" data-section="destacados"></div>
+</section>
+<!-- recorridos -->
+<section class="section" data-lazy-section="" id="recorridos">
+<h2 class="sr-only">recorridos</h2>
+<div class="grid uniform-3" data-section="walkthrough"></div>
+</section>
+<!-- retícula 8 (verticales) -->
+<section class="section" data-lazy-section="" id="v8">
+<h2 class="sr-only">retícula — 8 videos verticales</h2>
+<div class="tight-wrap">
+<div class="tight-grid cols-4" data-initial="8" data-section="vertical8"></div>
+</div>
+</section>
+<!-- retícula 15 (imágenes) -->
+<section class="section" data-lazy-section="" id="img15">
+<h2 class="sr-only">retícula — 15 imágenes</h2>
+<div class="tight-wrap">
+<div class="tight-grid cols-5" data-initial="15" data-section="images15"></div>
+</div>
+</section>
+<!-- retícula 22 (videos) -->
+<section class="section" data-lazy-section="" id="vid22">
+<h2 class="sr-only">retícula — 22 videos</h2>
+<div class="tight-wrap">
+<div class="tight-grid cols-6" data-initial="22" data-section="videos22"></div>
+</div>
+</section>
+<!-- a.e.i embebido (exp43) -->
+<section aria-label="a.e.i embebido" class="section" data-lazy-section="" id="exp43_aei">
+<h2 class="sr-only">galería experimental — a.e.i embebido</h2>
+<div class="aei-embed" id="aeiEmbed">
+<svg class="aei-lines" id="aeiLines"></svg>
+<div aria-label="escena a.e.i" class="aei-stage" id="aeiStage"></div>
+<div aria-hidden="true" class="aei-hint">toca/arrastra para pausar · tap/drag to pause</div>
+</div>
+</section>
+</main>
+<!-- lightbox -->
+<div aria-modal="true" class="lightbox" id="lightbox" role="dialog">
+<button aria-label="cerrar" class="lb-close" id="lbClose">✕</button>
+<figure id="lbFigure"></figure>
+</div>
+<script>
+    /* ===== idioma ===== */
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el=>{
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn=>{
+        const on = btn.dataset.lang===lang; btn.classList.toggle('active', on); btn.setAttribute('aria-pressed', on);
+      });
+    }
+    document.querySelector('.language-selector').addEventListener('click', (e)=>{
+      const b = e.target.closest('button[data-lang]'); if(!b) return; setLang(b.dataset.lang);
+    });
+
+    /* ===== media (tus URLs) ===== */
+    const media = {
+      walkthrough: [
+        "https://attachments.are.na/38723863/7f0ed5309d395fbc6b3f37c8e0752f2e.mov?1754952988",
+        "https://attachments.are.na/38723876/8edce6633f5f43ebfe6c1583381e9fe0.mp4?1754953041",
+      ],
+      flyer: [
+        "https://attachments.are.na/38723815/4ec7809024ffe39984bb63e36587c098.mov?1754952685"
+      ],
+      texture: [
+        "https://attachments.are.na/38723803/a3e4a8bb8c49704437c802ede9262f92.mov?1754952610"
+      ],
+      vertical8: [
+        "https://attachments.are.na/38723728/4a432b0fa135ba081d73d748df9e5730.mov?1754952239",
+        "https://attachments.are.na/38723755/a2953afef3eb744f73c3d94edb5efa1d.mov?1754952371",
+        "https://attachments.are.na/38723775/7ba33c770e0a650b8a9a75927f4d6288.mov?1754952450",
+        "https://attachments.are.na/38723779/0803693d272d6ea3f8f39cce457af967.mov?1754952474",
+        "https://attachments.are.na/38723780/cf45c5a08c6ef5d7a06316a9a7d90d95.mov?1754952475",
+        "https://attachments.are.na/38723781/b36d3fd3df97e88c00ba4937d49dafb3.mov?1754952478",
+        "https://attachments.are.na/38723782/67cab62582660b93307a16bc03deba03.mov?1754952478",
+        "https://attachments.are.na/38723785/db4155f30e65942f21d303a63364614e.mov?1754952485"
+      ],
+      images15: [
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723623/original_9ba59ff72520d7efabb4091823ea3e7c.jpg?1754951817?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723625/original_8beddae52a298b18b0f7c5f44786c2d5.jpg?1754951819?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723626/original_13a69766d1f67a9634d0e0bca5d106c9.jpg?1754951819?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723627/original_5532ab4e33003ea9b91de115267f16ad.jpg?1754951822?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723628/original_2197eb76cbdc1ed6027b3f28d820d982.jpg?1754951822?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723630/original_732138a9c4de9231ab8b4249f58ccf49.jpg?1754951823?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723632/original_8042718bdf6c173b01ca7da515089920.jpg?1754951824?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723633/original_b0cf984850413934c9a1048cd76a28c6.jpg?1754951826?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723634/original_97c51b4f5e1dd30a5bc6d35210b4ec32.jpg?1754951826?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723635/original_81f51ec7ebf8414a9a1decbf5b4c11fa.jpg?1754951827?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723638/original_61d82315a0c1c7e8531b99129ce536d6.jpg?1754951829?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723639/original_9a0c1d4dd86df335f744e4621dbb5c07.jpg?1754951829?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723641/original_cfc851a425cfb290b44003a74102bac8.jpg?1754951830?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723642/original_132003c16e147a71dc20698f065bc500.jpg?1754951833?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723643/original_afb22ec753d9ece6c7c6877f091f8136.jpg?1754951834?bc=0"
+      ],
+      videos22: [
+        "https://attachments.are.na/38723320/428bcf513c6fb3acda40383bc399eab1.mov?1754950909",
+        "https://attachments.are.na/38723348/b777f6e60d27dc39ff0f7dac5b8b1f6f.mov?1754951033",
+        "https://attachments.are.na/38723358/cbe81a05d34a38b2ce0ed4d9603777f4.mov?1754951076",
+        "https://attachments.are.na/38723366/de9d9dd801698f700558ee126f3c0359.mov?1754951093",
+        "https://attachments.are.na/38723368/e6c323c834a4cd723691c0b4ecc93da4.mov?1754951096",
+        "https://attachments.are.na/38723373/8adb3cbc5fec5a8826b9ec891f5b78f7.mov?1754951100",
+        "https://attachments.are.na/38723393/87e592aea1c9664bfd3574392eef3713.mov?1754951140",
+        "https://attachments.are.na/38723394/16108246f7d6cdbe2010b4eacbf37b58.mov?1754951140",
+        "https://attachments.are.na/38723410/9a6a49655b71fdc5b63bff23f62a6931.mov?1754951202",
+        "https://attachments.are.na/38723418/83b379ab0f1c16a8321480cfa17277ad.mov?1754951225",
+        "https://attachments.are.na/38723426/b4ba2f924422a4d126f4591a289b6d01.mov?1754951234",
+        "https://attachments.are.na/38723435/9b19d1af01a3ef1b3137dd48efa96aa1.mov?1754951257",
+        "https://attachments.are.na/38723454/569be366e5a150bb60d0ea1052651cd3.mov?1754951306",,
+        "https://attachments.are.na/38723473/5ef1583f8e15f627173945c5f63f9e4e.mov?1754951364",
+        "https://attachments.are.na/38723490/d06683ee50ca91a55791c24b28ec2c28.mov?1754951398",
+        "https://attachments.are.na/38723499/88b5fbc93efdf73e07581f84f458aaa9.mov?1754951421",
+        "https://attachments.are.na/38723510/2735081d7038a805b501be63b39c1c0c.mov?1754951463",
+        "https://attachments.are.na/38723371/07bbf1cdd1511a2f1117eec68c2efbd5.mov?1754951098"
+      ],
+      exp43: [
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723176/original_b5da9cb6f00e289dc597faa20913a24b.png?1754950571?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723181/original_d0c91d113fa2a7610e913936b9e2acf8.jpg?1754950579?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723183/original_14216e3fb9366d980f60ad712d0a7be3.jpg?1754950589?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723187/original_269da65854f6f37ba635409b2774c1e3.jpg?1754950600?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723188/original_bc4772cf35d1be84e82b11efd2256b9e.jpg?1754950605?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723189/original_f53186d168707a401f42054c10f361be.jpg?1754950606?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723192/original_b33625421d64ee5ea48d21e6a01fc47c.jpg?1754950608?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723193/original_b4337030f124798c52cceafbbdc46da9.jpg?1754950610?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723194/original_c4f546d6fa21244f3ed6b48a5fd5c296.jpg?1754950613?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723196/original_7c3a37fee50a93c03f4b3318d7bcc9c0.jpg?1754950618?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723197/original_6fb47d1069f74be127197afe65d43bc4.jpg?1754950624?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723201/original_78d91f75df534a191e312b78218e178f.jpg?1754950638?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723203/original_22310e29d406102107cf7458820e5356.jpg?1754950642?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723205/original_62fb14f031f9d3d814a133fb905d703b.jpg?1754950646?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723207/original_bb0d55703e907e6d8d2a7751e4fc903b.jpg?1754950646?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723208/original_369c382dfdf41190cd0f85009313b28d.jpg?1754950646?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723209/original_59e0e74cecad48771050758e858d9e73.jpg?1754950650?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723213/original_139b047f4c23ca1f9257159ef15a5765.jpg?1754950660?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723214/original_cb8e10adc6561f1cbb9d26803af82b0c.jpg?1754950668?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723215/original_c92b70bce2fb3d907429ef9cd2f6b79a.jpg?1754950673?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723216/original_1a392d2371523c862ce1b480568eba03.jpg?1754950676?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723218/original_047b8236456964362a84293af6006302.jpg?1754950685?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723219/original_5f8f8329d7b76232d78d0084fbc5d0e7.jpg?1754950690?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723223/original_cf509565c4089cbca28a46a1be77676c.jpg?1754950695?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723224/original_8c4d3cca3c155196cd74d1184fbf2769.jpg?1754950696?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723227/original_84e442a21c07b3ccdcc392997ae8538d.jpg?1754950702?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723233/original_8b0d80a9d092a99da02e6b6113f4548d.jpg?1754950711?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723235/original_8b74019ff744fa01056d32d87ffba88f.jpg?1754950715?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723236/original_d7af5e2d42074a1c57cae7bba5323337.jpg?1754950718?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723243/original_2c68202da75b8fc9538305c83d3acbb1.jpg?1754950731?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723249/original_f906413bdb738f01cf1f4eb8f0085514.jpg?1754950743?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723251/original_b4395674e104e81ac3842cab934506a2.jpg?1754950747?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723254/original_3c21b18bb074c52416dc009b60721ba0.jpg?1754950754?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723256/original_042276e47005c54822a006cc06ccd9a4.jpg?1754950757?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723258/original_72fc2feb6d6c63c223c32bc6dcdafe3c.jpg?1754950764?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723263/original_61815bb599ab1fa65d27cc848eba799a.jpg?1754950770?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723266/original_cab1223d685d3f53a203ea93c32d8d9d.jpg?1754950779?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723270/original_4204cc16730a18902d02f914bb40127c.jpg?1754950788?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723274/original_14db66153fd7c829b6250051c33d7f02.jpg?1754950794?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723275/original_d997abbff3fbed11dc78a7a3b4cb43c6.jpg?1754950794?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723277/original_4043c67dcf413519bb841d67939e331d.jpg?1754950798?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723279/original_9e807085b3a6c67a2ba2859ab6a3dfc0.jpg?1754950801?bc=0",
+        "https://d2w9rnfcy7mm78.cloudfront.net/38723281/original_98be7f8ae1427f78c4cb438545685bf6.jpg?1754950802?bc=0"
+      ]
+    };
+
+    const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+
+    /* ===== helpers de video ===== */
+    function wireVideoEl(v, {autoplay=true}={}){
+      v.muted = true;
+      v.loop = true;
+      v.autoplay = !!autoplay;
+      v.playsInline = true;
+      v.preload = 'none';
+      v.setAttribute('muted','');
+      v.setAttribute('playsinline','');
+      v.setAttribute('webkit-playsinline','');
+      if(autoplay) v.setAttribute('autoplay','');
+    }
+
+    /* Carga perezosa asignando video.src (más compatible que <source>) */
+    const io = new IntersectionObserver((entries,obs)=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const v = en.target;
+        if(v.dataset.src && !v.src){
+          v.src = v.dataset.src;
+          v.preload = 'metadata';
+          v.load();
+          v.play().catch(()=>{});
+          v.addEventListener('loadedmetadata', ()=>{
+            setAspectFromVideo(v);
+            v.closest('.card, .tight-item')?.classList.add('ready');
+          }, { once:true });
+        }
+        obs.unobserve(v);
+      });
+    }, { rootMargin:'420px 0px', threshold:.1 });
+
+    /* Aspect ratio dinámico */
+    function setAspect(el, w, h){
+      const wrapper = el.closest('.frame, .media-box');
+      if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+    }
+    function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+    /* factoría video */
+    
+function makeImmediateVideo(url){
+  const container = document.createElement('figure');
+  container.className = 'card ready';
+  const box = document.createElement('div'); box.className = 'frame'; container.appendChild(box);
+  const v=document.createElement('video');
+  wireVideoEl(v, {autoplay:true});
+  v.controls=false; v.preload='auto'; v.src=url;
+  box.appendChild(v);
+  v.addEventListener('loadedmetadata', ()=> setAspectFromVideo(v), { once:true });
+  (function retry(){ v.play().catch(()=> setTimeout(retry,200)); })();
+  container.addEventListener('click', ()=> openLightbox('video', url));
+  return container;
+}
+function makeVideo(url, { tight=false }={}){
+      const container = tight ? document.createElement('div') : document.createElement('figure');
+      container.className = tight ? 'tight-item' : 'card';
+      const box = document.createElement('div'); box.className = tight ? 'media-box' : 'frame';
+      container.appendChild(box);
+
+      const v=document.createElement('video');
+      wireVideoEl(v, {autoplay:true});
+      v.controls=false;
+      v.dataset.src=url; // asignaremos src cuando entre al viewport
+      box.appendChild(v);
+
+      io.observe(v);
+      autoPlayOnVisible(v);
+      (function r(){ v.play().catch(()=> setTimeout(r,250)); })();
+
+      if(!tight){
+        container.addEventListener('click', ()=> openLightbox('video', url));
+      }
+      return container;
+    }
+
+    /* autoplay robusto (iOS / low power / tab visibility) */
+    function autoPlayOnVisible(video){
+      function tryPlay(){ video.play().catch(()=>{}); }
+      const vio=new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{
+          if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); }
+          else { video.pause(); }
+        });
+      }, { threshold:.12 });
+      vio.observe(video);
+
+      // reintentos cortos al cargar
+      const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+
+      // si vuelve la pestaña visible, relanza
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.visibilityState==='visible') tryPlay();
+      });
+    }
+
+    // desbloqueo por primer interacción (iOS modo ahorro)
+    function unlockAllVideos(){
+      document.removeEventListener('click', unlockAllVideos);
+      document.removeEventListener('touchstart', unlockAllVideos);
+      $$('video').forEach(v=>{ if(!v.src && v.dataset.src){ v.src=v.dataset.src; v.load(); } v.muted=true; v.setAttribute('muted',''); v.play().catch(()=>{}); });
+    }
+    document.addEventListener('click', unlockAllVideos, { once:true });
+    document.addEventListener('touchstart', unlockAllVideos, { once:true, passive:true });
+
+    /* Render secciones (sin hero) */
+    (function renderBase(){
+      // destacados
+      const dWrap = document.querySelector('[data-section="destacados"]');
+      const d = [];
+      if(media.flyer?.[0]) d.push( makeImmediateVideo(media.flyer[0]) );
+      (media.walkthrough||[]).slice(0,2).forEach(u=> d.push(makeImmediateVideo(u)));
+      d.forEach(el=> dWrap.appendChild(el));
+
+      // recorridos
+      const walkthroughWrap=document.querySelector('[data-section="walkthrough"]');
+      (media.walkthrough||[]).slice(2).forEach(u=> walkthroughWrap.appendChild( makeVideo(u) ));
+    })();
+
+    /* retículas pegadas */
+    function renderTightGrid(key, sources, isVideo){
+      const wrap=document.querySelector(`[data-section="${key}"]`); if(!wrap) return;
+      sources.forEach(url=>{
+        const item = document.createElement('div'); item.className='tight-item';
+        const box = document.createElement('div'); box.className='media-box'; item.appendChild(box);
+
+        if(isVideo){
+          const v=document.createElement('video');
+          wireVideoEl(v, {autoplay:true});
+          v.controls=false;
+          v.dataset.src=url;
+          box.appendChild(v);
+          io.observe(v);
+          autoPlayOnVisible(v);
+          v.addEventListener('loadedmetadata', ()=> setAspectFromVideo(v), { once:true });
+        }else{
+          const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+          box.appendChild(img);
+          img.addEventListener('load', ()=> setAspectFromVideo({videoWidth:img.naturalWidth, videoHeight:img.naturalHeight, closest:sel=>item.querySelector(sel)}), { once:true });
+          item.addEventListener('click', ()=> openLightbox('img', url));
+        }
+
+        wrap.appendChild(item);
+      });
+    }
+
+    // render retículas
+    renderTightGrid('vertical8', media.vertical8||[], true);
+    renderTightGrid('images15', media.images15||[], false);
+    renderTightGrid('videos22', media.videos22||[], true);
+
+    /* lightbox */
+    const lb=document.getElementById('lightbox');
+    const lbFigure=document.getElementById('lbFigure');
+    const lbClose=document.getElementById('lbClose');
+    function openLightbox(type,url){
+      lbFigure.innerHTML='';
+      if(type==='img'){
+        const i=document.createElement('img'); i.src=url; i.alt=''; lbFigure.appendChild(i);
+      }else{
+        const v=document.createElement('video');
+        v.controls=true; v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+        v.src=url;
+        lbFigure.appendChild(v);
+        v.muted=false; v.removeAttribute('muted'); v.play().catch(()=>{});
+      }
+      lb.classList.add('open');
+    }
+    function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; }
+    lbClose.addEventListener('click', closeLightbox);
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLightbox(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLightbox(); });
+
+    /* a.e.i embebido (con exp43) */
+    renderAEI(document.getElementById('aeiStage'), document.getElementById('aeiLines'), media.exp43||[]);
+
+    function renderAEI(stage, linesSVG, urls){
+      const blocks=[], MAX_AT_ONCE = Math.min(urls.length, 42);
+      let idx=0, paused=false;
+
+      const pauseOn = ()=> paused=true, resume=()=> paused=false;
+      stage.addEventListener('mouseenter', pauseOn);
+      stage.addEventListener('mouseleave', resume);
+      stage.addEventListener('touchstart', pauseOn, {passive:true});
+      stage.addEventListener('touchend', resume);
+
+      function addNext(){
+        if(idx>=MAX_AT_ONCE) return;
+        const url = urls[idx++];
+        const block = document.createElement('div');
+        block.className='aei-block';
+        let el;
+        if(/\.(mp4|mov)(\?|$)/i.test(url)){
+          el=document.createElement('video');
+          wireVideoEl(el, {autoplay:true});
+          el.dataset.src=url;
+          block.appendChild(el); stage.appendChild(block);
+          io.observe(el);
+          autoPlayOnVisible(el);
+        }else{
+          el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.src=url;
+          block.appendChild(el); stage.appendChild(block);
+        }
+        const rect = stage.getBoundingClientRect();
+        block.x = Math.random() * Math.max(10, rect.width - parseInt(getComputedStyle(block).width));
+        block.y = Math.random() * Math.max(10, rect.height - parseInt(getComputedStyle(block).height));
+        block.vx = (Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
+        updateBlockTransform(block);
+
+        makeDraggable(block);
+        blocks.push(block);
+        setTimeout(addNext, 45);
+      }
+      addNext();
+
+      function updateBlockTransform(b){ b.style.transform = `translate3d(${b.x}px,${b.y}px,0)`; }
+      function makeDraggable(el){
+        let isDragging=false,lastX=0,lastY=0;
+        const move=(cx,cy)=>{ const dx=cx-lastX,dy=cy-lastY; el.x+=dx; el.y+=dy; updateBlockTransform(el); lastX=cx; lastY=cy; drawLines(); };
+        el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true; paused=true; lastX=e.clientX; lastY=e.clientY;});
+        window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
+        window.addEventListener('mouseup',()=>{isDragging=false; paused=false;});
+        el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true; paused=true; lastX=t.clientX; lastY=t.clientY;},{passive:true});
+        el.addEventListener('touchmove',e=>{if(!isDragging)return; const t=e.touches[0]; move(t.clientX,t.clientY);},{passive:false});
+        el.addEventListener('touchend',()=>{isDragging=false; paused=false;});
+      }
+
+      function step(){
+        if(!paused){
+          const rect = stage.getBoundingClientRect();
+          for(const b of blocks){
+            b.x += b.vx; b.y += b.vy;
+            const bw = parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+            if(b.x<0 || b.x>rect.width-bw) b.vx*=-1;
+            if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
+            updateBlockTransform(b);
+          }
+          if(!nextLineTick || performance.now()>nextLineTick){ generateLines(); nextLineTick = performance.now() + (120 + Math.random()*480); }
+        }
+        drawLines();
+        requestAnimationFrame(step);
+      }
+      let currentPairs=[], nextLineTick=0;
+      function generateLines(){
+        currentPairs = [];
+        for(let i=0;i<blocks.length;i++){
+          for(let j=i+1;j<blocks.length;j++){
+            if(Math.random()<0.08){ currentPairs.push([blocks[i],blocks[j]]); }
+          }
+        }
+      }
+      function centerOf(b){
+        const r=b.getBoundingClientRect();
+        return [b.x + r.width/2, b.y + r.height/2];
+      }
+      function drawLines(){
+        linesSVG.innerHTML='';
+        for(const [a,b] of currentPairs){
+          const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+          const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+          line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+          line.setAttribute('stroke','#000'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
+          linesSVG.appendChild(line);
+        }
+      }
+      step();
+
+      window.addEventListener('resize', ()=>{
+        const rect = stage.getBoundingClientRect();
+        for(const b of blocks){
+          b.x = Math.min(Math.max(0,b.x), Math.max(0,rect.width-parseFloat(getComputedStyle(b).width)));
+          b.y = Math.min(Math.max(0,b.y), Math.max(0,rect.height-parseFloat(getComputedStyle(b).height)));
+          updateBlockTransform(b);
+        }
+      }, { passive:true });
+    }
+
+    /* pausa videos invisibles para ahorrar CPU */
+    const pauseIO=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); });
+    }, { threshold:.05 });
+    const watch=setInterval(()=>{
+      document.querySelectorAll('.tight-item video, .frame video').forEach(v=> pauseIO.observe(v));
+      if(document.querySelectorAll('.tight-item video, .frame video').length>0) clearInterval(watch);
+    }, 160);
+
+    /* idioma por defecto */
+    setLang(localStorage.getItem('lang') || 'es');
+  </script>
+</body>
+</html>
