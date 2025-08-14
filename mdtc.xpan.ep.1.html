@@ -76,6 +76,7 @@
   .aei-block{ width:var(--aei-block); height:var(--aei-block); position:absolute; opacity:.8; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
   .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
   .aei-hint{ position:absolute; inset:auto 1rem 1rem auto; font-size:.8rem; opacity:.35; user-select:none; }
+.load-more{margin:1rem 0 0;display:flex;justify-content:center}.load-more button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.5rem .9rem;cursor:pointer;font-size:.95rem}
 </style>
 
 <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
@@ -136,7 +137,7 @@ video[data-tap-audio], video.tap-audio { cursor: pointer; }
 <header class="site">
   <div class="site-inner">
     <div class="brand">
-      <img alt="xpan" src="xpan.svg" / fetchpriority="high">
+      <img alt="xpan" src="xpan.svg" fetchpriority="high" />
       <div class="title">xpan.ep.1 — activaciones</div>
     </div>
     <div aria-label="selector de idioma" class="lang">
@@ -190,7 +191,7 @@ const lazyIO = new IntersectionObserver((entries)=>{
       lazyIO.unobserve(t);
     }
   });
-}, { rootMargin: '400px 0px' });
+}, { rootMargin: '800px 0px' });
 
 const playIO = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
@@ -199,7 +200,7 @@ const playIO = new IntersectionObserver((entries)=>{
     if(entry.isIntersecting){ v.play().catch(()=>{}); }
     else{ v.pause(); }
   });
-}, { rootMargin: '200px 0px', threshold: 0.25 });
+}, { rootMargin: '400px 0px', threshold: 0.25 });
 
 
 /* ===== a.e.i constructor ===== */
@@ -335,7 +336,7 @@ function makeMediaBox(url, kind){
     img.addEventListener('load', ()=> setAspectFromMedia(frame, img), {once:true});
     lazyIO.observe(img);
   }else{
-    const v = el('video', {preload:'metadata', playsinline:'', muted:'', loop:'', 'data-src': url});
+    const v = el('video', {preload:'none', playsinline:'', muted:'', loop:'', 'data-src': url});
     frame.appendChild(v);
     v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(frame, v), {once:true});
     lazyIO.observe(v); playIO.observe(v);
@@ -353,7 +354,7 @@ function makeTightItem(url, kind){
     img.addEventListener('load', ()=> setAspectFromMedia(mb, img), {once:true});
     lazyIO.observe(img);
   }else{
-    const v = el('video', {preload:'metadata', playsinline:'', muted:'', loop:'', 'data-src': url});
+    const v = el('video', {preload:'none', playsinline:'', muted:'', loop:'', 'data-src': url});
     mb.appendChild(v);
     v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(mb, v), {once:true});
     lazyIO.observe(v); playIO.observe(v);
@@ -1062,20 +1063,46 @@ const main = document.getElementById('entries');
     }
 
     // gridImages
-    if(p.gridImages && p.gridImages.length){
-      const wrap = el('div', {class:'tight-wrap', style:'margin-top:1rem;'});
-      const grid = el('div', {class:'tight-grid '+autoCols(p.gridImages.length)});
-      p.gridImages.forEach(url=> grid.appendChild(makeTightItem(url, 'img')));
-      wrap.appendChild(grid); sec.appendChild(wrap);
-    }
+if(p.gridImages && p.gridImages.length){
+  const wrap = el('div', {class:'tight-wrap', style:'margin-top:1rem;'});
+  const grid = el('div', {class:'tight-grid '+autoCols(p.gridImages.length)});
+  wrap.appendChild(grid); sec.appendChild(wrap);
+  const items = p.gridImages.slice(); let loaded=0; const conn = (navigator.connection||{});
+const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
+const PAGE = SLOW ? 6 : 10; const MORE = SLOW ? 6 : 12;
+  function loadBatch(n){
+    const max = Math.min(items.length, loaded+n);
+    for(let i=loaded;i<max;i++){ grid.appendChild(makeTightItem(items[i], 'img')); }
+    loaded = max; btn.style.display = loaded<items.length ? 'inline-flex' : 'none';
+  }
+  const btnWrap = el('div',{class:'load-more'});
+  const btn = el('button',{type:'button'},[document.createTextNode('cargar más')]);
+  btn.addEventListener('click',()=> loadBatch(MORE));
+  btnWrap.appendChild(btn); sec.appendChild(btnWrap);
+  loadBatch(PAGE);
+}
+
 
     // gridVideos
-    if(p.gridVideos && p.gridVideos.length){
-      const wrap = el('div', {class:'tight-wrap', style:'margin-top:1rem;'});
-      const grid = el('div', {class:'tight-grid '+autoCols(p.gridVideos.length)});
-      p.gridVideos.forEach(url=> grid.appendChild(makeTightItem(url, 'video')));
-      wrap.appendChild(grid); sec.appendChild(wrap);
-    }
+if(p.gridVideos && p.gridVideos.length){
+  const wrap = el('div', {class:'tight-wrap', style:'margin-top:1rem;'});
+  const grid = el('div', {class:'tight-grid '+autoCols(p.gridVideos.length)});
+  wrap.appendChild(grid); sec.appendChild(wrap);
+  const items = p.gridVideos.slice(); let loaded=0; const conn = (navigator.connection||{});
+const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
+const PAGE = SLOW ? 6 : 10; const MORE = SLOW ? 6 : 12;
+  function loadBatch(n){
+    const max = Math.min(items.length, loaded+n);
+    for(let i=loaded;i<max;i++){ grid.appendChild(makeTightItem(items[i], 'video')); }
+    loaded = max; btn.style.display = loaded<items.length ? 'inline-flex' : 'none';
+  }
+  const btnWrap = el('div',{class:'load-more'});
+  const btn = el('button',{type:'button'},[document.createTextNode('cargar más')]);
+  btn.addEventListener('click',()=> loadBatch(MORE));
+  btnWrap.appendChild(btn); sec.appendChild(btnWrap);
+  loadBatch(PAGE);
+}
+
 
     // aei
     if(p.aei && p.aei.length){
@@ -1094,6 +1121,31 @@ const main = document.getElementById('entries');
   });
 }
 document.addEventListener('DOMContentLoaded', render);
+
+// background prefetch for remaining media (images only on slow networks, images+videos on fast)
+document.addEventListener('DOMContentLoaded', ()=>{
+  try{
+    const conn = (navigator.connection||{});
+    const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
+    const urls = [];
+    document.querySelectorAll('img[data-src],video[data-src]').forEach(el=>{
+      const u = el.getAttribute('data-src'); if(!u) return;
+      const isVid = /\.(mp4|mov)(\?|$)/i.test(u);
+      if(SLOW && isVid) return; // skip video prefetch on slow
+      urls.push(u);
+    });
+    let i=0;
+    function step(deadline){
+      while((deadline && deadline.timeRemaining()>8) && i<urls.length){
+        const u = urls[i++];
+        fetch(u, {mode:'no-cors', cache:'force-cache'}).catch(()=>{});
+      }
+      if(i<urls.length) requestIdleCallback(step, {timeout: 2000});
+    }
+    if('requestIdleCallback' in window) requestIdleCallback(step, {timeout: 1500});
+  }catch(e){}
+});
+
 </script>
 
 <script>
