@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="color-scheme" content="light dark"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>xpan.ep.1 — activaciones (FIXED)</title>
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --tile-max-h:72vh;
+    --aei-block:140px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+  header.site{ position:sticky; top:0; z-index:40; background:transparent; border:none; }
+  .site-inner{ max-width:1440px; margin:0 auto; padding: .8rem 1.25rem; display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:.8rem; }
+  .brand img{ width:46px; height:auto; }
+  .brand .title{ font-size:clamp(1.05rem,2vw,1.25rem); text-transform:lowercase; letter-spacing:.01em; display:none; }
+  .lang{ display:flex; gap:.5rem; align-items:center; }
+  .lang button{ background:none; border:none; padding:.25rem .4rem; cursor:pointer; opacity:.55; text-transform:lowercase; color: #000; }
+  .lang button.active{ opacity:1; text-decoration:underline; text-underline-offset:3px; }
+  .intro{ max-width:1440px; margin:0 auto; padding: 1.2rem 1.25rem 0.5rem; }
+  .intro .text{ max-width:860px; line-height:1.35; }
+  .selector-wrap{ max-width:1440px; margin:0 auto; padding: .6rem 1.25rem 1rem; }
+  .selector{ display:flex; gap:.6rem; overflow:auto; padding-bottom:.2rem; }
+  .selector a{ white-space:nowrap; padding:.35rem .7rem; border:1px solid var(--line); border-radius:999px; background:#fff; font-size:.95rem; }
+  .selector a.active{ border-color:#000; }
+  main{ max-width:1440px; margin:0 auto 5rem; padding:0 1.25rem; }
+  .entry{ border-top:1px solid var(--line); padding-top:1.2rem; margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 900px; scroll-margin-top:96px; }
+  .entry h2{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .25rem; text-transform:lowercase; }
+  .entry .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 .9rem; }
+  .grid{ display:grid; gap:var(--gap); }
+  .grid.columns-3{ grid-template-columns: repeat(3, 1fr); }
+  @media (max-width:1100px){ .grid.columns-3{ grid-template-columns: repeat(2, 1fr);} }
+  @media (max-width:640px){ .grid.columns-3{ grid-template-columns: 1fr; } }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+  .card.ready{ opacity:1; transform:none; }
+  .frame{ position:relative; background:#fff; }
+  .frame.ratio{ aspect-ratio: var(--ar, auto); }
+  .frame > img, .frame > video{ width:100%; height:auto; object-fit:contain; background:#fff; }
+  .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .tight-grid{ display:grid; gap:0 !important; }
+  .tight-grid.cols-6{ grid-template-columns: repeat(6, 1fr); }
+  .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+  .tight-grid.cols-4{ grid-template-columns: repeat(4, 1fr); }
+  .tight-grid.cols-3{ grid-template-columns: repeat(3, 1fr); }
+  .tight-grid.cols-2{ grid-template-columns: repeat(2, 1fr); }
+  @media (max-width:1100px){
+    .tight-grid.cols-6{ grid-template-columns: repeat(5, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(3, 1fr); }
+    .tight-grid.cols-3{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width:640px){
+    .tight-grid.cols-6{ grid-template-columns: repeat(3, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(3, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(2, 1fr); }
+    .tight-grid.cols-3{ grid-template-columns: repeat(2, 1fr); }
+    .tight-grid.cols-2{ grid-template-columns: 1fr; }
+  }
+  .tight-item .media-box{ position:relative; }
+  .tight-item .media-box.ratio{ aspect-ratio: var(--ar, auto); }
+  .tight-item .media-box > *{ width:100%; height:auto; object-fit:contain; background:#fff; }
+  .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; }
+  .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .aei-block{ width:var(--aei-block); height:var(--aei-block); content-visibility:auto; contain-intrinsic-size: var(--aei-block) var(--aei-block); position:absolute; opacity:.8; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
+  .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+  .aei-hint{ position:absolute; inset:auto 1rem 1rem auto; font-size:.8rem; opacity:.35; user-select:none; }
+.load-more{margin:1rem 0 0;display:flex;justify-content:center}.load-more button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.5rem .9rem;cursor:pointer;font-size:.95rem}
+
+  /* thumbnails for grids */
+  .media-box.thumb-box{ max-height:220px; }
+  .media-box.thumb-box > img,
+  .media-box.thumb-box > video{ width:100%; height:100%; object-fit:contain; background:#fff; }
+
+
+  /* Masonry override for tight grids */
+  .tight-grid{ display:block; column-gap:0; }
+  .tight-grid.cols-6{ column-count:6; }
+  .tight-grid.cols-5{ column-count:5; }
+  .tight-grid.cols-4{ column-count:4; }
+  .tight-grid.cols-3{ column-count:3; }
+  .tight-grid.cols-2{ column-count:2; }
+  @media (max-width:1100px){
+    .tight-grid.cols-6{ column-count:5; }
+    .tight-grid.cols-5{ column-count:4; }
+    .tight-grid.cols-4{ column-count:3; }
+    .tight-grid.cols-3{ column-count:2; }
+  }
+  @media (max-width:640px){
+    .tight-grid.cols-6,
+    .tight-grid.cols-5{ column-count:3; }
+    .tight-grid.cols-4,
+    .tight-grid.cols-3{ column-count:2; }
+    .tight-grid.cols-2{ column-count:1; }
+  }
+  .tight-item{ break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; display:inline-block; width:100%; margin:0 0 var(--gap); }
+  .media-box.thumb-box{ max-height:none; }
+
+
+  /* performance and packing */
+  .tight-item{ break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; display:inline-block; width:100%; margin:0 0 0; content-visibility:auto; contain-intrinsic-size: 300px 200px; }
+  .tight-wrap{ border:none; border-radius:0; overflow:visible; }
+  .tight-grid img, .tight-grid video{ display:block; width:100%; height:auto; content-visibility:auto; }
+
+
+  /* stream-mode skeletons preserve column flow without media mounted */
+  .tight-item.skel{ background: #fff; }
+  .tight-item.skel .media-box{ display:none; }
+
+</style>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+<style>
+.tap-audio-banner{
+  position:fixed; left:0; right:0; bottom:0; display:none;
+  background:rgba(255,255,255,.92); color:#111; border-top:1px solid rgba(0,0,0,.1);
+  padding:.8rem 1rem; font: 14px/1.2 ui-sans-serif, system-ui; z-index:9999;
+}
+.tap-audio-banner button{ margin-left:.75rem; padding:.4rem .7rem; border:1px solid #111; background:#fff; cursor:pointer; }
+@media (prefers-color-scheme: dark){
+  .tap-audio-banner{ background:rgba(0,0,0,.86); color:#f2f2f2; border-top-color: rgba(255,255,255,.18); }
+  .tap-audio-banner button{ border-color:#f2f2f2; background:transparent; color:#f2f2f2;}
+}
+.aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.aei-stage{ position:relative; }
+.aei-block{ touch-action:none; cursor:grab; }
+.aei-block:active{ cursor:grabbing; }
+.aei-pause *{ animation-play-state: paused !important; transition: none !important; }
+</style>
+
+
+<style>
+/* tap-audio visual affordance */
+video[data-tap-audio], video.tap-audio { cursor: pointer; }
+/* ensure white bg for media to avoid bars */
+.frame, .media-box { background: #fff; }
+/* AEI: allow vertical scroll and avoid horizontal swipe conflict */
+.aei-embed, .aei-stage { touch-action: pan-y; }
+</style>
+
+
+<style>
+.aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line, #000); border-radius:12px; overflow:hidden; }
+.aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; }
+.aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.aei-block{ position:absolute; width:var(--aei-block, 180px); height:var(--aei-block, 180px); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
+.aei-block:active{ cursor:grabbing; }
+.aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+</style>
+
+<style>
+/* === OPT: estabilidad y virtualización ligera (no altera estética) === */
+.entry{ content-visibility:auto; contain-intrinsic-size:900px 1px; }
+.card .frame, .tight-item .media-box{ content-visibility:auto; contain-intrinsic-size:480px 270px; }
+@media (prefers-reduced-motion: reduce){
+  .card, .tight-item, .aei-embed, .aei-lines{ transition:none !important; animation:none !important; }
+  .aei-pause *{ animation-play-state:paused !important; }
+}
+/* Sugerencia UX táctil para arrastre dentro de embeds */
+.aei-embed{ touch-action: pan-y; }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="site-inner">
+    <div class="brand">
+      <img alt="xpan" src="xpan.svg" fetchpriority="high" />
+      <div class="title">xpan.ep.1 — activaciones</div>
+    </div>
+    <div aria-label="selector de idioma" class="lang">
+      <button class="active" data-lang="es">es</button>
+      <button data-lang="en">en</button>
+      <button data-lang="fr">fr</button>
+      <button data-lang="jp">jp</button>
+    </div>
+  </div>
+</header>
+<section class="intro">
+  <div class="text">
+    <p class="i18n active" data-lang="es">activaciones públicas y showcases realizados en xpan.ep.1 (cdmx, 2024–2025). documentación en video e imagen de sesiones abiertas, lanzamientos y colaboraciones. esta página funciona como archivo vivo y se actualiza conforme avanzan los procesos.</p>
+  
+    <p class="i18n" data-lang="en">public activations and showcases at xpan.ep.1 (cdmx…) documentation in video and image of open sessions, launches and collaborations. this page works as a living archive and updates as processes evolve.</p>
+    <p class="i18n" data-lang="fr">activations publiques et showcases à xpan.ep.1 (cdmx…) documentation vidéo et image des sessions ouvertes, lancements et collaborations. cette page fonctionne comme un archive vivant et se met à jour au fur et à mesure que les processus avancent.</p>
+    <p class="i18n" data-lang="jp">xpan.ep.1（cdmx…）での公開アクティベーションとショーケース。公開セッション、ローンチ、コラボレーションの映像・画像ドキュメント。進行に合わせて更新される生きたアーカイブとして機能します。</p></div>
+</section>
+<div class="selector-wrap"><nav aria-label="activaciones" class="selector" id="selector"></nav></div>
+<main id="entries"></main>
+
+<script>
+/* ===== util ===== */
+function el(tag, attrs={}, children=[]){
+  const n = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>{
+    if(k==='class') n.className = v;
+    else if(k==='style') n.setAttribute('style', v);
+    else n.setAttribute(k, v);
+  });
+  children.forEach(c=> n.appendChild(c));
+  return n;
+}
+
+
+/* ===== are.na CDN helpers ===== */
+function isArenaCDN(u){ return /d2w9rnfcy7mm78\.cloudfront\.net/.test(u); }
+function arenaVariant(u, tier){ // 'small'|'display'|'large'|'original'
+  if(!isArenaCDN(u)) return u;
+  return u.replace(/\/original_/, '/'+tier+'_');
+}
+function buildSrcset(u){
+  if(!isArenaCDN(u)) return '';
+  const s = arenaVariant(u,'small');
+  const d = arenaVariant(u,'display');
+  const l = arenaVariant(u,'large');
+  return `${s} 400w, ${d} 1200w, ${l} 1600w`;
+}
+function wrapLink(frame, originalUrl){
+/* ===== network queue to avoid saturation ===== */
+let _inflight = 0; const _MAX = 6; const _q = [];
+function _pump(){
+  while(_inflight<_MAX && _q.length){
+    const job = _q.shift();
+    _inflight++;
+    job().finally(()=>{ _inflight--; _pump(); });
+  }
+}
+function enqueue(fn){ _q.push(fn); _pump(); }
+/* ===== offscreen parking to avoid saturation ===== */
+const PARK_ABOVE = 3;   // viewheights above
+const PARK_BELOW = 5;   // viewheights below
+let _scanPend = false;
+
+function _parkScan(){
+  _scanPend = false;
+  const H = window.innerHeight;
+  const nodes = document.querySelectorAll('.tight-item img, .tight-item video, .card .frame img, .card .frame video, .aei-block img, .aei-block video');
+  nodes.forEach(n=>{
+    const r = n.getBoundingClientRect();
+    const farAbove = r.bottom < -PARK_ABOVE*H;
+    const farBelow = r.top    >  PARK_BELOW*H;
+    if(farAbove || farBelow){
+      // park
+      if(!n.dataset.src && n.src){ n.dataset.src = n.currentSrc || n.src; }
+      if(n.tagName==='IMG'){
+        if(n.srcset){ n.dataset.srcset = n.srcset; n.srcset=''; }
+        n.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='; // 1x1
+      }else if(n.tagName==='VIDEO'){
+        try{ n.pause(); n.removeAttribute('src'); while(n.firstChild) n.removeChild(n.firstChild); }catch(e){}
+      }
+      n.classList.add('parked');
+    }else if(n.classList.contains('parked')){
+      // unpark by re-enqueueing
+      if(n.tagName==='IMG'){
+        if(n.dataset.srcset) n.srcset = n.dataset.srcset;
+        if(n.dataset.src){
+          const url = n.dataset.src;
+          delete n.dataset.src; delete n.dataset.srcset;
+          enqueue(()=> new Promise(resolve=>{
+            const done = ()=>{ n.removeEventListener('load', done); n.removeEventListener('error', done); resolve(); };
+            n.addEventListener('load', done, {once:true});
+            n.addEventListener('error', done, {once:true});
+            n.src = url;
+          }));
+        }
+      }else if(n.tagName==='VIDEO' && n.dataset.src){
+        const s = document.createElement('source'); s.src = n.dataset.src; s.type = n.dataset.type || 'video/mp4';
+        n.appendChild(s); n.load();
+      }
+      n.classList.remove('parked');
+    }
+  });
+}
+
+document.addEventListener('scroll', ()=>{
+  if(!_scanPend){
+    _scanPend = true;
+    requestIdleCallback? requestIdleCallback(_parkScan, {timeout:800}) : setTimeout(_parkScan, 200);
+  }
+}, {passive:true});
+
+
+  const a = document.createElement('a');
+  a.href = originalUrl; a.target = '_blank'; a.rel = 'noopener';
+  a.appendChild(frame.firstChild);
+  frame.appendChild(a);
+}
+
+
+/* ===== Lazy / Play IO ===== */
+const lazyIO = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const t = entry.target;
+    if(entry.isIntersecting){
+      if(t.dataset.src){
+        if(t.tagName==='VIDEO'){
+          const s = document.createElement('source');
+          s.src = t.dataset.src;
+          s.type = t.dataset.type || 'video/mp4';
+          t.appendChild(s);
+          t.load();
+        }else{ if(t.dataset.srcset) t.srcset = t.dataset.srcset;
+          t.src = t.dataset.src; }
+        t.removeAttribute('data-src');
+      }
+      t.closest('.card, .tight-item')?.classList.add('ready');
+      lazyIO.unobserve(t);
+    }
+  });
+}, { rootMargin: '120px 0px' });
+
+const playIO = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const v = entry.target;
+    if(v.tagName!=='VIDEO') return;
+    if(entry.isIntersecting){ v.play().catch(()=>{}); }
+    else{ v.pause(); }
+  });
+}, { rootMargin: '80px 0px', threshold: 0.6 });
+
+
+/* ===== a.e.i constructor ===== */
+function buildAEI(root, urls){
+  if(!root) return;
+  const stage = root.querySelector('.aei-stage');
+  const svg   = root.querySelector('svg.aei-lines');
+  const blocks = [];
+
+  function stageSize(){
+    const r = stage.getBoundingClientRect();
+    return { W: r.width, H: r.height };
+  }
+  function clampToStage(el){
+    const {W,H} = stageSize();
+    const w = el.offsetWidth, h = el.offsetHeight;
+    let x = parseFloat(el.style.left)||0, y = parseFloat(el.style.top)||0;
+    x = Math.min(Math.max(8, x), Math.max(8, W - w - 8));
+    y = Math.min(Math.max(8, y), Math.max(8, H - h - 8));
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+  }
+
+  function redraw(){
+    if(!svg) return;
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const sr = stage.getBoundingClientRect();
+    const cx = sr.width/2, cy = sr.height/2;
+    blocks.forEach(b=>{
+      const r = b.getBoundingClientRect();
+      const x2 = r.left - sr.left + r.width/2;
+      const y2 = r.top  - sr.top  + r.height/2;
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+      line.setAttribute('stroke', 'rgba(0,0,0,.25)');
+      line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+    });
+  }
+
+  // create blocks within current visible stage
+  const {W,H} = stageSize();
+  (urls||[]).forEach(u=>{
+    const b = document.createElement('div');
+    b.className = 'aei-block';
+    // initial position within bounds
+    b.style.left = (Math.random()*(Math.max(20, W-180))+10) + 'px';
+    b.style.top  = (Math.random()*(Math.max(20, H-180))+10) + 'px';
+
+    const isVid = /\.(mp4|mov)(\?|$)/i.test(u);
+    if(isVid){
+      const v = document.createElement('video');
+      v.setAttribute('preload','metadata'); v.setAttribute('playsinline','');
+      v.muted = true; v.loop = true; v.setAttribute('data-src', u);
+      b.appendChild(v);
+      lazyIO.observe(v); playIO.observe(v);
+    }else{
+      const img = document.createElement('img');
+      img.setAttribute('loading','lazy'); img.setAttribute('decoding','async'); img.setAttribute('fetchpriority','low');
+      img.setAttribute('data-src', u); img.alt='';
+      b.appendChild(img);
+      lazyIO.observe(img);
+    }
+    stage.appendChild(b);
+    clampToStage(b);
+    blocks.push(b);
+  });
+
+  // drag without blocking vertical scroll
+  stage.style.touchAction = 'pan-y';
+  let candidate=null, dragging=null, dx=0, dy=0, sx=0, sy=0;
+  const THRESH = 6;
+
+  stage.addEventListener('pointerdown', e=>{
+    const t = e.target.closest('.aei-block'); if(!t) return;
+    const r = t.getBoundingClientRect(); const sr = stage.getBoundingClientRect();
+    dx = e.clientX - r.left; dy = e.clientY - r.top;
+    sx = e.clientX; sy = e.clientY;
+    candidate = t;
+  }, {capture:true});
+
+  stage.addEventListener('pointermove', e=>{
+    if(candidate && !dragging){
+      const moved = Math.hypot(e.clientX - sx, e.clientY - sy);
+      if(moved > THRESH){
+        dragging = candidate;
+        dragging.setPointerCapture && dragging.setPointerCapture(e.pointerId);
+      }
+    }
+    if(!dragging) return;
+    const sr = stage.getBoundingClientRect();
+    let x = e.clientX - sr.left - dx, y = e.clientY - sr.top - dy;
+    dragging.style.left = x+'px'; dragging.style.top = y+'px';
+    clampToStage(dragging);
+    redraw();
+    if(e.cancelable) e.preventDefault();
+  }, {capture:true, passive:false});
+
+  function end(){
+    candidate=null; dragging=null;
+  }
+  stage.addEventListener('pointerup', end, {capture:true});
+  stage.addEventListener('pointercancel', end, {capture:true});
+
+  // adjust on resize and on load
+  const ro = new ResizeObserver(()=>{
+    blocks.forEach(clampToStage);
+    redraw();
+  });
+  ro.observe(stage);
+  window.addEventListener('load', redraw, {once:true});
+}
+/* ===== Aspect helper ===== */
+function setAspectFromMedia(container, media){
+  function apply(w,h){ if(!w||!h) return; container.style.setProperty('--ar', (w/h)); container.classList.add('ratio'); }
+  if(media.tagName==='IMG'){
+    if(media.naturalWidth && media.naturalHeight) apply(media.naturalWidth, media.naturalHeight);
+    else media.addEventListener('load', ()=> apply(media.naturalWidth, media.naturalHeight), {once:true});
+  }else if(media.tagName==='VIDEO'){
+    if(media.videoWidth && media.videoHeight) apply(media.videoWidth, media.videoHeight);
+    else media.addEventListener('loadedmetadata', ()=> apply(media.videoWidth, media.videoHeight), {once:true});
+  }
+}
+
+/* ===== Builders ===== */
+function makeMediaBox(url, kind){
+  const card = el('div', {class:'card'});
+  const frame = el('div', {class:'frame'});
+
+  if(kind==='img'){
+    const thumb = isArenaCDN(url) ? arenaVariant(url,'display') : url;
+    const img = el('img', {
+      loading:'lazy', decoding:'async',
+      'data-src': thumb, fetchpriority:'low', fetchpriority:'low',
+      'data-srcset': isArenaCDN(url) ? buildSrcset(url) : '',
+      alt:'', referrerpolicy:'no-referrer'
+    });
+    img.addEventListener('load', ()=> setAspectFromMedia(frame, img), {once:true});
+    img.onerror = ()=>{ img.removeAttribute('srcset'); img.src = url; };
+    frame.appendChild(img);
+    lazyIO.observe(img);
+    wrapLink(frame, url);
+  }else{
+    const v = el('video', {preload:'none', playsinline:'', muted:'', loop:'', 'data-src': url});
+    v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(frame, v), {once:true});
+    frame.appendChild(v);
+    lazyIO.observe(v); playIO.observe(v);
+  }
+
+  card.appendChild(frame);
+  return card;
+}
+
+function makeTightItem(url, kind){
+  const it = el('div', {class:'tight-item'});
+  const mb = el('div', {class:'media-box thumb-box'});
+
+  if(kind==='img'){
+    const thumb = isArenaCDN(url) ? arenaVariant(url,'small') : url;
+    const img = el('img', {
+      loading:'lazy', decoding:'async',
+      'data-src': thumb,
+      'data-srcset': isArenaCDN(url) ? buildSrcset(url) : '',
+      sizes:'(max-width:640px) 48vw, (max-width:1100px) 30vw, 22vw',
+      alt:'', referrerpolicy:'no-referrer'
+    });
+    img.addEventListener('load', ()=> setAspectFromMedia(mb, img), {once:true});
+    img.onerror = ()=>{ img.removeAttribute('srcset'); img.src = url; };
+    mb.appendChild(img);
+    lazyIO.observe(img);
+  }else{
+    const v = el('video', {preload:'none', playsinline:'', muted:'', loop:'', 'data-src': url});
+    v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(mb, v), {once:true});
+    mb.appendChild(v);
+    lazyIO.observe(v); playIO.observe(v);
+  }
+
+  it.dataset.url = url;
+  it.appendChild(mb);
+  return it;
+}
+
+/* ===== Data (normalized) ===== */
+const projects = {
+  "eden": {
+    "title": "eden blood supply",
+    "date": "17 de diciembre de 2024",
+    "category": "showcase",
+    "heroVideo": [
+      "https://attachments.are.na/38748969/2c8b22530334939ac5e12164156be1e7.mov?1755035769",
+      "https://attachments.are.na/38748974/c40fd9380617d2d999265d969b8aceb3.mp4?1755035781"
+    ],
+    "gridImages": [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748990/original_58099ccd2ed6d7e2b1afcd1702f4db7d.jpg?1755035825?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748991/original_6ae1b9fef4f13e2873fd03f6a12d0b34.jpg?1755035825?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748993/original_20221d4695ccdf7b1b4261588f91da66.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748994/original_8cf258f36b24f5e24048c33b102c8cac.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748992/original_51ee839f5f9129032a0d39917b5d8236.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748995/original_3812bc9c86db9e71b29de89b43dbe0b3.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748996/original_27dcf1e74e214f3d4902904b5708e8ab.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748997/original_ce1dbef43bb9e7311c3fdaf4f8b417e8.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748998/original_7528278cde3a106dc2cbbb18ba709321.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749001/original_d56c6b3348478552a716421f00ba07d1.jpg?1755035828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749002/original_7e633a849d80c030fa28390d580a56d5.jpg?1755035829?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749003/original_5f0cdbe94b421cf952e291d1d22d6822.jpg?1755035829?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749004/original_f730998e0fcdcceda75c737220c39fc9.jpg?1755035830?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749061/original_840152698e89031589ecd5e31c92ee5d.jpg?1755036031?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749063/original_b8e7da0a4f072d4e6269e5cbc8e16fc4.jpg?1755036031?bc=0"
+    ]
+  },
+  "atlas1":{
+    "title":"atlas.1 — inauguración de xpan.ep.1",
+    "date":"17 de octubre de 2024",
+    "category":"lanzamiento de primer volumen de atlas",
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749139/original_e83b96234eefa7ffe35f41eac701d9d0.jpg?1755036234?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749140/original_ab278023b3f5f0c5112b32a6f2550b12.jpg?1755036236?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749141/original_dcb04e2039c258e90e9dfdf53f4dafd7.jpg?1755036235?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749142/original_1fb6fd564d18d09547f0105828abea49.jpg?1755036236?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749143/original_882be03b64b4d99674a9994e05dfff2f.jpg?1755036235?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749144/original_06df314891649fe330e2f832ad2c7201.jpg?1755036235?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749145/original_19b3b5ba81600bf95c0cff3fa3bd6e61.jpg?1755036237?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749146/original_24951cffb3b1a188562edefc0c66ea3b.jpg?1755036235?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749147/original_325ea0a46b4d3980c4a6767576a01273.jpg?1755036236?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749148/original_79df63d8d35b79bf1f4620559e9630c9.jpg?1755036236?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749149/original_622cf399a22dc243421322baf9fd5279.jpg?1755036237?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749150/original_07d88ca54351c7833aead783adc083b5.jpg?1755036236?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749151/original_15e6573bf976a62d5dd8586d7c5e55d7.jpg?1755036238?bc=0"
+    ]
+  },
+  "usj":{
+    "title":"universal space jam",
+    "date":"31 de octubre de 2024",
+    "category":"jam",
+    "gridVideos":[
+      "https://attachments.are.na/38749208/ae9b3cd0b20e65bdbfb9625fa6de9d38.mp4?1755036443",
+      "https://attachments.are.na/38749215/cf85f2ae3e3dc071e3fa6b75785d8cbe.mp4?1755036460",
+      "https://attachments.are.na/38749220/c7cee9fd4551a5028a58752950c731d7.mp4?1755036465",
+      "https://attachments.are.na/38749221/95ac46d4f5cda9fc98f923fff9204c7a.mp4?1755036466",
+      "https://attachments.are.na/38749222/5a09bce237bcb47dcf42048a8e6ce0ca.mp4?1755036467",
+      "https://attachments.are.na/38749227/9769879cd6f56f77d14bc15ad667cd6a.mp4?1755036488",
+      "https://attachments.are.na/38749225/ab4a568ebeb93d2d8c2bed4bab95a011.mp4?1755036485",
+      "https://attachments.are.na/38749228/859edd924313d38472a167d8477a54c1.mov?1755036490",
+      "https://attachments.are.na/38749233/a9636c13df5a90b7f3aa32186194ee99.mov?1755036513"
+    ]
+  },
+  "ninos":{
+    "title":"niños en guerra",
+    "date":"15 de noviembre de 2024",
+    "category":"showcase",
+    "heroVideo":["https://attachments.are.na/38749499/d184f2d34ce2f4b30f75320e93dfb4d3.mp4?1755037130"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749507/original_64f2ffcf1e00c3afc4b3e2e52fc1bfe7.jpg?1755037147?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749508/original_333b19858598f8bfeabd28a4663fada8.jpg?1755037147?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749509/original_c8dec68514a600b12daccecc36484de2.jpg?1755037147?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749510/original_32bd31c207a6fe9aee6f991cb721e988.jpg?1755037146?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749512/original_4dc3ca4b8c6038cbe34e287e48df6fe7.jpg?1755037147?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749515/original_dbd317dbfa758825f1c3bcb0984c5fc2.jpg?1755037147?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749516/original_f5e21153bd49efdf18df9d4925c31090.jpg?1755037147?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749517/original_50fb3eadf39a495ff16201e9ae1b9864.jpg?1755037147?bc=0"
+    ],
+    "aei":[
+      "https://attachments.are.na/38749543/327826fc2325e20ea60476fdbcfab9e9.mp4?1755037217",
+      "https://attachments.are.na/38749544/65e86c5b6774566ab233fd813879960c.mp4?1755037218",
+      "https://attachments.are.na/38749545/f5047e468fc61e2d301c458de66b2769.mp4?1755037219",
+      "https://attachments.are.na/38749546/0ded7724ad1c9d7ebff46ada3f9cc42d.mp4?1755037220",
+      "https://attachments.are.na/38749547/4946a5be5d72648f697cda5bfd4d368c.mp4?1755037221",
+      "https://attachments.are.na/38749548/53baa3b74eba73c5d464862135847279.mp4?1755037221",
+      "https://attachments.are.na/38749549/f77b1c8a103ed968edb79a60f2ca0cee.mp4?1755037222",
+      "https://attachments.are.na/38749550/7f5ebe8c1a8c63cfdab6e67558504158.mp4?1755037222",
+      "https://attachments.are.na/38749551/c9c5c674a8f99823ad9d4c353688af85.mp4?1755037223",
+      "https://attachments.are.na/38749552/de2d2826a684a41d6e22b29732cf577d.mp4?1755037223",
+      "https://attachments.are.na/38749553/21ca061069b8faa9f84f03079c0d1c05.mp4?1755037224",
+      "https://attachments.are.na/38749554/066b028adacc6e7d9e87237627f9be38.mp4?1755037225",
+      "https://attachments.are.na/38749555/2932478c4266effc284eb48113556ded.mp4?1755037225",
+      "https://attachments.are.na/38749556/49ff32bc741c18ba74e9aba0a379476b.mp4?1755037225",
+      "https://attachments.are.na/38749558/384e866c84cb6e44a8d78c0c7d5cff93.mp4?1755037226",
+      "https://attachments.are.na/38749559/a199f36bd18e9c401c7ddffe24a842b8.mp4?1755037228",
+      "https://attachments.are.na/38749560/79a529b4a576925561d7b36ee6bd7bf1.mp4?1755037229",
+      "https://attachments.are.na/38749561/1049ba9c559ffad3d29faa1766880c78.mp4?1755037230",
+      "https://attachments.are.na/38749562/bd57ab54c09d2ba23446917c4cacf11a.mp4?1755037230",
+      "https://attachments.are.na/38749563/5a7c2aba2d4a25627f3572284bc511ca.mp4?1755037232",
+      "https://attachments.are.na/38749565/c1209aaae1a99fc64ff0896d8e6013a6.mp4?1755037233",
+      "https://attachments.are.na/38749566/d0d43ccc45965b62f404385a6fb8f4cd.mp4?1755037233",
+      "https://attachments.are.na/38749567/e770d647273d7a1ebd1b9014796c9d60.mp4?1755037234",
+      "https://attachments.are.na/38749568/a809110d0fcc251c8f3bf0ef32aa0c62.mp4?1755037233",
+      "https://attachments.are.na/38749569/06ef45723d45a298b814b81ddd8ff04d.mp4?1755037234",
+      "https://attachments.are.na/38749570/7eff2474081e8add661929026111415a.mp4?1755037235",
+      "https://attachments.are.na/38749571/08cdf4d57b4d774918caf47365141f90.mp4?1755037234",
+      "https://attachments.are.na/38749572/087b6a7852b096c98f4da445e98693d9.mp4?1755037236",
+      "https://attachments.are.na/38749573/b35ff9488f333d68360a654bdcd1fb72.mp4?1755037237",
+      "https://attachments.are.na/38749574/71208cc96f09674dd1da7f99d3eb201a.mp4?1755037237",
+      "https://attachments.are.na/38749576/35c9445f97646769b8f55d2f5bda449f.mp4?1755037240",
+      "https://attachments.are.na/38749577/40dedef45fde928a8fe3237d61bfb459.mp4?1755037240",
+      "https://attachments.are.na/38749578/cecb0d1f8f54677cc3b7b53954f6a3f9.mp4?1755037240",
+      "https://attachments.are.na/38749580/be4651c062230d65f33ef800528c4e10.mp4?1755037241",
+      "https://attachments.are.na/38749581/1ebd4c3d70bfc2858911c297b6b9fe5f.mp4?1755037241",
+      "https://attachments.are.na/38749583/6255f2cc8b642a0b22262213b58bdb43.mp4?1755037242",
+      "https://attachments.are.na/38749584/b6705d6edf3ab59241d56fc9f1cfa2a7.mp4?1755037242",
+      "https://attachments.are.na/38749585/ee8c1bf5376aee6914d13f6427b69d1a.mp4?1755037243",
+      "https://attachments.are.na/38749586/52e239641bd95cdd8036065569747717.mp4?1755037244",
+      "https://attachments.are.na/38749587/26fa13687fcd7d8acc15851f53d2f9c0.mp4?1755037244",
+      "https://attachments.are.na/38749588/f241c0911d1037f081d5682b8e60209.mp4?1755037244"
+    ]
+  },
+  "resurrected":{
+    "title":"proyecto resurrected",
+    "date":"18 de diciembre de 2024",
+    "category":"showcase",
+    "heroVideo":["https://attachments.are.na/38749811/be19410241542b9cb9c9ace486fffd1f.mp4?1755037812"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749815/original_5f42fc8eeaade53505908e67595c00cf.jpg?1755037828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749816/original_33b034d9233a332fff2a6d11b4b42b71.jpg?1755037828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749817/original_7fbff88d5e05e562470de23f9a901808.jpg?1755037828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749818/original_0b7268e167b8792868e536d7df472750.jpg?1755037828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749819/original_62416f09b5b64cb92ddb291e14d02765.jpg?1755037828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749820/original_3d9acd124c4e2c125fc98bf978e1d853.jpg?1755037829?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749821/original_7536378c1b11998f3a8814f6143e87d7.jpg?1755037829?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749822/original_24eb6aa2c142dcfa329c9d9851ba8ece.jpg?1755037830?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749823/original_6b7f70c066be80311a49a165bca75416.jpg?1755037830?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749824/original_06336fe942c753bb3d0d5f82c4386f6d.jpg?1755037830?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749825/original_f6b89d4567057a90ddbe45a9432cca74.jpg?1755037830?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749826/original_e5a21a5b7a2e35522d51824e169df29d.jpg?1755037831?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749827/original_8189d5967cd9e504d8b918cac91de93b.jpg?1755037832?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749828/original_f01cf4eab4bfd825b23d2a0fb89dde30.jpg?1755037832?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749829/original_43e9beb7794bf887b5c5817c2725ef94.jpg?1755037832?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749830/original_f9becc85533b816ac5aff4292f431801.jpg?1755037832?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749832/original_b936b62c2f736dcf516cd59fb4aca2ac.jpg?1755037833?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749833/original_859133337a700e82f8c47a24b655f98e.jpg?1755037834?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749834/original_54306330a9286aca863f18d3d71320ae.jpg?1755037834?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749835/original_ef258da023259ec83b0bec62aa1a6404.jpg?1755037834?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749836/original_fb85c3d77333e4e985c634cd660e107d.jpg?1755037834?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749837/original_641214deff295d27d32241272c9f0629.jpg?1755037833?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749838/original_06143c72cbbd1e90842457cf1c91abf3.jpg?1755037835?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749839/original_0212d2e818d7252ae346a69bf65fb0c9.jpg?1755037836?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749840/original_138d7cf335d4fc85c8228d2ae989f652.jpg?1755037836?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749841/original_dcf4529e8fd0b0cc72f085a35f5a389d.jpg?1755037836?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749842/original_19b0f33fe23f2aebcdd1fc700d45eb2c.jpg?1755037837?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749843/original_32e5622ca11c153dabfa8c61c195ce62.jpg?1755037837?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749844/original_6713ffa30960a12afbd0be01baa57df9.jpg?1755037837?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749845/original_e7533d6f11fbc55f005cf11eb948b40d.jpg?1755037837?bc=0"
+    ]
+  },
+  "mdo":{
+    "title":"maison des orphelins",
+    "date":"6 de diciembre del 2024",
+    "category":"",
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749964/original_99e935a92f15e0ca6b23b665f57b5bcd.png?1755038351?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749966/original_16a25681d656eea6531e4b23e34a51ce.png?1755038352?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749967/original_113ca3498cc7018171ccf69c13c07b64.png?1755038352?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749969/original_d6732d797998d13557711803efca8e46.png?1755038353?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750013/original_c81a97da9e83fb0068047b7fe542278c.jpg?1755038449?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750014/original_06a0777e8534960adb473769002bf3de.jpg?1755038450?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750015/original_fdf5151a5837e7b775ba6b6596920329.jpg?1755038450?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750016/original_79ed073f157fe291583eb758164610cd.jpg?1755038450?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750017/original_8ff84139a50881bf58b5e9eee062dc1b.jpg?1755038450?bc=0"
+    ]
+  },
+  "louis":{
+    "title":"louis f cota & d56i3e7",
+    "date":"16 de noviembre de 2024",
+    "category":"showcase",
+    "heroVideo":["https://attachments.are.na/38750117/607ecb8a6c1d9b3818518017cc8b7259.mp4?1755038884"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750118/original_b15629f1f32667b3827e99ccabe22755.jpg?1755038889?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750119/original_4eceb5e85c7160ca4aaf2a3a6cb7d5c7.gif?1755038890?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750120/original_9e0ed24bdbf688555721ea3e48d0ac63.gif?1755038890?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750121/original_aa91df73098b6f1dc1061a0b7edeb6a6.gif?1755038891?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750122/original_be4f9568873e6a66e956ab472dd51f0a.gif?1755038891?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750123/original_03eeb64308aba8907c476df470f248de.gif?1755038891?bc=0"
+    ]
+  },
+  "misha":{
+    "title":"misha",
+    "date":"22 de noviembre de 2024",
+    "category":"",
+    "heroVideo":["https://attachments.are.na/38750188/1e42bb258556a52b6877e596e5e906db.mp4?1755039396"]
+  },
+  "harcha":{
+    "title":"otvaal <> cculdesacc <> xpan — harcha showcase [ mdtc.6 ]",
+    "date":"25 de abril del 2025",
+    "category":"harcha showcase",
+    "heroVideo":["https://attachments.are.na/38750211/3627cb038c3789ddab9b17ed70b0ac3c.mov?1755039558"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750217/original_73468d1faece7152e4543b988abbf579.jpg?1755039571?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750218/original_dae065249ce4638712c322b4ed9bbae4.jpg?1755039572?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750219/original_03e4b4f63439f1f829be52e9451c88a5.jpg?1755039572?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750220/original_3168fe415a83c8662fdfc77218e72020.jpg?1755039572?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750221/original_b8c3c921513db6ccb5d5ffca3f32aa3e.jpg?1755039573?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750224/original_e226e15df6aa187f845eff78f1168f81.jpg?1755039573?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750222/original_55cd8d77840eb810c93d259b95673f76.jpg?1755039573?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750223/original_785cbe492be648837da097b30c823483.jpg?1755039573?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750225/original_42b8e723cc6f6cef703170997ae6d9ae.jpg?1755039573?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750226/original_88ad0f64fecebe50e5e1a123fde75533.jpg?1755039573?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750227/original_d47bcaefba88d9c38f2e509af508d7ac.jpg?1755039574?bc=0"
+    ],
+    "aei":[
+      "https://attachments.are.na/38750302/e8d42254bf84052beb4e32df04246e56.mp4?1755039827",
+      "https://attachments.are.na/38750304/2b66f492026ddf19640988c670d4dbd4.mp4?1755039828",
+      "https://attachments.are.na/38750305/7c74ff59785d59cd3ce9726baa2588c8.mp4?1755039828",
+      "https://attachments.are.na/38750306/5231ce0883c8f3cdfd3b517155de7aee.mp4?1755039828",
+      "https://attachments.are.na/38750307/6f415caf2a69a94693f40bf0f87f05e0.mp4?1755039831",
+      "https://attachments.are.na/38750308/c1affbcda97a5804db47e2a85e9235c1.mp4?1755039830",
+      "https://attachments.are.na/38750310/86afeaa159ca4d6f3d1767001126d672.mp4?1755039834",
+      "https://attachments.are.na/38750312/dede7bed7a27439675ea59a1b162d759.mp4?1755039835",
+      "https://attachments.are.na/38750313/80e9f74c215a6693e44d5c42c225c4fb.mp4?1755039835",
+      "https://attachments.are.na/38750314/30a7be27eea846e28e06a0eb0c2b33ba.mp4?1755039835",
+      "https://attachments.are.na/38750315/4f84bb452f1ed210e8c6b10a79998d28.mp4?1755039836",
+      "https://attachments.are.na/38750316/53756e7fce8d5e2fa1389f79887c3c6d.mp4?1755039836",
+      "https://attachments.are.na/38750318/10658a3fbb3f213fa2636bc46e97074c.mp4?1755039841",
+      "https://attachments.are.na/38750319/f4dc457ff4df08373e2d48bf2b1b6ced.mp4?1755039843",
+      "https://attachments.are.na/38750321/3f61dbbcddb85da14e113b99a8b2a793.mp4?1755039848",
+      "https://attachments.are.na/38750325/c209f09edbcd5513c9e82ddabde17fc7.mp4?1755039849",
+      "https://attachments.are.na/38750327/cb5766ede400cb7d5813c50b0465b1aa.mp4?1755039851",
+      "https://attachments.are.na/38750328/af3f07944fa1b8174cd96e20929ec747.mp4?1755039853",
+      "https://attachments.are.na/38750329/eb91d79708eab610b76cfff5ea48c42a.mp4?1755039855",
+      "https://attachments.are.na/38750330/39857a6856e4e09885bfd48321475143.mp4?1755039855",
+      "https://attachments.are.na/38750333/9c828df0e672ca4964580757ff233adb.mp4?1755039857",
+      "https://attachments.are.na/38750334/4e85a6c2207809bb7b447f9f174a030d.mp4?1755039859",
+      "https://attachments.are.na/38750336/b8d5980592d54b915c994d949284f72c.mp4?1755039860",
+      "https://attachments.are.na/38750338/f8070f8646351b1f07f471f969667d31.mp4?1755039860",
+      "https://attachments.are.na/38750339/46d6ab936019e5dadeb203b763fb81d7.mp4?1755039860",
+      "https://attachments.are.na/38750341/3a6c56887378a63ade7e6d3eee3b48ca.mp4?1755039863",
+      "https://attachments.are.na/38750342/e7af97109ffbd0d011a7c5e9057a8caa.mp4?1755039865",
+      "https://attachments.are.na/38750345/40ad8ff73b4b3fe1c9b5362f54f63139.mp4?1755039867",
+      "https://attachments.are.na/38750346/69e140391190f461d7bb0292f7bbed0f.mp4?1755039868",
+      "https://attachments.are.na/38750347/f0c89ca877f87d5371cc24409136c8c9.mp4?1755039869",
+      "https://attachments.are.na/38750348/cccae221c81a4be7d5c305e9ecb277ee.mp4?1755039870",
+      "https://attachments.are.na/38750349/e2201c358394e5e08c074e465405e63e.mp4?1755039869",
+      "https://attachments.are.na/38750350/fd2c7ad0c62e55ee428dfd956279679b.mp4?1755039870",
+      "https://attachments.are.na/38750351/68f444b7941bad3093707767d4dfc0ab.mp4?1755039870",
+      "https://attachments.are.na/38750352/42d8b3f4524dd5c5015deff2ac143000.mp4?1755039870",
+      "https://attachments.are.na/38750353/44d42fa0f6f0965f0cd61cff1c7ebe0c.mp4?1755039871",
+      "https://attachments.are.na/38750356/d3260332d97adbc24634a3452906bb73.mp4?1755039875",
+      "https://attachments.are.na/38750357/360b39ad2b7e8be6c3ba22f194aabe61.mp4?1755039875",
+      "https://attachments.are.na/38750358/1b09ff0f29303674df4b0d6cb0bbd47b.mp4?1755039876",
+      "https://attachments.are.na/38750359/2866cf79842f69b890940fe998a1f126.mp4?1755039877",
+      "https://attachments.are.na/38750360/9667162a2f883e06bc66222d8712744d.mp4?1755039877",
+      "https://attachments.are.na/38750362/beb04785cffc1c4057102ba3e1e83b41.mp4?1755039881",
+      "https://attachments.are.na/38750365/a7d4c45bc4255f4230510fe3c95ad1db.mp4?1755039887",
+      "https://attachments.are.na/38750366/6f1d86adc6d297e126f7e1b61e218cec.mp4?1755039887",
+      "https://attachments.are.na/38750367/88816f3c8d7eee79afbee6eadb563c5b.mp4?1755039889",
+      "https://attachments.are.na/38750370/313a0b34d56b0340aa508e07045a4b9d.mp4?1755039893"
+    ]
+  },
+  "empire":{
+    "title":"empire libre — showcase lounge",
+    "date":"02 de noviembre de 2024",
+    "category":"",
+    "heroVideo":["https://attachments.are.na/38750425/3d8cc16093f20b3cb085f239f8a95003.mp4?1755040135"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750470/original_91836b15d6ea6f8128078d7e13562270.png?1755040229?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750469/original_2e882a54aec67ec4eb3661c492e440c6.png?1755040229?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750468/original_195db3e59f5e55570aff62bd75d40c03.png?1755040229?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750467/original_5cec6f147fade3addf1566409f9af20a.png?1755040228?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750466/original_e9b9b40118e522547205b7d19ba9fdaf.png?1755040228?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750465/original_6a2e45ccef0be8a7d2bf6a25b85c128e.png?1755040227?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750464/original_412ac2cda464ec12bf0f3c3a824031e8.png?1755040228?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750462/original_4fcc01fd1bb03a2b2ba4e4fae3badfd1.png?1755040227?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750461/original_f54bfc11dbec7082fa3264b2db5ffcbc.png?1755040227?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750460/original_d01cb620167a41f33b0abc269dfa0c91.png?1755040226?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750459/original_bface8eab0bc89a22c9f7d4475b1e95f.png?1755040226?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750458/original_7d2cd937d7683b47d08f26b65299bf69.png?1755040226?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750457/original_2b68e2ca8afb124fc164defa78aa4d29.png?1755040225?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750455/original_ab7e404ae5bacfdc204319d8e7567e08.png?1755040225?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750454/original_6e6d0b1d4ad84c9f9ad555600b0f6ae9.png?1755040223?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750453/original_14976628d996388fc8fd3633513773db.png?1755040223?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750452/original_513ab6930039e03a859ebdaf5065dfc1.jpg?1755040223?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750451/original_a5628fb6be2c6cfb496900dc57610558.jpg?1755040222?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750450/original_0105c9e0919ecefbf17bc5eb522d8462.png?1755040222?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750449/original_668deba5551c5e3db4ff19f47ba46931.jpg?1755040221?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750448/original_493b5d48f25b8111517f49f04c436646.jpg?1755040222?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750447/original_933c9624b0db1bcc9a0809b4ba5170a4.jpg?1755040221?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750446/original_28b7bca7520ee6fc057b01dd8e736a7f.jpg?1755040221?bc=0"
+   ],
+    "aei":[
+      "https://attachments.are.na/38750615/16393b3b98993df8948bcd42324c5de1.mp4?1755041243",
+      "https://attachments.are.na/38750617/4bf7156c5b5d9a1b6f5d9a2e0c1805b7.mp4?1755041247",
+      "https://attachments.are.na/38750618/8dd668e04ecf035347a77278912999ff.mp4?1755041250",
+      "https://attachments.are.na/38750619/6b2a26e48ae4d00c9f4f23a1e146e7e1.mp4?1755041253",
+      "https://attachments.are.na/38750620/3c97edfc9250561f4b64008df5a1f9d5.mp4?1755041258",
+      "https://attachments.are.na/38750621/872f9e542f6095b66787812001279847.mp4?1755041260",
+      "https://attachments.are.na/38750653/a325fa16cac29820f31829093afeccbe.mp4?1755041356",
+      "https://attachments.are.na/38750655/5114ae37c24893494c19abd8c07d5902.mp4?1755041367",
+      "https://attachments.are.na/38750656/63aa6da9e75c50142c63474756bed2ec.mp4?1755041369",
+      "https://attachments.are.na/38750659/e151c49fa96c88228ecea61108df5b55.mp4?1755041380",
+      "https://attachments.are.na/38750662/db93f23fda47d84b2695001db22f6c09.mp4?1755041395",
+      "https://attachments.are.na/38750666/1c7fd30dc8d7f35d0ae40fe6ee41d72d.mp4?1755041418",
+      "https://attachments.are.na/38750667/f70d19ae030a15428a073f0c0f007212.mp4?1755041419",
+      "https://attachments.are.na/38750669/c1aa8e2f7e351510e8f970207e5ef46e.mp4?1755041427",
+      "https://attachments.are.na/38750671/294b157609215b6b244ce4108f21971b.mp4?1755041430",
+      "https://attachments.are.na/38750674/fefdc61e8009e78a2c961996dbe7fbd6.mp4?1755041435",
+      "https://attachments.are.na/38750675/8640ab7cc3eda4e4388c9cca541d19d4.mp4?1755041438",
+      "https://attachments.are.na/38750676/c7c92f7168f78e4032c13ea2913e4f06.mp4?1755041443",
+      "https://attachments.are.na/38750684/87753b3f3c17117a9ec8e9da3a711549.mp4?1755041454",
+      "https://attachments.are.na/38750686/ef9149e7deeeb93d17a2436a5a3675dd.mp4?1755041461"
+   ]
+  },
+  "odbeauty":{
+    "title":"od beauty — lanzamiento de marca",
+    "date":"29 de noviembre de 2024",
+    "category":"showcase",
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750797/original_11922d6f290bcae8e4be62a8600ec78d.jpg?1755042062?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750764/original_29f48aaf8fe9110a6e75ecc393d0bb6d.png?1755041842?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750763/original_f50f502c7eaace0d38919e295349e180.png?1755041843?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750762/original_9a693dd7b5ad4809139ab83c38c7576e.png?1755041842?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750761/original_2ffa28862f9c94fdbc638377c07ef6d7.png?1755041841?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750760/original_e61dabf612c7d2e6b60e94a600246314.png?1755041841?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750759/original_1fde67d5edbaf164262aa30111c8a714.png?1755041841?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750758/original_19f2dab6751c277d2822ad84f9ca0a80.png?1755041840?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750757/original_1719f240bb55d7c2369903c0c34f73f9.png?1755041840?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750755/original_4c16f7ec9dbd3cbde8200fabbe21c7b3.png?1755041838?bc=0"
+    ]
+  },
+  "sacrifice":{
+    "title":"sacrifice redemption — chelsea alcerreca (parte.1)",
+    "date":"29 de diciembre de 2024",
+    "category":"",
+    "heroVideo":["https://attachments.are.na/38770339/c2ce2b05104f0b83d657b406d652c873.mp4?1755114189"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770354/original_744f65239b5735afee70d211423d508e.jpg?1755114200?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770351/original_13a52b8c3485211a39715d9b2955692e.jpg?1755114200?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770350/original_40bed6a33b558d7e459343dcf9fecd81.jpg?1755114199?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770349/original_f91e2f7188fd785549c87a7722214ffd.jpg?1755114199?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770348/original_bc48b0b5fbace34132c4afddf1b993de.jpg?1755114199?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770347/original_5ee14a62a44b50f2613a4d6d6bf85e44.jpg?1755114198?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770346/original_570adad97de8449526471b134a8f3279.jpg?1755114197?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770344/original_3c32c3f8017a2f4f6a72177db0c89dc2.jpg?1755114197?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770343/original_e6fe3c33fbd5a885d5fe0822cf3ceeac.jpg?1755114197?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770342/original_ea1f6d17c64fb3c99b0b76ea407c49f4.jpg?1755114196?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770341/original_ed0761c5e1df2c946824a696a6f0da4f.jpg?1755114194?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770371/original_330194d34bd1995c04eeb96561230921.jpg?1755114258?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770370/original_af8d421aebdbc7bc52e3e9c350ed6bd4.jpg?1755114253?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770369/original_1c34883d03fd55fddd6994ed9990c5cb.jpg?1755114205?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770368/original_15fc61f4b943ae14f603b9eaa46ff0c2.jpg?1755114203?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770367/original_c03c663531095c83f3e2ba550c9ba813.jpg?1755114217?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770365/original_85a0b87c69b87accd70226ea610f81d6.jpg?1755114218?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770364/original_1d60db6a7e40903525ad43fd57867aa9.jpg?1755114203?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770363/original_d4eaa0fb6edbea06c902d2d2833849b3.jpg?1755114223?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770362/original_ba57f08c3e5aa92f6fdb688d2fae4abe.jpg?1755114217?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770361/original_c499fc2b7ce872a214a420f96f4b0eb0.jpg?1755114203?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770360/original_012d471f47ac142c78677921c2528963.jpg?1755114201?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770359/original_3e7a4700a5f2809044ccf4e3ed71f53b.jpg?1755114221?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770607/original_bfcd6e7b6b68e17f8a0d67365ed2bdc7.png?1755114651?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770358/original_df7bc01c7d77a5f982d80efc61ac6761.jpg?1755114221?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770357/original_3de9d1034998158477db4320aec790fa.jpg?1755114201?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770356/original_00ba08cdf5449ce79f78320ff783a686.jpg?1755114200?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770355/original_dff1e02aaa077d14f6a7c583b74f68c1.jpg?1755114200?bc=0"
+    ]
+  },
+  "atlas2":{
+    "title":"atlas.2",
+    "date":"15 de mayo de 2025",
+    "category":"",
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771025/original_f41d63f812b4213b9ab542105b2d1788.jpg?1755115307?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770899/original_8459965c8bf663b6edf8fe2cab237326.jpg?1755115096?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770897/original_cf23761b367f35b0680b214f87ae4d93.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770896/original_deff35b13235b79defd1c0c5983bf616.jpg?1755115096?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770895/original_472662d6c9c8c25c06d149a8b6bd333b.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770894/original_3b8ed131c29c05583921e689a3d5ca13.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770893/original_8b16a764bb5b5745692ab79dd2458464.jpg?1755115094?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770892/original_ea5b9469f409e39506cf726910f21aef.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770891/original_01d49c771d6c42e4f5d30ddc12d964f8.jpg?1755115094?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770889/original_abeea8c49b33fb7cf7364ea2318c0de2.jpg?1755115093?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770888/original_b1a205a34422f5efc08738183c747007.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770887/original_fe4ab020e76494fd65f6969fba3e192c.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770885/original_8909e1c7178355165f87d8e348447536.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770884/original_12e3877d1271157e27659b7294d52ab0.jpg?1755115096?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770883/original_16bfca5b4c838e492cc4a1d6bb0c9456.jpg?1755115091?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770882/original_45ab1c55daa73cffb3b32f00ff335139.jpg?1755115090?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770881/original_b76f125220485423a87237bf1301bda7.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770880/original_13c850df31759d87ff89b196a3b3d4c1.jpg?1755115090?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770878/original_00324316687b15603a3e6d4e054e5d5f.jpg?1755115088?bc=0"
+    ],
+     "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770874/original_3ffd9c0dc63be282c52e944be577edac.jpg?1755115082?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770873/original_1d358a6c8f03aee2557ddb71428f580d.jpg?1755115082?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770872/original_db0da8779044fe6c393f5f6bae23c04a.jpg?1755115083?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770871/original_df195faa261930c6b74f0eb19036d4b9.jpg?1755115082?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770870/original_cab5a600546677271037882b1763f9db.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770869/original_1fba2e1171e8573d13a802e2d9c90737.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770868/original_7578286a66a8efc6f707074ae9aec6e4.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770867/original_180b8322f5088acf2ccdd69192ab6b20.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770865/original_4ef6a99bf4929a01c018e34c53a81958.jpg?1755115156?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770864/original_0b2a83a50fd30eb03e52c61eb193e6d3.jpg?1755115175?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770863/original_514fe64457a8250360b7ee78f6280057.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770862/original_18523ffaa25131fd99aba0620387d00c.jpg?1755115079?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770861/original_b8bcc10d06e20bd30f047ceb91b3c72a.jpg?1755115079?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770860/original_6b588202cb55a912ddc79a19885cd50c.jpg?1755115079?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770859/original_3c1121168346fbf0c409f34418a6aeb9.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770857/original_693c7c76ac35448639d0d8f242ea68c7.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770856/original_c26cf80c79b2d54450abb66457bd59b9.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770855/original_2bcba2002b57efaf2454a2d6720b8712.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770854/original_64ae9175cee4f34a73f49e28c62333f5.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770853/original_e3ea7c0c860b68634e42c3a25da361ef.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770852/original_94c2ee780af51fd8b385b0ef4c494d68.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770851/original_53ff450ab68f40e8224d5bb6b22797f7.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770850/original_a7cd79552c8cd0556f62596bd8100366.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770849/original_033ce65cccd41a386b5414d15f510899.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770848/original_63bff25c8f926c4e197aec7dda3b1871.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770847/original_f2909ffe2562b5dd07394acbe0cd875b.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770846/original_f9918cd633836564b95cbdc273adbe28.jpg?1755115076?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770844/original_8e21f92cf665a032fd33333d76f458dc.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770843/original_34fb4bed2a0ca70663fb4d330e20b476.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770842/original_f4815514887c46a8de84acedc76e1894.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770841/original_68d7fbd60e89011cd1941516f106e8fb.jpg?1755115076?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770840/original_29c53ce3d3274db36255ecef0eee30dd.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770839/original_76eabcaa8a21390f6741062701347212.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770837/original_9270318ae2f8f5a135276974e47c13c6.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770836/original_74520028b9a11daca86c30b57b0bcc4e.jpg?1755115074?bc=0"
+    ],
+    "aei":[
+      "https://attachments.are.na/38770827/30417a3382a6b5c33b542c44a34d3fcf.mp4?1755115054",
+      "https://attachments.are.na/38770826/830e4c42497977aacc6edcfaca512461.mp4?1755115051",
+      "https://attachments.are.na/38770825/fd20ec3db2313f196ded9f997012ea66.mp4?1755115050",
+      "https://attachments.are.na/38770823/83e6f6801d71e55bdcc329e0ded88b65.mp4?1755115050",
+      "https://attachments.are.na/38770822/3fe61970a04d4d99245c06bf0b02069c.mp4?1755115045",
+      "https://attachments.are.na/38770821/92ef945b2948556423f5fa40676a216b.mp4?1755115045",
+      "https://attachments.are.na/38770819/c60dbec0cb205e0ebaea87eefa5b5608.mp4?1755115043",
+      "https://attachments.are.na/38770810/5c6478311a8cbd5e15b56cfae4508240.mp4?1755115034",
+      "https://attachments.are.na/38770807/808ab21e48ca81797e1b2843f623eba2.mp4?1755115032",
+      "https://attachments.are.na/38770806/1c33b419f133a52e6f80bfe2934084b6.mp4?1755115032",
+      "https://attachments.are.na/38770791/862804d6b938674eadfdad60ff81338f.mp4?1755115021",
+      "https://attachments.are.na/38770787/760fd3a683af5f3604cbfbeacba15788.mp4?1755115013",
+      "https://attachments.are.na/38770786/e171e85c4aef9033a94d5e77a1bc1c60.mp4?1755115030",
+      "https://attachments.are.na/38770785/414022721fb51026d8fb2705eb1dd523.mp4?1755115013",
+      "https://attachments.are.na/38770782/05be962e07316720c405996cfdaf1ff3.mp4?1755115009",
+      "https://attachments.are.na/38770780/78d767e4b777afd52bbf791a74936fe2.mp4?1755115007",
+      "https://attachments.are.na/38770778/4802ed4e9c238039556c49b3bf849b5d.mp4?1755115006",
+      "https://attachments.are.na/38770773/7123d4130eb05f9d699ac81e8c38fcc3.mp4?1755115001",
+      "https://attachments.are.na/38770771/8b3a084874630bdae8938f1519f3f5d2.mp4?1755114999",
+      "https://attachments.are.na/38770770/3e0f5429414c1bc447867fc111d25ebc.mp4?1755114998",
+      "https://attachments.are.na/38770769/e9ade66b319ab89d78109cb47577fbc7.mp4?1755114998",
+      "https://attachments.are.na/38770768/98c5761aea9a39ca81ac1c66c7da2438.mp4?1755114999",
+      "https://attachments.are.na/38770767/efded9a81fc4bee938bcfed39a940188.mp4?1755114996",
+      "https://attachments.are.na/38770766/ffca2cac2d5b21a1a24810e093140cd1.mp4?1755114994",
+      "https://attachments.are.na/38770765/49b9e718a7ecdca4f5aacf46f26d50c7.mp4?1755114993",
+      "https://attachments.are.na/38770763/2642c6c314e80f10b14472f94bfbdbad.mp4?1755114993",
+      "https://attachments.are.na/38770760/61e20b073a368be548e2af7abc8e9425.mp4?1755114988",
+      "https://attachments.are.na/38770759/84e3be81dad053f729273696f62e56b2.mp4?1755114989",
+      "https://attachments.are.na/38770757/dafcd262bab20d5e5f73dca3f5d432a8.mp4?1755114984",
+      "https://attachments.are.na/38770752/ce6f20f967710243b7d84d59dc19f8c0.mp4?1755114979",
+      "https://attachments.are.na/38770750/d898b1460ea8c5b8d58dae89417348cc.mp4?1755114977",
+      "https://attachments.are.na/38770747/b794abc573efc566749ae8d86dc3f437.mp4?1755114973",
+      "https://attachments.are.na/38770746/fad4c322533852d517f60b8fbdb5f19d.mov?1755114971",
+      "https://attachments.are.na/38770745/3b56bf57a33e9e6499b2d0a762d44a42.mp4?1755114970",
+      "https://attachments.are.na/38770743/280f42926364aaf229bceb32396dc9de.mp4?1755114964",
+      "https://attachments.are.na/38770742/ec4ae054183af9ce456ef104e0439620.mp4?1755114961",
+      "https://attachments.are.na/38770741/e50348df72c73d5fde0ede9e456942ab.mp4?1755114961",
+      "https://attachments.are.na/38770740/83e2a2f942f6c844674f986b77f3b022.mp4?1755114961",
+      "https://attachments.are.na/38770739/4f38f47943d386b7352861709102e31a.mov?1755115008",
+      "https://attachments.are.na/38770738/81ad1d30bec9ecdcdfa0c2657f1666e0.mov?1755114960",
+      "https://attachments.are.na/38770737/180c6b41c6337cfb1943648d84ecb646.mov?1755114958",
+      "https://attachments.are.na/38770733/b5277d3760f97fc59916f1ab274f9089.mov?1755114951",
+      "https://attachments.are.na/38770731/c606ecb50a6144f84a5b0d7482dcb9ed.mov?1755114942",
+      "https://attachments.are.na/38770730/7eae7941d5d8db511bc7570392bcf9d0.mov?1755114937",
+      "https://attachments.are.na/38770729/325abd33f99bd4f314ba3277b494eea8.mov?1755114938",
+      "https://attachments.are.na/38770727/885e431526ef3d6d1aa6c7b5773b649c.mov?1755114937",
+      "https://attachments.are.na/38770723/5fd0b5a7992417a0179dbc95f374b293.mov?1755114933",
+      "https://attachments.are.na/38770722/3afb78101ebd1de2b1c9e7971d9c8c1e.mov?1755114932"
+    ]
+  },
+  "mugler":{
+    "title":"mugler showcase",
+    "date":"20 de diciembre de 2024",
+    "category":"showcase",
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771260/original_5d5f08edacce0dbe062e87cd8b51c9e6.jpg?1755115907?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771267/original_5716a5aaf10eed93c4a3e108c17cecee.jpg?1755115915?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771268/original_79d5636faeecdbc689981e38bdf3494c.jpg?1755115915?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771263/original_d9b6710dddd116f36c8c9758d0f821ca.jpg?1755115913?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771296/original_059df7a5bdeb7946d51d28a05735f238.jpg?1755115960?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771316/original_182d5940c2716f870528030cbcccbaf5.jpg?1755115990?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771265/original_dbc50ad7fb648e022c9fd523314d034c.jpg?1755115913?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771269/original_ed0c497581666bb3df0e79c43c646058.jpg?1755115915?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771270/original_b044d4a78125a25daa3912b3a25adcbe.jpg?1755115917?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771271/original_11aafabce3392030714ee0ea0a5f3802.jpg?1755115917?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771272/original_d163eecef55268a54d94ded9074230da.jpg?1755115917?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771296/original_059df7a5bdeb7946d51d28a05735f238.jpg?1755115960?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771259/original_1c1e97b026ab0206feca466606c7d0db.jpg?1755115906?bc=0"
+   ],
+    "gridVideos":[
+      "https://attachments.are.na/38771253/068b98b34c72354f15c3bcfca3e07a27.mov?1755115892",
+      "https://attachments.are.na/38771249/6a195f580a8962ca0d8a2d6b43446df0.mov?1755115888",
+      "https://attachments.are.na/38771246/38f5fbfba71fa1aeddf3ece96b6757cd.mov?1755115904",
+      "https://attachments.are.na/38771242/c568f5d1eae797ef7728e455ad48949c.mov?1755115875",
+      "https://attachments.are.na/38771240/8d92159ddc33114bad93e2cb96f2f885.mov?1755115871",
+      "https://attachments.are.na/38771236/b511316e8cc60b54581645702b953131.mov?1755115864",
+      "https://attachments.are.na/38771234/3ae5713243d54355da1f8080c887e945.mov?1755115870",
+      "https://attachments.are.na/38771233/fa22b195af0ab859230eb8f58bbe3a34.mov?1755115855",
+      "https://attachments.are.na/38771232/a507206e9260f63db7c43888736480fe.mov?1755115851",
+      "https://attachments.are.na/38771230/a4752f1e685c80a3164185916b8373ed.mov?1755115850",
+      "https://attachments.are.na/38771226/aab3ac63a9529b3d0c065dea41304e53.mov?1755115846"
+    ],
+    "aei":[
+      "https://attachments.are.na/38771501/3ae7178a807c584689aba9edf35a3a92.mp4?1755116201",
+      "https://attachments.are.na/38771500/012e06386c882323004e6b9abf7f296f.mp4?1755116201",
+      "https://attachments.are.na/38771499/0d7db348361154b03759df95986ff4f3.mp4?1755116201",
+      "https://attachments.are.na/38771498/a2d1800ce90522d712343e39ceeb45a5.mp4?1755116201",
+      "https://attachments.are.na/38771497/62a51d665e0d39f289dd7c23e3a956b4.mp4?1755116200",
+      "https://attachments.are.na/38771495/7538aa32055a2823db65b299a9ded795.mp4?1755116200",
+      "https://attachments.are.na/38771494/d8d102097a2f66d2844393605a687269.mp4?1755116200",
+      "https://attachments.are.na/38771493/562401750b084417db580da6ec887790.mp4?1755116200",
+      "https://attachments.are.na/38771491/e6176790a218a57207c0b6a924ab43e7.mp4?1755116199",
+      "https://attachments.are.na/38771490/6c59123e2f3d0d719d9d5bfbf279dc2b.mp4?1755116199",
+      "https://attachments.are.na/38771489/e3ab948a0ed70217901a52b6e6048e0c.mp4?1755116198",
+      "https://attachments.are.na/38771488/186a8b1140d4a4c77f52856fe5054614.mp4?1755116197",
+      "https://attachments.are.na/38771487/b75ba1a303550f5b43f9319044afad18.mp4?1755116196",
+      "https://attachments.are.na/38771486/aff254769d2dd3ff866e6e07a9a3aab7.mp4?1755116197",
+      "https://attachments.are.na/38771485/588a3b85380dab62a1d3087d0d9fca54.mp4?1755116196",
+      "https://attachments.are.na/38771484/f06bcea510b86f9b737dd75640e976ae.mp4?1755116195",
+      "https://attachments.are.na/38771483/bb3c7e83cb786647fd5e17be19ed6091.mp4?1755116195",
+      "https://attachments.are.na/38771482/a10cf072c04d315a1a6de2c0bbc47bb9.mp4?1755116194",
+      "https://attachments.are.na/38771481/46957b07bb0dd835dc15b20f0526a953.mp4?1755116194",
+      "https://attachments.are.na/38771480/ceef6d2a4a1e8b1f9738a6c313945d79.mp4?1755116192",
+      "https://attachments.are.na/38771478/7d7e0f2ac62e34c9e21e133ad45de4ff.mp4?1755116189",
+      "https://attachments.are.na/38771475/cffd4ca0ddf89827b7c9e0361ae43ff9.mp4?1755116187",
+      "https://attachments.are.na/38771474/f7917203f2eb70c85f6e1ed9fc9bde6d.mp4?1755116185",
+      "https://attachments.are.na/38771472/45bcc5f4febdd274c4409f8975ce4684.mp4?1755116184",
+      "https://attachments.are.na/38771471/cb5f9dc73bcaf4cd83f2feccd579ef16.mp4?1755116182",
+      "https://attachments.are.na/38771469/e7d92b90dddcccea23471e12a67690d2.mp4?1755116180",
+      "https://attachments.are.na/38771468/78a5c092a9b5a056e42849fb9fcd3794.mp4?1755116180",
+      "https://attachments.are.na/38771467/5486436d377214a38d9b4f56ca377bb0.mp4?1755116180",
+      "https://attachments.are.na/38771466/65d0a3fd462fb5f4c9bd8a8f31a77d55.mp4?1755116178",
+      "https://attachments.are.na/38771465/d74bae1b503f721ed9090d10ad8a179c.mp4?1755116178",
+      "https://attachments.are.na/38771463/e3f2cc7fe0b745d67572bd4e79455fc9.mp4?1755116178",
+      "https://attachments.are.na/38771462/ede2b69c739472516a0cc0e2cabf12b7.mp4?1755116177",
+      "https://attachments.are.na/38771460/da621073984ff01dee31e195a936f6f1.mp4?1755116177",
+      "https://attachments.are.na/38771458/f3369f70a3bf85f971e97f770370116c.mp4?1755116176",
+      "https://attachments.are.na/38771457/1c037c7e813f1eb9d5975c3270c49073.mp4?1755116175",
+      "https://attachments.are.na/38771456/57cf9c6ef3187faa5a358e514046b3f3.mp4?1755116175",
+      "https://attachments.are.na/38771454/3fafe3362bcc585cd7ab67b12085c9d2.mp4?1755116174"
+    ]
+  },
+  "paglieri":{
+    "title":"paglieri — presentación de álbum “ruido”",
+    "date":"04 de noviembre de 2024",
+    "category":"showcase",
+    "heroVideo":["https://attachments.are.na/38771863/247e41ac93dd72c52b682082364c45af.mp4?1755116824"],
+    "gridVideos":[
+      "https://attachments.are.na/38771858/503f4b6f1a4331a643c3e52ffdb1842f.avi?1755116814",
+      "https://attachments.are.na/38771855/e75697356b318830e849f20f4f052925.avi?1755116810",
+      "https://attachments.are.na/38771853/aea354326a82f582cf996deba191b58a.avi?1755116809",
+      "https://attachments.are.na/38771844/c5dce88593fef988c389f2813468d8c3.avi?1755116799",
+      "https://attachments.are.na/38771841/9455a5c0a4313dfc703d782a4d6eeedf.avi?1755116792",
+      "https://attachments.are.na/38771838/a120899315001ab573a2b41be2337e70.avi?1755116789",
+      "https://attachments.are.na/38771832/ddd648be3c7ec129b89a8d5f9f80f361.avi?1755116774",
+      "https://attachments.are.na/38771794/58d952119451dfe80baefdde7bed22c4.avi?1755116769",
+      "https://attachments.are.na/38771790/45277b77130158a216ff780b4476ba6c.avi?1755116764",
+      "https://attachments.are.na/38771789/42175dbb036dd208ec7cb889043d58d1.avi?1755116764",
+      "https://attachments.are.na/38771784/472a6d8e0b873887b7b4a741c5349b79.avi?1755116760"
+    ],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771770/original_e11a234681bfa756d4cc71cd641b1ea5.jpg?1755116747?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771769/original_46a6f7d2b774d6a471d79f9604f5536c.jpg?1755116747?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771768/original_c21535d1fcdfef03352ebf2c223d4ed2.jpg?1755116747?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771767/original_29ac3b19c735c3c3687c33a57abe231a.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771766/original_ef7a80ba37a04184a82a20ac9446b49f.jpg?1755116747?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771764/original_f8bda397338e18666e7fa72e0852d989.jpg?1755116747?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771763/original_f05bfc4e9ca9d7409a43f8979f74746b.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771762/original_90785eeb096beb24353dff57830859e8.jpg?1755116747?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771761/original_d245f1d48c1b9d65988c474bcb619efe.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771759/original_68dc6e239c7096e293aaa5119af820cc.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771757/original_f1b0c8a3f7f9b889a73949014fd90f66.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771756/original_985dd15f21946b740c98b2a12bb20a45.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771755/original_3f277832be21c73e6bc9f0f0280baa7f.jpg?1755116745?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771754/original_6b95a25d98db386c4a355ec07e3a3fc4.jpg?1755116746?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771753/original_a49c90fb559500767a5c943bfda223bc.jpg?1755116745?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771752/original_20cae5b9a5f6ce0fcce778ca787b14da.jpg?1755116745?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771751/original_a33e99ea78e7ef1d3f29faf8d2d52ede.jpg?1755116745?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771750/original_ad04157bc9c7f23d7be6c10531c74bcd.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771748/original_768454d5e8057dfe2347616f08388dc5.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771749/original_0e9f4d26d8d33f8d01a94caaed93cd55.jpg?1755116745?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771747/original_473756af43f305084b3fdf0f45a309af.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771746/original_379acb20ca0d5434a5cfb6548353496b.jpg?1755116745?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771745/original_87acb906845e2d31c6f113d0df5a8286.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771744/original_44d378695c91709964dc891eb83dc2a7.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771743/original_d87b91696a430f337002f9c62b6dfd77.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771742/original_2bf99e35aa58ae2c4d8cc4ad4d100cb0.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771741/original_8e9d60de492ff71c25aff41cc78cac9b.jpg?1755116744?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771740/original_6e1cdaef61b360e908dd8c2606022e19.jpg?1755116743?bc=0"
+    ]
+  },
+  "ia":{
+    "title":"ía — performance",
+    "date":"04 de febrero de 2025",
+    "category":"performance",
+    "heroVideo":["https://attachments.are.na/38772161/6ecbf91dbe418731d41a5e2e7a673330.mp4?1755117291"]
+  },
+  "profesor":{
+    "title":"profesor trumane — taller de dibujo sobre mesa microfoneada y amplificada",
+    "date":"09 de noviembre de 2025",
+    "category":"taller",
+    "heroImage":"https://d2w9rnfcy7mm78.cloudfront.net/38772602/original_743f0c4524a75a6e2bfa8569d003b337.jpg?1755118464?bc=0",
+    "gridVideos":[
+      "https://attachments.are.na/38772609/6cde1e346b5aa2f2dd7f802d9ad51a94.mov?1755118469",
+      "https://attachments.are.na/38772610/b8c811f92108574f94cf683f8d3b8d00.mov?1755118470",
+      "https://attachments.are.na/38772611/1a0e7c967427b6e982f4c80c13859cf2.mov?1755118470",
+      "https://attachments.are.na/38772612/c09de58342f64375de25ee96ded04ea1.mov?1755118470",
+      "https://attachments.are.na/38772613/8a84b94ae67132de852da7a5b3dd7f7b.mov?1755118470",
+      "https://attachments.are.na/38772614/f58a7d0784767b4dc3cd1c287299854d.mov?1755118470"
+     ],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772619/original_e430628586a5b5d6ba189b3c6551621d.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772620/original_fb793e9839661037baa33c6fa44f8b18.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772621/original_be5fc613fa204da89fbdf0ffccfd3e97.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772622/original_8b40df7bce2b492268a40f4a85b7d509.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772624/original_b6c32987cb090c2a9b4aee92c57dc2ac.jpg?1755118480?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772625/original_9838ce71497883b4e4a6f4b2368cd645.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772626/original_44a4bb145dfa416b4a01de4c7f3b6875.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772627/original_51a7b3da33d45f693e2976f8d2472e5f.jpg?1755118479?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772628/original_b91548fbe16691454c7a25492afe9e5d.jpg?1755118480?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772629/original_dcbcb0bac90f08b9c71831694ed187e4.jpg?1755118480?bc=0"
+    ]
+  },
+  "trazo":{
+    "title":"performance “trazo”",
+    "date":"17 de febrero de 2024",
+    "category":"performance",
+    "heroVideo":["https://attachments.are.na/38772720/7d21f211394470f3e99177a43d6b8223.mp4?1755118707"],
+    "gridImages":[
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772726/original_252434c9fb706c8b2cb121b7c7a41965.jpg?1755118716?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772728/original_2c0a134aa1550aef1f4ac0f0959ff9b8.jpg?1755118719?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772730/original_fd7631b35caadefb41b2851c86475ccf.jpg?1755118721?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772732/original_dce1e3cb3423f9ed3409ae972da1e9f8.jpg?1755118722?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772734/original_041491f548fa69895eb4beb7e5c7e437.jpg?1755118722?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772736/original_157325a091a35db4b69ee272498ae9cb.jpg?1755118724?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772737/original_213974578c84f3db636230d5167f3885.jpg?1755118724?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772738/original_ee1a3278123df6da084de505f146dc71.jpg?1755118723?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772740/original_79014017f9a1c25a8f48e097fca79f26.jpg?1755118724?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772741/original_01920f5ea8ad47a7df808342b1aa89d0.jpg?1755118726?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772743/original_db042359a4a63998a826393397352984.jpg?1755118727?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772744/original_8b90503e6f4f8c3636d1b72e4198eef3.jpg?1755118728?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772746/original_759143afb17d8ea01f076850dae5cbb6.jpg?1755118730?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772747/original_2b0ced087d89bac2da1499f6b2d948a4.jpg?1755118730?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38772749/original_806e1a184936c47830b26884d836bb85.jpg?1755118731?bc=0"
+    ]
+  }
+};
+
+/* ===== Helpers ===== */
+function autoCols(count){
+  if(count >= 20) return 'cols-6';
+  if(count >= 12) return 'cols-5';
+  if(count >= 8) return 'cols-4';
+  if(count >= 4) return 'cols-3';
+  return 'cols-2';
+}
+
+function render(){
+  // nav
+  const nav = document.getElementById('selector');
+  Object.entries(projects).forEach(([id, p])=>{
+    nav.appendChild(el('a', {href:'#'+id}, [document.createTextNode(p.title)]));
+  });
+
+  /* build sections */
+const main = document.getElementById('entries');
+  Object.entries(projects).forEach(([id, p])=>{
+    const sec = el('section', {class:'entry', id});
+    sec.appendChild(el('h2', {}, [document.createTextNode(p.title)]));
+    const metaText = p.date + (p.category ? ' — ' + p.category : '');
+    sec.appendChild(el('div', {class:'meta'}, [document.createTextNode(metaText)]));
+
+    // hero
+    if(p.heroVideo){
+      const grid = el('div', {class:'grid columns-3'});
+      (Array.isArray(p.heroVideo) ? p.heroVideo : [p.heroVideo]).forEach(url=>{
+        const card = makeMediaBox(url, 'video');
+        grid.appendChild(card);
+      });
+      sec.appendChild(grid);
+    }else if(p.heroImage){
+      const grid = el('div', {class:'grid columns-3'});
+      grid.appendChild(makeMediaBox(p.heroImage, 'img'));
+      sec.appendChild(grid);
+    }
+
+    // gridImages
+if(p.gridImages && p.gridImages.length){
+  const wrap = el('div', {class:'tight-wrap', style:'margin-top:1rem;'});
+  const grid = el('div', {class:'tight-grid '+autoCols(p.gridImages.length)});
+  wrap.appendChild(grid); sec.appendChild(wrap);
+  const items = p.gridImages.slice(); let loaded=0; const conn = (navigator.connection||{});
+const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
+const PAGE = SLOW ? 4 : 6; const MORE = SLOW ? 6 : 10;
+  function loadBatch(n){
+    const max = Math.min(items.length, loaded+n);
+    for(let i=loaded;i<max;i++){ grid.appendChild(makeTightItem(items[i], 'img')); }
+    loaded = max; btn.style.display = loaded<items.length ? 'inline-flex' : 'none';
+  }
+  const btnWrap = el('div',{class:'load-more'});
+  const btn = el('button',{type:'button'},[document.createTextNode('cargar más')]);
+  btn.addEventListener('click',()=> loadBatch(MORE));
+  btnWrap.appendChild(btn); sec.appendChild(btnWrap);
+  loadBatch(PAGE);
+}
+
+
+    // gridVideos
+if(p.gridVideos && p.gridVideos.length){
+  const wrap = el('div', {class:'tight-wrap', style:'margin-top:1rem;'});
+  const grid = el('div', {class:'tight-grid '+autoCols(p.gridVideos.length)});
+  wrap.appendChild(grid); sec.appendChild(wrap);
+  const items = p.gridVideos.slice(); let loaded=0; const conn = (navigator.connection||{});
+const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
+const PAGE = SLOW ? 4 : 6; const MORE = SLOW ? 6 : 10;
+  function loadBatch(n){
+    const max = Math.min(items.length, loaded+n);
+    for(let i=loaded;i<max;i++){ grid.appendChild(makeTightItem(items[i], 'video')); }
+    loaded = max; btn.style.display = loaded<items.length ? 'inline-flex' : 'none';
+  }
+  const btnWrap = el('div',{class:'load-more'});
+  const btn = el('button',{type:'button'},[document.createTextNode('cargar más')]);
+  btn.addEventListener('click',()=> loadBatch(MORE));
+  btnWrap.appendChild(btn); sec.appendChild(btnWrap);
+  loadBatch(PAGE);
+}
+
+
+    // aei
+    if(p.aei && p.aei.length){
+      const block = el('div', {class:'section', style:'margin-top:1.2rem;'});
+      const embed = el('div', {class:'aei-embed'});
+      const lines = document.createElementNS('http://www.w3.org/2000/svg','svg'); lines.classList.add('aei-lines');
+      const stage = el('div', {class:'aei-stage'});
+      const hint = el('div', {class:'aei-hint'}, [document.createTextNode('toca/arrastra')]);
+      embed.appendChild(lines); embed.appendChild(stage); embed.appendChild(hint);
+      block.appendChild(embed); sec.appendChild(block);
+      // usa el builder existente para crear y observar medios
+      if(typeof buildAEI==='function'){ buildAEI(embed, p.aei); }
+    }
+
+    main.appendChild(sec);
+  });
+}
+document.addEventListener('DOMContentLoaded', render);
+
+// background prefetch for remaining media (images only on slow networks, images+videos on fast)
+document.addEventListener('DOMContentLoaded', ()=>{
+  try{
+    const conn = (navigator.connection||{});
+    const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
+    const urls = [];
+    document.querySelectorAll('img[data-src],video[data-src]').forEach(el=>{
+      const u = el.getAttribute('data-src'); if(!u) return;
+      const isVid = /\.(mp4|mov)(\?|$)/i.test(u);
+      if(SLOW && isVid) return; // skip video prefetch on slow
+      urls.push(u);
+    });
+    let i=0;
+    function step(deadline){
+      while((deadline && deadline.timeRemaining()>8) && i<urls.length){
+        const u = urls[i++];
+        fetch(u, {mode:'no-cors', cache:'force-cache'}).catch(()=>{});
+      }
+      if(i<urls.length) requestIdleCallback(step, {timeout: 2000});
+    }
+    if('requestIdleCallback' in window) requestIdleCallback(step, {timeout: 1500});
+  }catch(e){}
+});
+
+
+/* ===== stream mode: windowed mounting for heavy retículas ===== */
+(function(){
+  const OVERSCAN_TOP = 2.0;   // viewport heights
+  const OVERSCAN_BOTTOM = 3.0;
+  const PREFETCH_AHEAD = 24;
+  const SPEED_OFF_MS = 600;   // disable parking while fast scroll
+
+  let lastY = window.scrollY, lastT = performance.now(), fastUntil = 0;
+
+  function onScrollSpeed(){
+    const now = performance.now();
+    const dy = Math.abs(window.scrollY - lastY);
+    const dt = Math.max(1, now - lastT);
+    const v = dy / dt; // px per ms
+    lastY = window.scrollY; lastT = now;
+    if(v > 1.2){ fastUntil = now + SPEED_OFF_MS; }
+  }
+
+  // mount/unmount media inside a tight-item while keeping its height
+  function unmountItem(it){
+    if(it.classList.contains('skel')) return;
+    const h = it.getBoundingClientRect().height;
+    it.dataset.h = String(Math.max(32, Math.round(h)));
+    it.style.height = it.dataset.h + 'px';
+    const mb = it.querySelector('.media-box'); if(!mb) return;
+    // park descendants
+    mb.querySelectorAll('img,video').forEach(n=>{
+      if(n.tagName==='IMG'){
+        if(!n.dataset.src && n.src){ n.dataset.src = n.currentSrc || n.src; }
+        if(n.srcset){ n.dataset.srcset = n.srcset; n.srcset=''; }
+        n.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+      }else{
+        try{ n.pause(); n.removeAttribute('src'); while(n.firstChild) n.removeChild(n.firstChild); }catch(e){}
+      }
+    });
+    it.classList.add('skel');
+  }
+  function mountItem(it){
+    if(!it.classList.contains('skel')) return;
+    const mb = document.createElement('div'); mb.className = 'media-box thumb-box';
+    // rebuild from data-url attribute preserved on placeholder child if any
+    // Our tight items were created with an <img> or <video> child originally.
+    // We reuse existing URL stored on the first child dataset in HTML (kept on wrapper via data-url).
+    const url = it.dataset.url || '';
+    const isVid = /\.(mp4|mov)(\?|$)/i.test(url);
+    if(isVid){
+      const v = document.createElement('video');
+      v.setAttribute('preload','none'); v.setAttribute('playsinline',''); v.muted = true; v.loop = true;
+      v.setAttribute('data-src', url);
+      mb.appendChild(v);
+      lazyIO.observe(v); playIO.observe(v);
+    }else{
+      const img = document.createElement('img');
+      img.setAttribute('loading','lazy'); img.setAttribute('decoding','async'); img.setAttribute('fetchpriority','low');
+      const thumb = isArenaCDN(url) ? arenaVariant(url,'small') : url;
+      img.setAttribute('data-src', thumb);
+      if(isArenaCDN(url)) img.setAttribute('data-srcset', buildSrcset(url));
+      img.alt='';
+      img.addEventListener('load', ()=> setAspectFromMedia(mb, img), {once:true});
+      img.onerror = ()=>{ img.removeAttribute('srcset'); img.src = url; };
+      mb.appendChild(img);
+      lazyIO.observe(img);
+    }
+    // clear skeleton height to allow natural height again
+    it.style.height = '';
+    it.classList.remove('skel');
+    // remove any old media-box remnants and append new
+    it.querySelectorAll('.media-box').forEach(e=>e.remove());
+    it.appendChild(mb);
+  }
+
+  function collectGrids(){
+    return Array.from(document.querySelectorAll('.tight-grid')).map(grid=>{
+      const items = Array.from(grid.children);
+      // persist each item's URL for rebuilds
+      items.forEach(it=>{
+        if(!it.dataset.url){
+          const m = it.querySelector('img,video');
+          if(m){
+            const ds = m.getAttribute('data-src') || m.getAttribute('src') || '';
+            it.dataset.url = ds || '';
+          }
+        }
+      });
+      return {grid, items};
+    });
+  }
+
+  function applyStream(){
+    const grids = collectGrids();
+    const vh = window.innerHeight;
+    const top = window.scrollY - OVERSCAN_TOP*vh;
+    const bot = window.scrollY + (1+OVERSCAN_BOTTOM)*vh;
+
+    grids.forEach(({grid, items})=>{
+      items.forEach(it=>{
+        const r = it.getBoundingClientRect();
+        const absTop = r.top + window.scrollY;
+        const absBot = r.bottom + window.scrollY;
+        const visible = !(absBot < top || absTop > bot);
+        if(visible){ mountItem(it); } else { unmountItem(it); }
+      });
+
+      // Prefetch next items after the last visible
+      const lastVisIndex = items.findIndex(it=>{
+        const r = it.getBoundingClientRect(); const y = r.top + window.scrollY;
+        return y > bot;
+      });
+      const start = Math.max(0, (lastVisIndex===-1? items.length-1 : lastVisIndex));
+      for(let i=start; i<Math.min(items.length, start+PREFETCH_AHEAD); i++){
+        const it = items[i];
+        const url = it.dataset.url || '';
+        if(url && isArenaCDN(url)){
+          // enqueue display variant quietly
+          const u = arenaVariant(url,'display');
+          enqueue(()=> fetch(u, {mode:'no-cors', cache:'force-cache'}).catch(()=>Promise.resolve()));
+        }
+      }
+    });
+
+    // disable parking briefly when scrolling very fast
+    const now = performance.now();
+    const disableParking = now < fastUntil;
+    document.documentElement.dataset.fast = disableParking ? '1' : '0';
+  }
+
+  let raf = 0, idlePend=false;
+  function loop(){
+    onScrollSpeed();
+    if(!idlePend){
+      idlePend = true;
+      (window.requestIdleCallback ? requestIdleCallback : (fn)=>setTimeout(fn,0))(()=>{ idlePend=false; applyStream(); });
+    }
+    raf = requestAnimationFrame(loop);
+  }
+  window.addEventListener('load', ()=>{ applyStream(); loop(); }, {once:true});
+  window.addEventListener('resize', ()=> applyStream(), {passive:true});
+  window.addEventListener('scroll', ()=> applyStream(), {passive:true});
+})();
+
+</script>
+
+<script>
+(function(){
+  'use strict';
+
+  /* === UTIL: intersection helper === */
+  function onVisible(elements, options, enter, exit){
+    if(!('IntersectionObserver' in window)) { 
+      elements.forEach(el=> enter && enter(el)); 
+      return {disconnect:()=>{}};
+    }
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=> e.isIntersecting ? (enter && enter(e.target, e)) : (exit && exit(e.target, e)));
+    }, Object.assign({ root:null, rootMargin:'0px', threshold:[0.0, .25, .5, .75, 1] }, options||{
+    // a.e.i block
+    const mediaForAEI = []
+      .concat(Array.isArray(p.heroVideo)? p.heroVideo : (p.heroVideo? [p.heroVideo]: []))
+      .concat(Array.isArray(p.gridImages)? p.gridImages : (p.gridImages? [p.gridImages]: []))
+      .slice(0, 8);
+    if(mediaForAEI.length){
+      const aei = el('div', {class:'aei-embed'});
+      const stage = el('div', {class:'aei-stage'});
+      const lines = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      lines.classList.add('aei-lines');
+      aei.appendChild(stage);
+      aei.appendChild(lines);
+      sec.appendChild(aei);
+      buildAEI(aei, mediaForAEI);
+    }
+    }));
+    elements.forEach(el=> obs.observe(el));
+    return obs;
+  }
+
+  /* === VIDEO MANAGER: autoplay, lazy, single-audio-in-viewport === */
+  function hide(){ banner.style.display='none'; }
+      function show(){ banner.style.display='flex'; banner.style.alignItems='center'; }
+      if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){ show(); } else { show(); } // keep banner for desktop too
+      banner.querySelector('#enable-audio').addEventListener('click', ()=>{ state.audioEnabled = true; applyAudio(); hide(); }, {once:true});
+      window.addEventListener('touchstart', ()=>{ state.audioEnabled = true; applyAudio(); hide(); }, {once:true, passive:true});
+      document.addEventListener('keydown', ()=>{ state.audioEnabled = true; applyAudio(); hide(); }, {once:true});
+    }
+
+    return { init, processVideo, setPrimary, applyAudio };
+  })();
+
+  /* === AEI: drag blocks and animate lines inside .aei-stage === */
+  const AEI = (function(){
+    function ensureSvg(stage){
+      let svg = stage.querySelector('svg.aei-lines');
+      if(!svg){
+        svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.classList.add('aei-lines');
+        stage.appendChild(svg);
+      }
+      return svg;
+    }
+
+    function connectInOrder(svg, nodes){
+      svg.setAttribute('width', svg.clientWidth || svg.parentNode.clientWidth);
+      svg.setAttribute('height', svg.clientHeight || svg.parentNode.clientHeight);
+      while(svg.firstChild) svg.removeChild(svg.firstChild);
+      if(nodes.length < 2) return;
+      const rectS = svg.getBoundingClientRect();
+      function center(el){
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width/2 - rectS.left, y: r.top + r.height/2 - rectS.top };
+      }
+      for(let i=0;i<nodes.length;i++){
+        const a = nodes[i];
+        const b = nodes[(i+1)%nodes.length];
+        const ca = center(a), cb = center(b);
+        const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+        l.setAttribute('x1', ca.x); l.setAttribute('y1', ca.y);
+        l.setAttribute('x2', cb.x); l.setAttribute('y2', cb.y);
+        l.setAttribute('stroke','rgba(0,0,0,.18)'); l.setAttribute('stroke-width','1');
+        l.setAttribute('vector-effect','non-scaling-stroke');
+        svg.appendChild(l);
+      }
+    }
+
+    function enableDrag(stage){
+      let active=null, start={x:0,y:0}, boxStart={x:0,y:0};
+      function parseTranslate(el){
+        const m = (el.style.transform||'').match(/translate\(([-0-9.]+)px,\s*([-0-9.]+)px\)/);
+        return m ? {x: parseFloat(m[1]), y: parseFloat(m[2])} : {x:0, y:0};
+      }
+      stage.addEventListener('pointerdown', (e)=>{
+        const b = e.target.closest('.aei-block');
+        if(!b) return;
+        active = b;
+        start = { x: e.clientX, y: e.clientY };
+        const pos = parseTranslate(b);
+        boxStart = pos;
+        b.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+      stage.addEventListener('pointermove', (e)=>{
+        if(!active) return;
+        const dx = e.clientX - start.x;
+        const dy = e.clientY - start.y;
+        active.style.transform = `translate(${boxStart.x + dx}px, ${boxStart.y + dy}px)`;
+      });
+      stage.addEventListener('pointerup', ()=>{ active=null; });
+      stage.addEventListener('pointercancel', ()=>{ active=null; });
+    }
+
+    function init(){
+      const stages = Array.from(document.querySelectorAll('.aei-stage'));
+      stages.forEach(stage=>{
+        const svg = ensureSvg(stage);
+        enableDrag(stage);
+        const nodes = Array.from(stage.querySelectorAll('.aei-block'));
+        // render loop every ~500ms, pause when offscreen or hovered
+        let running = false; let raf = 0; let tId = 0;
+        function loop(){
+          raf = requestAnimationFrame(()=>{
+            connectInOrder(svg, nodes);
+            tId = setTimeout(loop, 500);
+          });
+        }
+        const io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{
+            if(e.isIntersecting && !running){ running=true; loop(); stage.classList.remove('aei-pause'); }
+            else { running=false; cancelAnimationFrame(raf); clearTimeout(tId); stage.classList.add('aei-pause'); }
+          });
+        }, {threshold:.05});
+        io.observe(stage);
+        stage.addEventListener('pointerenter', ()=>{ cancelAnimationFrame(raf); clearTimeout(tId); stage.classList.add('aei-pause'); });
+        stage.addEventListener('pointerleave', ()=>{ if(!running){ running=true; loop(); stage.classList.remove('aei-pause'); } });
+        window.addEventListener('resize', ()=> connectInOrder(svg, nodes));
+      });
+    }
+    return { init };
+  })();
+
+  /* === INIT after DOM ready and after user render() populates content === */
+  function ready(fn){ (document.readyState!=='loading') ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+  ready(function(){
+    // Defer a tick to allow existing render() in page to build DOM
+    requestAnimationFrame(function(){
+      AEI.init();
+      });
+  });
+})();
+</script>
+
+
+<script>
+// === tap-audio: activar/desactivar sonido por toque ===
+(function(){
+  if (!('IntersectionObserver' in window)) {
+    Array.prototype.slice.call(document.querySelectorAll('video')).forEach(function(v){
+      v.setAttribute('playsinline','');
+      v.setAttribute('tabindex','0');
+      v.addEventListener('pointerup', function(){ try{ v.muted = false; v.volume = 1.0; v.play().catch(function(){});}catch(e){} });
+      v.addEventListener('keydown', function(ev){ if (ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); try{ v.muted=false; v.volume=1.0; v.play().catch(function(){});}catch(e){} } });
+    });
+    return;
+  }
+
+  function loadVideoSources(v){
+    var changed = false;
+    var sources = v.querySelectorAll('source[data-src]');
+    for (var i=0;i<sources.length;i++){
+      var s = sources[i];
+      if (!s.getAttribute('src')){
+        s.setAttribute('src', s.getAttribute('data-src'));
+        s.removeAttribute('data-src');
+        changed = true;
+      }
+    }
+    if (changed) v.load();
+    return changed;
+  }
+
+  function ensurePlayable(v){
+    v.setAttribute('playsinline','');
+  }
+
+  function attachTap(v){
+    if (v.__tapAudioBound) return;
+    v.__tapAudioBound = true;
+    v.setAttribute('tabindex','0');
+    v.setAttribute('aria-label','Toca para activar/desactivar sonido');
+    v.classList.add('tap-audio');
+
+    function unmuteAndPlay(){
+      try{
+        loadVideoSources(v);
+        v.muted = false;
+        try { v.volume = 1.0; } catch(e){}
+        var p = v.play();
+        if (p && typeof p.catch==='function') p.catch(function(){});
+      }catch(e){}
+    }
+    function muteVideo(){ try{ v.muted = true; }catch(e){} }
+
+    v.addEventListener('pointerup', function(ev){
+      if (ev.target !== v) return;
+      if (v.muted) unmuteAndPlay();
+      else muteVideo();
+    });
+    v.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter' || ev.key === ' '){
+        ev.preventDefault();
+        if (v.muted) unmuteAndPlay();
+        else muteVideo();
+      }
+    });
+  }
+
+  function initAll(){
+    var vids = Array.prototype.slice.call(document.querySelectorAll('video'));
+    vids.forEach(function(v){
+      ensurePlayable(v);
+      attachTap(v);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
+  else initAll();
+
+  // Observar nuevos videos agregados dinámicamente
+  var mo = new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      for (var i=0;i<(m.addedNodes||[]).length;i++){
+        var n = m.addedNodes[i];
+        if (!(n instanceof Element)) continue;
+        if (n.tagName && n.tagName.toLowerCase()==='video'){
+          ensurePlayable(n);
+          attachTap(n);
+        } else {
+          var inner = n.querySelectorAll ? n.querySelectorAll('video') : [];
+          for (var j=0;j<inner.length;j++){
+            ensurePlayable(inner[j]);
+            attachTap(inner[j]);
+          }
+        }
+      }
+    });
+  });
+  mo.observe(document.documentElement, {childList:true, subtree:true});
+
+  // Pausar y mutear fuera de viewport; reintentar play al entrar si ya está unmuted
+  var vidObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var v = e.target;
+      if (e.isIntersecting){
+        loadVideoSources(v);
+        if (!v.muted){
+          var p = v.play();
+          if (p && typeof p.catch==='function') p.catch(function(){});
+        }
+      } else {
+        try {
+          if (!v.paused && !v.ended) v.pause();
+          v.muted = true;
+        } catch(e){}
+      }
+    });
+  }, {rootMargin: '300px 0px', threshold: 0.01});
+  Array.prototype.slice.call(document.querySelectorAll('video')).forEach(function(v){ vidObs.observe(v); });
+
+  // AEI: prevenir swipe horizontal del navegador durante arrastre
+  (function(){
+    var startX=0, startY=0, active=false;
+    function withinAEI(target){
+      return !!(target && target.closest && (target.closest('.aei-embed') || target.closest('.aei-stage')));
+    }
+    window.addEventListener('touchstart', function(e){
+      if(!withinAEI(e.target)) return;
+      var t = e.touches && e.touches[0];
+      if(!t) return;
+      startX = t.clientX; startY = t.clientY; active = true;
+    }, {passive:true, capture:true});
+    window.addEventListener('touchmove', function(e){
+      if(!active) return;
+      var t = e.touches && e.touches[0];
+      if(!t) return;
+      var dx = t.clientX - startX;
+      var dy = t.clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy) * 1.15){
+        if (e.cancelable) e.preventDefault();
+      }
+    }, {passive:false, capture:true});
+    window.addEventListener('touchend', function(){ active=false; }, {passive:true, capture:true});
+    window.addEventListener('touchcancel', function(){ active=false; }, {passive:true, capture:true});
+  })();
+})();
+</script>
+
+
+<script>
+/* === a.e.i drag + swipe guard === */
+(function(){
+  function redrawLines(root){
+    const svg = root.querySelector('svg.aei-lines');
+    const stage = root.querySelector('.aei-stage');
+    if(!svg || !stage) return;
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const sa = stage.getBoundingClientRect();
+    const cx = sa.left + sa.width/2, cy = sa.top + sa.height/2;
+    const blocks = root.querySelectorAll('.aei-block');
+    blocks.forEach(b=>{
+      const r = b.getBoundingClientRect();
+      const x2 = r.left + r.width/2;
+      const y2 = r.top  + r.height/2;
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', (cx - sa.left)); line.setAttribute('y1', (cy - sa.top));
+      line.setAttribute('x2', (x2 - sa.left)); line.setAttribute('y2', (y2 - sa.top));
+      line.setAttribute('stroke', 'rgba(0,0,0,.25)');
+      line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+    });
+  }
+
+  function initAEIDrag(root){
+    const stage = root.querySelector('.aei-stage');
+    if(!stage) return;
+    stage.style.touchAction = 'none'; // evitar swipe del navegador durante drag
+    let dragging = null, dx = 0, dy = 0;
+
+    stage.addEventListener('pointerdown', function(e){
+      const target = e.target.closest('.aei-block');
+      if(!target) return;
+      const r = target.getBoundingClientRect();
+      const sr = stage.getBoundingClientRect();
+      dx = e.clientX - r.left;
+      dy = e.clientY - r.top;
+      dragging = target;
+      dragging.setPointerCapture && dragging.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    }, {capture:true});
+
+    stage.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      const sr = stage.getBoundingClientRect();
+      let x = e.clientX - sr.left - dx;
+      let y = e.clientY - sr.top  - dy;
+      x = Math.max(0, Math.min(sr.width  - dragging.offsetWidth,  x));
+      y = Math.max(0, Math.min(sr.height - dragging.offsetHeight, y));
+      dragging.style.left = x + 'px';
+      dragging.style.top  = y + 'px';
+      redrawLines(root);
+      if (e.cancelable) e.preventDefault();
+    }, {capture:true});
+
+    function end(){ dragging = null; }
+    stage.addEventListener('pointerup', end, {capture:true});
+    stage.addEventListener('pointercancel', end, {capture:true});
+
+    // Redraw on resize
+    window.addEventListener('resize', function(){ redrawLines(root); });
+    // Initial draw after load
+    if (document.readyState === 'complete') redrawLines(root);
+    else window.addEventListener('load', function(){ redrawLines(root); }, {once:true});
+  }
+
+  document.querySelectorAll('.aei-embed').forEach(initAEIDrag);
+})();
+</script>
+
+<script>
+// === OPT JS no intrusivo ===
+(function(){
+  // Pausa todos los videos cuando la pestaña no está visible
+  document.addEventListener('visibilitychange', function(){
+    var vids = document.querySelectorAll('video');
+    if(document.hidden){
+      vids.forEach(function(v){ try{ v.pause(); }catch(e){} });
+    }else{
+      vids.forEach(function(v){
+        // Reproduce solo si estaba reproduciéndose o si el autor lo desea; no fuerza autoplay con audio
+        if(v.autoplay || (v.dataset && v.dataset.autoplay==="true")){
+          try{ v.play(); }catch(e){}
+        }
+      });
+    }
+  }, {passive:true});
+
+  // Banner tap-to-audio: si existe en el DOM, se muestra solo si el autoplay con audio falla
+  try{
+    var banner = document.querySelector('.tap-audio-banner');
+    if(banner){
+      var test = document.createElement('video');
+      test.muted = false; test.playsInline = true; test.src = ''; // no carga red
+      var failed = false;
+      test.play().catch(function(){ failed = true; });
+      setTimeout(function(){
+        if(failed){ banner.style.display = 'flex'; }
+      }, 200);
+      var btn = banner.querySelector('button');
+      if(btn){
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('video').forEach(function(v){
+            try{ v.muted = false; v.play(); }catch(e){}
+          });
+          banner.remove();
+        }, {passive:true});
+      }
+    }
+  }catch(e){}
+
+  // requestIdleCallback para trabajo no crítico; fallback Safari iOS
+  var idle = window.requestIdleCallback || function(fn){ return setTimeout(fn,150); };
+  idle(function(){
+    document.dispatchEvent(new CustomEvent('xpan:idle-ready'));
+  });
+
+  // Mejora de listeners por defecto
+  window.addEventListener('scroll', function(){}, {passive:true});
+})();
+</script>
+<script>
+(function(){
+  const btns = document.querySelectorAll('.lang button');
+  const paras = document.querySelectorAll('.intro .i18n');
+  function show(lang){
+    let target = document.querySelector('.intro .i18n[data-lang="'+lang+'"]');
+    if(!target) target = document.querySelector('.intro .i18n[data-lang="es"]');
+    paras.forEach(p=> p.classList.toggle('active', p===target));
+    btns.forEach(b=> b.classList.toggle('active', b.dataset.lang===lang));
+  }
+  btns.forEach(b=> b.addEventListener('click', ()=> show(b.dataset.lang)));
+  const css = document.createElement('style');
+  css.textContent = '.i18n{display:none}.i18n.active{display:block}';
+  document.head.appendChild(css);
+})();
+</script>
+</body>
+</html>
