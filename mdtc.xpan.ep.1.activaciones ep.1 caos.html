@@ -73,51 +73,10 @@
   .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
   .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; }
   .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-  .aei-block{ width:var(--aei-block); height:var(--aei-block); content-visibility:auto; contain-intrinsic-size: var(--aei-block) var(--aei-block); position:absolute; opacity:.8; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
+  .aei-block{ width:var(--aei-block); height:var(--aei-block); position:absolute; opacity:.8; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
   .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
   .aei-hint{ position:absolute; inset:auto 1rem 1rem auto; font-size:.8rem; opacity:.35; user-select:none; }
 .load-more{margin:1rem 0 0;display:flex;justify-content:center}.load-more button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.5rem .9rem;cursor:pointer;font-size:.95rem}
-
-  /* thumbnails for grids */
-  .media-box.thumb-box{ max-height:220px; }
-  .media-box.thumb-box > img,
-  .media-box.thumb-box > video{ width:100%; height:100%; object-fit:contain; background:#fff; }
-
-
-  /* Masonry override for tight grids */
-  .tight-grid{ display:block; column-gap:0; }
-  .tight-grid.cols-6{ column-count:6; }
-  .tight-grid.cols-5{ column-count:5; }
-  .tight-grid.cols-4{ column-count:4; }
-  .tight-grid.cols-3{ column-count:3; }
-  .tight-grid.cols-2{ column-count:2; }
-  @media (max-width:1100px){
-    .tight-grid.cols-6{ column-count:5; }
-    .tight-grid.cols-5{ column-count:4; }
-    .tight-grid.cols-4{ column-count:3; }
-    .tight-grid.cols-3{ column-count:2; }
-  }
-  @media (max-width:640px){
-    .tight-grid.cols-6,
-    .tight-grid.cols-5{ column-count:3; }
-    .tight-grid.cols-4,
-    .tight-grid.cols-3{ column-count:2; }
-    .tight-grid.cols-2{ column-count:1; }
-  }
-  .tight-item{ break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; display:inline-block; width:100%; margin:0 0 var(--gap); }
-  .media-box.thumb-box{ max-height:none; }
-
-
-  /* performance and packing */
-  .tight-item{ break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; display:inline-block; width:100%; margin:0 0 0; content-visibility:auto; contain-intrinsic-size: 300px 200px; }
-  .tight-wrap{ border:none; border-radius:0; overflow:visible; }
-  .tight-grid img, .tight-grid video{ display:block; width:100%; height:auto; content-visibility:auto; }
-
-
-  /* stream-mode skeletons preserve column flow without media mounted */
-  .tight-item.skel{ background: #fff; }
-  .tight-item.skel .media-box{ display:none; }
-
 </style>
 
 <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
@@ -213,92 +172,6 @@ function el(tag, attrs={}, children=[]){
   return n;
 }
 
-
-/* ===== are.na CDN helpers ===== */
-function isArenaCDN(u){ return /d2w9rnfcy7mm78\.cloudfront\.net/.test(u); }
-function arenaVariant(u, tier){ // 'small'|'display'|'large'|'original'
-  if(!isArenaCDN(u)) return u;
-  return u.replace(/\/original_/, '/'+tier+'_');
-}
-function buildSrcset(u){
-  if(!isArenaCDN(u)) return '';
-  const s = arenaVariant(u,'small');
-  const d = arenaVariant(u,'display');
-  const l = arenaVariant(u,'large');
-  return `${s} 400w, ${d} 1200w, ${l} 1600w`;
-}
-function wrapLink(frame, originalUrl){
-/* ===== network queue to avoid saturation ===== */
-let _inflight = 0; const _MAX = 6; const _q = [];
-function _pump(){
-  while(_inflight<_MAX && _q.length){
-    const job = _q.shift();
-    _inflight++;
-    job().finally(()=>{ _inflight--; _pump(); });
-  }
-}
-function enqueue(fn){ _q.push(fn); _pump(); }
-/* ===== offscreen parking to avoid saturation ===== */
-const PARK_ABOVE = 3;   // viewheights above
-const PARK_BELOW = 5;   // viewheights below
-let _scanPend = false;
-
-function _parkScan(){
-  _scanPend = false;
-  const H = window.innerHeight;
-  const nodes = document.querySelectorAll('.tight-item img, .tight-item video, .card .frame img, .card .frame video, .aei-block img, .aei-block video');
-  nodes.forEach(n=>{
-    const r = n.getBoundingClientRect();
-    const farAbove = r.bottom < -PARK_ABOVE*H;
-    const farBelow = r.top    >  PARK_BELOW*H;
-    if(farAbove || farBelow){
-      // park
-      if(!n.dataset.src && n.src){ n.dataset.src = n.currentSrc || n.src; }
-      if(n.tagName==='IMG'){
-        if(n.srcset){ n.dataset.srcset = n.srcset; n.srcset=''; }
-        n.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='; // 1x1
-      }else if(n.tagName==='VIDEO'){
-        try{ n.pause(); n.removeAttribute('src'); while(n.firstChild) n.removeChild(n.firstChild); }catch(e){}
-      }
-      n.classList.add('parked');
-    }else if(n.classList.contains('parked')){
-      // unpark by re-enqueueing
-      if(n.tagName==='IMG'){
-        if(n.dataset.srcset) n.srcset = n.dataset.srcset;
-        if(n.dataset.src){
-          const url = n.dataset.src;
-          delete n.dataset.src; delete n.dataset.srcset;
-          enqueue(()=> new Promise(resolve=>{
-            const done = ()=>{ n.removeEventListener('load', done); n.removeEventListener('error', done); resolve(); };
-            n.addEventListener('load', done, {once:true});
-            n.addEventListener('error', done, {once:true});
-            n.src = url;
-          }));
-        }
-      }else if(n.tagName==='VIDEO' && n.dataset.src){
-        const s = document.createElement('source'); s.src = n.dataset.src; s.type = n.dataset.type || 'video/mp4';
-        n.appendChild(s); n.load();
-      }
-      n.classList.remove('parked');
-    }
-  });
-}
-
-document.addEventListener('scroll', ()=>{
-  if(!_scanPend){
-    _scanPend = true;
-    requestIdleCallback? requestIdleCallback(_parkScan, {timeout:800}) : setTimeout(_parkScan, 200);
-  }
-}, {passive:true});
-
-
-  const a = document.createElement('a');
-  a.href = originalUrl; a.target = '_blank'; a.rel = 'noopener';
-  a.appendChild(frame.firstChild);
-  frame.appendChild(a);
-}
-
-
 /* ===== Lazy / Play IO ===== */
 const lazyIO = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
@@ -311,15 +184,14 @@ const lazyIO = new IntersectionObserver((entries)=>{
           s.type = t.dataset.type || 'video/mp4';
           t.appendChild(s);
           t.load();
-        }else{ if(t.dataset.srcset) t.srcset = t.dataset.srcset;
-          t.src = t.dataset.src; }
+        }else{ t.src = t.dataset.src; }
         t.removeAttribute('data-src');
       }
       t.closest('.card, .tight-item')?.classList.add('ready');
       lazyIO.unobserve(t);
     }
   });
-}, { rootMargin: '120px 0px' });
+}, { rootMargin: '800px 0px' });
 
 const playIO = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
@@ -328,7 +200,7 @@ const playIO = new IntersectionObserver((entries)=>{
     if(entry.isIntersecting){ v.play().catch(()=>{}); }
     else{ v.pause(); }
   });
-}, { rootMargin: '80px 0px', threshold: 0.6 });
+}, { rootMargin: '400px 0px', threshold: 0.25 });
 
 
 /* ===== a.e.i constructor ===== */
@@ -388,7 +260,7 @@ function buildAEI(root, urls){
       lazyIO.observe(v); playIO.observe(v);
     }else{
       const img = document.createElement('img');
-      img.setAttribute('loading','lazy'); img.setAttribute('decoding','async'); img.setAttribute('fetchpriority','low');
+      img.setAttribute('loading','lazy'); img.setAttribute('decoding','async');
       img.setAttribute('data-src', u); img.alt='';
       b.appendChild(img);
       lazyIO.observe(img);
@@ -458,56 +330,35 @@ function setAspectFromMedia(container, media){
 function makeMediaBox(url, kind){
   const card = el('div', {class:'card'});
   const frame = el('div', {class:'frame'});
-
   if(kind==='img'){
-    const thumb = isArenaCDN(url) ? arenaVariant(url,'display') : url;
-    const img = el('img', {
-      loading:'lazy', decoding:'async',
-      'data-src': thumb, fetchpriority:'low', fetchpriority:'low',
-      'data-srcset': isArenaCDN(url) ? buildSrcset(url) : '',
-      alt:'', referrerpolicy:'no-referrer'
-    });
-    img.addEventListener('load', ()=> setAspectFromMedia(frame, img), {once:true});
-    img.onerror = ()=>{ img.removeAttribute('srcset'); img.src = url; };
+    const img = el('img', {loading:'lazy', decoding:'async', 'data-src': url, alt:''});
     frame.appendChild(img);
+    img.addEventListener('load', ()=> setAspectFromMedia(frame, img), {once:true});
     lazyIO.observe(img);
-    wrapLink(frame, url);
   }else{
     const v = el('video', {preload:'none', playsinline:'', muted:'', loop:'', 'data-src': url});
-    v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(frame, v), {once:true});
     frame.appendChild(v);
+    v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(frame, v), {once:true});
     lazyIO.observe(v); playIO.observe(v);
   }
-
   card.appendChild(frame);
   return card;
 }
 
 function makeTightItem(url, kind){
   const it = el('div', {class:'tight-item'});
-  const mb = el('div', {class:'media-box thumb-box'});
-
+  const mb = el('div', {class:'media-box'});
   if(kind==='img'){
-    const thumb = isArenaCDN(url) ? arenaVariant(url,'small') : url;
-    const img = el('img', {
-      loading:'lazy', decoding:'async',
-      'data-src': thumb,
-      'data-srcset': isArenaCDN(url) ? buildSrcset(url) : '',
-      sizes:'(max-width:640px) 48vw, (max-width:1100px) 30vw, 22vw',
-      alt:'', referrerpolicy:'no-referrer'
-    });
-    img.addEventListener('load', ()=> setAspectFromMedia(mb, img), {once:true});
-    img.onerror = ()=>{ img.removeAttribute('srcset'); img.src = url; };
+    const img = el('img', {loading:'lazy', decoding:'async', 'data-src': url, alt:''});
     mb.appendChild(img);
+    img.addEventListener('load', ()=> setAspectFromMedia(mb, img), {once:true});
     lazyIO.observe(img);
   }else{
     const v = el('video', {preload:'none', playsinline:'', muted:'', loop:'', 'data-src': url});
-    v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(mb, v), {once:true});
     mb.appendChild(v);
+    v.addEventListener('loadedmetadata', ()=> setAspectFromMedia(mb, v), {once:true});
     lazyIO.observe(v); playIO.observe(v);
   }
-
-  it.dataset.url = url;
   it.appendChild(mb);
   return it;
 }
@@ -1218,7 +1069,7 @@ if(p.gridImages && p.gridImages.length){
   wrap.appendChild(grid); sec.appendChild(wrap);
   const items = p.gridImages.slice(); let loaded=0; const conn = (navigator.connection||{});
 const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
-const PAGE = SLOW ? 4 : 6; const MORE = SLOW ? 6 : 10;
+const PAGE = SLOW ? 6 : 10; const MORE = SLOW ? 6 : 12;
   function loadBatch(n){
     const max = Math.min(items.length, loaded+n);
     for(let i=loaded;i<max;i++){ grid.appendChild(makeTightItem(items[i], 'img')); }
@@ -1239,7 +1090,7 @@ if(p.gridVideos && p.gridVideos.length){
   wrap.appendChild(grid); sec.appendChild(wrap);
   const items = p.gridVideos.slice(); let loaded=0; const conn = (navigator.connection||{});
 const SLOW = conn.saveData===true || /2g|slow-2g/.test(conn.effectiveType||'');
-const PAGE = SLOW ? 4 : 6; const MORE = SLOW ? 6 : 10;
+const PAGE = SLOW ? 6 : 10; const MORE = SLOW ? 6 : 12;
   function loadBatch(n){
     const max = Math.min(items.length, loaded+n);
     for(let i=loaded;i<max;i++){ grid.appendChild(makeTightItem(items[i], 'video')); }
@@ -1294,147 +1145,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if('requestIdleCallback' in window) requestIdleCallback(step, {timeout: 1500});
   }catch(e){}
 });
-
-
-/* ===== stream mode: windowed mounting for heavy retículas ===== */
-(function(){
-  const OVERSCAN_TOP = 2.0;   // viewport heights
-  const OVERSCAN_BOTTOM = 3.0;
-  const PREFETCH_AHEAD = 24;
-  const SPEED_OFF_MS = 600;   // disable parking while fast scroll
-
-  let lastY = window.scrollY, lastT = performance.now(), fastUntil = 0;
-
-  function onScrollSpeed(){
-    const now = performance.now();
-    const dy = Math.abs(window.scrollY - lastY);
-    const dt = Math.max(1, now - lastT);
-    const v = dy / dt; // px per ms
-    lastY = window.scrollY; lastT = now;
-    if(v > 1.2){ fastUntil = now + SPEED_OFF_MS; }
-  }
-
-  // mount/unmount media inside a tight-item while keeping its height
-  function unmountItem(it){
-    if(it.classList.contains('skel')) return;
-    const h = it.getBoundingClientRect().height;
-    it.dataset.h = String(Math.max(32, Math.round(h)));
-    it.style.height = it.dataset.h + 'px';
-    const mb = it.querySelector('.media-box'); if(!mb) return;
-    // park descendants
-    mb.querySelectorAll('img,video').forEach(n=>{
-      if(n.tagName==='IMG'){
-        if(!n.dataset.src && n.src){ n.dataset.src = n.currentSrc || n.src; }
-        if(n.srcset){ n.dataset.srcset = n.srcset; n.srcset=''; }
-        n.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-      }else{
-        try{ n.pause(); n.removeAttribute('src'); while(n.firstChild) n.removeChild(n.firstChild); }catch(e){}
-      }
-    });
-    it.classList.add('skel');
-  }
-  function mountItem(it){
-    if(!it.classList.contains('skel')) return;
-    const mb = document.createElement('div'); mb.className = 'media-box thumb-box';
-    // rebuild from data-url attribute preserved on placeholder child if any
-    // Our tight items were created with an <img> or <video> child originally.
-    // We reuse existing URL stored on the first child dataset in HTML (kept on wrapper via data-url).
-    const url = it.dataset.url || '';
-    const isVid = /\.(mp4|mov)(\?|$)/i.test(url);
-    if(isVid){
-      const v = document.createElement('video');
-      v.setAttribute('preload','none'); v.setAttribute('playsinline',''); v.muted = true; v.loop = true;
-      v.setAttribute('data-src', url);
-      mb.appendChild(v);
-      lazyIO.observe(v); playIO.observe(v);
-    }else{
-      const img = document.createElement('img');
-      img.setAttribute('loading','lazy'); img.setAttribute('decoding','async'); img.setAttribute('fetchpriority','low');
-      const thumb = isArenaCDN(url) ? arenaVariant(url,'small') : url;
-      img.setAttribute('data-src', thumb);
-      if(isArenaCDN(url)) img.setAttribute('data-srcset', buildSrcset(url));
-      img.alt='';
-      img.addEventListener('load', ()=> setAspectFromMedia(mb, img), {once:true});
-      img.onerror = ()=>{ img.removeAttribute('srcset'); img.src = url; };
-      mb.appendChild(img);
-      lazyIO.observe(img);
-    }
-    // clear skeleton height to allow natural height again
-    it.style.height = '';
-    it.classList.remove('skel');
-    // remove any old media-box remnants and append new
-    it.querySelectorAll('.media-box').forEach(e=>e.remove());
-    it.appendChild(mb);
-  }
-
-  function collectGrids(){
-    return Array.from(document.querySelectorAll('.tight-grid')).map(grid=>{
-      const items = Array.from(grid.children);
-      // persist each item's URL for rebuilds
-      items.forEach(it=>{
-        if(!it.dataset.url){
-          const m = it.querySelector('img,video');
-          if(m){
-            const ds = m.getAttribute('data-src') || m.getAttribute('src') || '';
-            it.dataset.url = ds || '';
-          }
-        }
-      });
-      return {grid, items};
-    });
-  }
-
-  function applyStream(){
-    const grids = collectGrids();
-    const vh = window.innerHeight;
-    const top = window.scrollY - OVERSCAN_TOP*vh;
-    const bot = window.scrollY + (1+OVERSCAN_BOTTOM)*vh;
-
-    grids.forEach(({grid, items})=>{
-      items.forEach(it=>{
-        const r = it.getBoundingClientRect();
-        const absTop = r.top + window.scrollY;
-        const absBot = r.bottom + window.scrollY;
-        const visible = !(absBot < top || absTop > bot);
-        if(visible){ mountItem(it); } else { unmountItem(it); }
-      });
-
-      // Prefetch next items after the last visible
-      const lastVisIndex = items.findIndex(it=>{
-        const r = it.getBoundingClientRect(); const y = r.top + window.scrollY;
-        return y > bot;
-      });
-      const start = Math.max(0, (lastVisIndex===-1? items.length-1 : lastVisIndex));
-      for(let i=start; i<Math.min(items.length, start+PREFETCH_AHEAD); i++){
-        const it = items[i];
-        const url = it.dataset.url || '';
-        if(url && isArenaCDN(url)){
-          // enqueue display variant quietly
-          const u = arenaVariant(url,'display');
-          enqueue(()=> fetch(u, {mode:'no-cors', cache:'force-cache'}).catch(()=>Promise.resolve()));
-        }
-      }
-    });
-
-    // disable parking briefly when scrolling very fast
-    const now = performance.now();
-    const disableParking = now < fastUntil;
-    document.documentElement.dataset.fast = disableParking ? '1' : '0';
-  }
-
-  let raf = 0, idlePend=false;
-  function loop(){
-    onScrollSpeed();
-    if(!idlePend){
-      idlePend = true;
-      (window.requestIdleCallback ? requestIdleCallback : (fn)=>setTimeout(fn,0))(()=>{ idlePend=false; applyStream(); });
-    }
-    raf = requestAnimationFrame(loop);
-  }
-  window.addEventListener('load', ()=>{ applyStream(); loop(); }, {once:true});
-  window.addEventListener('resize', ()=> applyStream(), {passive:true});
-  window.addEventListener('scroll', ()=> applyStream(), {passive:true});
-})();
 
 </script>
 
