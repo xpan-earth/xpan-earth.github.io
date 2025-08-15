@@ -521,6 +521,46 @@
 
   let galleryItems=[], galleryIndex=0;
 
+  // ——— anti click-through en móvil ———
+let suppressClicksUntil = 0;
+
+const stopAll = e => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+};
+
+// refuerza open/close sin romper lógica existente
+const _openLightbox = openLightbox;
+openLightbox = function(items, index=0){
+  _openLightbox(items, index);
+  document.documentElement.style.overflow = 'hidden'; // bloquea scroll
+};
+
+const _closeLightbox = closeLightbox;
+closeLightbox = function(){
+  _closeLightbox();
+  document.documentElement.style.overflow = '';
+  suppressClicksUntil = Date.now() + 400; // come el “ghost click” del tap
+};
+
+// come cualquier click “fantasma” tras cerrar
+document.addEventListener('click', e => {
+  if (Date.now() < suppressClicksUntil) stopAll(e);
+}, true); // en captura para interceptar antes que el grid
+
+// dentro del overlay: impedir burbujeo y cerrar de forma segura
+function lbConsumeAndMaybeClose(e){
+  if (!lb.classList.contains('open')) return;
+  stopAll(e);
+  const inside = e.target.closest('#lbFigure');
+  if (inside || e.target === lb) closeLightbox();
+}
+
+lb.addEventListener('click', lbConsumeAndMaybeClose, { capture:true });
+lb.addEventListener('touchend', lbConsumeAndMaybeClose, { capture:true, passive:false });
+
+
   function openLightbox(items, index=0){
     galleryItems=items||[];
     galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
@@ -593,8 +633,7 @@
     });
   }
   wireGalleryForSection('images15','[data-section="images15"]');
-  // wireGalleryForSection('vertical8','[data-section="vertical8"]');
-  // wireGalleryForSection('videos22','[data-section="videos22"]');
+
 
   /* ===== a.e.i: movimiento suave, drag con límites ===== */
   renderAEI(document.getElementById('aeiStage'), document.getElementById('aeiLines'), media.exp43||[]);
