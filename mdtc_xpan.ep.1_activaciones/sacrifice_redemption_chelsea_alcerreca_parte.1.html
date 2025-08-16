@@ -146,7 +146,7 @@
 
   function wireVideoEl(v, {autoplay=true}={}){
     v.muted = true; v.loop = true; v.autoplay = !!autoplay;
-    v.playsInline = true; v.preload = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'metadata' : 'none'; v.poster = BLANK_POSTER;
+    v.playsInline = true; v.preload = (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) ? 'metadata' : 'none'; v.poster = BLANK_POSTER;
     v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
     if(autoplay) v.setAttribute('autoplay','');
   }
@@ -241,18 +241,7 @@
   /* render */
   (function render(){
     const wWrap=document.querySelector('[data-section="walkthrough"]');
-    (function(){
-    const list = media.walkthrough||[];
-    list.forEach((u,i)=>{
-      const card = makeVideoCard(u);
-      // Eager-load first video for mobile Safari
-      if(i===0){
-        const v = card.querySelector('video');
-        if(v && !v.src){ v.src = u; v.load(); v.play().catch(()=>{}); }
-      }
-      wWrap.appendChild(card);
-    });
-  })();
+    (media.walkthrough||[]).forEach(u=> wWrap.appendChild(makeVideoCard(u)));
 
     const imgWrap=document.querySelector('[data-section="images15"]');
     (media.images15||[]).forEach(url=>{
