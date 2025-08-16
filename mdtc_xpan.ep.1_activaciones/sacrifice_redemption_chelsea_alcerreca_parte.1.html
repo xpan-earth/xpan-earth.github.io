@@ -146,7 +146,7 @@
 
   function wireVideoEl(v, {autoplay=true}={}){
     v.muted = true; v.loop = true; v.autoplay = !!autoplay;
-    v.playsInline = true; v.preload = 'none'; v.poster = BLANK_POSTER;
+    v.playsInline = true; v.preload = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'metadata' : 'none'; v.poster = BLANK_POSTER;
     v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
     if(autoplay) v.setAttribute('autoplay','');
   }
