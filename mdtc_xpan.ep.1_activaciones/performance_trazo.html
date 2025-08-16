@@ -253,5 +253,6 @@
   const pauseIO=new IntersectionObserver((ents)=>{ ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); }); },{threshold:.05});
   const watch=setInterval(()=>{ document.querySelectorAll('.frame video').forEach(v=> pauseIO.observe(v)); if(document.querySelectorAll('.frame video').length>0) clearInterval(watch); },160);
 </script>
+<script src="../assets/js/video-autoplay-mobile.js" defer></script>
 </body>
 </html>

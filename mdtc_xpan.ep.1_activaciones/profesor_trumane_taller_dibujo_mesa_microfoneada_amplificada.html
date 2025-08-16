@@ -286,5 +286,6 @@
   /* precarga ociosa */
   (function idleWarmup(){ if(!('requestIdleCallback' in window)) return; const warm=()=>requestIdleCallback(()=>{ document.querySelectorAll('video[data-src]').forEach(v=>{ if(!v.src) scheduleVideoLoad(v, v.dataset.src); }); },{timeout:1500}); document.addEventListener('DOMContentLoaded',warm,{once:true}); window.addEventListener('load',warm,{once:true}); })();
 </script>
+<script src="../assets/js/video-autoplay-mobile.js" defer></script>
 </body>
 </html>
