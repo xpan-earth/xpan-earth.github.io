@@ -257,5 +257,54 @@
 
 </script>
 <script src="../assets/js/video-autoplay-mobile.js" defer></script>
+<script>
+(() => {
+  const LB = document.getElementById('lightbox');            // contenedor de la galería
+  const LBF = document.getElementById('lbFigure');            // figura donde insertas el <video>
+  if (!LB || !LBF) return;
+
+  // 0) Desbloqueo de audio en iOS con el mismo gesto
+  let unlocked=false, AC;
+  function unlock(){ if(unlocked) return;
+    try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); AC.resume&&AC.resume(); }catch(e){}
+    unlocked=true;
+  }
+
+  // 1) Al hacer click en cualquier tile (captura antes de tu handler):
+  //    espera a que la galería se abra y el <video> exista, luego desmutea+play
+  document.addEventListener('click', (e) => {
+    unlock(); // mismo gesto del usuario
+    const wasClosed = !LB.classList.contains('open');
+    // doble rAF para dejar que tu código pinte el lightbox y su <video>
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (wasClosed && LB.classList.contains('open')) {
+        const v = LBF.querySelector('video');
+        if (!v) return;
+        v.muted = false; v.removeAttribute('muted'); v.volume = 1;
+        v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+        const play = () => v.play().catch(()=>{});
+        play(); v.addEventListener('loadeddata', play, { once:true });
+      }
+    }));
+  }, { capture:true });
+
+  // 2) Si cambias de item dentro de la galería (siguiente/anterior),
+  //    re-aplica audio al nuevo <video> insertado
+  new MutationObserver(() => {
+    const v = LBF.querySelector('video'); if (!v || !unlocked) return;
+    v.muted = false; v.removeAttribute('muted'); v.volume = 1;
+    const play = () => v.play().catch(()=>{});
+    play(); v.addEventListener('loadeddata', play, { once:true });
+  }).observe(LBF, { childList:true, subtree:true });
+
+  // 3) Al cerrar la galería: solo mute, NO pause (retículas siguen)
+  document.addEventListener('click', (e) => {
+    if (e.target === LB || e.target.closest('.lb-close,.gallery-back,[data-close-gallery]')) {
+      const v = LBF.querySelector('video'); if (v) v.muted = true; // no pause
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
