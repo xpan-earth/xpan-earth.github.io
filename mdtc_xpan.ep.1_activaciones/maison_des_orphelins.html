@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>maison des orphelins — xpan — mdtc</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:124px auto 5rem; padding:0 1.25rem; }
+
+  h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; letter-spacing:.01em; }
+  .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+
+  .section{ margin:2.2rem 0; padding-top:1.2rem; border-top:1px solid var(--line); }
+
+  .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .tight-grid{ display:grid; gap:0; grid-template-columns: repeat(5, 1fr); }
+  @media (max-width:1100px){ .tight-grid{ grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width:640px){ .tight-grid{ grid-template-columns: repeat(2, 1fr); } }
+
+  .tight-item{ position:relative; background:#fff; }
+  .tight-item .media-box{ position:relative; }
+  .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+  .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* lightbox minimal, media siempre completa */
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+  .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <!-- info visible -->
+  <section aria-label="info">
+    <h1>maison des orphelins</h1>
+    <div class="meta">6 de diciembre del 2024</div>
+  </section>
+
+  <!-- retícula 15 (imágenes) -->
+  <section class="section" id="img15">
+    <h2 class="sr-only">retícula — 15 imágenes</h2>
+    <div class="tight-wrap">
+      <div class="tight-grid" id="gridImages" data-section="images15"></div>
+    </div>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  /* ===== datos ===== */
+  const media = {
+    images15: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749964/original_99e935a92f15e0ca6b23b665f57b5bcd.png?1755038351?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749966/original_16a25681d656eea6531e4b23e34a51ce.png?1755038352?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749967/original_113ca3498cc7018171ccf69c13c07b64.png?1755038352?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749969/original_d6732d797998d13557711803efca8e46.png?1755038353?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750013/original_c81a97da9e83fb0068047b7fe542278c.jpg?1755038449?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750014/original_06a0777e8534960adb473769002bf3de.jpg?1755038450?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750015/original_fdf5151a5837e7b775ba6b6596920329.jpg?1755038450?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750016/original_79ed073f157fe291583eb758164610cd.jpg?1755038450?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750017/original_8ff84139a50881bf58b5e9eee062dc1b.jpg?1755038450?bc=0"
+    ]
+  };
+
+  const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+
+  /* ===== render grid ===== */
+  function setAspectFromImage(img, host){
+    const w = img.naturalWidth || 4, h = img.naturalHeight || 3;
+    const wrapper = host.querySelector('.media-box');
+    if(wrapper) wrapper.style.setProperty('--ar', `${w}/${h}`);
+  }
+
+  function renderImagesGrid(){
+    const wrap = document.getElementById('gridImages');
+    (media.images15||[]).forEach(url=>{
+      const item = document.createElement('div'); item.className='tight-item';
+      const box = document.createElement('div'); box.className='media-box'; item.appendChild(box);
+      const img = document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+      img.addEventListener('load',()=> setAspectFromImage(img, item), {once:true});
+      box.appendChild(img);
+      wrap.appendChild(item);
+    });
+  }
+
+  /* ===== lightbox ===== */
+  const lb = document.getElementById('lightbox');
+  const lbFigure = document.getElementById('lbFigure');
+  let galleryItems=[], galleryIndex=0;
+
+  function openLightbox(items, index=0){
+    galleryItems=items||[];
+    galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
+    lbFigure.innerHTML='';
+    renderLB();
+    lb.classList.add('open');
+    document.documentElement.style.overflow='hidden';
+  }
+  function closeLightbox(){
+    lb.classList.remove('open');
+    lbFigure.innerHTML='';
+    document.documentElement.style.overflow='';
+  }
+  function renderLB(){
+    const item=galleryItems[galleryIndex]; if(!item) return;
+    lbFigure.innerHTML='';
+    const el=document.createElement('img');
+    el.className='lb-media'; el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url;
+    lbFigure.appendChild(el);
+  }
+  function openLightboxGroup(urls, index){
+    const arr=(urls||[]).map(u=>({type:'img', url:u}));
+    openLightbox(arr, index);
+  }
+
+  // click en grid para abrir galería
+  document.getElementById('gridImages').addEventListener('click', e=>{
+    const item = e.target.closest('.tight-item'); if(!item) return;
+    const items = $$('.tight-item', item.parentElement);
+    const index = items.indexOf(item);
+    openLightboxGroup(media.images15, index);
+  });
+
+  // cerrar por click o tecla
+  lb.addEventListener('click', e=>{ if(e.target===lb || e.target.closest('#lbFigure')) closeLightbox(); });
+  window.addEventListener('keydown', e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLightbox(); });
+
+  /* init */
+  renderImagesGrid();
+</script>
+</body>
+</html>

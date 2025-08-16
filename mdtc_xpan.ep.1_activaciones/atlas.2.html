@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>atlas.2 — xpan — mdtc</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --tile-max-h:72vh;
+    --aei-block:140px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:124px auto 5rem; padding:0 1.25rem; }
+
+  .lang h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; letter-spacing:.01em; }
+  .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+  .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+  .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+  .card.ready{ opacity:1; transform:none; }
+  .frame{ position:relative; background:#fff; }
+  .frame::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); max-height:var(--tile-max-h); }
+  .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  @media (hover:hover){
+    .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+    .card:active{ transform:translateY(1px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition:none; }
+    .card:hover .frame > *{ transform:none !important; }
+  }
+
+  .grid{ display:grid; gap:var(--gap); }
+  .grid.destacados{ grid-template-columns: repeat(3, 1fr); gap:var(--gap-lg); }
+  .grid.uniform-3{ grid-template-columns: repeat(3, 1fr); }
+  @media (max-width:1200px){ .grid.destacados{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width:640px){ .grid.destacados{ grid-template-columns: 1fr; } }
+
+  .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .tight-grid{ display:grid; gap:0; }
+  .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+  @media (max-width:1100px){ .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width:640px){ .tight-grid.cols-5{ grid-template-columns: repeat(3, 1fr); } }
+
+  .tight-item{ position:relative; background:#fff; }
+  .tight-item .media-box{ position:relative; }
+  .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+  .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+
+  /* a.e.i */
+  .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; touch-action:none; }
+  .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .aei-block{ width:var(--aei-block); height:var(--aei-block); position:absolute; opacity:.72; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; touch-action:none; }
+  .aei-block:active{ cursor:grabbing; }
+  .aei-block:hover{ opacity:.9; z-index:5; }
+  .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+</style>
+
+<!-- uso el primer aei como herovideo para precarga -->
+<link rel="preload" as="video" href="https://attachments.are.na/38770827/30417a3382a6b5c33b542c44a34d3fcf.mp4?1755115054"/>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <!-- ES -->
+  <section class="lang lang-es">
+    <h1>atlas.2</h1>
+    <div class="meta">15 de mayo de 2025</div>
+  </section>
+
+  <!-- destacados: herovideo como walkthrough -->
+  <section class="section" id="destacados" data-lazy-section>
+    <h2 class="sr-only">destacados</h2>
+    <div class="grid destacados" data-section="destacados"></div>
+  </section>
+
+  <!-- retícula 15 (imágenes) — grupo A -->
+  <section class="section" id="img15a" data-lazy-section>
+    <h2 class="sr-only">retícula — 15 imágenes A</h2>
+    <div class="tight-wrap">
+      <div class="tight-grid cols-5" data-section="images15a" data-initial="15"></div>
+    </div>
+  </section>
+
+  <!-- retícula 15 (imágenes) — grupo B -->
+  <section class="section" id="img15b" data-lazy-section>
+    <h2 class="sr-only">retícula — 15 imágenes B</h2>
+    <div class="tight-wrap">
+      <div class="tight-grid cols-5" data-section="images15b" data-initial="15"></div>
+    </div>
+  </section>
+
+  <!-- a.e.i embebido -->
+  <section class="section" id="aei_embed" aria-label="a.e.i embebido" data-lazy-section>
+    <h2 class="sr-only">galería experimental — a.e.i embebido</h2>
+    <div class="aei-embed" id="aeiEmbed">
+      <svg class="aei-lines" id="aeiLines"></svg>
+      <div class="aei-stage" id="aeiStage" aria-label="escena a.e.i"></div>
+    </div>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  /* ===== helpers ===== */
+  const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+  const BLANK_POSTER='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+  function wireVideoEl(v,{autoplay=true}={}){
+    v.muted=true; v.loop=true; v.autoplay=!!autoplay; v.playsInline=true;
+    v.preload='none'; v.poster=BLANK_POSTER;
+    v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    if(autoplay) v.setAttribute('autoplay','');
+  }
+  function setAspect(el,w,h){
+    const wrapper=el.closest('.frame, .media-box');
+    if(wrapper) wrapper.style.setProperty('--ar', `${w}/${h}`);
+  }
+  function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+  /* ===== cola de carga + IO ===== */
+  const MAX_CONCURRENT=4; let activeLoads=0; const loadQueue=[];
+  function scheduleVideoLoad(el,url){ loadQueue.push({el,url}); pumpLoads(); }
+  function pumpLoads(){
+    while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+      const {el,url}=loadQueue.shift(); activeLoads++;
+      el.src=url; el.preload='metadata';
+      const done=()=>{ activeLoads--; pumpLoads(); };
+      el.addEventListener('loadedmetadata',done,{once:true});
+      el.addEventListener('error',done,{once:true});
+      el.load();
+    }
+  }
+  const ioLoad=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const v=en.target;
+      if(v.dataset.src && !v.src){
+        scheduleVideoLoad(v, v.dataset.src);
+        v.addEventListener('loadedmetadata', ()=>{
+          setAspectFromVideo(v);
+          v.closest('.card, .tight-item')?.classList.add('ready');
+        },{once:true});
+      }
+      obs.unobserve(v);
+    });
+  },{rootMargin:'600px 0px', threshold:.08});
+
+  function autoPlayOnVisible(video){
+    function tryPlay(){ video.play().catch(()=>{}); }
+    const vio=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+    },{threshold:.12});
+    vio.observe(video);
+    const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+  }
+
+  /* ===== lightbox ===== */
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+  let galleryItems=[], galleryIndex=0;
+
+  function openLightbox(items,index=0){
+    galleryItems=items||[]; galleryIndex=Math.max(0,Math.min(index,galleryItems.length-1));
+    lbFigure.innerHTML=''; renderLB(); lb.classList.add('open');
+    document.documentElement.style.overflow='hidden';
+  }
+  function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; document.documentElement.style.overflow=''; }
+  function renderLB(){
+    const item=galleryItems[galleryIndex]; if(!item) return;
+    lbFigure.innerHTML='';
+    const el=document.createElement(item.type==='img'?'img':'video');
+    el.className='lb-media';
+    if(item.type==='img'){ el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url; }
+    else{
+      el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+      el.loop=true; el.preload='metadata'; el.src=item.url;
+      el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+    }
+    lbFigure.appendChild(el);
+  }
+  function openLightboxGroup(arr,index){ openLightbox(arr.map(url=>({type:/\.(mp4|mov)(\?|$)/i.test(url)?'video':'img', url})), index); }
+
+  lb.addEventListener('click', e=>{
+    const inside=e.target.closest('#lbFigure');
+    if(inside || e.target===lb) closeLightbox();
+  });
+  window.addEventListener('keydown', e=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') closeLightbox();
+    if(e.key==='ArrowRight' || e.key===' ') { galleryIndex=(galleryIndex+1)%galleryItems.length; renderLB(); }
+    if(e.key==='ArrowLeft') { galleryIndex=(galleryIndex-1+galleryItems.length)%galleryItems.length; renderLB(); }
+  });
+
+  /* ===== media (tus URLs) ===== */
+  const media = {
+    title: "atlas.2",
+    date: "15 de mayo de 2025",
+
+
+
+    images15a: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38771025/original_f41d63f812b4213b9ab542105b2d1788.jpg?1755115307?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770899/original_8459965c8bf663b6edf8fe2cab237326.jpg?1755115096?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770897/original_cf23761b367f35b0680b214f87ae4d93.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770896/original_deff35b13235b79defd1c0c5983bf616.jpg?1755115096?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770895/original_472662d6c9c8c25c06d149a8b6bd333b.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770894/original_3b8ed131c29c05583921e689a3d5ca13.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770893/original_8b16a764bb5b5745692ab79dd2458464.jpg?1755115094?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770892/original_ea5b9469f409e39506cf726910f21aef.jpg?1755115095?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770891/original_01d49c771d6c42e4f5d30ddc12d964f8.jpg?1755115094?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770889/original_abeea8c49b33fb7cf7364ea2318c0de2.jpg?1755115093?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770888/original_b1a205a34422f5efc08738183c747007.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770887/original_fe4ab020e76494fd65f6969fba3e192c.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770885/original_8909e1c7178355165f87d8e348447536.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770884/original_12e3877d1271157e27659b7294d52ab0.jpg?1755115096?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770883/original_16bfca5b4c838e492cc4a1d6bb0c9456.jpg?1755115091?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770882/original_45ab1c55daa73cffb3b32f00ff335139.jpg?1755115090?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770881/original_b76f125220485423a87237bf1301bda7.jpg?1755115092?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770880/original_13c850df31759d87ff89b196a3b3d4c1.jpg?1755115090?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770878/original_00324316687b15603a3e6d4e054e5d5f.jpg?1755115088?bc=0"
+    ],
+
+    images15b: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770874/original_3ffd9c0dc63be282c52e944be577edac.jpg?1755115082?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770873/original_1d358a6c8f03aee2557ddb71428f580d.jpg?1755115082?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770872/original_db0da8779044fe6c393f5f6bae23c04a.jpg?1755115083?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770871/original_df195faa261930c6b74f0eb19036d4b9.jpg?1755115082?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770870/original_cab5a600546677271037882b1763f9db.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770869/original_1fba2e1171e8573d13a802e2d9c90737.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770868/original_7578286a66a8efc6f707074ae9aec6e4.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770867/original_180b8322f5088acf2ccdd69192ab6b20.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770865/original_4ef6a99bf4929a01c018e34c53a81958.jpg?1755115156?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770864/original_0b2a83a50fd30eb03e52c61eb193e6d3.jpg?1755115175?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770863/original_514fe64457a8250360b7ee78f6280057.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770862/original_18523ffaa25131fd99aba0620387d00c.jpg?1755115079?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770861/original_b8bcc10d06e20bd30f047ceb91b3c72a.jpg?1755115079?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770860/original_6b588202cb55a912ddc79a19885cd50c.jpg?1755115079?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770859/original_3c1121168346fbf0c409f34418a6aeb9.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770857/original_693c7c76ac35448639d0d8f242ea68c7.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770856/original_c26cf80c79b2d54450abb66457bd59b9.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770855/original_2bcba2002b57efaf2454a2d6720b8712.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770854/original_64ae9175cee4f34a73f49e28c62333f5.jpg?1755115078?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770853/original_e3ea7c0c860b68634e42c3a25da361ef.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770852/original_94c2ee780af51fd8b385b0ef4c494d68.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770851/original_53ff450ab68f40e8224d5bb6b22797f7.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770850/original_a7cd79552c8cd0556f62596bd8100366.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770849/original_033ce65cccd41a386b5414d15f510899.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770848/original_63bff25c8f926c4e197aec7dda3b1871.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770847/original_f2909ffe2562b5dd07394acbe0cd875b.jpg?1755115077?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770846/original_f9918cd633836564b95cbdc273adbe28.jpg?1755115076?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770844/original_8e21f92cf665a032fd33333d76f458dc.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770843/original_34fb4bed2a0ca70663fb4d330e20b476.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770842/original_f4815514887c46a8de84acedc76e1894.jpg?1755115081?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770841/original_68d7fbd60e89011cd1941516f106e8fb.jpg?1755115076?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770840/original_29c53ce3d3274db36255ecef0eee30dd.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770839/original_76eabcaa8a21390f6741062701347212.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770837/original_9270318ae2f8f5a135276974e47c13c6.jpg?1755115075?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38770836/original_74520028b9a11daca86c30b57b0bcc4e.jpg?1755115074?bc=0"
+    ],
+
+    aei: [
+      "https://attachments.are.na/38770827/30417a3382a6b5c33b542c44a34d3fcf.mp4?1755115054",
+      "https://attachments.are.na/38770826/830e4c42497977aacc6edcfaca512461.mp4?1755115051",
+      "https://attachments.are.na/38770825/fd20ec3db2313f196ded9f997012ea66.mp4?1755115050",
+      "https://attachments.are.na/38770823/83e6f6801d71e55bdcc329e0ded88b65.mp4?1755115050",
+      "https://attachments.are.na/38770822/3fe61970a04d4d99245c06bf0b02069c.mp4?1755115045",
+      "https://attachments.are.na/38770821/92ef945b2948556423f5fa40676a216b.mp4?1755115045",
+      "https://attachments.are.na/38770819/c60dbec0cb205e0ebaea87eefa5b5608.mp4?1755115043",
+      "https://attachments.are.na/38770810/5c6478311a8cbd5e15b56cfae4508240.mp4?1755115034",
+      "https://attachments.are.na/38770807/808ab21e48ca81797e1b2843f623eba2.mp4?1755115032",
+      "https://attachments.are.na/38770806/1c33b419f133a52e6f80bfe2934084b6.mp4?1755115032",
+      "https://attachments.are.na/38770791/862804d6b938674eadfdad60ff81338f.mp4?1755115021",
+      "https://attachments.are.na/38770787/760fd3a683af5f3604cbfbeacba15788.mp4?1755115013",
+      "https://attachments.are.na/38770786/e171e85c4aef9033a94d5e77a1bc1c60.mp4?1755115030",
+      "https://attachments.are.na/38770785/414022721fb51026d8fb2705eb1dd523.mp4?1755115013",
+      "https://attachments.are.na/38770782/05be962e07316720c405996cfdaf1ff3.mp4?1755115009",
+      "https://attachments.are.na/38770780/78d767e4b777afd52bbf791a74936fe2.mp4?1755115007",
+      "https://attachments.are.na/38770778/4802ed4e9c238039556c49b3bf849b5d.mp4?1755115006",
+      "https://attachments.are.na/38770773/7123d4130eb05f9d699ac81e8c38fcc3.mp4?1755115001",
+      "https://attachments.are.na/38770771/8b3a084874630bdae8938f1519f3f5d2.mp4?1755114999",
+      "https://attachments.are.na/38770770/3e0f5429414c1bc447867fc111d25ebc.mp4?1755114998",
+      "https://attachments.are.na/38770769/e9ade66b319ab89d78109cb47577fbc7.mp4?1755114998",
+      "https://attachments.are.na/38770768/98c5761aea9a39ca81ac1c66c7da2438.mp4?1755114999",
+      "https://attachments.are.na/38770767/efded9a81fc4bee938bcfed39a940188.mp4?1755114996",
+      "https://attachments.are.na/38770766/ffca2cac2d5b21a1a24810e093140cd1.mp4?1755114994",
+      "https://attachments.are.na/38770765/49b9e718a7ecdca4f5aacf46f26d50c7.mp4?1755114993",
+      "https://attachments.are.na/38770763/2642c6c314e80f10b14472f94bfbdbad.mp4?1755114993",
+      "https://attachments.are.na/38770760/61e20b073a368be548e2af7abc8e9425.mp4?1755114988",
+      "https://attachments.are.na/38770759/84e3be81dad053f729273696f62e56b2.mp4?1755114989",
+      "https://attachments.are.na/38770757/dafcd262bab20d5e5f73dca3f5d432a8.mp4?1755114984",
+      "https://attachments.are.na/38770752/ce6f20f967710243b7d84d59dc19f8c0.mp4?1755114979",
+      "https://attachments.are.na/38770750/d898b1460ea8c5b8d58dae89417348cc.mp4?1755114977",
+      "https://attachments.are.na/38770747/b794abc573efc566749ae8d86dc3f437.mp4?1755114973",
+      "https://attachments.are.na/38770746/fad4c322533852d517f60b8fbdb5f19d.mov?1755114971",
+      "https://attachments.are.na/38770745/3b56bf57a33e9e6499b2d0a762d44a42.mp4?1755114970",
+      "https://attachments.are.na/38770743/280f42926364aaf229bceb32396dc9de.mp4?1755114964",
+      "https://attachments.are.na/38770742/ec4ae054183af9ce456ef104e0439620.mp4?1755114961",
+      "https://attachments.are.na/38770741/e50348df72c73d5fde0ede9e456942ab.mp4?1755114961",
+      "https://attachments.are.na/38770740/83e2a2f942f6c844674f986b77f3b022.mp4?1755114961",
+      "https://attachments.are.na/38770739/4f38f47943d386b7352861709102e31a.mov?1755115008",
+      "https://attachments.are.na/38770738/81ad1d30bec9ecdcdfa0c2657f1666e0.mov?1755114960",
+      "https://attachments.are.na/38770737/180c6b41c6337cfb1943648d84ecb646.mov?1755114958",
+      "https://attachments.are.na/38770733/b5277d3760f97fc59916f1ab274f9089.mov?1755114951",
+      "https://attachments.are.na/38770731/c606ecb50a6144f84a5b0d7482dcb9ed.mov?1755114942",
+      "https://attachments.are.na/38770730/7eae7941d5d8db511bc7570392bcf9d0.mov?1755114937",
+      "https://attachments.are.na/38770729/325abd33f99bd4f314ba3277b494eea8.mov?1755114938",
+      "https://attachments.are.na/38770727/885e431526ef3d6d1aa6c7b5773b649c.mov?1755114937",
+      "https://attachments.are.na/38770723/5fd0b5a7992417a0179dbc95f374b293.mov?1755114933",
+      "https://attachments.are.na/38770722/3afb78101ebd1de2b1c9e7971d9c8c1e.mov?1755114932"
+    ]
+  };
+
+  /* ===== render ===== */
+  function makeImmediateVideo(url){
+    const container=document.createElement('figure');
+    container.className='card ready';
+    const box=document.createElement('div'); box.className='frame'; container.appendChild(box);
+    const v=document.createElement('video');
+    wireVideoEl(v,{autoplay:true}); v.controls=false; v.preload='auto'; v.src=url;
+    box.appendChild(v);
+    v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+    (function retry(){ v.play().catch(()=> setTimeout(retry,200)); })();
+    function toggleAudio(e){ e.preventDefault(); v.muted=!v.muted; if(v.muted) v.setAttribute('muted',''); else v.removeAttribute('muted'); v.play().catch(()=>{}); }
+    container.addEventListener('click',toggleAudio);
+    container.addEventListener('touchend',toggleAudio,{passive:false});
+    return container;
+  }
+
+  function renderHero(){
+    const wrap=document.querySelector('[data-section="destacados"]');
+    if(media.walkthrough?.[0]) wrap.appendChild(makeImmediateVideo(media.walkthrough[0]));
+  }
+
+  function renderTightGrid(selectorKey, sources){
+    const wrap=document.querySelector(`[data-section="${selectorKey}"]`); if(!wrap) return;
+    (sources||[]).filter(Boolean).forEach(url=>{
+      const item=document.createElement('div'); item.className='tight-item';
+      const box=document.createElement('div'); box.className='media-box'; item.appendChild(box);
+      const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+      box.appendChild(img);
+      img.addEventListener('load',()=> setAspectFromVideo({videoWidth:img.naturalWidth, videoHeight:img.naturalHeight, closest:sel=>item.querySelector(sel)}),{once:true});
+      wrap.appendChild(item);
+    });
+  }
+
+  /* lightbox wiring por sección */
+  function wireGalleryFor(selectorKey, urls){
+    const wrap=document.querySelector(`[data-section="${selectorKey}"]`); if(!wrap) return;
+    const items=urls.map(u=>({type:/\.(mp4|mov)(\?|$)/i.test(u)?'video':'img', url:u}));
+    wrap.addEventListener('click', e=>{
+      const item=e.target.closest('.tight-item'); if(!item) return;
+      const list=[...wrap.querySelectorAll('.tight-item')];
+      const idx=list.indexOf(item);
+      openLightbox(items, idx<0?0:idx);
+    });
+  }
+
+  /* a.e.i */
+  function renderAEI(stage, linesSVG, urls){
+    const blocks=[], MAX_AT_ONCE=Math.min(urls.length,42);
+    let idx=0, paused=false;
+
+    const pauseOn=()=> paused=true, resume=()=> paused=false;
+    stage.addEventListener('mouseenter',pauseOn);
+    stage.addEventListener('mouseleave',resume);
+    stage.addEventListener('touchstart',pauseOn,{passive:true});
+    stage.addEventListener('touchend',resume);
+
+    function addNext(){
+      if(idx>=MAX_AT_ONCE) return;
+      const url=urls[idx++], block=document.createElement('div');
+      block.className='aei-block';
+      let el;
+      if(/\.(mp4|mov)(\?|$)/i.test(url)){
+        el=document.createElement('video');
+        wireVideoEl(el,{autoplay:true});
+        el.dataset.src=url; block.appendChild(el); stage.appendChild(block);
+        ioLoad.observe(el); autoPlayOnVisible(el);
+      }else{
+        el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.src=url;
+        block.appendChild(el); stage.appendChild(block);
+      }
+      const rect=stage.getBoundingClientRect();
+      const bw=parseFloat(getComputedStyle(block).width), bh=parseFloat(getComputedStyle(block).height);
+      block.x=Math.random()*Math.max(10,rect.width-bw);
+      block.y=Math.random()*Math.max(10,rect.height-bh);
+      block.vx=(Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
+      updateBlockTransform(block);
+      makeDraggable(block);
+      blocks.push(block);
+      setTimeout(addNext,45);
+    }
+    addNext();
+
+    function updateBlockTransform(b){ b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; }
+    function clampToStage(b){
+      const rect=stage.getBoundingClientRect();
+      const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+      b.x=Math.min(Math.max(0,b.x), Math.max(0,rect.width-bw));
+      b.y=Math.min(Math.max(0,b.y), Math.max(0,rect.height-bh));
+    }
+
+    function makeDraggable(el){
+      let isDragging=false,lastX=0,lastY=0;
+      const move=(cx,cy)=>{
+        const dx=cx-lastX, dy=cy-lastY;
+        el.x+=dx; el.y+=dy; clampToStage(el); updateBlockTransform(el);
+        lastX=cx; lastY=cy; drawLines();
+      };
+      el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true;paused=true;lastX=e.clientX;lastY=e.clientY;});
+      window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
+      window.addEventListener('mouseup',()=>{isDragging=false;paused=false;});
+
+      el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;paused=true;lastX=t.clientX;lastY=t.clientY;},{passive:true});
+      el.addEventListener('touchmove',e=>{if(!isDragging) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY);},{passive:false});
+      el.addEventListener('touchend',()=>{isDragging=false;paused=false;});
+    }
+
+    function step(){
+      if(!paused){
+        const rect=stage.getBoundingClientRect();
+        for(const b of blocks){
+          b.x+=b.vx; b.y+=b.vy;
+          const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+          if(b.x<0 || b.x>rect.width-bw) b.vx*=-1;
+          if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
+          clampToStage(b); updateBlockTransform(b);
+        }
+        if(!nextLineTick || performance.now()>nextLineTick){ generateLines(); nextLineTick=performance.now()+(120+Math.random()*480); }
+      }
+      drawLines();
+      requestAnimationFrame(step);
+    }
+    let currentPairs=[], nextLineTick=0;
+    function generateLines(){
+      currentPairs=[];
+      for(let i=0;i<blocks.length;i++){
+        for(let j=i+1;j<blocks.length;j++){
+          if(Math.random()<0.08) currentPairs.push([blocks[i],blocks[j]]);
+        }
+      }
+    }
+    function centerOf(b){ const r=b.getBoundingClientRect(); return [b.x+r.width/2, b.y+r.height/2]; }
+    function drawLines(){
+      linesSVG.innerHTML='';
+      for(const [a,b] of currentPairs){
+        const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+        const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+        line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+        line.setAttribute('stroke','#000'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
+        linesSVG.appendChild(line);
+      }
+    }
+    step();
+
+    window.addEventListener('resize',()=>{ for(const b of blocks){ clampToStage(b); updateBlockTransform(b); } },{passive:true});
+  }
+
+  /* ===== iniciar render ===== */
+  function init(){
+    // título visible y fecha ya están en HTML; si quieres inyectarlos, aquí:
+    // document.querySelector('.lang-es h1').textContent = media.title;
+    // document.querySelector('.lang-es .meta').textContent = media.date;
+
+    renderHero();
+
+    renderTightGrid('images15a', media.images15a);
+    renderTightGrid('images15b', media.images15b);
+
+    wireGalleryFor('images15a', media.images15a);
+    wireGalleryFor('images15b', media.images15b);
+
+    renderAEI(document.getElementById('aeiStage'), document.getElementById('aeiLines'), media.aei);
+
+    // pausa videos invisibles
+    const pauseIO=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); });
+    },{threshold:.05});
+    const watch=setInterval(()=>{
+      document.querySelectorAll('.tight-item video, .frame video').forEach(v=> pauseIO.observe(v));
+      if(document.querySelectorAll('.tight-item video, .frame video').length>0) clearInterval(watch);
+    },160);
+  }
+
+  // desbloqueo iOS
+  function unlockAllVideos(){
+    document.removeEventListener('click', unlockAllVideos);
+    document.removeEventListener('touchstart', unlockAllVideos);
+    $$('video').forEach(v=>{
+      if(!v.src && v.dataset.src){ v.src=v.dataset.src; v.load(); }
+      v.muted=true; v.setAttribute('muted',''); v.play().catch(()=>{});
+    });
+  }
+  document.addEventListener('click', unlockAllVideos, { once:true });
+  document.addEventListener('touchstart', unlockAllVideos, { once:true, passive:true });
+
+  // run
+  init();
+</script>
+</body>
+</html>

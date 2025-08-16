@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>universal space jam — xpan — mdtc</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --tile-max-h:72vh;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:92px auto 5rem; padding:0 1.25rem; }
+
+  h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; letter-spacing:.01em; }
+  .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+
+  .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+  .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+  /* tarjetas y frames */
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+  .card.ready{ opacity:1; transform:none; }
+  .frame{ position:relative; background:#fff; }
+  .frame::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); max-height:var(--tile-max-h); }
+  .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  @media (hover:hover){
+    .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+    .card:active{ transform:translateY(1px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition:none; }
+    .card:hover .frame > *{ transform:none !important; }
+  }
+
+  /* grid compacta */
+  .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .tight-grid{ display:grid; gap:0; }
+  .tight-grid.cols-6{ grid-template-columns: repeat(6, 1fr); }
+  .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+  .tight-grid.cols-4{ grid-template-columns: repeat(4, 1fr); }
+  @media (max-width:1100px){
+    .tight-grid.cols-6{ grid-template-columns: repeat(5, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width:640px){
+    .tight-grid.cols-6{ grid-template-columns: repeat(3, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(3, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .tight-item{ position:relative; background:#fff; }
+  .tight-item .media-box{ position:relative; }
+  .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+  .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  /* lightbox minimal */
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+</style>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <section>
+    <h1>universal space jam</h1>
+    <div class="meta">31 de octubre de 2024</div>
+  </section>
+
+  <!-- retícula — videos -->
+  <section class="section" id="gridVideos" data-lazy-section>
+    <h2 class="sr-only">retícula — videos</h2>
+    <div class="tight-wrap">
+      <div class="tight-grid cols-5" data-section="gridVideos" data-initial="20"></div>
+    </div>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  // ===== media (solo grid de videos) =====
+  const media = {
+    gridVideos:[
+      "https://attachments.are.na/38749208/ae9b3cd0b20e65bdbfb9625fa6de9d38.mp4?1755036443",
+      "https://attachments.are.na/38749215/cf85f2ae3e3dc071e3fa6b75785d8cbe.mp4?1755036460",
+      "https://attachments.are.na/38749220/c7cee9fd4551a5028a58752950c731d7.mp4?1755036465",
+      "https://attachments.are.na/38749221/95ac46d4f5cda9fc98f923fff9204c7a.mp4?1755036466",
+      "https://attachments.are.na/38749222/5a09bce237bcb47dcf42048a8e6ce0ca.mp4?1755036467",
+      "https://attachments.are.na/38749227/9769879cd6f56f77d14bc15ad667cd6a.mp4?1755036488",
+      "https://attachments.are.na/38749225/ab4a568ebeb93d2d8c2bed4bab95a011.mp4?1755036485",
+      "https://attachments.are.na/38749228/859edd924313d38472a167d8477a54c1.mov?1755036490",
+      "https://attachments.are.na/38749233/a9636c13df5a90b7f3aa32186194ee99.mov?1755036513"
+    ]
+  };
+
+  const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+
+  /* ===== helpers de video ===== */
+  const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+  function wireVideoEl(v, {autoplay=true}={}){
+    v.muted = true; v.loop = true; v.autoplay = !!autoplay; v.playsInline = true; v.preload = 'none'; v.poster = BLANK_POSTER;
+    v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    if(autoplay) v.setAttribute('autoplay','');
+  }
+
+  /* ===== cola de carga + IO ===== */
+  const MAX_CONCURRENT = 4; let activeLoads = 0; const loadQueue = [];
+  function scheduleVideoLoad(el, url){ loadQueue.push({el,url}); pumpLoads(); }
+  function pumpLoads(){
+    while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+      const {el,url}=loadQueue.shift(); activeLoads++;
+      el.src=url; el.preload='metadata';
+      const done=()=>{ activeLoads--; pumpLoads(); };
+      el.addEventListener('loadedmetadata',done,{once:true});
+      el.addEventListener('error',done,{once:true});
+      el.load();
+    }
+  }
+  const ioLoad=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const v=en.target;
+      if(v.dataset.src && !v.src){
+        scheduleVideoLoad(v, v.dataset.src);
+        v.addEventListener('loadedmetadata', ()=>{
+          setAspectFromVideo(v);
+          v.closest('.tight-item')?.classList.add('ready');
+        },{once:true});
+      }
+      obs.unobserve(v);
+    });
+  },{rootMargin:'600px 0px', threshold:.08});
+
+  function setAspect(el, w, h){
+    const wrapper = el.closest('.frame, .media-box');
+    if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+  }
+  function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+  /* ===== autoplay robusto ===== */
+  function autoPlayOnVisible(video){
+    function tryPlay(){ video.play().catch(()=>{}); }
+    const vio=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+    },{threshold:.12});
+    vio.observe(video);
+    const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+  }
+
+  // desbloqueo iOS
+  function unlockAllVideos(){
+    document.removeEventListener('click', unlockAllVideos);
+    document.removeEventListener('touchstart', unlockAllVideos);
+    $$('video').forEach(v=>{
+      if(!v.src && v.dataset.src){ v.src=v.dataset.src; v.load(); }
+      v.muted=true; v.setAttribute('muted',''); v.play().catch(()=>{});
+    });
+  }
+  document.addEventListener('click', unlockAllVideos, { once:true });
+  document.addEventListener('touchstart', unlockAllVideos, { once:true, passive:true });
+
+  /* ===== render grid ===== */
+  function renderTightGrid(key, sources){
+    const wrap=document.querySelector(`[data-section="${key}"]`); if(!wrap) return;
+    (sources||[]).filter(Boolean).forEach(url=>{
+      const item=document.createElement('div'); item.className='tight-item';
+      const box=document.createElement('div'); box.className='media-box'; item.appendChild(box);
+      const v=document.createElement('video');
+      wireVideoEl(v,{autoplay:true}); v.controls=false; v.dataset.src=url; box.appendChild(v);
+      ioLoad.observe(v); autoPlayOnVisible(v);
+      v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+      wrap.appendChild(item);
+    });
+  }
+  renderTightGrid('gridVideos', media.gridVideos, true);
+
+  /* ===== lightbox ===== */
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+  let galleryItems=[], galleryIndex=0;
+
+  function openLightbox(items, index=0){
+    galleryItems=items||[]; galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
+    lbFigure.innerHTML=''; renderLB(); lb.classList.add('open');
+    document.documentElement.style.overflow='hidden';
+  }
+  function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; document.documentElement.style.overflow=''; }
+  function renderLB(){
+    const item=galleryItems[galleryIndex]; if(!item) return;
+    lbFigure.innerHTML='';
+    const el=document.createElement('video');
+    el.className='lb-media'; el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+    el.loop=true; el.preload='metadata'; el.src=item.url;
+    el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+    lbFigure.appendChild(el);
+  }
+  function openLightboxGroup(key, index){
+    const arr=(media[key]||[]).map(url=>({type:'video', url}));
+    openLightbox(arr, index);
+  }
+
+  // click en grid -> galería
+  (function wireGallery(){
+    const wrap=document.querySelector('[data-section="gridVideos"]'); if(!wrap) return;
+    wrap.addEventListener('click', e=>{
+      const item=e.target.closest('.tight-item'); if(!item) return;
+      const items=Array.from(wrap.querySelectorAll('.tight-item')); const index=items.indexOf(item); if(index<0) return;
+      openLightboxGroup('gridVideos', index);
+    });
+  })();
+
+  // cerrar por tap fuera o tap sobre la media
+  document.getElementById('lightbox').addEventListener('click', e=>{
+    const inside = e.target.closest('#lbFigure');
+    if(inside || e.target===e.currentTarget) closeLightbox();
+  });
+
+  // teclado en desktop
+  window.addEventListener('keydown', e=>{ if(!lb.classList.contains('open')) return; if(e.key==='Escape') closeLightbox(); });
+
+  /* pausa videos invisibles */
+  const pauseIO=new IntersectionObserver((ents)=>{
+    ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); });
+  },{threshold:.05});
+  const watch=setInterval(()=>{
+    document.querySelectorAll('.tight-item video').forEach(v=> pauseIO.observe(v));
+    if(document.querySelectorAll('.tight-item video').length>0) clearInterval(watch);
+  },160);
+
+</script>
+</body>
+</html>

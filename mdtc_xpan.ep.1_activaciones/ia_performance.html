@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ía — performance</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:72px auto 5rem; padding:0 1.25rem; }
+  h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; }
+  .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .frame{ position:relative; background:#fff; }
+  .frame::before{ content:""; display:block; aspect-ratio:16/9; }
+  .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  /* lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+</style>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <section>
+    <h1 class="sr-only">ía — performance</h1>
+    <div class="meta">04 de febrero de 2025</div>
+    <figure class="card">
+      <div class="frame">
+        <video src="https://attachments.are.na/38772161/6ecbf91dbe418731d41a5e2e7a673330.mp4?1755117291"
+               muted loop autoplay playsinline controls></video>
+      </div>
+    </figure>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+  const video=document.querySelector('video');
+
+  video.addEventListener('click',()=>{
+    openLightbox([{type:'video',url:video.src}],0);
+  });
+
+  function openLightbox(items,index=0){
+    lbFigure.innerHTML='';
+    const el=document.createElement('video');
+    el.className='lb-media';
+    el.src=items[index].url;
+    el.controls=true;
+    el.loop=true;
+    el.autoplay=true;
+    lbFigure.appendChild(el);
+    lb.classList.add('open');
+  }
+
+  function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; }
+
+  lb.addEventListener('click',e=>{
+    if(e.target===lb) closeLightbox();
+  });
+  window.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLightbox(); });
+</script>
+</body>
+</html>

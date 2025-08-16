@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>eden blood supply — xpan — mdtc</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --tile-max-h:72vh;
+    --aei-block:140px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:124px auto 5rem; padding:0 1.25rem; }
+
+  .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+  .info{ margin:0 0 1.6rem; }
+  .info .title{ font-size:clamp(1.2rem,2.2vw,1.6rem); margin:0 0 .25rem; text-transform:lowercase; letter-spacing:.01em; }
+  .info .meta{ font-size:.96rem; opacity:.85; font-style:italic; }
+
+  .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+  .grid{ display:grid; gap:var(--gap); }
+  .grid.uniform-3{ grid-template-columns: repeat(3, 1fr); }
+  @media (max-width:1100px){ .grid.uniform-3{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width:640px){ .grid.uniform-3{ grid-template-columns: 1fr; } }
+
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+  .card.ready{ opacity:1; transform:none; }
+  .frame{ position:relative; background:#fff; }
+  .frame::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); max-height:var(--tile-max-h); }
+  .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .tight-grid{ display:grid; gap:0 !important; }
+  .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+  @media (max-width:1100px){ .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width:640px){ .tight-grid.cols-5{ grid-template-columns: repeat(2, 1fr); } }
+
+  .tight-item{ position:relative; background:#fff; }
+  .tight-item .media-box{ position:relative; }
+  .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+  .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  /* images15 con aspecto vertical definido por defecto */
+  [data-section="images15"] .media-box::before{ aspect-ratio:9/16; }
+  [data-section="images15"] .media-box > img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* lightbox minimal */
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+</style>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <!-- info visible: title + date -->
+  <section class="info" aria-label="información">
+    <h1 class="sr-only">eden blood supply</h1>
+    <div class="title">eden blood supply</div>
+    <div class="meta">17 de diciembre de 2024</div>
+  </section>
+
+  <!-- walkthrough / heroVideo -->
+  <section class="section" id="recorridos" data-lazy-section>
+    <h2 class="sr-only">recorridos</h2>
+    <div class="grid uniform-3" data-section="walkthrough"></div>
+  </section>
+
+  <!-- retícula 15 (imágenes) -->
+  <section class="section" id="img15" data-lazy-section>
+    <h2 class="sr-only">retícula — 15 imágenes</h2>
+    <div class="tight-wrap">
+      <div class="tight-grid cols-5" data-section="images15" data-initial="15"></div>
+    </div>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  /* ===== media (eden) ===== */
+  const media = {
+    walkthrough: [
+      "https://attachments.are.na/38748969/2c8b22530334939ac5e12164156be1e7.mov?1755035769",
+      "https://attachments.are.na/38748974/c40fd9380617d2d999265d969b8aceb3.mp4?1755035781"
+    ],
+    images15: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748990/original_58099ccd2ed6d7e2b1afcd1702f4db7d.jpg?1755035825?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748991/original_6ae1b9fef4f13e2873fd03f6a12d0b34.jpg?1755035825?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748993/original_20221d4695ccdf7b1b4261588f91da66.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748994/original_8cf258f36b24f5e24048c33b102c8cac.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748992/original_51ee839f5f9129032a0d39917b5d8236.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748995/original_3812bc9c86db9e71b29de89b43dbe0b3.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748996/original_27dcf1e74e214f3d4902904b5708e8ab.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748997/original_ce1dbef43bb9e7311c3fdaf4f8b417e8.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38748998/original_7528278cde3a106dc2cbbb18ba709321.jpg?1755035826?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749001/original_d56c6b3348478552a716421f00ba07d1.jpg?1755035828?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749002/original_7e633a849d80c030fa28390d580a56d5.jpg?1755035829?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749003/original_5f0cdbe94b421cf952e291d1d22d6822.jpg?1755035829?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749004/original_f730998e0fcdcceda75c737220c39fc9.jpg?1755035830?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749061/original_840152698e89031589ecd5e31c92ee5d.jpg?1755036031?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38749063/original_b8e7da0a4f072d4e6269e5cbc8e16fc4.jpg?1755036031?bc=0"
+    ]
+  };
+
+  const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+  const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+  function wireVideoEl(v,{autoplay=true}={}){
+    v.muted = true;
+    v.loop = true;
+    v.autoplay = !!autoplay;
+    v.playsInline = true;
+    v.preload = 'none';
+    v.poster = BLANK_POSTER;
+    v.setAttribute('muted','');
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    if(autoplay) v.setAttribute('autoplay','');
+  }
+
+  function setAspect(el,w,h){
+    const wrapper = el.closest('.frame, .media-box');
+    if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+  }
+  function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+  const MAX_CONCURRENT = 4;
+  let activeLoads = 0;
+  const loadQueue = [];
+  function scheduleVideoLoad(el, url){ loadQueue.push({el,url}); pumpLoads(); }
+  function pumpLoads(){
+    while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+      const {el,url}=loadQueue.shift();
+      activeLoads++;
+      el.src=url; el.preload='metadata';
+      const done=()=>{ activeLoads--; pumpLoads(); };
+      el.addEventListener('loadedmetadata',done,{once:true});
+      el.addEventListener('error',done,{once:true});
+      el.load();
+    }
+  }
+
+  const ioLoad=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const v=en.target;
+      if(v.dataset.src && !v.src){
+        scheduleVideoLoad(v, v.dataset.src);
+        v.addEventListener('loadedmetadata', ()=>{
+          setAspectFromVideo(v);
+          v.closest('.card, .tight-item')?.classList.add('ready');
+        },{once:true});
+      }
+      obs.unobserve(v);
+    });
+  },{rootMargin:'600px 0px', threshold:.08});
+
+  function autoPlayOnVisible(video){
+    function tryPlay(){ video.play().catch(()=>{}); }
+    const vio=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+    },{threshold:.12});
+    vio.observe(video);
+    const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+  }
+
+  function makeVideo(url,{tight=false}={}){
+    const container=tight?document.createElement('div'):document.createElement('figure');
+    container.className=tight?'tight-item':'card';
+    const box=document.createElement('div'); box.className=tight?'media-box':'frame';
+    container.appendChild(box);
+    const v=document.createElement('video');
+    wireVideoEl(v,{autoplay:true});
+    v.controls=false; v.dataset.src=url;
+    box.appendChild(v);
+    ioLoad.observe(v);
+    autoPlayOnVisible(v);
+    v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+    if(!tight){ container.addEventListener('click', ()=> openLightboxSingle({type:'video', url})); }
+    return container;
+  }
+
+  (function render(){
+    const walkthroughWrap=document.querySelector('[data-section="walkthrough"]');
+    (media.walkthrough||[]).forEach(u=> walkthroughWrap.appendChild(makeVideo(u)));
+
+    const wrapImages=document.querySelector('[data-section="images15"]');
+    (media.images15||[]).forEach(url=>{
+      const item=document.createElement('div'); item.className='tight-item';
+      const box=document.createElement('div'); box.className='media-box'; item.appendChild(box);
+      const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+      box.appendChild(img);
+      img.addEventListener('load',()=> setAspect({closest:()=>item.querySelector('.media-box'), videoWidth:img.naturalWidth, videoHeight:img.naturalHeight}, img.naturalWidth, img.naturalHeight),{once:true});
+      wrapImages.appendChild(item);
+    });
+  })();
+
+  /* ===== lightbox ===== */
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+  let galleryItems=[], galleryIndex=0;
+
+  function openLightbox(items, index=0){
+    galleryItems=items||[];
+    galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
+    lbFigure.innerHTML='';
+    renderLB();
+    lb.classList.add('open');
+    document.documentElement.style.overflow = 'hidden';
+  }
+  function openLightboxGroup(key, index){
+    const arr=(media[key]||[]).map(url=>({type:/\.(mp4|mov)(\?|$)/i.test(url)?'video':'img', url}));
+    openLightbox(arr, index);
+  }
+  function openLightboxSingle(item){ openLightbox([item], 0); }
+
+  function renderLB(){
+    const item=galleryItems[galleryIndex]; if(!item) return;
+    lbFigure.innerHTML='';
+    const el=document.createElement(item.type==='img'?'img':'video');
+    el.className='lb-media';
+    if(item.type==='img'){
+      el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url;
+    }else{
+      el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+      el.loop=true; el.preload='metadata'; el.src=item.url;
+      el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+    }
+    lbFigure.appendChild(el);
+  }
+  function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; document.documentElement.style.overflow=''; }
+  function nextLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex+1)%galleryItems.length; renderLB(); }
+  function prevLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex-1+galleryItems.length)%galleryItems.length; renderLB(); }
+
+  // abrir grupo de imágenes
+  (function wireGallery(){
+    const wrap=document.querySelector('[data-section="images15"]'); if(!wrap) return;
+    wrap.addEventListener('click', e=>{
+      const item=e.target.closest('.tight-item'); if(!item) return;
+      const items=Array.from(wrap.querySelectorAll('.tight-item'));
+      const index=items.indexOf(item); if(index<0) return;
+      openLightboxGroup('images15', index);
+    });
+  })();
+
+  // cerrar por click o teclado
+  lb.addEventListener('click', e=>{
+    const inside = e.target.closest('#lbFigure');
+    if(inside || e.target===lb) closeLightbox();
+  });
+  window.addEventListener('keydown', e=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') return closeLightbox();
+    if(e.key===' ' || e.key==='Spacebar' || e.key==='ArrowRight') return nextLB();
+    if(e.key==='ArrowLeft') return prevLB();
+  });
+
+  // carga en viewport y pausa fuera
+  const pauseIO=new IntersectionObserver((ents)=>{
+    ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); });
+  },{threshold:.05});
+  const watch=setInterval(()=>{
+    document.querySelectorAll('video').forEach(v=> pauseIO.observe(v));
+    if(document.querySelectorAll('video').length>0) clearInterval(watch);
+  },160);
+
+  // iOS unlock
+  function unlockAllVideos(){
+    document.removeEventListener('click', unlockAllVideos);
+    document.removeEventListener('touchstart', unlockAllVideos);
+    $$('video').forEach(v=>{
+      if(!v.src && v.dataset.src){ v.src=v.dataset.src; v.load(); }
+      v.muted=true; v.setAttribute('muted',''); v.play().catch(()=>{});
+    });
+  }
+  document.addEventListener('click', unlockAllVideos, { once:true });
+  document.addEventListener('touchstart', unlockAllVideos, { once:true, passive:true });
+</script>
+</body>
+</html>

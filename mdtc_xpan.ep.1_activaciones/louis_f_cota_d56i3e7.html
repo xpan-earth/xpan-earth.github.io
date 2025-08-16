@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>louis f cota & d56i3e7 — xpan — mdtc</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem; --ease:cubic-bezier(.22,.61,.36,1);
+    --tile-max-h:72vh;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:124px auto 5rem; padding:0 1.25rem; }
+
+  .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+  /* info */
+  .info h2{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .15rem; text-transform:lowercase; letter-spacing:.01em; }
+  .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+
+  /* tarjetas y marcos */
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+  .card.ready{ opacity:1; transform:none; }
+  .frame{ position:relative; background:#fff; }
+  .frame::before{ content:""; display:block; aspect-ratio:var(--ar, 16/9); max-height:var(--tile-max-h); }
+  .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  @media (hover:hover){
+    .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+    .card:active{ transform:translateY(1px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition:none; }
+    .card:hover .frame > *{ transform:none !important; }
+  }
+
+  /* grids */
+  .grid{ display:grid; gap:var(--gap); }
+  .grid.uniform-3{ grid-template-columns: repeat(3, 1fr); }
+  @media (max-width:1200px){ .grid.uniform-3{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width:640px){ .grid.uniform-3{ grid-template-columns: 1fr; } }
+
+  .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .tight-grid{ display:grid; gap:0; }
+  .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+  @media (max-width:1100px){ .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width:640px){ .tight-grid.cols-5{ grid-template-columns: repeat(2, 1fr); } }
+
+  .tight-item{ position:relative; background:#fff; }
+  .tight-item .media-box{ position:relative; }
+  .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+  .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  /* lightbox minimal sin barras negras y media completa */
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+</style>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <!-- título oculto de la página -->
+  <h1 class="sr-only">louis f cota & d56i3e7</h1>
+
+  <!-- info visible: title + date -->
+  <section class="info" aria-labelledby="t">
+    <h2 id="t">louis f cota & d56i3e7</h2>
+    <div class="meta">16 de noviembre de 2024</div>
+  </section>
+
+  <!-- herovideo como walkthrough -->
+  <section class="section" aria-label="walkthrough">
+    <div class="grid uniform-3" data-section="walkthrough"></div>
+  </section>
+
+  <!-- grid15 de imágenes -->
+  <section class="section" aria-label="retícula — 15 imágenes">
+    <div class="tight-wrap">
+      <div class="tight-grid cols-5" data-section="images15" data-initial="15"></div>
+    </div>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  /* ===== media (tus URLs) ===== */
+  const media = {
+    walkthrough: [
+      "https://attachments.are.na/38750117/607ecb8a6c1d9b3818518017cc8b7259.mp4?1755038884"
+    ],
+    images15: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750118/original_b15629f1f32667b3827e99ccabe22755.jpg?1755038889?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750119/original_4eceb5e85c7160ca4aaf2a3a6cb7d5c7.gif?1755038890?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750120/original_9e0ed24bdbf688555721ea3e48d0ac63.gif?1755038890?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750121/original_aa91df73098b6f1dc1061a0b7edeb6a6.gif?1755038891?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750122/original_be4f9568873e6a66e956ab472dd51f0a.gif?1755038891?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38750123/original_03eeb64308aba8907c476df470f248de.gif?1755038891?bc=0"
+    ]
+  };
+
+  const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+
+  /* ===== helpers de video ===== */
+  const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+  function wireVideoEl(v, {autoplay=true}={}){
+    v.muted = true;
+    v.loop = true;
+    v.autoplay = !!autoplay;
+    v.playsInline = true;
+    v.preload = 'none';
+    v.poster = BLANK_POSTER;
+    v.setAttribute('muted','');
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    if(autoplay) v.setAttribute('autoplay','');
+  }
+
+  /* cola de carga + IO */
+  const MAX_CONCURRENT = 4;
+  let activeLoads = 0;
+  const loadQueue = [];
+  function scheduleVideoLoad(el, url){ loadQueue.push({el,url}); pumpLoads(); }
+  function pumpLoads(){
+    while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+      const {el,url}=loadQueue.shift();
+      activeLoads++;
+      el.src=url; el.preload='metadata';
+      const done=()=>{ activeLoads--; pumpLoads(); };
+      el.addEventListener('loadedmetadata',done,{once:true});
+      el.addEventListener('error',done,{once:true});
+      el.load();
+    }
+  }
+  const ioLoad=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const v=en.target;
+      if(v.dataset.src && !v.src){
+        scheduleVideoLoad(v, v.dataset.src);
+        v.addEventListener('loadedmetadata', ()=>{
+          setAspectFromVideo(v);
+          v.closest('.card, .tight-item')?.classList.add('ready');
+        },{once:true});
+      }
+      obs.unobserve(v);
+    });
+  },{rootMargin:'600px 0px', threshold:.08});
+
+  function setAspect(el, w, h){
+    const wrapper = el.closest('.frame, .media-box');
+    if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+  }
+  function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+  /* ===== factorías ===== */
+  function makeImmediateVideo(url){
+    const container=document.createElement('figure');
+    container.className='card ready';
+    const box=document.createElement('div'); box.className='frame'; container.appendChild(box);
+    const v=document.createElement('video');
+    wireVideoEl(v,{autoplay:true});
+    v.controls=false; v.preload='auto'; v.src=url;
+    box.appendChild(v);
+    v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+    (function retry(){ v.play().catch(()=> setTimeout(retry,200)); })();
+    // abrir lightbox al click para ver media completa
+    container.addEventListener('click', ()=> openLightboxSingle({type:'video', url}));
+    return container;
+  }
+
+  function makeVideo(url,{tight=false}={}){
+    const container=tight?document.createElement('div'):document.createElement('figure');
+    container.className=tight?'tight-item':'card';
+    const box=document.createElement('div'); box.className=tight?'media-box':'frame';
+    container.appendChild(box);
+    const v=document.createElement('video');
+    wireVideoEl(v,{autoplay:true});
+    v.controls=false; v.dataset.src=url;
+    box.appendChild(v);
+    ioLoad.observe(v);
+    autoPlayOnVisible(v);
+    (function r(){ v.play().catch(()=> setTimeout(r,250)); })();
+    if(!tight){ container.addEventListener('click', ()=> openLightboxSingle({type:'video', url})); }
+    return container;
+  }
+
+  /* autoplay robusto */
+  function autoPlayOnVisible(video){
+    function tryPlay(){ video.play().catch(()=>{}); }
+    const vio=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+    },{threshold:.12});
+    vio.observe(video);
+    const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+    document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+  }
+
+  /* ===== render ===== */
+  (function render(){
+    const walkthroughWrap=document.querySelector('[data-section="walkthrough"]');
+    (media.walkthrough||[]).forEach(u=> walkthroughWrap.appendChild(makeImmediateVideo(u)));
+    renderTightGrid('images15', media.images15, false);
+  })();
+
+  function renderTightGrid(key, sources, isVideo){
+    const wrap=document.querySelector(`[data-section="${key}"]`); if(!wrap) return;
+    (sources||[]).filter(Boolean).forEach(url=>{
+      const item=document.createElement('div'); item.className='tight-item';
+      const box=document.createElement('div'); box.className='media-box'; item.appendChild(box);
+      if(isVideo){
+        const v=document.createElement('video');
+        wireVideoEl(v,{autoplay:true});
+        v.controls=false; v.dataset.src=url; box.appendChild(v);
+        ioLoad.observe(v);
+        autoPlayOnVisible(v);
+        v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+      }else{
+        const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+        box.appendChild(img);
+        img.addEventListener('load',()=> setAspectFromVideo({videoWidth:img.naturalWidth, videoHeight:img.naturalHeight, closest:sel=>item.querySelector(sel)}),{once:true});
+      }
+      wrap.appendChild(item);
+    });
+  }
+
+  /* ===== lightbox ===== */
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+  let galleryItems=[], galleryIndex=0;
+
+  function openLightbox(items, index=0){
+    galleryItems=items||[];
+    galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
+    lbFigure.innerHTML='';
+    renderLB();
+    lb.classList.add('open');
+    document.documentElement.style.overflow='hidden';
+  }
+  function openLightboxGroup(key, index){
+    const wrap=document.querySelector(`[data-section="${key}"]`);
+    const arr=Array.from(wrap.querySelectorAll('.tight-item')).map(el=>{
+      const srcEl=el.querySelector('img,video');
+      const url=srcEl?.src || srcEl?.dataset?.src || '';
+      return {type: srcEl?.tagName==='IMG' ? 'img' : 'video', url};
+    });
+    openLightbox(arr, index);
+  }
+  function openLightboxSingle(item){ openLightbox([item], 0); }
+
+  function renderLB(){
+    const item=galleryItems[galleryIndex]; if(!item) return;
+    lbFigure.innerHTML='';
+    const el=document.createElement(item.type==='img'?'img':'video');
+    el.className='lb-media';
+    if(item.type==='img'){
+      el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url;
+    }else{
+      el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+      el.loop=true; el.preload='metadata'; el.src=item.url;
+      el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+    }
+    lbFigure.appendChild(el);
+  }
+  function closeLightbox(){
+    lb.classList.remove('open');
+    lbFigure.innerHTML='';
+    document.documentElement.style.overflow='';
+  }
+  function nextLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex+1)%galleryItems.length; renderLB(); }
+  function prevLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex-1+galleryItems.length)%galleryItems.length; renderLB(); }
+
+  // click para abrir galería por grupo
+  (function wireGridGallery(){
+    const wrap=document.querySelector('[data-section="images15"]');
+    if(!wrap) return;
+    wrap.addEventListener('click', e=>{
+      const item=e.target.closest('.tight-item'); if(!item) return;
+      const items=Array.from(wrap.querySelectorAll('.tight-item'));
+      openLightboxGroup('images15', items.indexOf(item));
+    });
+  })();
+
+  // cerrar con click o teclado
+  lb.addEventListener('click', e=>{
+    const insideMedia = e.target.closest('#lbFigure');
+    if(insideMedia){ closeLightbox(); } else if(e.target===lb){ closeLightbox(); }
+  });
+  window.addEventListener('keydown', e=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') return closeLightbox();
+    if(e.key===' ' || e.key==='Spacebar' || e.key==='ArrowRight') return nextLB();
+    if(e.key==='ArrowLeft') return prevLB();
+  });
+</script>
+</body>
+</html>

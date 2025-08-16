@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>misha — xpan — mdtc</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+<style>
+  :root{
+    --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+    --radius:14px; --gap:.8rem; --gap-lg:1rem; --ease:cubic-bezier(.22,.61,.36,1);
+    --tile-max-h:72vh;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,video{ display:block; max-width:100%; height:auto; }
+  body{ overflow-x:hidden; }
+
+  header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+  header img{ width:50px; height:auto; display:block; }
+
+  main{ max-width:1440px; margin:124px auto 5rem; padding:0 1.25rem; }
+
+  .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+  /* encabezado del proyecto */
+  .project-head{ margin:0 0 1.5rem; }
+  .project-head h1{ font-size:clamp(1.2rem,2.2vw,1.6rem); margin:0 0 .25rem; text-transform:lowercase; letter-spacing:.01em; }
+  .project-head .meta{ font-size:.96rem; opacity:.85; font-style:italic; }
+
+  .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+
+  .grid{ display:grid; gap:var(--gap-lg); }
+  .grid.destacados{ grid-template-columns: 1fr; }
+
+  .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+  .card.ready{ opacity:1; transform:none; }
+
+  .frame{ position:relative; background:#fff; }
+  .frame::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); max-height:var(--tile-max-h); }
+  .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+  @media (hover:hover){
+    .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+    .card:active{ transform:translateY(1px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition:none; }
+    .card:hover .frame > *{ transform:none !important; }
+  }
+
+  /* lightbox mínimo */
+  .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+  .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+</style>
+</head>
+<body>
+<header>
+  <a href="../" aria-label="xpan"><img src="../xpan.svg" alt="xpan" fetchpriority="high"></a>
+</header>
+
+<main>
+  <section class="project-head" aria-label="encabezado del proyecto">
+    <h1>misha</h1>
+    <div class="meta">22 de noviembre de 2024</div>
+  </section>
+
+  <!-- hero video como walkthrough -->
+  <section class="section" id="destacados" data-lazy-section>
+    <h2 class="sr-only">media</h2>
+    <div class="grid destacados" data-section="destacados"></div>
+  </section>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <div class="lb-surface">
+    <figure id="lbFigure" style="margin:0"></figure>
+  </div>
+</div>
+
+<script>
+  /* ===== media ===== */
+  const media = {
+    heroVideo: ["https://attachments.are.na/38750188/1e42bb258556a52b6877e596e5e906db.mp4?1755039396"]
+  };
+
+  const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+  const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+  function wireVideoEl(v,{autoplay=true}={}){
+    v.muted = true; v.loop = true; v.autoplay = !!autoplay; v.playsInline = true;
+    v.preload='auto'; v.poster=BLANK_POSTER;
+    v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    if(autoplay) v.setAttribute('autoplay','');
+  }
+
+  function setAspect(el,w,h){
+    const wrapper = el.closest('.frame');
+    if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+  }
+  function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+  /* ===== lightbox ===== */
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+
+  function openLightboxSingle(item){
+    lbFigure.innerHTML='';
+    const el = document.createElement(item.type==='video'?'video':'img');
+    el.className='lb-media';
+    if(item.type==='video'){
+      el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+      el.loop=true; el.preload='metadata'; el.src=item.url;
+      el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+    }else{
+      el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url;
+    }
+    lbFigure.appendChild(el);
+    lb.classList.add('open');
+  }
+  function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; }
+
+  lb.addEventListener('click', e=>{
+    const inside = e.target.closest('#lbFigure');
+    if(inside || e.target===lb) closeLightbox();
+  });
+  window.addEventListener('keydown', e=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') closeLightbox();
+    if(e.key===' ' || e.key==='Spacebar') closeLightbox();
+  });
+
+  /* ===== render ===== */
+  (function render(){
+    const dWrap=document.querySelector('[data-section="destacados"]');
+    if(media.heroVideo?.[0]){
+      const container=document.createElement('figure');
+      container.className='card ready';
+      const box=document.createElement('div'); box.className='frame'; container.appendChild(box);
+
+      const v=document.createElement('video');
+      wireVideoEl(v,{autoplay:true});
+      v.controls=false; v.src=media.heroVideo[0];
+      box.appendChild(v);
+
+      v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+
+      // abrir en lightbox a tamaño completo
+      const open = (e)=>{ e.preventDefault(); openLightboxSingle({type:'video', url:media.heroVideo[0]}); };
+      container.addEventListener('click', open);
+      container.addEventListener('touchend', open, {passive:false});
+
+      // robust play
+      (function retry(){ v.play().catch(()=> setTimeout(retry,200)); })();
+
+      dWrap.appendChild(container);
+    }
+  })();
+</script>
+</body>
+</html>
