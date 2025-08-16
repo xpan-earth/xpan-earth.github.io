@@ -90,6 +90,9 @@ details.proj summary::-webkit-details-marker{display:none}
   opacity:.65;
   font-style:italic;    }
 
+/* perf hints */
+.aei-block{ will-change: transform; }
+#aeiLines{ contain: strict; }
 
 </style>
 </head>
@@ -404,7 +407,7 @@ const projects = [
 
 /* red y video controls */
 const BLANK_POSTER='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
-const MAX_CONCURRENT=24; let activeLoads=0; const loadQueue=[];
+const MAX_CONCURRENT=8; let activeLoads=0; const loadQueue=[];
 
 function wireVideoEl(v){
   v.muted = true;
@@ -442,12 +445,21 @@ function autoplayWhenVisible(v){
   const tryPlay=()=>v.play().catch(()=>{});
   const vio=new IntersectionObserver(ents=>{
     ents.forEach(en=>{
-      if(en.isIntersecting) tryPlay(); else v.pause();
+      if(en.isIntersecting){
+        if(!v.src){
+          const url = v.dataset && v.dataset.src ? v.dataset.src : v.src;
+          if(url) scheduleVideoLoad(v, url);
+        }
+        tryPlay();
+      } else {
+        v.pause();
+      }
     });
-  },{threshold:.12});
+  },{threshold:.10});
   vio.observe(v);
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
 }
+
 
 /* imágenes eager críticas */
 function eagerImg(src){
@@ -546,7 +558,7 @@ function renderAEI(){
 function renderList(container){
   container.innerHTML = projects.map(p=>{
     const media=(p.media||[]).filter(m=>m&&m.src).slice(0,4).map(m=> m.type==='video'
-      ? `<video muted playsinline preload="metadata" src="${m.src}" poster="${m.poster||BLANK_POSTER}"></video>`
+? `<video muted playsinline preload="metadata" data-src="${m.src}" poster="${m.poster||BLANK_POSTER}"></video>`
       : `<img src="${m.src}" alt="">`
     ).join('');
     return `<details class="proj">
@@ -556,7 +568,11 @@ function renderList(container){
       ${p.link ? `<div class=\"p-link\"><a href=\"${p.link}\">ver proyecto</a></div>` : ''}
     </details>`;
   }).join('');
-  container.querySelectorAll('video').forEach(v=>{ wireVideoEl(v); scheduleVideoLoad(v,v.src); autoplayWhenVisible(v); });
+container.querySelectorAll('video').forEach(v=>{
+  wireVideoEl(v);
+  // carga y play solo cuando entra a viewport
+  autoplayWhenVisible(v);
+});
 }
 
 /* autoplay + selector vista */
@@ -592,11 +608,21 @@ function boot(){
   const saved = localStorage.getItem('mdtc_view') || 'aei';
   setView(saved);
 
-  ['pointerdown','touchstart','scroll','visibilitychange'].forEach(ev=>{
-    window.addEventListener(ev, hardAutoplayAll, { once:true, passive:true });
+  // más gestos y sin "once" para insistir
+  ['pointerdown','touchstart','scroll','visibilitychange','keydown','wheel','mousemove'].forEach(ev=>{
+    window.addEventListener(ev, hardAutoplayAll, { passive:true });
   });
-  let tries=0; const t=setInterval(()=>{ if(tries++>8) return clearInterval(t); hardAutoplayAll(); }, 1200);
+  window.addEventListener('focus', hardAutoplayAll);
+  window.addEventListener('pageshow', hardAutoplayAll);
+
+  // reintentos escalonados
+  [300,900,2000,3500,6000,10000,15000].forEach(t=>setTimeout(hardAutoplayAll, t));
+
+  // si aparecen nodos nuevos, intentar otra vez
+  const mo=new MutationObserver(()=>hardAutoplayAll());
+  mo.observe(document.body,{subtree:true,childList:true});
 }
+
 document.addEventListener('DOMContentLoaded', boot);
 </script>
 </body>
