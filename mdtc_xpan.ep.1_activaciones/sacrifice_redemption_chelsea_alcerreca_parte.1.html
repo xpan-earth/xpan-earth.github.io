@@ -241,7 +241,18 @@
   /* render */
   (function render(){
     const wWrap=document.querySelector('[data-section="walkthrough"]');
-    (media.walkthrough||[]).forEach(u=> wWrap.appendChild(makeVideoCard(u)));
+    (function(){
+    const list = media.walkthrough||[];
+    list.forEach((u,i)=>{
+      const card = makeVideoCard(u);
+      // Eager-load first video for mobile Safari
+      if(i===0){
+        const v = card.querySelector('video');
+        if(v && !v.src){ v.src = u; v.load(); v.play().catch(()=>{}); }
+      }
+      wWrap.appendChild(card);
+    });
+  })();
 
     const imgWrap=document.querySelector('[data-section="images15"]');
     (media.images15||[]).forEach(url=>{
