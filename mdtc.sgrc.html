@@ -599,14 +599,16 @@ header img {
       ioLoad.observe(el);
       if(!reduce) ioPlay.observe(el);
     }else{
-      // imágenes: SÍ abren galería
-      el = document.createElement('img');
-      el.src = url;
-      el.loading = 'lazy';
-      el.decoding = 'async';
-      el.referrerPolicy = 'no-referrer';   // robustez con CDNs
-      el.addEventListener('click', ()=> openLightbox(el));
-    }
+  // restaurar visibilidad inmediata (sin proxy)
+  el = document.createElement('img');
+  el.src = url;                          // carga directa
+  el.loading = 'lazy';
+  el.decoding = 'async';
+  el.referrerPolicy = 'no-referrer';
+  el.setAttribute('data-no-proxy','1');  // evita que media-proxy lo toque
+  el.addEventListener('click', ()=> openLightbox(el));
+}
+
 
     frame.appendChild(el);
     tile.appendChild(frame);
@@ -692,7 +694,7 @@ function renderAEIEmbed(stage, linesSVG, urls){
     block.y=Math.random()*Math.max(10,rect.height-bh);
     block.vx=(Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
     update(block); makeDraggable(block); blocks.push(block);
-    setTimeout(addNext,45);
+    setTimeout(addNext,110);
   }
   addNext();
 
@@ -722,7 +724,9 @@ function renderAEIEmbed(stage, linesSVG, urls){
         if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
         clamp(b); update(b);
       }
-      if(!nextLineTick || performance.now()>nextLineTick){ generateLines(); nextLineTick=performance.now()+(120+Math.random()*480); }
+        if(!nextLineTick || performance.now()>nextLineTick){
+        generateLines(); nextLineTick=performance.now()+(300+Math.random()*600);
+}
     }
     drawLines();
     requestAnimationFrame(step);
@@ -737,19 +741,35 @@ function renderAEIEmbed(stage, linesSVG, urls){
   }
   function centerOf(b){ const r=b.getBoundingClientRect(); return [b.x+r.width/2, b.y+r.height/2]; }
   function drawLines(){
-    linesSVG.innerHTML='';
-    for(const [a,b] of currentPairs){
-      const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
-      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-      line.setAttribute('x2',x2); line.setAttribute('y2',y2);
-      line.setAttribute('stroke','#000'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
-      linesSVG.appendChild(line);
-    }
+  // crea si faltan
+  const need = currentPairs.length - linesSVG.childNodes.length;
+  for(let i=0;i<need;i++){
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('stroke','#000');
+    line.setAttribute('stroke-width','.6');
+    line.setAttribute('opacity','.18');
+    linesSVG.appendChild(line);
   }
+  // actualiza posiciones
+  const nodes = linesSVG.childNodes;
+  for(let i=0;i<currentPairs.length;i++){
+    const [a,b] = currentPairs[i];
+    const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+    const line = nodes[i];
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+  }
+  // recorta sobrantes sin reconstruir todo
+  while(linesSVG.childNodes.length > currentPairs.length){
+    linesSVG.removeChild(linesSVG.lastChild);
+  }
+}
   step();
   window.addEventListener('resize',()=>{ for(const b of blocks){ clamp(b); update(b); } },{passive:true});
-}
+    };
+  
+
+
 
 
   // ======= Idioma ===========================================================
