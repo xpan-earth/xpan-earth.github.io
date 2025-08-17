@@ -246,7 +246,7 @@ header img {
     </section>
 
     <!-- retícula -->
-    <section class="section" id="exp43_aei">
+    <section class="section" id="gridSection">
       <div class="lang lang-es active"><h2>retícula</h2></div>
       <div class="lang lang-en"><h2>grid</h2></div>
       <div class="lang lang-fr"><h2>grille</h2></div>
@@ -426,6 +426,12 @@ header img {
 
   // Normaliza URLs con '?ts?bc=0' -> '?ts&bc=0'
   const fixUrl = (u) => typeof u === 'string' ? u.replace(/\?(\d+)\?bc=0$/, '?$1&bc=0') : u;
+  // proxy weserv con resize + AVIF/WebP
+function wes(u, w){
+  const clean = (typeof u === 'string' ? u : '').replace(/^https?:\/\//,'');
+  return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&w=${w}&q=70&we`;
+}
+
 
   // Video: crear elemento robusto con autoplay en viewport
   function createVideo(src){
@@ -599,15 +605,31 @@ header img {
       ioLoad.observe(el);
       if(!reduce) ioPlay.observe(el);
     }else{
-  // restaurar visibilidad inmediata (sin proxy)
   el = document.createElement('img');
-  el.src = url;                          // carga directa
+
+  // anchos objetivos por columna
+  const W = [480, 960, 1600];
+
+  // usa proxy redimensionado
+  el.src    = wes(url, W[1]);
+  el.srcset = `${wes(url,W[0])} 480w, ${wes(url,W[1])} 960w, ${wes(url,W[2])} 1600w`;
+  el.sizes  = '(min-width:1080px) calc((100vw - 2rem)/8), (min-width:720px) calc((100vw - 2rem)/6), calc((100vw - 2rem)/3)';
+
   el.loading = 'lazy';
   el.decoding = 'async';
   el.referrerPolicy = 'no-referrer';
-  el.setAttribute('data-no-proxy','1');  // evita que media-proxy lo toque
+
+
+  tile.classList.add('loading');
+  el.addEventListener('load', ()=>{
+    tile.classList.remove('loading');
+    tile.classList.add('loaded');
+  });
+  el.addEventListener('error', ()=> tile.classList.remove('loading'));
+
   el.addEventListener('click', ()=> openLightbox(el));
 }
+
 
 
     frame.appendChild(el);
