@@ -97,6 +97,11 @@ header img {
   cursor: grab;
 }
 
+.carousel-track img.highlight,
+.carousel-video.highlight,
+.carousel-track video.highlight { opacity: 1 !important; }
+
+
 .carousel-track img,
 .carousel-video {
   width: calc((100% - 2 * var(--gap)) / 3);
@@ -106,32 +111,33 @@ header img {
   opacity: 0.3;
   flex-shrink: 0;
   transition: opacity 0.5s ease-in-out;
+  display: block;
 }
 
-.carousel-video video {
+.carousel-video video,
+.carousel-track video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.carousel-track img.highlight,
-.carousel-video.highlight {
-  opacity: 1 !important;
-}
-
 @media (max-width: 768px) {
   .carousel-track img,
-  .carousel-video {
+  .carousel-video,
+  .carousel-track video {
     width: calc((100% - var(--gap)) / 2);
   }
 }
 
 @media (max-width: 480px) {
   .carousel-track img,
-  .carousel-video {
+  .carousel-video,
+  .carousel-track video {
     width: 100%;
   }
+}
+
 
   .main-container {
     padding-left: 1rem;
@@ -201,6 +207,9 @@ header img {
   display: block;
 }
 </style>
+  <script src="../assets/js/video-autoplay-mobile.js" defer></script>
+<script src="/assets/js/media-proxy.js" defer></script>
+
 <link crossorigin="True" href="https://attachments.are.na" rel="preconnect"/><link crossorigin="True" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/><style>
 /* --- PERF HINTS (no afectan diseño) --- */
 .intro-block, .entry { content-visibility: auto; contain-intrinsic-size: 1px 900px; }
@@ -384,6 +393,52 @@ header img {
   </div>
 </div>
 
+<div class="entry">
+  <strong>xpan.ep.1 — activaciones</strong>
+  <span>2024–2025 — ciudad de méxico — espacio público uno</span>
+  <a href="mdtc.xpan.ep.1.index.html">ver proyecto</a>
+  <div class="carousel-wrapper">
+    <div class="carousel-track">
+      <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38770343/original_e6fe3c33fbd5a885d5fe0822cf3ceeac.jpg?1755114197?bc=0" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="min-height:1px;"/>
+      <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38749966/original_16a25681d656eea6531e4b23e34a51ce.png?1755038352?bc=0" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="min-height:1px;"/>
+      <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38749835/original_ef258da023259ec83b0bec62aa1a6404.jpg?1755037834?bc=0" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="min-height:1px;"/>
+      <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38749003/original_5f0cdbe94b421cf952e291d1d22d6822.jpg?1755035829?bc=0" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="min-height:1px;"/>
+      <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38802102/original_92de9e58cc35238c344d7fac2834ce0c.jpg?1755226697?bc=0" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="min-height:1px;"/>
+      <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38802103/original_912d1e6eee104518baa55f54ef780b29.jpg?1755226699?bc=0" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="min-height:1px;"/>    
+    </div>
+  </div>
+</div>
+
+
+<div class="entry">
+  <strong>s.g.r.c. — sistema global de reverberación cognitiva</strong>
+  <span>21 ago – 2 oct 2024 — ciudad de méxico</span>
+  <a href="mdtc.sgrc.html">ver proyecto</a>
+  <div class="carousel-wrapper">
+    <div class="carousel-track">
+      <div class="carousel-video">
+        <video class="lazy-video" autoplay loop muted playsinline preload="metadata">
+          <source data-src="https://attachments.are.na/38834875/e55b28ec742fc9a1d49edf2564237159.mov?1755403759" type="video/mp4"/>
+        </video>
+      </div>
+      <div class="carousel-video">
+        <video class="lazy-video" autoplay loop muted playsinline preload="metadata">
+          <source data-src="https://attachments.are.na/38834874/995d82e291c4a1def3dd28dc96032b4b.mov?1755403754" type="video/mp4"/>
+        </video>
+      </div>
+      <div class="carousel-video">
+        <video class="lazy-video" autoplay loop muted playsinline preload="metadata">
+          <source data-src="https://attachments.are.na/38834872/4545e340e667b04a11a061335453acac.mov?1755403751" type="video/mp4"/>
+        </video>
+      </div>
+      <div class="carousel-video">
+        <video class="lazy-video" autoplay loop muted playsinline preload="metadata">
+          <source data-src="https://attachments.are.na/38834870/ec6419b8f4b636904c4c27621a6613fa.mp4?1755403748" type="video/mp4"/>
+        </video>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -452,7 +507,7 @@ document.querySelectorAll('.carousel-track').forEach(track => {
 
   function highlight() {
     const trackRect = track.parentElement.getBoundingClientRect();
-    const items = track.querySelectorAll('img, .carousel-video');
+const items = track.querySelectorAll('img, .carousel-video, video');
     let bestItem = null;
     let minLeftDiff = Infinity;
 
@@ -567,7 +622,7 @@ document.querySelectorAll('.carousel-track').forEach(track => {
     // Highlight conservado
     function highlight(){
       var trackRect = track.parentElement.getBoundingClientRect();
-      var items = track.querySelectorAll('img, .carousel-video');
+const items = track.querySelectorAll('img, .carousel-video, video');
       var bestItem = null;
       var minLeftDiff = Infinity;
       items.forEach(function(item){
@@ -605,7 +660,6 @@ document.querySelectorAll('.carousel-track').forEach(track => {
 })();
 </script>
 <script src="assets/js/video-autoplay-mobile.js" defer></script>
-  <script>(function(){const IMG_SEL='img[src*="cloudfront.net"]',PFX='https://images.weserv.nl/?url=',CFG='&q=70&we',W=[480,960,1600];function prox(u,w){if(!/^https?:\/\//i.test(u))return null;const c=u.replace(/^https?:\/\//,'');return`${PFX}${encodeURIComponent(c)}&w=${w}${CFG}`}function tuneImg(img){const o=img.getAttribute('src');if(!o)return;if(img.hasAttribute('srcset')||img.hasAttribute('data-no-proxy'))return;const m=prox(o,W[1]);if(!m)return;img.setAttribute('data-full',o);img.loading='lazy';img.decoding='async';img.src=m;img.srcset=`${prox(o,W[0])} 480w, ${m} 960w, ${prox(o,W[2])} 1600w`;img.sizes='(max-width:600px) 480px, (max-width:1200px) 960px, 1600px'}function prepareVideoLazy(){const vids=new Set;document.querySelectorAll('video[src*="attachments.are.na"]').forEach(v=>{v.setAttribute('data-src',v.src);v.removeAttribute('src');v.preload='metadata';v.playsInline=!0;vids.add(v)});document.querySelectorAll('video source[src*="attachments.are.na"]').forEach(s=>{const v=s.parentElement;s.setAttribute('data-src',s.src);s.removeAttribute('src');v.preload='metadata';v.playsInline=!0;vids.add(v)});const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const v=e.target;if(!v.src&&v.dataset.src){v.src=v.dataset.src}v.querySelectorAll('source[data-src]').forEach(s=>{if(!s.src)s.src=s.dataset.src});v.load();io.unobserve(v)})},{rootMargin:'200px'});vids.forEach(v=>io.observe(v))}document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll(IMG_SEL).forEach(tuneImg);prepareVideoLazy()})})();</script>
 
 </body>
 </html>

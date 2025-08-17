@@ -79,6 +79,8 @@
   .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
   .aei-hint{ display:none !important; }
 </style>
+<script src="../assets/js/media-proxy.js" defer></script>
+
 </head>
 <body>
 <header>
@@ -553,7 +555,6 @@
   });
 })();
 </script>
-<script>(function(){const IMG_SEL='img[src*="cloudfront.net"]',PFX='https://images.weserv.nl/?url=',CFG='&q=70&we',W=[480,960,1600];function prox(u,w){if(!/^https?:\/\//i.test(u))return null;const c=u.replace(/^https?:\/\//,'');return`${PFX}${encodeURIComponent(c)}&w=${w}${CFG}`}function tuneImg(img){const o=img.getAttribute('src');if(!o)return;if(img.hasAttribute('srcset')||img.hasAttribute('data-no-proxy'))return;const m=prox(o,W[1]);if(!m)return;img.setAttribute('data-full',o);img.loading='lazy';img.decoding='async';img.src=m;img.srcset=`${prox(o,W[0])} 480w, ${m} 960w, ${prox(o,W[2])} 1600w`;img.sizes='(max-width:600px) 480px, (max-width:1200px) 960px, 1600px'}function prepareVideoLazy(){const vids=new Set;document.querySelectorAll('video[src*="attachments.are.na"]').forEach(v=>{v.setAttribute('data-src',v.src);v.removeAttribute('src');v.preload='metadata';v.playsInline=!0;vids.add(v)});document.querySelectorAll('video source[src*="attachments.are.na"]').forEach(s=>{const v=s.parentElement;s.setAttribute('data-src',s.src);s.removeAttribute('src');v.preload='metadata';v.playsInline=!0;vids.add(v)});const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const v=e.target;if(!v.src&&v.dataset.src){v.src=v.dataset.src}v.querySelectorAll('source[data-src]').forEach(s=>{if(!s.src)s.src=s.dataset.src});v.load();io.unobserve(v)})},{rootMargin:'200px'});vids.forEach(v=>io.observe(v))}document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll(IMG_SEL).forEach(tuneImg);prepareVideoLazy()})})();</script>
 
 </body>
 </html>

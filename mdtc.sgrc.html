@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[S.G.R.C] — xpan — mdtc</title>
+  
+  <!-- Performance hints -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+  <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+
+  <!-- Leaflet (mapas interactivos) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+    defer
+  ></script>
+
+  <style>
+    :root {
+      --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.12);
+      --radius:14px; --gap:.9rem; --gap-lg:1.2rem; --tile-max-h:72vh;
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+    *{ box-sizing:border-box }
+    html,body{ margin:0; height:100%; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif }
+
+    header {
+  position: fixed;   /* ya lo tienes */
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;     /* más alto que cualquier mapa/animación */
+}
+
+header img {
+  width: 50px;
+  height: auto;
+  display: block;
+}
+
+.language-selector {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.language-selector button {
+  background: transparent;
+  border: none;
+  font-family: 'Times New Roman', serif;
+  font-size: 0.9rem;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-transform: lowercase;
+  transition: opacity 0.3s ease;
+}
+
+/* nuevos estilos para activo/inactivo */
+.language-selector button { 
+  opacity: .5;        /* inactivos */
+}
+.language-selector button[aria-pressed="true"] { 
+  opacity: 1;         /* activo */
+}
+
+
+.language-selector button:hover {
+  opacity: 0.5;
+}
+
+
+    main{ max-width:1160px; margin:0 auto; padding:6rem 1rem 3rem }
+
+    h1{ font-size:1.35rem; font-weight:600; margin:0 0 .25rem }
+    .muted{ opacity:.7; font-size:.95rem }
+    .section{ margin:2.2rem 0; border-top:1px solid var(--line); padding-top:1.2rem }
+
+    .capsules{ display:grid; grid-template-columns:1fr; gap:var(--gap-lg) }
+    @media(min-width:860px){ .capsules{ grid-template-columns:1fr 1fr } }
+
+    .card{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:#fff }
+    .card-header{ padding:.9rem .9rem .6rem; border-bottom:1px solid var(--line) }
+    .meta{ display:flex; flex-wrap:wrap; gap:.6rem; font-size:.9rem; opacity:.9 }
+    .meta .dot::before{ content:"·"; padding:0 .4rem; opacity:.6 }
+
+    .frame{ position:relative; width:100%; background:#fafafa }
+    .frame::before{ content:""; display:block; padding-top:56.25% } /* fallback 16:9 */
+    .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain }
+
+    video{ background:#000; display:block }
+
+    .mapwrap{ border-top:1px solid var(--line); padding:.75rem .75rem .9rem }
+    .map{ height:260px; border-radius:10px; border:1px solid var(--line); overflow:hidden }
+
+    /* marcador animado */
+    .pulse{
+      width:14px; height:14px; background:#000; border-radius:50%;
+      box-shadow:0 0 0 rgba(0,0,0,0.5); animation:pulse 2s var(--ease) infinite
+    }
+    @keyframes pulse{
+      0%{ box-shadow:0 0 0 0 rgba(0,0,0,.35) }
+      70%{ box-shadow:0 0 0 18px rgba(0,0,0,0) }
+      100%{ box-shadow:0 0 0 0 rgba(0,0,0,0) }
+    }
+
+    /* 
+    .grid{ display:grid; grid-template-columns:1fr; gap:var(--gap); }
+    @media(min-width:720px){ .grid{ grid-template-columns:repeat(3,1fr) } }
+    @media(min-width:1080px){ .grid{ grid-template-columns:repeat(4,1fr) } }
+     */
+    .tile{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:#fff }
+    .tile .frame::before{ padding-top:66.666% }
+
+
+    /* a.e.i embebido */
+    .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; touch-action:none; }
+    .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .aei-block{ width:140px; height:140px; position:absolute; opacity:.72; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; touch-action:none; will-change:transform; }
+    .aei-block:active{ cursor:grabbing; }
+    .aei-block:hover{ opacity:.9; z-index:5; }
+    .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+    .aei-hint{ display:none !important; }
+
+
+    /* lightbox */
+    #lightbox{ position:fixed; inset:0; background:rgba(255,255,255,.96); display:none; align-items:center; justify-content:center; z-index:50 }
+    #lightbox.open{ display:flex }
+    #lightbox figure{ max-width:92vw; max-height:92vh; margin:0 }
+    #lightbox img, #lightbox video{ max-width:92vw; max-height:92vh; display:block }
+    #lbClose{ position:fixed; top:12px; right:12px; background:#000; color:#fff; border:none; border-radius:999px; padding:.55rem .8rem; cursor:pointer }
+
+    /* util */
+    .hidden{ display:none }
+    .lang{ display:none }
+    .lang.active{ display:block }
+    
+    /* overlay por encima y mapas desactivados en galería */
+    #lightbox { z-index: 9999; }
+    #lightbox * { z-index: 9999; }
+    .lb-open .map { pointer-events: none; visibility: hidden; }
+
+    .grid{ display:grid; gap:0; }
+
+    /* 
+.grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+@media(min-width:720px){ .grid{ grid-template-columns:repeat(6,1fr); } }
+@media(min-width:1080px){ .grid{ grid-template-columns:repeat(8,1fr); } }
+*/
+
+.tile{ border:0; border-radius:0; overflow:hidden; }
+.tile .frame{ background:#000; }            /* evita “costuras” blancas */
+.tile .frame::before{ padding-top:66.666%; }/* conserva 3:2; opcional */
+.tile .frame > *{ object-fit:cover; }       /* imagen a borde completo */
+
+
+/* Oculta títulos de retícula */
+#gridSection .lang h2 {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Oculta títulos de a.e.i. */
+#exp43_aei .lang h2 {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+
+</head>
+<body>
+  <header>
+    <a href="/" aria-label="xpan"><img src="xpan.svg" alt="xpan" width="50" height="50" fetchpriority="high"></a>
+<div class="language-selector">
+  <button data-lang="es">es</button>
+  <button data-lang="en">en</button>
+  <button data-lang="fr">fr</button>
+  <button data-lang="jp">jp</button>
+</div>
+  </header>
+
+  <main>
+    <!-- Título y fechas globales -->
+    <section class="section">
+      <div class="lang lang-es active">
+        <h1>[S.G.R.C] — sistema global de reverberación cognitiva</h1>
+        <div class="muted">21 ago 2024 – 2 oct 2024</div>
+      </div>
+      <div class="lang lang-en">
+        <h1>[S.G.R.C] — global cognitive reverberation system</h1>
+        <div class="muted">Aug 21, 2024 – Oct 2, 2024</div>
+      </div>
+      <div class="lang lang-fr">
+        <h1>[S.G.R.C] — système global de réverbération cognitive</h1>
+        <div class="muted">21 août 2024 – 2 oct. 2024</div>
+      </div>
+      <div class="lang lang-jp">
+        <h1>[S.G.R.C] — グローバル認知残響システム</h1>
+        <div class="muted">2024年8月21日–2024年10月2日</div>
+      </div>
+    </section>
+
+<!-- descripción principal multilingüe -->
+<section class="section">
+  <div class="lang lang-es active">
+    <p>el sistema global de reverberación cognitiva (s.g.r.c.) fue un proyecto activado entre el 21 de agosto y el 2 de octubre de 2024. usó la camiseta c.0.0 como punto de partida y herramienta de registro. el sistema se estructuró en cuatro cápsulas audiovisuales, cada una vinculada a una fecha específica y coordenada. en conjunto, conforman la documentación del proceso y sus variaciones en el tiempo.</p>
+  </div>
+  <div class="lang lang-en">
+    <p>the global cognitive reverberation system (s.g.r.c.) was activated between august 21 and october 2, 2024. it used the c.0.0 t-shirt as the starting point and recording tool. the system was structured into four audiovisual capsules, each tied to a specific date and coordinate. together they form the documentation of the process and its variations over time.</p>
+  </div>
+  <div class="lang lang-fr">
+    <p>le système global de réverbération cognitive (s.g.r.c.) a été activé entre le 21 août et le 2 octobre 2024. il a utilisé le t-shirt c.0.0 comme point de départ et outil d’enregistrement. le système a été structuré en quatre capsules audiovisuelles, chacune liée à une date et coordonnée précise. ensemble, elles constituent la documentation du processus et de ses variations dans le temps.</p>
+  </div>
+  <div class="lang lang-jp">
+    <p>グローバル認知残響システム（s.g.r.c.）は、2024年8月21日から10月2日まで実施されたプロジェクトです。c.0.0 tシャツを起点かつ記録ツールとして用いました。システムは4つの映像カプセルで構成され、それぞれが特定の日付と座標に紐づいています。全体として、プロセスの記録とその時間的な変化を示します。</p>
+  </div>
+</section>
+
+
+
+    <!-- Cápsulas: 4 videos principales + mapa -->
+    <section class="section">
+      <div class="capsules" id="capsules"></div>
+    </section>
+
+    <!-- retícula -->
+    <section class="section" id="exp43_aei">
+      <div class="lang lang-es active"><h2>retícula</h2></div>
+      <div class="lang lang-en"><h2>grid</h2></div>
+      <div class="lang lang-fr"><h2>grille</h2></div>
+      <div class="lang lang-jp"><h2>レティクラ</h2></div>
+      <div id="grid" class="grid"></div>
+    </section>
+
+   <!-- a.e.i. (embed) -->
+<section class="section" id="exp43_aei" aria-label="a.e.i embebido">
+  <div class="lang lang-es active"><h2>a.e.i.</h2></div>
+  <div class="lang lang-en"><h2>a.e.i.</h2></div>
+  <div class="lang lang-fr"><h2>a.e.i.</h2></div>
+  <div class="lang lang-jp"><h2>a.e.i.</h2></div>
+
+  <div class="aei-embed" id="aeiEmbed">
+    <svg class="aei-lines" id="aeiLines"></svg>
+    <div class="aei-stage" id="aeiStage" aria-label="escena a.e.i"></div>
+    <div class="aei-hint" aria-hidden="true">toca/arrastra para pausar · tap/drag to pause</div>
+  </div>
+</section>
+
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" aria-hidden="true">
+    <figure id="lbFigure"></figure>
+  </div>
+
+  <script>
+  // ======= Datos ============================================================
+  // Coordenadas: [lat, lng]
+  const data = {
+  capsules: [
+  {
+    id: 1,
+    title: { es: "cápsula no. 1", en: "capsule no. 1", fr: "capsule n° 1", jp: "カプセル 1" },
+    date: { es: "21 de agosto de 2024", en: "21 august 2024", fr: "21 août 2024", jp: "2024年8月21日" },
+    participant: { es:"fig3", en:"fig3", fr:"fig3", jp:"fig3" },
+    place: { es: "general prim, colonia juárez, ciudad de méxico", en: "general prim, colonia juárez, mexico city", fr: "general prim, colonia juárez, mexico", jp: "メキシコシティ フフアレス地区 ジェネラル・プリム" },
+    coords: [19.429891, -99.152885],
+    plus: "CRHW+WR",
+    note: { es: "primer registro del sistema.", en:"first system record.", fr:"premier enregistrement du système.", jp:"最初の記録" },
+    src: "https://attachments.are.na/38834875/e55b28ec742fc9a1d49edf2564237159.mov?1755403759"
+  },
+  {
+    id: 2,
+    title: { es: "cápsula no. 2", en: "capsule no. 2", fr: "capsule n° 2", jp:"カプセル 2" },
+    date: { es: "03 de septiembre de 2024", en:"3 september 2024", fr:"3 septembre 2024", jp:"2024年9月3日" },
+    participant: { es:"paula", en:"paula", fr:"paula", jp:"paula" },
+    place: { es: "claudio bernard, colonia doctores, ciudad de méxico", en: "claudio bernard, colonia doctores, mexico city", fr: "claudio bernard, colonia doctores, mexico", jp: "メキシコシティ ドクトレス地区 クラウディオ・ベルナルド" },
+    coords: [19.424012, -99.152841],
+    plus: "CRFW+JV",
+    note: { es:"segundo registro.", en:"second record.", fr:"deuxième enregistrement.", jp:"2回目の記録" },
+    src: "https://attachments.are.na/38834874/995d82e291c4a1def3dd28dc96032b4b.mov?1755403754"
+  },
+  {
+    id: 3,
+    title: { es: "cápsula no. 3", en:"capsule no. 3", fr:"capsule n° 3", jp:"カプセル 3" },
+    date: { es: "29 de septiembre de 2024", en:"29 september 2024", fr:"29 septembre 2024", jp:"2024年9月29日" },
+    participant: { es:"luisiana", en:"luisiana", fr:"luisiana", jp:"luisiana" },
+    place: { es: "forum buenavista, colonia buenavista, ciudad de méxico", en: "forum buenavista, colonia buenavista, mexico city", fr: "forum buenavista, colonia buenavista, mexico", jp: "メキシコシティ ブエナビスタ地区 フォーラム・ブエナビスタ" },
+    coords: [19.447800, -99.152200],
+    plus: "CRXX+V8",
+    note: { es:"tercer registro.", en:"third record.", fr:"troisième enregistrement.", jp:"3回目の記録" },
+    src: "https://attachments.are.na/38834872/4545e340e667b04a11a061335453acac.mov?1755403751"
+  },
+  {
+    id: 4,
+    title: { es: "cápsula no. 4", en:"capsule no. 4", fr:"capsule n° 4", jp:"カプセル 4" },
+    date: { es: "02 de octubre de 2024", en:"2 october 2024", fr:"2 octobre 2024", jp:"2024年10月2日" },
+    participant: { es:"sebas", en:"sebas", fr:"sebas", jp:"sebas" },
+    place: { es: "plaza de las tres culturas, tlatelolco, ciudad de méxico", en: "plaza de las tres cultures, tlatelolco, mexico city", fr: "plaza de las trois cultures, tlatelolco, mexico", jp: "メキシコシティ トラテロルコ 三文化広場" },
+    coords: [19.451635, -99.136183],
+    plus: "8C7XG42V+M2",
+    note: { es:"“el amor siempre triunfará”.", en:"“love will always prevail”.", fr:"« l’amour triomphera toujours ».", jp:"「愛はいつも勝つ」" },
+    src: "https://attachments.are.na/38834870/ec6419b8f4b636904c4c27621a6613fa.mp4?1755403748"
+  }
+],
+
+
+  grid: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834808/original_49a411e8714cff67821c721d87ec37b0.png?1755403705?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834809/original_40b183bfce9cde381aa7f1971c5fa589.png?1755403705?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834810/original_f76302a63722828c57eefae6dbc34d4d.png?1755403705?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834811/original_ea2dc1bfe382dd5cd77f34327f11cbaa.png?1755403705?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834812/original_f0b5779eba8f7f940f765da437315d38.png?1755403706?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834813/original_2f116386ea6207375e501a1e81bab009.png?1755403706?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834814/original_afb56d65defdd62a66afdf5ff12d1bfd.png?1755403705?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834815/original_76ff6f2d720fb1e4a1638bbede6d6a26.png?1755403705?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834816/original_a41645353b01bcac4dd94871e63b4e78.png?1755403706?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834817/original_12cea6f4ede5e7cc1fc6e6c2de94fabd.png?1755403706?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834818/original_6439232e16a60b0863e047dd79f1b5a4.png?1755403707?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834819/original_ee2a620cccc805701fb5a0a51367af2d.png?1755403707?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834820/original_bd792e17658bab94e9054424c3a39b1f.png?1755403707?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834821/original_2a6f1233900a0a505915398bb4264dcb.png?1755403707?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834822/original_330607a822f2bf99b067e4386442017f.png?1755403707?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834823/original_bfd940c9ec483c41a8f7184ee06c9a8c.png?1755403707?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834824/original_99baa0e93f87a34af2a659239d915064.png?1755403708?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834825/original_e162fb86f4e451e19a47a4e7716150be.png?1755403708?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834826/original_7323f8f69c8d1c5578767acc0313c427.png?1755403708?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834827/original_164366c5335f53d90e7f33b15ac8d035.png?1755403709?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834828/original_3c43144b3f9fefcf47c36828c5eff199.png?1755403709?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834829/original_32ca22e913f91f118416218bd928a563.png?1755403709?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834830/original_73baffe68340b7b22e8b0087a6978fe5.png?1755403708?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834831/original_ff4443919a96a80953ce30e8948e5470.png?1755403709?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834832/original_0719162c81f403059b5f53606c6a91c8.png?1755403708?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834833/original_c70a9caf6f8c697393e9e9e43bae4efe.png?1755403710?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834834/original_ec621641b7f9369802b5deb3b7d11a8c.png?1755403710?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834835/original_b242c33b0f9cdbc5bace6d111e452b8d.png?1755403709?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834836/original_19d4e8eb59384fa4d116616da0229fa6.png?1755403710?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834837/original_95156aa3bfb714ba14b2d086c1ebf3c7.png?1755403710?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834838/original_e8038d7e607200c451b6fbb9926dc87e.png?1755403710?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834840/original_39160a5ac6198b51c411eafc64aae5ab.png?1755403711?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834841/original_d9de97aa7e97062d410bb23528deaf21.png?1755403710?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834842/original_b8995bea8825b54d72ee0fbda2f21390.png?1755403712?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834843/original_b208077709f6599750b1e2a61c0214e4.png?1755403711?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834844/original_f54111ae4c4538fefb8b6a4337610872.png?1755403712?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834845/original_382ca2655bb9d9878108fd20747fdb7b.png?1755403712?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834846/original_07b51b4637c2c6fae981c828c731760c.png?1755403712?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834847/original_8b7d7bb1060f7c826cb8ec80ee1d5746.png?1755403712?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834848/original_ed523760d835a23106c17196efebeca8.png?1755403712?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834850/original_e2f68d2c4508f801acd670211fc14a33.png?1755403713?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834851/original_50e79282281074d4d6036d62821efb67.png?1755403713?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834852/original_8add1998cd9ac6f940465268a3bb9104.png?1755403713?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834853/original_6dc6fc450f0c861aea4a9c78aa8ed1ed.png?1755403713?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834854/original_11dcecaf2a01056e2c1b8dae0e20c6dd.png?1755403713?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834855/original_f154eba917a6009e858ce16e8de32a67.png?1755403713?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834856/original_7607338b4d4e393a44cb9a41ad8f2f2b.png?1755403716?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834857/original_5d228646c69bdc89f205e63ca7e1dc6b.png?1755403714?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834859/original_f536610e2e311c57e4690e9bdaa4e849.png?1755403724?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834860/original_c506ce923322744d9b88b5eef6373f24.png?1755403724?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834861/original_07f2b6f65e4059547ca1b7f064d62003.png?1755403725?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834863/original_9ba49eb9bd66135a6c0a03e217f0a291.png?1755403725?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834864/original_ff32442a054225bf625c176fafa99eb6.png?1755403725?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834865/original_95dd1c756c6ce43ddbe0a83c05bb653b.png?1755403725?bc=0",
+  ],
+
+  aei: [
+    "https://attachments.are.na/38834805/9efd6c4d41a7535f6a5b4d2701631595.mov?1755403688",
+    "https://attachments.are.na/38834804/874b5fe50a3281fd5e4d2ed124d69a1b.mov?1755403682",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834802/original_8743a07033c949608677ffd60599c9b5.png?1755403681?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834801/original_61a8432f1afdd9f73b6b9b838295e7e4.png?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834800/original_f0e8e9ecf584fecea42242e6be7bd32f.png?1755403680?bc=0",
+    "https://attachments.are.na/38834799/20ff41cafeffebcc91163c6dd4c98239.mov?1755403679",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834798/original_ab22f844da8db9265dec857eea459327.png?1755403680?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834797/original_b4c7e4d1783f9fc8ae0e7ce4238958ed.png?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834796/original_3e99822f3df1d331ebac197f74256489.jpg?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834795/original_939ca9598c9f377fad738d4846edc5f9.png?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834794/original_89d78ca84c82c13690b31835b2fe68a3.png?1755403684?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834793/original_bc949910c48473568ac816c9b54053ec.png?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834792/original_952ca9d4d0d2ee0c3bc40b61f2396daf.jpg?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834791/original_97046ed38d293d69d2c70957a08c9e7b.jpg?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834790/original_c27adaa9d2ed4db0d454bd4a44fc229d.jpg?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834789/original_390bc8760335b55b8a6c6991d45e0547.jpg?1755403678?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834788/original_c8be34681c51e475e4f761c63ba685f9.jpg?1755403679?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834787/original_8b5db1b66d8a5a2c6915e6c3ef7b0a70.jpg?1755403679?bc=0",
+    "https://attachments.are.na/38834786/6e25b3e21f6287b2a74b03bdab60735e.mp4?1755403679",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834785/original_e9a0b3df16ebac6b1fb41c58c35ba319.jpg?1755403678?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834784/original_96c6f689d12832f3ec8de44b77882af0.jpg?1755403678?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834783/original_d7434907e2e978c7167cad70904e2c76.jpg?1755403678?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834782/original_49a8ed114b6882cbe66a825a6ea5e6a7.jpg?1755403678?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834781/original_4f42d4574d6bddb3d07fbd9e9fb07f4c.jpg?1755403678?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834780/original_f621b70fd7223d421e1f08bcc4e4bc07.jpg?1755403677?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834779/original_95e2efa5814a0a54a87f0e211b032e6e.jpg?1755403677?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834778/original_0d89388c5135add89a714e5c08ebb405.jpg?1755403677?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38834777/original_a0a32a2fa2f2723f667c50ab0d8c6d62.jpg?1755403677?bc=0"
+  ]
+};
+
+
+  // ======= Utilidades =======================================================
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+  const ioOptsPlay = { root:null, rootMargin:"200px", threshold:.25 };
+  const ioOptsLoad = { root:null, rootMargin:"600px", threshold:0 };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Normaliza URLs con '?ts?bc=0' -> '?ts&bc=0'
+  const fixUrl = (u) => typeof u === 'string' ? u.replace(/\?(\d+)\?bc=0$/, '?$1&bc=0') : u;
+
+  // Video: crear elemento robusto con autoplay en viewport
+  function createVideo(src){
+    const v = document.createElement('video');
+    v.dataset.managed='1';
+    v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('preload','none');
+    v.setAttribute('webkit-playsinline','true');
+    v.dataset.src = src; // lazy
+    v.addEventListener('click', () => openLightbox(v));
+    return v;
+  }
+
+  // Lazy de video con IntersectionObserver
+  const ioLoad = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const v = en.target;
+        if(v.dataset.src){ v.src = v.dataset.src; v.removeAttribute('data-src'); }
+        ioLoad.unobserve(v);
+      }
+    });
+  }, ioOptsLoad);
+
+  // Autoplay/Pause al entrar/salir de viewport
+  const ioPlay = new IntersectionObserver((entries)=>{
+    entries.forEach(async en=>{
+      const v = en.target;
+      if(en.isIntersecting){
+        try { await v.play(); } catch(e) {}
+      } else {
+        try { v.pause(); } catch(e) {}
+      }
+    });
+  }, ioOptsPlay);
+
+  // iOS: desbloqueo en primer interacción
+  function unlockAllVideosOnce(){
+    const handler = ()=>{
+      $$('video').forEach(v=>{ try{ v.play().then(()=>v.pause()); }catch(e){} });
+      window.removeEventListener('touchstart', handler);
+      window.removeEventListener('click', handler);
+    };
+    window.addEventListener('touchstart', handler, { once:true });
+    window.addEventListener('click', handler, { once:true });
+  }
+
+  // Lightbox básico
+  const lb = {
+  el: document.getElementById('lightbox'),
+  fig: document.getElementById('lbFigure'),
+  open(node){
+    this.fig.innerHTML = '';
+    const clone = node.cloneNode(true);
+    clone.controls = true;
+    clone.muted = false;
+    clone.removeAttribute('data-src');
+    if(clone.tagName === 'VIDEO' && !clone.src) clone.src = node.src;
+    clone.setAttribute('controlsList','nodownload noplaybackrate noremoteplayback');
+    clone.setAttribute('disableRemotePlayback','');
+    clone.setAttribute('disablePictureInPicture','');
+    this.fig.appendChild(clone);
+    this.el.classList.add('open');
+    this.el.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('lb-open');
+  },
+  close(){
+    this.el.classList.remove('open');
+    this.el.setAttribute('aria-hidden','true');
+    this.fig.innerHTML = '';
+    document.body.style.overflow = '';
+    document.body.classList.remove('lb-open');
+  }
+};
+
+  function openLightbox(node){ lb.open(node); }
+
+  // ======= Render cápsulas ==================================================
+  function renderCapsules(){
+    const wrap = $('#capsules');
+    data.capsules.forEach((c,idx)=>{
+      const card = document.createElement('article');
+      card.className = 'card';
+
+      const head = document.createElement('div');
+      head.className = 'card-header';
+
+      head.innerHTML = `
+        <div class="lang lang-es${idx===0?' active':''}">
+          <strong>${c.title.es}</strong>
+          <div class="meta">
+            <span>${c.date.es}</span>
+            <span class="dot"></span><span>participante: ${c.participant.es}</span>
+            <span class="dot"></span><span>${c.place.es}</span>
+            <span class="dot"></span><span>${c.plus} · ${c.coords[0].toFixed(6)}, ${c.coords[1].toFixed(6)}</span>
+          </div>
+        </div>
+        <div class="lang lang-en">
+          <strong>${c.title.en}</strong>
+          <div class="meta">
+            <span>${c.date.en}</span>
+            <span class="dot"></span><span>participant: ${c.participant.en}</span>
+            <span class="dot"></span><span>${c.place.en}</span>
+            <span class="dot"></span><span>${c.plus} · ${c.coords[0].toFixed(6)}, ${c.coords[1].toFixed(6)}</span>
+          </div>
+        </div>
+        <div class="lang lang-fr">
+          <strong>${c.title.fr}</strong>
+          <div class="meta">
+            <span>${c.date.fr}</span>
+            <span class="dot"></span><span>participant : ${c.participant.fr}</span>
+            <span class="dot"></span><span>${c.place.fr}</span>
+            <span class="dot"></span><span>${c.plus} · ${c.coords[0].toFixed(6)}, ${c.coords[1].toFixed(6)}</span>
+          </div>
+        </div>
+        <div class="lang lang-jp">
+          <strong>${c.title.jp}</strong>
+          <div class="meta">
+            <span>${c.date.jp}</span>
+            <span class="dot"></span><span>参加者：${c.participant.jp}</span>
+            <span class="dot"></span><span>${c.place.jp}</span>
+            <span class="dot"></span><span>${c.plus} ・ ${c.coords[0].toFixed(6)}, ${c.coords[1].toFixed(6)}</span>
+          </div>
+        </div>
+      `;
+
+      const frame = document.createElement('div');
+      frame.className = 'frame';
+      const v = createVideo(c.src);
+      frame.appendChild(v);
+
+      const mapwrap = document.createElement('div');
+      mapwrap.className = 'mapwrap';
+      const mapdiv = document.createElement('div');
+      mapdiv.className = 'map';
+      mapdiv.id = `map-${c.id}`;
+      mapwrap.appendChild(mapdiv);
+
+      card.appendChild(head);
+      card.appendChild(frame);
+      card.appendChild(mapwrap);
+      wrap.appendChild(card);
+
+      // Lazy + autoplay
+      ioLoad.observe(v);
+      if(!reduce) ioPlay.observe(v);
+
+      // Map init after render tick
+      requestAnimationFrame(()=> initMap(mapdiv.id, c.coords));
+    });
+  }
+
+  // ======= Grid renderer ============================================
+  function renderGrid(){
+  const host = document.getElementById('grid');
+  if(!host) return;
+  const items = [...(data.grid||[])];
+
+  // shuffle
+  for(let i=items.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [items[i],items[j]]=[items[j],items[i]]; }
+
+  items.forEach((raw)=>{
+    const url = fixUrl(raw);
+    const tile = document.createElement('div'); tile.className='tile';
+    const frame = document.createElement('div'); frame.className='frame';
+    let el;
+
+    if(/\.mp4($|\?)/.test(url)){
+      // videos: NO abren galería
+      el = createVideo(url);
+      ioLoad.observe(el);
+      if(!reduce) ioPlay.observe(el);
+    }else{
+      // imágenes: SÍ abren galería
+      el = document.createElement('img');
+      el.src = url;
+      el.loading = 'lazy';
+      el.decoding = 'async';
+      el.referrerPolicy = 'no-referrer';   // robustez con CDNs
+      el.addEventListener('click', ()=> openLightbox(el));
+    }
+
+    frame.appendChild(el);
+    tile.appendChild(frame);
+    host.appendChild(tile);
+  });
+}
+// Calcula automáticamente columnas sin huecos
+function setGridColumns(){
+  const host = document.getElementById('grid');
+  if(!host) return;
+  const n = host.children.length;
+  if(!n) return;
+
+  // rango de columnas permitidas
+  const MIN = 3, MAX = 12;
+
+  // según ancho de pantalla
+  const w = host.clientWidth || window.innerWidth;
+  let target = w >= 1080 ? 8 : (w >= 720 ? 6 : 3);
+
+  // busca un número de columnas que divida a n
+  let best = target;
+  for(let c = MIN; c <= MAX; c++){
+    if(n % c === 0){ best = c; break; }
+  }
+  host.style.gridTemplateColumns = `repeat(${best}, 1fr)`;
+}
+
+
+
+
+  // ======= Mapas Leaflet ====================================================
+  function initMap(id, coords){
+    const m = L.map(id, { zoomControl:false, attributionControl:false, dragging:true, scrollWheelZoom:false });
+    const z = 16;
+    m.setView(coords, z);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom:19,
+      detectRetina:true
+    }).addTo(m);
+    const PulseIcon = L.DivIcon.extend({ options:{ className:'' } });
+    const icon = new PulseIcon({ html:'<div class="pulse"></div>', iconSize:[14,14] });
+    L.marker(coords, { icon }).addTo(m);
+  }
+// ===== helpers para a.e.i embed =====
+const BLANK_POSTER='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+function wireVideoEl(v,{autoplay=true}={}){ v.muted=true; v.loop=true; v.autoplay=!!autoplay; v.playsInline=true; v.preload='none'; v.poster=BLANK_POSTER; v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); if(autoplay) v.setAttribute('autoplay',''); }
+const MAX_CONCURRENT=4; let activeLoads=0; const loadQueue=[];
+function scheduleVideoLoad(el,url){ loadQueue.push({el,url}); pumpLoads(); }
+function pumpLoads(){ while(activeLoads<MAX_CONCURRENT && loadQueue.length){ const {el,url}=loadQueue.shift(); activeLoads++; el.src=url; el.preload='metadata'; const done=()=>{activeLoads--; pumpLoads();}; el.addEventListener('loadedmetadata',done,{once:true}); el.addEventListener('error',done,{once:true}); el.load(); } }
+const ioLoadAEI=new IntersectionObserver((ents,obs)=>{ ents.forEach(en=>{ if(!en.isIntersecting) return; const v=en.target; if(v.dataset.src && !v.src){ scheduleVideoLoad(v,v.dataset.src); } obs.unobserve(v); }); },{rootMargin:'600px 0px',threshold:.08});
+function autoPlayOnVisible(video){ function tryPlay(){ video.play().catch(()=>{}); } const vio=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } }); },{threshold:.12}); vio.observe(video); const t0=Date.now(); (function r(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(r,300); })(); document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); }); }
+
+// ===== a.e.i embebido =====
+function renderAEIEmbed(stage, linesSVG, urls){
+  const blocks=[], MAX_AT_ONCE=Math.min(urls.length,42);
+  let idx=0, paused=false, currentPairs=[], nextLineTick=0;
+
+  const pauseOn=()=> paused=true, resume=()=> paused=false;
+  stage.addEventListener('mouseenter',pauseOn);
+  stage.addEventListener('mouseleave',resume);
+  stage.addEventListener('touchstart',pauseOn,{passive:true});
+  stage.addEventListener('touchend',resume);
+
+  function addNext(){
+    if(idx>=MAX_AT_ONCE) return;
+    const url=urls[idx++], block=document.createElement('div');
+    block.className='aei-block';
+    let el;
+    if(/\.(mp4|mov)(\?|$)/i.test(url)){
+      el=document.createElement('video');
+      wireVideoEl(el,{autoplay:true});
+      el.dataset.src=url;
+      block.appendChild(el); stage.appendChild(block);
+      ioLoadAEI.observe(el); autoPlayOnVisible(el);
+    }else{
+      el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.src=url;
+      block.appendChild(el); stage.appendChild(block);
+    }
+    const rect=stage.getBoundingClientRect();
+    const bw=140, bh=140;
+    block.x=Math.random()*Math.max(10,rect.width-bw);
+    block.y=Math.random()*Math.max(10,rect.height-bh);
+    block.vx=(Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
+    update(block); makeDraggable(block); blocks.push(block);
+    setTimeout(addNext,45);
+  }
+  addNext();
+
+  function update(b){ b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; }
+  function clamp(b){
+    const rect=stage.getBoundingClientRect(), bw=140, bh=140;
+    b.x=Math.min(Math.max(0,b.x), Math.max(0,rect.width-bw));
+    b.y=Math.min(Math.max(0,b.y), Math.max(0,rect.height-bh));
+  }
+  function makeDraggable(el){
+    let drag=false,lx=0,ly=0;
+    const move=(cx,cy)=>{ const dx=cx-lx, dy=cy-ly; el.x+=dx; el.y+=dy; clamp(el); update(el); lx=cx; ly=cy; drawLines(); };
+    el.addEventListener('mousedown',e=>{e.preventDefault();drag=true;paused=true;lx=e.clientX;ly=e.clientY;});
+    window.addEventListener('mousemove',e=>{if(drag) move(e.clientX,e.clientY);});
+    window.addEventListener('mouseup',()=>{drag=false;paused=false;});
+    el.addEventListener('touchstart',e=>{const t=e.touches[0];drag=true;paused=true;lx=t.clientX;ly=t.clientY;},{passive:true});
+    el.addEventListener('touchmove',e=>{if(!drag) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY);},{passive:false});
+    el.addEventListener('touchend',()=>{drag=false;paused=false;});
+  }
+
+  function step(){
+    if(!paused){
+      const rect=stage.getBoundingClientRect(), bw=140, bh=140;
+      for(const b of blocks){
+        b.x+=b.vx; b.y+=b.vy;
+        if(b.x<0 || b.x>rect.width-bw) b.vx*=-1;
+        if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
+        clamp(b); update(b);
+      }
+      if(!nextLineTick || performance.now()>nextLineTick){ generateLines(); nextLineTick=performance.now()+(120+Math.random()*480); }
+    }
+    drawLines();
+    requestAnimationFrame(step);
+  }
+  function generateLines(){
+    currentPairs=[];
+    for(let i=0;i<blocks.length;i++){
+      for(let j=i+1;j<blocks.length;j++){
+        if(Math.random()<0.08) currentPairs.push([blocks[i],blocks[j]]);
+      }
+    }
+  }
+  function centerOf(b){ const r=b.getBoundingClientRect(); return [b.x+r.width/2, b.y+r.height/2]; }
+  function drawLines(){
+    linesSVG.innerHTML='';
+    for(const [a,b] of currentPairs){
+      const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+      line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+      line.setAttribute('stroke','#000'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
+      linesSVG.appendChild(line);
+    }
+  }
+  step();
+  window.addEventListener('resize',()=>{ for(const b of blocks){ clamp(b); update(b); } },{passive:true});
+}
+
+
+  // ======= Idioma ===========================================================
+  function setLang(lang){
+    localStorage.setItem('lang', lang);
+    $$('.language-selector button').forEach(b=> b.setAttribute('aria-pressed', String(b.dataset.lang===lang)) );
+    $$('.lang').forEach(n=> n.classList.remove('active'));
+    $$('.lang-'+lang).forEach(n=> n.classList.add('active'));
+  }
+  function initLang(){
+    const saved = localStorage.getItem('lang') || 'es';
+    setLang(saved);
+    $$('.language-selector button').forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang) ));
+  }
+
+  // ======= Visibilidad / motion =============================================
+  document.addEventListener('visibilitychange', ()=>{
+    const vids = document.querySelectorAll('video');
+    if(document.hidden){
+      vids.forEach(v=>{ try{ v.pause(); }catch{} });
+    }else if(!reduce){
+      vids.forEach(v=>{
+        try{ v.closest('#lightbox.open') ? v.pause() : v.play(); }catch{}
+      });
+    }
+  });
+
+  // ======= Boot =============================================================
+  window.addEventListener('DOMContentLoaded', ()=>{
+    renderCapsules();
+    renderGrid();
+    setGridColumns(); 
+    initLang();
+    unlockAllVideosOnce();
+    $('#lightbox').addEventListener('click', (e)=>{ if(e.target.id==='lightbox') lb.close(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') lb.close(); });
+    renderAEIEmbed(document.getElementById('aeiStage'), document.getElementById('aeiLines'), data.aei||[]);
+  });
+  </script>
+
+
+</body>
+</html>
