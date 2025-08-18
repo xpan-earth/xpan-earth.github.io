@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>mdtc.5 — xpan — mdtc</title>
+
+  <!-- conexiones previas -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+  <style>
+    :root{
+      --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+      --radius:14px; --gap:.8rem; --gap-lg:1rem;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --tile-max-h:72vh;
+      --aei-block:140px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:auto; }
+    body{ overflow-x:hidden; }
+
+    header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+    header img{ width:50px; height:auto; display:block; }
+
+    .language-selector{ position:fixed; top:1rem; right:1rem; z-index:35; font-size:.9rem; text-transform:lowercase; letter-spacing:.02em; }
+    .language-selector button{ background:none; border:none; margin-left:.6rem; cursor:pointer; color:#000; opacity:.55; transition:opacity .2s var(--ease), text-decoration-color .2s var(--ease); text-decoration:underline transparent; text-underline-offset:3px; }
+    .language-selector button.active, .language-selector button:hover{ opacity:.9; text-decoration-color:#000; }
+
+    main{ max-width:1440px; margin:72px auto 5rem; padding:0 1.25rem; }
+
+    .lang h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; letter-spacing:.01em; }
+    .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+    .description{ font-size:1rem; line-height:1.65; max-width:980px; margin-bottom:2.2rem; }
+    .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+    .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+    .card.ready{ opacity:1; transform:none; }
+    .frame{ position:relative; background:#fff; }
+.frame::before,
+.media-box::before {
+  content:none !important;
+}
+.frame > *,
+.media-box > * {
+  position:static !important;
+  width:auto !important;
+  height:auto !important;
+  max-width:100%;
+  object-fit:contain;
+}
+    .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    @media (hover:hover){
+      .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+      .card:active{ transform:translateY(1px); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .card{ transition:none; }
+      .card:hover .frame > *{ transform:none !important; }
+    }
+
+    .grid{ display:grid; gap:var(--gap); }
+    .grid.destacados{ grid-template-columns: repeat(3, 1fr); gap:var(--gap-lg); }
+    .grid.uniform-3{ grid-template-columns: repeat(3, 1fr); }
+    @media (max-width:1200px){ .grid.destacados{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width:640px){ .grid.destacados{ grid-template-columns: 1fr; } }
+
+    .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .tight-grid{ display:grid; gap:0; }
+    .tight-grid.cols-6{ grid-template-columns: repeat(6, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(4, 1fr); }
+    @media (max-width:1100px){
+      .tight-grid.cols-6{ grid-template-columns: repeat(5, 1fr); }
+      .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); }
+      .tight-grid.cols-4{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width:640px){
+      .tight-grid.cols-6{ grid-template-columns: repeat(3, 1fr); }
+      .tight-grid.cols-5{ grid-template-columns: repeat(3, 1fr); }
+      .tight-grid.cols-4{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .tight-item{ position:relative; background:#fff; }
+    .tight-item .media-box{ position:relative; }
+    .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+    .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    .section-controls{ display:flex; justify-content:flex-end; margin-top:.6rem; }
+    .btn{ background:#fff; border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; font-size:.9rem; cursor:pointer; }
+    .btn[hidden]{ display:none; }
+
+    /* lightbox minimal */
+    .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+    .lightbox.open{display:flex}
+    .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+    .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+
+    /* a.e.i */
+    .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; touch-action:none; }
+    .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .aei-block{ width:var(--aei-block); height:var(--aei-block); position:absolute; opacity:.72; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; touch-action:none; }
+    .aei-block:active{ cursor:grabbing; }
+    .aei-block:hover{ opacity:.9; z-index:5; }
+    .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+    .aei-hint{ display:none !important; }
+
+    [data-lazy-section]{ content-visibility:auto; contain-intrinsic-size:1px 1000px; }
+
+    /* ajustes xpan */
+    .grid.destacados .frame{ background:transparent !important; border-radius:var(--radius); overflow:hidden; }
+    .grid.destacados .frame > video{ width:100%; height:100%; object-fit:contain; background:#fff !important; }
+
+    [data-section="vertical8"] .media-box::before,
+    [data-section="videos22"] .media-box::before{ aspect-ratio:9/16; }
+    [data-section="vertical8"] .media-box > video,
+    [data-section="videos22"] .media-box > video{ width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    [data-section="images15"] .media-box::before{ aspect-ratio:9/16; }
+    [data-section="images15"] .media-box > img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .tight-grid{ gap:0 !important; }
+
+    @media (min-width:1024px){
+      .grid.destacados{ grid-template-columns: 1fr 1.15fr 1fr !important; align-items:center !important; }
+      .grid.destacados .card{ height:auto !important; align-self:center !important; }
+    }
+
+    main{ margin-top:124px !important; }
+
+    /* ——— estilos player ——— */
+    .xpan-audio-block{border:1px solid #000;padding:1rem;margin:1.5rem 0;background:#fff}
+    .audio-meta .title{font:700 1rem "Times New Roman",serif;text-transform:lowercase;margin-bottom:.2rem}
+    .audio-meta .info{font-size:.85rem;opacity:.6;margin-bottom:1rem}
+    .audio-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .play-button{background:none;border:none;font-size:1rem;cursor:pointer;text-transform:lowercase;padding:.4rem .6rem}
+    .time-display{font-size:.85rem;min-width:60px}
+    .progress-container{position:relative;flex-grow:1;height:2px;background:#ddd;cursor:pointer;touch-action:none}
+    .progress-fill{height:2px;background:#000;width:0%}
+    .xpan-audio-block canvas{width:100%;height:100px;display:block;margin-top:1rem;background:#fff}
+    .tooltip{position:absolute;font-size:.75rem;background:#000;color:#fff;padding:.2rem .4rem;border-radius:3px;transform:translateX(-50%);top:-1.5rem;display:none;pointer-events:none;z-index:100}
+    @media (prefers-color-scheme:light){
+      .xpan-audio-block{border-color:#fff;background:#000}
+      .progress-container{background:#666}
+      .progress-fill{background:#fff}
+      .xpan-audio-block canvas{background:#000}
+      .tooltip{background:#fff;color:#000}
+      .play-button{color:#fff}
+    }
+    @media (max-width:600px){
+      .audio-controls{flex-direction:column;align-items:flex-start}
+    }
+
+    /* ——— tracklist / créditos extra ——— */
+    .tl-wrap{border:1px solid var(--line);border-radius:var(--radius);padding:1rem;background:#fff}
+    .tl-list{list-style:none;margin:0;padding:0;columns:2;column-gap:1.2rem}
+    .tl-list li{break-inside:avoid;padding:.35rem 0;border-bottom:1px solid rgba(0,0,0,.06)}
+    .tl-list li:last-child{border-bottom:none}
+    .tl-list strong{text-transform:lowercase}
+    @media(max-width:780px){.tl-list{columns:1}}
+
+    .cr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;border:1px solid var(--line);border-radius:var(--radius);padding:1rem;background:#fff}
+    .cr-title{font-weight:700;text-transform:lowercase;margin-bottom:.25rem}
+    .cr-line{opacity:.8;font-size:.95rem;line-height:1.5}
+    @media(max-width:980px){.cr-grid{grid-template-columns:1fr}}
+
+    
+    #assets6, #tshirts { content-visibility: visible; contain-intrinsic-size: auto; }
+  </style>
+
+  <!-- proxy/optimización -->
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="/" aria-label="xpan"><img src="https://d2w9rnfcy7mm78.cloudfront.net/38848462/original_9fd8aada8a087fcb0fae63eb75fa1081.png?1755478531?bc=0" alt="xpan" fetchpriority="high"></a>
+  </header>
+
+  <div class="language-selector" role="navigation" aria-label="selector de idioma">
+    <button data-lang="es" class="active" aria-pressed="true">es</button>
+    <button data-lang="en" aria-pressed="false">en</button>
+    <button data-lang="fr" aria-pressed="false">fr</button>
+    <button data-lang="jp" aria-pressed="false">jp</button>
+  </div>
+
+  <main>
+    <!-- ES -->
+    <section class="lang lang-es">
+      <h1>mdtc.5</h1>
+      <div class="meta">03.23.25 — tokyo</div>
+      <div class="description">
+        mdtc.5 abre un nuevo punto en la topología conectiva.  
+        méxico ↔ japón, el ruido como puente.  
+        <br><br>
+        con gata magazine y xpan.  
+        <br><br>
+        invitados:  
+        ami [@zoo_as_zoo] · arashi yanagawa [@johnlawrencesullivan_official] · bianco [@sabukaru.online] · hanna [@callhanna] · himawari & ryota [@cannabis_tokyo] · katoman [@beatcafe] · kohei [@pat_market_tokyo]  
+        <br>
+        marta espinosa [@gata_magazine] · msh [@xpan.earth] · nevin [@cakeshopseoul] · noob [@jianye.official] · yamaki [@dinoworks_] · yone [@plus_dayone_gallery] · yyoiy [@shoopclothing]
+      </div>
+    </section>
+
+    <!-- EN -->
+    <section class="lang lang-en" style="display:none;">
+      <h1>mdtc.5</h1>
+      <div class="meta">03.23.25 — tokyo</div>
+      <div class="description">
+        mdtc.5 opens a new point in the connective topology.  
+        mexico ↔ japan, noise as a bridge.  
+        <br><br>
+        with gata magazine and xpan.  
+        <br><br>
+        guests:  
+        ami [@zoo_as_zoo] · arashi yanagawa [@johnlawrencesullivan_official] · bianco [@sabukaru.online] · hanna [@callhanna] · himawari & ryota [@cannabis_tokyo] · katoman [@beatcafe] · kohei [@pat_market_tokyo]  
+        <br>
+        marta espinosa [@gata_magazine] · msh [@xpan.earth] · nevin [@cakeshopseoul] · noob [@jianye.official] · yamaki [@dinoworks_] · yone [@plus_dayone_gallery] · yyoiy [@shoopclothing]
+      </div>
+    </section>
+
+    <!-- FR -->
+    <section class="lang lang-fr" style="display:none;">
+      <h1>mdtc.5</h1>
+      <div class="meta">23.03.25 — tokyo</div>
+      <div class="description">
+        mdtc.5 ouvre un nouveau point dans la topologie connective.  
+        mexique ↔ japon, le bruit comme pont.  
+        <br><br>
+        avec gata magazine et xpan.  
+        <br><br>
+        invités :  
+        ami [@zoo_as_zoo] · arashi yanagawa [@johnlawrencesullivan_official] · bianco [@sabukaru.online] · hanna [@callhanna] · himawari & ryota [@cannabis_tokyo] · katoman [@beatcafe] · kohei [@pat_market_tokyo]  
+        <br>
+        marta espinosa [@gata_magazine] · msh [@xpan.earth] · nevin [@cakeshopseoul] · noob [@jianye.official] · yamaki [@dinoworks_] · yone [@plus_dayone_gallery] · yyoiy [@shoopclothing]
+      </div>
+    </section>
+
+    <!-- JP -->
+    <section class="lang lang-jp" style="display:none;">
+      <h1>mdtc.5</h1>
+      <div class="meta">2025年3月23日 — 東京</div>
+      <div class="description">
+        mdtc.5 は接続的トポロジーに新たな点を開く。  
+        メキシコ ↔ 日本、ノイズが橋となる。  
+        <br><br>
+        gata magazine と xpan とともに。  
+        <br><br>
+        招待者:  
+        ami [@zoo_as_zoo] · arashi yanagawa [@johnlawrencesullivan_official] · bianco [@sabukaru.online] · hanna [@callhanna] · himawari & ryota [@cannabis_tokyo] · katoman [@beatcafe] · kohei [@pat_market_tokyo]  
+        <br>
+        marta espinosa [@gata_magazine] · msh [@xpan.earth] · nevin [@cakeshopseoul] · noob [@jianye.official] · yamaki [@dinoworks_] · yone [@plus_dayone_gallery] · yyoiy [@shoopclothing]
+      </div>
+    </section>
+
+    <!-- PLAYER -->
+    <section class="section" id="mixtape">
+      <div class="xpan-audio-block audio-local">
+        <div class="audio-meta">
+          <div class="title">mdtc.5 — mixtape</div>
+          <div class="info">tokyo · 03.23.25 · compiled from three-track maps by each guest</div>
+        </div>
+        <div class="audio-controls">
+          <button class="play-button">play</button>
+          <div class="time-display">0:00 / 0:00</div>
+          <div class="progress-container"><div class="progress-fill"></div></div>
+          <audio crossorigin="anonymous">
+            <source src="https://ia600907.us.archive.org/2/items/mixtape-final-mdtc.-5/mixtape%20final%20mdtc.5.wav" type="audio/mpeg">
+          </audio>
+        </div>
+        <canvas></canvas>
+      </div>
+    </section>
+
+    <!-- TRACKLIST -->
+    <section class="section" id="tracklist">
+      <h2 class="sr-only">tracklist</h2>
+      <div class="tl-wrap">
+        <ul class="tl-list">
+          <li>01 - the last emperor – ryuichi sakamoto [yuka]</li>
+          <li>02 - merry christmas mr. lawrence – ryuichi sakamoto [yamaki lori]</li>
+          <li>03 - liebe (trance remix) – ayla [yamaki lori]</li>
+          <li>04 - koufukuron -a view of happiness- (etsuraku-hen) [yohei]</li>
+          <li>05 - these days – nico [yuka]</li>
+          <li>06 - hiroshi fujiwara – みんな大好きみんな愛してる [n00b]</li>
+          <li>07 - uainrealli - kim ximya [ami]</li>
+          <li>08 - residual stress – /using [marta]</li>
+          <li>09 - flame thrower – apollo noir [hanna]</li>
+          <li>10 - rezzett – zik zak [ttt40] [n00b]</li>
+          <li>11 - moving forward – bourbonaise qualk (mixed) [msh]</li>
+          <li>12 - taste the poison – dj smokey [bianco]</li>
+          <li>13 - nokia demonzxx [uranium shadowmix] [bianco]</li>
+          <li>14 - humiliation ritual – dj smokey [bianco]</li>
+          <li>15 - stef mendedsis – stalker [kw33] [marta]</li>
+          <li>16 - post rave maximalist – machine girl [marta]</li>
+          <li>17 - incinerate – sonic youth [msh]</li>
+          <li>18 - ss – "mr. twist" [yone]</li>
+          <li>19 - ultra bide (1978–1980 関西no wave) [yone]</li>
+          <li>20 - ガセネタ – 社会復帰 [yone]</li>
+          <li>21 - call me jesus – laddio bolocko [msh]</li>
+          <li>22 - mitsubishi [demo] – chivengi [nevin]</li>
+          <li>23 - du hast – rammstein [arashi]</li>
+          <li>24 - personal jesus – marilyn manson [arashi]</li>
+          <li>25 - front 242 – headhunter [arashi]</li>
+          <li>26 - disco – sextile [hanna]</li>
+          <li>27 - helter skelter – siouxsie and the banshees [hanna]</li>
+          <li>28 - pop group – trap [kato]</li>
+          <li>29 - bauhaus – dark entries [kato]</li>
+          <li>30 - the contortions – contort yourself [kato]</li>
+          <li>31 - holy – dinamarca [yamaki]</li>
+          <li>32 - trasgender – crystal castles [nevin]</li>
+          <li>33 - paris hilton – mutsumi [n00b]</li>
+          <li>34 - kohh – die young [yohei]</li>
+          <li>35 - acid rain – hypnosis therapy [ami]</li>
+          <li>36 - texas girl – pigbaby [yuka]</li>
+          <li>37 - a$ap rocky – fashion killa (bvrlout remix) [kohei]</li>
+          <li>38 - nle choppa – slut me out (saint punk remix) [kohei]</li>
+          <li>39 - offset – say my grace (feat travis scott) (saint punk remix) [kohei]</li>
+          <li>40 - tony velour h8 me 2 [ami]</li>
+        </ul>
+      </div>
+    </section>
+
+  <!-- ——— CRÉDITOS ——— -->
+<section class="section" id="credits">
+  <h2 class="sr-only">créditos</h2>
+  <div class="cr-grid">
+    <div>
+      <div class="cr-title">mdtc.5</div>
+      <div class="cr-line">03.23.25 — tokyo</div>
+      <div class="cr-line">GATA × xpan</div>
+    </div>
+    <div>
+      <div class="cr-title">venue</div>
+      <div class="cr-line">mitsuki — shibuya, dogenzaka, 1−22−12 b1</div>
+      <div class="cr-line">9pm–3am</div>
+    </div>
+    <div>
+      <div class="cr-title">topología conectiva</div>
+      <div class="cr-line">2025</div>
+      <div class="cr-line">méxico ↔ japón · noise as a cultural bridge</div>
+    </div>
+  </div>
+</section>
+
+<!-- destacados (flyer + 2 recorridos) -->
+<section class="section" id="destacados" data-lazy-section>
+  <h2 class="sr-only">destacados</h2>
+  <div class="grid destacados" data-section="destacados"></div>
+</section>
+
+<!-- recorridos -->
+<section class="section" id="recorridos" data-lazy-section>
+  <h2 class="sr-only">recorridos</h2>
+  <div class="grid uniform-3" data-section="walkthrough"></div>
+</section>
+
+
+    <!-- ——— 6 ASSETS PRINCIPALES ——— -->
+    <section class="section" id="assets6" data-lazy-section>
+      <h2 class="sr-only">assets principales</h2>
+      <div class="grid uniform-3" data-section="assets6"></div>
+    </section>
+
+    <!-- ——— RETÍCULA 1 (24 fotos) ——— -->
+    <section class="section" id="reticula1" data-lazy-section>
+      <h2 class="sr-only">retícula — 24 imágenes</h2>
+      <div class="tight-wrap">
+        <div class="tight-grid cols-6" data-section="images24a" data-initial="24"></div>
+      </div>
+    </section>
+
+    <!-- ——— GALERÍA T-SHIRT (3 imágenes) ——— -->
+    <section class="section" id="tshirts" data-lazy-section>
+      <h2 class="sr-only">t_shirt · mdtc.5</h2>
+      <div class="grid uniform-3" data-section="tshirts3"></div>
+    </section>
+
+    <!-- ——— RETÍCULA 2 (24 fotos) ——— -->
+    <section class="section" id="reticula2" data-lazy-section>
+      <h2 class="sr-only">retícula — 24 imágenes</h2>
+      <div class="tight-wrap">
+        <div class="tight-grid cols-6" data-section="images24b" data-initial="24"></div>
+      </div>
+    </section>
+
+    <!-- ——— A.E.I EMBEBIDO 2 ——— -->
+    <section class="section" id="exp_aei_2" aria-label="a.e.i embebido" data-lazy-section>
+      <h2 class="sr-only">galería experimental — a.e.i embebido</h2>
+      <div class="aei-embed" id="aeiEmbed2">
+        <svg class="aei-lines" id="aeiLines2"></svg>
+        <div class="aei-stage" id="aeiStage2" aria-label="escena a.e.i"></div>
+        <div class="aei-hint" aria-hidden="true">toca/arrastra para pausar · tap/drag to pause</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <div class="lb-surface">
+      <figure id="lbFigure" style="margin:0"></figure>
+    </div>
+  </div>
+
+  <script>
+    /* idioma */
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el=>{
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn=>{
+        const on = btn.dataset.lang===lang; btn.classList.toggle('active', on); btn.setAttribute('aria-pressed', on);
+      });
+    }
+    document.querySelector('.language-selector').addEventListener('click', (e)=>{
+      const b = e.target.closest('button[data-lang]'); if(!b) return; setLang(b.dataset.lang);
+    });
+
+    /* media: reemplaza con tus URLs base si hace falta */
+    const media = {
+      walkthrough: [],
+      flyer: [],
+      texture: [],
+      vertical8: [],
+      images15: [],
+      videos22: [],
+      expAEI: []
+    };
+
+    const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+    const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+    function wireVideoEl(v, {autoplay=true}={}){
+      v.muted = true;
+      v.loop = true;
+      v.autoplay = !!autoplay;
+      v.playsInline = true;
+      v.preload = 'none';
+      v.poster = BLANK_POSTER;
+      v.setAttribute('muted','');
+      v.setAttribute('playsinline','');
+      v.setAttribute('webkit-playsinline','');
+      if(autoplay) v.setAttribute('autoplay','');
+    }
+
+    const MAX_CONCURRENT = 4;
+    let activeLoads = 0;
+    const loadQueue = [];
+    function scheduleVideoLoad(el, url){ loadQueue.push({el,url}); pumpLoads(); }
+    function pumpLoads(){
+      while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+        const {el,url}=loadQueue.shift();
+        activeLoads++;
+        el.src=url; el.preload='metadata';
+        const done=()=>{ activeLoads--; pumpLoads(); };
+        el.addEventListener('loadedmetadata',done,{once:true});
+        el.addEventListener('error',done,{once:true});
+        el.load();
+      }
+    }
+    const ioLoad=new IntersectionObserver((entries,obs)=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const v=en.target;
+        if(v.dataset.src && !v.src){
+          scheduleVideoLoad(v, v.dataset.src);
+          v.addEventListener('loadedmetadata', ()=>{
+            setAspectFromVideo(v);
+            v.closest('.card, .tight-item')?.classList.add('ready');
+          },{once:true});
+        }
+        obs.unobserve(v);
+      });
+    },{rootMargin:'600px 0px', threshold:.08});
+
+    function setAspect(el, w, h){
+      const wrapper = el.closest('.frame, .media-box');
+      if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+    }
+    function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+    function makeImmediateVideo(url){
+      const container=document.createElement('figure');
+      container.className='card ready';
+      const box=document.createElement('div'); box.className='frame'; container.appendChild(box);
+      const v=document.createElement('video');
+      wireVideoEl(v,{autoplay:true});
+      v.controls=false; v.preload='auto'; v.src=url;
+      box.appendChild(v);
+      v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+      (function retry(){ v.play().catch(()=> setTimeout(retry,200)); })();
+      function toggleAudio(e){ e.preventDefault(); v.muted=!v.muted; if(v.muted) v.setAttribute('muted',''); else v.removeAttribute('muted'); v.play().catch(()=>{}); }
+      container.addEventListener('click',toggleAudio);
+      container.addEventListener('touchend',toggleAudio,{passive:false});
+      return container;
+    }
+
+(function renderDestacadosYRecorridos(){
+  const dWrap = document.querySelector('[data-section="destacados"]');
+  if (dWrap) {
+    const d = [];
+    if (media.flyer?.[0]) d.push(makeImmediateVideo(media.flyer[0]));
+    (media.walkthrough || []).slice(0, 2).forEach(u => d.push(makeImmediateVideo(u)));
+    d.forEach(el => dWrap.appendChild(el));
+  }
+  const rWrap = document.querySelector('[data-section="walkthrough"]');
+  if (rWrap) (media.walkthrough || []).slice(2).forEach(u => rWrap.appendChild(makeVideo(u)));
+})();
+
+
+
+    function makeVideo(url,{tight=false}={}){
+      const container=tight?document.createElement('div'):document.createElement('figure');
+      container.className=tight?'tight-item':'card';
+      const box=document.createElement('div'); box.className=tight?'media-box':'frame';
+      container.appendChild(box);
+      const v=document.createElement('video');
+      wireVideoEl(v,{autoplay:true});
+      v.controls=false; v.dataset.src=url;
+      box.appendChild(v);
+      ioLoad.observe(v);
+      autoPlayOnVisible(v);
+      (function r(){ v.play().catch(()=> setTimeout(r,250)); })();
+      if(!tight){ container.addEventListener('click', ()=> openLightboxSingle({type:'video', url})); }
+      return container;
+    }
+
+    function autoPlayOnVisible(video){
+      function tryPlay(){ video.play().catch(()=>{}); }
+      const vio=new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+      },{threshold:.12});
+      vio.observe(video);
+      const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+    }
+
+    function unlockAllVideos(){
+      document.removeEventListener('click', unlockAllVideos);
+      document.removeEventListener('touchstart', unlockAllVideos);
+      $$('video').forEach(v=>{
+        if(!v.src && v.dataset.src){ v.src=v.dataset.src; v.load(); }
+        v.muted=true; v.setAttribute('muted',''); v.play().catch(()=>{});
+      });
+    }
+    document.addEventListener('click', unlockAllVideos, { once:true });
+    document.addEventListener('touchstart', unlockAllVideos, { once:true, passive:true });
+
+    (function renderBase(){
+      const dWrap=document.querySelector('[data-section="destacados"]');
+      if(dWrap){
+        const d=[];
+        if(media.flyer?.[0]) d.push(makeImmediateVideo(media.flyer[0]));
+        (media.walkthrough||[]).slice(0,2).forEach(u=> d.push(makeImmediateVideo(u)));
+        d.forEach(el=> dWrap.appendChild(el));
+        const walkthroughWrap=document.querySelector('[data-section="walkthrough"]');
+        (media.walkthrough||[]).slice(2).forEach(u=> walkthroughWrap.appendChild(makeVideo(u)));
+      }
+    })();
+
+    function renderTightGrid(key, sources, isVideo){
+      const wrap=document.querySelector(`[data-section="${key}"]`); if(!wrap) return;
+      (sources||[]).filter(Boolean).forEach(url=>{
+        const item=document.createElement('div'); item.className='tight-item';
+        const box=document.createElement('div'); box.className='media-box'; item.appendChild(box);
+        if(isVideo){
+          const v=document.createElement('video');
+          wireVideoEl(v,{autoplay:true});
+          v.controls=false; v.dataset.src=url; box.appendChild(v);
+          ioLoad.observe(v);
+          autoPlayOnVisible(v);
+          v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+        }else{
+          const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+          box.appendChild(img);
+          img.addEventListener('load',()=> setAspectFromVideo({videoWidth:img.naturalWidth, videoHeight:img.naturalHeight, closest:sel=>item.querySelector(sel)}),{once:true});
+        }
+        wrap.appendChild(item);
+      });
+    }
+
+    /* lightbox */
+    const lb=document.getElementById('lightbox');
+    const lbFigure=document.getElementById('lbFigure');
+
+    let galleryItems=[], galleryIndex=0;
+
+    let suppressClicksUntil = 0;
+    const stopAll = e => { e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); };
+
+    const _openLightbox = openLightbox;
+    openLightbox = function(items, index=0){
+      _openLightbox(items, index);
+      document.documentElement.style.overflow = 'hidden';
+    };
+
+    const _closeLightbox = closeLightbox;
+    closeLightbox = function(){
+      _closeLightbox();
+      document.documentElement.style.overflow = '';
+      suppressClicksUntil = Date.now() + 400;
+    };
+
+    document.addEventListener('click', e => {
+      if (Date.now() < suppressClicksUntil) stopAll(e);
+    }, true);
+
+    function lbConsumeAndMaybeClose(e){
+      if (!lb.classList.contains('open')) return;
+      stopAll(e);
+      const inside = e.target.closest('#lbFigure');
+      if (inside || e.target === lb) closeLightbox();
+    }
+    lb.addEventListener('click', lbConsumeAndMaybeClose, { capture:true });
+    lb.addEventListener('touchend', lbConsumeAndMaybeClose, { capture:true, passive:false });
+
+    function openLightbox(items, index=0){
+      galleryItems=items||[];
+      galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
+      lbFigure.innerHTML='';
+      renderLB();
+      lb.classList.add('open');
+    }
+    function openLightboxGroup(key, index){
+      const arr=(media[key]||[]).map(url=>({type:/\.(mp4|mov)(\?|$)/i.test(url)?'video':'img', url}));
+      openLightbox(arr, index);
+    }
+    function openLightboxSingle(item){ openLightbox([item], 0); }
+
+    function renderLB(){
+      const item=galleryItems[galleryIndex]; if(!item) return;
+      lbFigure.innerHTML='';
+      const el=document.createElement(item.type==='img'?'img':'video');
+      el.className='lb-media';
+      if(item.type==='img'){
+        el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url;
+      }else{
+        el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+        el.loop=true; el.preload='metadata'; el.src=item.url;
+        el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+      }
+      lbFigure.appendChild(el);
+    }
+    function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; }
+    function nextLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex+1)%galleryItems.length; renderLB(); }
+    function prevLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex-1+galleryItems.length)%galleryItems.length; renderLB(); }
+
+    lb.addEventListener('click', e=>{
+      const insideMedia = e.target.closest('#lbFigure');
+      if(insideMedia){ closeLightbox(); } else if(e.target===lb){ closeLightbox(); }
+    });
+
+    window.addEventListener('keydown', e=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') return closeLightbox();
+      if(e.key===' ' || e.key==='Spacebar' || e.key==='ArrowRight') return nextLB();
+      if(e.key==='ArrowLeft') return prevLB();
+    });
+
+    (function(){
+      let x0=null, y0=null, t0=0;
+      lb.addEventListener('touchstart',e=>{
+        const t=e.touches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now();
+      },{passive:true});
+      lb.addEventListener('touchend',e=>{
+        if(x0==null) return;
+        const t=e.changedTouches[0];
+        const dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+        if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){ dx<0?nextLB():prevLB(); }
+        else if(dt<250 && Math.abs(dx)<10 && Math.abs(dy)<10){ closeLightbox(); }
+        x0=y0=null;
+      });
+    })();
+
+    function wireGalleryForSection(sectionKey, selector){
+      const wrap=document.querySelector(selector); if(!wrap) return;
+      wrap.addEventListener('click', e=>{
+        const item=e.target.closest('.tight-item'); if(!item) return;
+        const items=Array.from(wrap.querySelectorAll('.tight-item'));
+        const index=items.indexOf(item); if(index<0) return;
+        openLightboxGroup(sectionKey, index);
+      });
+    }
+    wireGalleryForSection('images15','[data-section="images15"]');
+
+    /* a.e.i render base */
+    function renderAEI(stage, linesSVG, urls){
+      const blocks=[], MAX_AT_ONCE=Math.min(urls.length,42);
+      let idx=0, paused=false;
+
+      const pauseOn=()=> paused=true, resume=()=> paused=false;
+      stage.addEventListener('mouseenter',pauseOn);
+      stage.addEventListener('mouseleave',resume);
+      stage.addEventListener('touchstart',pauseOn,{passive:true});
+      stage.addEventListener('touchend',resume);
+
+      function addNext(){
+        if(idx>=MAX_AT_ONCE) return;
+        const url=urls[idx++], block=document.createElement('div');
+        block.className='aei-block';
+        let el;
+        if(/\.(mp4|mov)(\?|$)/i.test(url)){
+          el=document.createElement('video');
+          wireVideoEl(el,{autoplay:true});
+          el.dataset.src=url; block.appendChild(el); stage.appendChild(block);
+          ioLoad.observe(el); autoPlayOnVisible(el);
+        }else{
+          el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.src=url;
+          block.appendChild(el); stage.appendChild(block);
+        }
+        const rect=stage.getBoundingClientRect();
+        const bw=parseFloat(getComputedStyle(block).width), bh=parseFloat(getComputedStyle(block).height);
+        block.x=Math.random()*Math.max(10,rect.width-bw);
+        block.y=Math.random()*Math.max(10,rect.height-bh);
+        block.vx=(Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
+        updateBlockTransform(block);
+        makeDraggable(block);
+        blocks.push(block);
+        setTimeout(addNext,45);
+      }
+      addNext();
+
+      function updateBlockTransform(b){ b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; }
+      function clampToStage(b){
+        const rect=stage.getBoundingClientRect();
+        const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+        b.x=Math.min(Math.max(0,b.x), Math.max(0,rect.width-bw));
+        b.y=Math.min(Math.max(0,b.y), Math.max(0,rect.height-bh));
+      }
+
+      function makeDraggable(el){
+        let isDragging=false,lastX=0,lastY=0;
+        const move=(cx,cy)=>{
+          const dx=cx-lastX, dy=cy-lastY;
+          el.x+=dx; el.y+=dy; clampToStage(el); updateBlockTransform(el);
+          lastX=cx; lastY=cy; drawLines();
+        };
+        el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true;paused=true;lastX=e.clientX;lastY=e.clientY;});
+        window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
+        window.addEventListener('mouseup',()=>{isDragging=false;paused=false;});
+
+        el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;paused=true;lastX=t.clientX;lastY=t.clientY;},{passive:true});
+        el.addEventListener('touchmove',e=>{if(!isDragging) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY);},{passive:false});
+        el.addEventListener('touchend',()=>{isDragging=false;paused=false;});
+      }
+
+      function step(){
+        if(!paused){
+          const rect=stage.getBoundingClientRect();
+          for(const b of blocks){
+            b.x+=b.vx; b.y+=b.vy;
+            const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+            if(b.x<0 || b.x>rect.width-bw) b.vx*=-1;
+            if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
+            clampToStage(b); updateBlockTransform(b);
+          }
+          if(!nextLineTick || performance.now()>nextLineTick){ generateLines(); nextLineTick=performance.now()+(120+Math.random()*480); }
+        }
+        drawLines();
+        requestAnimationFrame(step);
+      }
+      let currentPairs=[], nextLineTick=0;
+      function generateLines(){
+        currentPairs=[];
+        for(let i=0;i<blocks.length;i++){
+          for(let j=i+1;j<blocks.length;j++){
+            if(Math.random()<0.08) currentPairs.push([blocks[i],blocks[j]]);
+          }
+        }
+      }
+      function centerOf(b){ const r=b.getBoundingClientRect(); return [b.x+r.width/2, b.y+r.height/2]; }
+      function drawLines(){
+        linesSVG.innerHTML='';
+        for(const [a,b] of currentPairs){
+          const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+          const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+          line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+          line.setAttribute('stroke','#000'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
+          linesSVG.appendChild(line);
+        }
+      }
+      step();
+
+      window.addEventListener('resize',()=>{ for(const b of blocks){ clampToStage(b); updateBlockTransform(b); } },{passive:true});
+    }
+
+    const pauseIO=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); });
+    },{threshold:.05});
+    const watch=setInterval(()=>{
+      document.querySelectorAll('.tight-item video, .frame video').forEach(v=> pauseIO.observe(v));
+      if(document.querySelectorAll('.tight-item video, .frame video').length>0) clearInterval(watch);
+    },160);
+
+    (function idleWarmup(){
+      if(!('requestIdleCallback' in window)) return;
+      const warm=()=>requestIdleCallback(()=>{
+        document.querySelectorAll('video[data-src]').forEach(v=>{ if(!v.src) scheduleVideoLoad(v, v.dataset.src); });
+      },{timeout:1500});
+      document.addEventListener('DOMContentLoaded',warm,{once:true});
+      window.addEventListener('load',warm,{once:true});
+    })();
+
+    setLang(localStorage.getItem('lang') || 'es');
+  </script>
+
+  <!-- player script -->
+  <script>
+  document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
+    const audio = block.querySelector('audio');
+    const button = block.querySelector('.play-button');
+    const fill = block.querySelector('.progress-fill');
+    const canvas = block.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const timeDisplay = block.querySelector('.time-display');
+    const progressContainer = block.querySelector('.progress-container');
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    progressContainer.appendChild(tooltip);
+
+    let audioContext = null, source, analyser, dataArray, animationId;
+
+    const formatTime = (seconds) => {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
+
+    const resizeCanvas = () => {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    };
+
+    const draw = () => {
+      if (!analyser) return;
+      analyser.getByteTimeDomainData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      const sliceWidth = canvas.width / dataArray.length;
+      let x = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * canvas.height) / 2;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+        x += sliceWidth;
+      }
+      ctx.strokeStyle = `rgb(${Math.floor(dataArray[0] * 1.5)},0,0)`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      animationId = requestAnimationFrame(draw);
+    };
+
+    const setupVisualizer = () => {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      source = audioContext.createMediaElementSource(audio);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      dataArray = new Uint8Array(analyser.fftSize);
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+      resizeCanvas();
+      draw();
+    };
+
+    const playAudio = async () => {
+      try {
+        if (!audioContext) {
+          setupVisualizer();
+        } else if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+          animationId = requestAnimationFrame(draw);
+        } else {
+          animationId = requestAnimationFrame(draw);
+        }
+        await audio.play();
+        button.innerText = 'pause';
+      } catch (err) {
+        console.warn('Error al reproducir audio:', err);
+      }
+    };
+
+    const pauseAudio = () => {
+      audio.pause();
+      button.innerText = 'play';
+      cancelAnimationFrame(animationId);
+    };
+
+    button.addEventListener('click', () => {
+      if (audio.paused) playAudio(); else pauseAudio();
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const duration = isNaN(audio.duration) ? 0 : audio.duration;
+      if (duration > 0) {
+        fill.style.width = (audio.currentTime / duration) * 100 + '%';
+        timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      button.innerText = 'play';
+      fill.style.width = '0%';
+      cancelAnimationFrame(animationId);
+      const next = allBlocks[index + 1];
+      if (next) next.querySelector('.play-button')?.click();
+    });
+
+    const seek = (e) => {
+      const rect = progressContainer.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
+      const percent = Math.max(0, Math.min(1, x / rect.width));
+      audio.currentTime = percent * (isNaN(audio.duration) ? 0 : audio.duration);
+    };
+
+    const showTooltip = (e) => {
+      const rect = progressContainer.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const x = clientX - rect.left;
+      const percent = Math.max(0, Math.min(1, x / rect.width));
+      const time = percent * (isNaN(audio.duration) ? 0 : audio.duration);
+      tooltip.textContent = formatTime(time);
+      tooltip.style.left = `${x}px`;
+      tooltip.style.display = 'block';
+    };
+
+    const hideTooltip = () => { tooltip.style.display = 'none'; };
+
+    progressContainer.addEventListener('click', seek);
+    progressContainer.addEventListener('mousemove', showTooltip);
+    progressContainer.addEventListener('mouseleave', hideTooltip);
+    progressContainer.addEventListener('touchstart', (e) => { seek(e); showTooltip(e); });
+    progressContainer.addEventListener('touchmove', showTooltip);
+    progressContainer.addEventListener('touchend', hideTooltip);
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    canvas.addEventListener('dblclick', () => {
+      if (!document.fullscreenElement) canvas.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'f') {
+        if (!document.fullscreenElement) canvas.requestFullscreen().catch(()=>{});
+        else document.exitFullscreen();
+      }
+    });
+  });
+  </script>
+
+  <!-- BLOQUE NUEVO DE FUENTES: integra tus URLs sin tocar lo previo -->
+  <script>
+  Object.assign(media, {
+    /* 6 assets: 5 videos + 1 foto */
+    assets6: [
+      "https://attachments.are.na/38848469/366c0786a48e5a43eb9150a078a1c311.mov?1755478544",
+      "https://attachments.are.na/38848468/772ffb2ce4879ac2fc612cb2f9a8ba2c.mov?1755478542",
+      "https://attachments.are.na/38848467/2c75dd051ff4b1ec7153ef1a0c64340b.mov?1755478540",
+      "https://attachments.are.na/38848466/6dd8cdb3693c96379b1eea7ac372c9e7.mov?1755478540",
+      "https://attachments.are.na/38848465/e0be84095072e57de8dacfcdb8ac292f.mov?1755478539",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848464/original_7a5289810489086a0f13bc0181ead79b.jpg?1755478537?bc=0"
+    ],
+    /* Retícula 1 — 24 fotos */
+    images24a: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848577/original_ed8a97416a6fc08d87c4b03a0d1b1764.jpg?1755478838?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848578/original_51ab1483e7c2d4a4624dd83a29b88b73.jpg?1755478838?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848579/original_b0c5df327911d4516ac97b6f88f34bb2.jpg?1755478839?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848580/original_98fd33286019c8ff0b7fad014586960a.jpg?1755478837?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848581/original_2128f6f2452d68cc493ce4e07b47f264.jpg?1755478838?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848582/original_8a09782acb270f12a102cba7e25424c2.jpg?1755478838?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848583/original_52ea900f6196041a00bf99c4577ae207.jpg?1755478838?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848584/original_fce87665c69c3fd34eca44fe3da436a2.jpg?1755478839?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848585/original_b6c6b29814f3e868558b52d1e4dbf222.jpg?1755478853?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848586/original_0122e8982ea57823caa8b8024d32612e.jpg?1755478853?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848587/original_235e0ea10981727dc398cfcc22032c88.jpg?1755478854?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848588/original_d9bd96b4d66c4074bd1d72acf091995f.jpg?1755478853?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848589/original_5665428c9ff7dec53c76fce7d984d418.jpg?1755478854?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848590/original_477d89b5ba748ee8654c0303fc2314d9.jpg?1755478854?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848591/original_f2a18322eb557187c7561c0f71b05d0a.jpg?1755478854?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848592/original_b1dad68094832e7ef8f36d66a7832726.jpg?1755478854?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848593/original_79bc169ad29a591aa70aa601f94eafb5.jpg?1755478854?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848594/original_5ed44fd923feaba7ee44c86accb8bf7d.jpg?1755478855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848595/original_bfa0202e6bb354136be0081d6bbd89bb.jpg?1755478855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848596/original_c94c1c6bbaeb4be46b0ce00f39826b10.jpg?1755478855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848597/original_c3c616f31ea9c5ddd4c28cb8eda400ea.jpg?1755478855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848598/original_9731c693f4df808ab29c6a546c5ed04f.jpg?1755478855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848599/original_8cec0a806f430bdf6582e221a805de59.jpg?1755478855?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848600/original_ec45656103686f86fba95e8c50dcadc6.jpg?1755478855?bc=0"
+    ],
+    /* Galería T-shirt — 3 imágenes */
+    tshirts3: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848605/original_cf5857e30d10a5f1bc27282135070e5b.jpg?1755478857?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848604/original_630fe7c461791ca07b564fb414b18bef.jpg?1755478856?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848603/original_6e3a6b646334c1d14af5ae12347cd9ca.jpg?1755478856?bc=0"
+    ],
+    /* Retícula 2 — 24 fotos (primer tramo recibido + resto hasta 24 si aplica) */
+    images24b: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848609/original_abe03b27bed0ded8c0fcc8ecb8c62193.jpg?1755478860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848610/original_fe34f0ebe9c0040559781c31cf07849a.jpg?1755478860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848611/original_61d1c80af422a1ea581cc0a280c12ca6.jpg?1755478861?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848612/original_bff45985258ffb32d13d5677644d0d98.jpg?1755478860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848613/original_7b081867e6f288b0e999c0a3158cf4a8.jpg?1755478861?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848614/original_70ad9c4f0ab165ce6be739318b3638a1.jpg?1755478861?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848615/original_48174343f725f5d2c62fe40b8bceb918.jpg?1755478860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848616/original_75430abbf7875e90bc9a7215fbe9e7e4.jpg?1755478860?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848618/original_da4bc468c8f4611aece17d95895d1817.jpg?1755478861?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848619/original_a68545e3a56208e0f184d851516723d9.jpg?1755478862?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848620/original_730f25557e73e3dfe29b90a15c8b7bac.jpg?1755478862?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848621/original_6adc9d1a901d2e34afcc7013240c43e2.jpg?1755478862?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848622/original_178b48344d1d1123cbb66e1e0c4d0e7b.jpg?1755478863?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848623/original_26ebd9d0e87bfff86976054d6b06b825.jpg?1755478862?bc=0"
+    ],
+    /* A.E.I 2 — imágenes */
+    expAEI2: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848507/original_fe843f4911452f1347ed4d565d7d6a26.jpg?1755478752?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848508/original_877cf2ea2d7741ce6a2d1ebb6b8f4eba.jpg?1755478753?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848510/original_5197cd2bdaa0fd5c821a800a8ad31958.jpg?1755478754?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848511/original_aae0f69f8778c38d704a90a38b264093.jpg?1755478754?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848512/original_4d534c650ac663057253505b1f072f65.jpg?1755478755?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848513/original_296b1016f9c8e37099df7e3b6f9da94a.jpg?1755478755?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848514/original_1ec432abd0186d85c78c7e4b874361fc.jpg?1755478755?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848515/original_383b53b8f77f4239543068d2ed72877a.jpg?1755478755?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848516/original_d9ccb62f4284521034af2aceaf0d2671.jpg?1755478755?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848517/original_e2ccc9803f1489959dbfcebcb53fb9ba.jpg?1755478755?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848518/original_ad5d7ee1ca4ac2d047963e757d82f351.jpg?1755478756?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848519/original_a2a69812183d5b0f9186fb3d20914b92.jpg?1755478757?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848520/original_89388f17f1128b2cbdd53ae6af6c4429.jpg?1755478756?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848521/original_c831e4448f6d8d9d641c714f664ecdf4.jpg?1755478757?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848522/original_385606027363a33e65da74da0a4ba0b9.jpg?1755478757?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848523/original_0f228012c2aa9497289b5742df003f18.jpg?1755478758?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848524/original_40ffa05a44fb83902bee01dba5f17d39.jpg?1755478757?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848525/original_a49a2f55b51ab59ee06b6d1f3b3fa171.jpg?1755478758?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848527/original_eefcc2573fd4ce8fe2a93cdb37dbd82e.jpg?1755478759?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848528/original_ab2f3282df1a8e75183e5f7c07f58485.jpg?1755478759?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848529/original_29480fa2ce7c6865d8c71644dabdf3d7.jpg?1755478759?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848530/original_9756f9781498f8549f7d832a9d22e861.jpg?1755478759?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848531/original_bd5085ddcd850573913b397734ad88d3.jpg?1755478760?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848532/original_bdb9e954864003812d3a38e654a73a03.jpg?1755478759?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848533/original_b8b55f300811407f546d95dd3e1e5357.jpg?1755478761?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848534/original_5a17ac39146ee87513735e5c7ca7eb73.jpg?1755478760?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848535/original_ee84ba5b84aeadabade60728124a3e24.jpg?1755478761?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848536/original_da79b81142e14d1da26d22c8dd6fe868.jpg?1755478762?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848537/original_08d0bae1bea2de735115d88c5e1519ff.jpg?1755478761?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848538/original_e2555f23cb089fc3a6a28dff170f386c.jpg?1755478762?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848539/original_450021c52cbbe85b694457b1c6b9e344.jpg?1755478762?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848540/original_10d6e054314a30fc48d476733d714cc6.jpg?1755478763?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848541/original_7b2f569c5386db70f82367767a7bbae5.jpg?1755478763?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848542/original_f37fedc0502ea398643a50c9bb9560ed.jpg?1755478763?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848543/original_e385732f8305a5cdcd86c59040b9a529.jpg?1755478764?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848544/original_8b0ac3ea43bf3994161918554f9c630e.jpg?1755478764?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848545/original_a4e56664827efb8cd972f3b10147f8cd.jpg?1755478764?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848546/original_fd01ad1956d56411f6413850de826bbf.jpg?1755478764?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848547/original_462b24dd0073c4f66b42d2ca457176c8.jpg?1755478764?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848548/original_28542077c592e7b77a53a9153b7550f0.jpg?1755478764?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848561/original_d8d20eb12a3b486b297bb989be342278.jpg?1755478811?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848562/original_f1eed64fe25fa1e92d0aa18ea759efd6.jpg?1755478812?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848563/original_f95f72e982d378ac743f90f1c2d1139e.jpg?1755478812?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848564/original_148e40f055669b08e401547c46f98a4f.jpg?1755478812?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848565/original_9cb5265d9ada3e4154ec1fdf0c2a3499.jpg?1755478813?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848566/original_b7a8d6cab5b7c1727e40aa96fa023ac6.jpg?1755478813?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848567/original_c7313d793b73111dc6e02f3233d354d7.jpg?1755478813?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848568/original_4a5871cf2ee0846020366649c277b9b4.jpg?1755478813?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848569/original_a7bb6c2b26fadb7d9e28248a0d53435d.jpg?1755478813?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848570/original_f9e0d5dca21d5e500e055b9b75105fc0.jpg?1755478813?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848571/original_39b749b0546bc28c79082586d835096d.jpg?1755478814?bc=0",
+      "https://d2w9rnfcy7mm78.cloudfront.net/38848572/original_e221b284d80516c326b4a48b1d40f97f.jpg?1755478814?bc=0"
+    ]
+  });
+
+  // helpers para nuevas secciones
+  function renderCardsMixed(key, sources){
+    const wrap = document.querySelector(`[data-section="${key}"]`);
+    if(!wrap) return;
+    (sources||[]).filter(Boolean).forEach(url=>{
+      const fig=document.createElement('figure'); fig.className='card';
+      const box=document.createElement('div'); box.className='frame'; fig.appendChild(box);
+      if(/\.(mp4|mov)(\?|$)/i.test(url)){
+        const v=document.createElement('video');
+        wireVideoEl(v,{autoplay:true});
+        v.controls=false; v.dataset.src=url; box.appendChild(v);
+        ioLoad.observe(v); autoPlayOnVisible(v);
+        v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+        fig.addEventListener('click', ()=> openLightboxSingle({type:'video', url}));
+      }else{
+        const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url; box.appendChild(img);
+        img.addEventListener('load',()=> setAspectFromVideo({videoWidth:img.naturalWidth, videoHeight:img.naturalHeight, closest:sel=>fig.querySelector(sel)}),{once:true});
+        fig.addEventListener('click', ()=> openLightboxSingle({type:'img', url}));
+      }
+      wrap.appendChild(fig);
+      requestAnimationFrame(()=> fig.classList.add('ready'));
+    });
+  }
+
+  // mapea desde assets6 como en s+js23 (flyer + walkthrough)
+media.flyer = [ media.assets6[0] ];                 // 1º asset como flyer
+media.walkthrough = media.assets6.slice(1, 5);      // 2º–5º como recorridos
+
+
+  // render de los nuevos bloques
+  renderCardsMixed('assets6', media.assets6);
+  renderTightGrid('images24a', media.images24a, false);
+  renderCardsMixed('tshirts3', media.tshirts3);
+  renderTightGrid('images24b', media.images24b, false);
+  renderAEI(document.getElementById('aeiStage2'), document.getElementById('aeiLines2'), media.expAEI2||[]);
+  </script>
+  <script>
+  // fallback: si hay videos sin src, cárgalos al entrar a la página
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#assets6 video[data-src]').forEach(v => {
+      if (!v.src) { v.src = v.dataset.src; v.load(); }
+    });
+  });
+</script>
+<script>
+/* ajuste de tamaño del lightbox según el aspecto real del medio */
+(function(){
+  const lb = document.getElementById('lightbox');
+  const surface = lb.querySelector('.lb-surface');
+  const figure = document.getElementById('lbFigure');
+
+  function fitLBSurfaceByMedia(el){
+    if (!el) return;
+    const w = el.videoWidth || el.naturalWidth || 1280;
+    const h = el.videoHeight || el.naturalHeight || 720;
+    const vw = Math.min(innerWidth * 0.92, innerWidth - 16);
+    const vh = Math.min(innerHeight * 0.92, innerHeight - 16);
+    let W = vw, H = W * (h / w);
+    if (H > vh) { H = vh; W = H * (w / h); }
+    surface.style.width = W + 'px';
+    surface.style.height = H + 'px';
+  }
+
+  // reenvuelve renderLB para ajustar tamaño tras pintar el medio
+  const _renderLB = window.renderLB;
+  window.renderLB = function(){
+    _renderLB && _renderLB();
+    const el = figure.firstElementChild;
+    if (!el) return;
+    if (el.tagName === 'VIDEO') {
+      if (el.readyState >= 1) fitLBSurfaceByMedia(el);
+      else el.addEventListener('loadedmetadata', () => fitLBSurfaceByMedia(el), { once:true });
+    } else {
+      if (el.complete) fitLBSurfaceByMedia(el);
+      else el.addEventListener('load', () => fitLBSurfaceByMedia(el), { once:true });
+    }
+  };
+
+  // reajusta en resize
+  window.addEventListener('resize', () => {
+    if (lb.classList.contains('open')) fitLBSurfaceByMedia(figure.firstElementChild);
+  });
+
+  // limpia estilos al cerrar
+  const _closeLB = window.closeLightbox;
+  window.closeLightbox = function(){
+    _closeLB && _closeLB();
+    surface.style.width = '';
+    surface.style.height = '';
+  };
+})();
+</script>
+</body>
+</html>
