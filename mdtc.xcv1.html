@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>xcv1 — xpan — mdtc</title>
+
+  <!-- conexiones previas -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+  <style>
+    :root{
+      --bg:#ffffff; --fg:#0a0a0a; --line:rgba(0,0,0,.10);
+      --radius:14px; --gap:.8rem; --gap-lg:1rem;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --tile-max-h:72vh;
+      --aei-block:140px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:"Times New Roman", serif; }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:auto; }
+    body{ overflow-x:hidden; }
+
+    header{ position:fixed; top:1rem; left:1rem; z-index:30; }
+    header img{ width:50px; height:auto; display:block; }
+
+    .language-selector{ position:fixed; top:1rem; right:1rem; z-index:35; font-size:.9rem; text-transform:lowercase; letter-spacing:.02em; }
+    .language-selector button{ background:none; border:none; margin-left:.6rem; cursor:pointer; color:#000; opacity:.55; transition:opacity .2s var(--ease), text-decoration-color .2s var(--ease); text-decoration:underline transparent; text-underline-offset:3px; }
+    .language-selector button.active, .language-selector button:hover{ opacity:.9; text-decoration-color:#000; }
+
+    main{ max-width:1440px; margin:72px auto 5rem; padding:0 1.25rem; }
+    main{ margin-top:124px !important; }
+
+    .lang h1{ font-size:clamp(1.2rem, 2.2vw, 1.6rem); margin:0 0 .3rem; text-transform:lowercase; letter-spacing:.01em; }
+    .meta{ font-size:.96rem; opacity:.8; font-style:italic; margin:0 0 1.35rem; }
+    .description{ font-size:1rem; line-height:1.65; max-width:980px; margin-bottom:2.2rem; }
+    .section{ margin:2.2rem 0; content-visibility:auto; contain-intrinsic-size:1px 800px; padding-top:1.2rem; border-top:1px solid var(--line); }
+    .sr-only{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; opacity:0; transform:translateY(6px); transition:opacity .38s var(--ease), transform .5s var(--ease); }
+    .card.ready{ opacity:1; transform:none; }
+
+    .frame{ position:relative; background:#fff; }
+    .frame::before,
+    .media-box::before { content:none !important; }
+    .frame > *,
+    .media-box > * { position:static !important; width:auto !important; height:auto !important; max-width:100%; object-fit:contain; }
+    .frame > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    @media (hover:hover){
+      .card:hover .frame > *{ transform:scale(1.006); transition:transform .5s var(--ease); }
+      .card:active{ transform:translateY(1px); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .card{ transition:none; }
+      .card:hover .frame > *{ transform:none !important; }
+    }
+
+    .grid{ display:grid; gap:var(--gap); }
+    .grid.uniform-3{ grid-template-columns: repeat(3, 1fr); }
+    @media (max-width:1100px){ .grid.uniform-3{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width:640px){ .grid.uniform-3{ grid-template-columns: 1fr; } }
+
+    .tight-wrap{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .tight-grid{ display:grid; gap:0; }
+    .tight-grid.cols-6{ grid-template-columns: repeat(6, 1fr); }
+    .tight-grid.cols-5{ grid-template-columns: repeat(5, 1fr); }
+    .tight-grid.cols-4{ grid-template-columns: repeat(4, 1fr); }
+    @media (max-width:1100px){
+      .tight-grid.cols-6{ grid-template-columns: repeat(5, 1fr); }
+      .tight-grid.cols-5{ grid-template-columns: repeat(4, 1fr); }
+      .tight-grid.cols-4{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width:640px){
+      .tight-grid.cols-6{ grid-template-columns: repeat(3, 1fr); }
+      .tight-grid.cols-5{ grid-template-columns: repeat(3, 1fr); }
+      .tight-grid.cols-4{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .tight-item{ position:relative; background:#fff; }
+    .tight-item .media-box{ position:relative; }
+    .tight-item .media-box::before{ content:""; display:block; aspect-ratio:var(--ar, 4/3); }
+    .tight-item .media-box > *{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; }
+
+    /* lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:50}
+    .lightbox.open{display:flex}
+    .lb-surface{position:relative;max-width:92vw;max-height:92vh;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.08);overflow:hidden}
+    .lb-media{display:block;width:100%;height:100%;object-fit:contain;background:#fff;touch-action:manipulation}
+
+    /* a.e.i */
+    .aei-embed{ position:relative; width:100%; min-height:60vh; background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .aei-stage{ position:relative; width:100%; height:100%; min-height:60vh; touch-action:none; }
+    .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .aei-block{ width:var(--aei-block); height:var(--aei-block); position:absolute; opacity:.72; transition:opacity .25s var(--ease); cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; touch-action:none; }
+    .aei-block:active{ cursor:grabbing; }
+    .aei-block:hover{ opacity:.9; z-index:5; }
+    .aei-block img, .aei-block video{ max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; background:#fff; }
+    .aei-hint{ display:none !important; }
+
+    [data-lazy-section]{ content-visibility:auto; contain-intrinsic-size:1px 1000px; }
+
+    /* merch en 9:16 */
+    [data-section="merch3"] .media-box::before{ aspect-ratio:9/16; }
+    [data-section="merch3"] .media-box > img{ object-fit:cover; }
+
+  </style>
+
+  <!-- proxy/optimización -->
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="/" aria-label="xpan"><img src="xpan.svg" alt="xpan" fetchpriority="high"></a>
+  </header>
+
+  <div class="language-selector" role="navigation" aria-label="selector de idioma">
+    <button data-lang="es" class="active" aria-pressed="true">es</button>
+    <button data-lang="en" aria-pressed="false">en</button>
+    <button data-lang="fr" aria-pressed="false">fr</button>
+    <button data-lang="jp" aria-pressed="false">jp</button>
+  </div>
+
+  <main>
+    <!-- ES -->
+    <section class="lang lang-es">
+      <h1>xcv1</h1>
+      <div class="meta">noviembre 2022 — nueva york</div>
+      <div class="description">
+        xcv1 [xpan collaborations volume 1] fue la primera colaboración internacional de xpan, realizada en studio guapo (manhattan, nyc) con matt pecina.
+        para esta edición, studio guapo intervino nuestra bocina mdl.1, generando un modelo único de la serie mdl.c y construyendo con ella una instalación espacial.
+        la activación incluyó un performance en vivo de josh allen y, presentada por nyxo records, sumó otro performance de isaiah barr y salomon faye.
+        xcv1 operó como un punto de convergencia entre prácticas sonoras, diseño espacial y la comunidad artística de nueva york, consolidando un primer nodo de colaboración que abrió el camino para ediciones posteriores de la serie xcv.
+      </div>
+    </section>
+
+    <!-- EN -->
+    <section class="lang lang-en" style="display:none;">
+      <h1>xcv1</h1>
+      <div class="meta">november 2022 — new york</div>
+      <div class="description">
+        xcv1 [xpan collaborations volume 1] was xpan’s first international collaboration, held at studio guapo (manhattan, nyc) with matt pecina.
+        for this edition, studio guapo intervened our mdl.1 speaker, creating a unique mdl.c model and building a spatial installation with it.
+        the activation included a live performance by josh allen and, presented by nyxo records, an additional performance by isaiah barr and salomon faye.
+        xcv1 operated as a convergence point between sound practice, spatial design, and new york’s art community, establishing the first collaboration node that paved the way for later xcv editions.
+      </div>
+    </section>
+
+    <!-- FR -->
+    <section class="lang lang-fr" style="display:none;">
+      <h1>xcv1</h1>
+      <div class="meta">novembre 2022 — new york</div>
+      <div class="description">
+        xcv1 [xpan collaborations volume 1] a été la première collaboration internationale de xpan, réalisée à studio guapo (manhattan, nyc) avec matt pecina.
+        pour cette édition, studio guapo a intervenu notre enceinte mdl.1, produisant un modèle unique de la série mdl.c et composant une installation spatiale.
+        l’activation a inclus une performance live de josh allen et, présentée par nyxo records, une autre performance d’isaiah barr et salomon faye.
+        xcv1 a servi de point de convergence entre pratiques sonores, design spatial et communauté artistique new-yorkaise, posant le premier nœud de collaboration qui a ouvert la voie aux éditions suivantes de la série xcv.
+      </div>
+    </section>
+
+    <!-- JP -->
+    <section class="lang lang-jp" style="display:none;">
+      <h1>xcv1</h1>
+      <div class="meta">2022年11月 — ニューヨーク</div>
+      <div class="description">
+        xcv1［xpan collaborations volume 1］は、studio guapo（マンハッタン、NYC／matt pecina）で行った、xpan による最初の国際コラボレーションです。
+        本エディションでは、studio guapo が当方のスピーカー mdl.1 を介入し、シリーズ mdl.c のユニークなモデルを制作し、それを用いた空間インスタレーションを構成しました。
+        アクティベーションでは josh allen のライブに加え、nyxo records のプレゼンテーションとして isaiah barr と salomon faye のパフォーマンスも行われました。
+        xcv1 は、サウンドの実践・空間デザイン・ニューヨークのアートコミュニティが交差する結節点として機能し、以後の xcv エディションへの道を開いた最初のノードとなりました。
+      </div>
+    </section>
+
+    <!-- ——— RETÍCULA 1 (12 ítems) ——— -->
+    <section class="section" id="reticula1" data-lazy-section>
+      <h2 class="sr-only">retícula 1 — 12 imágenes</h2>
+      <div class="tight-wrap">
+        <div class="tight-grid cols-6" data-section="images12a" data-initial="12"></div>
+      </div>
+    </section>
+
+    <!-- ——— FLYERS (4 imágenes, discreto) ——— -->
+    <section class="section" id="flyers" data-lazy-section>
+      <h2 class="sr-only">flyers — 4 imágenes</h2>
+      <div class="tight-wrap">
+        <div class="tight-grid cols-4" data-section="flyers4" data-initial="4"></div>
+      </div>
+    </section>
+
+    <!-- ——— RETÍCULA 2 (14 ítems) ——— -->
+    <section class="section" id="reticula2" data-lazy-section>
+      <h2 class="sr-only">retícula 2 — 14 imágenes</h2>
+      <div class="tight-wrap">
+        <div class="tight-grid cols-6" data-section="images14b" data-initial="14"></div>
+      </div>
+    </section>
+
+    <!-- ——— MERCH (3 imágenes 9:16) ——— -->
+    <section class="section" id="merch" data-lazy-section>
+      <h2 class="sr-only">merch — 3 imágenes</h2>
+      <div class="grid uniform-3" data-section="merch3"></div>
+    </section>
+
+    <!-- ——— A.E.I EMBEBIDO ——— -->
+    <section class="section" id="exp_aei" aria-label="a.e.i embebido" data-lazy-section>
+      <h2 class="sr-only">galería experimental — a.e.i embebido</h2>
+      <div class="aei-embed" id="aeiEmbed">
+        <svg class="aei-lines" id="aeiLines"></svg>
+        <div class="aei-stage" id="aeiStage" aria-label="escena a.e.i"></div>
+        <div class="aei-hint" aria-hidden="true">toca/arrastra para pausar · tap/drag to pause</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <div class="lb-surface">
+      <figure id="lbFigure" style="margin:0"></figure>
+    </div>
+  </div>
+
+  <script>
+    /* idioma */
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el=>{
+        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn=>{
+        const on = btn.dataset.lang===lang; btn.classList.toggle('active', on); btn.setAttribute('aria-pressed', on);
+      });
+    }
+    document.querySelector('.language-selector').addEventListener('click', (e)=>{
+      const b = e.target.closest('button[data-lang]'); if(!b) return; setLang(b.dataset.lang);
+    });
+
+const media = {
+  images12a: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871436/original_55b9b2aaf7f1550a6f6c20df53911576.png?1755561985?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871434/original_767340c0ee17538619fc51010d3e9467.png?1755561981?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871433/original_322f2582598fea19346fcdd21433dcc5.png?1755561981?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871429/original_c447903bd7654e8c44fbab7de19e6eae.jpg?1755561974?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871428/original_f5cb20d67f6a53defb5a35df5516ebcf.jpg?1755561967?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871424/original_8d6647fbcd5b0d51980c98be4e46726b.png?1755561965?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871422/original_b82a46b4369576afadcea3b49b94f737.jpg?1755561959?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871435/original_bcbc21e62b94ce76eaa12ffdae0c24fa.png?1755561982?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871417/original_194bd344e6529af8166118c8ad9b399b.jpg?1755561953?bc=0",
+  ],
+  flyers4: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871403/original_bd806510b98d07fa367df0e6a176b83b.jpg?1755561933?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871410/original_69ca867f7351743a5b193aef80c35baf.jpg?1755561937?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871402/original_75616d91954d5392cd63fdff303cbfa7.jpg?1755561933?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871401/original_2d7f759fc731bc78bb679b6b5e8d7997.jpg?1755561932?bc=0"
+  ],
+  images14b: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871413/original_d931be8ecf00a2802ec85a25277dcbfe.png?1755561945?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871408/original_e07a8e3499a2029fa07ed80876862954.png?1755561936?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871406/original_995934ce66649c1fec1d0eca8d22d42d.png?1755561934?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871398/original_57fac2d614de9882512588737f353f96.png?1755561927?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871396/original_970884a3c6b1c91ad0edd70bcbe673c4.png?1755561918?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871395/original_110ed111b2257041f1ba4b3574c91b8c.jpg?1755561917?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871393/original_0f209618d2d2366eedd20c6e4db0b99d.jpg?1755561915?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871392/original_ef2bc99e87136b856215cee2d120a3f9.jpg?1755561912?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871391/original_d2701da2e0a0c1c642622191527c8124.jpg?1755561912?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871390/original_569119cbe890185dec045fc7aafcc347.jpg?1755561909?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871389/original_ce77f2454732f080e66ac4ed87b95d30.png?1755561908?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871378/original_e189e353e10b94e008cffea9992f26c0.jpg?1755561894?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871377/original_8f9623e8f1034c77bc804df8cbc7fdec.jpg?1755561894?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871376/original_47da7623f1b367a56c005951ea5e966a.jpg?1755561894?bc=0"
+  ],
+  merch3: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871370/original_0d0e187ec1fc3ad7a766b859e36c857b.jpg?1755561886?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871371/original_2c156f4d53f52747831a87efc6ff08b9.jpg?1755561887?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871372/original_ea8e32f56e960f6e50421efe1fd2ce1c.jpg?1755561887?bc=0"
+  ],
+  expAEI: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871325/original_d675f80b6f9f584474ac742f7072fa14.jpg?1755561749?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871327/original_527924643fc5b170825572e16da3df2b.jpg?1755561757?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871333/original_455e0d3714fbb6306c7582ee22a94946.jpg?1755561774?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871334/original_11d8bd47dedc852e0c75ac4cd55ae58f.jpg?1755561774?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871335/original_7e8615b041105e602b679a5b95409086.jpg?1755561775?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871338/original_f7582d94a0cca67158f0133168977fd3.jpg?1755561786?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871340/original_3effcc730abb00f744f91a61653630d1.png?1755561788?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871341/original_e2fa57d00d6a5576fa166f1d53b96c9b.jpg?1755561801?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871343/original_825b7cea352c931b95c3da477a8c0cd2.jpg?1755561803?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871344/original_d582f7fa519d3e25d7841bd8df740fbb.jpg?1755561804?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871346/original_051dba53202593611485fb75051cd191.jpg?1755561808?bc=0",
+    "https://d2w9rnfcy7mm78.cloudfront.net/38871348/original_4be7bb5b1827d832150c99b06ad517fc.png?1755561809?bc=0",
+    "https://attachments.are.na/38871359/7e1a846aba78735ec54a3e8c07eb5b73.mp4?1755561842",
+    "https://attachments.are.na/38871363/ef0a271b3f0b1bc63e706417ccdf071b.mov?1755561855"
+  ]
+};
+
+
+    const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+    const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+    function wireVideoEl(v, {autoplay=true}={}){
+      v.muted = true; v.loop = true; v.autoplay = !!autoplay; v.playsInline = true;
+      v.preload = 'none'; v.poster = BLANK_POSTER;
+      v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+      if(autoplay) v.setAttribute('autoplay','');
+    }
+
+    const MAX_CONCURRENT = 4;
+    let activeLoads = 0;
+    const loadQueue = [];
+    function scheduleVideoLoad(el, url){ loadQueue.push({el,url}); pumpLoads(); }
+    function pumpLoads(){
+      while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+        const {el,url}=loadQueue.shift();
+        activeLoads++;
+        el.src=url; el.preload='metadata';
+        const done=()=>{ activeLoads--; pumpLoads(); };
+        el.addEventListener('loadedmetadata',done,{once:true});
+        el.addEventListener('error',done,{once:true});
+        el.load();
+      }
+    }
+
+    const ioLoad=new IntersectionObserver((entries,obs)=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const v=en.target;
+        if(v.dataset.src && !v.src){
+          scheduleVideoLoad(v, v.dataset.src);
+          v.addEventListener('loadedmetadata', ()=>{
+            setAspectFromVideo(v);
+            v.closest('.card, .tight-item')?.classList.add('ready');
+          },{once:true});
+        }
+        obs.unobserve(v);
+      });
+    },{rootMargin:'600px 0px', threshold:.08});
+
+    function setAspect(el, w, h){
+      const wrapper = el.closest('.frame, .media-box');
+      if(wrapper){ wrapper.style.setProperty('--ar', `${w}/${h}`); }
+    }
+    function setAspectFromVideo(video){ setAspect(video, video.videoWidth||4, video.videoHeight||3); }
+
+    function makeVideo(url,{tight=false}={}){
+      const container=tight?document.createElement('div'):document.createElement('figure');
+      container.className=tight?'tight-item':'card';
+      const box=document.createElement('div'); box.className=tight?'media-box':'frame';
+      container.appendChild(box);
+      const v=document.createElement('video');
+      wireVideoEl(v,{autoplay:true});
+      v.controls=false; v.dataset.src=url;
+      box.appendChild(v);
+      ioLoad.observe(v);
+      autoPlayOnVisible(v);
+      (function r(){ v.play().catch(()=> setTimeout(r,250)); })();
+      if(!tight){ container.addEventListener('click', ()=> openLightboxSingle({type:'video', url})); }
+      return container;
+    }
+
+    function autoPlayOnVisible(video){
+      function tryPlay(){ video.play().catch(()=>{}); }
+      const vio=new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+      },{threshold:.12});
+      vio.observe(video);
+      const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+    }
+
+    function renderTightGrid(key, sources, isVideo){
+      const wrap=document.querySelector(`[data-section="${key}"]`); if(!wrap) return;
+      (sources||[]).filter(Boolean).forEach(url=>{
+        const item=document.createElement('div'); item.className='tight-item';
+        const box=document.createElement('div'); box.className='media-box'; item.appendChild(box);
+        if(isVideo){
+          const v=document.createElement('video');
+          wireVideoEl(v,{autoplay:true});
+          v.controls=false; v.dataset.src=url; box.appendChild(v);
+          ioLoad.observe(v);
+          autoPlayOnVisible(v);
+          v.addEventListener('loadedmetadata',()=> setAspectFromVideo(v),{once:true});
+        }else{
+          const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+          box.appendChild(img);
+          img.addEventListener('load',()=> setAspectFromVideo({videoWidth:img.naturalWidth, videoHeight:img.naturalHeight, closest:sel=>item.querySelector(sel)}),{once:true});
+        }
+        wrap.appendChild(item);
+      });
+    }
+
+    /* lightbox */
+    const lb=document.getElementById('lightbox');
+    const lbFigure=document.getElementById('lbFigure');
+    let galleryItems=[], galleryIndex=0;
+
+    function openLightbox(items, index=0){
+      galleryItems=items||[];
+      galleryIndex=Math.max(0, Math.min(index, galleryItems.length-1));
+      lbFigure.innerHTML='';
+      renderLB();
+      lb.classList.add('open');
+      document.documentElement.style.overflow = 'hidden';
+    }
+    function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; document.documentElement.style.overflow=''; }
+    function renderLB(){
+      const item=galleryItems[galleryIndex]; if(!item) return;
+      lbFigure.innerHTML='';
+      const el=document.createElement(item.type==='img'?'img':'video');
+      el.className='lb-media';
+      if(item.type==='img'){ el.alt=''; el.decoding='async'; el.loading='eager'; el.src=item.url; }
+      else{
+        el.controls=false; el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+        el.loop=true; el.preload='metadata'; el.src=item.url;
+        el.addEventListener('loadedmetadata',()=>{ el.play().catch(()=>{}); },{once:true});
+      }
+      lbFigure.appendChild(el);
+    }
+    function nextLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex+1)%galleryItems.length; renderLB(); }
+    function prevLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex-1+galleryItems.length)%galleryItems.length; renderLB(); }
+
+    lb.addEventListener('click', e=>{ if(e.target===lb) closeLightbox(); }, {capture:true});
+    lb.addEventListener('touchend', e=>{ if(e.target===lb) closeLightbox(); }, {capture:true, passive:false});
+    window.addEventListener('keydown', e=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') return closeLightbox();
+      if(e.key===' ' || e.key==='Spacebar' || e.key==='ArrowRight') return nextLB();
+      if(e.key==='ArrowLeft') return prevLB();
+    });
+
+    function openLightboxGroup(key, index){
+      const arr=(media[key]||[]).map(url=>({type:/\.(mp4|mov)(\?|$)/i.test(url)?'video':'img', url}));
+      openLightbox(arr, index);
+    }
+    function openLightboxSingle(item){ openLightbox([item], 0); }
+
+    function wireGallery(key, selector){
+      const wrap=document.querySelector(selector); if(!wrap) return;
+      wrap.addEventListener('click', e=>{
+        const item=e.target.closest('.tight-item'); if(!item) return;
+        const items=Array.from(wrap.querySelectorAll('.tight-item'));
+        const index=items.indexOf(item); if(index<0) return;
+        openLightboxGroup(key, index);
+      });
+    }
+
+    /* a.e.i */
+    function renderAEI(stage, linesSVG, urls){
+      const blocks=[], MAX_AT_ONCE=Math.min(urls.length,42);
+      let idx=0, paused=false;
+
+      const pauseOn=()=> paused=true, resume=()=> paused=false;
+      stage.addEventListener('mouseenter',pauseOn);
+      stage.addEventListener('mouseleave',resume);
+      stage.addEventListener('touchstart',pauseOn,{passive:true});
+      stage.addEventListener('touchend',resume);
+
+      function addNext(){
+        if(idx>=MAX_AT_ONCE) return;
+        const url=urls[idx++], block=document.createElement('div');
+        block.className='aei-block';
+        let el;
+        if(/\.(mp4|mov)(\?|$)/i.test(url)){
+          el=document.createElement('video');
+          wireVideoEl(el,{autoplay:true});
+          el.dataset.src=url; block.appendChild(el); stage.appendChild(block);
+          ioLoad.observe(el); autoPlayOnVisible(el);
+        }else{
+          el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.src=url;
+          block.appendChild(el); stage.appendChild(block);
+        }
+        const rect=stage.getBoundingClientRect();
+        const bw=parseFloat(getComputedStyle(block).width), bh=parseFloat(getComputedStyle(block).height);
+        block.x=Math.random()*Math.max(10,rect.width-bw);
+        block.y=Math.random()*Math.max(10,rect.height-bh);
+        block.vx=(Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
+        updateBlockTransform(block);
+        makeDraggable(block);
+        blocks.push(block);
+        setTimeout(addNext,45);
+      }
+      addNext();
+
+      function updateBlockTransform(b){ b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; }
+      function clampToStage(b){
+        const rect=stage.getBoundingClientRect();
+        const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+        b.x=Math.min(Math.max(0,b.x), Math.max(0,rect.width-bw));
+        b.y=Math.min(Math.max(0,b.y), Math.max(0,rect.height-bh));
+      }
+
+      function makeDraggable(el){
+        let isDragging=false,lastX=0,lastY=0;
+        const move=(cx,cy)=>{
+          const dx=cx-lastX, dy=cy-lastY;
+          el.x+=dx; el.y+=dy; clampToStage(el); updateBlockTransform(el);
+          lastX=cx; lastY=cy; drawLines();
+        };
+        el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true;paused=true;lastX=e.clientX;lastY=e.clientY;});
+        window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
+        window.addEventListener('mouseup',()=>{isDragging=false;paused=false;});
+
+        el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;paused=true;lastX=t.clientX;lastY=t.clientY;},{passive:true});
+        el.addEventListener('touchmove',e=>{if(!isDragging) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY);},{passive:false});
+        el.addEventListener('touchend',()=>{isDragging=false;paused=false;});
+      }
+
+      function step(){
+        if(!paused){
+          const rect=stage.getBoundingClientRect();
+          for(const b of blocks){
+            b.x+=b.vx; b.y+=b.vy;
+            const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+            if(b.x<0 || b.x>rect.width-bw) b.vx*=-1;
+            if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
+            clampToStage(b); updateBlockTransform(b);
+          }
+          if(!nextLineTick || performance.now()>nextLineTick){ generateLines(); nextLineTick=performance.now()+(120+Math.random()*480); }
+        }
+        drawLines();
+        requestAnimationFrame(step);
+      }
+      let currentPairs=[], nextLineTick=0;
+      function generateLines(){
+        currentPairs=[];
+        for(let i=0;i<blocks.length;i++){
+          for(let j=i+1;j<blocks.length;j++){
+            if(Math.random()<0.08) currentPairs.push([blocks[i],blocks[j]]);
+          }
+        }
+      }
+      function centerOf(b){ const r=b.getBoundingClientRect(); return [b.x+r.width/2, b.y+r.height/2]; }
+      function drawLines(){
+        linesSVG.innerHTML='';
+        for(const [a,b] of currentPairs){
+          const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+          const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+          line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+          line.setAttribute('stroke','#000'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
+          linesSVG.appendChild(line);
+        }
+      }
+      step();
+
+      window.addEventListener('resize',()=>{ for(const b of blocks){ clampToStage(b); updateBlockTransform(b); } },{passive:true});
+    }
+
+    const pauseIO=new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ const v=en.target; if(!en.isIntersecting) v.pause(); else v.play().catch(()=>{}); });
+    },{threshold:.05});
+    const watch=setInterval(()=>{
+      document.querySelectorAll('.tight-item video, .frame video').forEach(v=> pauseIO.observe(v));
+      if(document.querySelectorAll('.tight-item video, .frame video').length>0) clearInterval(watch);
+    },160);
+
+    (function idleWarmup(){
+      if(!('requestIdleCallback' in window)) return;
+      const warm=()=>requestIdleCallback(()=>{
+        document.querySelectorAll('video[data-src]').forEach(v=>{ if(!v.src) scheduleVideoLoad(v, v.dataset.src); });
+      },{timeout:1500});
+      document.addEventListener('DOMContentLoaded',warm,{once:true});
+      window.addEventListener('load',warm,{once:true});
+    })();
+
+    /* render de secciones */
+    function renderAll(){
+      renderTightGrid('images12a', media.images12a, false);
+      renderTightGrid('flyers4',   media.flyers4,   false);
+      renderTightGrid('images14b', media.images14b, false);
+
+      // merch3 en grid .uniform-3
+      const merchWrap=document.querySelector('[data-section="merch3"]');
+      (media.merch3||[]).forEach(url=>{
+        const fig=document.createElement('figure'); fig.className='card ready';
+        const frame=document.createElement('div'); frame.className='frame'; fig.appendChild(frame);
+        const img=document.createElement('img'); img.alt=''; img.decoding='async'; img.loading='lazy'; img.src=url;
+        frame.appendChild(img);
+        merchWrap.appendChild(fig);
+      });
+
+      // lightbox wiring
+      wireGallery('images12a','[data-section="images12a"]');
+      wireGallery('flyers4','[data-section="flyers4"]');
+      wireGallery('images14b','[data-section="images14b"]');
+      wireGallery('merch3','[data-section="merch3"]');
+
+      // a.e.i
+      renderAEI(document.getElementById('aeiStage'), document.getElementById('aeiLines'), media.expAEI||[]);
+    }
+
+    setLang(localStorage.getItem('lang') || 'es');
+    renderAll();
+  </script>
+</body>
+</html>

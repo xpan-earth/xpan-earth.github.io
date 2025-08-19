@@ -196,9 +196,6 @@
 @media (max-width:640px){ #assets6 .grid.uniform-3{ grid-template-columns:1fr; } }
 
 /* corrige grid en escritorio SOLO para assets6 */
-#assets6 .grid.uniform-3{
-  align-items:start !important;   /* no forzar alturas iguales */
-}
 #assets6 .grid.uniform-3 .card{
   height:auto !important;         /* deja que el ::before marque la altura */
 }
@@ -685,11 +682,6 @@
     function closeLightbox(){ lb.classList.remove('open'); lbFigure.innerHTML=''; }
     function nextLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex+1)%galleryItems.length; renderLB(); }
     function prevLB(){ if(!galleryItems.length) return; galleryIndex=(galleryIndex-1+galleryItems.length)%galleryItems.length; renderLB(); }
-
-    lb.addEventListener('click', e=>{
-      const insideMedia = e.target.closest('#lbFigure');
-      if(insideMedia){ closeLightbox(); } else if(e.target===lb){ closeLightbox(); }
-    });
 
     window.addEventListener('keydown', e=>{
       if(!lb.classList.contains('open')) return;
