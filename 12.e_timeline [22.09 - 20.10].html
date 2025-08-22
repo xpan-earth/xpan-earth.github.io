@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xpan — 12.e ls timeline [ 22.09 - 20.10 ]</title>
+  <style>
+    /* base */
+    :root { --fg:#000; --bg:#fff; --line:#000; }
+    *{ box-sizing:border-box }
+    body{
+      margin:0;
+      font-family:"Times New Roman", serif;
+      background:var(--bg);
+      color:var(--fg);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    header{
+      position:fixed;
+      top:1rem;
+      left:1rem;
+      z-index:10;
+    }
+    header img{ width:50px; height:auto; display:block }
+
+    .timeline{
+      position:relative;
+      max-width:700px;
+      margin:6rem auto 10rem auto;
+      padding-left:3.5rem;
+      padding-right:1rem;
+      contain:layout paint;
+    }
+
+    /* línea vertical */
+    .line{
+      position:absolute;
+      top:0; bottom:0;
+      left:1.5rem;
+      width:3px;
+      background:var(--line);
+      border-radius:2px;
+      animation:pulseLine 3s infinite;
+      z-index:1;
+    }
+    @keyframes pulseLine{
+      0%{opacity:1}
+      50%{opacity:.3}
+      100%{opacity:1}
+    }
+
+    .entry{
+      position:relative;
+      max-width:650px;
+      margin-bottom:4rem;
+      padding-left:3.5rem;
+      opacity:0;
+      transform:translateY(-40px) scale(.9);
+      transition:opacity .8s ease, transform .8s ease;
+      text-align:justify;
+    }
+    .entry.visible{
+      opacity:1;
+      transform:translateY(0) scale(1);
+    }
+
+    /* punto circular */
+    .entry::before{
+      content:"";
+      position:absolute;
+      top:.8rem; left:0;
+      width:16px; height:16px;
+      background:#000;
+      border-radius:50%;
+      border:3px solid #fff;
+      z-index:2;
+    }
+
+    .entry h2{
+      margin:0 0 .3rem 0;
+      font-size:1rem;
+      font-weight:normal;
+      line-height:1.2;
+      text-transform:lowercase;
+    }
+    .entry h3{
+      margin:0 0 .6rem 0;
+      font-size:1.3rem;
+      font-style:italic;
+      font-weight:normal;
+      line-height:1.2;
+      text-transform:lowercase;
+    }
+    .entry p{
+      margin:0;
+      font-size:1rem;
+      white-space:pre-wrap;
+    }
+
+    /* móviles */
+    @media (max-width:600px){
+      .timeline{ max-width:90vw; padding-left:2.5rem; padding-right:1rem }
+      .line{ left:1rem; width:2.5px }
+      .entry{ max-width:100%; padding-left:2.5rem; margin-bottom:3rem; font-size:.95rem }
+      .entry::before{ width:14px; height:14px; top:.7rem; border-width:2.5px; left:0 }
+      .entry h2{ font-size:.95rem }
+      .entry h3{ font-size:1.1rem }
+      .entry p{ font-size:.95rem }
+    }
+
+    /* accesibilidad: reduce motion */
+    @media (prefers-reduced-motion:reduce){
+      .line{ animation:none }
+      .entry{ transition:none; transform:none; opacity:1 }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan home">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+
+  <div class="timeline" id="timeline">
+    <div class="line" aria-hidden="true"></div>
+
+    <!-- ls.43 -->
+    <div class="entry" style="transition-delay:.6s">
+      <h2>ls.43 — 22.sep.25</h2>
+      <h3>meredith monk — dolmen music</h3>
+      <p>dolmen music articula un sistema vocal no narrativo. meredith monk emplea la voz como material primario, despojado de semántica. los gestos vocales operan como arquitectura rítmica, como textura corporal y como signo abstracto. la obra combina ensamble vocal e instrumentación mínima en una lógica de bloques. no se orienta al desarrollo melódico, sino a la acumulación de timbres y repeticiones. su relevancia técnica está en haber definido un vocabulario autónomo de la voz, donde la comunicación se construye desde la condición física del sonido.</p>
+    </div>
+
+    <!-- ls.44 -->
+    <div class="entry" style="transition-delay:.65s">
+      <h2>ls.44 — 29.sep.25</h2>
+      <h3>györgy ligeti — atmosphères</h3>
+      <p>atmosphères establece una técnica de micropolyfonía: cada instrumento ejecuta líneas individuales que, superpuestas, generan una masa sonora continua. ligeti elimina jerarquías temáticas y las sustituye por texturas en transformación lenta. el resultado es un campo sonoro denso, sin centro tonal ni progresión melódica. la obra ejemplifica la composición orientada al timbre como estructura. su relevancia histórica y técnica radica en desplazar el foco hacia la materia del sonido mismo.</p>
+    </div>
+
+    <!-- ls.45 -->
+    <div class="entry" style="transition-delay:.7s">
+      <h2>ls.45 — 06.oct.25</h2>
+      <h3>bernard parmegiani — de natura sonorum</h3>
+      <p>de natura sonorum organiza un catálogo técnico de morfologías sonoras. parmegiani construye cada pieza como experimento autónomo: choques metálicos, fricciones, oscilaciones electrónicas, modulaciones granulares. la obra no se orienta a la melodía, sino al análisis formal del sonido como fenómeno físico. su relevancia es doble: documento central de la música electroacústica francesa y modelo de escucha analítica que separa, clasifica y reordena el material auditivo como sustancia bruta.</p>
+    </div>
+
+    <!-- ls.46 -->
+    <div class="entry" style="transition-delay:.75s">
+      <h2>ls.46 — 13.oct.25</h2>
+      <h3>keiji haino — watashi dake?</h3>
+      <p>watashi dake? construye un espacio de saturación vocal y gestual. keiji haino trabaja con la voz extendida, explorando gritos, susurros y quiebres como materiales primarios. el registro se sostiene en la tensión sin resolución, con acompañamiento instrumental mínimo. la obra se inscribe en el noise y el free improvisation, con direccionalidad íntima. plantea la voz como arma y herida, como superficie desbordada por intensidad. su relevancia está en la crudeza controlada: transformar lo vulnerable en método estructural.</p>
+    </div>
+
+    <!-- ls.47 -->
+    <div class="entry" style="transition-delay:.8s">
+      <h2>ls.47 — 20.oct.25</h2>
+      <h3>pauline oliveros — deep listening</h3>
+      <p>deep listening propone un método de percepción extendida. pauline oliveros, stuart dempster y panaiotis registran improvisaciones en un espacio con reverberación extrema. la composición se basa en el tiempo prolongado, la resonancia y la atención a microvariaciones. más que obra, funciona como dispositivo de práctica: un modelo de escucha expandida, donde cada gesto se integra en la duración del espacio mismo. su relevancia es técnica y conceptual: instituir la escucha como forma compositiva.</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const entries = document.querySelectorAll(".entry");
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReduced){
+        entries.forEach(el => el.classList.add("visible"));
+        return;
+      }
+
+      const io = new IntersectionObserver((list) => {
+        for (const it of list){
+          if (it.isIntersecting){
+            it.target.classList.add("visible");
+          } else {
+            it.target.classList.remove("visible");
+          }
+        }
+      }, { threshold: .1, rootMargin: "0px 0px -10% 0px" });
+
+      entries.forEach(el => io.observe(el));
+    });
+  </script>
+</body>
+</html>
