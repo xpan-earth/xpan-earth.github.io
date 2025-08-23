@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>vol.6:1313:13 · inscripción→redim.portal·s2·2025 · ∞6 — v6</title>
+<style>
+  :root{
+    --bg:#fff; --fg:#0a0a0a;
+    --thin:1.05; --axis:.55;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --panel-w:min(86vw,420px);
+    --dock-h:min(58vh,560px);
+    --veil:rgba(0,0,0,.08);
+  }
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);
+    font-family:"Times New Roman",serif;overflow:hidden}
+
+  /* lienzo */
+  svg{position:fixed;inset:0;width:100%;height:100%;display:block}
+
+  /* trazos */
+  .stroke{fill:none;stroke:var(--fg);stroke-width:var(--thin);
+    vector-effect:non-scaling-stroke;stroke-linejoin:miter;stroke-linecap:butt;
+    filter:url(#hairline)}
+  .ghost{opacity:.20} .ghost2{opacity:.10}
+  .draw{animation:dashin 900ms var(--ease) forwards}
+  @keyframes dashin{from{stroke-dashoffset:var(--plen)} to{stroke-dashoffset:0}}
+
+  /* ejes/red */
+  .axis{stroke:var(--fg);stroke-width:var(--axis);opacity:.22;vector-effect:non-scaling-stroke}
+  .axis.animate{animation:pulse 1200ms ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.15}50%{opacity:.5}}
+  .axis.hl{opacity:.9;stroke-width:calc(var(--axis)*1.9)}
+  .link{stroke:var(--fg);stroke-width:.44;opacity:.12;vector-effect:non-scaling-stroke}
+  .lbl{font-size:12px;letter-spacing:.3px;opacity:.85;transition:opacity .2s}
+  .lbl.hl{opacity:1}
+  @media (max-width:600px){ .lbl{font-size:11px} }
+
+  /* cinturones */
+  .belt text{font-size:14px;letter-spacing:.08em}
+  .subbelt text{font-size:11px;letter-spacing:.22em;opacity:.75}
+  @media (max-width:600px){ .belt text{font-size:12px} .subbelt text{font-size:10px} }
+  .reveal circle{fill:#000}
+
+  /* velo */
+  .veil{
+    position:fixed; inset:0; background:var(--veil);
+    backdrop-filter:saturate(110%) blur(2px);
+    opacity:0; pointer-events:none; transition:opacity .35s var(--ease);
+    z-index:28;
+  }
+  .veil.show{opacity:1; pointer-events:auto}
+
+  /* panel semiótico */
+  aside#panel{
+    position:fixed; top:0; right:0; height:100%;
+    width:var(--panel-w); background:#fff;
+    border-left:1px solid #000; box-shadow:-8px 0 24px rgba(0,0,0,.08);
+    display:grid; grid-template-rows:auto 1fr auto;
+    transform:translateX(100%); transition:transform .45s var(--ease);
+    z-index:30; contain:layout paint;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  aside#panel.open{ transform:translateX(0); }
+  .ph{padding:16px 18px 10px; border-bottom:1px solid #000}
+  .ph h2{margin:0; font-size:18px; font-weight:400}
+  .pc{padding:14px 18px 90px; overflow:auto;-webkit-overflow-scrolling:touch}
+  .pc section{margin:0 0 16px; opacity:.55; transition:opacity .25s var(--ease)}
+  .pc section.active{opacity:1}
+  .pc h3{margin:.2rem 0 .2rem;font-size:14px;font-weight:400}
+  .pc p{margin:.2rem 0 .5rem; line-height:1.25}
+  .pf{padding:10px 18px;border-top:1px solid #000;font-size:12px;opacity:.65}
+
+  /* dock de media */
+  .dock{
+    position:fixed; left:0; right:0; bottom:0; height:var(--dock-h);
+    background:#fff; border-top:1px solid #000; z-index:29;
+    transform:translateY(100%); transition:transform .45s var(--ease);
+    display:grid; grid-template-rows:auto 1fr;
+    box-shadow:0 -12px 28px rgba(0,0,0,.08);
+    padding-bottom:env(safe-area-inset-bottom);
+    contain:layout paint;
+  }
+  .dock.open{ transform:translateY(0); }
+  .dock header{display:flex;align-items:center;justify-content:center;
+    padding:8px 12px;border-bottom:1px solid #000;font-size:13px}
+  .dock iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+
+  /* botones sutiles */
+  .btn{
+    position:fixed; z-index:40; width:24px; height:24px; border-radius:999px;
+    background:rgba(255,255,255,.65); border:1px solid #000;
+    display:grid; place-items:center; cursor:pointer; user-select:none;
+    opacity:.25; transition:opacity .2s var(--ease), transform .2s var(--ease), backdrop-filter .2s;
+    backdrop-filter:blur(1px) saturate(110%);
+  }
+  .btn:hover, .btn:focus-visible{opacity:1; outline:none; transform:scale(1.03)}
+  .btn span{width:10px;height:10px;border:1px solid #000;border-radius:999px; display:block}
+
+  /* posiciones */
+  #btnPanel{ right:14px; top:50%; transform:translateY(-50%); }
+  #btnDock{ left:50%; bottom:14px; transform:translateX(-50%); }
+
+  /* estados */
+  .hint{position:fixed;left:12px;bottom:10px;font-size:12px;opacity:.40;user-select:none;z-index:10}
+  .paused *{animation-play-state:paused}
+
+  @media (prefers-reduced-motion: reduce){
+    .draw,.axis.animate{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- velo -->
+<div class="veil" id="veil" aria-hidden="true"></div>
+
+<!-- botones sutiles -->
+<button class="btn" id="btnPanel" aria-label="abrir/cerrar panel semiótico"><span></span></button>
+<button class="btn" id="btnDock" aria-label="abrir/cerrar media"><span></span></button>
+
+<!-- lienzo -->
+<svg viewBox="0 0 1000 1000" id="svg" aria-label="inscripción v6">
+  <defs>
+    <filter id="hairline"><feComponentTransfer>
+      <feFuncA type="gamma" amplitude="1" exponent="1.15" offset="0"/></feComponentTransfer>
+    </filter>
+    <filter id="glitch">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2"/>
+    </filter>
+
+    <!-- órbita principal -->
+    <path id="orbit" d="M500,210 a290,290 0 1,1 0,580 a290,290 0 1,1 0,-580" />
+    <!-- sub-órbitas (JS) -->
+    <g id="subOrbits"></g>
+
+    <!-- máscara de revelado del cinturón -->
+    <mask id="beltReveal" class="reveal"><circle id="revealDisk" cx="500" cy="500" r="0"/></mask>
+  </defs>
+
+  <!-- red y ejes -->
+  <g id="links"></g>
+  <g id="axes"></g>
+
+  <!-- estelas + trazo -->
+  <g filter="url(#glitch)">
+    <path class="stroke ghost2" id="g3"/>
+    <path class="stroke ghost"  id="g2"/>
+  </g>
+  <path class="stroke" id="g1"/>
+  <path class="stroke" id="stroke"/>
+
+  <!-- etiquetas -->
+  <g id="labels"></g>
+
+  <!-- cinturón principal -->
+  <g class="belt" mask="url(#beltReveal)">
+    <text id="beltText">
+      <textPath href="#orbit" id="beltPath" startOffset="0%">
+        vol.6:1313:13 · inscripción→redim.portal·s2·2025 · ∞6
+      </textPath>
+    </text>
+  </g>
+
+  <!-- sub-cinturones -->
+  <g id="subBelts" class="subbelt"></g>
+</svg>
+
+<!-- panel semiótico -->
+<aside id="panel" aria-label="panel semiótico">
+  <header class="ph"><h2>semiótica descriptiva</h2></header>
+  <div class="pc" id="pc">
+    <section data-axis="0" class="active">
+      <h3>1. eje volumétrico</h3>
+      <p>vol.6 señala la unidad dentro de una serie expansiva de memoria preservada. El seis funciona como ancla rítmica y bisagra de continuidad.</p>
+    </section>
+    <section data-axis="1">
+      <h3>2. eje numérico</h3>
+      <p>1313:13 condensa repetición y variación. El doble 13 activa lo ritual y lo estructural; el último 13 abre un desvío dentro de la repetición. Opera como cifra de acceso.</p>
+    </section>
+    <section data-axis="2">
+      <h3>3. eje inscriptivo</h3>
+      <p>inscripción→ fija la condición previa, acto anticipatorio que prepara la apertura. La inscripción orienta.</p>
+    </section>
+    <section data-axis="3">
+      <h3>4. eje redimensional</h3>
+      <p>redim.portal opera como doble clave: deformar la medida y atravesar el umbral. Es el núcleo del tránsito.</p>
+    </section>
+    <section data-axis="4">
+      <h3>5. eje temporal</h3>
+      <p>s2·2025 sitúa la apertura en coordenada exacta: segundo semestre del ciclo 2025. Es anclaje temporal mínimo y decisivo.</p>
+    </section>
+    <section data-axis="5">
+      <h3>6. eje infinito-cíclico</h3>
+      <p>∞6 sella la inscripción. El seis retorna como fundamento estructural y el infinito lo proyecta más allá del ciclo, articulando cierre y relanzamiento.</p>
+    </section>
+    <section data-axis="syn" style="margin-top:14px;border-top:1px solid #000;padding-top:12px">
+      <h3>síntesis</h3>
+      <p>La inscripción funciona como sello anticipatorio. Concentra serie, cifra, huella, tránsito, tiempo y motivo en un solo bloque. Transforma una frase extensa en un código compacto que mantiene legibilidad y densidad simbólica.</p>
+    </section>
+  </div>
+</aside>
+
+<!-- dock de media -->
+<section class="dock" id="dock" aria-label="media are.na">
+  <header>media — canal are.na</header>
+  <iframe
+    src="https://www.are.na/moises-sacal-hadid/vol-6-1313-13-inscripcion-redim-portal-s2-2025-6/embed"
+    loading="lazy" referrerpolicy="no-referrer" allowfullscreen
+    title="are.na — vol.6:1313:13 — inscripción→redim.portal·s2·2025 · ∞6">
+  </iframe>
+</section>
+
+
+<script>
+(function(){
+  /* refs */
+  const svg = document.getElementById('svg');
+  const stroke = document.getElementById('stroke');
+  const g1 = document.getElementById('g1');
+  const g2 = document.getElementById('g2');
+  const g3 = document.getElementById('g3');
+  const axes = document.getElementById('axes');
+  const labels = document.getElementById('labels');
+  const links = document.getElementById('links');
+  const beltPath = document.getElementById('beltPath');
+  const revealDisk = document.getElementById('revealDisk');
+  const subOrbits = document.getElementById('subOrbits');
+  const subBelts = document.getElementById('subBelts');
+  const panel = document.getElementById('panel');
+  const pc = document.getElementById('pc');
+  const dock = document.getElementById('dock');
+  const veil = document.getElementById('veil');
+  const btnPanel = document.getElementById('btnPanel');
+  const btnDock = document.getElementById('btnDock');
+
+  /* estado */
+  const CENTER = {x:500, y:500};
+  const NAMES  = ['vol.6','1313:13','inscripción→','redim.portal','s2·2025','∞6'];
+  let intensity = 0.6;     // 0..1
+  let paused = false;
+  let ritual = true;
+  let timer = null;
+  let focusIdx = 0;
+
+  /* utils */
+  const rad = d=> d*Math.PI/180;
+  const lerp = (a,b,t)=> a+(b-a)*t;
+  const rand = (a,b)=> a + Math.random()*(b-a);
+  const jitter = v => v * rand(0.92,1.08);
+  const el = (tag, attrs)=>{ const n=document.createElementNS('http://www.w3.org/2000/svg',tag); for(const k in attrs) n.setAttribute(k,attrs[k]); return n; };
+
+  function polar(cx,cy,deg,r,aj=0){
+    const a = rad(deg + aj);
+    return [ cx + r*Math.cos(a), cy + r*Math.sin(a) ];
+  }
+
+  /* geometría */
+  function buildPoints(){
+    const R_MIN = lerp(246, 280, intensity);
+    const R_MAX = lerp(405, 475, intensity);
+    return Array.from({length:6}, (_,i)=>{
+      const base = i*60 - 90;
+      const r = jitter(rand(R_MIN,R_MAX));
+      const aj = rand(-2,2)*intensity*2.4;
+      return {deg:base+aj, r, p:polar(CENTER.x,CENTER.y,base,r,aj)};
+    });
+  }
+
+  function pathFrom(points){
+    let d = `M ${points[0].p[0].toFixed(2)} ${points[0].p[1].toFixed(2)} `;
+    for(let i=1;i<points.length;i++)
+      d += `L ${CENTER.x} ${CENTER.y} L ${points[i].p[0].toFixed(2)} ${points[i].p[1].toFixed(2)} `;
+    return d + `L ${CENTER.x} ${CENTER.y}`;
+  }
+
+  function drawAxes(points){
+    axes.innerHTML = ''; labels.innerHTML='';
+    points.forEach((pt,i)=>{
+      const [x,y]=pt.p;
+      const ax = el('line',{x1:CENTER.x,y1:CENTER.y,x2:x,y2:y,class:'axis animate', 'data-i':i});
+      axes.appendChild(ax);
+      const t = el('text',{class:'lbl','data-i':i,
+        x: CENTER.x + (x-CENTER.x)*1.06,
+        y: CENTER.y + (y-CENTER.y)*1.06,
+        'text-anchor': (x<CENTER.x)?'end':'start'});
+      t.textContent = NAMES[i];
+      labels.appendChild(t);
+    });
+  }
+
+  function buildLinks(points){
+    links.innerHTML='';
+    const m = Math.floor(lerp(4, 12, intensity));
+    for(let k=0;k<m;k++){
+      const i = Math.floor(rand(0,6)), j=(i+Math.floor(rand(1,5)))%6;
+      const a = points[i].p, b = points[j].p;
+      links.appendChild(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'link'}));
+    }
+  }
+
+  function animateStroke(d){
+    g3.setAttribute('d', g2.getAttribute('d')||d);
+    g2.setAttribute('d', g1.getAttribute('d')||d);
+    g1.setAttribute('d', stroke.getAttribute('d')||d);
+
+    stroke.classList.remove('draw');
+    stroke.setAttribute('d', d);
+    const len = stroke.getTotalLength();
+    [stroke,g1,g2,g3].forEach(p=>{
+      const l = (p.getTotalLength? p.getTotalLength():len);
+      p.style.strokeDasharray = l;
+      p.style.setProperty('--plen', `${l}`);
+      p.style.strokeDashoffset = l;
+    });
+    void stroke.getBoundingClientRect();
+    stroke.classList.add('draw');
+  }
+
+  function moveBelt(){
+    const off = parseFloat(beltPath.getAttribute('startOffset'))||0;
+    const next = (off + lerp(0.24, 1.0, intensity))%100;
+    beltPath.setAttribute('startOffset', next+'%');
+    const r = lerp(60, 310, intensity);
+    revealDisk.setAttribute('r', r);
+  }
+
+  /* sub-órbitas */
+  function ensureSubOrbits(){
+    if(subOrbits.childElementCount) return;
+    for(let i=0;i<6;i++){
+      const r = 135 + i*24;
+      const d = `M ${500-r} 500 a ${r},${r} 0 1,0 ${r*2},0 a ${r},${r} 0 1,0 ${-r*2},0`;
+      const p = el('path',{id:`subOrbit${i}`, d});
+      subOrbits.appendChild(p);
+
+      const txt = el('text',{}); const tp = el('textPath',{href:`#subOrbit${i}`, startOffset:`${(i*10)%100}%`});
+      tp.textContent = ` ${NAMES[i]} • ${NAMES[i]} • ${NAMES[i]} • `;
+      txt.appendChild(tp); subBelts.appendChild(txt);
+    }
+  }
+  function driftSubBelts(){
+    [...subBelts.querySelectorAll('textPath')].forEach((tp,i)=>{
+      const off = parseFloat(tp.getAttribute('startOffset'))||0;
+      const next = (off + lerp(.18, .65, intensity)*(i%2?1:-1))%100;
+      tp.setAttribute('startOffset', next+'%');
+    });
+  }
+
+  /* foco sincronizado */
+  function setFocus(i){
+    const idx = (i%6+6)%6;
+    [...axes.children].forEach((n,k)=> n.classList.toggle('hl', k===idx));
+    [...labels.children].forEach((n,k)=> n.classList.toggle('hl', k===idx));
+    [...pc.querySelectorAll('section[data-axis]')].forEach(s=>{
+      s.classList.toggle('active', parseInt(s.dataset.axis,10)===idx);
+    });
+    focusIdx = idx;
+  }
+
+  /* ciclo */
+  function cycle(){
+    const pts = buildPoints();
+    drawAxes(pts);
+    buildLinks(pts);
+    animateStroke(pathFrom(pts));
+    moveBelt();
+    driftSubBelts();
+    if(ritual) setFocus(focusIdx+1);
+    if(!paused){ timer=setTimeout(cycle, lerp(1500, 680, intensity)); }
+  }
+
+  /* interacción principal */
+  let dragging=false,x0=0,base=intensity,moved=false;
+  svg.addEventListener('pointerdown', e=>{ dragging=true; moved=false; x0=e.clientX; base=intensity; });
+  window.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const dx = (e.clientX - x0) / window.innerWidth;
+    intensity = Math.min(1, Math.max(0, base + dx*1.6));
+    moved=true;
+  });
+  window.addEventListener('pointerup', ()=> dragging=false);
+
+  // toque corto = pausa
+  svg.addEventListener('click', ()=>{
+    if(moved) return;
+    paused = !paused;
+    svg.classList.toggle('paused', paused);
+    if(!paused) cycle(); else clearTimeout(timer);
+  });
+
+  /* toggles con botones sutiles */
+  function openPanel(){ panel.classList.add('open'); veil.classList.add('show'); }
+  function closePanel(){ panel.classList.remove('open'); if(!dock.classList.contains('open')) veil.classList.remove('show'); }
+  function openDock(){ dock.classList.add('open'); veil.classList.add('show'); }
+  function closeDock(){ dock.classList.remove('open'); if(!panel.classList.contains('open')) veil.classList.remove('show'); }
+
+  btnPanel.addEventListener('click', ()=>{
+    if(panel.classList.contains('open')) closePanel(); else openPanel();
+  });
+  btnDock.addEventListener('click', ()=>{
+    if(dock.classList.contains('open')) closeDock(); else openDock();
+  });
+
+  // cerrar tocando el velo
+  veil.addEventListener('click', ()=>{ closePanel(); closeDock(); });
+
+  // foco por tap en etiquetas/ejes
+  function armTap(sel){
+    svg.addEventListener('pointerdown', e=>{
+      const t=e.target;
+      if(t.matches(sel)){ ritual=false; setFocus(parseInt(t.getAttribute('data-i'),10)||0); }
+    });
+  }
+  armTap('.lbl'); armTap('.axis');
+
+  // init
+  ensureSubOrbits();
+  cycle();
+})();
+</script>
+</body>
+</html>
