@@ -1,13 +1,14 @@
-/*! media-proxy.js — xpan
+/*! media-proxy.js — xpan (rev universal-video)
  *  - Proxy responsive vía images.weserv.nl para imágenes (src/srcset/data-src)
- *  - Lazy-load de videos (attachments.are.na) si no tienen tu lazy propio
- *  - Acceso “oculto” al original: Alt/Ctrl/Cmd + click (desktop) o long-press (~550ms) en touch
- *  - Funciona con nodos añadidos dinámicamente y cambios de atributos (src, srcset, poster)
+ *  - Lazy-load robusto de videos (p. ej., attachments.are.na) sin limitar formatos
+ *  - Prioriza fuentes reproducibles por navegador (canPlayType) y no rompe si ninguna sirve
+ *  - Acceso al original: Alt/Ctrl/Cmd + click o long-press (~550ms)
+ *  - Soporta nodos añadidos dinámicamente y cambios de atributos
  *  - Opt-out por elemento con data-no-proxy
  */
 (() => {
   // --- Config ---
-  const IMG_HOST_MATCH = /(?:cloudfront\.net|attachments\.are\.na)/i;
+  const IMG_HOST_MATCH = /(?:cloudfront\.net|attachments\.are\.na)/i; // imágenes y videos servidos desde estos hosts
   const IMG_SEL = 'img, source[type^="image/"]';
   const WESERV = 'https://images.weserv.nl/?url=';
   const WCFG = '&q=70&we';                  // q=calidad, we=auto WebP/AVIF si soporta
@@ -16,7 +17,7 @@
   const IO_MARGIN_VID = '300px 0px';
   const LONGPRESS_MS = 550;
 
-  // --- Utils ---
+  // --- Utils comunes ---
   const fixUrl = u => typeof u === 'string'
     ? u.replace(/\?(\d+)\?bc=0$/, '?$1&bc=0')
     : u;
@@ -41,7 +42,6 @@
     if (el.tagName === 'SOURCE') {
       const ss = el.getAttribute('srcset') || '';
       const s = el.getAttribute('src') || '';
-      // toma el primer candidato de srcset si es HTTP
       const first = ss.split(',')[0]?.trim().split(' ')[0];
       return (first && isHttp(first)) ? first : (isHttp(s) ? s : null);
     }
@@ -94,22 +94,20 @@
     if (imgLike.dataset.noProxy != null) { enableOpenOriginal(imgLike); return; }
     if (imgLike.dataset.proxied === '1') { enableOpenOriginal(imgLike); return; }
 
-    // Detecta URL objetivo (src o data-src o srcset)
     const tag = imgLike.tagName;
     let orig = null;
 
     // Si es <source> de imagen dentro de <picture>
     if (tag === 'SOURCE' && /^image\//i.test(imgLike.getAttribute('type') || '')) {
       let candidate = imgLike.getAttribute('srcset') || imgLike.getAttribute('data-srcset') || '';
-      // toma primer candidato
       const first = candidate.split(',')[0]?.trim().split(' ')[0] || '';
       orig = first || imgLike.getAttribute('src') || imgLike.getAttribute('data-src') || null;
     } else {
       // <img>
       orig = imgLike.getAttribute('data-src') || imgLike.getAttribute('src') || null;
+
       // si viene con srcset/data-srcset ya armado por autor, no tocar (solo habilitar original)
       if (imgLike.hasAttribute('srcset') || imgLike.hasAttribute('data-srcset')) {
-        // pero aún marcamos data-full con el primer candidato
         const first = (imgLike.getAttribute('srcset') || imgLike.getAttribute('data-srcset') || '')
           .split(',')[0]?.trim().split(' ')[0];
         if (first && isHttp(first)) imgLike.setAttribute('data-full', first);
@@ -137,21 +135,17 @@
 
     // Aplica según el tipo de elemento y si usa data-src (lazy) o src directo
     if (tag === 'SOURCE') {
-      // Mantén semántica de <picture>: usamos srcset
       imgLike.setAttribute('srcset', srcset);
-      imgLike.removeAttribute('data-src'); // por si acaso
+      imgLike.removeAttribute('data-src');
     } else {
-      // IMG
       imgLike.referrerPolicy = 'no-referrer';
       imgLike.decoding = 'async';
       imgLike.loading = 'lazy';
 
       if (imgLike.hasAttribute('data-src') && !imgLike.getAttribute('src')) {
-        // El autor usa lazy con data-src -> reescribimos data-src a proxy medio
         imgLike.setAttribute('data-src', proxify(orig, 960));
-        imgLike.setAttribute('data-srcset', srcset); // por si el loader del autor lo respeta
+        imgLike.setAttribute('data-srcset', srcset);
       } else {
-        // Tenemos src “eager” -> lo cambiamos al proxy medio
         imgLike.setAttribute('src', proxify(orig, 960));
         imgLike.setAttribute('srcset', srcset);
       }
@@ -166,7 +160,6 @@
   }
 
   function tunePicture(pic) {
-    // Proxifica sus <source> y su <img> fallback
     pic.querySelectorAll('source[type^="image/"]').forEach(tuneImgElement);
     const img = pic.querySelector('img');
     if (img) tuneImgElement(img);
@@ -193,67 +186,130 @@
     targets.forEach(el => { el.__x_lazy_img = 1; io.observe(el); });
   }
 
-  // --- Videos (attachments.are.na) ---
-  function prepareVideo(v) {
-    if (!(v instanceof HTMLVideoElement)) return;
-    if (v.dataset.videoReady === '1') return;
+  // --- Videos: soporte universal en cliente sin transcodificar ---
+  // Mapa mínimo para deducir MIME si falta type=""
+  const TYPE_MAP = {
+    mp4:'video/mp4', m4v:'video/mp4', mov:'video/quicktime',
+    webm:'video/webm', mkv:'video/x-matroska',
+    ogv:'video/ogg', mpeg:'video/mpeg', mpg:'video/mpeg',
+    ts:'video/mp2t', m2ts:'video/mp2t',
+    m3u8:'application/vnd.apple.mpegurl'
+  };
+  function mimeFrom(u){
+    try{
+      const ext = (new URL(u, location.href).pathname.split('.').pop()||'').toLowerCase();
+      return TYPE_MAP[ext] || '';
+    }catch{ return ''; }
+  }
+  function playable(videoEl, mime){
+    if (!mime) return false;
+    const r = videoEl.canPlayType(mime);
+    return r === 'probably' || r === 'maybe';
+  }
 
-    const hasOwnLazy = v.classList.contains('lazy-video'); // respeta el lazy del sitio si existe
+  function prepareVideo(v){
+    if (!(v instanceof HTMLVideoElement) || v.dataset.videoReady === '1') return;
 
-    // Si ya viene con <source data-src> dejamos su lazy y solo habilitamos “original”
-    const firstSource = v.querySelector('source');
-    let orig = null;
+    const hasOwnLazy = v.classList.contains('lazy-video');
+    let sources = Array.from(v.querySelectorAll('source'));
 
-    if (firstSource) {
-      const ds = firstSource.getAttribute('data-src');
-      const s = firstSource.getAttribute('src');
-      orig = fixUrl(ds || s || '');
-    } else {
-      const ds = v.getAttribute('data-src');
-      const s = v.getAttribute('src');
-      orig = fixUrl(ds || s || '');
-    }
-
-    if (orig) v.setAttribute('data-full', orig);
+    // guardar original para “abrir original”
+    const firstUrl =
+      sources[0]?.getAttribute('src') ||
+      sources[0]?.getAttribute('data-src') ||
+      v.getAttribute('src') ||
+      v.getAttribute('data-src') || '';
+    if (firstUrl) v.setAttribute('data-full', fixUrl(firstUrl));
     enableOpenOriginal(v);
 
-    // Si no tiene lazy propio y es de are.na, le ponemos un IO básico
-    const isArena = IMG_HOST_MATCH.test(orig || '');
-    if (!hasOwnLazy && isArena) {
-      // Convertimos src/src de <source> a data-src para lazear
-      if (firstSource) {
-        if (!firstSource.getAttribute('data-src') && firstSource.getAttribute('src')) {
-          firstSource.setAttribute('data-src', firstSource.getAttribute('src'));
-          firstSource.removeAttribute('src');
-        }
-      } else if (v.getAttribute('src')) {
-        v.setAttribute('data-src', v.getAttribute('src'));
-        v.removeAttribute('src');
-      }
-
-      const vio = new IntersectionObserver((entries) => {
-        entries.forEach(en => {
-          if (!en.isIntersecting) return;
-          const vid = en.target;
-          const s = vid.querySelector('source[data-src]');
-          if (s && !s.src) s.src = s.getAttribute('data-src');
-          if (!vid.src && vid.getAttribute('data-src')) vid.src = vid.getAttribute('data-src');
-          vid.load();
-          const p = vid.play();
-          if (p && p.catch) p.catch(() => {});
-          vio.unobserve(vid);
-        });
-      }, { rootMargin: IO_MARGIN_VID, threshold: 0.2 });
-
-      vio.observe(v);
+    // si no hay <source> y sí hay video[src], normalizar a <source>
+    if (!sources.length && (v.getAttribute('src') || v.getAttribute('data-src'))){
+      const s = document.createElement('source');
+      const url = v.getAttribute('src') || v.getAttribute('data-src');
+      s.setAttribute('src', url);
+      const t = v.getAttribute('type') || mimeFrom(url);
+      if (t) s.setAttribute('type', t);
+      v.appendChild(s);
+      sources = [s];
     }
 
-    // Autoplay on visible / pause off visible (suave, no interfiere si ya hay uno)
-    const apo = new IntersectionObserver((entries) => {
-      entries.forEach(en => {
-        if (en.isIntersecting) {
-          const p = v.play();
-          if (p && p.catch) p.catch(() => {});
+    // decidir si aplicar lazy propio: medios de nuestros hosts y sin lazy del sitio
+    const isArena = IMG_HOST_MATCH.test(firstUrl||'');
+
+    // mover TODAS las fuentes a data-src para lazy si aplica
+    if (!hasOwnLazy && isArena){
+      sources.forEach(s=>{
+        if (!s.getAttribute('data-src')){
+          const src = s.getAttribute('src');
+          if (src){ s.setAttribute('data-src', src); s.removeAttribute('src'); }
+        }
+        if (!s.getAttribute('type')){
+          const t = mimeFrom(s.getAttribute('data-src')||'');
+          if (t) s.setAttribute('type', t);
+        }
+      });
+      if (v.getAttribute('src') && !v.getAttribute('data-src')){
+        v.setAttribute('data-src', v.getAttribute('src'));
+        v.removeAttribute('src');
+        if (!v.getAttribute('type')){
+          const t = mimeFrom(v.getAttribute('data-src'));
+          if (t) v.setAttribute('type', t);
+        }
+      }
+    }
+
+    // IO: restaurar todas las fuentes y priorizar una reproducible
+    const vio = new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        if (!en.isIntersecting) return;
+        const vid = en.target;
+
+        // restaurar todas las fuentes <source>
+        const ss = Array.from(vid.querySelectorAll('source'));
+        ss.forEach(s=>{
+          if (!s.getAttribute('src') && s.getAttribute('data-src')){
+            s.setAttribute('src', s.getAttribute('data-src'));
+          }
+          if (!s.getAttribute('type')){
+            const t = mimeFrom(s.getAttribute('src')||'');
+            if (t) s.setAttribute('type', t);
+          }
+        });
+        // restaurar video[src] si estaba en data-src
+        if (!vid.getAttribute('src') && vid.getAttribute('data-src')){
+          vid.setAttribute('src', vid.getAttribute('data-src'));
+        }
+
+        // 1) preferir HLS/MP4 si el cliente lo puede reproducir
+        const preferred = ss.find(s=>{
+          const t = (s.getAttribute('type')||'').toLowerCase();
+          return t.includes('application/vnd.apple.mpegurl') || t.includes('video/mp4') || t.includes('avc1');
+        });
+        if (preferred) vid.prepend(preferred);
+
+        // 2) si el primero sigue sin ser reproducible, elegir por canPlayType
+        let first = vid.querySelector('source');
+        if (!playable(vid, first?.getAttribute('type')||'')){
+          const ok = ss.find(s=>playable(vid, s.getAttribute('type')||''));
+          if (ok && ok !== first) vid.prepend(ok);
+        }
+
+        // cargar y reproducir si procede
+        vid.load();
+        const p = vid.play();
+        if (p && p.catch) p.catch(()=>{});
+
+        vio.unobserve(vid);
+      });
+    }, { rootMargin: IO_MARGIN_VID, threshold: 0.2 });
+
+    if (!hasOwnLazy && isArena) vio.observe(v);
+
+    // Autoplay/pause por visibilidad
+    const apo = new IntersectionObserver(es=>{
+      es.forEach(en=>{
+        if (en.isIntersecting){
+          const p = v.play(); if (p && p.catch) p.catch(()=>{});
         } else {
           v.pause();
         }
@@ -275,6 +331,7 @@
         if (m.type === 'childList') {
           m.addedNodes.forEach(node => {
             if (node.nodeType !== 1) return;
+
             // <picture>
             if (node.tagName === 'PICTURE') tunePicture(node);
             node.querySelectorAll?.('picture').forEach(tunePicture);
@@ -298,7 +355,7 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['src', 'srcset', 'data-src', 'data-srcset', 'poster']
+      attributeFilter: ['src', 'srcset', 'data-src', 'data-srcset', 'poster', 'type']
     });
   }
 
