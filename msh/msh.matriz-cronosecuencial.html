@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cronograma experimental</title>
+  <script src="/assets/js/media-proxy.js" defer></script>
+
   <style>
     html, body {
       margin: 0;
@@ -108,25 +109,6 @@
       z-index: 5;
     }
   </style>
-
-<script src="/assets/js/media-proxy.js" defer></script>
-<script>
-// --- PATCH para asegurar que la primera imagen se visualice correctamente ---
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && entry.target.tagName === 'IMG') {
-      const src = entry.target.getAttribute('data-src');
-      if (src && !entry.target.src) {
-        entry.target.src = src;
-      }
-    }
-  });
-}, { rootMargin: "500px" });
-
-document.querySelectorAll("img[data-src]").forEach(img => observer.observe(img));
-</script>
-
-
 </head>
 <body>
   <div class="metadata-bar" id="metadata"></div>
@@ -229,3 +211,4 @@ document.querySelectorAll("img[data-src]").forEach(img => observer.observe(img))
   </script>
 </body>
 </html>
+
