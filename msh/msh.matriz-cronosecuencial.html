@@ -1,1 +1,212 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/><title>matriz cronosecuencial — strip</title><link rel="preconnect" href="https://images.weserv.nl" crossorigin><style>:root{--bg:#fff;--fg:#0a0a0a;--line:rgba(0,0,0,.12);--ease:cubic-bezier(.22,.61,.36,1)}*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif}#hud{position:fixed;left:12px;top:12px;z-index:30;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px}#wrap{position:fixed;inset:0;display:flex;flex-direction:column}#strip{position:relative;flex:1;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scroll-behavior:smooth;cursor:ew-resize}#rail{position:relative;height:160px;display:inline-block;white-space:nowrap}figure{display:inline-block;margin:0 4px;vertical-align:top;position:relative;transform:translateZ(0)}img.thumb{height:140px;width:auto;display:block;border-radius:12px;border:1px solid var(--line);transition:transform .25s var(--ease), box-shadow .25s var(--ease)}img.thumb:hover{transform:translateY(-2px)}.meta{position:absolute;left:8px;bottom:6px;font-size:10px;color:#fff;background:rgba(0,0,0,.45);padding:2px 6px;border-radius:999px;backdrop-filter:blur(2px)}#years{position:fixed;right:12px;top:12px;z-index:30;display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;max-width:40vw;overflow:hidden}#years span{opacity:.6}#years b{opacity:1;margin-left:6px}dialog#viewer{border:0;border-radius:20px;max-width:min(92vw,1400px);padding:0;box-shadow:0 25px 60px rgba(0,0,0,.25)}dialog::backdrop{background:rgba(0,0,0,.55)}.viewer{position:relative;background:#000}.viewer img{display:block;max-height:80vh;width:100%;height:auto;object-fit:contain}.vmeta{position:absolute;left:0;right:0;bottom:0;color:#fff;background:linear-gradient(to top,rgba(0,0,0,.6),transparent);padding:10px 14px;font-size:13px;display:flex;justify-content:space-between;gap:10px}</style></head><body><div id="hud"><span id="count">0</span><span>ítems</span></div><div id="years"><span>año</span><b id="y">—</b></div><div id="wrap"><div id="strip"><div id="rail"></div></div></div><dialog id="viewer"><div class="viewer"><img id="vimg" alt=""/><div class="vmeta"><span id="vdate"></span><span id="vdim"></span></div></div></dialog><script>const INDEX_URL='timeline.index.json';const H=140;const PAD=4;const MARGIN=8;const CHUNK=400;const MAX_NODES=800;const DPR=Math.max(1,Math.min(devicePixelRatio||1,2));const prox=(u)=>`https://images.weserv.nl/?url=${encodeURIComponent(u)}&h=${Math.round(H*DPR)}&we&output=webp&n=-1`;let items=[];let positions=[];let viewStart=0,viewEnd=0,railW=0;const $=s=>document.querySelector(s),strip=$('#strip'),rail=$('#rail'),count=$('#count'),yLbl=$('#y'),dialog=$('#viewer'),vimg=$('#vimg'),vdate=$('#vdate'),vdim=$('#vdim');init();async function init(){const data=await fetch(INDEX_URL,{cache:'no-store'}).then(r=>r.json()).catch(()=>[]);items=data.filter(Boolean).map(x=>({url:x.url,ts:+(typeof x.ts==='number'?x.ts:Date.parse(x.ts)||0),w:x.w||0,h:x.h||0})).filter(x=>x.url&&x.ts).sort((a,b)=>a.ts-b.ts);count.textContent=items.length.toLocaleString('es-MX');layout();render();strip.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',()=>{layout(true);render()},{passive:true});strip.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){strip.scrollLeft+=e.deltaY; e.preventDefault()}},{passive:false})}function layout(reset=false){const ww=innerWidth;const spacing=PAD*2+MARGIN;positions.length=items.length;let x=PAD;for(let i=0;i<items.length;i++){const it=items[i];const ar=aspect(it);const w=Math.round(H*(ar||1));positions[i]=[x,w];x+=w+spacing}railW=x;rail.style.width=railW+'px';if(reset) strip.scrollLeft=Math.min(strip.scrollLeft,railW-innerWidth)}function aspect(it){if(it.w&&it.h) return it.w/it.h;try{const u=new URL(it.url);const w=+(u.searchParams.get('w')||0),h=+(u.searchParams.get('h')||0);if(w&&h) return w/h}catch{}return 4/3}function yearAtScroll(){const mid=strip.scrollLeft+innerWidth/2;let i=bsearch(mid);if(i<0) i=~i;const d=new Date(items[Math.min(items.length-1,Math.max(0,i))].ts);yLbl.textContent=d.getFullYear()}function bsearch(px){let lo=0,hi=positions.length-1;while(lo<=hi){const mid=Math.floor((lo+hi)/2);const [x,w]=positions[mid];if(x+w<px) lo=mid+1; else if(x>px) hi=mid-1; else return mid}return ~lo}function onScroll(){render();yearAtScroll()}function render(){const left=strip.scrollLeft,right=left+innerWidth;const pad=innerWidth*2;const startX=Math.max(0,left-pad),endX=Math.min(railW,right+pad);let s=bsearch(startX),e=bsearch(endX);if(s<0) s=~s; if(e<0) e=~e; s=Math.max(0,s-20); e=Math.min(items.length,e+20);if(s===viewStart&&e===viewEnd) return;viewStart=s;viewEnd=e;const frag=document.createDocumentFragment();for(const el of Array.from(rail.children)) el.remove();let lastY=null;for(let i=s;i<e;i++){const it=items[i];const [x,w]=positions[i];const d=new Date(it.ts);const y=d.getFullYear();if(y!==lastY){const yr=document.createElement('div');yr.className='meta';yr.textContent=y;yr.style.position='absolute';yr.style.left=(x)+'px';yr.style.top='4px';yr.style.transform='translateY(-120%)';yr.style.background='rgba(0,0,0,.45)';yr.style.color='#fff';yr.style.fontSize='10px';yr.style.padding='2px 6px';yr.style.borderRadius='999px';yr.style.backdropFilter='blur(2px)';frag.appendChild(yr);lastY=y}const fig=document.createElement('figure');fig.style.position='absolute';fig.style.left=x+'px';fig.style.top=MARGIN+'px';fig.style.width=w+'px';fig.dataset.ts=it.ts;const img=document.createElement('img');img.className='thumb';img.height=H;img.width=w;const u=prox(it.url);img.src=u;img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';fig.appendChild(img);const m=document.createElement('div');m.className='meta';m.textContent=`${String(d.getDate()).padStart(2,'0')} ${d.toLocaleString('es-MX',{month:'short'})}`;fig.appendChild(m);fig.addEventListener('click',()=>openViewer(it));frag.appendChild(fig)}rail.appendChild(frag);trim()}function trim(){const nodes=rail.children.length;if(nodes>MAX_NODES){const over=nodes-MAX_NODES;for(let i=0;i<over;i++) rail.removeChild(rail.firstElementChild)}}function openViewer(it){vimg.src=it.url;vimg.alt=new Date(it.ts).toISOString();const d=new Date(it.ts);vdate.textContent=d.toLocaleString('es-MX',{dateStyle:'full',timeStyle:'short'});vdim.textContent=it.w&&it.h?`${it.w}×${it.h}`:'—';dialog.showModal()}dialog.addEventListener('click',e=>{if(e.target===dialog) dialog.close()});</script></body></html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cronograma experimental</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      font-family: "Times New Roman", serif;
+      overflow-x: hidden;
+    }
+    .metadata-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: calc(100% - 40px);
+      padding: 6px 12px;
+      background: rgba(0, 0, 0, 0.75);
+      color: rgb(255, 0, 0);
+      font-size: 12px;
+      font-family: monospace;
+      z-index: 10;
+      border-bottom: 1px solid rgb(255, 0, 0);
+      pointer-events: none;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
+    .toggle-button {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 6px 12px;
+      font-size: 18px;
+      font-family: monospace;
+      color: rgb(255, 0, 0);
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 11;
+      cursor: pointer;
+      user-select: none;
+      border-left: 1px solid rgb(255, 0, 0);
+      border-bottom: 1px solid rgb(255, 0, 0);
+    }
+    .timeline, .grid {
+      display: none;
+    }
+    .timeline.active {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .grid.active {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 2px;
+      padding-top: 36px;
+    }
+    .item {
+      flex: 0 0 auto;
+      width: 100vw;
+      scroll-snap-align: center;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform: scale(1);
+      transition: transform 0.5s ease;
+      mix-blend-mode: lighten;
+    }
+    .item img, .item video {
+      max-width: 100%;
+      max-height: 100vh;
+      object-fit: contain;
+      filter: contrast(1.2) brightness(1.1);
+      cursor: pointer;
+    }
+    .item:hover {
+      transform: scale(1.05);
+      z-index: 2;
+    }
+    .fullscreen-view {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+    .fullscreen-view img, .fullscreen-view video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    svg#line {
+      position: fixed;
+      top: 30px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      z-index: 5;
+    }
+  </style>
+</head>
+<body>
+  <div class="metadata-bar" id="metadata"></div>
+  <div class="toggle-button" id="toggle">𒅒𒄆</div>
+  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(255, 0, 0)" stroke-width="1" /></svg>
+  <div class="timeline active" id="timeline"></div>
+  <div class="grid" id="grid"></div>
+  <div class="fullscreen-view" id="fullscreen" onclick="this.style.display='none'"></div>
+
+  <script>
+    async function loadTimeline() {
+      const res = await fetch('timeline.index.json');
+      let data = await res.json();
+
+      for (let i = data.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [data[i], data[j]] = [data[j], data[i]];
+      }
+
+      const timeline = document.getElementById('timeline');
+      const grid = document.getElementById('grid');
+      const metadataBar = document.getElementById('metadata');
+      const fullscreen = document.getElementById('fullscreen');
+
+      const createItem = (item, index) => {
+        const el = document.createElement('div');
+        el.className = 'item';
+
+        const media = (item.url.endsWith('.mp4') || item.url.includes('video'))
+          ? document.createElement('video')
+          : document.createElement('img');
+
+        media.src = item.url;
+        if (media.tagName === 'VIDEO') {
+          media.autoplay = true;
+          media.loop = true;
+          media.muted = true;
+          media.playsInline = true;
+        }
+
+        el.appendChild(media);
+        const date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
+        const desc = item.description || '';
+        el.dataset.date = date;
+        el.dataset.desc = desc;
+        el.dataset.index = index;
+
+        el.addEventListener('click', () => {
+          fullscreen.innerHTML = '';
+          const fsMedia = media.cloneNode(true);
+          if (fsMedia.tagName === 'VIDEO') fsMedia.muted = false;
+          fullscreen.appendChild(fsMedia);
+          fullscreen.style.display = 'flex';
+        });
+
+        return el;
+      };
+
+      data.forEach((item, index) => {
+        timeline.appendChild(createItem(item, index));
+        grid.appendChild(createItem(item, index));
+      });
+
+      const updateMetadata = () => {
+        const items = [...document.querySelector('.timeline.active')?.children || []];
+        const center = window.innerWidth / 2;
+        let closest = null;
+        let minDist = Infinity;
+
+        items.forEach(item => {
+          const rect = item.getBoundingClientRect();
+          const dist = Math.abs(rect.left + rect.width / 2 - center);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = item;
+          }
+        });
+
+        if (closest) {
+          const date = closest.dataset.date;
+          const desc = closest.dataset.desc;
+          metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
+        }
+      };
+
+      document.getElementById('timeline').addEventListener('scroll', () => {
+        requestAnimationFrame(updateMetadata);
+      });
+
+      updateMetadata();
+
+      document.getElementById('toggle').addEventListener('click', () => {
+        timeline.classList.toggle('active');
+        grid.classList.toggle('active');
+        updateMetadata();
+      });
+    }
+
+    loadTimeline();
+  </script>
+</body>
+</html>
