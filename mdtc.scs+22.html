@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   scs+22 &mdash; showcase sound + 2022
+  </title>
+  <!-- perf hints -->
+  <link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+  <link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+  <link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
+  <link href="https://attachments.are.na" rel="dns-prefetch"/>
+  <style>
+   :root{
+      --bg:#fff; --fg:#0a0a0a; --line:rgba(0,0,0,.12); --radius:14px; --gap:.9rem; --gap-lg:1.2rem; --ease:cubic-bezier(.22,.61,.36,1);
+      --maxw:1440px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman", Times, ui-serif, Georgia, serif}
+    img,video{display:block;max-width:100%;height:auto}
+    a{color:inherit;text-decoration:none}
+    body{overflow-x:hidden}
+
+    /* header */
+    header{position:fixed;inset:auto 1rem auto 1rem;top:1rem;z-index:40;display:flex;gap:.8rem;align-items:center;justify-content:space-between}
+    header img{width:50px;height:auto}
+    .language-selector{display:flex;gap:.5rem}
+    .language-selector button{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.25rem .6rem;cursor:pointer;opacity:.75;text-transform:lowercase}
+    .language-selector button.active{background:#000;color:#fff;opacity:1}
+
+    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1.1rem}
+    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.1rem 0;text-transform:lowercase}
+    .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
+    .description{font-size:1rem;line-height:1.58;max-width:980px}
+
+    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin-bottom:.6rem}
+    .section h2{font-size:1.02rem;margin:0;text-transform:lowercase}
+    .muted{opacity:.68;font-size:.92rem}
+
+    /* grid systems */
+    .tight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem}
+    @media(min-width:720px){.tight-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(min-width:1100px){.tight-grid{grid-template-columns:repeat(3,1fr)}}
+
+    .tight-grid .tile{border:1px solid var(--line);border-radius:var(--radius);overflow:visible;background:#fff}
+    .frame{position:relative;width:100%;background:#000}
+.frame::before { content: none; }
+.frame > img, .frame > video { width: 100%; height: 100%; object-fit: contain; }
+
+    /* corregir solo para videos que necesiten proporción exacta */
+.frame > video.preserve-ratio {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+
+    /* flyers 4 horizontal */
+    .flyers4{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+    @media(min-width:900px){.flyers4{grid-template-columns:repeat(4,1fr)}}
+.frame::before { content: none; }
+    .flyers4 .frame>img{object-fit:contain;background:#fff}
+
+    /* documentation blocks */
+    details.block{border:1px solid var(--line);border-radius:var(--radius);overflow:visible;background:#fff}
+    details.block+details.block{margin-top:.6rem}
+    details.block summary{padding:.7rem .9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem;font-size:1rem}
+    details.block summary::-webkit-details-marker{display:none}
+    .block .wrap{padding:.7rem .7rem 1rem}
+    .media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+    @media(min-width:720px){.media-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(min-width:1200px){.media-grid{grid-template-columns:repeat(4,1fr)}}
+.frame::before { content: none; }
+    .media-grid .frame>img{object-fit:contain;background:#fff}
+
+    /* artists list */
+    details.listado{border:1px solid var(--line);border-radius:var(--radius);overflow:visible}
+    details.listado summary{padding:.7rem .9rem;cursor:pointer;list-style:none;font-size:1rem}
+    details.listado summary::-webkit-details-marker{display:none}
+    .cols{display:grid;grid-template-columns:repeat(1,1fr);gap:.4rem;padding:.1rem .9rem .9rem}
+    @media(min-width:800px){.cols{grid-template-columns:repeat(2,1fr)}}
+    .cols h3{margin:.6rem 0 .2rem;font-size:.96rem;text-transform:lowercase}
+    ul.clean{margin:.1rem 0 .6rem;padding-left:1rem}
+
+    /* 4 vertical videos */
+    .v4{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+    @media(min-width:900px){.v4{grid-template-columns:repeat(4,1fr)}}
+.frame::before { content: none; }
+    .v4 video{object-fit:cover}
+
+    /* gallery toggle */
+    .view-controls{display:flex;gap:.6rem;justify-content:flex-end}
+    .btn{background:#fff;border:1px solid var(--line);padding:.25rem .6rem;border-radius:999px;cursor:pointer}
+    .btn.active{background:#000;color:#fff}
+    #allGallery{display:none}
+
+    /* lang show/hide */
+    .lang{display:none}
+    .lang.active{display:block}
+
+    /* video helpers */
+    video{background:#000}
+  
+.tight-grid .tile {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tight-grid .frame {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+</style>
+  <script src="../assets/js/video-autoplay-mobile.js" defer></script>
+  <script defer="" src="/assets/js/media-proxy.js">
+    
+  </script>
+  <script>
+   // small helper for autoplay on mobile
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.querySelectorAll('video[autoplay]').forEach(v=>{
+        v.muted = v.hasAttribute('muted');
+        v.playsInline = true;
+        const play = ()=> v.play().catch(()=>{});
+        play();
+        ['touchstart','pointerdown','click'].forEach(ev=>document.addEventListener(ev,play,{once:true,capture:true}));
+      });
+
+      // language selector
+      const $btns=[...document.querySelectorAll('.language-selector button')];
+      const sync=(lang)=>{
+        $btns.forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+        document.querySelectorAll('.lang').forEach(n=>n.style.display = n.classList.contains('lang-'+lang)?'block':'none');
+      };
+      $btns.forEach(b=>b.addEventListener('click',()=>sync(b.dataset.lang)));
+      sync('es');
+
+      // gallery toggle
+      const btnAll=document.getElementById('btnAll');
+      const btnSections=document.getElementById('btnSections');
+      const all=document.getElementById('allGallery');
+      const sections=document.getElementById('sections');
+      btnAll.addEventListener('click',()=>{btnAll.classList.add('active');btnSections.classList.remove('active');all.style.display='block';sections.style.display='none'});
+      btnSections.addEventListener('click',()=>{btnSections.classList.add('active');btnAll.classList.remove('active');all.style.display='none';sections.style.display='block'});
+
+      // build all‑media gallery by cloning every media element src
+      const collect = [];
+      document.querySelectorAll('[data-collect] img,[data-collect] video').forEach(m=>{
+        const isVideo = m.tagName.toLowerCase()==='video';
+        collect.push({type:isVideo?'video':'img',src:m.currentSrc||m.src});
+      });
+      const grid=document.getElementById('allGrid');
+      collect.forEach(item=>{
+        const tile=document.createElement('div');tile.className='tile';
+        const fr=document.createElement('div');fr.className='frame';tile.appendChild(fr);
+        const el=document.createElement(item.type);
+        if(item.type==='video'){el.src=item.src;el.autoplay=true;el.loop=true;el.muted=true;el.playsInline=true}
+        else{el.src=item.src;el.loading='lazy'}
+        fr.appendChild(el);grid.appendChild(tile);
+      });
+    });
+  </script>
+  
+ </head>
+ <body>
+  <header>
+   <a aria-label="xpan" href="/">
+    <img alt="xpan" decoding="async" fetchpriority="high" src="xpan.svg"/>
+   </a>
+   <nav aria-label="selector de idioma" class="language-selector">
+    <button class="active" data-lang="es">
+     es
+    </button>
+    <button data-lang="en">
+     en
+    </button>
+    <button data-lang="fr">
+     fr
+    </button>
+    <button data-lang="jp">
+     jp
+    </button>
+   </nav>
+  </header>
+  <main>
+   <!-- title + meta -->
+   <section class="section">
+    <div class="lang lang-es active">
+     <h1>
+      scs+22 &mdash; showcase sound + 2022
+     </h1>
+     <div class="meta">
+      03&ndash;06 noviembre 2022 &mdash; ciudad de m&eacute;xico
+     </div>
+     <p class="description">
+      sound + se configur&oacute; como un puente donde convergen distintas vertientes de la cultura sonora dentro de la escena art&iacute;stica mexicana. para su quinta activaci&oacute;n satelital, la plataforma reuni&oacute; a artistas nacionales e internacionales a trav&eacute;s de esculturas sonoras, instalaciones, piezas acusm&aacute;ticas y performances en vivo. durante cuatro d&iacute;as se presentaron m&aacute;s de veinticinco obras e instalaciones, junto con veinte performances que integraron tecnolog&iacute;as de espacializaci&oacute;n multicanal. por primera vez en m&eacute;xico se experiment&oacute; una estructura esf&eacute;rica de doce bocinas (xpan.12.e), dise&ntilde;ada para generar una inmersi&oacute;n sonora total en el espacio. esta infraestructura expandi&oacute; las posibilidades perceptuales del p&uacute;blico y marc&oacute; un precedente en la experiencia del arte sonoro en el pa&iacute;s. la activaci&oacute;n transform&oacute; el recinto en un entorno de comuni&oacute;n y recreaci&oacute;n, donde la propuesta curatorial articul&oacute; la vanguardia sonora con pr&aacute;cticas de arte contempor&aacute;neo. sound + consolid&oacute; as&iacute; su constancia en abrir nuevos puentes para la difusi&oacute;n de la experimentaci&oacute;n, fortaleciendo la relevancia cultural del sonido como pr&aacute;ctica transversal.
+     </p>
+    </div>
+    <div class="lang lang-en" style="display:none">
+     <h1>
+      scs+22 &mdash; showcase sound + 2022
+     </h1>
+     <div class="meta">
+      03&ndash;06 november 2022 &mdash; mexico city
+     </div>
+     <p class="description">
+      sound + acted as a bridge where different strands of sonic culture converge within mexico&rsquo;s art scene. for its fifth satellite activation, the platform brought together national and international artists through sound sculptures, installations, acousmatic works, and live performances. over four days, more than twenty‑five works and installations were presented alongside twenty performances that employed multichannel spatialization. for the first time in mexico, a twelve‑speaker spherical structure (xpan.12.e) was experienced, designed to create full spatial immersion. this infrastructure expanded the audience&rsquo;s perceptual range and set a precedent for sound‑art experiences in the country. the activation transformed the venue into a space of communion and recreation, where the curatorial approach articulated sonic vanguard with contemporary art practices, consolidating sound + as a persistent bridge for experimentation and strengthening the cultural relevance of sound as a transversal practice.
+     </p>
+    </div>
+    <div class="lang lang-fr" style="display:none">
+     <h1>
+      scs+22 &mdash; showcase sound + 2022
+     </h1>
+     <div class="meta">
+      03&ndash;06 novembre 2022 &mdash; mexico
+     </div>
+     <p class="description">
+      sound + s&rsquo;est d&eacute;fini comme un pont o&ugrave; convergent diverses branches de la culture sonore au sein de la sc&egrave;ne artistique mexicaine. pour sa cinqui&egrave;me activation satellitaire, la plateforme a r&eacute;uni des artistes nationaux et internationaux &agrave; travers des sculptures sonores, des installations, des pi&egrave;ces acousmatiques et des performances en direct. pendant quatre jours, plus de vingt‑cinq &oelig;uvres et installations ont &eacute;t&eacute; pr&eacute;sent&eacute;es, accompagn&eacute;es de vingt performances utilisant des technologies de spatialisation multicanale. pour la premi&egrave;re fois au mexique, une structure sph&eacute;rique de douze enceintes (xpan.12.e) a &eacute;t&eacute; exp&eacute;riment&eacute;e, con&ccedil;ue pour g&eacute;n&eacute;rer une immersion spatiale totale. cette infrastructure a &eacute;largi les possibilit&eacute;s perceptuelles du public et a marqu&eacute; un pr&eacute;c&eacute;dent dans l&rsquo;exp&eacute;rience de l&rsquo;art sonore dans le pays. l&rsquo;activation a transform&eacute; le lieu en un environnement de communion et de recr&eacute;ation, o&ugrave; la proposition curatoriale a articul&eacute; l&rsquo;avant‑garde sonore avec les pratiques de l&rsquo;art contemporain, consolidant sound + comme pont durable pour l&rsquo;exp&eacute;rimentation et renfor&ccedil;ant la pertinence culturelle du son en tant que pratique transversale.
+     </p>
+    </div>
+    <div class="lang lang-jp" style="display:none">
+     <h1>
+      scs+22 &mdash; showcase sound + 2022
+     </h1>
+     <div class="meta">
+      2022年11月3日&ndash;6日 &mdash; メキシコシティ
+     </div>
+     <p class="description">
+      sound + は、メキシコのアートシーンにおける多様な音文化の潮流が交差する橋として機能した。第5回サテライト・アクティベーションでは、サウンドスカルプチャー、インスタレーション、アクースマティック作品、ライブ・パフォーマンスを通じて国内外のアーティストを集めた。4日間で25を超える作品とインスタレーション、さらに多チャンネル空間化技術を用いた20のパフォーマンスを提示。メキシコで初めて、12台のスピーカーによる球体構造（xpan.12.e）が体験され、空間全体での没入を実現した。このインフラは観客の知覚可能性を拡張し、国内のサウンドアート体験に前例をつくった。会場は交感とレクリエーションの場へと変容し、キュラトリアル提案は音の前衛と現代美術の実践を接続した。sound + は実験のための新たな橋を開き続け、音を横断的な実践として位置づける文化的関連性を強化した。
+     </p>
+    </div>
+   </section>
+   <!-- controls: sections vs all-media -->
+   <div class="view-controls">
+    <button aria-pressed="true" class="btn active" id="btnSections">
+     ver por secciones
+    </button>
+    <button aria-pressed="false" class="btn" id="btnAll">
+     ver todo junto
+    </button>
+   </div>
+   <!-- ALL MEDIA GALLERY (auto-built) -->
+   <section class="section" id="allGallery">
+    <div class="head">
+     <h2>
+      galer&iacute;a completa
+     </h2>
+     <div class="muted">
+      todas las piezas en una ret&iacute;cula
+     </div>
+    </div>
+    <div class="tight-grid" id="allGrid">
+    </div>
+   </section>
+   <!-- SECTIONED CONTENT -->
+   <section id="sections">
+    <!-- artists + portraits slideshow -->
+    <section class="section" data-collect="">
+     <div class="head">
+
+     </div>
+     <details class="listado">
+      <summary>
+      <h2>
+     <div class="muted">
+       artistas participantes
+     </div>
+      </h2>
+      </summary>
+      <div class="cols">
+       <div>
+        <h3>
+         performances e instalaciones multicanal (12.e)
+        </h3>
+        <ul class="clean">
+         <li>
+          Carlos Iturralde
+         </li>
+         <li>
+          Enrique Arriaga
+         </li>
+         <li>
+          Interspecifics
+         </li>
+         <li>
+          Iv&aacute;n Naranjo
+         </li>
+         <li>
+          Malitzin Cort&eacute;s
+         </li>
+         <li>
+          Roberto Morales Manzanares
+         </li>
+         <li>
+          Sol Oosel
+         </li>
+         <li>
+          Tito Rivas
+         </li>
+        </ul>
+        <h3>
+         piezas acusm&aacute;ticas en soporte fijo
+        </h3>
+        <ul class="clean">
+         <li>
+          Arturo Capur
+         </li>
+         <li>
+          Concepci&oacute;n Huerta
+         </li>
+         <li>
+          Diente de Le&oacute;n
+         </li>
+         <li>
+          Ecotonalismo Fluido
+         </li>
+         <li>
+          Emiliano Mendoza
+         </li>
+         <li>
+          Fabi&aacute;n Coronado
+         </li>
+         <li>
+          For Feria
+         </li>
+         <li>
+          Fonoteca Tlacuilo
+         </li>
+         <li>
+          Jorge Mart&iacute;nez
+         </li>
+         <li>
+          Josue Medina Mario Alberto Bravo
+         </li>
+         <li>
+          Pedro Dascaleskis
+         </li>
+         <li>
+          Strange Attractor
+         </li>
+        </ul>
+       </div>
+       <div>
+        <h3>
+         esculturas sonoras
+        </h3>
+        <ul class="clean">
+         <li>
+          Alonso Hern&aacute;ndez
+         </li>
+         <li>
+          Armando Rosales
+         </li>
+         <li>
+          Danielle Firoozi
+         </li>
+         <li>
+          Emilio Algo
+         </li>
+         <li>
+          Gabriel O&rsquo;Shea
+         </li>
+         <li>
+          John Giorno
+         </li>
+         <li>
+          Jos&eacute; Orozco Mora
+         </li>
+         <li>
+          Lucas Cant&uacute;
+         </li>
+         <li>
+          Maximiliano Rosiles
+         </li>
+        </ul>
+        <h3>
+         performances exteriores
+        </h3>
+        <ul class="clean">
+         <li>
+          Alina Maldonado
+         </li>
+         <li>
+          Alonso Hern&aacute;ndez
+         </li>
+         <li>
+          &Aacute;ngel Florido
+         </li>
+         <li>
+          Dios Bestial
+         </li>
+         <li>
+          Exesposos
+         </li>
+         <li>
+          Jorge Berumen
+         </li>
+         <li>
+          La Fem
+         </li>
+         <li>
+          La Kriego + La Cal
+         </li>
+         <li>
+          Los Poporitos
+         </li>
+         <li>
+          Mito del Desierto
+         </li>
+         <li>
+          Sites + Cyrus Bayandor
+         </li>
+         <li>
+          Sof&iacute;a Legarreta
+         </li>
+         <li>
+          &Uacute;ltima Ratio
+         </li>
+        </ul>
+       </div>
+      </div>
+     </details>
+     <div class="tight-grid" style="margin-top:.6rem">
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" muted="" playsinline="" src="https://attachments.are.na/39027747/1821e1daf25b6f8082732194c3927711.mov?1756152042">
+        </video>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- principal slideshow video + panfleto -->
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       video principal
+      </h2>
+     </div>
+     <div class="tight-grid">
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" muted="" playsinline="" src="https://attachments.are.na/39028005/9be55de52cb12f4ebe8e65b5e8d15180.mp4?1756152662">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame" style="background:#fff">
+        <img alt="panfleto principal" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028398/original_6b57e2acd9d2c5e7ed8e8105ffde63b9.png?1756153435?bc=0" style="object-fit:contain"/>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- 9 flyers cuadrados (video con sonido) -->
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       flyers &mdash; video
+      </h2>
+     </div>
+     <div class="tight-grid">
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028276/bbadd08731d383dbce3d7211351f3c2c.mp4?1756153186">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028298/0dbd8a862bb7a0073a69455cb0ee5d63.mov?1756153208">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028344/a3c63fb2e789a0cc7c9fe9a61775d650.mov?1756153303">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028258/ce31e48e84e467403666deb4a2fd9ca6.mov?1756153171">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028256/234ab06c88f80aec47912f5a0bb97127.mov?1756153171">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028255/0ea2174fbd401b7dada13f5194500804.mov?1756153170">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028245/961cde328d7975ce673b048beb6aa9f2.mov?1756153134">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028247/3806a00ce0547f5c33019e588190eeb3.mov?1756153144">
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" loop="" playsinline="" src="https://attachments.are.na/39028253/573b7976487fb31a83c9bb8b3056ba76.mov?1756153169">
+        </video>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- 4 flyers imagen programa por día -->
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       programa por d&iacute;a
+      </h2>
+     </div>
+     <div class="flyers4">
+      <div class="tile">
+       <div class="frame">
+        <img alt="programa 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028403/original_29ecf7620b0c590695fe84006f1faef3.png?1756153468?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img alt="programa 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028405/original_3b8a4c719761464c76206f7676dda878.png?1756153469?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img alt="programa 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028407/original_0536e3e8164642cc3a33ea5f8ce201b6.png?1756153472?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img alt="programa 4" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028408/original_021a847bc8f73373b7d6877606187c89.png?1756153474?bc=0"/>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- DOCUMENTACIÓN POR DÍA/SECCIÓN -->
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       documentaci&oacute;n &mdash; jueves 3.11
+      </h2>
+      <div class="muted">
+       performances
+      </div>
+     </div>
+     <!-- Alonso Hernández -->
+     <details class="block">
+      <summary>
+       alonso hern&aacute;ndez
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028483/original_95028f1157c3d1b4b36f22001ac6cf78.jpg?1756153763?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028501/original_4f3c852cb6f095d5ef2bfd4e94d0231d.jpg?1756153799?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028508/original_d1dc7c9fcab0f4241b47df9d076b3bef.jpg?1756153831?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028509/original_60404a704823ee454233d3551af4b443.jpg?1756153838?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028510/original_2c63a68e7813d27be3aa44bed0ce418f.jpg?1756153842?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028511/original_d36d591bef7b4e760456d77e2fd105e4.jpg?1756153843?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028512/original_60b569991da3aafab1e4753d277a2619.jpg?1756153844?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028514/original_1a4462fa7cce27a4f6e5dea28a6e8ae1.jpg?1756153845?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Carlos Iturralde -->
+     <details class="block">
+      <summary>
+       carlos iturralde
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028626/original_44d7c7f02f66ace5988daee251ba1f08.jpg?1756154180?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028637/original_64a0aff6f9899c144313cea87d638c4a.jpg?1756154202?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028639/original_5ee40e05f7766dd9cb98bc6e67c6de1e.jpg?1756154209?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028644/original_35252df68e298caf5667c028903cf483.jpg?1756154219?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Dios Bestial -->
+     <details class="block">
+      <summary>
+       dios bestial
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028669/original_e09ebbd41d6138080c1e07e674324582.jpg?1756154297?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028682/original_c40e5d7fceb56f0914b7e4abc364e1f0.jpg?1756154339?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028684/original_2edf2c4cd7c77546a829479e151ebbd6.jpg?1756154342?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028690/original_ff13fcb9d144de9a9ebe615b471583f9.jpg?1756154358?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028705/original_3c631cf9fdd547a6e0a745e624b2044e.jpg?1756154388?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028706/original_b268cb9195e09bf1db3e71f03b5ca58d.jpg?1756154390?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028707/original_89c856efe8c93ae9cf2b3944ff0f4e24.jpg?1756154393?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028715/original_7920247f2afdcbc944d382a7629f0480.jpg?1756154406?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028731/original_becbc05acc1cfc8cf10f18f9b110f810.jpg?1756154452?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028744/original_af121b4c137af3a708b83a5b50740ad3.jpg?1756154497?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028746/original_40be8e1369546a0f2a89d30dfec3369e.jpg?1756154506?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028760/original_9a894c7f1405edc06fa67a57c59c97a9.jpg?1756154525?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028773/original_20a8b8b7e67d2c01d03696fb857b0744.jpg?1756154540?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028776/original_5011ef6b8505632b6ffcd736ebbabea4.jpg?1756154544?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028783/original_008d588c22b94562d3e7ff78e0b3f32d.jpg?1756154564?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028786/original_d0614785b0497133ab808be5a5d7ebf4.jpg?1756154570?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028790/original_f00aa716b066b3a86d886bfa3581a7c2.jpg?1756154583?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028791/original_e1eb988f33dee57261ef967d2b81c175.jpg?1756154586?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028793/original_3a8e7ce81e2118bc5b2441f5ddc52968.jpg?1756154591?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Interspecifics -->
+     <details class="block">
+      <summary>
+       interspecifics
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028829/original_fd77bdbd444698d5b0634b082310e55c.jpg?1756154710?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028834/original_bffdc9236cac5e3e390a61cf5e18c755.jpg?1756154734?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028837/original_62ff9d7527aff9eb81ac47f1ba04c4f5.jpg?1756154735?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028840/original_20b855a559065d77902bdb5e875f7303.jpg?1756154751?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028843/original_b04c431b0714d75f569ba7caa31f54cb.jpg?1756154763?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028847/original_4ebd625f4386f9e50a5613488f29899d.jpg?1756154768?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028848/original_1d06bd9d4b6b08bcd3571d5e4561e77f.jpg?1756154773?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028851/original_084db68d82bcbc556813ae289e8af38d.jpg?1756154778?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- La Fem -->
+     <details class="block">
+      <summary>
+       la fem
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028867/original_756f0c1c7596ef0d9fde95fd5bb2d566.jpg?1756154810?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028872/original_72258986449c31c03d82b2d1b7a77119.jpg?1756154831?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028880/original_c2d4c969d9afe1f24a2f0acd1530a2d1.jpg?1756154853?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028885/original_b843bcac3d6fc58bed72914e47b76cb5.jpg?1756154871?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028893/original_6d9557b41cb0014f725c0b8dfd37fc9e.jpg?1756154894?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028900/original_e8cfbacf959798f03219a1d3b13359a3.jpg?1756154910?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028915/original_c53c22579b1323deb064d22d45693c4f.jpg?1756154931?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028934/original_7b6dce7f190becba08c856738c424238.jpg?1756154953?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028939/original_ad79070690e5a3ef104726217a92c4ed.jpg?1756154963?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028942/original_84862b8c1b14d01bc44a2234da44bc9c.jpg?1756154970?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028946/original_4c78a4bc015272bfd7e34837b6a90cee.jpg?1756154986?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028951/original_183feaec62c4053c57db3d4779388bd3.jpg?1756155003?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028952/original_c575ac611441227d8e895d928cf88cd9.jpg?1756155005?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028959/original_aea5fadc8c9d1dca1e665f6946cf2a53.jpg?1756155020?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028962/original_ce7aad6c6a5e3ca1e3a40a6028da23cf.jpg?1756155037?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028971/original_7a01fb2395a3bff441aee2f0d160f814.jpg?1756155043?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028974/original_18d9a5bc170ce8a8bbe4f9cbb4ffc5a5.jpg?1756155052?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028979/original_8c4c51f280e4aa3891d8ed963e37a720.jpg?1756155058?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028982/original_16f0ca4ebe144e71f5907b389153ac0a.jpg?1756155076?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028983/original_c74e6beb6ce0b86195c4d7aef45efd75.jpg?1756155083?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028991/original_66a682c0d06c6e095bd146cae041d757.jpg?1756155103?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028997/original_957c3be1d7a6bcfea9f361bcc98d56b2.jpg?1756155126?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029005/original_a61733b73bbff3c1ba3147b5cb85d18e.jpg?1756155130?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029008/original_703e14706bbb16fdc88c5d5600cc5623.jpg?1756155141?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029012/original_f1b3ca0f2dc04a66978b2b20b15321c8.jpg?1756155156?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029013/original_8ec5038c6a5b9db0b44ba2f3b7d16517.jpg?1756155157?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029014/original_b45b570309f3e73d870ae930f591478d.jpg?1756155163?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029015/original_b2d4ec05e392e8f40f2589ddd9afeb95.jpg?1756155164?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029019/original_a18a24ad6ebbd88842498499a0216da2.jpg?1756155168?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39029020/original_1c17abd667d564ca2489136a5e60bb4a.jpg?1756155168?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- La Kriego + La Cal -->
+     <details class="block">
+      <summary>
+       la kriego + la cal
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030633/original_db1fa782f9682e7193185c70486abb36.jpg?1756159167?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030644/original_774759f1f0adb0be985601476a10ddc9.jpg?1756159194?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030650/original_c48cc4511b79d33b05e21c05602b9450.jpg?1756159225?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030660/original_1d3901c9d05c524c271702d83adb615c.jpg?1756159253?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030665/original_f7f6806ba2e9caa263837f712429ac8c.jpg?1756159275?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030672/original_c3b8de554fc93a3947e51c5481716858.jpg?1756159296?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030677/original_9ec7372c1b6cdf911f11372d5a2c1ec7.jpg?1756159314?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030688/original_3f888bdcb9ebf2c064a9415381922e6d.jpg?1756159340?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030689/original_f9c6744f9b84990a7e919e77d7f598a3.jpg?1756159340?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030695/original_e7fd92146c1fe753787e1de71e8e5593.jpg?1756159361?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030696/original_41917623afec7e5ee1a24b0258763339.jpg?1756159361?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030698/original_d791a3d2d1701b8f4e8ca4f27ebee9d4.jpg?1756159367?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030701/original_a49e329c6083cc80e0825410cc9b3484.jpg?1756159377?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030710/original_914da0a9ad82b4e3589fed221f9405f0.jpg?1756159403?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030712/original_5f1da332ec532e9e75ea65bf2c0a48ab.jpg?1756159414?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030715/original_9eeef7e1166026ac72f06f02ceaae712.jpg?1756159424?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030728/original_d2ef365602ac2713564e91ae22090387.jpg?1756159445?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030738/original_2de2f0072c2ba23b94a4a7f2042b3e91.jpg?1756159476?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030746/original_701d6dd75b28c4457e3dc6fbd6f6dcbc.jpg?1756159493?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030748/original_6f88a1f3ad550bcc84c87ee306cf2495.jpg?1756159496?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030757/original_66ba07cf0b36a4403d2ecfb7664717fa.jpg?1756159520?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030765/original_065b1cdf7f4232757179fe3e1d3d41a4.jpg?1756159542?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030767/original_54670788eec14a41fc61e6e056a1b6ab.jpg?1756159546?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030772/original_0caef242733bdec5acb260515c487d31.jpg?1756159552?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030773/original_f3e437cba982eafcc885c5497d620fda.jpg?1756159553?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030775/original_8c208fe8862eb6ea21962a6350338b27.jpg?1756159554?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030777/original_91c77a7294e699538dbbb10d8d05251a.jpg?1756159555?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Roberto Morales Manzanares -->
+     <details class="block">
+      <summary>
+       roberto morales manzanares
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030828/original_c6353c211d99abae3ab2ec4ed87574bc.jpg?1756159722?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030838/original_f69e6980f3ef830f4d12590ab70e22f5.jpg?1756159750?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030849/original_69c3005877bbaa5e961d74bb3d8b4a60.jpg?1756159780?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030859/original_bb3b33538bcb1df5cce30a663d3c54da.jpg?1756159809?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030871/original_ce2bb6205046bd9b228cf52392d1b69d.jpg?1756159836?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030873/original_8fa279ac69f46472a5437f792c0ad0cb.jpg?1756159841?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030877/original_fa50c3be8da669160b8b815cb0c20ff6.jpg?1756159845?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030881/original_5326b6a393e90a5012929efd9e4e1f28.jpg?1756159855?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030884/original_c90a5aad1edd80b7ebbcc233522aef44.jpg?1756159858?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030888/original_7d9d3406ce7639bd98aff613b5c97583.jpg?1756159872?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030891/original_8f872df9af2ee18be9b69f94787f5a59.jpg?1756159876?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030899/original_27039dd3d03f2aea35b54ef74729041f.jpg?1756159897?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030906/original_d71702ca5c650eacc4a2dfd6563a5afd.jpg?1756159915?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030909/original_c61a52c097c92f7c72e2ada75502eda5.jpg?1756159931?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030912/original_cd89fd31d3951304a57bdc08346f1c33.jpg?1756159943?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030915/original_aae0b1f44e26dfe0e7f0d377341808c3.jpg?1756159950?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Sol Oosel -->
+     <details class="block">
+      <summary>
+       sol oosel
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030928/original_3c37552cf92384f0987325f028c45641.jpg?1756159986?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030933/original_8e07cfbfcf8ca7cd534091dbe683be76.jpg?1756160007?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030938/original_881fe165294ce47d52a0e2efb2bc5162.jpg?1756160021?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030950/original_db7011df8c3f617de53b1aacec62b27e.jpg?1756160049?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030962/original_fd68eb0abc0ec9ff7f115a5ad85087e6.jpg?1756160072?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030973/original_413739459edf2d91b0428c83499391dc.jpg?1756160095?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030984/original_6e79359f234241d16da2ad877c46d710.jpg?1756160122?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030989/original_2a770364aeab03d841fed3345733f688.jpg?1756160139?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030991/original_b1a72cf5b20f07224b09d34ddab094f6.jpg?1756160141?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030997/original_34b1916dc9b3876bd8940e8fec55bfd4.jpg?1756160149?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39030998/original_e937c83e699a1afd0ffefe732bf5b1dc.jpg?1756160151?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031001/original_5e323189ae0030a7391b74279f897f7f.jpg?1756160158?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031002/original_2bd7c97ecf7176853913d24c75112cd1.jpg?1756160157?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Repeat blocks for all remaining artists and sections, inserting every provided URL.  -->
+    </section>
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       documentaci&oacute;n &mdash; viernes 4.11
+      </h2>
+      <div class="muted">
+       performances
+      </div>
+     </div>
+     <!-- Alina Maldonado -->
+     <details class="block">
+      <summary>
+       alina maldonado
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031084/original_e5aaa5bd374930402643c1f49201df75.jpg?1756160389?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031088/original_f3c69b731a5a4836b301191860de0e1a.jpg?1756160409?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031096/original_803908979f22280a0aeea2bfe5e5afa7.jpg?1756160433?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031105/original_7148cd271b02992769c84ac1e29a61db.jpg?1756160466?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031108/original_a2e7792927537d7c352267a5b123aaf6.jpg?1756160468?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031116/original_90848d7f6cc03abe0e9b5ea5db77859a.jpg?1756160495?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031119/original_073a397977cc81453b6ee6ebf130651c.jpg?1756160499?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031167/original_d543257a8543186c3692b043d52ed843.jpg?1756160524?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031169/original_4db0d8d6086491356d2b34c56740fcad.jpg?1756160525?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031174/original_e8752a345aa43afe5276874607795046.jpg?1756160532?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031176/original_a86d65e69ae55a7f44b5bc85f31b1ae6.jpg?1756160541?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031177/original_daf6daefdca50ebc6d5d7e8e707b3f8f.jpg?1756160542?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Enrique Arriaga -->
+     <details class="block">
+      <summary>
+       enrique arriaga
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031202/original_517fe5953bfd1b709ece6269a667898e.jpg?1756160600?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031206/original_9a3f5f733db7ad29cca104ed91c7ed3e.jpg?1756160624?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031212/original_c7934f90ed8580f65e9e0f3a20fb6219.jpg?1756160650?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031225/original_67ce273dc06fc32bff0e802c8e05eed0.jpg?1756160671?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031234/original_b974f853fc5a5ee3cbea49af5f44ac95.jpg?1756160708?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031238/original_6a16563e9239f782e8b086b2dc262ecf.jpg?1756160719?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031241/original_e9536ed9d578af24559b4a77bc821c1d.jpg?1756160732?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031247/original_cc9fff0c59021cc625454da0343c33df.jpg?1756160755?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031248/original_ea48e68bfbcafb22f0a705f932a2b452.jpg?1756160756?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031259/original_77a4a26f52c8d61b84fc457f01c1f8de.jpg?1756160776?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031269/original_4dd5058336a6924c09f6fcd6ff57c67a.jpg?1756160792?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031271/original_3b51df489a73adbfd04fd328fb80a182.jpg?1756160794?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031275/original_0a01f320aa1eef80fa5f7d9bdb39b345.jpg?1756160799?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031276/original_e2e7e5b9940a67cda7774f2a0c65a579.jpg?1756160799?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031282/original_876314d895866f80d8fbe141cb5899ed.jpg?1756160804?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031285/original_ab900bc665100201903c5666c1fb864e.jpg?1756160817?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Ivan Naranjo -->
+     <details class="block">
+      <summary>
+       ivan naranjo
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031322/original_4323ef4f36281319da02aebcfc0fb177.jpg?1756160921?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031309/original_b8ad77cf33b4126c6fbb371be3848c22.jpg?1756160890?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031324/original_bf47c524eb796013f48f2e94f484e35e.jpg?1756160929?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031318/original_0d6e312a268cde2f0c4dbd58971cf192.jpg?1756160907?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Malitzin Cortés + Ivan Abreu -->
+     <details class="block">
+      <summary>
+       malitzin cort&eacute;s + ivan abreu
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031343/original_1c4e0bd260c9711631268fdc39801d98.jpg?1756160978?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031353/original_96c346ee9d66e5867fc9bbb1844054b9.jpg?1756160997?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031362/original_6dd3835e86e0603f295e87e5cac6f5cc.jpg?1756161008?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031368/original_3b34e6ce643f0eedd410036b4a0fe476.jpg?1756161021?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031373/original_5d47a9a7cfcfae2cf99a19b7cc67aa49.jpg?1756161029?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Mito del Desierto -->
+     <details class="block">
+      <summary>
+       mito del desierto
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031391/original_33ed9bffe40cd12ba9dbe6c5b025bbee.jpg?1756161085?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031398/original_71c518d05b2d9c791d30cc16c30f5945.jpg?1756161104?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031413/original_41e29f61362a423b12824331a61c8551.jpg?1756161139?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031424/original_b388ffa2c87e3b9572e17584c05cb1f4.jpg?1756161172?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031435/original_f34b1064862bc99553bec3d38311dc6b.jpg?1756161192?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031437/original_91a8d783c967809bf0853702f9ed43f7.jpg?1756161194?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031438/original_d1c8ab9f822d093ee70c219211ddf336.jpg?1756161195?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031444/original_a47c3ed7c27bbffa66fe414dae3de41f.jpg?1756161206?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031450/original_8a60deefff55cbf6e6ca6b158a1cf876.jpg?1756161218?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031454/original_93f50a31d9e585adde0389e5f54501bd.jpg?1756161229?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031456/original_00592fcc14fb816fd5bcf4113e6f8dc1.jpg?1756161235?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031467/original_0b8a67d98b1a3d6ea91632107be35eb0.jpg?1756161262?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031479/original_7bb3054b0a753c19a98a82166fdd6c17.jpg?1756161291?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031482/original_bd8ca5ba5afe292efc6a2aafdacbf713.jpg?1756161303?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031487/original_450df2a5b1a7b731f5e9363651f532d7.jpg?1756161320?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031490/original_8c54113fdb999cf9a1087d2b10340757.jpg?1756161324?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031502/original_8edbd2ae4fb69b5f2e3f320ee0575203.jpg?1756161353?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031503/original_7e19eb469eb7b02d631a83cb21baba5a.jpg?1756161353?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031505/original_3b134e0c2c73055f46ec2cefff09a7c8.jpg?1756161355?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031506/original_8a04e94582d5588d19b6aa36ebe44d6f.jpg?1756161359?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031517/original_c42579352f0c150e467fcd562ec83eb1.jpg?1756161390?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031526/original_c554d74dc230f698f4ef2068c8e6100f.jpg?1756161402?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031533/original_28a57cc87d7e1c013382c9a863093f26.jpg?1756161420?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031538/original_460e8155c400c0efbcadcf70b4ac30ab.jpg?1756161432?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031544/original_725af70570c6bc74cfed50ca8f577391.jpg?1756161448?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031545/original_cccfee93fb99405a30def5a03551bd17.jpg?1756161457?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031548/original_05a51790d2db17fdc6e2570e00605d1b.jpg?1756161458?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031549/original_3bb51b145ddb7c15204f42e8cba29856.jpg?1756161463?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Sites + Cyrus Bayandor -->
+     <details class="block">
+      <summary>
+       sites + cyrus bayandor
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031560/original_1e1fe3caaaa7f0ec44958bd8dc554e11.jpg?1756161507?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031565/original_b50fdcc92f8f6a180c699cff1dba87fc.jpg?1756161528?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031571/original_7ff810ceb8085b8edd0d0cc88de107cd.jpg?1756161560?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031578/original_3311ca79835c5e6217809544e9b4a527.jpg?1756161591?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031590/original_fdcfbfcaa05015764d73c809da2e68ba.jpg?1756161618?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031593/original_e0d5ff62769432eccfdecf2c732ee03f.jpg?1756161621?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031594/original_549ebb699d2e4c5a81f45bf67a612dd7.jpg?1756161624?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031597/original_2fa09cdc0f4b37fb87bd326225454c36.jpg?1756161630?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031599/original_3400b6dd4089afa477b93a57708f48d6.jpg?1756161635?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031600/original_8078003eab57452236e1770ae19703c3.jpg?1756161638?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031602/original_3680e1ad7562d3cf1eda6b5d1572ea61.jpg?1756161644?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Sofía Legarreta -->
+     <details class="block">
+      <summary>
+       sof&iacute;a legarreta
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031621/original_e785f4ed053f279eb369baa0a98666f0.jpg?1756161717?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031629/original_c953d1e0cf90401ac57443fcb46b4fc5.jpg?1756161744?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031632/original_9246dcb9ce39384b0c637756e0449605.jpg?1756161755?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031634/original_34ca33141f2b5ab3053b1a305bd175fe.jpg?1756161772?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031635/original_94dffe704499864c0a47320a601ba101.jpg?1756161774?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031637/original_8c5e31f0b64755c8e591cd025618480a.jpg?1756161780?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031641/original_c2f5e971d11cc20c4626336d46ae6214.jpg?1756161785?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Tito Rivas -->
+     <details class="block">
+      <summary>
+       tito rivas
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031657/original_ab52c5491ce6098d68281f95f4f97ffc.jpg?1756161838?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031664/original_46c173394329a446c9c3f51fb6cf5985.jpg?1756161859?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031671/original_609b8a4cba4a9924d6be0a8e8c79c2a5.jpg?1756161875?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031673/original_e85c7d71349768b79b368ddb76ef22f4.jpg?1756161880?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031681/original_7320a9cbdced4a474a4594e66a64c02f.jpg?1756161891?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+    </section>
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       documentaci&oacute;n &mdash; domingo 6.11
+      </h2>
+      <div class="muted">
+       performances
+      </div>
+     </div>
+     <!-- Los Poporitos -->
+     <details class="block">
+      <summary>
+       los poporitos
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031728/original_1f9838097ce43fba9025872fbfe98e61.jpg?1756162012?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031747/original_8ca40d907c2e62b628df6b795440cfc3.jpg?1756162065?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031757/original_09fcf1d84bc1438634bb11dd80065389.jpg?1756162093?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031762/original_7ffad1cce633b7166dcd23c17fe389fc.jpg?1756162101?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031765/original_a7d7c41812bd03a61d6c4235f58aa0ea.jpg?1756162110?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031770/original_1f480af3380ab40d61f418d2f0b5bd8f.jpg?1756162123?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031772/original_4e37b2ae97633e4551ff396d66ac3a6d.jpg?1756162129?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031773/original_fb7715253535927e368df1108e350026.jpg?1756162130?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Angel Florido -->
+     <details class="block">
+      <summary>
+       angel florido
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+       </div>
+      </div>
+     </details>
+     <!-- Jorge Berumen -->
+     <details class="block">
+      <summary>
+       jorge berumen
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031702/original_86069d416936e04edf2e25799ca12cda.jpg?1756161941?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031706/original_de9358a680233899b66f7375ed96b454.jpg?1756161955?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031711/original_64af538f4e3773e5d7830c93c268e93f.jpg?1756161966?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Ultima Ratio -->
+     <details class="block">
+      <summary>
+       ultima ratio
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+       </div>
+      </div>
+     </details>
+     <!-- Exesposos -->
+     <details class="block">
+      <summary>
+       exesposos
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+       </div>
+      </div>
+     </details>
+    </section>
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       documentaci&oacute;n &mdash; piezas en instalaci&oacute;n
+      </h2>
+      <div class="muted">
+       3, 4, 5, 6 de noviembre
+      </div>
+     </div>
+     <!-- Alonso Hernández -->
+     <details class="block">
+      <summary>
+       alonso hern&aacute;ndez
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031812/original_332155f7acc5d8bd71211f8a8386a3ad.jpg?1756162244?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031816/original_a3f936984f711ab05ff4afe80a326314.jpg?1756162252?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031820/original_81483dbdacea1a9fd64fce9b098d63a4.jpg?1756162263?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031822/original_f4eec42c53faf0d10cdef32f02ae2aba.jpg?1756162270?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031825/original_465fe64d67fa5c6da850d412a4a47bd2.jpg?1756162280?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031827/original_5f57990f5df3e81715b86663506bb2ef.jpg?1756162282?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39031829/original_eda0465d52f45bfd2967aab406ac5c1d.jpg?1756162288?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Armando Rosales -->
+     <details class="block">
+      <summary>
+       armando rosales
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032038/original_a766ad6471e19700081203fd743a3a90.jpg?1756162539?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032039/original_2cad288cfd4a9546be14f3e477c3f01b.jpg?1756162540?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032040/original_3a383aa0dcaf7032b6cd9e976e0e5941.jpg?1756162541?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032041/original_578972bd50bad4d78feb53827d751c5f.jpg?1756162541?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032042/original_c5f4a572fa892a86d54691f645962882.jpg?1756162541?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032043/original_09dc73aee94a4ed9ebacb2b3611dcebb.jpg?1756162541?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Danielle Firoozi -->
+     <details class="block">
+      <summary>
+       danielle firoozi
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032051/original_bc8b2aed8528815b560edd5cfa98e8c5.jpg?1756162550?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032053/original_27c181d7537e6c8399be4a6576ac12e6.jpg?1756162552?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032054/original_be8bcf3458b7c98a324e3d9c29b84541.jpg?1756162553?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032055/original_888be3312cefde5600ef85a52e0cfb59.jpg?1756162553?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032056/original_1277616ab36a74b298dea7d32ddca73d.jpg?1756162560?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032057/original_b9a9d6cce3ec91bf7a9601fad28f18a3.jpg?1756162555?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032058/original_3d99b43378858f41307dfccb2062899f.jpg?1756162553?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032059/original_7239c86204c1264cfbff7348dcc688ae.jpg?1756162553?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032060/original_49042b96c2478ab6be2c24ce835e864a.jpg?1756162555?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032061/original_9dcf5d4e300a8f4756af4ed8ebecadb9.jpg?1756162556?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Emilio Algo -->
+     <details class="block">
+      <summary>
+       emilio algo
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032105/original_feee7efa2adc1d6a2d8d3119c34324e6.jpg?1756162640?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032108/original_ef5b6da37c3cb91a57dfa37513b2e1fb.jpg?1756162642?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032109/original_4422662a43867e33ad70282fc4564c54.jpg?1756162642?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032110/original_4422e1aa576e3dd5982346f228ffe065.jpg?1756162643?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032111/original_c3dfa3da1448aaad32ed6478c445cf18.jpg?1756162642?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032112/original_94aadc95e1620fc3205df554cdaa2598.jpg?1756162642?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032113/original_18044356543eb37856ef4190f22b5011.jpg?1756162642?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032114/original_fc9b961cd23ea8f53899038cf07b3cb9.jpg?1756162642?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Fonoteca Tlacuilo -->
+     <details class="block">
+      <summary>
+       fonoteca tlacuilo
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032124/original_4b3333e80f9d374443c00881a842ad11.jpg?1756162657?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032125/original_ce08f12b60df6cc046e384799c92110e.jpg?1756162658?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032126/original_542a3524c538180db51f74c4728ac7ca.jpg?1756162659?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032127/original_a20a4e113dfdf9b6c5bc7c0bdc826b48.jpg?1756162659?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032128/original_5124ad10368e35e116fbd3f1802a3ab4.jpg?1756162659?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032129/original_111ea8d98d9883bcfd220a180086b4ef.jpg?1756162659?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032130/original_856c8232dda9a999766855fca1700c0e.jpg?1756162659?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032131/original_b0792d4c463dd3397b27053d1f7ce9f7.jpg?1756162660?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032132/original_b128e589e359f6293c98568f1e028d1d.jpg?1756162661?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032133/original_26b426703b032ccb838bc0e37ac76e7b.jpg?1756162661?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032134/original_f6d8cd8f0eeaa4666247231af5937b3f.jpg?1756162662?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032135/original_eb27f216dfa474d6c25ac541af7bb479.jpg?1756162662?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032136/original_053ef3c76a907fbcf184a5801f25fab1.jpg?1756162661?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Gabriel O’shea -->
+     <details class="block">
+      <summary>
+       gabriel o&rsquo;shea
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032139/original_6c9335eb55912537eab43e4b9352dba5.jpg?1756162668?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032141/original_4a03756f2fd0051c292d6e5d83e58c12.jpg?1756162668?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032161/original_c4cb7dabfcd153d26f76ca070ff203e1.jpg?1756162733?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032162/original_ed201a4b6aa6bccc453c3a799f2a4843.jpg?1756162733?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- José Orozco Mora -->
+     <details class="block">
+      <summary>
+       jos&eacute; orozco mora
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032164/original_47721465f65e666d155c2c6f1dc0bcb7.jpg?1756162742?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032165/original_d410340e6d529178a943c4a2c2ab8a18.jpg?1756162743?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032166/original_03b08d6b7eb8c5b14a59aee24d07fda0.jpg?1756162743?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032167/original_64b60919741f44a0611694a5a73b3848.jpg?1756162743?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032168/original_c3634c35a27ec8a773e74d9ca0df8a59.jpg?1756162743?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032169/original_9fbb234cbbaa2d7a5b5221ba75165dd1.jpg?1756162744?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032171/original_fdb5703b71867eb83d06890fd338f1ed.jpg?1756162746?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Lucas Cantú -->
+     <details class="block">
+      <summary>
+       lucas cant&uacute;
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032174/original_3e6a7d0751424fda9285e369fa9123ad.jpg?1756162752?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032175/original_1327c9fbd36d05fa7a4a1b08b0d869af.jpg?1756162753?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032176/original_94d7315e526c22cb25eaa59e16c09ec8.jpg?1756162754?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032177/original_f510b1d8e6f350aa88bdc4e14834f12b.jpg?1756162755?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032178/original_9ab15886a7b91de0c2ed02c78f3ac533.jpg?1756162758?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032179/original_93d4ba3842f0ff39775a20608f2c11ed.jpg?1756162756?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032180/original_9d0ac0a7c09b8e22df061364d2e5e045.jpg?1756162756?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032181/original_0e8b497f12d9d1acb0ad6ccb9849fec3.jpg?1756162756?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032182/original_8b3fd7c53ad6faf901c267467f8d23f5.jpg?1756162756?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032183/original_77b3fe4baec9194e775f77450baeac9f.jpg?1756162756?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+     <!-- Maximiliano Rosiles -->
+     <details class="block">
+      <summary>
+       maximiliano rosiles
+      </summary>
+      <div class="wrap">
+       <div class="media-grid">
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032195/original_2ec4fd328eda7da4477f9dcf67d8d3c0.jpg?1756162775?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032196/original_bd2577cf183bf3b2e3223e03591cd5e1.jpg?1756162775?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032197/original_8c31f1d10f41379d34663757a0868597.jpg?1756162775?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032198/original_63b12d6ecba38c630260e3735eb2c422.jpg?1756162776?bc=0"/>
+         </div>
+        </div>
+        <div class="tile">
+         <div class="frame">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032199/original_fbae25a1cb6b9cd698af8aba33365c25.jpg?1756162776?bc=0"/>
+         </div>
+        </div>
+       </div>
+      </div>
+     </details>
+    </section>
+    <!-- INTERVENCIÓN ARQUITECTÓNICA -->
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       intervenci&oacute;n arquitect&oacute;nica
+      </h2>
+      <div class="muted">
+      </div>
+     </div>
+     <div class="media-grid">
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032207/original_05f7bad3933bea52300baa2cfd99a143.jpg?1756162807?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032208/original_e10b8a4d2077cf862b6300a8727cf340.jpg?1756162808?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032209/original_2f706c5d17d2270d243b3b4e5bd9de25.jpg?1756162808?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032211/original_e364181e9f153349cddce80eb3376351.jpg?1756162809?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032212/original_5f1f4e2196c322463e1ff30a08f31711.jpg?1756162809?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032213/original_d9bbf2fff205806d67ce55c5a8285d2d.jpg?1756162810?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032214/original_34b640c5a13c0531434c9630e0b6c1d1.jpg?1756162811?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032215/original_272b2628319a6c79c799cdc809c1d81d.jpg?1756162811?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032216/original_6ef6f011b461073fb47aae5c91aa1636.jpg?1756162810?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032218/original_025313f06e3fded4d59762497ef2ed96.jpg?1756162812?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032219/original_c013bf305a82a9b32c5db44839697ef6.jpg?1756162835?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032220/original_d7f5a6b940dbbe8098287b73bc74a4b3.jpg?1756162813?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032225/original_ceb3e145305b9742604ed728acd60f73.jpg?1756162813?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032224/original_5df6ff858d490ae34ff1241689627911.jpg?1756162813?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032227/original_a2afbf1cf7fa65fd1f24df1a0b29c182.jpg?1756162814?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032229/original_a3a707e2ea193a7b789ca6742b5bf8b3.jpg?1756162815?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032223/original_ad763784acf397499553460ce9611662.jpg?1756162814?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032221/original_6312bf755f9a6fadfa87d2a6adff066a.jpg?1756162814?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032226/original_000e0b3d3eebe2b6badf041c62217cc8.jpg?1756162813?bc=0"/>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39032228/original_eb6263c92f48c52a695cc649e608b25b.jpg?1756162816?bc=0"/>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- CUATRO VIDEOS VERTICALES -->
+    <section class="section" data-collect="">
+     <div class="head">
+      <h2>
+       verticales
+      </h2>
+      <div class="muted">
+       4 videos &mdash; autoplay mute
+      </div>
+     </div>
+     <div class="v4">
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" disablePictureInPicture="" disablepictureinpicture="" disableremoteplayback="" loop="" muted="" playsinline="" preload="auto">
+         <source src="https://attachments.are.na/39033461/4d1a2b79b99d4c4e92b4cbc06005bd8b.mov?1756166991" type="video/mp4"/>
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" disablePictureInPicture="" disablepictureinpicture="" disableremoteplayback="" loop="" muted="" playsinline="" preload="auto">
+         <source src="https://attachments.are.na/39033530/82360918fa70d71d50d87478d50c42cd.mov?1756167404" type="video/mp4"/>
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" disablePictureInPicture="" disablepictureinpicture="" disableremoteplayback="" loop="" muted="" playsinline="" preload="auto">
+         <source src="https://attachments.are.na/39033591/78d5a099a0fbe18eb6c3cee6d6531082.mov?1756167751" type="video/mp4"/>
+        </video>
+       </div>
+      </div>
+      <div class="tile">
+       <div class="frame">
+        <video autoplay="" disablePictureInPicture="" disablepictureinpicture="" disableremoteplayback="" loop="" muted="" playsinline="" preload="auto">
+         <source src="https://attachments.are.na/39033610/5e3cab1f39e7419b2eeb0db74d4d3c8d.mov?1756167877" type="video/mp4"/>
+        </video>
+       </div>
+      </div>
+     </div>
+    </section>
+   </section>
+  </main>
+ 
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('video').forEach(video => {
+      video.muted = true;
+      video.playsInline = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.setAttribute('muted', 'true');
+      video.play().catch(()=>{});
+    });
+  });
+</script>
+
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const videos = document.querySelectorAll('video');
+
+    videos.forEach(video => {
+      video.muted = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute('muted', 'true');
+      video.play().catch(() => {});
+
+      // Activar sonido al hacer click
+      video.addEventListener('click', () => {
+        video.muted = !video.muted;
+        video.setAttribute('muted', video.muted.toString());
+      });
+    });
+
+    // Mute/unmute según visibilidad
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const video = entry.target;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+          video.muted = true;
+          video.setAttribute('muted', 'true');
+        }
+      });
+    }, { threshold: 0.4 });
+
+    videos.forEach(video => observer.observe(video));
+  });
+</script>
+
+</body>
+</html>
