@@ -765,6 +765,46 @@ const items = track.querySelectorAll('img, .carousel-video, video');
 })();
 </script>
 <script src="assets/js/video-autoplay-mobile.js" defer></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const videos = document.querySelectorAll("video");
+
+  // Set flags en todos los videos
+  videos.forEach(v => {
+    v.muted = true;
+    v.setAttribute("muted", "");
+    v.playsInline = true;
+    v.setAttribute("playsinline", "");
+    v.setAttribute("webkit-playsinline", "");
+  });
+
+  // Intentar reproducir todos
+  function tryPlayAll() {
+    videos.forEach(v => {
+      const p = v.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(() => {}); // ignorar bloqueo inicial
+      }
+    });
+  }
+
+  tryPlayAll();
+
+  // Fallback: primer toque desbloquea todos
+  function resumeAll() {
+    tryPlayAll();
+    window.removeEventListener("touchstart", resumeAll);
+    window.removeEventListener("click", resumeAll);
+  }
+  window.addEventListener("touchstart", resumeAll, { once: true, passive: true });
+  window.addEventListener("click", resumeAll, { once: true, passive: true });
+
+  // También cuando se vuelve visible la pestaña
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) tryPlayAll();
+  });
+});
+</script>
 
 </body>
 </html>

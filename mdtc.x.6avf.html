@@ -453,5 +453,43 @@
     }, {threshold:[0,.33,1]});
     autoVideos.forEach(v=>io.observe(v));
   </script>
+  <script>
+(function(){
+  const v = document.getElementById('beam');
+  if(!v) return;
+
+  // flags robustos para iOS/Android
+  v.muted = true; v.setAttribute('muted','');
+  v.autoplay = true; v.setAttribute('autoplay','');
+  v.loop = true; v.setAttribute('loop','');
+  v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+  v.setAttribute('disablePictureInPicture',''); v.setAttribute('controlslist','nodownload noplaybackrate nofullscreen');
+
+  function tryPlay(){
+    const p = v.play?.();
+    if (p && p.catch) p.catch(() => armGesture());
+  }
+  function armGesture(){
+    const resume = () => {
+      v.play().finally(() => {
+        ['touchstart','pointerdown','click'].forEach(ev=>window.removeEventListener(ev,resume,{passive:true}));
+      });
+    };
+    ['touchstart','pointerdown','click'].forEach(ev=>window.addEventListener(ev,resume,{once:true,passive:true}));
+  }
+
+  // reintentos sin nunca pausar el beam
+  window.addEventListener('load', tryPlay, {once:true});
+  window.addEventListener('pageshow', tryPlay);
+  window.addEventListener('focus', tryPlay);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
+
+  // watchdog suave para ahorro de energía
+  setInterval(() => {
+    if (document.visibilityState === 'visible' && v.paused) tryPlay();
+  }, 5000);
+})();
+</script>
+
 </body>
 </html>
