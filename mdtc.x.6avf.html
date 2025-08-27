@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light">
+  <title>x.6_A/V.f — xpan</title>
+
+  <!-- Priorizar BEAM -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="video" href="https://attachments.are.na/39071236/224495abd52e40b79149605ebc8d9db6.mov?1756254381" type="video/mp4" fetchpriority="high">
+  <!-- Restaurar optimización v3: preload del video principal con prioridad baja -->
+  <link rel="preload" as="video" href="https://attachments.are.na/39071034/26519fce69fd547f4dd74b5df863b0da.mp4?1756253586" type="video/mp4" fetchpriority="low">
+
+  <style>
+    :root{--fg:#000;--line:rgba(0,0,0,.12);--radius:14px;--maxw:1440px}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:#fff;color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
+    img,video{display:block;max-width:100%;height:auto}
+    a{text-decoration:none;color:inherit}
+
+    /* Header + lenguaje estilo xcv2 */
+    header{position:fixed;top:1rem;left:1rem;z-index:30}
+    header img{width:50px;height:auto;display:block}
+    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
+    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;color:#000;opacity:.5;transition:.2s}
+    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+
+    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1.1rem}
+    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.1rem 0;text-transform:lowercase}
+    .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
+    .description{font-size:1rem;line-height:1.58;max-width:980px}
+    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin-bottom:.6rem}
+    .section h2{font-size:1.02rem;margin:0;text-transform:lowercase}
+    .muted{opacity:.68;font-size:.92rem}
+
+    /* BEAM background: z-index corregido para que sea visible */
+    .bg-video{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+      background:#000 url('https://d2w9rnfcy7mm78.cloudfront.net/39072351/original_12eee1b9a1a2b4278c69d2d7acf1aad2.png?1756258293?bc=0') center/cover no-repeat}
+    .bg-video video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s ease;filter:contrast(120%) saturate(210%)}
+    .bg-video video.ready{opacity:1}
+
+    main{
+  position: relative;
+  z-index: 1;
+}
+    /* mini audio player */
+    .mini-player{position:fixed;right:1rem;bottom:1rem;z-index:45;backdrop-filter:blur(6px);background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:.35rem .6rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    .mini-btn{width:34px;height:34px;border-radius:999px;border:1px solid #000;background:transparent;display:grid;place-items:center;cursor:pointer}
+    .mini-btn:active{transform:scale(.98)}
+    .mini-icon{width:9px;height:9px;display:block}
+    .mini-label{font-size:.85rem;opacity:.7;text-transform:lowercase}
+
+    /* featured video */
+    .featured{display:grid;place-items:center;border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+    .featured video{width:100%;height:100%;max-height:76vh;object-fit:contain;background:#fff}
+
+    /* collapsible program */
+    details.block{border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+    details.block+details.block{margin-top:.6rem}
+    details.block summary{padding:.7rem .9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem;font-size:1rem}
+    details.block summary::-webkit-details-marker{display:none}
+    .block .wrap{padding:.2rem .9rem 1rem}
+    .block .wrap h3{margin:1rem 0 .5rem;font-size:1rem;text-transform:lowercase}
+    .block .wrap ul{margin:.25rem 0 1rem;padding-left:1rem}
+
+    /* three key videos row */
+    .tri-videos{display:grid;grid-template-columns:1fr minmax(0,720px) 1fr;gap:.6rem;align-items:center}
+    .tri-videos .cell{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
+    .tri-videos .cell video{width:100%;height:100%;object-fit:contain;background:#fff}
+    @media(max-width:1000px){.tri-videos{grid-template-columns:1fr}}
+
+    /* 9 horizontales por día */
+    .days9{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+    @media(max-width:900px){.days9{grid-template-columns:1fr}}
+    .days9 .tile{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+    .days9 video{width:100%;height:100%;object-fit:contain;background:#fff}
+    .badge{position:absolute;top:.4rem;left:.4rem;background:rgba(255,255,255,.85);color:#000;padding:.15rem .4rem;border-radius:4px;font-size:.72rem;letter-spacing:.01em}
+    .info{position:absolute;bottom:.4rem;left:.4rem;background:rgba(0,0,0,.55);color:#fff;padding:.15rem .4rem;border-radius:4px;font-size:.72rem;letter-spacing:.01em;max-width:90%}
+
+    /* 9 flyers cuadrados */
+    .flyers9{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+    .flyers9 .tile{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+    .flyers9 .frame{position:relative}
+    .flyers9 .frame::before{content:"";display:block;aspect-ratio:1/1}
+    .flyers9 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff}
+
+    .lang{display:none}.lang.active{display:block}
+  </style>
+
+  <script defer src="/assets/js/media-proxy.js"></script>
+  
+</head>
+<body>
+  <!-- BEAM: z-index corregido, poster, preload alto y fade-in -->
+  <div class="bg-video" aria-hidden="true">
+    <video id="beam" autoplay loop muted playsinline preload="auto" webkit-playsinline
+      poster="https://d2w9rnfcy7mm78.cloudfront.net/39072351/original_12eee1b9a1a2b4278c69d2d7acf1aad2.png?1756258293?bc=0">
+      <source src="https://attachments.are.na/39072498/696b6c11123dcd9a3dee6227c52bce3b.mov?1756258801" type="video/mp4">
+    </video>
+  </div>
+
+  <header>
+    <a href="/" aria-label="xpan"><img src="xpan.svg" alt="xpan"></a>
+    <nav class="language-selector" aria-label="selector de idioma">
+      <button class="active" data-lang="es">es</button>
+      <button data-lang="en">en</button>
+      <button data-lang="fr">fr</button>
+      <button data-lang="jp">jp</button>
+    </nav>
+  </header>
+
+  <!-- mini audio player -->
+  <div class="mini-player" role="region" aria-label="reproductor sonoro">
+    <button id="playToggle" class="mini-btn" aria-label="play/pause">
+      <svg class="mini-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="#000" stroke="#000"></path>
+      </svg>
+    </button>
+    <span class="mini-label">motivo sonoro — x.6_A/V.f</span>
+    <audio id="motif" preload="none">
+      <source src="https://attachments.are.na/39071290/a00a8d374c840e2dd2a787105962b555.wav?1756254571" type="audio/wav">
+    </audio>
+  </div>
+
+  <main>
+    <!-- título + descripción multilíngüe -->
+    <section class="section">
+      <div class="lang lang-es active">
+        <h1>x.6_A/V.f</h1>
+        <div class="meta">2024 — ciudad de méxico</div>
+        <div class="description">
+          x.6_A/V.f [xpan 6channel audiovisual forum] operó como un sistema espacial autónomo y como punto de congregación cultural. más allá de su estructura —arco de acero, seis bocinas mdl.1 suspendidas y membrana visual tensada—, el proyecto se concibió como un foro expandido para la comunidad cultural de la ciudad de méxico, donde sonido e imagen fueron herramientas para un diálogo directo entre artistas, proyectos e iniciativas emergentes.<br><br>
+          la activación se desplegó en el espacio wig durante cuatro semanas de febrero de 2024. cada jornada se articuló como un programa abierto y post-disciplinario, donde piezas de video, performances audiovisuales, lecturas de poesía, desfiles y sesiones acusmáticas convivieron en un mismo campo inmersivo. la infraestructura no solo sostuvo la experiencia técnica multicanal, sino que propició el encuentro entre generaciones de artistas que operan en los márgenes y el centro de la escena cultural.<br><br>
+          x.6_A/V.f consolidó un espacio de intersección que no impuso categorías ni formatos fijos: cada participante fue invitado a apropiarse del sistema y a intervenirlo desde su propia práctica. en esa libertad se trazó la relevancia cultural del foro: un lugar de transmisión colectiva donde el intercambio energético y estético delineó nuevas formas de comunidad.
+        </div>
+      </div>
+      <div class="lang lang-en">
+        <h1>x.6_A/V.f</h1>
+        <div class="meta">2024 — mexico city</div>
+        <div class="description">
+          x.6_A/V.f [xpan 6channel audiovisual forum] functioned as an autonomous spatial system and a cultural gathering point. beyond its structure—steel arch, six suspended mdl.1 speakers, and a tensioned visual membrane—the project was conceived as an expanded forum for mexico city’s cultural community, where sound and image served as tools for direct dialogue among artists, projects, and emerging initiatives.<br><br>
+          the activation unfolded at wig over four weeks in february 2024. each day operated as an open, post-disciplinary program in which video works, audiovisual performances, poetry readings, runway shows, and acousmatic sessions coexisted within one immersive field. the infrastructure not only sustained the multichannel technical experience but also fostered encounters across generations working at the margins and at the center of the cultural scene.<br><br>
+          x.6_A/V.f consolidated an intersectional space without fixed categories or formats: each participant appropriated and intervened in the system from their own practice. that freedom framed the forum’s cultural relevance: a site of collective transmission where energetic and aesthetic exchange outlined new forms of community.
+        </div>
+      </div>
+      <div class="lang lang-fr">
+        <h1>x.6_A/V.f</h1>
+        <div class="meta">2024 — mexico</div>
+        <div class="description">
+          x.6_A/V.f [xpan 6channel audiovisual forum] a fonctionné comme un système spatial autonome et un point de rassemblement culturel. au-delà de sa structure —arc en acier, six enceintes mdl.1 suspendues et membrane visuelle tendue—, le projet a été conçu comme un forum étendu pour la communauté culturelle de mexico, où le son et l’image ont servi d’outils pour un dialogue direct entre artistes, projets et initiatives émergentes.<br><br>
+          l’activation s’est déployée chez wig pendant quatre semaines en février 2024. chaque journée s’est articulée comme un programme ouvert et post-disciplinaire où vidéos, performances audiovisuelles, lectures de poésie, défilés et sessions acousmatiques ont coexisté dans un même champ immersif. l’infrastructure a soutenu l’expérience technique multicanal et favorisé la rencontre entre générations opérant aux marges et au centre de la scène culturelle.<br><br>
+          x.6_A/V.f a consolidé un espace d’intersection sans catégories ni formats fixes : chaque participant s’est approprié le système et l’a intervenu depuis sa propre pratique. cette liberté a tracé la pertinence culturelle du forum : un lieu de transmission collective où l’échange énergétique et esthétique a dessiné de nouvelles formes de communauté.
+        </div>
+      </div>
+      <div class="lang lang-jp">
+        <h1>x.6_A/V.f</h1>
+        <div class="meta">2024 — メキシコシティ</div>
+        <div class="description">
+          x.6_A/V.f（xpan 6channel audiovisual forum）は、自律的な空間システムであり、文化的な集合点として機能した。鋼製アーチ、吊り下げられた6台のmdl.1スピーカー、張力のかかったビジュアル膜という構成を越えて、本プロジェクトはメキシコシティの文化コミュニティに向けた拡張フォーラムとして構想された。音とイメージは、アーティスト、プロジェクト、新興イニシアチブ間の直接的な対話のための道具となった。<br><br>
+          2024年2月の4週間、会場wigで展開。各日はオープンでポストディシプリナリーなプログラムとして編成され、ビデオ作品、視聴覚パフォーマンス、詩の朗読、ランウェイ、アクースマティック・セッションが同一の没入空間で共存した。インフラはマルチチャンネルの技術体験を支えるだけでなく、周縁と中心の両極で活動する世代間の出会いも促した。<br><br>
+          x.6_A/V.fは固定のカテゴリーや形式を設けない交差の場を確立した。各参加者は自らの実践からシステムに介入し、それを占有した。その自由がフォーラムの文化的意義をかたちづくった。すなわち、エネルギーと美学の交換が新しい共同体のかたちを描く、集中的な伝達の場である。
+        </div>
+      </div>
+    </section>
+
+
+    <!-- programa completo -->
+    <section class="section">
+      <details class="block">
+        <summary><span>programa completo x.6_A/V.f — wig, cdmx, febrero 2024</span><span>ver/ocultar</span></summary>
+        <div class="wrap">
+          <h3>semana 1</h3>
+          <h4>jueves 01.feb</h4>
+          <ul>
+            <li>17:00–18:00 → Jose Darío Fernández — tipología emocional en flow state [pieza en video]</li>
+            <li>18:00–19:00 → Maureen Muse — lyric & super star [piezas en video]</li>
+            <li>19:00–20:00 → Sindicato Mexicano de Fotografía / diles que no me maten [muestra de video + musicalización] — con Antonia Valentina, Ramon Saturnino, Josue Medina, Jose Luis Cuevas, Jose Darío Fernández, Sonia Krisanova</li>
+            <li>20:00–22:00 → Invitadxs especialxs [dj set / selección musical]</li>
+          </ul>
+          <h4>viernes 02.feb</h4>
+          <ul>
+            <li>17:00–18:00 → Nimodo ft Goma Xantana [performance audiovisual]</li>
+            <li>18:00–19:00 → María José Cruz — la muerte pertenece a la vida [pieza en video + lectura de poesía]</li>
+            <li>19:00–20:00 → Fendi Fentanil [performance audiovisual]</li>
+            <li>20:00–21:00 → Ich_nore — knights of swords [pieza en video + selección musical]</li>
+            <li>21:00–23:00 → Kai, do you love me? [dj set: piano works, showcase & bass]</li>
+          </ul>
+          <h4>sábado 03.feb</h4>
+          <ul>
+            <li>17:00–18:00 → Pálida® [intervención en vivo a mdl.1 + rifa de la bocina + selección musical]</li>
+            <li>18:00–19:00 → Kat._.chi [intervención en vivo a mdl.1 + rifa + selección musical]</li>
+            <li>19:00–20:00 → Cuachic ft Dont Trust Me [intervención en vivo a mdl.1 + rifa + selección musical]</li>
+            <li>20:00–21:00 → Vuulpees ft Missora [intervención en vivo a mdl.1 + rifa + selección musical]</li>
+            <li>21:00–22:30 → Alejandro Marcial [live show]</li>
+          </ul>
+
+          <h3>semana 2</h3>
+          <h4>jueves 08.feb</h4>
+          <ul>
+            <li>17:00–17:30 → Alanamey — alanashow cap.1 alanamey parfum [pieza en video]</li>
+            <li>17:45–18:15 → Lorena Vega — canal vortex [pieza en video]</li>
+            <li>18:30–19:00 → Nik Mantilla — humped pumped duped [serie de 6 poemas]</li>
+            <li>19:15–20:15 → PLN [listening session — mixtape release]</li>
+            <li>20:30–21:30 → Dj Clout Chaser ft Tacky Samantha [dj set]</li>
+          </ul>
+          <h4>viernes 09.feb</h4>
+          <ul>
+            <li>18:00–18:20 → Sites — fairy diet [compilation of unreleased sounds]</li>
+            <li>18:30–19:30 → Theorama — disques de la spirale [dj set / music selection]</li>
+            <li>19:30–20:15 → Orbe_nacimiento [unreleased sounds — listening session]</li>
+            <li>20:50–21:00 → Sophie Sound — a restless audio drama in 8–13 acts [sound performance]</li>
+            <li>21:00–22:00 → Alonso Hernández — POSTPREHISTÓRICO [sound performance]</li>
+          </ul>
+          <h4>sábado 10.feb</h4>
+          <ul>
+            <li>17:00–18:00 → Δlt+m8ç — gracias [live sound execution]</li>
+            <li>18:00–19:00 → Ilusiones Perceptivas — luz series [pieza en video + foto]</li>
+            <li>19:00–19:45 → Renata Pereira Lima [precomposed score with performatic improv]</li>
+            <li>20:00–20:30 → Illuzion — sometimes i wish i was blind-NY [film screening]</li>
+            <li>20:30–21:30 → Isaiah Barr + Gabriel Lauder — зона [live performance of drums and winds]</li>
+          </ul>
+
+          <h3>semana 3</h3>
+          <h4>jueves 15.feb</h4>
+          <ul>
+            <li>20:00 → Lazaro — F/W24 colección chopo [runway show]</li>
+          </ul>
+          <h4>sábado 17.feb</h4>
+          <ul>
+            <li>17:00–17:40 → Hola Bebé [muestra de video] — con Erika Maish, Celia Calderon Asensio, Sacred Scraps, Krystal Paniagua, Heavy Boots, Vanebon, No Sesso, Tacha</li>
+            <li>17:50–18:30 → Alicia Nieto — archive/fashion.film [pieza en video]</li>
+            <li>19:00–19:50 → Eyaculo Lagrimas — varios títulos [piezas en video]</li>
+            <li>20:00–20:40 → Marte [piezas selectas en video]</li>
+            <li>21:00–22:00 → Mi$ha [live performance]</li>
+          </ul>
+
+          <h3>semana 4</h3>
+          <h4>viernes 23.feb</h4>
+          <ul>
+            <li>17:00–17:30 → Marie Dubus — NoClip [pieza en video]</li>
+            <li>17:30–18:20 → Atracciones Mágicas [presentación de piezas con intervención audiovisual]</li>
+            <li>18:30–19:10 → YIN [live performance]</li>
+            <li>19:30–20:00 → Louis F Cota — Atonal 95 96 by NÓIS IV / No Alternative [full film] Premiere 1 [pieza en video]</li>
+            <li>20:00–20:30 → Tomás Díaz Cedeño + Tomás Altamirano — Fuente y fantasma [composición acusmática para fuente de agua WICHEMI]</li>
+            <li>20:30–21:00 → Cyrus Bayandor [acusmatic listening session]</li>
+            <li>21:00–22:00 → El Insulto [live performance]</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+        <!-- video principal -->
+    <section class="section">
+      <div class="featured">
+        <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+          <source src="https://attachments.are.na/39071034/26519fce69fd547f4dd74b5df863b0da.mp4?1756253586" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
+    <!-- tres videos -->
+    <section class="section">
+      <div class="tri-videos">
+        <div class="cell">
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+            <source src="https://attachments.are.na/39071279/c5a9070ed3b4670f57953be759db6123.mov?1756254524" type="video/quicktime">
+          </video>
+        </div>
+        <div class="cell">
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+            <source src="https://attachments.are.na/39071250/d489ac12bae4f5b4d31f516101c80adb.mp4?1756254427" type="video/mp4">
+          </video>
+        </div>
+        <div class="cell">
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+            <source src="https://attachments.are.na/39071256/eb413b698865502b6faca523ee766d51.mov?1756254452" type="video/quicktime">
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 por día -->
+    <section class="section">
+      <div class="head"><h2>registro por día</h2><div class="muted"></div></div>
+<div class="days9">
+  <div class="tile">
+    <span class="badge">01.feb</span>
+    <span class="info">
+      jose darío fernández; maureen muse; sindicato mexicano de fotografía
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074071/e5aed89893983db42b200d8d34237a5e.mp4?1756266986" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">02.feb</span>
+    <span class="info">
+      nimodo ft goma xantana; maría josé cruz; fendi fentanil; ich_nore; kai, do you love me?
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074073/ebc130071f26cc95aeea4c6ad5e099f0.mp4?1756266990" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">03.feb</span>
+    <span class="info">
+      pálida®; kat._.chi; cuachic ft dont trust me; vuulpees ft missora; alejandro marcial
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074074/9a52bd107f60be4d46332f729cf805bb.mp4?1756266999" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">08.feb</span>
+    <span class="info">
+      alanamey; lorena vega; nik mantilla; pln; dj clout chaser ft tacky samantha
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074075/0e5d5f9a69e1304692f345afdad9ed3b.mp4?1756267002" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">09.feb</span>
+    <span class="info">
+      sites; theorama; orbe_nacimiento; sophie sound; alonso hernández
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074076/4d51d01c3d8eefcf24873497284edb83.mp4?1756267004" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">10.feb</span>
+    <span class="info">
+      Δlt+m8ç; ilusiones perceptivas; renata pereira lima; illuzion; isaiah barr + gabriel lauder
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074077/12bfc2c447f4bfdd648e2ba20ab71616.mp4?1756267006" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">15.feb</span>
+    <span class="info">
+      lazaro — f/w24 colección chopo
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074079/b79770c00d538aa4b47e8e9e6bab095f.mp4?1756267018" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">17.feb</span>
+    <span class="info">
+      hola bebé; alicia nieto; eyaculo lagrimas; marte; mi$ha
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074079/b79770c00d538aa4b47e8e9e6bab095f.mp4?1756267018" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="tile">
+    <span class="badge">23.feb</span>
+    <span class="info">
+      marie dubus; atracciones mágicas; yin; louis f cota; tomás díaz cedeño + tomás altamirano; cyrus bayandor; el insulto
+    </span>
+    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+      <source src="https://attachments.are.na/39074079/b79770c00d538aa4b47e8e9e6bab095f.mp4?1756267018" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+    </section>
+
+    <!-- flyers -->
+    <section class="section">
+      <div class="head"><h2>programa — flyers</h2><div class="muted"></div></div>
+      <div class="flyers9">
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071386/645816de61e63defb78685f511706f82.mov?1756254869" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071381/f3beaa2afeae524b40bc1a60aeb88b77.mov?1756254847" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071385/0adc08698552cd0a0279ebb9493cb251.mov?1756254869" type="video/mp4"></video></div></div>
+
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071315/03ba50287e33d700eb903ec08044f8bb.mov?1756254652" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071343/5bdf7243c31207674741248cd1f4473b.mov?1756254756" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071365/c2ff479bcc498a3035903f7491d979cf.mov?1756254811" type="video/mp4"></video></div></div>
+
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071334/c9cdbed4fc14edf297d37b8f8288d787.mov?1756254721" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071364/77c88fe82536b9763ea1e33c7562df91.mov?1756254810" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071392/642558a43ca1fc52aae328c2b5dff733.mov?1756254878" type="video/mp4"></video></div></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Beam: marcar listo al primer frame para el fade-in
+    const beam = document.getElementById('beam');
+    beam?.addEventListener('loadeddata',()=>beam.classList.add('ready'),{once:true});
+
+    // Selector de idioma
+    const langButtons = document.querySelectorAll('.language-selector button');
+    function setLang(code){
+      langButtons.forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
+      document.querySelectorAll('.lang').forEach(el=>el.classList.remove('active'));
+      document.querySelectorAll('.lang-' + code).forEach(el=>el.classList.add('active'));
+    }
+    langButtons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));
+
+    // Mini audio
+    const motif = document.getElementById('motif');
+    const playToggle = document.getElementById('playToggle');
+    const iconPath = document.getElementById('iconPath');
+    let motifPlaying = false;
+    playToggle.addEventListener('click', async ()=>{
+      if(!motifPlaying){
+        try{ await motif.play(); motifPlaying = true; iconPath.setAttribute('d','M7 5 H11 V19 H7 Z M13 5 H17 V19 H13 Z'); }catch(e){}
+      }else{
+        motif.pause(); motifPlaying = false; iconPath.setAttribute('d','M8 5 L19 12 L8 19 Z');
+      }
+    });
+
+    // Video control: tap-to-unmute y pausar fuera de viewport
+    const autoVideos = Array.from(document.querySelectorAll('video.auto-video'));
+    let currentWithSound = null;
+    autoVideos.forEach(v=>{
+      if(v.hasAttribute('data-tap-sound')){
+        v.addEventListener('click', ()=>{
+          if(currentWithSound && currentWithSound!==v){ currentWithSound.muted = true; currentWithSound = null; }
+          if(v.muted){ v.muted = false; currentWithSound = v; } else { v.muted = true; currentWithSound = null; }
+        }, {passive:true});
+      }
+    });
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        const vid = e.target;
+        if(e.isIntersecting && e.intersectionRatio > 0.33){
+          if(vid.paused){ vid.play().catch(()=>{}); }
+          if(vid !== currentWithSound){ vid.muted = true; }
+        }else{
+          vid.muted = true;
+          if(!vid.paused) vid.pause();
+          if(currentWithSound === vid) currentWithSound = null;
+        }
+      });
+    }, {threshold:[0,.33,1]});
+    autoVideos.forEach(v=>io.observe(v));
+  </script>
+</body>
+</html>
