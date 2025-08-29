@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light"/>
+  <title>sound + anahuacalli — xpan</title>
+
+  <!-- Perf hints -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <script src="/assets/js/media-proxy.js" defer></script>
+
+  <style>
+    :root{
+      --bg:#fff; --fg:#000; --line:rgba(0,0,0,.12);
+      --radius:14px; --gap:.8rem; --maxw:1440px;
+      --overlay: rgba(255,255,255,.98);
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman", serif;overflow-x:hidden}
+    img,video{display:block;max-width:100%;height:auto}
+    a{color:inherit;text-decoration:none}
+
+    /* Header blindado */
+    .logo-header{position:fixed;top:1rem;left:1rem;z-index:30;isolation:isolate}
+    .logo-header img{height:50px;width:auto;display:block;background:transparent;border-radius:0;mix-blend-mode:normal;filter:none}
+/* removed duplicate img rule */
+/* removed conflicting rounded img rule */
+    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
+    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;color:#000;opacity:.5;transition:.2s}
+    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+
+    main{max-width:var(--maxw);margin:120px auto 5rem;padding:0 1rem;position:relative;z-index:0}
+
+    .section{margin:1.6rem 0;position:relative;z-index:0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin:.2rem 0 .8rem}
+    .section h2{margin:0;font-size:1.12rem;text-transform:lowercase}
+    .muted{opacity:.68;font-size:.92rem}
+
+    /* Tarjetas de info */
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    @media(max-width:900px){.info-grid{grid-template-columns:1fr}}
+    .info-card{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+    .info-card header{display:flex;justify-content:space-between;align-items:center;padding:.7rem .9rem;border-bottom:1px solid var(--line)}
+    .info-card .tag{font-size:.92rem;text-transform:lowercase;opacity:.85}
+    .info-card .content{padding:.9rem}
+    .scroll-y{max-height:360px;overflow:auto}
+    .two-cols{columns:2;column-gap:1.2rem}
+    @media(max-width:720px){.two-cols{columns:1}}
+
+    /* Bloques contraíbles elegantes */
+    details.block{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
+    details.block+details.block{margin-top:.7rem}
+    details.block summary{padding:.8rem .9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem;font-size:1rem}
+    details.block summary::-webkit-details-marker{display:none}
+    .block .wrap{padding:.7rem .9rem 1rem}
+
+    /* Grids compactos */
+    .tight-grid{display:grid;gap:.5rem}
+    .tight-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+    .tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    .tight-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+    /* Mantener 3 columnas también en móvil para flyers y exp9 */
+    [data-keep3] .tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    @media(max-width:900px){
+      .tight-grid.cols-4{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:600px){
+      .tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    }
+
+    .tile{position:relative;z-index:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+    .frame{position:relative;z-index:0;width:100%;background:#fff}
+    .frame>*{width:100%;height:100%;object-fit:contain;background:#fff}
+
+    /* Ratios que no recortan */
+    .ratio-1-1::before,.ratio-9-16::before,.ratio-16-9::before{content:"";display:block}
+    .ratio-1-1::before{padding-top:100%}
+    .ratio-9-16::before{padding-top:177.77%}
+    .ratio-16-9::before{padding-top:56.25%}
+    .ratio-1-1>*,.ratio-9-16>*,.ratio-16-9>*{position:absolute;inset:0}
+
+    /* Hero */
+    .hero-portrait{display:grid;place-items:center;background:#fff;min-height:40vh}
+    #heroImg{position:relative;display:block;width:auto;height:auto;max-width:none;max-height:none;transform-origin:center center}
+    .is-landscape #heroImg.rot{transform:rotate(90deg)}
+
+  /* LIGHTBOX mejorado */
+  .lightbox{
+    position:fixed; inset:0;
+    background:var(--overlay);
+    display:none; align-items:center; justify-content:center;
+    z-index:300000; touch-action:none; overscroll-behavior:contain;
+  }
+  .lightbox.open{display:flex}
+  .lb-surface{position:relative; max-width:98vw; max-height:98vh; display:flex; align-items:center; justify-content:center}
+  .lb-media{
+    display:block; max-width:98vw; max-height:98vh; width:auto; height:auto;
+    object-fit:contain; background:#fff; cursor:zoom-out; touch-action:none;
+    transform:translate3d(0,0,0) scale(1); will-change:transform;
+  }
+  .lb-media.grabbing{cursor:grabbing}
+  .lb-hint{
+    position:absolute; bottom:.6rem; left:50%; transform:translateX(-50%);
+    font-size:.78rem; opacity:.6; background:rgba(255,255,255,.85);
+    padding:.15rem .4rem; border-radius:4px; user-select:none; -webkit-user-select:none;
+  }
+
+    /* PDF */
+    .pdf-wrap{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+    .pdf-frame{width:100%;height:80vh;border:0;display:block}
+    .pdf-fallback{padding:.8rem;font-size:.92rem}
+
+    /* Nada por encima del header */
+    main, .section, .tile, .frame, .info-card, .tight-grid{position:relative;z-index:0}
+
+    .zoomable{cursor:zoom-in}
+    .meta{opacity:.85;font-style:italic;margin:.2rem 0 1rem}
+    .lang{display:none}
+    .lang.active{display:block}
+  
+    /* FIX: logo sin redondeo ni máscaras, prioridad máxima */
+    .logo-header, .logo-header * { border-radius:0 !important; clip-path:none !important; -webkit-mask:none !important; mask:none !important; filter:none !important; backdrop-filter:none !important; }
+    .logo-header img, img[src$="xpan.svg"], img[alt="xpan"] { border-radius:0 !important; background:transparent !important; mix-blend-mode:normal !important; }
+    .logo-header { overflow:visible !important; }
+
+  /* Grids FLUSH: media al ras, sin cajas más grandes que la imagen/video */
+  .flush .tile{border:0;border-radius:0;background:transparent}
+  .flush .frame{border-radius:0;overflow:visible;background:transparent}
+  .flush .frame::before{display:none}
+  .flush .frame>*{position:static;width:100%;height:auto;object-fit:contain;display:block}
+  .flush .tight-grid{gap:.4rem}
+</style>
+</head>
+<body>
+  <div class="logo-header">
+    <a href="/" aria-label="xpan"><img src="sound+.png" alt="xpan"></a>
+    <nav class="language-selector" aria-label="selector de idioma">
+      <button class="active" data-lang="es">es</button>
+      <button data-lang="en">en</button>
+      <button data-lang="fr">fr</button>
+      <button data-lang="jp">jp</button>
+    </nav>
+  </div>
+
+  <main>
+    <!-- 1) DESCRIPCIÓN MULTILENGUAJE -->
+<section class="section">
+  <div class="lang lang-es active">
+    <h1>sound + anahuacalli</h1>
+    <div class="meta">11–14 noviembre 2021 — museo anahuacalli, ciudad de méxico</div>
+    <p class="description">
+      sound + nace en 2021 como una respuesta a la urgencia de formalizar y difundir el talento emergente en torno al arte sonoro y la música experimental en méxico. su primera edición se manifestó en el museo anahuacalli, marcando un inicio decisivo y estableciendo la vanguardia como un epicentro masivo de interés cultural.<br><br>
+      durante cuatro días, más de 60 artistas presentaron un programa que incluyó instalaciones para sitio específico, esculturas sonoras, piezas multicanal, performances audiovisuales, improvisaciones, conciertos de música electroacústica, charlas y talleres. la diversidad de formatos convirtió al sonido en un eje transversal capaz de articular disciplinas y generaciones. más de 4500 asistentes se encontraron en este espacio, consolidando un puente doble: entre artistas emergentes y consolidados, y entre públicos de distintas generaciones.<br><br>
+      este primer encuentro inauguró un territorio accesible, colectivo y no institucional, donde la escucha se configuró como lenguaje crítico y como forma de comunidad. anahuacalli no fue un evento aislado, sino el primer nodo de una plataforma en despliegue que conecta prácticas disociadas, amplifica comunidades y abre procesos de largo alcance.<br><br>
+      como gesto final, la edición coincidió con la inauguración de la extensión arquitectónica del museo, diseñada por mauricio rocha iturbide, inscribiendo así el nacimiento de sound + en un cruce entre historia y futuro.
+    </p>
+  </div>
+
+  <div class="lang lang-en">
+    <h1>sound + anahuacalli</h1>
+    <div class="meta">11–14 november 2021 — museo anahuacalli, mexico city</div>
+    <p class="description">
+      sound + was born in 2021 as a response to the urgency of formalizing and disseminating emerging talent around sound art and experimental music in mexico. its first edition took place at museo anahuacalli, marking a decisive beginning and establishing the avant-garde as a massive epicenter of cultural interest.<br><br>
+      over four days, more than 60 artists presented a program that included site-specific installations, sound sculptures, multichannel works, audiovisual performances, improvisations, electroacoustic concerts, talks, and workshops. the diversity of formats turned sound into a transversal axis capable of articulating disciplines and generations. more than 4,500 attendees gathered in this space, consolidating a double bridge: between emerging and established artists, and between audiences of different generations.<br><br>
+      this first encounter inaugurated an accessible, collective, and non-institutional territory, where listening was configured as a critical language and as a form of community. anahuacalli was not an isolated event but the first node of an expanding platform that connects dissociated practices, amplifies communities, and opens long-term processes.<br><br>
+      as a final gesture, the edition coincided with the inauguration of the museum’s architectural extension, designed by mauricio rocha iturbide, thus inscribing the birth of sound + at a crossroads between history and future.
+    </p>
+  </div>
+
+  <div class="lang lang-fr">
+    <h1>sound + anahuacalli</h1>
+    <div class="meta">11–14 novembre 2021 — musée anahuacalli, mexico</div>
+    <p class="description">
+      sound + est né en 2021 comme une réponse à l’urgence de formaliser et de diffuser le talent émergent autour de l’art sonore et de la musique expérimentale au mexique. sa première édition s’est tenue au musée anahuacalli, marquant un début décisif et établissant l’avant-garde comme un épicentre majeur de l’intérêt culturel.<br><br>
+      pendant quatre jours, plus de 60 artistes ont présenté un programme comprenant des installations in situ, des sculptures sonores, des pièces multicanal, des performances audiovisuelles, des improvisations, des concerts de musique électroacoustique, ainsi que des conférences et des ateliers. la diversité des formats a fait du son un axe transversal capable d’articuler disciplines et générations. plus de 4500 personnes se sont rassemblées dans cet espace, consolidant un double pont : entre artistes émergents et établis, et entre publics de différentes générations.<br><br>
+      cette première rencontre a inauguré un territoire accessible, collectif et non institutionnel, où l’écoute s’est configurée comme un langage critique et une forme de communauté. anahuacalli n’a pas été un événement isolé, mais le premier nœud d’une plateforme en expansion qui relie des pratiques dissociées, amplifie des communautés et ouvre des processus de longue durée.<br><br>
+      en geste final, l’édition a coïncidé avec l’inauguration de l’extension architecturale du musée, conçue par mauricio rocha iturbide, inscrivant ainsi la naissance de sound + dans un croisement entre histoire et futur.
+    </p>
+  </div>
+
+  <div class="lang lang-jp">
+    <h1>sound + anahuacalli</h1>
+    <div class="meta">2021年11月11日–14日 — アナワカリ美術館（メキシコシティ）</div>
+    <p class="description">
+      sound + は2021年に誕生し、メキシコにおけるサウンドアートと実験音楽をめぐる新しい才能を制度化し普及させる緊急性に応えるものでした。最初のエディションはアナワカリ美術館で実施され、決定的な出発点となり、前衛を文化的関心の大規模な中心地として確立しました。<br><br>
+      4日間にわたり、60人以上のアーティストが、サイトスペシフィックなインスタレーション、サウンドスカルプチャー、多チャンネル作品、視聴覚パフォーマンス、即興演奏、電子音楽コンサート、講演、ワークショップを含むプログラムを発表しました。多様な形式は、サウンドを分野や世代を横断して結びつける軸としました。4500人以上の来場者がこの空間に集い、新進と確立済みのアーティスト、そして異なる世代の観客をつなぐ二重の橋を築きました。<br><br>
+      この最初の出会いは、アクセス可能で集合的かつ非制度的な領域を開き、そこで「聴取」が批評的な言語でありコミュニティの形態として位置づけられました。アナワカリは孤立したイベントではなく、分断された実践を結びつけ、コミュニティを拡張し、長期的なプロセスを開く展開中のプラットフォームの最初のノードとなりました。<br><br>
+      最後のジェスチャーとして、このエディションは建築家マウリシオ・ロチャ・イトゥルビデによって設計された美術館の新館の開館と重なり、sound + の誕生を歴史と未来の交差点に刻み込みました。
+    </p>
+  </div>
+</section>
+
+
+    <!-- 2) INFORMACIÓN GENERAL -->
+    <section class="section info-elevated">
+      <div class="head"><h2>información general</h2></div>
+      <div class="info-grid">
+        <article class="info-card">
+          <header><span class="tag">evento</span></header>
+          <div class="content">
+            <ul class="clean">
+              <li><strong>título:</strong> SOUND + — Museo Anahuacalli</li>
+              <li><strong>fechas:</strong> 11–14 noviembre 2021</li>
+              <li><strong>lugar:</strong> Museo 150, San Pablo Tepetlapa, Coyoacán, Ciudad de México</li>
+            </ul>
+          </div>
+        </article>
+        <article class="info-card">
+          <header><span class="tag">artistas</span></header>
+          <div class="content scroll-y">
+            <ul class="clean two-cols">
+              <li>Adair Vigil</li>
+              <li>Alejandro Carrillo</li>
+              <li>Aldo Sazen</li>
+              <li>Alonso Hernández</li>
+              <li>Ana Paula Santana</li>
+              <li>Ananas</li>
+              <li>Armando Rosales</li>
+              <li>Camilo Ángeles + Concepción Huerta</li>
+              <li>Camilo Lara</li>
+              <li>Carlos Iturralde</li>
+              <li>Carlos Vielma</li>
+              <li>Carole Chargueron</li>
+              <li>Cristina Ochoa</li>
+              <li>Daniela Solís</li>
+              <li>Emiliano Mendoza + Vladimir Aranda</li>
+              <li>Enrique Arriaga</li>
+              <li>Enrique Jezik</li>
+              <li>Gabriel Lengeling</li>
+              <li>Generación Espontánea</li>
+              <li>G.T. Pellizzi</li>
+              <li>Irene Dubrovsky</li>
+              <li>Iván Abreu + Malitzin Cortez</li>
+              <li>Iván Naranjo</li>
+              <li>Jerónimo Reyes Retana</li>
+              <li>Jimena Ordoñez + Emilia Ezeta</li>
+              <li>Josephine Strong</li>
+              <li>Julián Bonequi</li>
+              <li>Julián Margules</li>
+              <li>La Kriego</li>
+              <li>Lucila Garza</li>
+              <li>Luis Levin</li>
+              <li>Manuel Rocha</li>
+              <li>Marlen Ruiz</li>
+              <li>Mauricio Orduña</li>
+              <li>Mito del Desierto</li>
+              <li>Nari Ward (+ Andrés Levin, Moisés Sacal)</li>
+              <li>Naye Espinoza</li>
+              <li>Ollin Vázquez</li>
+              <li>Pedro Dascalakis</li>
+              <li>Pedro Magaña</li>
+              <li>Ricardo Rendón</li>
+              <li>Roberto Morales Manzanares</li>
+              <li>Ramón Saturnino</li>
+              <li>Sara Fernández</li>
+              <li>Sindicato Ánima</li>
+              <li>Sites</li>
+              <li>Sol Oosel</li>
+              <li>Space Cadet</li>
+              <li>Taller de Electroacústica de la Escuela Superior de Música</li>
+              <li>Tito Rivas</li>
+              <li>Ultima Ratio</li>
+              <li>Xin</li>
+              <li>Yosaphat Díaz</li>
+            </ul>
+          </div>
+        </article>
+        <article class="info-card">
+          <header><span class="tag">programa</span></header>
+          <div class="content scroll-y">
+            <div class="program-grid">
+              <div>
+                <h3>jueves 11</h3>
+                <ul class="clean">
+                  <li><strong>Margules Room</strong></li>
+                  <li>18:00 — G.T. Pellizzi</li>
+                  <li>20:20 — Iván Naranjo</li>
+                  <li>21:45 — Jimena Ordoñez + Emilia Ezeta</li>
+                  <li><strong>Escenario 1</strong></li>
+                  <li>19:00 — Camilo Ángeles + Concepción Huerta</li>
+                  <li>20:00 — Manuel Rocha</li>
+                  <li>20:20 — Naye Espinoza</li>
+                  <li>21:15 — Roberto Morales Manzanares</li>
+                  <li>22:00 — Nari Ward (+ Andrés Levin)</li>
+                  <li>22:15 — Iván Abreu + Malitzin Cortez</li>
+                  <li><strong>Escenario 2</strong></li>
+                  <li>19:00 — La Kriego</li>
+                  <li>21:00 — Pedro Dascalakis</li>
+                  <li><strong>A3</strong></li>
+                  <li>19:45 — Space Cadet</li>
+                </ul>
+                <h3>viernes 12</h3>
+                <ul class="clean"><li>11:00–17:30 — piezas en salas, jardines y estudios</li></ul>
+              </div>
+              <div>
+                <h3>sábado 13</h3>
+                <ul class="clean">
+                  <li><strong>Escenario 1</strong></li>
+                  <li>16:50 — Armando Rosales + Enrique Arriaga</li>
+                  <li>17:35 — Sites</li>
+                  <li>18:30 — Carlos Iturralde</li>
+                  <li>19:20 — Manuel Rocha + Roberto Morales Manzanares</li>
+                  <li>20:15 — Tito Rivas</li>
+                  <li>21:00 — Julián Bonequi</li>
+                  <li>22:00 — Mito del Desierto</li>
+                  <li>22:40 — Impro Sound+</li>
+                  <li><strong>Escenario 2</strong></li>
+                  <li>21:30 — Sara Fernández</li>
+                  <li><strong>Escenario 3</strong></li>
+                  <li>18:00 — Lucila Garza</li>
+                  <li><strong>Sound+ Studio</strong></li>
+                  <li>16:00 — Luis Levin</li>
+                  <li>17:30 — Xin</li>
+                  <li>18:15 — Julián Margules</li>
+                  <li>19:00 — Marlen Ruiz</li>
+                  <li>20:00 — Sindicato Ánima</li>
+                  <li>21:00 — Generación Espontánea</li>
+                  <li><strong>A3</strong></li>
+                  <li>17:30 — Ricardo Rendón</li>
+                  <li>18:15 — Ultima Ratio</li>
+                  <li>20:00 — Emiliano Mendoza + Vladimir Aranda</li>
+                  <li>21:00 — Cristina Ochoa</li>
+                  <li><strong>C1</strong></li>
+                  <li>16:00 — Yosaphat Díaz</li>
+                </ul>
+                <h3>domingo 14</h3>
+                <ul class="clean"><li>11:00–17:00 — piezas en salas y jardines</li></ul>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="info-card">
+          <header><span class="tag">instalaciones</span></header>
+          <div class="content scroll-y">
+            <ul class="clean two-cols">
+              <li>Pedro Dascalakis — <em>The Bell Passage</em></li>
+              <li>Carole Chargueron — <em>Fonomicroscopía del D.F.</em></li>
+              <li>Mauricio Orduña — <em>Cuatro en Cinco Negro: 5 momentos y un apéndice</em></li>
+              <li>Ricardo Rendón — <em>Inestable Sonoro</em></li>
+              <li>Ollin Vázquez — <em>La Certeza</em></li>
+              <li>Daniela Solís — <em>Sonidos de las mujeres que son incómodas</em></li>
+              <li>Irene Dubrovsky — <em>Discos de las Estrellas</em></li>
+              <li>Ana Paula Santana — <em>sin título</em></li>
+              <li>Adair Vigil — <em>1535 OC: El Sonido de la Tierra</em></li>
+              <li>Ramón Saturnino — <em>Introducción al Sonido Compulsivo</em></li>
+              <li>Naye Espinoza — <em>Sobre Escuchar en Loop</em></li>
+              <li>Enrique Jezik — <em>Costillar</em></li>
+              <li>Yosaphat Díaz — <em>Sesiones de Improvisación</em></li>
+              <li>Gabriel Lengeling — <em>Contacto</em></li>
+              <li>Jerónimo Reyes Retana — <em>sin título</em></li>
+              <li>Pedro Magaña — <em>0:10 (K.626 Kyrie)</em></li>
+              <li>Sol Oosel — <em>Volcanic Rocks Sculpted with Sound Waves</em></li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3) IMAGEN PRINCIPAL -->
+    <section class="section flush" data-collect>
+      <div class="tile zoomable" data-zoom-group="hero" data-zoom-index="0">
+        <div class="frame hero-portrait">
+          <img id="heroImg" src="https://d2w9rnfcy7mm78.cloudfront.net/39135841/original_285631b2a32cb3bfe52594b27f478318.jpg" alt="sound+ anahuacalli — imagen principal">
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) VIDEOS PRINCIPALES -->
+    <section class="section flush" data-collect>
+      <div class="tight-grid cols-2">
+        <div class="tile zoomable" data-zoom-group="recaps" data-zoom-index="0">
+          <div class="frame ratio-16-9">
+            <video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto">
+              <source src="https://attachments.are.na/39135835/c18d6ef28fe399bd3e9465265d439c1c.mp4?1756425479" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="tile zoomable" data-zoom-group="recaps" data-zoom-index="1">
+          <div class="frame ratio-16-9">
+            <video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto">
+              <source src="https://attachments.are.na/39135838/bae81dd335d0db26aad6fd7fdd2efc17.mp4?1756425491" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5) FLYERS VERTICALES 3x3 -->
+    <section class="section flush" data-collect data-keep3>
+      <div class="tight-grid cols-3">
+        <div class="tile zoomable" data-zoom-group="vflyers" data-zoom-index="1"><div class="frame ratio-9-16"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135828/original_14578ecd1160bf65b3c345957b613bd7.jpg" alt="vertical flyer 2"></div></div>
+        <div class="tile zoomable" data-zoom-group="vflyers" data-zoom-index="0"><div class="frame ratio-9-16"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135830/original_0c860e72d6bcbbce648c649b49c2de10.jpg" alt="vertical flyer 1"></div></div>
+        <div class="tile zoomable" data-zoom-group="vflyers" data-zoom-index="2"><div class="frame ratio-9-16"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135827/original_a61bad914870181701693ac5f325cdf6.jpg" alt="vertical flyer 3"></div></div>
+      </div>
+    </section>
+
+    <!-- 6) FLYERS CUADRADOS 3x3 -->
+    <section class="section flush" data-collect data-keep3>
+      <div class="tight-grid cols-3">
+        <div class="tile zoomable" data-zoom-group="s3" data-zoom-index="0"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135824/original_7d5e40992b42a565a6115a61a5beeb41.jpg" alt="square flyer 1"></div></div>
+        <div class="tile zoomable" data-zoom-group="s3" data-zoom-index="1"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135823/original_adf853067a94b6045c59d6d6a5484d6d.jpg" alt="square flyer 2"></div></div>
+        <div class="tile zoomable" data-zoom-group="s3" data-zoom-index="2"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135822/original_317f77b4f72f81b79c70b5d78becd2ec.jpg" alt="square flyer 3"></div></div>
+      </div>
+    </section>
+
+    <!-- 7) FLYERS CUADRADOS 4 piezas -->
+    <section class="section flush" data-collect>
+      <div class="tight-grid cols-4">
+        <div class="tile zoomable" data-zoom-group="s4" data-zoom-index="0"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135820/original_b52541a22cdf774b7673b7a1d4a1dc6f.jpg" alt="square flyer a"></div></div>
+        <div class="tile zoomable" data-zoom-group="s4" data-zoom-index="1"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135816/original_4f1ab2cd3ee4b41b65c85cead9fe89ee.jpg" alt="square flyer b"></div></div>
+        <div class="tile zoomable" data-zoom-group="s4" data-zoom-index="2"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135815/original_eaa7137bdc38cc3ee1efaeeba1b42d43.jpg" alt="square flyer c"></div></div>
+        <div class="tile zoomable" data-zoom-group="s4" data-zoom-index="3"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135814/original_c0004285c8fe20cab805361efc6ec919.jpg" alt="square flyer d"></div></div>
+      </div>
+    </section>
+
+    <!-- 8) 9 elementos experimentales (6 img + 3 video) -->
+    <section class="section flush" data-collect data-keep3>
+      <div class="tight-grid cols-3">
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="0"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135801/original_f6807b4071f76578c4e24da9544807ed.jpg" alt=""></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="1"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135802/original_b7b7e802b284031df316bec16330a244.jpg" alt=""></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="2"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135803/original_3cd285cbef7935d0ad85f5a8de38fc2b.jpg" alt=""></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="3"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135805/original_438d0d4553f9a574cb37718170f2c461.jpg" alt=""></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="4"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135806/original_ce94767a01a008c69a528bd7b525df96.jpg" alt=""></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="5"><div class="frame ratio-1-1"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39135808/original_f87f87ab1d316d21f7b1c918927a19c9.jpg" alt=""></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="6"><div class="frame ratio-1-1"><video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto"><source src="https://attachments.are.na/39135810/9753b02220fb8d8f5b4db7bca4075bfd.mp4?1756425392" type="video/mp4"></video></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="7"><div class="frame ratio-1-1"><video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto"><source src="https://attachments.are.na/39135804/bc458145c288e65220060f4e19511b3d.mov?1756425384" type="video/mp4"></video></div></div>
+        <div class="tile zoomable" data-zoom-group="exp9" data-zoom-index="8"><div class="frame ratio-1-1"><video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto"><source src="https://attachments.are.na/39135807/23a91e38ff7279f41c7ea84bc0b410cb.mov?1756425389" type="video/mp4"></video></div></div>
+      </div>
+    </section>
+
+    <!-- 9) PDF embed -->
+    <section class="section">
+      <div class="pdf-wrap">
+        <object class="pdf-frame" data="https://attachments.are.na/39135799/9beedbfc8b54addb8dff5b6e582b42b2.pdf" type="application/pdf">
+          <div class="pdf-fallback">
+            Tu navegador no puede mostrar el PDF. <a href="https://attachments.are.na/39135799/9beedbfc8b54addb8dff5b6e582b42b2.pdf" target="_blank" rel="noopener noreferrer">Abrir en nueva pestaña</a>.
+          </div>
+        </object>
+      </div>
+    </section>
+
+    <!-- 10) Retículas extensas: 3 colecciones -->
+    <section class="section" id="archivo-extenso" data-keep3>
+      <div class="head"><h2>archivo fotográfico</h2></div>
+
+      <details class="block" >
+        <summary><span class="muted">noel higareda</span></summary>
+        <div class="wrap">
+          <div id="grid-noel" class="tight-grid cols-3"></div>
+        </div>
+      </details>
+
+      <details class="block" >
+        <summary><span class="muted">pozole</span></summary>
+        <div class="wrap">
+          <div id="grid-pozole" class="tight-grid cols-3"></div>
+        </div>
+      </details>
+
+      <details class="block" >
+        <summary><span class="muted">david franco</span></summary>
+        <div class="wrap">
+          <div id="grid-dfranco" class="tight-grid cols-3"></div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <!-- Lightbox overlay unificado -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="media fullscreen">
+    <div class="lb-surface">
+      <img id="lbImg" class="lb-media" alt="" />
+      <video id="lbVid" class="lb-media" playsinline preload="auto" controlslist="nodownload noplaybackrate" disablePictureInPicture disableremoteplayback></video>
+        </div>
+  </div>
+<script>
+/* Binding robusto para abrir fullscreen */
+(() => {
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbVid = document.getElementById('lbVid');
+
+  // funciones ya existentes del lightbox
+  const openFrom = window.openFrom || (el => {
+    // fallback simple si tu script aún no expone openFrom
+    const src = el.currentSrc || el.src || el.querySelector('source')?.src;
+    if (!src) return;
+    const isVideo = el.tagName.toLowerCase()==='video';
+    lb.style.display='flex';
+    document.body.style.overflow='hidden';
+    if (isVideo){
+      lbImg.style.display='none';
+      lbVid.style.display='block';
+      lbVid.src = src; lbVid.muted=false; lbVid.play().catch(()=>{});
+    } else {
+      lbVid.pause(); lbVid.removeAttribute('src'); lbVid.load();
+      lbVid.style.display='none';
+      lbImg.style.display='block';
+      lbImg.src = src;
+    }
+    if (lb.requestFullscreen) lb.requestFullscreen().catch(()=>{});
+  });
+
+  // Delegación global: cualquier <img> o <video> abre, salvo data-fs="off"
+  const SELECTORS = 'img,video';
+  document.addEventListener('click', e => {
+    const el = e.target.closest(SELECTORS);
+    if (!el) return;
+    if (el.closest('#lightbox')) return;           // ignora clicks dentro del overlay
+    if (el.dataset && el.dataset.fs === 'off') return; // opt-out
+    e.preventDefault();
+    openFrom(el);
+  }, {capture:false});
+
+  // Salida con ESC o clic fuera
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && lb.style.display!=='none') closeLB();
+  });
+  lb.addEventListener('click', e => {
+    if (e.target === lb) closeLB();
+  });
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && lb.style.display!=='none') closeLB();
+  });
+
+  function closeLB(){
+    lb.style.display='none';
+    document.body.style.overflow='';
+    try{ lbVid.pause(); }catch{}
+    lbVid.removeAttribute('src'); lbVid.load();
+    lbImg.removeAttribute('src');
+  }
+
+  // Rebind si agregas nodos dinámicamente
+  new MutationObserver(()=>{/* delegación ya cubre nuevos nodos */})
+    .observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+  <script>
+  // Helpers
+  const qs=(s,r=document)=>r.querySelector(s); const qsa=(s,r=document)=>Array.from(r.querySelectorAll(s));
+
+  // Language selector
+  (()=>{const btns=qsa('.language-selector button');const blocks=qsa('.lang');btns.forEach(b=>b.addEventListener('click',()=>{btns.forEach(x=>x.classList.remove('active'));b.classList.add('active');const code=b.dataset.lang;blocks.forEach(el=>el.classList.toggle('active',el.classList.contains('lang-'+code)));}));})();
+
+  // Inline videos autoplay muted, pause fuera de viewport
+  function ensureMutedAutoplay(v){if(!v)return;v.muted=true;v.setAttribute('muted','');v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');const p=v.play();if(p&&typeof p.catch==='function'){p.catch(()=>{const resume=()=>{v.play().finally(()=>window.removeEventListener('touchstart',resume));};window.addEventListener('touchstart',resume,{once:true});});}}
+  function observeInlineVideos(){const vids=qsa('video.fs-video');const io=new IntersectionObserver(es=>{es.forEach(e=>{const v=e.target;if(qs('#lightbox').classList.contains('open'))return;if(e.isIntersecting){ensureMutedAutoplay(v);}else{v.pause();}});},{threshold:.2});vids.forEach(v=>{ensureMutedAutoplay(v);io.observe(v);});}
+
+  // Hero rotate-fit
+  (()=>{const img=qs('#heroImg');function setVP(){document.body.classList.toggle('is-landscape',innerWidth>innerHeight);}function layout(){if(!img)return;const vw=innerWidth*.86,vh=innerHeight*.86;const iw=img.naturalWidth||1200,ih=img.naturalHeight||1800;const rot=innerWidth>innerHeight;img.classList.toggle('rot',rot);const ar=rot?ih/iw:iw/ih;let W=vw,H=W/ar;if(H>vh){H=vh;W=H*ar;}img.style.width=Math.round(W)+'px';img.style.height=Math.round(H)+'px';}setVP();['load','resize','orientationchange'].forEach(ev=>addEventListener(ev,()=>{setVP();layout();}));img&&img.addEventListener('load',layout);layout();})();
+
+  // Lightbox / Fullscreen unificado
+  (()=>{const lb=qs('#lightbox'),lbImg=qs('#lbImg'),lbVid=qs('#lbVid');let groupEls=[],groupIndex=0,currentGroup=null,startX=0;function openOverlay(){document.body.style.overflow='hidden';lb.classList.add('open');if(lb.requestFullscreen){lb.requestFullscreen().catch(()=>{});}}
+    function closeOverlay(){lb.classList.remove('open');document.body.style.overflow='';if(document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen().catch(()=>{});}lbVid.muted=true;lbVid.pause();lbVid.removeAttribute('src');lbVid.load();lbImg.removeAttribute('src');}
+    function setGroupFrom(el){const tile=el.closest('.zoomable');if(tile&&tile.dataset.zoomGroup){currentGroup=tile.dataset.zoomGroup;groupEls=qsa(`.zoomable[data-zoom-group="${currentGroup}"] .frame img, .zoomable[data-zoom-group="${currentGroup}"] .frame video`);groupIndex=groupEls.indexOf(el);}else{currentGroup=null;groupEls=[el];groupIndex=0;}}
+    function openFrom(el){const isVideo=el.tagName.toLowerCase()==='video';const src=isVideo?(el.currentSrc||el.querySelector('source')?.src||el.src):(el.currentSrc||el.src);setGroupFrom(el);if(isVideo){lbImg.style.display='none';lbVid.style.display='block';lbVid.src=src;lbVid.muted=false;lbVid.volume=1.0;openOverlay();lbVid.play().catch(()=>{});}else{lbVid.pause();lbVid.removeAttribute('src');lbVid.load();lbVid.style.display='none';lbImg.style.display='block';lbImg.src=src;openOverlay();}}
+    function show(d){if(!currentGroup||groupEls.length<2)return;groupIndex=(groupIndex+d+groupEls.length)%groupEls.length;openFrom(groupEls[groupIndex]);}
+    function bind(){qsa('.zoomable img, .zoomable video').forEach(el=>{if(el.dataset._b)return;el.dataset._b='1';el.addEventListener('click',e=>{e.preventDefault();openFrom(el);},{passive:false});});}
+    lb.addEventListener('click',e=>{if(e.target===lb||e.target===lbImg||e.target===lbVid)closeOverlay();});
+    document.addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')closeOverlay();if(e.key==='ArrowRight')show(1);if(e.key==='ArrowLeft')show(-1);});
+    lb.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX;},{passive:true});
+    lb.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>50)show(dx<0?1:-1);},{passive:true});
+    bind(); window.__bindZoomables=bind;})();
+
+  // Construcción de grandes grids cuando lleguen URLs
+  function buildGrid(containerId, urls){const wrap=document.getElementById(containerId);if(!wrap||!Array.isArray(urls))return;wrap.innerHTML='';urls.forEach((u,i)=>{const isVideo=/\.(mp4|mov|m4v)(\?|$)/i.test(u);const tile=document.createElement('div');tile.className='tile zoomable';tile.dataset.zoomGroup=containerId;tile.dataset.zoomIndex=String(i);const frame=document.createElement('div');frame.className='frame '+(isVideo?'ratio-16-9':'ratio-1-1');frame.innerHTML=isVideo?`<video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto"><source src="${u}" type="video/mp4"></video>`:`<img src="${u}" alt="">`;tile.appendChild(frame);wrap.appendChild(tile);});qsa('#'+containerId+' video.fs-video').forEach(ensureMutedAutoplay);if(window.__bindZoomables)window.__bindZoomables();}
+
+window.GRID_NOEL = [
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135473/original_f2eb1560718d1a096f2897bd346158b8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135474/original_893910c78e9b256f2d79273f47e9fbe6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135475/original_d07f48cac9443d43f8685d9f20cb3eb2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135477/original_0a7142dbcf781704bcbc8525a0abfc67.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135478/original_de333a403602a5af12a35cada889b887.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135479/original_10644a38ac074e401b171bfb169dbab1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135480/original_f3474e3205024e1af3c3227038cc204e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135481/original_44ec412c6177294a5497cacb0eebff19.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135482/original_b01c2b1e8cef618b426ccf460c5aafde.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135483/original_4359d55b7784ada7f51f2680ea964dc7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135484/original_bd6c7b367269f2ee9a46d5c0c321e1e8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135485/original_4c1ef2d4c4c57cf681516cddfb7b8e86.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135486/original_8cf83e6ce03fb4bf1b7ded3bc71a23b3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135487/original_da99cb689b7c775e7638dafcde15fc29.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135489/original_c49f1e5a21c87984407f12c96fb6a067.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135490/original_5c667c0b810301a8f8aeb272ae7648ef.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135491/original_7f573456b22ebbe0df72a0d426595f3c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135492/original_ae79a06baa15b065e7b1754d43111cdd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135493/original_623e50515f37dffb83475db9a0a9c190.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135494/original_e58c9e4b460e5e532a71fa7dec2f2935.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135496/original_3b36907ccb1de2cebf1a52c9f7ad8e7b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135497/original_e628d6f664ee4686f57ad2e4b50ab4e8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135499/original_ab13d207fea9b30ea965f4d01252b25b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135500/original_c46665f263d21e3f379034ee6cb0a03e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135501/original_0c98b2958a8a054fcfeea2cb3ff2b5a5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135502/original_9d7e0e8529ee3b3b553330d1e1578586.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135503/original_2c6f701eb85be5d3cda0659ca3be2481.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135504/original_58765ea690a9110fbcc618a63d181ebc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135505/original_a5dbef0693e9e8b38dfa4b09b169c7cb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135506/original_f8c4116e49eeff79c2ea061fc9f6b18a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135507/original_c09da3f33b37272f9d19494cc41ad309.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135508/original_53e87cf939c0c86e20ab7509c1f35ae2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135509/original_9c1793c43a075ad943c91a2561466375.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135510/original_8d32ec26446892f90cd4d658e6f9b15c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135511/original_64ba1076fe997abd4f82312462777bcc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135512/original_dc144d4de302f1a92527534a019326a4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135513/original_bf4ffdb6a8f7178b6e0b1c2e30fcf601.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135514/original_4771ff0fab190ee432e12f48756d8eec.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135515/original_5cded4a434a716a2f0279e681d51088f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135517/original_ab967297bf983d4d1c2c5d8eacff36cb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135518/original_bfab6937a192e87b6944f56b2204aefd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135519/original_c8786c7f1dcce98c82236a2e113493d6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135520/original_036b5e4757e9d5958fc50d6abf23d943.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135521/original_d82d706aabbedca3c8681accabbea26b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135522/original_67baa03ac6f0eb5639ad733343b4462c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135523/original_12a1a59c5ac45f417e6cd6c5fb8f1692.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135524/original_b5782a640a2c7eec44c11ad9f3c5f75f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135526/original_3147da98c4827aebde9e28a0126d0470.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135527/original_4578c4a1c46336c04d24d085527a4035.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135528/original_dcf1f1e657a5556c85444ee746830e50.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135530/original_86b6bde379d5301f02b67c935986906b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135531/original_b9f8a9d054294a7c87a75f41726546a1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135533/original_18a2daed7cd70c3419b0d85c59e110c7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135534/original_ac09a7ac65679aa1a16691c66e2f4d9e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135535/original_ba891c63c61613f10736e0731cc26c94.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135537/original_1d32c66ff30f036b40f0e3bd65a51c59.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135540/original_20c5158454b5f462ac7d702c18991c5e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135541/original_aa0a09ae15c2ecb51bb79ad5f8fc75fe.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135543/original_3a1ae837740a7d8efcea86fd55054a0e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135544/original_9994ce527cf47d4ba43e617926d66db3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135546/original_e0a6c88d5aafe5cd5472b3abeeca2e2e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135548/original_ba57dba27389876add0a2c4de0ffb1de.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135549/original_71e8b1514d36c22e7a33f11376929450.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135555/original_e10bfdfbc0d864389a6eb02b2b1fde35.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135557/original_b608bc72ce3790e77c6ff554d70aee64.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135558/original_61dc9c8debbf4316f5b8e8432308c822.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135560/original_08eb4e091f1aa4b3c54d89ba9c338d7a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135562/original_bfa8b4e55d2d18725069caa4d7ce0637.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135563/original_be04757fd11704b6d06377a5db265f06.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135564/original_73b77aeb372ffa052ef6f1563d72daeb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135565/original_55c9e0ed7b1037a3f21f68ee5bad79b8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135567/original_3e9e08f58858af19fd1e1cf3d9a6a47f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135568/original_38236dc61b1098f9eb831a0b6ff612fd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135569/original_a5a58923a83174638d306b56b4eceeec.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135570/original_20991ed79ca79eb81cb775eb8c9436c1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135573/original_7a97855d5bea1c57cdc8189c839a0313.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135574/original_113c148f2cc023e4fe9581f7f5487c03.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135576/original_ab3bbdb0de30cf419ff256f3a97c34ce.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135577/original_9ab4c4bf3ffabe650f70a60a7457dec3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135578/original_38a47a99569cce5eaa99c16d7bd720c6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135579/original_1e365b4f616d8614eadf307310ca1f17.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135580/original_af37b8987154835fa4e6df8124d8c68b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135583/original_b41a9fe781da58e9eb5eb9b188c4041b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135584/original_13f2f9a9d757301813deb72d1e6f5b9a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135586/original_521690c43d160bf87eddd82efb71503b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135587/original_7b8d50fa48d0afc84d11b6c1942f9aab.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135588/original_7cb8050443ced6aa21bdb33998830d25.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135593/original_f5b330709b65e07046c8d4fe5fddcc74.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135595/original_72ad2402270e68ce451ae95ea77a1f1a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135596/original_6301bc68c62c942635295dec150b7a98.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135597/original_419272c8518c0cfab8f84fbd71c18480.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135598/original_4f23d9777fd2298a9abaa7c11398ff4b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135599/original_b38f20952133eeb96e5b0d2876079833.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135601/original_fc6499c004c3477296586ce66c3d353d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135602/original_42603422aa1873e6f80e428857525f9d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135604/original_6937018c8d3a365401bb559dbe95b1d4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135605/original_3e97e529730665e8bc6ca9aa3e1c05e6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135606/original_e09f429c9f64dc68f89c5385e760819f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135607/original_e0fcbf4b2b16294715f41a9a5498cddc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135611/original_1bd26584b45f69671735b1a5692a3f44.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135613/original_53011e3ab6b2f4e89e5392c916e2f6d0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135614/original_5175e7910f931b123f1d6b2dd5cdcd2d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135615/original_7deaaa00e0c1ab3a091bc9edfc6ea2ae.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135616/original_afb149e525c5626a23581e5c055a67ac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135617/original_a228d0a5c12da6370ad38f37313e4c37.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135619/original_3548b671f8c60e4afa71f2413428cf61.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135620/original_c1b3bbc36fef455255410f890ca8a00d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135621/original_ccf08eec7c23cf7ccde6a0a3d851b6de.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135622/original_018cdc9c1f67197fb3321fe6d4e3ec8e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135623/original_dfc278227866691971a9b0a5df03be3f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135626/original_3c70b9b4fc35384398873516c0facf7e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135627/original_07ac46342c43a51c654b9838dae76176.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135628/original_54f20d482d6f7c09a3003b2b9e96c746.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135629/original_296b15e9493811fd83fc0e079017eae1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135631/original_1b998d576c4e38142a1a611e6288a18b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135632/original_2ec748305c08df0115f19724e599577b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135633/original_9ea1c8882962da7cd81fa4bc1079555e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135636/original_df77252af86276b8abc866f162563ee6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135637/original_21c613900139641dd853f87b491c6132.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135641/original_c5870b6992dd1d2de6a818dddcffcab6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135642/original_2f652c36d950dddabe200690055889a9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135643/original_dc4c2157ab369f63104b5a0b132e7da2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135645/original_97effea85da64217c7dabf329957eca4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135646/original_7a785eeb46d749e90daf65b34a7cf102.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135648/original_b87cc3087126ff2456f82b95f2e4bb5c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135649/original_3e17b9b9efe1517846201071265767d6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135650/original_08d5c748d3f4e6a09adf74fe367c8714.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135651/original_c58c6f48834149977da3c99abc179cbd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135652/original_737fe8004ae2aee20dc0d865f2f2c38f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135653/original_2f549b59de38cee52732b8dc3536c745.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135654/original_c9c6be814b1b0a86432f5c8f5f380f3e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135655/original_e3cb9e9ff28dcde63e7918fc11b4e054.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135656/original_e4c9650c06950e8372bd5dae38666a6d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135658/original_21e929135b573e4c010a448395b00a2a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135659/original_dd2bbcbbf4eea1848cef48e4434d9587.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135660/original_bbc519a09908860df4c5bebdfc3f319d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135662/original_fb5e6fe1e87ef3d94f94178140f8147a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135664/original_8c59ba788c0ef72e2799c61ea421f359.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135665/original_e672cf19ad953475af55ef11ae8f693e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135667/original_7a77dd852d42215f95af675922845577.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135668/original_b6eb4dce06612324dd59ccc41574cc6b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135669/original_1955dbe7bc38c109d75c83ce5363898e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135670/original_caeef9c0ec37b122ba61f6661330d619.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135671/original_e866131e47f9e0dc11fa54b4eb519ec5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135673/original_0c499eb6898eef5b33d515f302413a38.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135674/original_55d0293fb6d1a0747ad1c0a308782e45.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135675/original_6e4e8ad16261bff06f3c998bd298919b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135676/original_719a2a6ee2fc02758a407dbd2dbbbede.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135677/original_ef032e4e81e586225fb99105a3ea28f0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135678/original_c021512ab2db28a1fe3d4f965e2d36cd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135679/original_2147a04663b702fb47837d1137e71a32.jpg"
+];
+
+window.GRID_POZOLE = [
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135041/original_63cfc0a5f7f6e9dad9140167213c4a5d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135042/original_4ec8668872317563231a7cb935cacd24.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135043/original_a8b3e85fc15c2f1a6347c486b6123ed5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135044/original_5aa39dcf91dae63f55370c0c34beb767.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135045/original_1c6d33e16c7ef3f59785ae2a37c48132.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135046/original_7deebb2a1c2a88bd3c2f0e7b8d45fe84.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135047/original_8258f1c32fd784b14c61f5fc9b2b3973.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135048/original_9bc8703b3a9a92096fcbf9b2880b648a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135049/original_2744e6d93d0ccb097916bf2fe0059285.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135051/original_3c7f83345e624642d6eeb355ebd9d5c9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135052/original_0cd8d8cf4b74cd3b6226f9f8d87f3eb6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135053/original_819c475ee8c34edbfcd59a7b13e1b59b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135054/original_b75593db6ccc4de9c9c888b7228662bf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135056/original_2f6aadbdc5779d23b9cc7990babfe842.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135057/original_fa809adb65ed0c0af8f80bdc302689df.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135058/original_4d06beb9dfb42c11419eb30adf33d4c7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135059/original_b32c215c20c3c4e3f35017d77bad6bf9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135060/original_f84c26a37d8c66bb50ab7f114836b11d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135061/original_fe52979697b10d5389dc6c3e8fc543da.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135062/original_b3e8df6b2fdf134972b1858cc2183d1e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135064/original_9498e09a8d4d76d057cad8561198a769.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135065/original_32be9f2e15f73583d835ed1756b62774.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135066/original_fd8e6894e304b66e085794cebb3fd884.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135074/original_fdb0b826498a2da5e989ca834368c1d0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135075/original_efcb57d298c5a07289214ae0f5eabb84.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135076/original_03f896a0325e3bba0fd7927044951a74.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135077/original_6ec6d4d141c983d57886352abe91da91.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135078/original_4181b9cac1e674020b171f8732ace905.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135079/original_bbc513ea9a5f6fa8fc8e8005377ff650.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135080/original_a90279daba642537606987d5ff2ed9dd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135081/original_c152df13febe7774a946c2d56c224c13.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135082/original_5ed3a27863d4874390dad1f1f77a96b9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135083/original_1e90837d782de272bc8b69658ed5872a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135084/original_896097939c147169ce45e3083ae3b318.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135085/original_fbfc05ea8bbba325d0ac20f1c296c415.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135086/original_90514bd8bffde212f024976851aef4ee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135087/original_55543fc3a326ddf5ac8856334defbebe.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135089/original_8b34ae70bf57886d2da3b0f6d30f4205.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135090/original_90a5574b3e67bfe6967d5fa925a7b555.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135091/original_640115687db3aa18f5e32e9636285512.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135092/original_d7250b65a1bf59406248f104b98f4cf9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135093/original_f7521592b3a5052776f08f915c0cb314.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135094/original_812785cc782eb3de5ac6bc455461b547.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135095/original_145d78db8b58189107476c2a66940f61.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135096/original_a40d43e602650fd2926d0f30539ecbf7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135098/original_7ac4e201d5dcc43bb34ac2e52e797093.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135099/original_b4418c18d7b11fb073d773b0eab74c1f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135100/original_cebf32c759172b05618d42c71b5985c2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135101/original_58b4d09b54a49475f7d3f266587df41e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135102/original_40e7c58c845c334b4f46062f127b7f19.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135103/original_ef8f25697b86f00e39cce856bea1427a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135104/original_6428c00239213ba1c4a02205df9b9e17.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135105/original_1d0fbbc8ca58bd5fe455e4c3e5b8ed32.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135106/original_9304a02452c42d1b6e82822035659b6d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135107/original_cd3bdad13b22754ef566be802b722d48.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135109/original_843df51f56adfcdb86f58b68b44a4806.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135108/original_d43c94d7dcdecdabb6602555a0dd7b2b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135111/original_840ed428f42fbd2964acfd0d55921d87.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135112/original_88c3c2253f7808d621bb4969274e6420.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135114/original_1acddcd6719f260a1feab1241bf59fd6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135115/original_aa6a46a135cc4a74f0f48fc92097ce0e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135116/original_57ac573cb8bacca5d3286a283c44e5d1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135117/original_3c98feda32f493e940d2172b38e674af.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135118/original_b0c8edf2489734081ef5aa3c6fe0df1f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135119/original_a976be0ce2d707463670e5bc678b03c8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135120/original_d3bc174d2658f5aced9c7eed719cfd38.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135121/original_a23bf953a3595f10295cef377b5f1768.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135122/original_94f3b2aa7d074e8223dd9154f7294598.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135123/original_76108c9bfe4611b84f0b9e1b9d796ab3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135124/original_108aa06e4ab09280edc49661e853b31e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135125/original_4811ba9fb27859aacfe66ba73626c7fb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135126/original_15619f5583591537a7bc3b3473b006dc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135127/original_96af3887fa33859624e9fc6926b6b170.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135128/original_3c73be9465cf40dfbfd03a915d61a14b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135130/original_efed2fad889b28149368768a091822fd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135131/original_24cbcf7e273140ca99c316d700cfaa2b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135132/original_81c3fefdebd99c443cde2924af66046a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135133/original_2d536b62fd67f045f1b23c2e3305ab66.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135134/original_83ed4456f90ab56662ad772899e39c13.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135135/original_5ec3e6030f6f72c90db6edb2acfafad0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135136/original_5f667d377eb37435952247493ac65b62.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135137/original_5b47fdcd96905d6726ced4e46cc864c8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135138/original_d2a4b75a02f99750d48f0f595ebc98f4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135139/original_bf19fb506627a62923ba7946f1eddc71.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135140/original_ce10c332a2774157b49bdfab21bed0b5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135141/original_dc583340e0d52ceb0cb16637dd94c971.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135142/original_bf399b6caf649efe087c34e7e72ba07b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135143/original_4794464e751a2fedeadbce228f2f903f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135144/original_d8b2fe544f75ed8b97842597470ec35c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135145/original_df8bd13fd73861829ebea6c4988f26aa.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135146/original_101521ff7e32676dd691d170541c0fa5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135147/original_0c6f0df7b863c6f2691b659743b30417.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135148/original_32347632a81899b9c2b2333b877c6a82.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135149/original_f4a5af997329e5458f9af048bd5611d7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135150/original_412645919f31a4eca0ea91c02e2c8a39.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135151/original_d8699087ebd0b1a7f956bcf611d187f8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135152/original_f9c98efb2cbaee50c6020d117ff27d99.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135153/original_4f3e44b8b86e898eaba5c306fbd5b3fa.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135154/original_877b7477467a4e047abd219a77c41dee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135155/original_a349c4506cb6a59e8f0b5ad0fcec7ddc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135156/original_1b00b14ac24aed4e3e2c83f644d9c95b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135157/original_aaae41ac6f6bd72f26fbc9a715f0c64f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135159/original_6b043bb95190099be6a4ecbe90615b2c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135160/original_beb453c5b18a1f629a0896428160c013.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135161/original_ac0260aca02bcb503d637922d6356809.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135162/original_7d6bbaa9d030ff89c938d3ded09d3744.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135163/original_872aeca271da38de117ccc68460be96b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135164/original_01d754606872334b20a5d9df09659002.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135165/original_8da319d963851b31d697fa53d9fd88c0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135166/original_605927f0c8d810fb9d754eb0143ded8d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135167/original_0015a81da8a7e66371471ad5f7bdea6f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135168/original_c4cbca90cb5b5a6ef9e96a0d92123d5b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135169/original_96d2df55b05ad83a80a1f776a6c9eb02.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135170/original_75777bfbf1a0d20008cf56d0d7fb30d2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135171/original_0d2a258c29f706be7c44d997dcdcc628.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135173/original_c300f5b6391f9231b5450ddbfc39abd1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135174/original_647c5dca54366fb258880e0d003fd28e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135175/original_2905cd307ce181df98ba266510471a09.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135176/original_4addac3ad6e7abfb5347be0bf1c561a9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135177/original_8d7d6861752f062bb32018e396a1f4d2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135179/original_3bd64d1a6187d07e8e6d3496efb9cf0b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135180/original_40fd65a8d79b97bb809fb6e293b18676.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135181/original_06168006331bc8ff74cdb97b0ca74d11.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135182/original_e1cd0bf65e6bc94add49b3bcb00121d8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135183/original_d989bc8b51dc349c19a55925de04da80.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135184/original_b12d83abe1b7ef40401caa3bb9751205.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135185/original_7c82eca15e708d3d44f6694a199eabd5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135186/original_5eeea23abb65648f8f46b208fa281a67.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135187/original_6c412140d5b86cfda5ee2f86209f1b59.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135188/original_07d099ce7b20daa4e6d32ac0630a3ae7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135189/original_f5953ea16a954cb8ed64a2f84358eb4c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135190/original_0c02547426e393147965a624538f9f38.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135191/original_c01212a94f7294c3a692a86ab8ef7f9f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135192/original_1dbe61d6e454f86f1a9ec2a78f694584.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135193/original_162b2e3a9df9c2556af61f16b0305b25.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135194/original_1735ad9292e400ae3ba53ea2562d611e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135197/original_b93449930aed94cc3869cf6f7b789490.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135196/original_70184aaacbf5a86ddea9d0417f292ee0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135198/original_12fd6f419686ce6e7f00f16c9dec177d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135199/original_eda25d54cb4357792220814be8618ee1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135200/original_a9ec369af0bf0a5ec964ad73e63e1843.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135201/original_0698a23d3d4d1a36ef0b30c79a276ddf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135202/original_d8565789aa65142edfac7b824f1120e4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135204/original_9b951b7dd347cb17078d4cef781b21fd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135203/original_45302f8e4776100e2b1dadb4e11a39a9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135206/original_b78221649d280404e7d38b48e66fbc83.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135205/original_39269392ff037e9a5904de4354f2af1e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135214/original_539619fe305de736826dccd77dd8ebe3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135216/original_c3db050f2b17cce344b0c83cd7b4a042.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135217/original_8becc30ac41a7cabfd082d5e377cc447.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135218/original_d474cd683149e84a009a267a8b9f0db8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135219/original_270cabac14be8ae8440a1c02f184eaa1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135220/original_55a420d6c44fcfd312adf1b785d952e3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135221/original_a17cbb6f585b29ff722d6b2336696d33.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135222/original_b51b70ac4ae31f23daaa93e76975888d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135223/original_39837d5526f5637b5ba0c3f5f7714cd2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135224/original_6a33ef80aca002696c02c4aefb584f25.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135225/original_7b98e2d8f81b114e102329bd974dc055.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135226/original_3ead92fca60ec339a3b9e865ae9499bf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135227/original_c954222e2de66a94cae303dcf5629505.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135228/original_06232835921f076947712d835d02b2c6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135229/original_cb4f9cc1eb76b8f4720d11c1e25bd8e3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135231/original_e89769ed3656362673402b5acae1bec6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135232/original_fb648fa219dfe477f0ece4272d492b12.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135233/original_c42fb1d26df0f1821634de095cd0a0db.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135234/original_66442ef0a99149e2457bc92c58568c2f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135235/original_7b8a04fb08cca76c7896af936882c8af.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135236/original_cbd27c3e3be7fd817386b4d6a6a60687.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135237/original_7c8e55ea1e594ac4979f69cfef59dcd6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135238/original_75f4aac3416c4ff4ab49f2e026af9fef.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135239/original_c81bfb32998eb2bc6f2c0a30414442a6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135240/original_9c1c641b11a0ad5a3d67ae2eab80e270.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135241/original_a8a6a66873a735740032c49194e3d8f4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135242/original_ea7e514350e8972e5a8f636fd9a06e28.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135244/original_9301bac022e09c55d5a141eec0567e68.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135245/original_759ba41c9c53e36440e5508f1e7e47b5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135246/original_63ae71747b4f0fef090b640138213a89.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135247/original_05a384e4efdf4714089f3dc016195ba8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135249/original_921b594d884aea9960801a84f659fe63.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135248/original_c2368873b628655f52016b0c8c995b19.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135250/original_4ceb670210463df3834f6f1d0cf5faf2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135251/original_a4ac3d18d1141815a68e70bd709099fe.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135252/original_66d4c2b8138a24d321302344c3d69467.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135253/original_89044c02e5557661fe445f64baec1571.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135263/original_64b358ebf70029118927ccdf90dfdf5c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135264/original_71470ea1b19c81d500299344d9643fb4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135265/original_5578c0f0daff86f46b80a3c52487320a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135266/original_7598395111d96de3dabb7873055542e0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135267/original_306d676769e0824ec51c68fd28b4b60b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135268/original_6c4931d9897f1de0452485756c6c3274.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135269/original_7edf4277e933a1035629ecd019f67971.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135270/original_2d48b6d27be1d359c830c09c45e7a099.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135271/original_ec69abdd93066fc03fe54e75bca1def2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135272/original_e0ccec064a67aecaf865b0e9af148a46.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135273/original_d8af64c89677f3d2dff06722947e535e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135274/original_5962d2b2dff64e55d52aa66418713c70.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135275/original_107e1d6057654760967a1bf3a38fbcc0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135276/original_42b5064fa33c8ee9d7a9236306f59c03.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135277/original_9d284c3ecf7f8e3e4a686a52e0e2db24.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135278/original_c98eb963f9f813c0621b3d8be746690b.jpg",
+  "https://www.are.na/block/39135279",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135280/original_e5f7099910ae6bea47b0c5c178118a60.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135281/original_508a1e6beeea4ed49f41bb9b4160e4df.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135282/original_ae4d3f9fb1ac6e9b3233d6d4777e50d0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135283/original_c857253cdfb6b12078f06a77f933695a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135284/original_0ad33cd6d0e8a49e71e5008a3811cd84.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135285/original_a1226d4cd8ae14da9874df6b787703dc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135286/original_348226d82922006796aea1c182b8717c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135287/original_74e6f382af2e26087e7bebaba4ee50b9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135289/original_7d07eb90ebc68485fc79d0b5173a6a63.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135291/original_c104aadfe5bdccc5c4793a41fa0d8bac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39135292/original_e910fc66c18f7f080a75818707073cbf.jpg"
+];
+
+
+  window.GRID_DFRANCO = [
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134449/original_f65c5b5734cae19b00cd38f61849e8c0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134450/original_4777a378be994aec9b46a47c03d9acfc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134451/original_cce74a1f04b1f72545904047458bc063.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134452/original_09eae78752be8c59c369a4e56923b43d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134453/original_c84368b7364d49d24f2d1a81e1de8753.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134454/original_c7c6173fae4d0f17d67f72540a5636a1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134455/original_8a2c0363e9e17e95268eca110d7ee3b8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134456/original_e3671466eafe6421936bacf36253054f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134457/original_22e92e025e418a9360b5329379e656b5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134458/original_a1254bda8dfa9d17ea132b5c85edb55c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134459/original_3aaf8e4e8076bb5dd28bc411f1fdd7ab.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134460/original_aed68ee685509aba80f33f41df7c79ab.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134461/original_10f9ecf3402a5b3c429d01c89b6db1b7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134462/original_da96ea24b1f7ad4977e2333256044cac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134463/original_5c486565914373559cd5d9abc6b53cc9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134464/original_2607f33f8405f8a7797379219b589a8f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134465/original_4457570e26966a48f94638f6375fef14.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134466/original_fbea5e9514d260077ba7a490080b8201.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134467/original_73e31386734658aecf4def88c5cb8292.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134469/original_6aa3414a4b2ad30fb76d7f1af8edaa2a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134468/original_bf90850deac20d225fb7756671c14375.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134470/original_4a120c0e0b085836aa3df60e7b05b93b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134471/original_64451ea7cfbb9600755f3602646cf887.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134472/original_790a0e750c26e98de71c9ac5cbde8cb4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134473/original_8a8b716d9b5bc088242d5210da93111a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134474/original_a2f359ac8451fee321b075428f435e9a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134476/original_eddd53a687bef1cff6ef24a32e126a3f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134475/original_74cf284b7474a1f86fdf9c586dc23e57.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134478/original_72ec218fa13eadea640e8ceefccf5d9b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134482/original_0bbccb3f01465dfd348ded8e922117eb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134481/original_ef50bfe5c4d09d7a2d7a53ba2d88f60c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134479/original_9a6bccd7369680c463dcb34c6635124e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134480/original_07652580395744272e87b4fcdedfe47f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134483/original_7da21f839bab66b160f11811b3a53aa3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134490/original_0d4a00ff887634bf33a07140fe1953b1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134488/original_2976d25d5c7b6338b93d66cab319bf06.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134486/original_6a4b9d813d1155c285162adeabe31c58.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134487/original_c58b3bab5a11ca43e824b16f9a473e0e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134492/original_e9ccb7553adb4e175f05e07a3c7d7398.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134489/original_c66e0fd92518c4a8ee30253ed575dddc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134491/original_cce164fd491f4c08a1eba213f91c6a19.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134495/original_04600858bb36865a36cc183237dee7ff.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134484/original_32f33fafac93f362b40daccde5cc1ce5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134493/original_705304c2960d70cec5c70930b5db4419.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134485/original_d55e11638d75465266a4f4c0073b028d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134494/original_fc9d6ad7206205cd7a469f03d8bab2f4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134496/original_ad42ca706ea306be487fd3ddda57188e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134500/original_b07a7797f4fcf88087a759fa663addd9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134503/original_6fc24808b5feb1b696199f337a63251e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134504/original_8b341c1095104626a6deb1915ce67fc0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134505/original_af99b6406d8856f114958c6ff24eb5b9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134506/original_60d7edc165002560b698babe42d94ba1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134507/original_d209c924b6a4844ba68c098d6c9d27ca.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134508/original_92a942819e60236ea09765e10a370b8c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134509/original_3d0655a64621dfcdd138338009c329dd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134510/original_a44bf28246cd94aa9fed018c76d1cf1c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134511/original_315540673a86dbef98dfa822142c17bb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134514/original_4cf1b79bebe5a9acacd2a00e25eeef40.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134515/original_f47580203498c5cd9c5e0b1a1aac0aff.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134513/original_005aa6d59079ca64a4f5bb94364e69ee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134512/original_99b35bdd215580a1d418da594519f40b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134516/original_6e45603693ab641b329b116db5f5cefe.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134517/original_0da3f71b1ae8ba8c28a88436879ee8c2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134518/original_d35ce5825abf22fb1c285c568048ed3d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134519/original_1401456231c00c445e08116c975ba3b1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134520/original_7a50621654f3c8da99134ebf0ddcad4d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134521/original_6abafd75569fc6d7303d0c84a57271cb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134522/original_9d45c78a4b33dfbd0460dec7b928c0de.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134523/original_b237cfcc4005d83bc297a098fee176ea.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134524/original_f9958f28795b83ac571bb4b6d2eab9e0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134525/original_e2f63f45c78823fe4ed57f95eaff9d88.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134527/original_cd5148eb78aa17f7f93aaaa76a24c395.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134528/original_e8a8aa406875de0c8e61c29a68a3e03c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134529/original_1558f42c7eb2b7e98df996fef4799f4d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134530/original_d14bff2734e5e1501d70c4b66fc74e87.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134531/original_5db3da38a44a37b4914f76d5aea1b186.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134532/original_e98a8cba2a576ebe560727bd133161d5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134533/original_fca0ace146a946e66e2aa0ce787e8b11.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134534/original_19350ddff63baf45e8a59e583f4e60af.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134535/original_ae9bbe6e06644d896dc9905b3ec0d81a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134536/original_6999d89f5a8c795a1ca463c8cd5c9415.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134537/original_4f083891bcf4357de9a8c15b7df1872e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134539/original_1fb8725027fab06ae6c41138dadd1d2c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134540/original_85bf16e388e4c2b0ccfbcce9598ec1ce.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134541/original_7c232451472b1f44a19947fe08226f12.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134542/original_e3fc4d9ffff33b152da432167e9e9535.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134543/original_cade94aebbb576f1a11c51ee09c5932c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134544/original_22dad84e3d3035ad36b38595ca072136.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134545/original_4b5f2b5c19d16f78c86c7b690053dcee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134546/original_574f326786540e9e98edcf64a2800133.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134547/original_e4ab22907ce3621d502f82dcecdc3c4d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134548/original_5049e1be6fc16a7e34838ff61d61a6ed.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134549/original_a4aca32f742ac802b796ed57a0a0c96e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134550/original_53b3a74e329fdf9a9dadb9227ec4fcf9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134551/original_81f6e1685d9eece27946bd6319a211b5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134552/original_ac3253e66c2afd229a0541707fe646ad.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134553/original_9ac4ceff8f05d6e904d00213c5bd1e91.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134554/original_444e966a4b99e463b2336336b9c5df56.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134555/original_bac4dea2096927268950d238bfdf0427.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134556/original_336afe397c225bbf31d916b348a72ff4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134557/original_aa5ad7e8cf194705834db72f5a5ecfe0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134558/original_f797155b62db5755431b837fcfbf5650.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134559/original_389ddc3d645982c9f57dc9fb82ade32d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134560/original_ed4d1c550f77bacc4b6e2564118bae69.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134561/original_57fb1e1c8061981216a804f801562918.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134563/original_b41c007589cbeaa4d9d2e183c42d6f74.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134564/original_96574af1e132ac2479f8e93977c2ead3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134568/original_72f01201044da6638a05b33ade1907a4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134565/original_20bb1e4bcf6fb843749365da96838dd2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134567/original_c415118f37272ecaddcce1fdf4984eda.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134566/original_9f3b42e735ab156eb2b9496e6d6aee26.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134569/original_30b9f284110dc2270836ae0fb7ce1a4c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134570/original_05405fd27a4eb8006f10c2e5d464e731.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134571/original_c14071ecf48624bb55f22da287bab173.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134572/original_4a039ce5b4519a00277792833cf54496.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134573/original_e18c624adc02bb2395f43acccf531f60.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134574/original_81aa5fe54ad974148c8c4b24570ab266.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134575/original_c6cb6d31f116d75f3d002cac57177cdb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134576/original_0dc83f882f6467b7446c580b43b5e4a6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134577/original_0adb5b4c314e23c58f5161bb853f7ea4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134578/original_736c10185242d6b38a4c83b1cf3ae448.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134579/original_214a291f320bfe05fdc5aa5c485d6f4a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134580/original_9580e68bf87ef99ef0a9ad246636b7b4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134581/original_98e08b8f6fdcfb1ccee29ed6bf6e017e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134582/original_3712fc190943b43206ad8c823bf04f1d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134588/original_f80cdc2e3d3c316c22954c31f65d69e7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134589/original_40b86794e1a2c50f8afb909994c1516f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134590/original_a9a18b8ff7e417a6e6fb4c1e6ba95f3e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134591/original_a3dab5ef2d203fde5457a93157481924.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134592/original_d0f098c8a4242104a274822a04e5ac1c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134593/original_ef6fd7ab244e1956f9afd5aa541c3a80.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134594/original_03345710604c26fc4cab82d47a657709.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134595/original_a1e5c1cfb928226fd3356ec253ba0b56.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134596/original_a777f0ae437f877dc5239706eb31a1ca.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134597/original_a6018711a6bf2b6dc08a0b75fa78b792.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134601/original_f9efe7945e453824c6531f86fb911d92.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134600/original_02096286543bb561f3109fcfddf58b8a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134599/original_3f3ed79fb7f8e964ebf1a8b304987e25.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134602/original_1cc36be8fa5cc0daa99f28193579222a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134603/original_4f27a7bdf78fb1ae2c5afd8c5296528a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134607/original_9280a4677f3bfb8f3a89e1779c757e6a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134604/original_670d6f359c4fd4431c20d78d568ece54.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134606/original_4bd3ea4275d00c3bf8ef20569d1d29da.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134608/original_493704f15c166549463aee96d0629ac7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134609/original_3d7c00d1f75ebfa03b5514802af6124d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134610/original_3d32ac9ab10d1b3210ccd29f81257f84.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134612/original_3d5961e843afa64a7526372e5d721866.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134611/original_a4a38db45b5d76b8266724109cc5a975.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134613/original_db1c0fa5680338427e0fa1263ed2972a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134614/original_d01663a70765941e320beaf62319721d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134615/original_16393c0f622817943634499ae7d78664.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134616/original_ac7db2e370595c40a04c9256c30559fc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134617/original_ab7a587280f2d86eda67e33bdee87b2c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134618/original_eac92fb3cd495ca1a15cd0af531d0ef7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134619/original_ecf1d45b1d05f0ac21ae208db1630f5a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134620/original_b72a75ed56b5cb4ebfb44f6609fba227.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134621/original_db63f8e9f881e4aae4e0ab10bf99c9d7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134622/original_3bf6f0fb09c9a65ea9ba1204cf2ab080.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134623/original_da409888fab9ade43162fc1802120ba1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134624/original_76176e459c19a947c12422a340686b4e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134625/original_25f46d3dd9d8b217d69b366c09b0d9a5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134626/original_f0ab663868848e9064e18b1979e11a60.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134628/original_38e9bf746dca09e81154244a6b5aa572.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134629/original_7c2983c311205c39ebf1ad0f43e5c563.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134630/original_4f21152e63819333702b479437786017.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134635/original_4a73c367e382c621938bc983697720da.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134636/original_c3ed2cdcaed75953f9e042c4d9fab2c7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134637/original_c92ee676ba24c9f249e31b4a914ec290.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134638/original_6dbe472589fcf6f9194cfdbf0c7a77a6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134639/original_b55828b37b4995b9b7e2201c465a6e48.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134640/original_cc1b43883dd1fb21f0dba5a2af949526.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134641/original_8c1884ff6339aa2546d399c14119334b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134643/original_3fbdd9bd89235ff33b2af98f5b21621c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134644/original_b7a9e885becce977125439680cf8c211.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134645/original_63ad635ed69c39b02954ce980adb60dd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134646/original_ea6b37ae909529e974fa268e76b36504.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134647/original_11a35b810a6439ef2a62713f739c0eb1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134648/original_659657dd2960b3b94a887b852c0d0d45.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134649/original_eeef145f4d99be8005c49f51c91571dd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134650/original_f8ef2f37d0a9c79eede28f4039723629.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134651/original_f7ee942b545415f2eac48e382bc6c8db.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134652/original_f2951dd21c7b5764235a415bdb36773b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134653/original_9325dad3bc4d5ad3468bda5e38db3701.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134654/original_14bd854991afda899ceb701bc43226be.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134655/original_664021a5e44f4e84d75fef9f3a09334b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134656/original_8144e46d80b64ff1420056b04b14604f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134657/original_f69f27f1ae75c296dc6988f0922177f8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134658/original_498ec9989cece030bc79e26b69fef58c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134659/original_a8cb5a2c0feb32b08cba23bae0f28546.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134664/original_f65aa22e1880cbeb2d47d9032e791743.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134663/original_809b19d568f5f1fbee8b0105f82c5774.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134665/original_1f06e98861259c2bd29e3a73fe9eaf6e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134660/original_c3c4a0b0020ddfe745dafaf5bdc44495.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134666/original_4e3d5c4a14844efe844edb520339c40a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134671/original_d94bb52b772a2553769f2dc50982d643.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134670/original_b6aaef657fcb9190beaf7de6dce9cdad.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134668/original_b1de550efa55fd681008aa7e9297ede3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134672/original_b00dc6e49e20c73c02771b19b0fe1c0d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134661/original_21b2f74328f7d8714f68c760887990cd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134667/original_88d24af01251199080def6068d22edb8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134662/original_b89624d70c450e24457aca9c94b0ebca.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134669/original_34c7b8ee68a9dd46ff1bb76441e00752.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134673/original_7486b95a716783da739dcc27bd705fd7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134674/original_fa988d49c98017edd5e07ef7e19a3d51.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134675/original_7b3241e16dd1a20a55184e6fcbfbe363.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134676/original_b4ce76127d5942a773f01fabe3dcbcd6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134677/original_bcb21cdf3bb4489160b8288c37271860.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134678/original_dc4754aebdcc83fc364304205e9467c0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134679/original_a9d72950fb711d42b9c2cd69e4e04d14.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134682/original_8b176912af8fb01305f9e5caafb56cc6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134681/original_5bd21d210a87499c4da4076af5053900.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134680/original_2174909bf6c381da522174c4272ee6fe.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134686/original_197c1efa2d81c68527e2de056f1cbeb6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134687/original_3533db949aac3d743e55ee630b78caea.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134688/original_39ad59a9ead8619397c60a15fe7dbcb4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134689/original_83f9d198169a1bae81d7e972c6e3bb8b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134690/original_3146189bcc5c08d973b88e3865339300.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134691/original_df23cf4428c6a983313029582d643608.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134692/original_2cc7d98aecac460e942480ae5f5ebd21.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134693/original_c49d95e895850671e26eddbf634abe2b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134694/original_af4a1e6e943f9d3ced25adf57f5ee9d7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134696/original_4af1dcb42b6fc17f6c4753f9ef81e75e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134695/original_acb556235963d0869d0bcc5fa4a4447c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134697/original_f0ea4a3f9948311220066eda9fd18be7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134698/original_80ca43637697c3af8345fd24b8d83841.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134699/original_294aebe538222d626cf64a6d2f513f98.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134700/original_2391a824feb4a7cd2a5737d94b113cee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134701/original_a98e35a0e17b5c3b97e1826df770a438.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134702/original_4204602954ffbe5cac86f37f9f422bee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134703/original_482961fce3bd13c0497c8d837a1a5fad.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134704/original_a75918efd0f77d674fabcae1fa9e772e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134705/original_d7fb9cb5c55f90df1b47be8c742971e7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134706/original_d8d66e4bc2440ad5200c5fecdceb1160.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134707/original_6ece9480323d038ea9c09733227803d4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134708/original_07c63c565030e24f5dd6183a12ec5e0f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134710/original_813676d837eb32deafc09105b4f298a6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134709/original_b803b5bd7579e3332f2d9e531c08e069.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134711/original_4f497d28dcae0f5f68bcf2fdc891c233.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134712/original_1977fd5d6a9e7ec864fcaef05ecbb88d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134713/original_85a3a6887e8461a5b83702b47cbd3801.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134714/original_e461fecf7b7578685bd3f3c5adbe647c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134715/original_dc36c58f279e1300abc52ff6106a8926.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134716/original_38b8bcc00a97ae363bfa80dc009a60bf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134717/original_81baea03072539a794e6fe8c605dd251.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134718/original_a17e360c0277aeee0d216da51c87562b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134719/original_8b9f7c6a15660ac147e1fc546a26f61e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134721/original_9dcbd01f9da28828d7254f7587acda49.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134720/original_e89f29ddc48d4615c78deed3390c05fe.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134722/original_4f88fb3cca25e2d3cd6bd890b024a294.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134723/original_4a160f3a31b34c1d6ecb672d3b548bff.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134724/original_6e4fc9fef7bd1ed17766fb88fc4857b6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134725/original_2d84a1d2e108902b7c227fc660684fd1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134726/original_a16ae9cebc16da72ec6df82bd3baa289.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134727/original_54d63da40fa4349069ac40c55674341f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134728/original_6fc51ca4b7b28b060ae35456dbd0dd6b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134729/original_c0bf5bffc48acf58a58c91e84d932f73.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134730/original_5959589274c9a74dcbc83d803bb1b02c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134731/original_593e8e57224604187810874a26b4e8fd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134732/original_3e1ef9e39275200dd5715cd27bee844c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134733/original_3c0c43c0a5584defa55fe3eef521ea97.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134734/original_cb9538324b6ebe46f53a5035d8f06496.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134735/original_01b032d422a649f2d079c3a3b9c49b31.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134736/original_a188cd87a23ba3af4b10878ac8c05678.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134737/original_acab205085d33050ea0a09753692fdf7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134738/original_8b8def7c026648b06ba15d03ade383d2.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134739/original_f1572821c2d6f4cbb42fba45cf0feeac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134740/original_c7b6a6248f1e0699f807fcb5fcb5e955.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134741/original_84118824077b9d13a015cb30c752200c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134742/original_06f51069341ff95914e048f514ff564e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134743/original_3ff130243b78801f94fdcb94aef142a7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134744/original_cd77002ddd58620577e4125bccb81f04.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134745/original_7b6a5d37218c7992b0f0405d8c3d0817.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134746/original_e8ea28fb8fb18646864155aeca8df9e7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134747/original_d2dc9d970af220331f7b9b5e014b7dda.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134748/original_66de55351bde68246a84ba43bf507564.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134749/original_ff5c39995ded4900aad36989b946e8ba.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134750/original_1d198e5023bb1319b617fae278642631.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134751/original_25265d5d78f390c375293984e5c5a787.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134754/original_4acbee114e89b055e0fd26fd194a9b8a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134755/original_0ad545a9753a8a7a40f0491f08d45947.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134756/original_79f9a9ac28e68abffa1b08ddbd0b5542.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134757/original_27fb46641a34c380f5cdc49a40ce62a0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134758/original_68f5efa4713107e8227f50596595ffa5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134759/original_b7c37c0dba06f52fe43ba778d1c8d713.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134760/original_daea28fbd6684d296d2048d06432c29e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134761/original_3a268818408a9718800d48d91fd2b554.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134762/original_9be553ce4208b22c19481f16c4c40367.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134763/original_39de854d3a0b03180a3114c7e4c687c1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134764/original_0c4d2da6c268ec996feff492aa2af303.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134765/original_48857fb4290a62f8bf4ce7e3b7bbf86c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134766/original_3dd7fc022ff578a3921091018d615e86.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134767/original_5c42d3438bfeccf40d3a1effd8959bdf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134768/original_59d6f80fe6e6ae77b2f897e2ce66d77a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134769/original_5cec2eea3bbbc182d856681596a2cd67.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134770/original_7e73d3bffd49ec7f2153e99ba01708cc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134771/original_f048d5bcca559fa0ad22d1de05f1e42a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134772/original_1bae25d58452e32119809b710b0c8b32.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134773/original_fb8458ca1f517f0c9c739cf5c5981c4f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134774/original_88ad59c1a7dce9a1c3a405684ad20e78.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134775/original_44db6aba233b87c7254d5b75f8b7377f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134776/original_20b8fad08dc89758c15251b758129966.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134778/original_e60aa441d286dc556d61a622c7100c10.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134780/original_35140c32b33990afde01ff21f36bcb22.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134777/original_58b70d893064b261eaad55cc658a0269.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134779/original_bbe7114c92912568c1020762a3d0fd6d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134781/original_01e9ac761936886010c91aff7c79f2ed.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134782/original_dc10838ae967c3bf54da98f835ac5c6a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134783/original_520107fb6b7e1042239b81c0099f791c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134784/original_b2909974a323d0a9e650e20c33f6442e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134785/original_6d55b368ab15d3a5a1aea20549de13fa.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134786/original_f06778a194d42768d26e1f54a6718ce4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134787/original_fc6b93e1dfd45b1e7e4bcdde53ed491a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134788/original_d9504bb0cd31b2eb93831023421f12e3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134789/original_0e3cd39630445a2a94d47f496853c393.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134790/original_8ade7c1d868ed10d8e30487618b74ff5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134791/original_a77b9cbfc858898b10210458406a4cab.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134792/original_7ed10d01aedf4aaf29317c6588651ef5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134793/original_84985604f7065d8cd8d58bfddb5a7f57.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134794/original_8cca8ba04d124aa78fb6ff97fdb3e73d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134796/original_a2657d4f17c5ec21841744ef9df7ab25.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134797/original_6c0f36142215f26cf7cf752f1c91eddb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134799/original_dd3b087b7a48a1b0f8ca2cb6facc7371.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134798/original_a404d1d95e3971ad60db9d1215f9db31.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134800/original_5895123e9e7abef0c9bc7ce52cd42556.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134801/original_b77980aca40039e943dffccb594711d7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134802/original_071d85986810d42eb5865d6cad908780.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134803/original_bd0787a3d07a96247ab449b480eb4a19.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134804/original_6f4ec324b88f24fbcc87ece0eac723e6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134805/original_51685f05ffedd9a58f0f17b1e939fdb5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134806/original_3d0c62082e8f883c7a5af502ad1da84e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134807/original_21d6283901812119160d6da65ccc9983.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134808/original_c665c1e2ec2a94bfe26c3b4d569ba91a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134809/original_2a104bf86b9ab937052c224088667287.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134810/original_ffb8a15dbc37d50f13c05b0dc147af00.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134811/original_035cd35591040e2b02f15a7f6a065fd0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134812/original_b467a86dd5299f93f5bafd14047c736e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134813/original_f3854483876ae419d13700f0797c3d63.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134814/original_52ad6f43842e7ba138b05c55786b5c02.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134815/original_4177d050f3f62dc2650c84e5f90c1b91.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134816/original_f34c7f13a7eb79f0014e7fce2a03c62b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134817/original_1b65aca9ba10ebafc693a75001f64644.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134818/original_7b3939a1e6103d70ad37ab185df857e6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134819/original_13ff22864bfe0f975ec6b1192959713a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134820/original_b5a8fda3974aa21cf8a761cf7a919c6f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134821/original_360cc52f8b9811866e7b0d2f12831a05.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134822/original_e2fc682269306810bf8b986d127a354e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134823/original_15d2080acb4791d88d8fe54001e10a02.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134824/original_11ad1746c837ad2a47d6050076aad9d1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134825/original_12bf87158ea413b6fc1d096f067b2008.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134826/original_214276bb1c426ec201756b9a3fa82ccd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134827/original_ddd456ec8e45f1b5e1b6518872180154.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134828/original_348e9dcfd707915f8a6191440cca179c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134829/original_c2e7765b933f5798ea750efed424f718.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134830/original_c508d927ef8aa3f60cd91575b5ab874d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134831/original_91b90925cbde2e883b402c7c678ac20b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134832/original_8d002f7d14213d9446cdda3549dca8d7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134833/original_17afa5611e9063e9ad4c8cbdb5faeb24.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134834/original_fd7e9abfcae66560bf91825256450557.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134835/original_ab3b9e06c27439e8efd7b0d4f0998ae4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134836/original_44f0140651808ebbb7979f2e11b65e44.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134837/original_c3df0accd35a8bcf5044fd49fde93b57.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134839/original_5fd8abf2a05aecf9f46e367e74f94a27.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134840/original_c6b28f95dee720d7405f3309b1278c0e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134841/original_dcb428d68199f53094c64f1119d1698b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134843/original_7b38928f21f966bfd132a8b37fb3ee97.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134842/original_8ded2376ef2548b780dced74f7773a45.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134844/original_18654e91db08f9964fca5f546c3bb11a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134845/original_cb2b45bfe0644a47429e16ba2356d4c0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134846/original_f4b0acf9baeabc2365c00df44cb9256d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134847/original_8a165ef9216a47a99bfe599d9dde3862.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134848/original_cdc6bee454c905cc47cb795507382d66.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134849/original_6d7e1574973300da334c1f94b45b0908.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134850/original_9486cfafc3c0ac11aa6b71825f747c12.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134851/original_7f9a6059263a727b2f03116fcf144761.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134852/original_19afb15479a86eb6a937ae35345c0a0a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134853/original_e500950cdd53a7c0469740ac72186292.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134854/original_94639af9bdc7005264cf876b38b0e84c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134855/original_203af585d660ad94a56c93907240d56a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134856/original_331fde1e81bfc326bfd4a8964f3b7342.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134857/original_765c32926bd5faa857c344b638e4a684.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134858/original_3da39e6acdc8335036bc085ca3df35ac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134860/original_87f92e2c8aec67aa5292f407344e2d44.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134859/original_b6a8ba4b609be43cb65fc73c2e0c5263.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134861/original_fb6e9763367a0631bf461e2afb945071.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134862/original_f7fe0f6d51de0c7af2439acf46ee53a3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134863/original_0618bee3302f6da09752f92407ebdada.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134864/original_a4968ce83ab7c3505302785a72bc772c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134865/original_86e2e23eb8f8e3acc87bf1d2552b5891.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/39134866/original_020e62c06cad2cac392e27d39ea01bb2.jpg"
+];
+
+  // Inicializar si existen arrays globales
+  buildGrid('grid-noel', window.GRID_NOEL);
+  buildGrid('grid-pozole', window.GRID_POZOLE);
+  buildGrid('grid-dfranco', window.GRID_DFRANCO);
+
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded', observeInlineVideos);} else { observeInlineVideos(); }
+  </script>
+</body>
+</html>
