@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xpan — rd1f · retrato de un fugitivo</title>
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <style>
+    /* Alineado al estilo xpan. Mantiene agresividad del original. */
+    :root{--g:16px;--g2:28px;--max:1220px;--bg:transparent}
+    html,body{margin:0;padding:0;background:#ff0000;color:#111;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    body{font-family:Times, "Times New Roman", serif;line-height:1.45}
+    a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+    .wrap{max-width:var(--max);margin:0 auto;padding:calc(var(--g2)*.8) var(--g)}
+    header.site{display:flex;align-items:center;justify-content:space-between;gap:var(--g);padding:var(--g) 0}
+    .logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+    .logo img{height:50px;width:auto;display:block;border-radius:0}
+
+    /* Fondo experimental del CSS original (gif). Dejar var para fácil cambio. */
+    body::before{content:"";position:fixed;inset:0;background:var(--bg) center/500px repeat;opacity:.18;pointer-events:none;z-index:-1}
+
+    .meta{font-size:.95rem;opacity:.85;margin:.25rem 0 1.25rem}
+    h1{font-weight:400;font-size:2rem;margin:.1rem 0 .25rem}
+    h2{font-weight:400;font-size:1.25rem;margin:0 0 .25rem}
+    .prose{max-width:860px}
+    .prose p{margin:.6rem 0}
+
+    /* Mantener gesto original: imágenes con borde cuando son links */
+    a img{border:2px solid}
+
+    .section{padding:var(--g2) 0;border-top:1px solid #eaeaea}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--g)}
+    figure{margin:0}
+    figure img,figure video{width:100%;height:auto;display:block;background:#f4f4f4}
+    figcaption{font-size:.9rem;opacity:.85;margin-top:.35rem}
+
+    /* Lightbox fullscreen uniforme */
+    .fs{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:9999}
+    .fs.active{display:flex}
+    .fs img,.fs video{max-width:92vw;max-height:92vh}
+    .fs .close{position:fixed;top:12px;right:12px;border:1px solid #111;background:#fff;padding:6px 10px;cursor:pointer}
+
+    /* Iframes: contenedor táctil */
+    .iframe-wrap{position:relative;aspect-ratio:16/9;background:#000}
+    .iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+    /* Multi-idioma */
+    .lang{display:none}
+    .lang.active{display:block}
+    .lang-switch{display:flex;gap:8px}
+    .lang-switch button{border:0;background:transparent;padding:4px 8px;cursor:pointer;font:inherit;text-decoration:underline}
+
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site" aria-label="encabezado">
+      <a class="logo" href="/">
+        <img src="xpan.svg" alt="xpan" loading="eager" decoding="async">
+        <span style="font-size:.95rem;opacity:.85">xpan</span>
+      </a>
+      <div class="lang-switch" role="tablist" aria-label="idioma">
+        <button data-lang="es" aria-selected="true">es</button>
+        <button data-lang="en">en</button>
+        <button data-lang="fr">fr</button>
+        <button data-lang="jp">jp</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="section" id="intro">
+        <div class="lang lang-es active">
+          <h1>rd1f — retrato de un fugitivo</h1>
+          <div class="prose">
+            <p><em>video instalación performatica — en una galería de arte contemporáneo — "el arte no es para quien no quiere mojarse los pies"</em></p>
+          </div>
+        </div>
+        <div class="lang lang-en">
+          <h1>rd1f — portrait of a fugitive</h1>
+          <div class="prose">
+            <p><em>video performance installation in a contemporary art gallery — “art is not for those unwilling to get their feet wet.”</em></p>
+          </div>
+        </div>
+        <div class="lang lang-fr">
+          <h1>rd1f — portrait d’un fugitif</h1>
+          <div class="prose">
+            <p><em>installation vidéo performative dans une galerie d’art contemporain — « l’art n’est pas pour ceux qui refusent de se mouiller les pieds ».</em></p>
+          </div>
+        </div>
+        <div class="lang lang-jp">
+          <h1>rd1f — 逃亡者の肖像</h1>
+          <div class="prose">
+            <p><em>現代美術ギャラリーにおけるビデオ・パフォーマンス・インスタレーション — 「濡れる覚悟のない者に芸術はない」。</em></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="descripcion">
+        <div class="lang lang-es active">
+          <h2>descripción</h2>
+          <div class="prose" id="desc-es"></div>
+        </div>
+        <div class="lang lang-en">
+          <h2>description</h2>
+          <div class="prose" id="desc-en"></div>
+        </div>
+        <div class="lang lang-fr">
+          <h2>description</h2>
+          <div class="prose" id="desc-fr"></div>
+        </div>
+        <div class="lang lang-jp">
+          <h2>解説</h2>
+          <div class="prose" id="desc-jp"></div>
+        </div>
+      </section>
+
+      <section class="section" id="galeria">
+        <h2 class="lang lang-es active">galería</h2>
+        <h2 class="lang lang-en">gallery</h2>
+        <h2 class="lang lang-fr">galerie</h2>
+        <h2 class="lang lang-jp">ギャラリー</h2>
+        <div class="grid" id="mediaGrid" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Lightbox global -->
+  <div class="fs" id="fs" aria-hidden="true">
+    <button class="close" id="fsClose" aria-label="cerrar">cerrar</button>
+    <img id="fsImg" alt="" hidden>
+    <video id="fsVid" playsinline muted loop controls hidden></video>
+  </div>
+
+  <script>
+  // === Cargar y conservar contenido del HTML original ===
+  // Se inyectan todos los <p> y la lista completa de imágenes 3..80.
+  // El archivo original incluye texto con elipsis. Se preserva tal cual.
+
+  const originalParagraphs = [
+    `<em>video instalación performatica - en una galería de arte contemporáneo-
+"el arte no es para quien no quiere mojarse los pies"</em>`,
+    `<em>Retrato de un fugitivo es una pieza colaborativa entre Moisés Sacal Hadid (CDMX, 1998) y Ramón Saturnino (Sonora, 1999). Indaga la experiencia de la imagen en vivo mediante el involucramiento no convencional del espectador dentro de una instalación de video. Cuestiona la transformación simbiótica entre objeto e individuo en sala, y las consecuencias de percibir la imagen bajo condiciones obligadas y predispuestas relacionadas a los rasgos del video. Extraídos al espacio físico, estos rasgos rompen una barrera de interpretación y abren nuevas lecturas sobre experiencia, consumo y vivencia.</em>`,
+    `<em>Una garza digital se proyecta sobre un charco de agua n… deviene espejismo. La instalación mostrada se vuelve una amplificación directa de t… selección, un confinamiento al animal dentro de la imagen digital. Todos los elementos que determinan una experiencia análoga, son … espacio de exhibición en donde se replican de manera sintética. Es por medio de estos elementos sintéticos los cuales el especta… por lo que es evidentemente, una proyección digital.</em>`,
+    `<em>La instalación esta constituida por 3 elementos:<br>– Proyección de video sobre biombo de cortinas traslúcidas<br>– Extra digitalización y procesamiento del video original [2hrs de duración]<br>– Lago artificial, espejo de agua que rompe la barrera del video y propone un segundo ecosistema artificial<br>El biombo es suspendido a 4 metros de altura sobre el centro del… representación directa de un ser que pertenece o no a donde es exhibido.</em>`
+  ];
+
+  // Traducciones fieles y concisas, manteniendo tono experimental
+  const translations = {
+    en: [
+      `<em>video performance installation in a contemporary art gallery — “art is not for those unwilling to get their feet wet.”</em>`,
+      `<em>Portrait of a Fugitive is a collaborative piece by Moisés Sacal Hadid (CDMX, 1998) and Ramón Saturnino (Sonora, 1999). It probes live image experience by involving spectators in non‑conventional ways within a video installation. It questions the symbiotic shift between object and individual in the gallery and the consequences of seeing under imposed conditions related to video traits. Extracted into physical space, those traits fracture interpretation and open new readings on experience, consumption, and living.</em>`,
+      `<em>A digital heron is projected over a pool of black water far from where the footage was captured. The real animal, enclosed in a synthetic lake, becomes a mirage. The installation amplifies these determinants and confines the animal within the digital image. Analog elements are reconstituted synthetically to generate new perspectives. Standing in the lake beside the heron, the spectator observes a logical, empathic mirage of a digital projection.</em>`,
+      `<em>The installation consists of three elements:<br>– Video projection onto a screen of translucent curtains<br>– Extra‑digitization and processing of the original video (2 h)<br>– Artificial lake as a second synthetic ecosystem<br>The screen, suspended 4 m high at the center, receives the hologram‑like projection. The water mirror proposes an abstract representation that interrogates belonging and exhibition.</em>`
+    ],
+    fr: [
+      `<em>installation vidéo performative dans une galerie d’art contemporain — « l’art n’est pas pour ceux qui refusent de se mouiller les pieds ».</em>`,
+      `<em>Portrait d’un Fugitif est une pièce collaborative de Moisés Sacal Hadid (CDMX, 1998) et Ramón Saturnino (Sonora, 1999). Elle explore l’expérience de l’image en direct par l’implication non conventionnelle du spectateur dans une installation vidéo, et interroge la transformation symbiotique entre l’objet et l’individu ainsi que les conditions imposées par les spécificités du médium vidéo.</em>`,
+      `<em>Un héron numérique est projeté sur une flaque d’eau noire, loin du lieu d’enregistrement. L’animal réel, enfermé dans un lac synthétique, devient un mirage. Les éléments analogiques sont reconstitués de manière synthétique, ouvrant d’autres perspectives. Aux côtés du héron, le spectateur observe un mirage logique et empathique d’une projection numérique.</em>`,
+      `<em>L’installation comporte trois éléments :<br>– Projection vidéo sur un paravent de rideaux translucides<br>– Sur‑numérisation et traitement de la vidéo originale (2 h)<br>– Lac artificiel comme second écosystème<br>Le paravent, suspendu à 4 m au centre, reçoit une projection de type holographique. Le miroir d’eau propose une représentation abstraite qui interroge l’appartenance et l’exposition.</em>`
+    ],
+    jp: [
+      `<em>現代美術ギャラリーでのビデオ・パフォーマンス・インスタレーション — 「濡れる覚悟のない者に芸術はない」。</em>`,
+      `<em>『逃亡者の肖像』は、モイセス・サカル・ハディド（CDMX, 1998）とラモン・サトゥルニーノ（ソノラ, 1999）による協働作品。映像インスタレーションの中で観客を非定型に関与させ、ライヴ・イメージの体験を掘り下げる。ギャラリーにおける対象と個体の相互変容、そして映像固有の条件がもたらす知覚のあり方を問う。</em>`,
+      `<em>黒い水面にデジタルの鷺が投影される。実在の動物は合成された湖に幽閉され、蜃気楼となる。アナログ要素は合成的に再構成され、新たな視点を生成する。鷺のそばに立つ観客は、デジタル投影の論理的かつ感覚的な蜃気楼を目撃する。</em>`,
+      `<em>本作は三要素で構成される：<br>・半透明カーテンへの映像投影<br>・元映像の追加デジタイズと処理（2時間）<br>・第二の生態系としての人工の水面<br>中心に吊るされたスクリーンはホログラム的な投影を受け、水面は帰属と展示を問う抽象的表現を提示する。</em>`
+    ]
+  };
+
+  function injectParagraphs(){
+    const es = document.getElementById('desc-es');
+    originalParagraphs.forEach(html=>{ const p=document.createElement('p'); p.innerHTML=html; es.appendChild(p); });
+    ['en','fr','jp'].forEach(lang=>{
+      const el = document.getElementById(`desc-${lang}`);
+      translations[lang].forEach(h=>{ const p=document.createElement('p'); p.innerHTML=h; el.appendChild(p); });
+    });
+  }
+
+  // Construye lista exacta del original 3..80 con PNG especiales
+  const bases = Array.from({length: 78}, (_,i)=> i+3); // 3..80
+  const knownPng = new Set([6,7,41,61,62,63,64,65]);
+  const mediaList = bases.map(n => ({
+    id: n,
+    src: `${n}_untitled.${knownPng.has(n)?'png':'jpg'}`
+  }));
+
+  const grid = document.getElementById('mediaGrid');
+  const fs = document.getElementById('fs');
+  const fsImg = document.getElementById('fsImg');
+  const fsVid = document.getElementById('fsVid');
+  const fsClose = document.getElementById('fsClose');
+
+  function openFS(src, isVideo=false){
+    fsImg.hidden = true; fsVid.hidden = true;
+    if(isVideo){
+      fsVid.src = src; fsVid.hidden = false; fsVid.currentTime = 0; fsVid.play().catch(()=>{});
+    } else {
+      fsImg.src = src; fsImg.hidden = false;
+    }
+    fs.classList.add('active');
+    fs.setAttribute('aria-hidden','false');
+  }
+  function closeFS(){
+    fs.classList.remove('active');
+    fs.setAttribute('aria-hidden','true');
+    fsVid.pause();
+    fsVid.removeAttribute('src'); fsVid.load();
+    fsImg.removeAttribute('src');
+  }
+  fs.addEventListener('click', (e)=>{ if(e.target===fs || e.target===fsClose) closeFS(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeFS(); });
+
+  // Lazy loading + error fallback a extensión alterna
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const fig = entry.target; io.unobserve(fig);
+      const img = fig.querySelector('img');
+      img.src = img.dataset.src;
+    });
+  }, { rootMargin: '200px 0px' });
+
+  function createFigure(item){
+    const fig = document.createElement('figure');
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = `rd1f · frame ${item.id}`;
+    img.dataset.src = item.src;
+    img.onerror = () => {
+      // alterna entre jpg/png
+      const parts = item.src.split('.');
+      const alt = parts[1]==='jpg' ? 'png' : 'jpg';
+      const fallback = `${parts[0]}.${alt}`;
+      if(img.src.endsWith(fallback)) return; // ya intentó
+      img.src = fallback;
+    };
+    img.addEventListener('click', ()=> openFS(img.currentSrc || img.src, false));
+    fig.appendChild(img);
+    io.observe(fig);
+    return fig;
+  }
+
+  function populateGrid(){ mediaList.forEach(m => grid.appendChild(createFigure(m))); }
+
+  // Idiomas
+  function setLang(lang){
+    document.querySelectorAll('.lang').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll(`.lang-${lang}`).forEach(n=>n.classList.add('active'));
+    document.querySelectorAll('.lang-switch button').forEach(b=> b.setAttribute('aria-selected', b.dataset.lang===lang ? 'true':'false'));
+  }
+  document.querySelectorAll('.lang-switch button').forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang)));
+
+  // Inicio
+  injectParagraphs();
+  populateGrid();
+
+  // Fondo experimental del CSS original: establece tu gif aquí si aplica
+  // Ejemplo: document.documentElement.style.setProperty('--bg', 'url(https://d2w9rnfcy7mm78.cloudfront.net/xxxxx.gif)');
+  </script>
+</body>
+</html>
