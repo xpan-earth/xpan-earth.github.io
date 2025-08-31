@@ -42,12 +42,14 @@
     .description{font-size:1rem;line-height:1.6;max-width:980px}
     .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
 
-    .lang{display:none}
+    /* Multilenguaje con fade */
+    .lang{display:none;opacity:0;transition:opacity .18s ease}
     .lang.active{display:block}
+    .lang.active.show{opacity:1}
 
     /* BG videos alternados, detrás de todo */
     .bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#00000000}
-    .bg-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .45s ease}
+    .bg-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease}
     .bg-wrap video.show{opacity:.35}
 
     /* Mini audio player (referencia x.6_A/V.f) */
@@ -62,8 +64,8 @@
 
     .lightbox{position:fixed;inset:0;background:transparent;display:none;align-items:center;justify-content:center;z-index:60;touch-action:none;overscroll-behavior:contain}
     .lightbox.open{display:flex}
-    .lb-surface{position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:98vw;max-height:98vh;background:transparent;border:0;border-radius:0;box-shadow:none;padding:0}
-    .lb-media{display:block;max-width:98vw;max-height:98vh;width:auto;height:auto;object-fit:contain;background:transparent;cursor:zoom-out}
+    .lb-surface{position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:100vw;max-height:100vh;background:transparent;border:0;border-radius:0;box-shadow:none;padding:0}
+    .lb-media{display:block;max-width:100vw;max-height:100vh;width:auto;height:auto;object-fit:contain;background:transparent;cursor:zoom-out}
 
     /* Retículas FLUSH sin separación y sin recortes */
     .flush .grid{display:grid;gap:0}
@@ -71,13 +73,14 @@
     .grid.cols-4{grid-template-columns:repeat(4,1fr)}
     @media(max-width:900px){.grid.cols-6{grid-template-columns:repeat(3,1fr)}.grid.cols-4{grid-template-columns:repeat(2,1fr)}}
     .tile{border:0;border-radius:0;overflow:hidden;background:#00000000}
-    .tile video,.tile img{width:100%;height:100%;object-fit:contain;background:#00000000}
+    /* Cover sólo en retículas */
+    .flush .tile video,.flush .tile img{width:100%;height:100%;object-fit:cover;background:#00000000}
 
     /* a.e.i. embebido (referencia mdtc.5 / s.g.r.c) */
     .aei-embed{position:relative;width:100%;min-height:60vh;background:#ffffff00;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
     .aei-stage{position:relative;width:100%;height:100%;min-height:60vh;touch-action:none}
     .aei-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-    .aei-block{position:absolute;width:140px;height:140px;display:flex;align-items:center;justify-content:center;opacity:.8;cursor:grab;user-select:none;transition:opacity .2s ease}
+    .aei-block{position:absolute;width:140px;height:140px;display:flex;align-items:center;justify-content:center;opacity:.8;cursor:grab;user-select:none;transition:opacity .2s ease;will-change:transform}
     .aei-block:active{cursor:grabbing}
     .aei-block img,.aei-block video{max-width:100%;max-height:100%;object-fit:contain;background:#ffffff00;pointer-events:none}
 
@@ -89,17 +92,13 @@
 
     /* Utilidades */
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  
-    /* mejora de rendimiento al arrastrar */
-.aei-block{ will-change: transform; }
-
   </style>
 </head>
 <body>
   <!-- BG alternado -->
   <div class="bg-wrap" aria-hidden="true">
-    <video id="bg1" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-    <video id="bg2" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
+    <video id="bg1" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true"></video>
+    <video id="bg2" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true"></video>
   </div>
 
   <header>
@@ -126,7 +125,7 @@
   <main>
     <!-- 1) DESCRIPCIÓN MULTILENGUAJE -->
     <section class="section">
-      <div class="lang lang-es active">
+      <div class="lang lang-es active show">
         <h1>xpan.c.0.0</h1>
         <div class="meta">2025 — ciudad de méxico</div>
         <p class="description">
@@ -167,7 +166,7 @@
     <!-- 2) VIDEO PRINCIPAL DESTACADO con lightbox y tap-to-sound -->
     <section class="section">
       <div class="featured">
-        <video class="auto video-featured" muted playsinline webkit-playsinline autoplay loop preload="auto" data-lightbox="video" data-src="https://attachments.are.na/39190046/4ddb74e2dce50421501ccef0b9600237.mp4?1756668673"></video>
+        <video class="auto video-featured" muted playsinline webkit-playsinline autoplay loop preload="auto" data-lightbox="video" data-src="https://attachments.are.na/39190046/4ddb74e2dce50421501ccef0b9600237.mp4?1756668673" disablepictureinpicture></video>
       </div>
     </section>
 
@@ -188,7 +187,7 @@
       <h2 class="sr-only">a.e.i — fotos</h2>
       <div class="aei-embed">
         <div class="aei-stage" id="aeiStagePhotos"></div>
-        <canvas class="aei-lines" id="aeiLinesPhotos"></canvas>
+        <svg class="aei-lines" id="aeiLinesPhotos" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
     </section>
 
@@ -197,16 +196,16 @@
       <h2 class="sr-only">a.e.i — videos</h2>
       <div class="aei-embed">
         <div class="aei-stage" id="aeiStageVideos"></div>
-        <canvas class="aei-lines" id="aeiLinesVideos"></canvas>
+        <svg class="aei-lines" id="aeiLinesVideos" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
     </section>
 
     <!-- 7) TRES IMÁGENES DESTACADAS al final (lightbox) -->
     <section class="section" id="final3">
       <div class="final-3">
-        <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165046/original_c90bf9a8c7c509c537de65d4181c3491.jpg" alt="img 1"></div>
-        <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165048/original_1163da918fd3f908ab10bb432c519dcf.jpg" alt="img 2"></div>
-        <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165053/original_a763e2768ad1544f3c84aa3e01cc2bc8.jpg" alt="img 3"></div>
+        <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165046/original_c90bf9a8c7c509c537de65d4181c3491.jpg" alt="c.0.0 — imagen 1" loading="lazy" decoding="async"></div>
+        <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165048/original_1163da918fd3f908ab10bb432c519dcf.jpg" alt="c.0.0 — imagen 2" loading="lazy" decoding="async"></div>
+        <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165053/original_a763e2768ad1544f3c84aa3e01cc2bc8.jpg" alt="c.0.0 — imagen 3" loading="lazy" decoding="async"></div>
       </div>
     </section>
   </main>
@@ -228,23 +227,61 @@
   ];
   const bg1 = document.getElementById('bg1');
   const bg2 = document.getElementById('bg2');
-  [bg1,bg2].forEach((v,i)=>{ v.src = BG_VIDEOS[i]; v.muted = true; v.setAttribute('muted',''); v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.addEventListener('canplay',()=>v.classList.add('show'),{once:true}); });
-  let showing = 0; bg1.classList.add('show');
-  // crossfade cada 30s
-  setInterval(()=>{ showing = 1-showing; (showing?bg2:bg1).classList.add('show'); (showing?bg1:bg2).classList.remove('show'); }, 30000);
+  const bgEls = [bg1,bg2];
+  let bgIndex = 0; // índice del video actual en BG_VIDEOS
+  let showing = 0; // 0 -> bg1 visible, 1 -> bg2 visible
+
+  function prepVideo(el, src){
+    if(el.dataset.src === src) return; // evita relocal if igual
+    el.dataset.src = src;
+    el.src = src;
+    el.muted = true; el.setAttribute('muted','');
+    el.playsInline = true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+    el.setAttribute('disablepictureinpicture','');
+    const p = el.play(); if(p && p.catch) p.catch(()=>{});
+  }
+
+  function randomDelay(){ return 8000 + Math.random()*4000; } // 8–12s
+
+  function switchBG(){
+    const nextIndex = (bgIndex + 1) % BG_VIDEOS.length;
+    const nextEl = bgEls[1 - showing];
+    prepVideo(nextEl, BG_VIDEOS[nextIndex]);
+    // cuando pueda reproducir, cruzar
+    const doSwap = () => {
+      nextEl.classList.add('show');
+      bgEls[showing].classList.remove('show');
+      showing = 1 - showing;
+      bgIndex = nextIndex;
+      scheduleNext();
+    };
+    if(nextEl.readyState >= 2){ doSwap(); }
+    else { nextEl.addEventListener('canplay', doSwap, {once:true}); }
+  }
+
+  function scheduleNext(){ setTimeout(switchBG, randomDelay()); }
+
+  // init
+  [bg1,bg2].forEach(v=>{ v.addEventListener('canplay',()=>v.classList.add('show'),{once:true}); });
+  prepVideo(bgEls[showing], BG_VIDEOS[bgIndex]);
+  // precarga el siguiente en el off-screen antes del primer swap
+  prepVideo(bgEls[1 - showing], BG_VIDEOS[(bgIndex+1)%BG_VIDEOS.length]);
+  scheduleNext();
+
   // primer toque reintenta play()
   function resumeBG(){[bg1,bg2].forEach(v=>{const p=v.play(); if(p&&p.catch) p.catch(()=>{});}); document.removeEventListener('touchstart',resumeBG); document.removeEventListener('click',resumeBG);} 
   document.addEventListener('touchstart',resumeBG,{once:true});
   document.addEventListener('click',resumeBG,{once:true});
 
-  // ——— idioma
+  // ——— idioma con fade
   const langBtns = $$('.language-selector button');
   langBtns.forEach(b=>b.addEventListener('click',()=>{
     langBtns.forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
     const code = b.dataset.lang;
-    $$('.lang').forEach(el=>el.classList.remove('active'));
-    $(`.lang-${code}`) && $(`.lang-${code}`).classList.add('active');
+    const all = $$('.lang');
+    all.forEach(el=>{ el.classList.remove('show'); });
+    setTimeout(()=>{ all.forEach(el=>el.classList.remove('active')); const target = $(`.lang-${code}`); if(!target) return; target.classList.add('active'); requestAnimationFrame(()=>target.classList.add('show')); }, 180);
   }));
 
   // ——— mini player (referencia x.6_A/V.f)
@@ -274,7 +311,6 @@
     "https://attachments.are.na/39190017/d0f718b33933abe50972cd27b61b2772.mp4",
     "https://attachments.are.na/39190018/744c9250426e9f135d6f10dbe6243ca3.mp4",
     "https://attachments.are.na/39190019/c1814c08b3b70ee0f87c570f806bd498.mp4",
-    "https://attachments.are.na/39190020/4819280496ef8a4fed605cbdfbb2b112.mp4",
     "https://attachments.are.na/39190021/5d7fbd94bf0a499dc15dba952d8702ea.mp4",
     "https://attachments.are.na/39190022/ac403fc1003e10c5d1c22cac31e23f15.mp4",
     "https://attachments.are.na/39190023/a060576613f2607990f7007e01edbff1.mp4",
@@ -457,16 +493,17 @@
   ];
 
   // ——— helpers
-  function vEl(src){
+  function vEl(src, {preloadNone=true}={}){
     const v=document.createElement('video');
-    v.src=src; v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.preload='metadata';
+    v.src=src; v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.setAttribute('disablepictureinpicture','');
+    v.preload = preloadNone ? 'none' : 'metadata';
     v.addEventListener('click',()=>toggleSound(v));
     v.addEventListener('touchstart',()=>toggleSound(v));
     return v;
   }
-  function iEl(src){ const i=new Image(); i.src=src; return i; }
+  function iEl(src, alt){ const i=new Image(); i.src=src; i.alt=alt||''; i.loading='lazy'; i.decoding='async'; return i; }
 
-  // Control global de sonido: solo 1 con audio a la vez
+  // Control global de sonido: solo 1 con audio a la vez (sin íconos)
   function toggleSound(target){
     if(target.muted){
       $$('video').forEach(vid=>{ if(vid!==target){ vid.muted=true; vid.volume=0; }});
@@ -484,70 +521,111 @@
   },{root:null, rootMargin:'100px', threshold:0.01});
 
   // Featured video
-  const fVid = $('.video-featured'); fVid.src = FEATURED; io.observe(fVid);
+  const fVid = $('.video-featured'); fVid.src = FEATURED; fVid.setAttribute('disablepictureinpicture',''); io.observe(fVid);
 
   // Retícula 28
   const wrap28 = document.getElementById('grid28Wrap');
-  GRID28.forEach(src=>{ const tile=document.createElement('div'); tile.className='tile'; const v=vEl(src); tile.appendChild(v); wrap28.appendChild(tile); io.observe(v); });
+  GRID28.forEach(src=>{ const tile=document.createElement('div'); tile.className='tile'; const v=vEl(src,{preloadNone:true}); tile.appendChild(v); wrap28.appendChild(tile); io.observe(v); });
 
   // Retícula 8
   const wrap8 = document.getElementById('grid8Wrap');
-  GRID8.forEach(src=>{ const tile=document.createElement('div'); tile.className='tile'; const v=vEl(src); tile.appendChild(v); wrap8.appendChild(tile); io.observe(v); });
+  GRID8.forEach(src=>{ const tile=document.createElement('div'); tile.className='tile'; const v=vEl(src,{preloadNone:true}); tile.appendChild(v); wrap8.appendChild(tile); io.observe(v); });
 
-  // Lightbox
+  // Lightbox con swipe y navegación
   const lb = document.getElementById('lightbox');
   const lbSurface = lb.querySelector('.lb-surface');
-  function openLB(kind, src){
+  const lbItemsEls = $$('[data-lightbox]');
+  const lbItems = lbItemsEls.map(el=>({ kind: el.getAttribute('data-lightbox'), src: el.dataset.src || el.getAttribute('src') }));
+  let lbIndex = -1;
+
+  function renderLBItem(item){
     lbSurface.innerHTML='';
     let el;
-    if(kind==='video'){ el=vEl(src); el.controls=false; el.muted=true; el.className='lb-media'; el.autoplay=true; el.loop=true; el.addEventListener('click',()=>toggleSound(el)); }
-    else { el=iEl(src); el.className='lb-media'; }
-    lbSurface.appendChild(el); lb.classList.add('open');
+    if(item.kind==='video'){ el=vEl(item.src,{preloadNone:false}); el.controls=false; el.muted=true; el.className='lb-media'; el.autoplay=true; el.loop=true; }
+    else { el=iEl(item.src, 'media ampliada'); el.className='lb-media'; }
+    lbSurface.appendChild(el);
   }
-  lb.addEventListener('click',()=>{ lb.classList.remove('open'); const v=lb.querySelector('video'); if(v){ v.pause(); v.muted=true; }});
+  function openLBByIndex(idx){ lbIndex = (idx+lbItems.length)%lbItems.length; renderLBItem(lbItems[lbIndex]); lb.classList.add('open'); }
+  function closeLB(){ lb.classList.remove('open'); const v=lb.querySelector('video'); if(v){ v.pause(); v.muted=true; } }
+  function nextLB(){ openLBByIndex(lbIndex+1); }
+  function prevLB(){ openLBByIndex(lbIndex-1); }
 
-  // Activar lightbox para featured e imágenes finales
-  fVid.addEventListener('click',()=>openLB('video', fVid.dataset.src || fVid.currentSrc || fVid.src));
-  $$('#final3 img').forEach(img=>{
-    const src = img.dataset.src || img.src; // usa data-src para preservar calidad completa
-    img.addEventListener('click',()=>openLB('img', src));
-    img.src = src; // carga visible
-  });
+  // listeners para origenes
+  lbItemsEls.forEach((el,i)=>{ el.addEventListener('click',()=>openLBByIndex(i)); });
+  lb.addEventListener('click', (e)=>{ if(e.target===lb || e.target.classList.contains('lb-media')) closeLB(); });
+  // teclado
+  window.addEventListener('keydown', (e)=>{ if(!lb.classList.contains('open')) return; if(e.key==='ArrowRight') nextLB(); if(e.key==='ArrowLeft') prevLB(); if(e.key==='Escape') closeLB(); });
+  // swipe móvil
+  let touchX=null, touchY=null, touchT=0;
+  lb.addEventListener('touchstart', (e)=>{ const t=e.changedTouches[0]; touchX=t.clientX; touchY=t.clientY; touchT=Date.now(); }, {passive:true});
+  lb.addEventListener('touchend', (e)=>{ if(touchX==null) return; const t=e.changedTouches[0]; const dx=t.clientX - touchX; const dy=t.clientY - touchY; const dt=Date.now()-touchT; const TH=40; if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>TH && dt<600){ if(dx<0) nextLB(); else prevLB(); } touchX=null; touchY=null; }, {passive:true});
 
-  // Cargar data-src en imágenes/featured
-  if(fVid.dataset.src) fVid.src = fVid.dataset.src;
+  // Activar lightbox para featured e imágenes finales ya quedó arriba con data-lightbox
+  // Cargar data-src en imágenes finales
+  $$('#final3 img').forEach((img,idx)=>{ const src = img.dataset.src || img.src; img.addEventListener('click',()=>{}); img.src = src; img.alt = img.alt || `c.0.0 — imagen ${idx+1}`; img.loading='lazy'; img.decoding='async'; });
 
-  // ——— a.e.i. básico, distribución aleatoria con colisiones simples
-  function makeAEI(stageEl, linesCanvas, items){
+  // ——— a.e.i. con líneas SVG (opacidad oscilante y conexiones múltiples)
+  function makeAEI(stageEl, linesSVG, items, altBase){
     const W = ()=>stageEl.clientWidth, H=()=>stageEl.clientHeight;
-    const ctx = linesCanvas.getContext('2d');
     const blocks=[];
+    // util para crear elementos SVG
+    const NS = 'http://www.w3.org/2000/svg';
+    function makeLine(){ const l=document.createElementNS(NS,'line'); l.setAttribute('stroke','#000'); l.setAttribute('stroke-width','0.5'); l.setAttribute('vector-effect','non-scaling-stroke'); linesSVG.appendChild(l); return l; }
     function place(el){
       const w=140, h=140; let x, y; let tries=0; const max=800;
       do{ x=Math.random()*(W()-w); y=Math.random()*(H()-h); tries++; }
       while(blocks.some(b=>!(x+w<b.x || b.x+b.w<x || y+h<b.y || b.y+b.h<y)) && tries<max);
       el.style.transform=`translate(${x}px,${y}px)`; blocks.push({x,y,w,h,el});
     }
-    items.forEach(src=>{
+    // crear bloques
+    items.forEach((src,idx)=>{
       const isVid = /\.(mp4|mov|webm)(\?|$)/i.test(src);
       const block=document.createElement('div'); block.className='aei-block';
-      const media = isVid ? vEl(src) : iEl(src);
+      const media = isVid ? vEl(src,{preloadNone:true}) : iEl(src, `${altBase} ${idx+1}`);
       if(isVid){ media.muted=true; media.loop=true; media.autoplay=true; io.observe(media); }
-      block.appendChild(media);
-      stageEl.appendChild(block); place(block);
+      stageEl.appendChild(block); block.appendChild(media); place(block);
     });
-    // líneas decorativas simples
-    function draw(){
-      const rect = stageEl.getBoundingClientRect(); linesCanvas.width=rect.width; linesCanvas.height=rect.height; ctx.clearRect(0,0,rect.width,rect.height); ctx.strokeStyle='rgba(0,0,0,.12)'; ctx.lineWidth=1; ctx.beginPath();
-      for(let i=0;i<blocks.length-1;i++){ const a=blocks[i], b=blocks[(i+3)%blocks.length]; ctx.moveTo(a.x+70,a.y+70); ctx.lineTo(b.x+70,b.y+70);} ctx.stroke();
-      requestAnimationFrame(draw);
+    // conexiones precomputadas para eficiencia
+    const connections=[]; // [{a,b,line,phase}]
+    const offs=[3,7,11];
+    function rebuildConnections(){
+      // limpiar svg
+      while(linesSVG.firstChild) linesSVG.removeChild(linesSVG.firstChild);
+      connections.length=0;
+      for(let i=0;i<blocks.length;i++){
+        offs.forEach((off,k)=>{
+          const j=(i+off)%blocks.length;
+          const l=makeLine();
+          connections.push({i,j,line:l,phase:(i*0.7+k)});
+        });
+      }
+      sizeSVG();
+      layoutLines(0);
     }
-    draw();
+    function sizeSVG(){ linesSVG.setAttribute('width', W()); linesSVG.setAttribute('height', H()); linesSVG.setAttribute('viewBox', `0 0 ${W()} ${H()}`); }
+    function centerOf(b){ return {x:b.x+70, y:b.y+70}; }
+    function layoutLines(t){
+      for(const c of connections){
+        const a=centerOf(blocks[c.i]); const b=centerOf(blocks[c.j]);
+        c.line.setAttribute('x1', a.x); c.line.setAttribute('y1', a.y);
+        c.line.setAttribute('x2', b.x); c.line.setAttribute('y2', b.y);
+        const alpha = 0.52 + 0.18*(0.5+0.5*Math.sin(t*1.2 + c.phase));
+        c.line.setAttribute('stroke-opacity', alpha.toFixed(3));
+      }
+    }
+    // animación
+    let rafId=null, t0=null;
+    function tick(ts){ if(!t0) t0=ts; const t=(ts-t0)/1000; layoutLines(t); rafId=requestAnimationFrame(tick); }
+    rebuildConnections();
+    rafId=requestAnimationFrame(tick);
+    // observar resize
+    const ro = new ResizeObserver(()=>{ sizeSVG(); layoutLines(0); });
+    ro.observe(stageEl);
   }
 
-  // Inicializar AEI con progresive hydration
-  const aeiPhotos = ()=>makeAEI(document.getElementById('aeiStagePhotos'), document.getElementById('aeiLinesPhotos'), AEI_PHOTOS);
-  const aeiVideos = ()=>makeAEI(document.getElementById('aeiStageVideos'), document.getElementById('aeiLinesVideos'), AEI_VIDEOS);
+  // Inicializar AEI con progressive hydration
+  const aeiPhotos = ()=>makeAEI(document.getElementById('aeiStagePhotos'), document.getElementById('aeiLinesPhotos'), AEI_PHOTOS, 'c.0.0 — foto');
+  const aeiVideos = ()=>makeAEI(document.getElementById('aeiStageVideos'), document.getElementById('aeiLinesVideos'), AEI_VIDEOS, 'c.0.0 — video');
   const ioSec = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ if(e.target.id==='aeiPhotos'){ aeiPhotos(); ioSec.unobserve(e.target);} if(e.target.id==='aeiVideos'){ aeiVideos(); ioSec.unobserve(e.target);} } }); },{threshold:.1});
   ioSec.observe(document.getElementById('aeiPhotos'));
   ioSec.observe(document.getElementById('aeiVideos'));
@@ -557,6 +635,7 @@
   document.addEventListener('touchstart',unlockAll,{once:true});
   document.addEventListener('click',unlockAll,{once:true});
 
+  // Nota sobre fuentes: actualmente se usa Times New Roman del sistema. Si en el futuro se cargan fuentes externas vía @font-face, use font-display: swap.
   </script>
   
 </body>
