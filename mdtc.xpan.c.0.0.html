@@ -78,7 +78,7 @@
 
     /* a.e.i. embebido (referencia mdtc.5 / s.g.r.c) */
     .aei-embed{position:relative;width:100%;min-height:60vh;background:#ffffff00;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-    .aei-stage{position:relative;width:100%;height:100%;min-height:60vh;touch-action:none}
+    .aei-stage{position:relative;width:100%;height:100%;min-height:60vh;touch-action:auto;}
     .aei-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
     .aei-block{position:absolute;width:140px;height:140px;display:flex;align-items:center;justify-content:center;opacity:.8;cursor:grab;user-select:none;transition:opacity .2s ease;will-change:transform}
     .aei-block:active{cursor:grabbing}
@@ -638,5 +638,68 @@
   // Nota sobre fuentes: actualmente se usa Times New Roman del sistema. Si en el futuro se cargan fuentes externas vía @font-face, use font-display: swap.
   </script>
   
+
+<script>
+(function(){
+  const $ = s=>document.querySelector(s);
+  const $$ = s=>Array.from(document.querySelectorAll(s));
+
+  // BG: ensure muted and resume playback on first user gesture (iOS)
+  function resumeBG(){
+    ['#bg1','#bg2'].forEach(sel=>{
+      const v = $(sel);
+      if(!v) return;
+      v.muted = true;
+      const p = v.play();
+      if(p && p.catch) p.catch(()=>{});
+    });
+    document.removeEventListener('pointerup', resumeBG);
+  }
+  document.addEventListener('pointerup', resumeBG, {once:true, passive:true});
+
+  // Tap-to-sound: stable on mobile, one audible video at a time
+  let currentSounded = null;
+  function makeAudible(v){
+    if(!v) return;
+    $$('video').forEach(x=>{ if(x!==v){ x.muted = true; x.volume = 0; }});
+    v.muted = false; v.volume = 1.0;
+    currentSounded = v;
+    const p = v.play(); if(p && p.catch) p.catch(()=>{});
+  }
+  function toggleSoundHandler(ev){
+    const v = ev.currentTarget;
+    if(v.muted){
+      makeAudible(v);
+    } else {
+      v.muted = true; v.volume = 0;
+      if(currentSounded === v) currentSounded = null;
+    }
+  }
+  // Attach only to content videos, ignore BG if they have ids bg1/bg2
+  $$('video').forEach(v=>{
+    if(v.id === 'bg1' || v.id === 'bg2') return;
+    v.addEventListener('pointerup', toggleSoundHandler, {passive:true});
+  });
+
+  // IntersectionObserver tweak to avoid flapping mute/unmute
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      const v = e.target;
+      if(e.isIntersecting){
+        const p = v.play(); if(p && p.catch) p.catch(()=>{});
+      } else {
+        v.pause();
+        if(currentSounded === v){
+          v.muted = true; v.volume = 0; currentSounded = null;
+        } else {
+          v.muted = true; v.volume = 0;
+        }
+      }
+    });
+  }, {root:null, rootMargin:'0px', threshold:0.4});
+  $$('video').forEach(v=>{ if(v.id!=='bg1' && v.id!=='bg2') io.observe(v); });
+})();
+</script>
+
 </body>
 </html>
