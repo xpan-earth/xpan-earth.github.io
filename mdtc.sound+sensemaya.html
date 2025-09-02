@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="color-scheme" content="light dark"/>
+<title>sound + sensemayá — xpan</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+<script src="/assets/js/media-proxy.js" defer></script>
+
+<style>
+  :root{--bg:#fff;--fg:#000;--line:rgba(0,0,0,.12);--radius:14px;--maxw:1440px}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
+  img,video{display:block;max-width:100%;height:auto}
+  a{color:inherit;text-decoration:none}
+
+  header{position:fixed;top:1rem;left:1rem;z-index:30}
+  header img{height:50px;width:auto;display:block}
+  .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
+  .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;opacity:.5;transition:.2s}
+  .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+
+  main{max-width:var(--maxw);margin:120px auto 5rem;padding:0 1rem}
+  .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+  .muted{opacity:.68;font-size:.92rem}
+  .lang{display:none}.lang.active{display:block}
+
+  /* featured square video */
+.ratio-1-1::before {
+  content: none; /* elimina el cuadrado forzado */
+}
+
+.ratio-1-1 > video {
+  position: static;      /* ya no absoluto */
+  width: 100%;
+  height: auto;
+  max-height: 100vh;     /* nunca más alto que la pantalla */
+  object-fit: contain;   /* siempre entero */
+}
+/* flyer */
+.flyer img {
+  width: 100%;
+  height: auto;
+  max-height: 100vh;     /* nunca más alto que la pantalla */
+  object-fit: contain;   /* siempre entero */
+}
+
+
+  
+
+  /* ====== PLAYER 4CH (estilo reference) ====== */
+  .x4-block{border:1px solid currentColor;border-radius:10px;padding:1.2rem;margin:1.2rem 0;background:#fff}
+  .x4-title{font-weight:700;text-transform:lowercase}
+  .x4-info{opacity:.66;font-size:.9rem}
+  .x4-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.75rem}
+  .x4-btn{border:1px solid currentColor;background:none;padding:.35rem .9rem;border-radius:999px;text-transform:lowercase;cursor:pointer}
+  .x4-time{font-size:.85rem;min-width:74px}
+  .x4-bar{flex:1;height:3px;background:color-mix(in srgb,currentColor 18%,transparent);border-radius:2px;position:relative;cursor:pointer}
+  .x4-fill{position:absolute;inset:0 auto 0 0;width:0%;background:currentColor;border-radius:2px}
+  .x4-viz{position:relative;margin-top:.8rem;border-radius:10px;overflow:hidden}
+  svg.quad{width:100%;height:40vh;min-height:260px;display:block}
+  .quad *{vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}
+  .gridDot{fill:currentColor;opacity:.18}
+  .ring{fill:none;stroke:url(#grad);stroke-width:1.4;opacity:.95;stroke-linecap:round;stroke-linejoin:round}
+  .ring.fill{fill:url(#grad);opacity:.08}
+  .liss{fill:none;stroke:url(#grad);stroke-width:1.6;opacity:.95;stroke-linecap:round;stroke-linejoin:round}
+  .lissGhost{fill:none;stroke:url(#grad);stroke-width:.9;opacity:.35}
+  .spoke{stroke:url(#grad);stroke-width:1;opacity:.28;stroke-linecap:round}
+  .rib{fill:currentColor;opacity:.06}
+  .ribEdge{fill:none;stroke:currentColor;stroke-width:.9;opacity:.55;stroke-linecap:round}
+  .spine{fill:none;stroke:currentColor;stroke-width:1.4;opacity:.85;stroke-linecap:round;stroke-linejoin:round}
+  .particle{fill:currentColor;opacity:.28}
+  .meters{position:absolute;left:clamp(12px,3vmin,28px);bottom:clamp(12px,3vmin,28px);display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;width:min(460px,42vw);z-index:5}
+  .meter{height:8px;border:1px solid currentColor;border-radius:6px;overflow:hidden}
+  .meter>i{display:block;height:100%;width:0;background:currentColor}
+  @media(prefers-color-scheme:dark){.x4-bar{background:color-mix(in srgb,#fff 24%,transparent)} .rib{opacity:.08}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" aria-label="xpan"><img src="sound+.png" alt="xpan"></a>
+  <nav class="language-selector" aria-label="selector de idioma">
+    <button class="active" data-lang="es">es</button>
+    <button data-lang="en">en</button>
+    <button data-lang="fr">fr</button>
+    <button data-lang="jp">jp</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 1) DESCRIPCIÓN -->
+  <section class="section">
+  <div class="lang lang-es active">
+    <h1>sound + sensemayá</h1>
+    <div class="muted">ciudad de méxico — febrero 2022 — presentado en la muestra neomaya — c.b.a.</div>
+    <p>este proyecto recontextualiza <em>sensemayá</em>, poema sinfónico de silvestre revueltas inspirado en el texto de nicolás guillén. el poema sinfónico, género decisivo en el siglo xx, expandió la música hacia narrativas poéticas y políticas; revueltas lo llevó a un plano radical en la modernidad mexicana, y <em>sensemayá</em> se convirtió en su obra más emblemática.<br><br>sound + traslada esa pieza histórica a un sistema multicanal, convocando a cinco artistas mexicanxs a manipular y redistribuir sus objetos sonoros en cuatro canales. el resultado desplaza la partitura original hacia un espacio inmersivo y tangible, ofreciendo una lectura contemporánea donde el legado sinfónico se vuelve experiencia directa, habitable y crítica.</p>
+  </div>
+
+  <div class="lang lang-en">
+    <h1>sound + sensemayá</h1>
+    <div class="muted">mexico city — february 2022 — presented at the neomaya exhibition — c.b.a.</div>
+    <p>This project recontextualizes <em>Sensemayá</em>, a symphonic poem by Silvestre Revueltas inspired by Nicolás Guillén. The symphonic poem, a decisive genre in the 20th century, expanded music into poetic and political narratives; Revueltas pushed it to a radical plane in modern Mexico, and <em>Sensemayá</em> became his emblematic work.<br><br>sound + translates this historical piece into a multichannel system, inviting five Mexican artists to manipulate and redistribute its sonic objects across four channels. The result shifts the original score into an immersive and tangible space, offering a contemporary reading where the symphonic legacy becomes direct, inhabitable, and critical experience.</p>
+  </div>
+
+  <div class="lang lang-fr">
+    <h1>sound + sensemayá</h1>
+    <div class="muted">mexico — février 2022 — présenté dans l’exposition neomaya — c.b.a.</div>
+    <p>Ce projet recontextualise <em>Sensemayá</em>, poème symphonique de Silvestre Revueltas inspiré par Nicolás Guillén. Le poème symphonique, genre décisif du XXe siècle, a élargi la musique vers des récits poétiques et politiques ; Revueltas l’a porté à un plan radical dans le Mexique moderne, et <em>Sensemayá</em> est devenu son œuvre emblématique.<br><br>sound + transpose cette pièce historique dans un système multicanal, invitant cinq artistes mexicains à manipuler et redistribuer ses objets sonores sur quatre canaux. Le résultat déplace la partition originale vers un espace immersif et tangible, offrant une lecture contemporaine où l’héritage symphonique devient expérience directe, habitable et critique.</p>
+  </div>
+
+  <div class="lang lang-jp">
+    <h1>sound + sensemayá</h1>
+    <div class="muted">メキシコシティ — 2022年2月 — ネオマヤ展 c.b.a. にて発表</div>
+    <p>本プロジェクトは、ニコラス・ギジェンに触発されたシルヴェストレ・レブエルタスの交響詩 <em>Sensemayá</em> を再文脈化する。交響詩という20世紀を代表するジャンルは、音楽を詩的かつ政治的な物語へと拡張した。レブエルタスはそれをメキシコ近代において急進的な次元へ押し上げ、<em>Sensemayá</em> は彼の代表作となった。<br><br>sound + は、この歴史的作品をマルチチャンネル・システムへと移行し、5名のメキシコ人アーティストが4チャンネルに音響オブジェクトを再配置することで、原曲を没入的で触知可能かつ批評的な体験へと変換する。</p>
+  </div>
+</section>
+
+
+  <!-- 2) VIDEO CUADRADO -->
+  <section class="section featured" aria-label="video principal">
+    <div class="ratio-1-1">
+      <video autoplay muted playsinline loop preload="auto">
+        <source src="https://attachments.are.na/39228762/39b5b6c911438235bf87c113ef4474d9.mov?1756788102" type="video/mp4">
+      </video>
+    </div>
+  </section>
+
+  <!-- 3) CINCO PLAYERS 4CH EMBEBIDOS (sin iframes) -->
+  <section class="section" id="piezas">
+    <!-- Sites -->
+    <article class="x4-block" id="x4-sites" data-audio="https://attachments.are.na/39228756/27fd1dfc5ca307e1f3e873b1a0b32b00.mp3?1756788091">
+      <div class="x4-title">Sites (B. 1994)</div>
+      <div class="x4-info">“Cero-sensemayá” · fft 8192 · bandas log · sala puntual · anillos + lissajous</div>
+      <div class="x4-controls">
+        <button class="x4-btn x4-play">play</button>
+        <div class="x4-time">0:00 / 0:00</div>
+        <div class="x4-bar"><div class="x4-fill"></div></div>
+      </div>
+      <div class="x4-viz">
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="visualización cuadrafónica">
+          <defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>
+          <g class="room"></g>
+          <g class="ribbons"></g>
+          <g class="particles"></g>
+          <g class="FL" transform="translate(250,150)"></g>
+          <g class="FR" transform="translate(750,150)"></g>
+          <g class="RL" transform="translate(250,450)"></g>
+          <g class="RR" transform="translate(750,450)"></g>
+          <g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g>
+          <circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/>
+        </svg>
+        <div class="meters">
+          <div class="meter"><i class="mFL"></i></div>
+          <div class="meter"><i class="mFR"></i></div>
+          <div class="meter"><i class="mRL"></i></div>
+          <div class="meter"><i class="mRR"></i></div>
+        </div>
+      </div>
+      <audio preload="auto" playsinline crossorigin="anonymous"></audio>
+    </article>
+
+    <!-- Ollin Vázquez -->
+    <article class="x4-block" id="x4-ollin" data-audio="https://attachments.are.na/39228755/52aa01fba5a3d321fe9082323e52bb68.mp3?1756788089">
+      <div class="x4-title">Ollin Vázquez González (B. 1993)</div>
+      <div class="x4-info">“Canto para matar a una culebra” · fft 8192 · bandas log · sala puntual · anillos + lissajous</div>
+      <div class="x4-controls">
+        <button class="x4-btn x4-play">play</button>
+        <div class="x4-time">0:00 / 0:00</div>
+        <div class="x4-bar"><div class="x4-fill"></div></div>
+      </div>
+      <div class="x4-viz">
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="visualización cuadrafónica">
+          <defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>
+          <g class="room"></g><g class="ribbons"></g><g class="particles"></g>
+          <g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g>
+          <g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g>
+          <g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g>
+          <circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/>
+        </svg>
+        <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
+      </div>
+      <audio preload="auto" playsinline crossorigin="anonymous"></audio>
+    </article>
+
+    <!-- Josephine Strong -->
+    <article class="x4-block" id="x4-josephine" data-audio="https://attachments.are.na/39228750/dc47753802123b3dbbbd82738e7b4dd0.mp3?1756788082">
+      <div class="x4-title">Josephine Strong (B. 1987)</div>
+      <div class="x4-info">“3 respuestas a una reinterpretación de sensemayá” · fft 8192 · bandas log · sala puntual · anillos + lissajous</div>
+      <div class="x4-controls"><button class="x4-btn x4-play">play</button><div class="x4-time">0:00 / 0:00</div><div class="x4-bar"><div class="x4-fill"></div></div></div>
+      <div class="x4-viz">
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g><g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
+        <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
+      </div>
+      <audio preload="auto" playsinline crossorigin="anonymous"></audio>
+    </article>
+
+    <!-- Fernando Feria -->
+    <article class="x4-block" id="x4-feria" data-audio="https://attachments.are.na/39228749/f84463abe49ca407b6a4525f67996cb5.mp3?1756788076">
+      <div class="x4-title">Fernando Feria (B. 1998)</div>
+      <div class="x4-info">“Al final. Su memoria” · fft 8192 · bandas log · sala puntual · anillos + lissajous</div>
+      <div class="x4-controls"><button class="x4-btn x4-play">play</button><div class="x4-time">0:00 / 0:00</div><div class="x4-bar"><div class="x4-fill"></div></div></div>
+      <div class="x4-viz">
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g><g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
+        <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
+      </div>
+      <audio preload="auto" playsinline crossorigin="anonymous"></audio>
+    </article>
+
+    <!-- Emilia Ezeta -->
+    <article class="x4-block" id="x4-emilia" data-audio="https://attachments.are.na/39228747/e48e0c4cca1bc025e6c37f3821699447.mp3?1756788073">
+      <div class="x4-title">Emilia Ezeta (B. 1998)</div>
+      <div class="x4-info">“Santa Fé” · fft 8192 · bandas log · sala puntual · anillos + lissajous</div>
+      <div class="x4-controls"><button class="x4-btn x4-play">play</button><div class="x4-time">0:00 / 0:00</div><div class="x4-bar"><div class="x4-fill"></div></div></div>
+      <div class="x4-viz">
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g><g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
+        <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
+      </div>
+      <audio preload="auto" playsinline crossorigin="anonymous"></audio>
+    </article>
+  </section>
+
+  <!-- 4) POEMA INLINE (Mariana Híjar) -->
+  <section class="section" id="poema">
+    <h2 style="margin:.2rem 0 .6rem;text-transform:lowercase">poema de mariana híjar — creado para sound +</h2>
+    <article class="poem" aria-label="Poema" style="max-width:760px;margin:0 auto;padding:0 20px">
+      <blockquote class="small" style="margin:0 0 1.1em 0;padding:0 0 0 1.1em;border-left:2px solid #000">
+        <p>Si alguien tuviera la ocurrencia de tocar mis composiciones, lo hará a su placer. Están</p>
+        <p>escritas sólo para mí, y es por eso que no están sujetas a ninguna regla.</p>
+      </blockquote>
+      <p>¡Yo no sé</p>
+      <p style="text-align:center">S E N S E M A Y Á</p>
+      <p>cómo hay gentes que se meten en honduras</p>
+      <p>revolucionarias y son más burgueses que toda la</p>
+      <p>burguesía junta!</p>
+      <p>Los guardadores de la tradición contemplan con</p>
+      <p>tristeza y obligada resignación lo que ellos</p>
+      <p>llaman la catástrofe. No saben que todavía hay</p>
+      <p>mucho qué destruir, y a ellos en primer término</p>
+      <p style="text-align:center">LA CULEBRA,</p>
+      <p style="text-align:center">S E N S E M A Y Á .</p>
+      <p style="text-align:center">S E N S E M A Y Á</p>
+      <p style="text-align:center">CON SUS OJOS</p>
+      <p>van las sombras tras las sombras,</p>
+      <p>traslaslasombrastraslasombras, que caminan</p>
+      <p>tocando el violín, tocando el violón. Sombras de</p>
+      <p>otras sombras de otras sombras y de más sombras,</p>
+      <p style="text-align:center">S E N S E M A Y Á .</p>
+      <p style="text-align:center">S E N S E M A Y Á</p>
+      <p style="text-align:center">CON SU LENGUA</p>
+      <p>sueño con una música para cuya transcripción no</p>
+      <p>existen caracteres gráficos. Sueño con una música</p>
+      <p>que es color, escultura y movimiento,</p>
+      <p style="text-align:center">S E N S E M A Y Á .</p>
+      <p style="text-align:center">S E N S E M A Y Á</p>
+      <p style="text-align:center">CON SU BOCA</p>
+      <p>contemplo el río riente y la ribera rumorosa.</p>
+      <p>Sueño mucho,</p>
+      <p style="text-align:center">S E N S E M A Y Á .</p>
+      <p style="text-align:center">S E N S E M A Y Á</p>
+      <p>fueron mis primeros amores: el cielo, el agua y</p>
+      <p>la montaña. Después vino la música, más tarde la</p>
+      <p>música por dentro.</p>
+      <p style="text-align:center">S E N S E M A Y Á ,</p>
+      <p style="text-align:center">LA CULEBRA MUERTA NO PUEDE SILBAR.</p>
+      <p>Mis ritmos son pujantes, dinámicos, táctiles,</p>
+      <p>visuales, pienso en imágenes que son acordes en</p>
+      <p>líneas melódicas y se mueven dinámicamente.</p>
+      <p>Pienso también en la revolución.</p>
+      <p style="white-space:pre-wrap">      Quizá ella también me ayude.</p>
+      <p style="text-align:center">S E N S E M A Y Á ,</p>
+      <p style="text-align:center">LA CULEBRA MUERTA NO PUEDE MIRAR.</p>
+      <p>Y seguimos mudos, tristemente envueltos en un</p>
+      <p>vago presentimiento, oyendo el río riente y</p>
+      <p>rumorosa la sonora corriente.</p>
+      <p style="text-align:center">S E N S E M A Y Á ,</p>
+      <p style="text-align:center">LA CULEBRA MUERTA NO PUEDE BEBER.</p>
+      <p>Y un sollozo como un vómito de sangre y lágrimas,</p>
+      <p style="white-space:pre-wrap">doloroso y desgarrado, s e  e s c u c h a  e n</p>
+      <p style="white-space:pre-wrap">a l g u n a  p a r t e ,  y este sonido penetrante</p>
+      <p>tiene ecos en las plantas, en las cosas, en los</p>
+      <p>seres.</p>
+      <p style="text-align:center">S E N S E M A Y Á ,</p>
+      <p style="text-align:center">SE MURIÓ.</p>
+      <p>Y seguí soñando con música y países remotos.</p>
+      <p>Bueno mi amor, au revoir / Silvestre</p>
+      <div style="height:.8em"></div>
+      <p class="center small" style="text-align:center;font-size:.95rem">MARIANA HIJAR GUEVARA</p>
+      <div style="height:.8em"></div>
+      <p class="small" style="font-size:.95rem">Fragmentos del poema <em>Canción para matar a una culebra</em> de Nicolás Guillén y de la</p>
+      <p class="small" style="font-size:.95rem">correspondencia personal, diario y escritos sueltos de Silvestre Revueltas.</p>
+    </article>
+  </section>
+
+  <!-- 5) FLYER -->
+  <section class="section flyer" id="flyer">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/39228740/original_ab41995d318a7d60c643857be5519d2d.jpg?1756788059" alt="flyer principal — sound + sensemayá">
+  </section>
+</main>
+
+<script>
+  // selector de idioma
+  const btns=[...document.querySelectorAll('.language-selector button')];
+  const setLang=lang=>{btns.forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));document.querySelectorAll('.lang').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.lang-'+lang).forEach(el=>el.classList.add('active'));try{localStorage.setItem('xpan.lang',lang)}catch(e){}};
+  btns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+  setLang(localStorage.getItem('xpan.lang')||'es');
+
+  // ====== LÓGICA DEL PLAYER 4CH (namespacing por instancia) ======
+  document.querySelectorAll('.x4-block').forEach(initPlayer);
+
+  function initPlayer(root){
+    const $=(s,p=root)=>p.querySelector(s);
+    const $$=(s,p=root)=>Array.from(p.querySelectorAll(s));
+
+    const playBtn=$('.x4-play');
+    const timeEl=$('.x4-time');
+    const bar=$('.x4-bar');
+    const fill=$('.x4-fill');
+    const audio=$('audio');
+
+    // fuente
+    audio.src=root.dataset.audio||"";
+
+    // SVG refs
+    const svg=$('.quad');
+    const roomG=$('.room'), ribbonsG=$('.ribbons'), particlesG=$('.particles');
+    const meters={FL:$('.mFL'),FR:$('.mFR'),RL:$('.mRL'),RR:$('.mRR')};
+
+    const W=1000, H=600, cx=500, cy=300;
+    const elNS=(t)=>document.createElementNS('http://www.w3.org/2000/svg',t);
+
+    // sala puntual
+    (function buildRoom(){ const step=44, r=1.2;
+      for(let y=step/2;y<H;y+=step){ for(let x=step/2;x<W;x+=step){
+        const c=elNS('circle'); c.setAttribute('class','gridDot');
+        c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',r);
+        roomG.append(c);
+      }}
+    })();
+
+    // cuadrantes
+    const quads=[
+      {id:'FL', side:'L', band:'low',  cx:250, cy:150, g:$('.FL')},
+      {id:'FR', side:'R', band:'low',  cx:750, cy:150, g:$('.FR')},
+      {id:'RL', side:'L', band:'high', cx:250, cy:450, g:$('.RL')},
+      {id:'RR', side:'R', band:'high', cx:750, cy:450, g:$('.RR')},
+    ];
+
+    function buildQuad(q){
+      const g=q.g; const E=q.E={};
+      const rFill=elNS('circle'); rFill.setAttribute('class','ring fill'); rFill.setAttribute('r',58);
+      const rOut =elNS('circle'); rOut .setAttribute('class','ring');      rOut .setAttribute('r',86);
+      const rIn  =elNS('circle'); rIn  .setAttribute('class','ring');      rIn  .setAttribute('r',62);
+      const liss =elNS('path');   liss .setAttribute('class','liss');
+      const lissG=elNS('path');   lissG.setAttribute('class','lissGhost');
+      const spokes=elNS('g'); for(let i=0;i<72;i++){ const ln=elNS('line'); ln.setAttribute('class','spoke'); ln.setAttribute('x1',0); ln.setAttribute('y1',0); ln.setAttribute('x2',0); ln.setAttribute('y2',0); spokes.append(ln); }
+      g.append(rFill,rOut,rIn,lissG,liss,spokes);
+      E.rFill=rFill; E.rOut=rOut; E.rIn=rIn; E.liss=liss; E.lissG=lissG; E.spokes=$$('line',spokes);
+    }
+    quads.forEach(buildQuad);
+
+    // partículas globales
+    const PNUM=40, particles=[];
+    for(let i=0;i<PNUM;i++){ const c=elNS('circle'); c.setAttribute('class','particle'); particlesG.append(c);
+      particles.push({el:c, x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5), vy:(Math.random()-.5)});
+    }
+
+    // ribbons entre cuadrantes
+    const arcPairs=[ ['FL','FR'], ['FR','RR'], ['RR','RL'], ['RL','FL'], ['FL','RR'], ['FR','RL'] ];
+    const arcs = arcPairs.map(()=>({rib:elNS('path'), edge1:elNS('path'), edge2:elNS('path'), spine:elNS('path')}));
+    arcs.forEach(a=>{ a.rib.setAttribute('class','rib'); a.edge1.setAttribute('class','ribEdge'); a.edge2.setAttribute('class','ribEdge'); a.spine.setAttribute('class','spine'); ribbonsG.append(a.rib,a.edge1,a.edge2,a.spine); });
+
+    // utilidades curvas
+    function Bc(t,p0,p1,p2,p3){ const u=1-t; return u*u*u*p0 + 3*u*u*t*p1 + 3*u*t*t*p2 + t*t*t*p3; }
+    function Bd(t,p0,p1,p2,p3){ const u=1-t; return -3*u*u*p0 + (3*u*u-12*u*t)*p1 + (6*u*t-3*t*t)*p2 + 3*t*t*p3; }
+    function norm(x,y){ const m=Math.hypot(x,y)||1; return [x/m,y/m]; }
+    function bezierRibbon(x1,y1,x2,y2,curv,wMax){
+      const mx=(x1+x2)/2; const c1x=x1+(mx-x1)*0.6; const c2x=x2+(mx-x2)*-0.6; const lift=Math.min(y1,y2,300)-curv; const c1y=lift, c2y=lift;
+      const N=84; const left=[], right=[], spine=[];
+      for(let i=0;i<=N;i++){
+        const t=i/N; const x=Bc(t,x1,c1x,c2x,x2); const y=Bc(t,y1,c1y,c2y,y2); spine.push([x,y]);
+        const dx=Bd(t,x1,c1x,c2x,x2), dy=Bd(t,y1,c1y,c2y,y2); const n=norm(-dy,dx);
+        const w=wMax*Math.sin(Math.PI*t)**0.9; left.push([x+n[0]*w,y+n[1]*w]); right.push([x-n[0]*w,y-n[1]*w]);
+      }
+      const poly='M '+left.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L ')+' L '+right.reverse().map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L ')+' Z';
+      const center='M '+spine.map((p,i)=> (i?'L ':'')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      const edge1='M '+left.map((p,i)=> (i?'L ':'')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      const edge2='M '+right.map((p,i)=> (i?'L ':'')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      return {poly,center,edge1,edge2};
+    }
+    function liss(cx,cy,rx,ry,a,b,d1,d2,N){ let d=''; for(let i=0;i<=N;i++){ const t=(i/N)*Math.PI*2; const x=cx+rx*Math.sin(a*t+d1); const y=cy+ry*Math.sin(b*t+d2); d += (i?' L':'M')+x.toFixed(2)+' '+y.toFixed(2); } return d; }
+
+    // audio + analysers L/R (como 4chplayer)
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=ctx.createMediaElementSource(audio);
+    const split=ctx.createChannelSplitter(2);
+    const anL=ctx.createAnalyser(), anR=ctx.createAnalyser();
+    anL.fftSize=8192; anR.fftSize=8192; anL.smoothingTimeConstant=0.82; anR.smoothingTimeConstant=0.82;
+    src.connect(split); split.connect(anL,0); split.connect(anR,1); src.connect(ctx.destination);
+    const dL=new Uint8Array(anL.frequencyBinCount), dR=new Uint8Array(anR.frequencyBinCount);
+
+    // mapas log por cuadrante (25–950 Hz low, 950–18 kHz high)
+    let sampleRate=48000;
+    function hzToIndex(hz,fft){ const nyq=sampleRate/2; return Math.max(0, Math.min((fft/2)-1, Math.floor(hz/nyq*(fft/2)))); }
+    function logMap(minHz,maxHz,n,fft){ const out=[]; const A=Math.log10(minHz), B=Math.log10(maxHz); for(let i=0;i<n;i++){ const t0=i/n, t1=(i+1)/n; const lo=10**(A+(B-A)*t0), hi=10**(A+(B-A)*t1); out.push([hzToIndex(lo,fft), hzToIndex(hi,fft)]); } return out; }
+    const maps={FL:[],FR:[],RL:[],RR:[]};
+    (function computeMaps(){ sampleRate=ctx.sampleRate||sampleRate; const fft=anL.fftSize; const low=logMap(25,950,96,fft), high=logMap(950,18000,96,fft); maps.FL=low; maps.FR=low; maps.RL=high; maps.RR=high; })();
+    function band(arr,i0,i1){ let s=0,c=0; for(let i=i0;i<=i1;i++){ s+=arr[i]; c++; } return c? s/c:0; }
+    const quadArr=q=> q.side==='L'? dL : dR;
+    const quadMap=q=> maps[q.id];
+    function avgEnergy(q){ const arr=quadArr(q), map=quadMap(q); let s=0; for(const [i0,i1] of map) s+=band(arr,i0,i1); return s/map.length; }
+
+    // --- features por audio ---
+const tBuf=new Uint8Array(2048);
+const fBufL=new Float32Array(anL.frequencyBinCount);
+const fBufR=new Float32Array(anR.frequencyBinCount);
+let feat={rms:0, bright:0, stereo:0, onsets:0, dyn:0}, featFrames=0, locked=false, style=null;
+
+function updateFeatures(){
+  // time-domain RMS y onsets
+  anL.getByteTimeDomainData(tBuf);
+  let sum=0, zc=0;
+  for(let i=1;i<tBuf.length;i++){
+    const v=(tBuf[i]-128)/128; sum+=v*v;
+    zc += ((tBuf[i-1]-128)>=0)!==( (tBuf[i]-128)>=0 ) ? 1:0;
+  }
+  const rms=Math.sqrt(sum/tBuf.length);
+  const onsets = zc/(tBuf.length/ctx.sampleRate); // aprox transitorios/s
+
+  // espectro y brillo
+  anL.getFloatFrequencyData(fBufL);
+  anR.getFloatFrequencyData(fBufR);
+  let num=0, den=0, numR=0, denR=0;
+  const sr=ctx.sampleRate, n=fBufL.length, nyq=sr/2;
+  for(let i=0;i<n;i++){
+    const mag=Math.pow(10, fBufL[i]/20); // lineal
+    const hz=i*nyq/n;
+    num+=hz*mag; den+=mag;
+    const magR=Math.pow(10, fBufR[i]/20);
+    numR+=hz*magR; denR+=magR;
+  }
+  const centL = den? num/den: 0, centR = denR? numR/denR: 0;
+  const bright = (centL+centR)/2; // Hz
+
+  // ancho estéreo por correlación burda
+  let corr=0;
+  for(let i=0;i<256;i++){
+    const li = Math.max(0, Math.min(n-1, (i/n)*n|0));
+    const ri = li;
+    const l = Math.pow(10, fBufL[li]/20);
+    const r = Math.pow(10, fBufR[ri]/20);
+    corr += (l*r);
+  }
+  const stereo = corr/256;
+
+  // acumular y bloquear a los 3 s
+  feat.rms += rms; feat.bright += bright; feat.stereo += stereo; feat.onsets += onsets; featFrames++;
+  if(!locked && audio.currentTime>3){
+    // promedios
+    for(const k of Object.keys(feat)) feat[k]/=featFrames;
+    // variabilidad dinámica en la ventana
+    feat.dyn = Math.min(1, Math.max(0, (feat.rms*1.8)));
+    style = styleFromFeatures(feat, audio.src);
+    locked=true;
+  }
+}
+
+function styleFromFeatures(f, src){
+  // hash determinista por src para pequeñas diferencias
+  let h=0; for(let i=0;i<src.length;i++) h=(h*131 + src.charCodeAt(i))>>>0;
+  const rnd=(min,max)=> min + (h%997/997)*(max-min);
+
+  // normalizaciones
+  const br = Math.min(1, f.bright/6000); // 0…~1 para 0–6 kHz
+  const tr = Math.min(1, f.onsets/8);    // 0…1 para 0–8 Hz aprox
+  const st = Math.min(1, Math.max(0, 1 - f.stereo*0.6)); // más alto = más ancho
+
+  return {
+    // Lissajous
+    aBase: 1.2 + 3.0*br,
+    bBase: 2.0 + 3.8*st,
+    rxMul: 0.78 + 0.25*st,
+    ryMul: 0.62 + 0.30*br,
+    phaseSpin: rnd(0.2, 1.1),
+
+    // Spokes
+    spokeJitter: 0.06 + 0.22*tr,
+    spokeOpacityMin: 0.18 + 0.12*st,
+
+    // Ribbons
+    ribLiftMul: 0.9 + 0.6*st,
+    ribWidthMul: 0.9 + 0.8*br,
+
+    // Partículas
+    particleCount: 28 + Math.round(30*st),
+    particleSpeedMul: 0.8 + 0.9*tr,
+
+    // Anillos / meters
+    ringThickMul: 0.9 + 0.5*f.dyn,
+    meterCurve: 0.8 + 0.4*br
+  };
+}
+
+function tick(){
+  if(!running) return;
+  anL.getByteFrequencyData(dL); anR.getByteFrequencyData(dR);
+  updateFeatures();
+  const t=performance.now()/1000;
+
+  // fallback si aún no bloquea
+  const S = style || {
+    aBase:1.6, bBase:2.6, rxMul:0.9, ryMul:0.7, phaseSpin:0.6,
+    spokeJitter:0.1, spokeOpacityMin:0.22,
+    ribLiftMul:1.0, ribWidthMul:1.0,
+    particleCount:40, particleSpeedMul:1.0,
+    ringThickMul:1.0, meterCurve:1.0
+  };
+
+  // meters con curva
+  for(const q of quads){
+    const arr=quadArr(q), map=quadMap(q);
+    let s=0; for(const [i0,i1] of map) s+=band(arr,i0,i1); const avg=s/map.length;
+    const eased = Math.pow(avg/255, S.meterCurve);
+    meters[q.id].style.width = (eased*100).toFixed(1)+'%';
+  }
+
+  // anillos + lissajous
+  for(const q of quads){
+    const E=q.E;
+    const avg=avgEnergy(q);
+    const r0=72*S.ringThickMul;
+    const rOut=r0 + Math.min(48, avg*0.11);
+    const rIn =r0*0.62 + Math.min(22, avg*0.06);
+    const rF  =r0*0.48 + Math.min(32, avg*0.09);
+    E.rOut.setAttribute('r', rOut.toFixed(2));
+    E.rIn .setAttribute('r', rIn .toFixed(2));
+    E.rFill.setAttribute('r', rF  .toFixed(2));
+
+    const a=S.aBase + (avg/255)*0.8;
+    const b=S.bBase + (avg/255)*1.0;
+    const rx=rOut*S.rxMul, ry=rOut*S.ryMul;
+    const phase = t*S.phaseSpin;
+    E.liss.setAttribute('d', liss(0,0,rx,ry,a,b,phase*0.9, phase*0.63, 280));
+    E.lissG.setAttribute('d', liss(0,0,rx*0.98,ry*0.98,a*1.02,b*0.98,phase*0.92, phase*0.61, 200));
+
+    // spokes con jitter determinista por índice
+    const sp=E.spokes.length;
+    for(let i=0;i<sp;i++){
+      const ang=(i/sp)*Math.PI*2;
+      const idx=Math.min(arr.length-1, Math.floor((i/sp)*arr.length));
+      const v=arr[idx]/255;
+      const jitter = 1 + S.spokeJitter*Math.sin(i*0.37 + phase);
+      const r1=rIn; const r2=rIn + v*(rOut-rIn)*jitter;
+      const x2=Math.cos(ang)*r2, y2=Math.sin(ang)*r2;
+      const ln=E.spokes[i];
+      ln.setAttribute('x2',x2.toFixed(2));
+      ln.setAttribute('y2',y2.toFixed(2));
+      ln.setAttribute('opacity',(S.spokeOpacityMin + 0.5*v).toFixed(2));
+    }
+  }
+
+  // ribbons con multiplicadores
+  const energies={ FL:avgEnergy(quads[0]), FR:avgEnergy(quads[1]), RL:avgEnergy(quads[2]), RR:avgEnergy(quads[3]) };
+  const pos={ FL:{x:250,y:150}, FR:{x:750,y:150}, RL:{x:250,y:450}, RR:{x:750,y:450} };
+  arcPairs.forEach(([a,b],i)=>{
+    const e1=energies[a], e2=energies[b];
+    const lift = (70 + (e1+e2)/255*110)*S.ribLiftMul;
+    const wMax = (6 + (e1+e2)/255*10)*S.ribWidthMul;
+    const {poly,center,edge1,edge2} = bezierRibbon(pos[a].x,pos[a].y,pos[b].x,pos[b].y,lift,wMax);
+    arcs[i].rib.setAttribute('d', poly);
+    arcs[i].spine.setAttribute('d', center);
+    arcs[i].edge1.setAttribute('d', edge1);
+    arcs[i].edge2.setAttribute('d', edge2);
+  });
+
+  // partículas: ajusta cantidad una sola vez
+  if(particles.length!==S.particleCount){
+    while(particles.length>S.particleCount){ const p=particles.pop(); p.el.remove(); }
+    while(particles.length<S.particleCount){
+      const c=elNS('circle'); c.setAttribute('class','particle'); particlesG.append(c);
+      particles.push({el:c, x:Math.random()*W, y:Math.random()*H, vx:0, vy:0});
+    }
+  }
+  const master=(energies.FL+energies.FR+energies.RL+energies.RR)/4;
+  particles.forEach(p=>{
+    const spd = (0.35 + (master/255)*1.2)*S.particleSpeedMul;
+    const ang = Math.sin((p.x+cx)*0.006 + t*0.9) + Math.cos((p.y+cy)*0.004 + t*0.7);
+    p.vx=Math.cos(ang)*spd; p.vy=Math.sin(ang)*spd;
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>W||p.y<0||p.y>H){ p.x=Math.random()*W; p.y=Math.random()*H; }
+    p.el.setAttribute('cx',p.x.toFixed(1));
+    p.el.setAttribute('cy',p.y.toFixed(1));
+    p.el.setAttribute('r',(0.7 + (master/255)*2.2).toFixed(2));
+    p.el.setAttribute('opacity',(0.24 + (master/255)*0.45).toFixed(2));
+  });
+
+  raf=requestAnimationFrame(tick);
+}
+
+    // controles
+    let raf=0, dragging=false, running=false;
+    playBtn.addEventListener('click', async ()=>{
+      if(ctx.state==='suspended'){try{await ctx.resume();}catch{}}
+      if(audio.paused){await audio.play(); playBtn.textContent='pause'; running=true; cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);}
+      else{audio.pause(); playBtn.textContent='play'; running=false; cancelAnimationFrame(raf);}
+    });
+    audio.addEventListener('loadedmetadata',updateTime);
+    audio.addEventListener('timeupdate',updateTime);
+    function updateTime(){ const fmt=s=>{s=Math.max(0,s|0); const m=(s/60)|0, r=(s%60)|0; return m+":"+String(r).padStart(2,'0'); };
+      const d=isNaN(audio.duration)?0:audio.duration, c=audio.currentTime; fill.style.width=(d? (c/d*100):0)+'%'; timeEl.textContent=`${fmt(c)} / ${fmt(d)}`; }
+    bar.addEventListener('pointerdown',e=>{dragging=true;seek(e);});
+    window.addEventListener('pointermove',e=>{if(dragging)seek(e);});
+    window.addEventListener('pointerup',()=>dragging=false);
+    function seek(e){const r=bar.getBoundingClientRect(); const k=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1); if(audio.duration) audio.currentTime=k*audio.duration;}
+
+    // animación
+    function tick(){
+      if(!running) return;
+      anL.getByteFrequencyData(dL); anR.getByteFrequencyData(dR);
+      const t=performance.now()/1000;
+
+      // actualizar cuadrantes
+      for(const q of quads){
+        const E=q.E; const arr=quadArr(q); const map=quadMap(q);
+        let s=0; for(const [i0,i1] of map) s+=band(arr,i0,i1); const avg=s/map.length;
+        meters[q.id].style.width = Math.min(100,(avg/255)*100).toFixed(1)+'%';
+
+        const r0=72; const rOut=r0 + Math.min(48, avg*0.11); const rIn=r0*0.62 + Math.min(22, avg*0.06); const rF=r0*0.48 + Math.min(32, avg*0.09);
+        E.rOut.setAttribute('r', rOut.toFixed(2)); E.rIn.setAttribute('r', rIn.toFixed(2)); E.rFill.setAttribute('r', rF.toFixed(2));
+
+        const a=1.3 + (avg/255)*2.2, b=2.1 + (avg/255)*3.1; const rx=rOut*0.92, ry=rOut*0.68;
+        E.liss.setAttribute('d', liss(0,0,rx,ry,a,b,t*0.9, t*0.63, 280));
+        E.lissG.setAttribute('d', liss(0,0,rx*0.98,ry*0.98,a*1.02,b*0.98,t*0.92, t*0.61, 200));
+
+        const sp=E.spokes.length;
+        for(let i=0;i<sp;i++){
+          const ang=(i/sp)*Math.PI*2;
+          const idx=Math.min(arr.length-1, Math.floor((i/sp)*arr.length));
+          const v=arr[idx]/255;
+          const r1=rIn; const r2=rIn + v*(rOut-rIn);
+          const x2=Math.cos(ang)*r2, y2=Math.sin(ang)*r2;
+          const ln=E.spokes[i]; ln.setAttribute('x2',x2.toFixed(2)); ln.setAttribute('y2',y2.toFixed(2)); ln.setAttribute('opacity',0.26 + 0.44*v);
+        }
+      }
+
+      // ribbons
+      const energies={ FL:avgEnergy(quads[0]), FR:avgEnergy(quads[1]), RL:avgEnergy(quads[2]), RR:avgEnergy(quads[3]) };
+      const pos={ FL:{x:250,y:150}, FR:{x:750,y:150}, RL:{x:250,y:450}, RR:{x:750,y:450} };
+      arcPairs.forEach(([a,b],i)=>{
+        const e1=energies[a], e2=energies[b]; const lift = 70 + (e1+e2)/255*110; const wMax = 6 + (e1+e2)/255*10;
+        const {poly,center,edge1,edge2} = bezierRibbon(pos[a].x,pos[a].y,pos[b].x,pos[b].y,lift,wMax);
+        arcs[i].rib.setAttribute('d', poly);
+        arcs[i].spine.setAttribute('d', center);
+        arcs[i].edge1.setAttribute('d', edge1);
+        arcs[i].edge2.setAttribute('d', edge2);
+        const op = 0.35 + Math.min(0.5, (e1+e2)/510);
+        arcs[i].rib.setAttribute('opacity', 0.04 + (e1+e2)/1020);
+        arcs[i].spine.setAttribute('opacity', op);
+        arcs[i].edge1.setAttribute('opacity', op*0.7);
+        arcs[i].edge2.setAttribute('opacity', op*0.7);
+      });
+
+      // partículas globales
+      const master=(energies.FL+energies.FR+energies.RL+energies.RR)/4;
+      particles.forEach(p=>{
+        const spd = 0.35 + (master/255)*1.2;
+        const ang = Math.sin((p.x+cx)*0.006 + t*0.9) + Math.cos((p.y+cy)*0.004 + t*0.7);
+        p.vx=Math.cos(ang)*spd; p.vy=Math.sin(ang)*spd;
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>W||p.y<0||p.y>H){ p.x=Math.random()*W; p.y=Math.random()*H; }
+        p.el.setAttribute('cx',p.x.toFixed(1)); p.el.setAttribute('cy',p.y.toFixed(1));
+        p.el.setAttribute('r',(0.7 + (master/255)*2.2).toFixed(2));
+        p.el.setAttribute('opacity',(0.24 + (master/255)*0.45).toFixed(2));
+      });
+
+      raf=requestAnimationFrame(tick);
+    }
+    
+  }
+</script>
+</body>
+</html>
