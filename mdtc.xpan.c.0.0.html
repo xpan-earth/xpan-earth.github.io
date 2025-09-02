@@ -641,65 +641,116 @@
   </script>
   
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
+/* tap-to-sound controller — STRICT, deconflictado
+   - Captura touchstart/click/pointer* y corta propagación antes de handlers previos.
+   - Reemplaza window.toggleSound para evitar doble toggle desde vEl().
+   - Un solo video con audio. BG (#bg1,#bg2) siempre mute. Mute al salir de viewport.
+*/
 (function(){
-  const $ = s=>document.querySelector(s);
-  const $$ = s=>Array.from(document.querySelectorAll(s));
+  const isVid = n => n && n.tagName === 'VIDEO';
+  const isBG = v => v && (v.id === 'bg1' || v.id === 'bg2' || (v.closest && v.closest('.bg-wrap')));
+  const vids = Array.from(document.querySelectorAll('video')).filter(v=>!isBG(v));
+  let active = null;
+  const visible = new WeakMap();
+  let lastHandledAt = 0;
 
-  // BG: ensure muted and resume playback on first user gesture (iOS)
-  function resumeBG(){
-    ['#bg1','#bg2'].forEach(sel=>{
-      const v = $(sel);
-      if(!v) return;
-      v.muted = true;
-      const p = v.play();
-      if(p && p.catch) p.catch(()=>{});
-    });
-    document.removeEventListener('pointerup', resumeBG);
-  }
-  document.addEventListener('pointerup', resumeBG, {once:true, passive:true});
-
-  // Tap-to-sound: stable on mobile, one audible video at a time
-  let currentSounded = null;
+  function play(v){ const p=v.play(); if(p && p.catch) p.catch(()=>{}); }
+  function silence(v){ v.muted = true; v.volume = 0; }
   function makeAudible(v){
-    if(!v) return;
-    $$('video').forEach(x=>{ if(x!==v){ x.muted = true; x.volume = 0; }});
-    v.muted = false; v.volume = 1.0;
-    currentSounded = v;
-    const p = v.play(); if(p && p.catch) p.catch(()=>{});
+    vids.forEach(x=>{ if(x!==v) silence(x); });
+    v.muted = false; v.volume = 1;
+    active = v;
+    play(v);
   }
-  function toggleSoundHandler(ev){
-    const v = ev.currentTarget;
-    if(v.muted){
-      makeAudible(v);
-    } else {
-      v.muted = true; v.volume = 0;
-      if(currentSounded === v) currentSounded = null;
-    }
+  function toggleCore(v){
+    if (v.muted) makeAudible(v);
+    else { silence(v); if (active===v) active = null; }
   }
-  // Attach only to content videos, ignore BG if they have ids bg1/bg2
-  $$('video').forEach(v=>{
-    if(v.id === 'bg1' || v.id === 'bg2') return;
-    v.addEventListener('pointerup', toggleSoundHandler, {passive:true});
+
+  // Reemplaza posible toggleSound global creado por otros scripts
+  window.toggleSound = function(target){
+    // Evita doble-tap si otro listener se ejecuta casi al mismo tiempo
+    if (performance.now() - lastHandledAt < 60) return;
+    if (!isVid(target) || isBG(target)) return;
+    toggleCore(target);
+  };
+
+  // Capturadores que cancelan propagación hacia handlers existentes
+  function capture(ev){
+    const t = ev.target;
+    if (!isVid(t) || isBG(t)) return;
+    lastHandledAt = performance.now();
+    try { ev.stopImmediatePropagation(); } catch(e){}
+    ev.stopPropagation();
+    ev.preventDefault();
+    toggleCore(t);
+  }
+  ['touchstart','pointerdown','click','touchend','pointerup'].forEach(type=>{
+    document.addEventListener(type, capture, {capture:true, passive:false});
   });
 
-  // IntersectionObserver tweak to avoid flapping mute/unmute
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
+  // IO: mantener reproducción y silenciar al salir de viewport
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{
       const v = e.target;
-      if(e.isIntersecting){
-        const p = v.play(); if(p && p.catch) p.catch(()=>{});
+      visible.set(v, e.isIntersecting);
+      if (e.isIntersecting) {
+        play(v);
       } else {
         v.pause();
-        if(currentSounded === v){
-          v.muted = true; v.volume = 0; currentSounded = null;
-        } else {
-          v.muted = true; v.volume = 0;
-        }
+        silence(v);
+        if (active===v) active = null;
       }
     });
-  }, {root:null, rootMargin:'0px', threshold:0.4});
-  $$('video').forEach(v=>{ if(v.id!=='bg1' && v.id!=='bg2') io.observe(v); });
+  }, {threshold:0.05});
+
+  vids.forEach(v=>{
+    silence(v);
+    v.setAttribute('muted','');
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    io.observe(v);
+    play(v);
+  });
+
+  // Si otro script mutea el activo visible, lo reponemos
+  vids.forEach(v=>{
+    v.addEventListener('volumechange', ()=>{
+      if(active===v && visible.get(v) && v.muted===true){
+        v.muted = false; v.volume = 1;
+      }
+    }, {passive:true});
+  });
+
+  // Motif audio: apaga video activo
+  const motif = document.getElementById('motif');
+  if (motif){
+    motif.addEventListener('play', ()=>{ if(active){ silence(active); active=null; }}, {passive:true});
+  }
+
+  // Desbloqueo inicial
+  function unlock(){
+    document.querySelectorAll('#bg1,#bg2,video').forEach(play);
+    document.removeEventListener('touchstart', unlock, {once:true});
+    document.removeEventListener('click', unlock, {once:true});
+  }
+  document.addEventListener('touchstart', unlock, {once:true, passive:true});
+  document.addEventListener('click', unlock, {once:true});
 })();
 </script>
 
