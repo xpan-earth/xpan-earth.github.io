@@ -194,6 +194,15 @@ video:hover {
 
 
 </style>
+<style>
+/* fullscreen unificado xpan */
+#lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:300000;touch-action:none}
+#lightbox.open{display:flex}
+#lightbox figure{margin:0;max-width:92vw;max-height:92vh}
+#lightbox img,#lightbox video{max-width:92vw;max-height:92vh;object-fit:contain;background:#fff;display:block}
+#lightbox{cursor:grab} #lightbox:active{cursor:grabbing}
+</style>
+
 <script defer="" src="/assets/js/media-proxy.js"></script>
 </link></link></head>
 <body>
@@ -2637,5 +2646,108 @@ document.addEventListener("DOMContentLoaded", function() {
         fr.appendChild(el);grid.appendChild(tile);
       });
     });
-  </script></body>
+  </script>
+<!-- lightbox fullscreen -->
+<div id="lightbox" aria-hidden="true"><figure id="lbFig"></figure></div>
+<script>
+(() => {
+  // 0) ANTI TAP-THROUGH GLOBAL (no deja reabrir al cerrar)
+  let suppressUntil = 0;
+  document.addEventListener('click', e => {
+    if (performance.now() < suppressUntil) {
+      e.preventDefault(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); e.stopPropagation();
+    }
+  }, true);
+
+  // 1) Refs lightbox
+  const lb = document.getElementById('lightbox');
+  const fig = document.getElementById('lbFig');
+
+  // 2) Helper: obtiene src real
+  function getMedia(el){
+    if(!el) return null;
+    if (el.tagName === 'IMG') return {type:'img', src: el.currentSrc || el.src || el.dataset?.src || ''};
+    if (el.tagName === 'VIDEO'){
+      const s = el.querySelector('source');
+      const src = (el.currentSrc || el.src || (s && (s.currentSrc || s.src || s.dataset?.src)) || '');
+      return {type:'video', src};
+    }
+    return null;
+  }
+
+  // 3) Render en LB
+  function render(item){
+    if(!item || !item.src) return;
+    fig.innerHTML = item.type === 'video'
+      ? `<video src="${item.src}" controls autoplay playsinline preload="metadata"></video>`
+      : `<img src="${item.src}" alt="" draggable="false">`;
+  }
+
+  // 4) Abre por grupo (cada .media-grid es un grupo)
+  let groupItems = []; let idx = 0;
+  function openFrom(el){
+    const grid = el.closest('.media-grid'); if(!grid) return;
+    const nodes = Array.from(grid.querySelectorAll('.frame img, .frame video'));
+    groupItems = nodes.map(n => getMedia(n)).filter(Boolean);
+    idx = nodes.indexOf(el);
+    render(groupItems[idx]);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLB(){
+    lb.classList.remove('open');
+    fig.innerHTML = '';
+    document.body.style.overflow = '';
+    suppressUntil = performance.now() + 350; // evita re-click fantasma
+  }
+
+  // 5) Delegación: click en cualquier media dentro de .media-grid
+  document.addEventListener('click', e => {
+    const media = e.target.closest('.media-grid .frame img, .media-grid .frame video');
+    if(!media) return;
+    e.preventDefault();
+    openFrom(media);
+  }, {passive:false});
+
+  // 6) Cierre tocando overlay (sin burbujeo)
+  lb.addEventListener('click', e => {
+    if (e.target === lb) {
+      e.preventDefault(); e.stopPropagation();
+      setTimeout(closeLB, 0);
+    }
+  }, {passive:false});
+
+  // 7) Teclado
+  document.addEventListener('keydown', e => {
+    if(!lb.classList.contains('open')) return;
+    if(e.key === 'Escape') return closeLB();
+    if(e.key === 'ArrowRight'){ idx = (idx+1) % groupItems.length; render(groupItems[idx]); }
+    if(e.key === 'ArrowLeft'){ idx = (idx-1+groupItems.length) % groupItems.length; render(groupItems[idx]); }
+  });
+
+  // 8) Swipe touch + mouse
+  let x0=null, dragging=false;
+  function getX(ev){ return ev.touches?.[0]?.clientX ?? ev.changedTouches?.[0]?.clientX ?? ev.clientX; }
+  lb.addEventListener('touchstart', e=>{ if(lb.classList.contains('open')){ x0=getX(e); dragging=true; } }, {passive:true});
+  lb.addEventListener('touchend',   e=>{
+    if(!dragging) return;
+    const dx = getX(e) - x0; const TH = 40;
+    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%groupItems.length : (idx-1+groupItems.length)%groupItems.length; render(groupItems[idx]); }
+    else { closeLB(); }
+    x0=null; dragging=false;
+  }, {passive:true});
+  lb.addEventListener('pointerdown', e=>{ if(lb.classList.contains('open')) x0 = getX(e); });
+  lb.addEventListener('pointerup',   e=>{
+    if(x0==null) return;
+    const dx = getX(e) - x0; const TH = 40;
+    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%groupItems.length : (idx-1+groupItems.length)%groupItems.length; render(groupItems[idx]); }
+    else { closeLB(); }
+    x0=null;
+  });
+  lb.addEventListener('dragstart', e=> e.preventDefault());
+})();
+</script>
+  
+</body>
 </html>
