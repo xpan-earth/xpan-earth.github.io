@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cronograma experimental</title>
+  
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://images.weserv.nl">
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+
 
   <style>
     html, body {
@@ -118,6 +126,37 @@
   <div class="fullscreen-view" id="fullscreen" onclick="this.style.display='none'"></div>
 
   <script>
+  // Proxy seguro para imágenes (no videos)
+  function proxifyImage(url){
+    if (!url) return url;
+    if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return url;         // no proxy a video
+    const clean = url.replace(/^https?:\/\//,'');                 // weserv recomienda sin protocolo
+    // 1600px máx, contención, webp, q=85
+    return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&w=1600&fit=inside&output=webp&q=85`;
+  }
+
+  // Precargador en background sin lazy (concurrencia limitada)
+  function preloadImages(urls, concurrency=8){
+    let i = 0, active = 0;
+    return new Promise(resolve=>{
+      function pump(){
+        while(active < concurrency && i < urls.length){
+          const src = urls[i++]; if(!src) continue;
+          active++;
+          const img = new Image();
+          img.decoding = 'async';
+          img.referrerPolicy = 'no-referrer';
+          img.onload = img.onerror = () => { active--; pump(); };
+          img.src = src;
+        }
+        if(active === 0 && i >= urls.length) resolve();
+      }
+      pump();
+    });
+  }
+</script>
+
+  <script>
     async function loadTimeline() {
       const res = await fetch('timeline.index.json');
       let data = await res.json();
@@ -136,17 +175,24 @@
         const el = document.createElement('div');
         el.className = 'item';
 
-        const media = (item.url.endsWith('.mp4') || item.url.includes('video'))
-          ? document.createElement('video')
-          : document.createElement('img');
+      const isVideo = /\.(mp4|webm|mov)(\?|$)/i.test(item.url) || item.url.includes('video');
+      const media = document.createElement(isVideo ? 'video' : 'img');
 
-        media.src = item.url;
-        if (media.tagName === 'VIDEO') {
-          media.autoplay = true;
-          media.loop = true;
-          media.muted = true;
-          media.playsInline = true;
-        }
+      if (isVideo) {
+        media.src = item.url;                // video directo
+        media.autoplay = true;
+        media.loop = true;
+        media.muted = true;
+        media.playsInline = true;
+        media.preload = 'metadata';
+      } else {
+        const proxied = proxifyImage(item.url);
+        media.decoding = 'async';
+        media.fetchPriority = (index < 8 ? 'high' : 'auto'); // primeras piezas más agresivas
+        media.referrerPolicy = 'no-referrer';
+        media.src = proxied;
+      }
+
 
         el.appendChild(media);
         const date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
@@ -170,6 +216,15 @@
         timeline.appendChild(createItem(item, index));
         grid.appendChild(createItem(item, index));
       });
+
+      // Preload agresivo de imágenes para swipe/scroll rápido
+      const imgURLs = data
+        .map(d => d.url)
+        .filter(u => u && !/\.(mp4|webm|mov)(\?|$)/i.test(u))
+        .map(proxifyImage);
+
+      preloadImages(imgURLs, 10); // subir a 10 si tu red lo permite
+
 
       const updateMetadata = () => {
         const items = [...document.querySelector('.timeline.active')?.children || []];
