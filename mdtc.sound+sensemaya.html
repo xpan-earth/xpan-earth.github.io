@@ -79,6 +79,18 @@
   .meter{height:8px;border:1px solid currentColor;border-radius:6px;overflow:hidden}
   .meter>i{display:block;height:100%;width:0;background:currentColor}
   @media(prefers-color-scheme:dark){.x4-bar{background:color-mix(in srgb,#fff 24%,transparent)} .rib{opacity:.08}}
+
+.language-selector{
+  position:fixed; top:1rem; right:1rem; z-index:30;
+  font-size:.9rem; text-transform:lowercase;
+}
+.language-selector button{
+  background:none; border:none; margin:0 .4rem; padding:.1rem .2rem;
+  cursor:pointer; color:#000; opacity:.5; transition:.2s;
+}
+.language-selector button.active,
+.language-selector button:hover{ opacity:1; text-decoration:underline; }
+
 </style>
 </head>
 <body>
