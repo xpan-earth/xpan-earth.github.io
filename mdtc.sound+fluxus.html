@@ -10,6 +10,9 @@
 <link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
 <link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
 <link href="https://attachments.are.na" rel="dns-prefetch"/>
+
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+<script src="/assets/js/media-proxy.js" defer></script>
 <style>
     :root{--bg:#fff;--fg:#000;--line:rgba(0,0,0,.12);--maxw:1440px;--radius:14px}
     *{box-sizing:border-box}
@@ -122,7 +125,6 @@ h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowe
 .muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
 .lang p { font-size:1rem; line-height:1.6; max-width:700px }
 
-</style><script defer="True" src="/assets/js/media-proxy.js"></script><style id="xpan-refine-2025-09-02">
 /* Hide any overlays or hints related to unmute */
 .tap-to-unmute, .tap-hint, [data-audio-toggle], .unmute-hint,
 .badge-unmute, .video-unmute, .mute-overlay, .hint, .overlay-unmute { display:none !important; }
@@ -207,7 +209,7 @@ h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowe
 </style></head>
 <body>
 <header>
-<a aria-label="xpan" href="/"><img alt="xpan" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="xpan.svg"/></a>
+<a aria-label="xpan" href="/"><img alt="xpan" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="sound+.png"/></a>
 <nav aria-label="selector de idioma" class="language-selector">
 <button class="active" data-lang="es">es</button>
 <button data-lang="en">en</button>
@@ -754,5 +756,212 @@ h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowe
     ov.setAttribute('aria-hidden', 'true');
   }, { passive:true });
 })();
-</script></body>
+</script>
+<script>
+/* ===== xpan — fix tap-to-unmute + lightbox con swipe ===== */
+(function(){
+  const lbEl = document.getElementById('lightbox');
+  const lbFig = document.getElementById('lbFig');
+  const BODY_LOCK_CLASS = 'no-scroll-lb';
+  let INDEX = [];
+  let cur = -1;
+
+  /* 1) Construir índice global a partir de las galerías existentes */
+  function buildIndex(){
+    INDEX = [];
+    const containers = [
+      '#grid-grafico', '#grid-destacadas', '#verticales', '#pozole', '#rebeca'
+    ].map(sel => document.querySelector(sel)).filter(Boolean);
+
+    containers.forEach(container=>{
+      container.querySelectorAll('figure.tile').forEach(fig=>{
+        const v = fig.querySelector('video');
+        if (v){
+          const s = v.querySelector('source');
+          if (s && s.src) INDEX.push({type:'video', src:s.src, el:fig});
+        }else{
+          const img = fig.querySelector('img');
+          if (img && img.src) INDEX.push({type:'img', src:img.src, el:fig});
+        }
+      });
+    });
+  }
+
+  /* 2) Tap-to-unmute inline: tocar el video alterna mute y silencia los demás */
+  function muteAllExcept(target){
+    document.querySelectorAll('video').forEach(v=>{
+      if (v !== target) v.muted = true;
+    });
+  }
+  function enableInlineTapToUnmute(){
+    document.querySelectorAll('figure.tile video').forEach(v=>{
+      // Evitar duplicar listeners
+      if (v.dataset._tapBound) return;
+      v.dataset._tapBound = '1';
+      v.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if (v.muted){
+          muteAllExcept(v);
+          v.muted = false;
+          v.volume = 1;
+          v.play().catch(()=>{});
+        }else{
+          v.muted = true;
+        }
+      }, {passive:true});
+    });
+  }
+
+  /* 3) Lightbox con soporte de imágenes y video, navegación y swipe */
+  function lockScroll(lock){
+    document.documentElement.style.overflow = lock ? 'hidden' : '';
+    document.body.style.overflow = lock ? 'hidden' : '';
+    document.body.classList.toggle(BODY_LOCK_CLASS, !!lock);
+  }
+
+  function renderItem(i){
+    const item = INDEX[i];
+    if (!item) return;
+    cur = i;
+    if (item.type === 'img'){
+      lbFig.innerHTML = `<img src="${item.src}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain">`;
+    }else{
+      lbFig.innerHTML = `
+        <video controls playsinline preload="metadata" style="max-width:92vw;max-height:92vh;object-fit:contain">
+          <source src="${item.src}" type="video/mp4">
+        </video>`;
+      const v = lbFig.querySelector('video');
+      // Abrir sin mute tras gesto de usuario (click que abrió el lightbox)
+      v.muted = false;
+      v.volume = 1;
+      v.play().catch(()=>{ /* iOS puede requerir otra interacción */ });
+      // Tap dentro del lightbox para alternar mute
+      v.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if (v.muted){
+          v.muted = false; v.volume = 1; v.play().catch(()=>{});
+        }else{
+          v.muted = true;
+        }
+      });
+    }
+  }
+
+  function openAt(i){
+    if (!INDEX.length) buildIndex();
+    if (i < 0) i = 0;
+    if (i >= INDEX.length) i = INDEX.length - 1;
+    lbEl.classList.add('open');
+    lockScroll(true);
+    renderItem(i);
+  }
+  function closeLB(){
+    lbEl.classList.remove('open');
+    lockScroll(false);
+    lbFig.innerHTML = '';
+    cur = -1;
+  }
+  function next(){ if (INDEX.length) renderItem((cur+1)%INDEX.length); }
+  function prev(){ if (INDEX.length) renderItem((cur-1+INDEX.length)%INDEX.length); }
+
+  // Cerrar al tocar fondo (no dentro del figure)
+  lbEl.addEventListener('click', (e)=>{
+    if (e.target === lbEl) closeLB();
+  });
+
+  // Navegación por teclado
+  window.addEventListener('keydown', (e)=>{
+    if (!lbEl.classList.contains('open')) return;
+    if (e.key === 'ArrowRight') next();
+    else if (e.key === 'ArrowLeft') prev();
+    else if (e.key === 'Escape') closeLB();
+  });
+
+  // Swipe táctil en lightbox
+  (function enableSwipe(){
+    let x0=null, y0=null, t0=0;
+    const THRESH = 42;
+    lbEl.addEventListener('touchstart', (e)=>{
+      if (!lbEl.classList.contains('open')) return;
+      const t = e.changedTouches[0];
+      x0 = t.clientX; y0 = t.clientY; t0 = Date.now();
+    }, {passive:true});
+    lbEl.addEventListener('touchend', (e)=>{
+      if (x0==null) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - x0;
+      const dy = t.clientY - y0;
+      const dt = Date.now() - t0;
+      x0 = y0 = null;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > THRESH && dt < 800){
+        if (dx < 0) next(); else prev();
+      }
+    }, {passive:true});
+  })();
+
+  /* 4) Interceptar el lightbox original para añadir swipe */
+  // Guardar referencia previa si existía
+  const _origOpenLB = window.openLightbox ? window.openLightbox.bind(window) : null;
+
+  // Reemplazar por versión que detecta src y abre la galería
+  window.openLightbox = function(argHTMLorNode){
+    try{
+      if (!INDEX.length) buildIndex();
+      let src = null;
+      if (typeof argHTMLorNode === 'string'){
+        const m = argHTMLorNode.match(/src="([^"]+)"/i);
+        if (m) src = m[1];
+      }else if (argHTMLorNode && argHTMLorNode.src){
+        src = argHTMLorNode.src;
+      }
+      if (src){
+        const i = INDEX.findIndex(it => it.src === src);
+        if (i >= 0){ openAt(i); return; }
+      }
+    }catch(_e){}
+    // Fallback al comportamiento previo si no se pudo mapear
+    if (_origOpenLB) _origOpenLB(argHTMLorNode);
+  };
+
+  /* 5) Click en figuras para abrir lightbox con swipe.
+        En videos: tap sobre el propio <video> solo alterna mute. */
+  function bindFigureClicks(){
+    if (!INDEX.length) buildIndex();
+    INDEX.forEach((item, i)=>{
+      if (!item.el || item.el.dataset._lbBound) return;
+      item.el.dataset._lbBound = '1';
+      item.el.addEventListener('click', ()=>{
+        openAt(i);
+      });
+      const v = item.el.querySelector('video');
+      if (v){
+        // Ya se agregó el tap-to-unmute en enableInlineTapToUnmute()
+        // Asegurar que el click al video no abra el lightbox
+        v.addEventListener('click', (e)=>e.stopPropagation());
+      }
+    });
+  }
+
+  /* 6) Observar inserciones tardías y aplicar bindings */
+  const obs = new MutationObserver(()=>{
+    buildIndex();
+    enableInlineTapToUnmute();
+    bindFigureClicks();
+  });
+
+  window.addEventListener('load', ()=>{
+    buildIndex();
+    enableInlineTapToUnmute();
+    bindFigureClicks();
+    const root = document.querySelector('main') || document.body;
+    obs.observe(root, {childList:true, subtree:true});
+  });
+})();
+</script>
+<style>
+/* Evita scroll de fondo al abrir lightbox */
+.no-scroll-lb, .no-scroll-lb * { overscroll-behavior: contain; }
+</style>
+
+</body>
 </html>
