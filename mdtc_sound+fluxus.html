@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="light" name="color-scheme"/>
+<title>sound+ — scores fluxus · index art book fair 2022 — xpan</title>
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
+<link href="https://attachments.are.na" rel="dns-prefetch"/>
+<style>
+    :root{--bg:#fff;--fg:#000;--line:rgba(0,0,0,.12);--maxw:1440px;--radius:14px}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
+    img,video{display:block;max-width:100%;height:auto}
+    a{text-decoration:none;color:inherit}
+    header{position:fixed;top:1rem;left:1rem;z-index:30}
+    header img{width:50px;height:auto;display:block}
+    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
+    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;opacity:.5;transition:.2s}
+    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1rem}
+    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    .muted{opacity:.68;font-size:.92rem}
+    .lang{display:none}.lang.active{display:block}
+    .grid{display:grid;gap:0}
+    .grid-3-fixed{grid-template-columns:repeat(3,1fr)}
+    .grid-6m-4d{grid-template-columns:repeat(6,1fr)}
+    @media(min-width:760px){.grid-6m-4d{grid-template-columns:repeat(4,1fr)}}
+    figure.tile{margin:0;position:relative;background:#000}
+    .tile>img,.tile>video{width:100%;height:100%;object-fit:cover;background:#000}
+    .contain .tile>img,.contain .tile>video{object-fit:contain;background:#fff}
+    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:9999}
+    #lightbox.open{display:flex}
+    #lightbox figure{margin:0;max-width:92vw;max-height:92vh}
+    #lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
+    #lbClose{position:fixed;top:12px;right:12px;background:#000;color:#fff;border:none;border-radius:999px;padding:.55rem .8rem;cursor:pointer}
+    .sound-badge{position:absolute;right:.35rem;bottom:.35rem;background:rgba(255,255,255,.85);color:#000;border:1px solid rgba(0,0,0,.25);border-radius:999px;padding:.15rem .45rem;font-size:.72rem;letter-spacing:.01em;user-select:none}
+    .muted .sound-badge{opacity:.8}
+    .score-img{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+    .score-img img{width:100%;height:auto;object-fit:contain}
+    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.2rem 0;text-transform:lowercase}
+    h2{font-size:1.02rem;margin:.2rem 0;text-transform:lowercase}
+    .piece{border-top:1px solid var(--line);padding-top:1rem;margin-top:1rem}
+  
+/* === Align typography and container to mdtc.pjt.mdl.1 === */
+body { font-family:'Times New Roman',serif; color:#000; }
+
+/* Container rhythm */
+@media (min-width: 1024px){
+  main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
+  #grid-verticales,#grid-destacadas,#grid-grafico,#piezas{max-width:1000px;margin-left:auto;margin-right:auto}
+  /* keep pozole/rebeca as-is (no width cap) */
+}
+@media (max-width: 768px){
+  main{margin-top:6rem;padding:0 1.5rem}
+}
+
+/* Typography copied from reference */
+h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase }
+.muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
+.lang p { font-size:1rem; line-height:1.6; max-width:700px }
+
+</style>
+<style id="xpan-base-style-2025-09-02">
+:root{
+  --bg:#fff; --fg:#000; --line:rgba(0,0,0,.12); --soft:rgba(0,0,0,.06);
+  --maxw:1440px; --pad:16px; --radius:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
+img,video,canvas,svg{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line)}
+a:hover{border-color:var(--fg)}
+.container{width:100%;max-width:var(--maxw);margin:0 auto;padding:calc(var(--pad)*1.5) var(--pad)}
+.section{padding:clamp(24px,3vw,48px) 0;border-top:1px solid var(--soft)}
+.grid{display:grid;gap:clamp(12px,1.5vw,20px)}
+.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:900px){.grid.cols-3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.grid.cols-2,.grid.cols-3{grid-template-columns:1fr}}
+
+.caption{font-size:13px;line-height:1.3;color:#333;margin-top:6px}
+.figure{background:linear-gradient(180deg,rgba(0,0,0,.02),transparent);padding:8px;border-radius:12px}
+.media-fit{width:100%;aspect-ratio:auto;object-fit:contain}
+.hero{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--soft)}
+.hero video,.hero img{width:100%;height:100%;object-fit:cover}
+.light{border:1px solid var(--soft);border-radius:12px;background:#fff}
+small.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;color:#333}
+h1,h2,h3{font-weight:400;margin:0 0 .4em 0}
+h1{font-size:clamp(24px,3.6vw,42px);line-height:1.05}
+h2{font-size:clamp(18px,2.4vw,28px)}
+h3{font-size:clamp(16px,2vw,22px)}
+p{margin:.75em 0;line-height:1.4}
+ul{margin:.5em 0;padding-left:1.2em}
+hr.sep{border:none;border-top:1px solid var(--soft);margin:32px 0}
+/* lightbox container if used by existing markup */
+.lb{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;padding:2vw;z-index:50}
+.lb.open{display:flex}
+.lb media{max-height:92vh;max-width:92vw;object-fit:contain}
+/* subtle fade-in for media once loaded */
+.lazy-ready{transition:opacity .35s ease;opacity:1}
+.lazy-pending{opacity:0}
+
+/* === Align typography and container to mdtc.pjt.mdl.1 === */
+body { font-family:'Times New Roman',serif; color:#000; }
+
+/* Container rhythm */
+@media (min-width: 1024px){
+  main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
+  #grid-verticales,#grid-destacadas,#grid-grafico,#piezas{max-width:1000px;margin-left:auto;margin-right:auto}
+  /* keep pozole/rebeca as-is (no width cap) */
+}
+@media (max-width: 768px){
+  main{margin-top:6rem;padding:0 1.5rem}
+}
+
+/* Typography copied from reference */
+h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase }
+.muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
+.lang p { font-size:1rem; line-height:1.6; max-width:700px }
+
+</style><script defer="True" src="/assets/js/media-proxy.js"></script><style id="xpan-refine-2025-09-02">
+/* Hide any overlays or hints related to unmute */
+.tap-to-unmute, .tap-hint, [data-audio-toggle], .unmute-hint,
+.badge-unmute, .video-unmute, .mute-overlay, .hint, .overlay-unmute { display:none !important; }
+
+/* Ensure no visual filters for muted videos */
+video[muted]{ filter:none !important; opacity:1 !important; }
+
+/* Desktop media subtlety: constrain width and center; no frames */
+@media(min-width: 1100px){
+  img:not([data-bg="true"]):not(.bg):not(.hero img),
+  video:not([data-bg="true"]):not(.bg):not(.hero video){
+    max-width: 960px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
+/* Remove borders/frames/radius/background from media */
+img, video{
+  border:none !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Lightbox close button hidden; click overlay to exit */
+.lb [data-close], .lb .close,
+.lightbox [data-close], .lightbox .close { display:none !important; }
+
+/* Safe container width and padding for consistency */
+:where(main, .container, .content, .page, .wrap, .layout, .inner, section){
+  max-width: var(--maxw);
+  margin-left:auto;
+  margin-right:auto;
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+}
+
+/* Typo rhythm */
+h1{ letter-spacing:.2px }
+h2,h3{ letter-spacing:.1px }
+p,li{ line-height:1.45 }
+.caption{ color:#333 }
+hr{ border:none; border-top:1px solid var(--soft) }
+
+
+/* Remove any mute dimming */
+.muted{opacity:1 !important}
+
+/* Hide any tap/unmute badges explicitly */
+.sound-badge{display:none !important}
+
+/* Lighter desktop presence for large 3-col grids */
+@media(min-width: 1200px){
+  .grid-3-fixed{grid-template-columns:repeat(3,1fr) !important}
+}
+@media(min-width: 1600px){
+  .grid-3-fixed{grid-template-columns:repeat(5,1fr) !important}
+}
+
+/* Ensure tiles are flat, no rounded placeholders from UA */
+figure.tile, figure.tile>*{border-radius:0 !important}
+
+/* === Align typography and container to mdtc.pjt.mdl.1 === */
+body { font-family:'Times New Roman',serif; color:#000; }
+
+/* Container rhythm */
+@media (min-width: 1024px){
+  main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
+  #grid-verticales,#grid-destacadas,#grid-grafico,#piezas{max-width:1000px;margin-left:auto;margin-right:auto}
+  /* keep pozole/rebeca as-is (no width cap) */
+}
+@media (max-width: 768px){
+  main{margin-top:6rem;padding:0 1.5rem}
+}
+
+/* Typography copied from reference */
+h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase }
+.muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
+.lang p { font-size:1rem; line-height:1.6; max-width:700px }
+
+</style></head>
+<body>
+<header>
+<a aria-label="xpan" href="/"><img alt="xpan" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="xpan.svg"/></a>
+<nav aria-label="selector de idioma" class="language-selector">
+<button class="active" data-lang="es">es</button>
+<button data-lang="en">en</button>
+<button data-lang="fr">fr</button>
+<button data-lang="jp">jp</button>
+</nav>
+</header>
+<main>
+<section class="section" id="descripcion">
+<div class="lang lang-es active">
+<h1>sound + — scores fluxus · index art book fair 2022</h1>
+<p class="muted">ciudad de méxico — 2022 — index art book fair</p>
+<p>para la edición 2022 de index art book fair, sound+ presentó tres acciones performáticas desarrolladas por cinco artistas mexicanos a partir de <em>scores</em> impresos del movimiento fluxus. la propuesta, curada por daniela kiehnle, se basa en una investigación de piezas representativas del colectivo, seleccionando instrucciones publicadas en distintos momentos de su trayectoria.</p>
+<p>los <em>scores</em> elegidos operan como detonadores: instrucciones a la vez precisas y ambiguas, abiertas a interpretaciones libres o dogmáticas que se transforman según su contexto histórico y sociocultural. su relectura por artistas vinculados a la experimentación sonora y performática activa un diálogo entre artes visuales, acción en vivo, sonido y edición, en sintonía con la ideología fundamental de sound+ como plataforma experimental.</p>
+</div>
+<div class="lang lang-en">
+<h1>sound + — fluxus scores · index art book fair 2022</h1>
+<p class="muted">mexico city — 2022 — index art book fair</p>
+<p>for the 2022 edition of index art book fair, sound+ presented three performative actions developed by five mexican artists from printed fluxus scores. curated by daniela kiehnle, the program draws on research into representative works of the collective, selecting instructions published at different moments of its trajectory.</p>
+<p>the chosen scores act as triggers: instructions that are both precise and ambiguous, open to free or dogmatic interpretations that shift with historical and sociocultural context. their rereading by artists engaged with sonic and performative experimentation generates a dialogue across visual arts, live action, sound, and editorial practice, aligned with sound+’s core experimental ethos.</p>
+</div>
+<div class="lang lang-fr">
+<h1>sound + — partitions fluxus · index art book fair 2022</h1>
+<p class="muted">mexico — 2022 — index art book fair</p>
+<p>pour l’édition 2022 d’index art book fair, sound+ a présenté trois actions performatives développées par cinq artistes mexicains à partir de partitions fluxus imprimées. la proposition, curatée par daniela kiehnle, s’appuie sur une recherche d’œuvres représentatives du collectif, en sélectionnant des instructions publiées à différents moments de son parcours.</p>
+<p>les partitions choisies fonctionnent comme des déclencheurs : des instructions à la fois précises et ambiguës, ouvertes à des interprétations libres ou dogmatiques qui se transforment selon le contexte historique et socioculturel. leur relecture par des artistes liés à l’expérimentation sonore et performative active un dialogue entre arts visuels, action en direct, son et édition, en accord avec l’idéologie expérimentale de sound+.</p>
+</div>
+<div class="lang lang-jp">
+<h1>sound + — フルクサス・スコアズ · index art book fair 2022</h1>
+<p class="muted">メキシコシティ — 2022 — index art book fair</p>
+<p>2022年のindex art book fairでは、sound+がフルクサスの印刷スコアを起点に、メキシコの5名のアーティストとともに3つのパフォーマティブなアクションを発表した。キュレーションはダニエラ・キーンレ。コレクティブの代表的作品を調査し、異なる時期に発表された指示文（スコア）を選定した。</p>
+<p>選ばれたスコアは起爆装置として機能する。厳密さと曖昧さを併せ持つ指示は、歴史的・社会文化的コンテクストに応じて変容し、自由あるいはドグマ的な解釈に開かれている。音響とパフォーマンスの実験に関わるアーティストによる再読は、視覚芸術／ライブアクション／サウンド／エディトリアルのあいだに対話を生み、sound+の実験的理念と共鳴する。</p>
+</div>
+</section>
+<section aria-label="material gráfico" class="section" id="mat-grafico">
+<div class="grid grid-3-fixed" id="grid-grafico"></div>
+</section>
+<section aria-label="12 imágenes destacadas" class="section" id="destacadas">
+<div class="grid grid-3-fixed" id="grid-destacadas"></div>
+</section>
+<section aria-label="piezas" class="section" id="piezas">
+<article class="piece">
+<div class="lang lang-es active">
+<h2>pieza 1 · la máscara</h2>
+<p>sites, gerardo ponce, emiliano cruz jiménez — duración: 45 min</p>
+<p>inspirada en <em>music for electric metronome</em> (ichiyanagi toshi, 1960), publicada en <em>an anthology of chance operations</em> (1963), esta pieza convierte al metrónomo en director de escena. tres intérpretes manipulan metrónomos a distintas escalas y generan una acción circular donde el ritmo mecánico guía la aparición de sonidos electrónicos, ambientales y vocales. la máscara funciona como símbolo de encubrimiento y libertad, proyectando una reflexión performática que solo se completa en el instante de su ejecución.</p>
+</div>
+<div class="lang lang-en">
+<h2>piece 1 · the mask</h2>
+<p>sites, gerardo ponce, emiliano cruz jiménez — duration: 45 min</p>
+<p>inspired by <em>music for electric metronome</em> (ichiyanagi toshi, 1960), published in <em>an anthology of chance operations</em> (1963), this piece turns the metronome into a stage director. three performers manipulate metronomes at different scales to generate a circular action where the mechanical pulse steers electronic, environmental and vocal sounds. the mask works as a symbol of concealment and freedom, casting a performative reflection that completes only in the instant of execution.</p>
+</div>
+<div class="lang lang-fr">
+<h2>pièce 1 · le masque</h2>
+<p>sites, gerardo ponce, emiliano cruz jiménez — durée : 45 min</p>
+<p>inspirée de <em>music for electric metronome</em> (ichiyanagi toshi, 1960), publiée dans <em>an anthology of chance operations</em> (1963), cette pièce fait du métronome un metteur en scène. trois interprètes manipulent des métronomes à différentes échelles et génèrent une action circulaire où le rythme mécanique guide l’apparition de sons électroniques, environnementaux et vocaux. le masque agit comme symbole de dissimulation et de liberté, produisant une réflexion performative qui ne s’achève qu’au moment de l’exécution.</p>
+</div>
+<div class="lang lang-jp">
+<h2>作品1 · マスク</h2>
+<p>sites、gerardo ponce、emiliano cruz jiménez — 上演時間：45分</p>
+<p>本作は<em>music for electric metronome</em>（一柳慧、1960）に着想を得ており、<em>an anthology of chance operations</em>（1963）に収録されたスコアを参照する。3名の演者が異なるスケールのメトロノームを操作し、機械的な拍が電子音／環境音／声の出現を導く円環的なアクションを形成する。マスクは隠蔽と自由の象徴として働き、上演の瞬間にのみ完結するパフォーマティブな省察を投影する。</p>
+</div>
+<div class="score-img" style="margin-top:.8rem"><img alt="partitura — la máscara" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="https://d2w9rnfcy7mm78.cloudfront.net/39251283/original_eb44b667d615b174d7f87b4f89d54eaa.png?1756850684"/></div>
+</article>
+<article class="piece">
+<div class="lang lang-es active">
+<h2>pieza 2 · el método de esteban</h2>
+<p>mario alonso hernández — duración: 20 min</p>
+<p>basada en <em>music for two players I</em> (mieko shiomi, 1963), incluida en <em>events and games</em> (1964), esta acción toma las instrucciones originales como punto de partida. hernández confronta la noción de <em>player</em> con cuestionamientos ontológicos y recurre a la técnica de desfasaje utilizada por steve reich en <em>come out</em> (1966). el resultado es una composición donde texto, repetición y sonido se entrelazan para explorar la relación entre instrucción y ejecución.</p>
+</div>
+<div class="lang lang-en">
+<h2>piece 2 · esteban’s method</h2>
+<p>mario alonso hernández — duration: 20 min</p>
+<p>based on <em>music for two players I</em> (mieko shiomi, 1963), included in <em>events and games</em> (1964), this action takes the original instructions as a starting point. hernández confronts the notion of the <em>player</em> through ontological questioning and employs the phase-shifting technique used by steve reich in <em>come out</em> (1966). the result is a composition where text, repetition and sound interlace to explore the relation between instruction and execution.</p>
+</div>
+<div class="lang lang-fr">
+<h2>pièce 2 · la méthode d’esteban</h2>
+<p>mario alonso hernández — durée : 20 min</p>
+<p>fondée sur <em>music for two players I</em> (mieko shiomi, 1963), incluse dans <em>events and games</em> (1964), cette action prend les instructions originales comme point de départ. hernández confronte la notion de <em>player</em> par un questionnement ontologique et recourt au déphasage employé par steve reich dans <em>come out</em> (1966). il en résulte une composition où texte, répétition et son s’entrelacent pour explorer le rapport entre instruction et exécution.</p>
+</div>
+<div class="lang lang-jp">
+<h2>作品2 · エステバンの方法</h2>
+<p>mario alonso hernández — 上演時間：20分</p>
+<p><em>music for two players I</em>（塩見允枝子、1963。<em>events and games</em>［1964］所収）を基に、オリジナルの指示文を起点として展開する。hernándezは<em>player</em>という概念を存在論的に問い直し、スティーブ・ライヒの<em>come out</em>（1966）で用いられたフェイズ・シフティング技法を参照する。テキスト／反復／音が絡み合い、指示と実行の関係を探る構成となる。</p>
+</div>
+<div class="score-img" style="margin-top:.8rem"><img alt="partitura — el método de esteban" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="https://d2w9rnfcy7mm78.cloudfront.net/39251282/original_551e2e5bc38dfa52080b37c5c2b469a6.png?1756850681"/></div>
+</article>
+<article class="piece">
+<div class="lang lang-es active">
+<h2>pieza 3 · sin título</h2>
+<p>sol oosel — duración: 30 min</p>
+<p>retomando <em>drinking piece for orchestra</em>, publicado en <em>grapefruit</em> (yoko ono, 1964), sol oosel construye una intervención sonoro-espacial. el carácter poético de las instrucciones se transforma en un campo de incertidumbre donde el espectador enfrenta lo incognoscible. la pieza celebra la apertura de fluxus hacia lo indefinido, haciendo del azar y la percepción colectiva los materiales centrales de la acción.</p>
+</div>
+<div class="lang lang-en">
+<h2>piece 3 · untitled</h2>
+<p>sol oosel — duration: 30 min</p>
+<p>drawing on <em>drinking piece for orchestra</em>, published in <em>grapefruit</em> (yoko ono, 1964), sol oosel builds a sound–spatial intervention. the poetic character of the instructions becomes a field of uncertainty in which the spectator faces the unknowable. the piece embraces fluxus’ openness to the indeterminate, making chance and collective perception the central materials of the action.</p>
+</div>
+<div class="lang lang-fr">
+<h2>pièce 3 · sans titre</h2>
+<p>sol oosel — durée : 30 min</p>
+<p>en s’appuyant sur <em>drinking piece for orchestra</em>, publié dans <em>grapefruit</em> (yoko ono, 1964), sol oosel compose une intervention sonoro-spatiale. le caractère poétique des instructions devient un champ d’incertitude où le spectateur affronte l’inconnaissable. la pièce assume l’ouverture de fluxus à l’indéterminé en faisant du hasard et de la perception collective les matériaux centraux de l’action.</p>
+</div>
+<div class="lang lang-jp">
+<h2>作品3 · 無題</h2>
+<p>sol oosel — 上演時間：30分</p>
+<p>小野洋子『<em>grapefruit</em>』（1964）所収の<em>drinking piece for orchestra</em>を参照し、音と空間を横断する介入を構築する。詩的な指示は不確定性の場へと変容し、観客は不可知なものと向き合う。フルクサスが志向した不定形への開放を受け継ぎ、偶然性と集合的知覚を行為の中核に据える。</p>
+</div>
+<div class="score-img" style="margin-top:.8rem"><img alt="partitura — sin título" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="https://d2w9rnfcy7mm78.cloudfront.net/39251281/original_f55fc0061ce199364e8c9ac5e3bae70d.png?1756850679"/></div>
+</article>
+</section>
+<section aria-label="pozole" class="section" id="grid-pozole">
+
+<div class="grid grid-6m-4d" id="pozole"></div>
+</section>
+<section aria-label="rebeca" class="section" id="grid-rebeca">
+
+<div class="grid grid-6m-4d" id="rebeca"></div>
+</section>
+<section aria-label="verticales" class="section" id="grid-verticales">
+<div class="grid grid-3-fixed" id="verticales"></div>
+</section>
+</main>
+<div aria-hidden="true" id="lightbox">
+<button aria-label="cerrar" id="lbClose" style="display:none !important">cerrar</button>
+<figure id="lbFig"></figure>
+</div>
+<script>
+  (function(){
+    const buttons = document.querySelectorAll('.language-selector button');
+    function setLang(code){
+      document.querySelectorAll('.language-selector button').forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
+      document.querySelectorAll('.lang').forEach(el=>el.classList.toggle('active', el.classList.contains('lang-'+code)));
+    }
+    buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));
+  })();
+
+  function createTile(src, isVideo=false){
+  const fig=document.createElement('figure');
+  fig.className='tile';
+  if(isVideo){
+    const v=document.createElement('video');
+    v.muted=true; v.loop=true; v.autoplay=true; v.playsInline=true; v.preload='metadata';
+    const s=document.createElement('source'); s.src=src; s.type='video/mp4';
+    v.appendChild(s);
+    fig.appendChild(v);
+    // no overlay, no click-to-unmute
+  }else{
+    const img=document.createElement('img');
+    img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer';
+    img.src=src; fig.appendChild(img);
+    fig.addEventListener('click',()=>openLightbox(`<img src="${src}" alt="">`));
+  }
+  return fig;
+}
+
+  function openLightbox(html){
+  const lb=document.getElementById('lightbox');
+  const fig=document.getElementById('lbFig');
+  fig.innerHTML=html;
+  lb.classList.add('open');
+}
+  
+  const MAT_GRAFICO = [
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251308/original_41184e5f9b0eb13554b59f8d2cd9cfd7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251311/original_5f5268fae3d31054ed4a432a4fe3b84c.png',
+    {v:'https://attachments.are.na/39251312/e723c22e9bb319423669107db52fd939.mp4'},
+    {v:'https://attachments.are.na/39251315/ae3a2a33d18b558acdc214096d678bff.mp4'},
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251316/original_92d7662f39ec03bf049621c1318c5f48.png',
+    {v:'https://attachments.are.na/39251317/c2233f2171560872a8884873dae929cb.mp4'},
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251318/original_6c98ff019cade6792238e22448c676c8.png',
+    {v:'https://attachments.are.na/39251320/586e3f8fb669e5227365c4004e6bea2c.mp4'},
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251322/original_a1849d6a0ada237c5a15ed2c96707b3e.png'
+  ];
+
+  const DESTACADAS_12 = [
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251289/original_3b33a27cef16acc23549044f7a538fb6.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251290/original_b88e5877204ad80c18000c0a1cf4b8cf.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251291/original_3dfcbd0944c741d05a7fcd47ba8365d9.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251293/original_411c61486afe48f1e2a7a6ae03c6838e.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251294/original_19db52a34d47cbf8ed135c1bbeb8b943.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251295/original_b955c90326c79939966255aff6625f69.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251296/original_dc11566d69db74de255a70e283dc2cde.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251297/original_2d0828ba255b02fa79d9f13ef581b75e.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251298/original_f92731b482c8264aa4b58bb80f46e656.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251949/original_1c0affad606869ea5d6dfdf6fbeefa10.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251300/original_6ca35622deeff137dc28247c3f87d7d2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251301/original_6915270f0d7b4b2b7863ef6c7cbc28ab.jpg'
+  ];
+
+  // POZOLE: lista larga
+  const POZOLE = [
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251610/original_62ec72ef842b709c50932b53cc3f64ea.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251612/original_9565a269f5bdf429acdc5e86e33553d4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251614/original_34bae00dd07aafd3dd67e05f5269d72d.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251615/original_63ce8d7a7f292fe9c1d60a4b2e899af1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251616/original_846f04b3806f82a967107add2b3e46fc.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251617/original_83d7a2f5e2c234502abde02f29b67fa4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251618/original_4634f92af244af46e6c9796ea0635011.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251619/original_4fbb3933aa487f4bd9f13b4dc1beea05.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251620/original_3793a2ef13cf7a54fd523a5fb5482d0a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251621/original_9d92520b598918b9300c262230216394.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251623/original_1422229212230aab09bf09c1f4a83717.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251624/original_1a2baa3b82135de5c5d35a6c6498fee0.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251625/original_640a2a7d56de07cc3befbb9916f1eeff.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251627/original_57c9d18ce2566712756d7f514eaf08b9.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251628/original_8426943ca50ac73c5e3be5640d3480f0.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251629/original_152cd4c83d1609649e981a8102e327a2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251630/original_36be955b99103d2138ab62a56af942f3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251631/original_a2845359028e8fb900446f268ffc2532.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251632/original_d78b7113b1a9872cda1ee70d5937b287.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251633/original_d07e136f8dbfafb3f3ee4d32ec791d98.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251634/original_bc38e819c89903257f0a69e47578a66b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251635/original_2dccd860a8e4528cc15219dc45ab5ec3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251637/original_7000f4a77d52699b90154621465db286.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251639/original_5a1aed7bb8f0c33592e64010b2818683.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251640/original_aa118f9bfb6a165c5cf12e3eb3ee00b5.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251641/original_e481515b4b12c62a5d63698caf87f6e1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251642/original_9145f9986fa4dc86e4bceb7ce6245895.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251643/original_cea619d417bcb001e8015dc997c53c1c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251644/original_3dce7fafe0bb9d114260507ab0ba6804.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251646/original_099f88367d1dd1ae1e29b725b9575e16.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251648/original_d109656dd5d9de4a6ce81a361b72f17a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251649/original_d4580959bca29b94ba375d9ca4a9c64d.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251650/original_8d8992e467a3d2525f24fd094cb23473.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251651/original_8b48a35eca85f0b3122ff40af16dc8bf.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251652/original_eb6622e91694bdce0efc594f7d5fe29a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251653/original_d456c79f4b0bcc082916ca746afe2bca.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251654/original_6ec57d86607340a7f2fc5c49f3d57859.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251655/original_95b4804d90cf96be420baa2051fadcaa.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251671/original_eaebb554369fd4381801bac060709b36.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251673/original_2276c4a0eb2aa2be22a8021e968f1caa.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251674/original_06ed02198efb50410e687f6f35fd3565.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251675/original_6e7b7fdd9b5e0fee08f9dcde2642d8f5.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251676/original_4ea8d4ae17563a4b6437e6d01de0cad4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251677/original_ca0631c85eaca7918ffc43fd808355ce.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251678/original_d4a3c0a2fcd5931ad618e048ef471437.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251681/original_ae2cda46dffdc6c310c1c8733cba6329.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251682/original_b3cb7a8918693e9f383266cc1f8a0f5f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251684/original_fd45940674d9df7bad57ba450c8e4c41.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251685/original_6494804b4150d5ab2f0e2392eec8f7c5.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251686/original_5c124f04f1a3fcdcaa79457160a1a70c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251687/original_f5827b6ee1fa9a34db40a03bf22c1287.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251688/original_92f935d3ab1281496233e98a34388d6f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251689/original_2e3f8aaf85a4f7ad163913ca1eeb80b4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251690/original_26cca6889354718710d5d23762fc8c49.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251691/original_1c0aaf0ff6e59154c36586e97b98b9da.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251692/original_199f4e78b68f82d18d07a60ce6bbb952.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251693/original_f5d8cc670198313563296bc57f0c34fb.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251694/original_eb82c8b30b9f7e42fdd811881f5123c6.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251695/original_f99a9ec3bdde05765b8f104c5617a0bc.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251696/original_5e8414cd53c9ae661c434b96d28672af.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251698/original_51da513372367adbfec70ffa4df01999.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251700/original_ec2eac1fdfef7d3eba37c8ade838ee4c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251701/original_8c197ab9ae197ec412018f8ebd5a4f62.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251703/original_25ba85d3895f356967b01a1a780e0f64.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251702/original_96bd1b45b90a04bd5f75c97ceaa0a197.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251705/original_5a3125103f6d640718e8e405e0520840.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251706/original_036cd525d2f3b37d9769e550fff41cc9.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251707/original_cc7f948c577431f4a99aceb9d6c4275e.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251708/original_f3f9e15e1ce4dce297e43bad5a7fb0fd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251710/original_bcf5d03af61f4ae897384541a8782e4b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251711/original_9a1898f1fee3762d571e653d92296160.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251712/original_ecdafab75e38ac57f1e596f44ad2dcbd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251713/original_940ec98baa7b98a1ea43992af20a9772.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251714/original_2d0fa29a1899b4f4765af91097952889.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251715/original_bb7225c42302af95047c3058ba677f54.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251732/original_0655076d67439f67c2c2e0b23959506b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251733/original_15da94a969b861bd8b8a7b3168a616ed.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251734/original_4f5da322fc1c02a5dbeb77357e63e51a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251735/original_0d071edf8ec16118f6aad06052adb22f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251736/original_0dd6d1ff57a374807198e9450fc0a01c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251737/original_eb7be633b5309210f72c7bc288e509b4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251738/original_7750295ef8e0675736bcb6036c773ee2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251739/original_bd3b9bbab54f5e7e4a2090ed677363b1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251740/original_e037e69af97402fe20ff65f0f3be8b7d.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251741/original_9d46ea751480fec3fc9ae111cf86a01f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251743/original_10e4818620bf46c3bf9f476ad1309b77.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251744/original_818f5d5ef0ede717eb6cd39229609f17.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251745/original_4de39e62516b71239be8c5b0e33dfb77.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251746/original_7dc53ffa8bc4216b2d440f4704561ee7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251747/original_45a17c712f3226d86cede28f7bcfd576.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251748/original_f3ecbb22497fe0f552c46258edc0683c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251749/original_4214b8724344aeaa2c707ccdb3247abc.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251750/original_549889275ee2bfa7d71d88505c0d7537.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251751/original_6398c3d82dc01616ab0683301339328f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251752/original_6b9e15f49dc527cb955b3b10eb754d34.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251753/original_4f1f31c4b0c856d5b00b2f4fce038579.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251754/original_9a65be47bbc4177e99a4d9d331ecddba.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251755/original_17f82dfd34390d59a8097c0bc489a63d.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251756/original_12c03f85f5768d779f456b5ad8327546.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251757/original_ef436d9af2c9cce1e37a468a9788ed1a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251759/original_7367deedecdd95b6b1e4edda822130b7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251760/original_68aa37bb20fb3acc9674106233e0c978.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251761/original_6fde67bce5f682333edd54d0ac6528d9.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251762/original_20c85e588c743dfc9c7613aabce75347.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251764/original_4a5478b13b58dab14978612e01d7b324.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251765/original_76e7e8a79a7e7643e0d5c0c253494ff3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251766/original_24465840578694a2a1c657d627a78dbb.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251767/original_0471f740c918d71c80425a358bd3f808.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251768/original_6deeb0ae9221593570d59dd4c8300232.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251769/original_b26e6a1347d3248f0a5c29310e9f39da.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251770/original_7f3195d5fffbb8acbcbefb7d8fab72ea.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251771/original_6a5110aa26f6988e799d0fc32f22cac8.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251772/original_7222d7cb806ebb4f7f99d9e2bfc0e219.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251773/original_7afeb3fe64de31e39f34eff834d6f1d7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251774/original_259dc8ac469701c4a915ed3162c21aa7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251790/original_fd54537a9de101b8ee4165bea750c91f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251791/original_364449ec40f0003ab3c5a4f14ab30ede.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251797/original_89558b9ee5d105f4b2128d304a144520.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251798/original_d38aa52e07cf4218fa66c942e45e79d7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251800/original_a1bad38e5ee53fdb6d7e9cbc956d7a22.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251801/original_e7e909258b253b88c592755d11e6e5d1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251802/original_714d5ac7d3b2a39c6cc2d12f1eb9a068.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251803/original_4ffd65ac835c7a3d23c646c17a43fedf.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251804/original_ff76318db894f510e45bf66b79e26b32.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251805/original_6587c14763fb6fdb21134dceb00bbd1b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251806/original_889a5ae400980121b22b14dbcada834a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251807/original_e6c5d1ae25fdab8ed3ba416a6ebb22d2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251809/original_0ff36837464a0fc9c341507b1f8b22a2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251810/original_ba026000380357f4964d61bc5ce68fd4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251811/original_f7709fdb77a76949a84cf0b70285219b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251812/original_79e9d31a878149efef45d938467f23df.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251813/original_4bcb0018773340e26595ff26a43b1f90.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251814/original_a1383c6c9eab9d4925683fa0395b7bba.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251815/original_d12c97bc2fd92d6bd662ee1b78756d4a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251816/original_3d2932db613608cd09b59684fdc9d3f2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251817/original_a83afe5faf1b73ac54be9b563b55e7c9.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251818/original_26159803832d05ac9f49fdcf8303bdf4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251819/original_532bcf558abc6e8aab3e076b024a8088.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251820/original_cdf1778af1e697cadc5a55b6c68f8b16.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251822/original_f52a957fad939aeaa7b14b3a43b93ca1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251823/original_03e2fd4ceb5ede23910f171ba6aff57a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251828/original_d8f16e1cda8a1fe01a2e5059d9bb7af3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251827/original_b098a3a2d1a5d6860ede0f193a43cc2b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251825/original_bb590622833334e1ba42f422947f1a0b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251826/original_545000b0fd37c21b4fb19e746c45de45.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251829/original_4fa6ec7b4d4953687a2d47f76631fa2a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251824/original_20b1763adafc5bb8065522baca7dc8d1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251831/original_62985d875a9c8e989eda154526d3ebcd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251832/original_00263e80a47b82265f5f4a3e45919bd1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251833/original_c339de8871c5d57cc944fae516046915.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251835/original_f6b9afd078b2a7ef38c832af4bf3d44f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251834/original_39d4947636c1e105ae0e571e987cfd9c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251836/original_865113e778b12e58ade25f932b2de0ba.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251857/original_12d30641012b42708b695df866afb4ed.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251859/original_5c44434c1d09f108c34d557519b8871f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251860/original_85e27aace14dcf186ee3feb36a0f4340.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251862/original_ac9c9252b000d9b87bef6d179b812545.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251863/original_7345cebe823ca6223815a1dbd3bb0fad.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251865/original_f60d720839bb099822d5cded85c36308.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251866/original_72d22d5e426315cdd97162881d373e1f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251867/original_f417c24ea2a633628512989ddeba3a9f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251868/original_704fa109104ffd13c1055600d474b342.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251869/original_31972a8716bb3d067e4c4def51614956.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251871/original_8c71c230d6b33f16d1b08fc3f4a7d8e3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251872/original_718b7cec61b311fec3ed460f39f1adf8.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251873/original_18aac6d26bc563c867d50741322b5355.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251875/original_58057f88ccedd132f679e5fabd3ec4fd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251874/original_d1d7bd649734e2516dbe5fb844a0dbed.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251876/original_e29c52b6b9dd2b31545af67e424fc274.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251877/original_69545234be48e1ebfc1ac60f0ecb68e1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251878/original_a524e8bdb2a3693fa22dd4a2a90052b8.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251880/original_b2b92c13004d6e2e181b18a826471bcd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251881/original_9ecf5691d0b98c4af3da5f8f2440f1bd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251882/original_9b6fe28de5e06b3325ee28c2a9dc9e6b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251883/original_e0361fc6d41851d27f8ae853f52a39c7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251884/original_e016604feaa31151b23e1314e6142f23.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251885/original_475e3760dead934dc9b5abb1e029d8e0.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251886/original_653e709dbfca27423c5da7c9131e6f37.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251890/original_a7ae65eecb072af0be80a75ecd1a630a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251891/original_5901214a442b3b2396ad4672ddfa0031.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251895/original_bee2769fb9acbf8b19b8c31f539e48b8.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251894/original_c85ddfcf6009dbda424bb3be7de4d690.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251892/original_457e62b997826f3fd40f4d8ac85275de.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251893/original_c1dcc59e18607668c608fc701ff792f5.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251896/original_2c5e790d105884e262afc13bffd0240f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251897/original_67ca2559ef185034ec436bbb75a5bb6c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251898/original_c3289ed89e0102772edd4319987d28ff.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251899/original_f64c1aec77651bf1c54d9d4bb3a0a1df.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251900/original_f57f477589138f9497e249f7b985a795.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251913/original_448fe84fa324261ddb55b857842a8ab8.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251914/original_87287040bd37d2a9c1a7d9173b17ee18.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251915/original_7b00dbdeef2453614c5e1ac99bed1b4f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251917/original_d3ba55c19d33e1753036278736b6d332.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251916/original_403d72570370d797f9e12c92ac1a9fe5.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251918/original_1db106499d46d681a7411ba15209ac47.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251919/original_ab259242ecf976393926aa9fe697be76.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251920/original_29e2a206ba2f5f49dba0906adc607195.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251921/original_913182d94cb241c988a30221464f3f37.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251922/original_b5a6e9ddc3c8c7cf997abd262c872506.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251924/original_052df53f6fbce5e5aaa03ffd5c5e5991.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251925/original_5b90b5ca6e34d12231964ef54baff69d.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251926/original_f4a0e227a507ad02893cb5ad1a252a8b.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251927/original_047043bf9fadeb783d1bc4833a5fc6bd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251928/original_18857ac37eba61a5f8ea35ef944f6d96.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251929/original_00c3ea1163989d6d9e28a906b6cb6dbd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251930/original_5c49ce4c47790ac1ce9003362cd3d360.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251931/original_3e1a614190e19e7830636dc935b156ca.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251933/original_3c7313cba043c4664aa81cac776fbe74.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251935/original_fea4be328c8d73024aaa6282d6307972.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251936/original_368a5a6af69338cb79ff4ad760a3e2ce.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251937/original_1013d6bb88790978e544a14f4126bd37.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251938/original_dbdfd72363377e6f7a1629c73eb5e866.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251939/original_49d91b80d6c25eba596c57ac4c401a86.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251940/original_a056357e2347cfc61c743758ec537c44.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251941/original_98eaff9177ab4cfbfb25d45279c8e99a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251942/original_6c94f9b238f1b0c0e75a4010460ecfe0.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251943/original_45ef19336d2dffd0d48b3b3cecbce157.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251944/original_c7698d935c4f7842fb10c0277a9216d7.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251945/original_f81afe79b94be5ff7e583f8df7a8c6a3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251947/original_f59a282e80155c58a1b5733a4ead6b3e.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251948/original_254ac5e4e75fb69a3c95cdc88b9cc750.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251949/original_1c0affad606869ea5d6dfdf6fbeefa10.jpg'
+  ];
+
+  const REBECA = [
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250988/original_ef0dc7592d1d82651b0c8485e756c7c4.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250989/original_2c31c553feb488b948112d78f601d55c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250990/original_68d9b2ed7f2c8f4dfd815134faf9899a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250991/original_beac8b41296a570c2048201e5e2eaba2.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250992/original_50a65656251bef128ea066da2202af72.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250994/original_f0c58cc0b51e53e8997a43f9ac335d3c.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250993/original_40abab3a81f264f2e75a60c394e61847.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250995/original_c922284f52c2ecfb9c8479bb820242da.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250996/original_7ac0ddf05df5f2562ae60a881831dce1.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250997/original_8556d3dce2f2204eb21a572c03494f89.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250998/original_b52d6f9b31cf6c12ef6ba74a5e0c488a.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250999/original_457045f3281d7d610e4b3c5770abb71f.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251000/original_a6bc698801447a470090878c50925be3.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251001/original_4ba66a95f0faba754993e9c77ea02bd8.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251002/original_c33f49fb1d9b3e30c1c93ba57bf6c618.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251003/original_46381c11d15d83a5a9bfc99875d7fb05.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251004/original_f44acf8784f90ac7add46409b40f21fb.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251005/original_d2c38463b31b4b43086997098e8bd4cd.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251006/original_55176b01c562f5184aa73b46f09e0e30.jpg',
+    'https://d2w9rnfcy7mm78.cloudfront.net/39251007/original_dbb14e5701052a996754633cb1526ab4.jpg'
+  ];
+
+  const VERTICALES = [
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250970/original_2ed57c3db8a078d7f705133bc0138be6.jpg',
+    {v:'https://attachments.are.na/39250971/6a892aa20d7e523a19ec7280eac52d92.mov'},
+    {v:'https://attachments.are.na/39250972/9b45d224bbafd3f1f3d6bd541ad6cb5a.mov'},
+    {v:'https://attachments.are.na/39250973/053c36fb29be6874efeea1d368786dfd.mov'},
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250974/original_b9a4da96a29c0022b876ac7c0afc7ebd.jpg',
+    {v:'https://attachments.are.na/39250975/493c52ec1852bf945f01f8a21a9aa818.mov'},
+    {v:'https://attachments.are.na/39250976/5ab845f060bf27b6e9c09e6096ff6eda.mov'},
+    'https://d2w9rnfcy7mm78.cloudfront.net/39250978/original_43f6be1abcb90f7ce355784188dcae62.jpg',
+    {v:'https://attachments.are.na/39250979/762ed660086644193dadb69e3e5b892f.mp4'},
+    {v:'https://attachments.are.na/39250980/757d52dabe90c6d41711c036082d8626.mov'},
+    {v:'https://attachments.are.na/39250982/91c596291912db5397fa745c9e9c8e19.mov'},
+    {v:'https://attachments.are.na/39250983/8d07a7300e8c25601ade6994051c5580.mov'}
+  ];
+  
+  function renderList(containerId, list){
+    const wrap=document.getElementById(containerId);
+    const frag=document.createDocumentFragment();
+    list.forEach(item=>{
+      if(typeof item==='string'){
+        frag.appendChild(createTile(item,false));
+      }else if(item && item.v){
+        frag.appendChild(createTile(item.v,true));
+      }
+    });
+    wrap.appendChild(frag);
+  }
+
+  renderList('grid-grafico', MAT_GRAFICO);
+  renderList('grid-destacadas', DESTACADAS_12);
+  renderList('pozole', POZOLE);
+  renderList('rebeca', REBECA);
+  renderList('verticales', VERTICALES);
+
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      const v=e.target;
+      if(e.isIntersecting){ v.play().catch(()=>{}); }
+      else { v.pause(); }
+    })
+  },{threshold:.25});
+  const obs=()=>document.querySelectorAll('video').forEach(v=>io.observe(v));
+  document.addEventListener('DOMContentLoaded', obs);
+  
+// click anywhere on overlay to close
+(function(){
+  const lb=document.getElementById('lightbox');
+  if(!lb) return;
+  lb.addEventListener('click', ()=>{
+    lb.classList.remove('open');
+  }, {passive:true});
+})();
+</script>
+<script id="xpan-boot-2025-09-02">
+(() => {
+  // Lazy load images
+  const imgs = Array.from(document.querySelectorAll('img.lazy-pending'));
+  const vids = Array.from(document.querySelectorAll('video.lazy-pending'));
+  const onEnter = (el) => {
+    if (el.tagName === 'IMG') {
+      el.addEventListener('load', () => { el.classList.remove('lazy-pending'); el.classList.add('lazy-ready'); }, { once:true });
+      if (el.complete) { el.classList.remove('lazy-pending'); el.classList.add('lazy-ready'); }
+    } else if (el.tagName === 'VIDEO') {
+      const sources = el.querySelectorAll('source[data-src]');
+      let assigned = false;
+      sources.forEach(s => {
+        if (!s.getAttribute('src')) { s.setAttribute('src', s.getAttribute('data-src')); assigned = true; }
+      });
+      if (assigned) { el.load(); }
+      const playIfAllowed = () => {
+        if (el.hasAttribute('autoplay') || el.dataset.bg === 'true' || (el.muted && el.loop)) {
+          el.play().catch(()=>{});
+        }
+      };
+      el.addEventListener('loadeddata', () => {
+        el.classList.remove('lazy-pending'); el.classList.add('lazy-ready'); playIfAllowed();
+      }, { once:true });
+    }
+  };
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(({isIntersecting, target}) => {
+      if (isIntersecting) { onEnter(target); io.unobserve(target); }
+    });
+  }, { rootMargin: '400px' });
+  imgs.forEach(el => io.observe(el));
+  vids.forEach(el => io.observe(el));
+
+  // iOS autoplay assist for background videos
+  window.addEventListener('load', () => {
+    document.querySelectorAll('video[data-bg="true"]').forEach(v => {
+      v.muted = true; v.loop = true; v.playsInline = true;
+      v.play().catch(()=>{});
+    });
+  });
+
+  // Lightbox: tap/click anywhere to close. No explicit close button needed.
+  const overlaySelectors = ['.lb', '.lightbox', '.image-viewer', '.modal--lightbox', '.viewer'];
+  document.addEventListener('click', (ev) => {
+    const ov = ev.target.closest(overlaySelectors.join(','));
+    if (!ov) return;
+    // Close only if it's an image/video overlay
+    if (!ov.querySelector('img, picture, video, figure')) return;
+    if (ov.classList.contains('open')) ov.classList.remove('open');
+    ov.style.display = 'none';
+    ov.setAttribute('aria-hidden', 'true');
+  }, { passive:true });
+})();
+</script></body>
+</html>
