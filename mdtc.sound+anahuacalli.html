@@ -502,11 +502,14 @@
   (()=>{const img=qs('#heroImg');function setVP(){document.body.classList.toggle('is-landscape',innerWidth>innerHeight);}function layout(){if(!img)return;const vw=innerWidth*.86,vh=innerHeight*.86;const iw=img.naturalWidth||1200,ih=img.naturalHeight||1800;const rot=innerWidth>innerHeight;img.classList.toggle('rot',rot);const ar=rot?ih/iw:iw/ih;let W=vw,H=W/ar;if(H>vh){H=vh;W=H*ar;}img.style.width=Math.round(W)+'px';img.style.height=Math.round(H)+'px';}setVP();['load','resize','orientationchange'].forEach(ev=>addEventListener(ev,()=>{setVP();layout();}));img&&img.addEventListener('load',layout);layout();})();
 
   // Lightbox / Fullscreen unificado
-  (()=>{const lb=qs('#lightbox'),lbImg=qs('#lbImg'),lbVid=qs('#lbVid');let groupEls=[],groupIndex=0,currentGroup=null,startX=0;function openOverlay(){
+  (()=>{const lb=qs('#lightbox'),lbImg=qs('#lbImg'),lbVid=qs('#lbVid');   let blockUntil = 0; let groupEls=[],groupIndex=0,currentGroup=null,startX=0;function openOverlay(){
   document.body.style.overflow='hidden';
   lb.classList.add('open');
+
+
 }
     function closeOverlay(){
+  blockUntil = performance.now() + 350;
   lb.classList.remove('open');
   document.body.style.overflow='';
   lbVid.muted=true; lbVid.pause(); lbVid.removeAttribute('src'); lbVid.load();
@@ -1309,5 +1312,38 @@ window.GRID_POZOLE = [
 
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded', observeInlineVideos);} else { observeInlineVideos(); }
   </script>
+
+  <script>
+/* Anti tap-through global: bloquea re-click 400ms después de cerrar!!!!!!!! */
+(() => {
+  let suppressUntil = 0;
+
+  // 1) Cancela cualquier click mientras esté activo el supresor (captura)
+  document.addEventListener('click', (e) => {
+    if (Date.now() < suppressUntil) {
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }, true);
+
+  // 2) Detecta el overlay de lightbox si existe y activa supresión al cerrar por tap
+  const lb = document.getElementById('lightbox');
+  if (lb) {
+    // Cerrar por tap en overlay suele ocurrir aquí. Marcamos supresión y dejamos que tu close() haga lo suyo.
+    lb.addEventListener('click', (e) => {
+      // Si el tap fue sobre el propio overlay (no dentro de la figura/media), activa supresión
+      const insideFigure = e.target.closest('#lbFig') || e.target.closest('#lbFigure');
+      if (!insideFigure && (e.target === lb || lb.contains(e.target))) {
+        suppressUntil = Date.now() + 400;
+      }
+    }, true); // captura para adelantarnos a tus otros listeners
+  }
+
+  // 3) Si tus scripts disparan un evento propio al cerrar, también lo atendemos
+  window.addEventListener('xpan-lb-closed', () => { suppressUntil = Date.now() + 400; });
+})();
+</script>
+
 </body>
 </html>

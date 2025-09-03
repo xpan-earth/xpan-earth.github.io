@@ -576,6 +576,37 @@ const expMedia = [
 })();
 </script>
 
+<script>
+/* Anti tap-through global: bloquea re-click 400ms después de cerrar */
+(() => {
+  let suppressUntil = 0;
+
+  // 1) Cancela cualquier click mientras esté activo el supresor (captura)
+  document.addEventListener('click', (e) => {
+    if (Date.now() < suppressUntil) {
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }, true);
+
+  // 2) Detecta el overlay de lightbox si existe y activa supresión al cerrar por tap
+  const lb = document.getElementById('lightbox');
+  if (lb) {
+    // Cerrar por tap en overlay suele ocurrir aquí. Marcamos supresión y dejamos que tu close() haga lo suyo.
+    lb.addEventListener('click', (e) => {
+      // Si el tap fue sobre el propio overlay (no dentro de la figura/media), activa supresión
+      const insideFigure = e.target.closest('#lbFig') || e.target.closest('#lbFigure');
+      if (!insideFigure && (e.target === lb || lb.contains(e.target))) {
+        suppressUntil = Date.now() + 400;
+      }
+    }, true); // captura para adelantarnos a tus otros listeners
+  }
+
+  // 3) Si tus scripts disparan un evento propio al cerrar, también lo atendemos
+  window.addEventListener('xpan-lb-closed', () => { suppressUntil = Date.now() + 400; });
+})();
+</script>
 
 </body>
 </html>
