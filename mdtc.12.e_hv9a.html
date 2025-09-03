@@ -39,6 +39,12 @@
       .gallery img,.gallery video{aspect-ratio:auto;}
       .image-block{width:100px;height:100px;}
     }
+
+    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:9999}
+#lightbox.open{display:flex}
+#lightbox figure{margin:0;max-width:92vw;max-height:92vh}
+#lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
+
   </style>
 <link crossorigin="True" href="https://attachments.are.na" rel="preconnect"/><link crossorigin="True" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
 <style>
@@ -302,6 +308,91 @@
   }
 })();
 </script>
+
+<div id="lightbox" aria-hidden="true">
+  <figure id="lbFig"></figure>
+</div>
+
+<script>
+(function(){
+  const lb = document.getElementById('lightbox');
+  const fig = document.getElementById('lbFig');
+
+  // Elementos reales de la galería (no URLs estáticas)
+  const itemsEls = Array.from(document.querySelectorAll('.gallery img, .gallery video'));
+  let idx = 0;
+
+  function getSrc(el){
+    if (el.tagName.toLowerCase() === 'video') {
+      const s = el.querySelector('source');
+      return (el.currentSrc || el.src || (s && (s.currentSrc || s.src || s.dataset.src)) || el.poster || '');
+    }
+    return el.currentSrc || el.src || el.dataset.src || '';
+  }
+
+  function ensureLoaded(el){
+    if (el.tagName.toLowerCase() === 'img') {
+      if (!el.src && el.dataset.src) el.src = el.dataset.src;
+    } else {
+      const s = el.querySelector('source');
+      if (s && !s.src && s.dataset.src) { s.src = s.dataset.src; el.load(); }
+    }
+  }
+
+  function render(i){
+    const el = itemsEls[i];
+    const src = getSrc(el);
+    if (!src) return; // no render si aún no hay URL
+    fig.innerHTML = (el.tagName.toLowerCase() === 'video')
+      ? `<video controls autoplay playsinline preload="metadata"><source src="${src}" type="video/mp4"></video>`
+      : `<img src="${src}" alt="" draggable="false">`;
+  }
+
+  function open(i){ idx=i; ensureLoaded(itemsEls[idx]); render(idx); lb.classList.add('open'); }
+  function close(){ lb.classList.remove('open'); fig.innerHTML=''; }
+
+  // Abrir desde miniaturas
+  itemsEls.forEach((el,i)=>{
+    el.addEventListener('click', e => {
+       e.preventDefault();
+       ensureLoaded(el);
+       open(i);
+    }, {passive:true});
+  });
+
+  // Cerrar tocando overlay
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+
+  // Teclado
+  document.addEventListener('keydown', e=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') close();
+    if(e.key==='ArrowRight'){ idx=(idx+1)%itemsEls.length; ensureLoaded(itemsEls[idx]); render(idx); }
+    if(e.key==='ArrowLeft'){ idx=(idx-1+itemsEls.length)%itemsEls.length; ensureLoaded(itemsEls[idx]); render(idx); }
+  });
+
+  // Swipe mouse/touch
+  let startX=null, dragging=false;
+  function getX(e){ return e.touches?.[0]?.clientX ?? e.changedTouches?.[0]?.clientX ?? e.clientX; }
+  function onDown(e){ if(lb.classList.contains('open')){ startX=getX(e); dragging=true; } }
+  function onUp(e){
+    if(!dragging) return;
+    const dx = getX(e) - startX, TH = 40;
+    if(Math.abs(dx) > TH){
+      idx = dx < 0 ? (idx+1)%itemsEls.length : (idx-1+itemsEls.length)%itemsEls.length;
+      ensureLoaded(itemsEls[idx]); render(idx);
+    } else { close(); }
+    dragging=false; startX=null;
+  }
+  lb.addEventListener('pointerdown', onDown);
+  lb.addEventListener('pointerup', onUp);
+  lb.addEventListener('touchstart', onDown, {passive:true});
+  lb.addEventListener('touchend', onUp, {passive:true});
+
+  lb.addEventListener('dragstart', e => e.preventDefault());
+})();
+</script>
+
 
 </body>
 </html>

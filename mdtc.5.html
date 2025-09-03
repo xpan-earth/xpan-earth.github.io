@@ -716,6 +716,11 @@
     }
     wireGalleryForSection('images15','[data-section="images15"]');
 
+    wireGalleryForSection('images24a','[data-section="images24a"]');
+    wireGalleryForSection('images24b','[data-section="images24b"]');
+
+
+
     /* a.e.i render base */
     function renderAEI(stage, linesSVG, urls){
       const blocks=[], MAX_AT_ONCE=Math.min(urls.length,42);
@@ -1150,6 +1155,11 @@ media.walkthrough = media.assets6.slice(1, 5);      // 2º–5º como recorridos
   });
 </script>
 <script>
+  renderTightGrid('images24a', media.images24a, false);
+  renderTightGrid('images24b', media.images24b, false);
+</script>
+
+<script>
 /* ajuste de tamaño del lightbox según el aspecto real del medio */
 (function(){
   const lb = document.getElementById('lightbox');
@@ -1197,5 +1207,20 @@ media.walkthrough = media.assets6.slice(1, 5);      // 2º–5º como recorridos
   };
 })();
 </script>
+<script>
+(function(){
+  const lb = document.getElementById('lightbox');
+  let x0 = null;
+  lb.addEventListener('pointerdown', e => { x0 = e.clientX; });
+  lb.addEventListener('pointerup', e => {
+    if (x0 == null) return;
+    const dx = e.clientX - x0;
+    if (Math.abs(dx) > 40) { dx < 0 ? nextLB() : prevLB(); }
+    else { closeLightbox(); }
+    x0 = null;
+  });
+})();
+</script>
+
 </body>
 </html>
