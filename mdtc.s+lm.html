@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light"/>
+  <title>sound + — listening material — xpan</title>
+
+  <!-- Perf + origins -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+
+  <!-- Site utils ya usados en xpan -->
+  <script src="/assets/js/media-proxy.js" defer></script>
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+
+  <style>
+    :root{
+      --bg:#fff; --fg:#000; --line:rgba(0,0,0,.12); --soft:rgba(0,0,0,.06);
+      --maxw:1440px; --pad:16px; --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
+    img,video{display:block;max-width:100%;height:auto}
+    a{color:inherit;text-decoration:none}
+
+    /* Header + lenguaje (alineado a referencias) */
+    header{position:fixed;top:1rem;left:1rem;z-index:30}
+    header img{width:50px;height:auto;display:block}
+    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
+    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;opacity:.5;transition:.2s}
+    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+
+    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1.1rem}
+    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.2rem 0;text-transform:lowercase}
+    h2{font-size:1.02rem;margin:.2rem 0;text-transform:lowercase}
+    .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
+    .description{font-size:1rem;line-height:1.58;max-width:980px}
+    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    .muted{opacity:.68;font-size:.92rem}
+
+    .lang{display:none}
+    .lang.active{display:block}
+
+    /* Grids "flush" */
+    .grid{display:grid;gap:0}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    @media(max-width:900px){.grid-3{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.grid-3{grid-template-columns:1fr}}
+    figure.tile{margin:0;position:relative;background:var(--bg)}
+    .tile>img,.tile>video{width:100%;height:100%;object-fit:contain;background:var(--bg)}
+
+    /* Carouseles tight tipo index */
+    .carousel{position:relative;margin:.6rem 0;overflow:hidden}
+    .track{display:flex;gap:.5rem;will-change:transform;touch-action:none;cursor:default;transform:translate3d(0,0,0)}
+    .thumb{flex:0 0 auto;width:calc((100% - 1rem)/3);aspect-ratio:4/3;object-fit:contain;opacity:.9;transition:opacity .35s;background:var(--bg)}
+    .thumb.highlight{opacity:1}
+    @media(max-width:768px){.thumb{width:calc((100% - .5rem)/2)}}
+    @media(max-width:480px){.thumb{width:100%}}
+
+    /* Lightbox full screen */
+    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:9999}
+    #lightbox.open{display:flex}
+    #lightbox figure{margin:0;max-width:96vw;max-height:96vh}
+    #lightbox img,#lightbox video{max-width:96vw;max-height:96vh;object-fit:contain}
+
+    /* Separadores suaves y listas */
+    .piece{border-top:1px solid var(--line);padding-top:1rem;margin-top:1rem}
+    ul{margin:.4rem 0 .8rem;padding-left:1.1rem}
+
+    /* Desktop ritmo tipo mdtc.pjt.mdl.1 */
+    @media (min-width:1024px){
+      main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
+    }
+    
+  </style>
+  <style>
+/* tight grid: 3 columnas en vertical, 5 en horizontal */
+#tg{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: var(--gap, 6px);
+}
+#tg .tile{ margin:0; }
+#tg img, #tg video{
+  width:100%; height:auto; display:block; object-fit:contain;
+}
+
+/* horizontal = 5 columnas */
+@media (orientation: landscape){
+  #tg{ grid-template-columns: repeat(5, minmax(0,1fr)); }
+}
+</style>
+
+</head>
+<body>
+  <header>
+    <a href="/" aria-label="xpan"><img src="sound+.png" alt="xpan"></a>
+    <nav class="language-selector" aria-label="selector de idioma">
+      <button class="active" data-lang="es">es</button>
+      <button data-lang="en">en</button>
+      <button data-lang="fr">fr</button>
+      <button data-lang="jp">jp</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- TÍTULO + DESCRIPCIÓN MULTILENGUAJE -->
+    <section class="section" id="desc">
+      <div class="lang lang-es active">
+        <h1>sound + — listening material</h1>
+        <div class="meta">material art fair — ciudad de méxico — 28 abril–1 mayo 2022</div>
+        <div class="description">
+          dentro del programa público de la octava edición de material art fair (cdmx), sound + presentó <em>listening material</em>, una muestra dedicada a reinsertar el arte sonoro en el marco del arte contemporáneo. la propuesta cuestionó la posición marginal de las prácticas sonoras dentro de ferias y circuitos de exhibición, generando un espacio donde el sonido se experimenta como medio autónomo, escultural y performático.
+        </div>
+      </div>
+      <div class="lang lang-en">
+        <h1>sound + — listening material</h1>
+        <div class="meta">material art fair — mexico city — april 28–may 1, 2022</div>
+        <div class="description">
+          as part of the public program of the eighth material art fair (mexico city), sound + presented <em>listening material</em>, a showcase dedicated to reinserting sound art within contemporary art. the project questioned the marginal position of sonic practices in fairs and exhibition circuits, creating a space where sound is experienced as an autonomous, sculptural, and performative medium.
+        </div>
+      </div>
+      <div class="lang lang-fr">
+        <h1>sound + — listening material</h1>
+        <div class="meta">material art fair — mexico — 28 avril–1 mai 2022</div>
+        <div class="description">
+          dans le cadre du programme public de la huitième édition de material art fair (mexico), sound + a présenté <em>listening material</em>, une proposition visant à réinsérer l’art sonore dans le champ de l’art contemporain. l’initiative interroge la position marginale des pratiques sonores au sein des foires et des circuits d’exposition, en ouvrant un espace où le son s’expérimente comme médium autonome, sculptural et performatif.
+        </div>
+      </div>
+      <div class="lang lang-jp">
+        <h1>sound + — listening material</h1>
+        <div class="meta">material art fair — メキシコシティ — 2022年4月28日–5月1日</div>
+        <div class="description">
+          第8回material art fair（メキシコシティ）のパブリックプログラムとして、sound + は〈listening material〉を発表した。本企画はサウンドアートを現代美術の枠組みに再配置し、フェアや展示回路で周縁化されてきた音の実践を問い直し、音を自律的・彫刻的・パフォーマティブな媒体として体験する場を開いた。
+        </div>
+      </div>
+    </section>
+
+    <!-- Retícula 3x3 inicial (videos juntos) -->
+    <section class="section" id="grid-inicial">
+      <div class="grid grid-3">
+        <figure class="tile"><video muted playsinline loop preload="metadata"><source data-src="https://attachments.are.na/39366804/a2567f9ce45163958b94445b8883ede5.mp4?1757272973" type="video/mp4"></video></figure>
+        <figure class="tile"><video muted playsinline loop preload="metadata"><source data-src="https://attachments.are.na/39366803/9f85337317b8a8ae4a176573fd09f139.mp4?1757272970" type="video/mp4"></video></figure>
+        <figure class="tile"><video muted playsinline loop preload="metadata"><source data-src="https://attachments.are.na/39366816/7a5088c21046816341e50332cadcbc52.mov?1757273041" type="video/mp4"></video></figure>
+      </div>
+    </section>
+
+    <!-- Estructura de la muestra -->
+    <section class="section" id="estructura">
+      <div class="lang lang-es active">
+        <h2>estructura de la muestra</h2>
+        <p>el proyecto se desplegó en tres soportes:</p>
+        <ul>
+          <li><strong>i8oppa</strong> — instalación octofónica oscilatoria para piezas acusmáticas.</li>
+          <li><strong>escultura sonora</strong> — objetos e instalaciones activadas en sitio.</li>
+          <li><strong>performance sonoro</strong> — acciones en vivo en el patio principal de la feria.</li>
+        </ul>
+        <p>cada soporte abrió canales distintos de relación entre espectador y sonido, estableciendo un territorio de cruce entre lo acusmático, lo escultórico y lo performático.</p>
+      </div>
+      <div class="lang lang-en">
+        <h2>exhibition structure</h2>
+        <p>the project unfolded across three platforms:</p>
+        <ul>
+          <li><strong>i8oppa</strong> — oscillatory octophonic installation for acousmatic pieces.</li>
+          <li><strong>sound sculpture</strong> — objects and in‑situ installations.</li>
+          <li><strong>sonic performance</strong> — live actions in the fair’s main courtyard.</li>
+        </ul>
+        <p>each platform opened distinct channels between audience and sound, crossing acousmatic, sculptural, and performative fields.</p>
+      </div>
+      <div class="lang lang-fr">
+        <h2>structure de l’exposition</h2>
+        <p>le projet s’est déployé sur trois supports :</p>
+        <ul>
+          <li><strong>i8oppa</strong> — installation octophonique oscillatoire pour pièces acousmatiques.</li>
+          <li><strong>sculpture sonore</strong> — objets et installations in situ.</li>
+          <li><strong>performance sonore</strong> — actions en direct dans la cour principale.</li>
+        </ul>
+        <p>chaque support a ouvert des relations différentes entre spectateur et son, à l’intersection de l’acousmatique, du sculptural et du performatif.</p>
+      </div>
+      <div class="lang lang-jp">
+        <h2>展示構成</h2>
+        <p>プロジェクトは3つのプラットフォームで展開した。</p>
+        <ul>
+          <li><strong>i8oppa</strong> — アクースマティック作品のための可動式8chインスタレーション。</li>
+          <li><strong>サウンドスカルプチャー</strong> — 物体／仕掛けによる現場インスタレーション。</li>
+          <li><strong>サウンド・パフォーマンス</strong> — フェア中庭でのライブ・アクション。</li>
+        </ul>
+        <p>三者は観客と音の関係を別様に開き、アクースマティック／彫刻／パフォーマティブの交差領域を形成した。</p>
+      </div>
+    </section>
+
+    <!-- I8OPPA bloque -->
+    <section class="section" id="i8oppa">
+      <div class="lang lang-es active">
+        <h2>i8oppa — instalación octofónica oscilatoria</h2>
+        <p>diseñada específicamente para <span class="muted">[ sound + listening material ]</span>, i8oppa consistió en un sistema de rieles con ocho bocinas móviles. las piezas se compusieron en formato octofónico y la movilidad de los altavoces permitió al público alterar la configuración espacial, transformando la escucha en experiencia participativa.</p>
+        <p><strong>obras presentadas:</strong></p>
+        <ul>
+          <li><em>el sonido nunca cesa</em> — ana paula santana (remasterización 2022). confronta naturaleza e industria mediante registros de prensas tipográficas y ambientes naturales.</li>
+          <li><em>paréntesis (mayakoba)</em> — carlos iturralde (rev. 2022). adaptación multicanal que articula grabaciones de campo con síntesis.</li>
+          <li><em>cerro del bramador / …del desierto emanen / sonoridades volátiles</em> — carole chargueron. paisajes sonoros ficticios del desierto de atacama.</li>
+          <li><em>trigonometrías entrelazadas i</em> — esteban chapela. síntesis aditiva y modulación de anillo en entorno octofónico.</li>
+          <li><em>permanencia voluntaria</em> — fernando feria. texturas inestables que apelan a la percepción.</li>
+          <li><em>8me</em> — josephine strong. ocho permutaciones simultáneas sobre una esmeriladora.</li>
+        </ul>
+      </div>
+      <div class="lang lang-en">
+        <h2>i8oppa — oscillatory octophonic installation</h2>
+        <p>designed specifically for <span class="muted">[ sound + listening material ]</span>, i8oppa consisted of a rail system with eight mobile speakers. the works were composed in an octophonic format, and audience‑driven speaker movement transformed listening into a participatory experience.</p>
+        <p><strong>works presented:</strong></p>
+        <ul>
+          <li><em>the sound never ceases</em> — ana paula santana (2022 remaster). printing‑press recordings and natural ambiences confront nature and industry.</li>
+          <li><em>parenthesis (mayakoba)</em> — carlos iturralde (rev. 2022). multichannel adaptation articulating field recordings with synthetic sound.</li>
+          <li><em>cerro del bramador / …del desierto emanen / sonoridades volátiles</em> — carole chargueron. fictive soundscapes of the atacama desert.</li>
+          <li><em>interlaced trigonometries i</em> — esteban chapela. additive synthesis and ring modulation in an octophonic field.</li>
+          <li><em>permanencia voluntaria</em> — fernando feria. unstable textures that address perception over meaning.</li>
+          <li><em>8me</em> — josephine strong. eight simultaneous permutations on a grinder.</li>
+        </ul>
+      </div>
+      <div class="lang lang-fr">
+        <h2>i8oppa — installation octophonique oscillatoire</h2>
+        <p>conçue pour <span class="muted">[ sound + listening material ]</span>, i8oppa se composait d’un système de rails avec huit haut‑parleurs mobiles. les œuvres, écrites en octophonie, faisaient de la mobilité des haut‑parleurs un vecteur de participation du public.</p>
+        <p><strong>œuvres présentées :</strong></p>
+        <ul>
+          <li><em>le son ne cesse jamais</em> — ana paula santana (remaster 2022). presses typographiques et ambiances naturelles confrontent nature et industrie.</li>
+          <li><em>parenthesis (mayakoba)</em> — carlos iturralde (rev. 2022). adaptation multicanale articulant prises de son et synthèse.</li>
+          <li><em>cerro del bramador / …del desierto emanen / sonoridades volátiles</em> — carole chargueron. paysages sonores fictifs du désert d’atacama.</li>
+          <li><em>trigonométries entremêlées i</em> — esteban chapela. synthèse additive et modulation en anneau en champ octophonique.</li>
+          <li><em>permanencia voluntaria</em> — fernando feria. textures instables privilégiant la perception au sens.</li>
+          <li><em>8me</em> — josephine strong. huit permutations simultanées autour d’une meuleuse.</li>
+        </ul>
+      </div>
+      <div class="lang lang-jp">
+        <h2>i8oppa — 可動式8chインスタレーション</h2>
+        <p><span class="muted">[ sound + listening material ]</span>のために設計されたi8oppaは、8台の可動スピーカーを備えたレールシステムで構成された。作品は8chで作曲され、観客によるスピーカーの移動が聴取を参加型の体験へと変換した。</p>
+        <p><strong>出品作品：</strong></p>
+        <ul>
+          <li><em>el sonido nunca cesa</em> — ana paula santana（2022リマスター）。活版機の録音と自然環境音により、自然／産業の対置を提示。</li>
+          <li><em>paréntesis (mayakoba)</em> — carlos iturralde（2022改訂）。フィールド録音と合成音を交差させたマルチチャンネル版。</li>
+          <li><em>cerro del bramador / …del desierto emanen / sonoridades volátiles</em> — carole chargueron。アタカマ砂漠の仮想サウンドスケープ。</li>
+          <li><em>trigonometrías entrelazadas I</em> — esteban chapela。加法合成とリングモジュレーションの8ch展開。</li>
+          <li><em>permanencia voluntaria</em> — fernando feria。意味よりも知覚に訴える不安定なテクスチャー。</li>
+          <li><em>8ME</em> — josephine strong。グラインダーを用いた8つの同時変奏。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Carrusel de imágenes general del montaje -->
+    <section class="section" id="media-general">
+      <div class="carousel" data-carousel>
+        <div class="track">
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366774/original_4b1a24206d8488c5d35c9a85100803ca.jpg?1757272716?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366761/original_dad69d0478b7ac957b26485341cdba0f.jpg?1757272714?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366773/original_699cb747b055ed3f83be702e633a5f95.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366764/original_471aac66aa9eb43ef40362e50472f3a0.jpg?1757272714?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366772/original_f2e0647e1ee57b014108480e5a4616f9.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366768/original_a0f80f972d4d57ecbf808e11f8f9731b.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366771/original_2f9e49b6e775a9145228160b68452df1.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366769/original_c9af22e2b97ce24995bc6cf3e9e72ae0.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366766/original_6263635b3056ff54cb59c3cdeeaf859b.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366770/original_e464b50a270b8cd4907b62c474df5d10.jpg?1757272716?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366767/original_50a24b573955879d7a37eb6ff703d208.jpg?1757272715?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366763/original_f8472f6244d388894f1a9a2fa2d326aa.jpg?1757272714?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366765/original_055de681e82281eaff8df741ded2f649.jpg?1757272714?bc=0" alt=""/>
+          <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366762/original_c426602de64b8fabe9a36b74ef5b5e19.jpg?1757272714?bc=0" alt=""/>
+        </div>
+      </div>
+    </section>
+
+    <!-- Esculturas sonoras -->
+    <section class="section" id="esculturas">
+      <div class="lang lang-es active"><h2>esculturas sonoras</h2></div>
+      <div class="lang lang-en"><h2>sound sculptures</h2></div>
+      <div class="lang lang-fr"><h2>sculptures sonores</h2></div>
+      <div class="lang lang-jp"><h2>サウンドスカルプチャー</h2></div>
+
+      <article class="piece" id="aps">
+        <div class="lang lang-es active"><strong>ana paula santana — <em>este instrumento tensado de piel</em></strong><p>instalación de aerófonos cerámicos y tensores que indaga en la percepción de aspereza sonora.</p></div>
+        <div class="lang lang-en"><strong>ana paula santana — <em>este instrumento tensado de piel</em></strong><p>installation with ceramic aerophones and tensioners exploring sonic roughness.</p></div>
+        <div class="lang lang-fr"><strong>ana paula santana — <em>este instrumento tensado de piel</em></strong><p>installation d’aérophones en céramique et tenseurs, autour de l’âpreté sonore.</p></div>
+        <div class="lang lang-jp"><strong>ana paula santana — <em>este instrumento tensado de piel</em></strong><p>セラミック製エアロフォンとテンション機構による、音の粗さの知覚を探るインスタレーション。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366736/original_7c6857828e45d9393c565cff0598e55b.jpg?1757272608?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366735/original_0c7b07b7ffb9a8dbb3ddf298621468ee.jpg?1757272607?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366730/original_2d9332d97f6c948b95ccde0df0015be1.jpg?1757272608?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366732/original_a115f27998b413d277cb91cc29f9a3d0.jpg?1757272609?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366734/original_f4d484550b6be6aaebc8ffb253e60aec.jpg?1757272607?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366733/original_a990442613c5bf797d404036274ab5c5.jpg?1757272608?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366731/original_e54799d88d3023175a275db6d4cec7fb.jpg?1757272608?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366729/original_96360b52d1965023a00e1b97e1bd15fe.jpg?1757272607?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366728/original_a07c6edc22203563cc43badfcecb18b6.jpg?1757272607?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366727/original_bb39342b4232a17db66d640730b58047.jpg?1757272607?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366726/original_6bc8d549bd5f2a24901e295eb8e99f38.jpg?1757272607?bc=0"/>
+          </div>
+        </div>
+      </article>
+
+      <article class="piece" id="rosales">
+        <div class="lang lang-es active"><strong>armando rosales — <em>hablar de más</em></strong><p>escultura activada por el público mediante pedales que amplifican el roce de materiales metálicos.</p></div>
+        <div class="lang lang-en"><strong>armando rosales — <em>hablar de más</em></strong><p>pedal‑activated sculpture amplifying the friction of metal materials.</p></div>
+        <div class="lang lang-fr"><strong>armando rosales — <em>hablar de más</em></strong><p>sculpture activée par pédales, amplifiant le frottement de matériaux métalliques.</p></div>
+        <div class="lang lang-jp"><strong>armando rosales — <em>hablar de más</em></strong><p>ペダル操作で金属摩擦音を増幅する参加型彫刻。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366712/original_aaf7f73b30a2382cda6ec3b22a3bd33b.jpg?1757272560?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366711/original_ac573d21feff3a59aeb061b6f5a93e95.jpg?1757272560?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366710/original_efc945111f4a0c14f0542af5fc21389b.jpg?1757272560?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366709/original_a35f7ba8c583b9463aaac9f1d63b35aa.jpg?1757272560?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366708/original_c4c2d11d8d129963ce18175c8462803b.jpg?1757272559?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366707/original_b66ccd140848dd64cfd05d65a65c94dc.jpg?1757272559?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366706/original_2f0061602321ea131e2571e5043c07a3.jpg?1757272559?bc=0"/>
+          </div>
+        </div>
+      </article>
+
+      <article class="piece" id="chun">
+        <div class="lang lang-es active"><strong>jessie chun — <em>voiceless consonants</em></strong><p>abstracción fonética del inglés reducida a consonantes sordas reproducidas en un altavoz de aeropuerto.</p></div>
+        <div class="lang lang-en"><strong>jessie chun — <em>voiceless consonants</em></strong><p>phonetic abstraction of english reduced to voiceless consonants, played through an airport speaker.</p></div>
+        <div class="lang lang-fr"><strong>jessie chun — <em>voiceless consonants</em></strong><p>abstraction phonétique de l’anglais réduite aux consonnes sourdes, diffusée par un haut‑parleur d’aéroport.</p></div>
+        <div class="lang lang-jp"><strong>jessie chun — <em>voiceless consonants</em></strong><p>英語の音素を無声子音に還元し、空港スピーカーで再生する作品。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366700/original_e2e97243743f873f3f4a7ab7671767db.jpg?1757272530?bc=0"/>
+          </div>
+        </div>
+      </article>
+
+      <article class="piece" id="reyes">
+        <div class="lang lang-es active"><strong>jerónimo reyes retana — <em>ustedes tienen los relojes, pero nosotros el tiempo</em></strong><p>instalación que inscribe sonoramente un proverbio en barras metálicas, y reflexiona sobre temporalidades y resistencia política.</p></div>
+        <div class="lang lang-en"><strong>jerónimo reyes retana — <em>you have the watches, but we have the time</em></strong><p>installation that inscribes a proverb sonically into metal bars, reflecting on temporalities and political resistance.</p></div>
+        <div class="lang lang-fr"><strong>jerónimo reyes retana — <em>vous avez les montres, nous avons le temps</em></strong><p>installation inscrivant un proverbe dans des barres métalliques, réflexion sur le temps et la résistance politique.</p></div>
+        <div class="lang lang-jp"><strong>jerónimo reyes retana — <em>彼らは時計を持つが、私たちは時間を持つ</em></strong><p>金属棒に格言を音的に刻むインスタレーション。時間性と政治的レジスタンスをめぐる考察。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366661/original_4092fa4addfee6091c8957ae4b92a1d0.jpg?1757272372?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366663/original_40f0361411807df7da917e0948c0516c.jpg?1757272384?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366665/original_581aa5937221a25831348990ab95f5fd.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366664/original_82fc374577b28ce7d98f0eb8863ceb62.jpg?1757272388?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366662/original_ee7e2abbd537059d29a921c5a9c0f013.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366668/original_1c2e6ce69f5b261a92b4dc8cdaa09cb1.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366666/original_152726f96b7248fb36084d980f68ebaf.jpg?1757272371?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366667/original_ba8cdf52e838640cac805c73b541cd59.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366660/original_4165e5883f7c00290b0220d634a5bf0d.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366659/original_3a1c0d01448012c7469c30be7cada574.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366658/original_3b1670ebcfe03f8de911088afe781f7d.jpg?1757272371?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366655/original_e45ebb70a4ec433d9e052d12e6b83292.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366656/original_a6fb263b5bb41b33e3bf0696291793a1.jpg?1757272369?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366654/original_a502ae7fd47aa33a40761eaae235f18a.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366657/original_1a7827ef0cd71765b559eac1f096bde0.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366653/original_07d574ff5e21fd72ff0cba065b6259d7.jpg?1757272371?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366652/original_1721f3a418cbf7e0e893a8f0a44de58d.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366651/original_00ee60c80fd4503de8e364f9e402d5e5.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366650/original_b877b0654e6958c759ab1b8511049e1c.jpg?1757272370?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366649/original_e507bfd1de060653d23be3f14b5491c3.jpg?1757272369?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366648/original_8e1ff50f18eeaf6e201d68c4ed8fd6c3.jpg?1757272369?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366647/original_b1d8e731380fdf42ebdd35ee9c48b2d4.jpg?1757272369?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366646/original_b21aee782d3e4fe6997fcb7b83afc442.jpg?1757272369?bc=0"/>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Performances sonoros -->
+    <section class="section" id="performances">
+      <div class="lang lang-es active"><h2>performances sonoros</h2><p>durante los cuatro días de feria se activaron piezas en vivo que ampliaron la dimensión comunitaria y experimental del proyecto.</p></div>
+      <div class="lang lang-en"><h2>sonic performances</h2><p>across four days, live pieces expanded the project’s communal and experimental dimension.</p></div>
+      <div class="lang lang-fr"><h2>performances sonores</h2><p>pendant quatre jours, des pièces en direct ont élargi la dimension communautaire et expérimentale du projet.</p></div>
+      <div class="lang lang-jp"><h2>サウンド・パフォーマンス</h2><p>会期の4日間にわたり、ライブ作品が本企画のコミュニティ性と実験性を拡張した。</p></div>
+
+      <!-- Ricardo Rendón -->
+      <article class="piece" id="rendon">
+        <div class="lang lang-es active"><strong>ricardo rendón — <em>plataforma activa</em></strong><p>improvisación con esculturas metálicas procesadas en tiempo real mediante síntesis modular.</p></div>
+        <div class="lang lang-en"><strong>ricardo rendón — <em>plataforma activa</em></strong><p>improvisation with metal sculptures processed in real time via modular synthesis.</p></div>
+        <div class="lang lang-fr"><strong>ricardo rendón — <em>plataforma activa</em></strong><p>improvisation avec sculptures métalliques, traitement en temps réel par synthèse modulaire.</p></div>
+        <div class="lang lang-jp"><strong>ricardo rendón — <em>plataforma activa</em></strong><p>金属彫刻を用いた即興演奏。モジュラーシンセでリアルタイム処理。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366584/original_f187564698a738f9574d73d6ae5aa90e.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366582/original_da8d1f13dd96dfc7cfbf6c942dd4cd3f.jpg?1757272023?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366583/original_e9b682704be6ee53540bc035ce3b0d7a.jpg?1757272023?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366581/original_aa8416e96ba6116c12ef120efaebd18c.jpg?1757272023?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366579/original_ccdb87c42ae44c3271b7bb0ddcfc4e10.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366580/original_6b933546d34e6f23992d2d537ea92349.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366578/original_33b4bb60a0a8d8b938c082e5cec376fa.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366577/original_13f97e28304b6adf7077289e5a0f382d.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366576/original_af76825f7366f5416048f7ad507851e9.jpg?1757272032?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366575/original_9e91dd24896c1ce6eeebed1013d65042.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366573/original_7666b0021ded1fe0772a96209b5c1414.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366574/original_7d227bf0e1a78a26bdaf4e5df91446ea.jpg?1757272024?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366572/original_a11d0d71f79326ca71758b1d992dbcbd.jpg?1757272025?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366571/original_b441217f650cbd53921f0b9969d1fe5a.jpg?1757272020?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366570/original_cb631a85649c6405a37eda97c29a15a4.jpg?1757272039?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366569/original_19930ec45e00ab40562130a8d0af14dc.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366568/original_e8c66ef5eefad0418f7cb24875fc9cc4.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366567/original_ec1ac5f9029be47acf42b89337dc6111.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366566/original_ed4ca8d1b56de38028a3c4ee45827efe.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366565/original_0ce7f18a6b2fad402ea299a7959bed18.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366564/original_6222e6d4efb686dec8aaf252b824a3ed.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366563/original_8e806a7dfb908c9f1c4ebd6a86d3eefb.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366562/original_49391e788e7c0b50b54f4f4effe6e990.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366561/original_5a42478317662201a018d3d775c0cb39.jpg?1757272023?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366560/original_b0a8558bac28fd8de4b0e0e4e58569df.jpg?1757272022?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366559/original_2595cff8d6549f75a0f437284bd69e51.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366558/original_49f8e72e28b7d30f5f8e14a538e7e909.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366557/original_948a86b18bacbb61529e9d1e0b76223e.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366556/original_9ce96a95a0343b25afc45cc28397f037.jpg?1757272021?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366555/original_901634af525bafe268cfc603f8f25f61.jpg?1757272020?bc=0"/>
+          </div>
+        </div>
+      </article>
+
+      <!-- Sindicato ANIMA -->
+      <article class="piece" id="anima">
+        <div class="lang lang-es active"><strong>sindicato anima — <em>improvisación gráfica</em></strong><p>improvisación con máquinas de tatuar amplificadas y procesadas.</p></div>
+        <div class="lang lang-en"><strong>sindicato anima — <em>graphic improvisation</em></strong><p>improvisation with amplified and processed tattoo machines.</p></div>
+        <div class="lang lang-fr"><strong>sindicato anima — <em>improvisation graphique</em></strong><p>improvisation à partir de machines à tatouer amplifiées et traitées.</p></div>
+        <div class="lang lang-jp"><strong>sindicato anima — <em>グラフィック即興</em></strong><p>タトゥーマシンを増幅・処理して用いた即興。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366409/original_ce49b96f3f805bda5b94fb5b23b0157f.jpg?1757271592?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366418/original_32a8e477e1117fefdd9673a31cc51d95.jpg?1757271596?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366416/original_8658cfadad268abe7ce2526d5019efc0.jpg?1757271595?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366410/original_612d8b792e7f0825d6d749885bffbbbe.jpg?1757271591?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366414/original_c51716749be062d6e5add6602830a12a.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366404/original_f2eff6fc9cf25b3e9ba493e729d81709.jpg?1757271596?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366408/original_00e2d39e6cd2a04a1d6436a5397d9516.jpg?1757271596?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366402/original_17f638389d05c7267856ac3f7475142d.jpg?1757271596?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366406/original_75eb5b5f63887a62cd1cdd5a46955fe4.jpg?1757271594?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366405/original_864d4e1e6b65fc940038ea4ed074f643.jpg?1757271594?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366415/original_df90fec7ebd5719c29f3b8f73be4d978.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366417/original_03124625a0a2cc1129d8859ee5bfe8cc.jpg?1757271591?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366412/original_4c9eb9d2b68253cd71659b2a033d9eb2.jpg?1757271591?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366393/original_bcdc16c4d83e0a698b2b00548ebbd767.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366413/original_bc4dd67c92c9924a66d18a93a8e9bf90.jpg?1757271593?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366407/original_de13c00ef09cf26e568a5acf83f2e3f9.jpg?1757271607?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366411/original_a38339da6b55ba867b1cf4be2a6f1ce3.jpg?1757271591?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366398/original_604ceb70c41bb87fa6df162e83f21f92.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366390/original_16a5c7e4c91274f470775f3812b4797b.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366401/original_f29d7fb020615e57e80b7cac312e9ff0.jpg?1757271589?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366397/original_feed90049a9b1c2a1ff8768073b1050c.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366392/original_bd694773d2f06566308e0720940a2751.jpg?1757271589?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366391/original_9c6f2083d6707113dd65ea4692709df6.jpg?1757271589?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366399/original_49f889ed975d52406ffd58be8664c6f3.jpg?1757271591?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366400/original_2bd45444159e85da09658d6ab90d2ce2.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366389/original_653ce06bba12f3ef80b12013fea22582.jpg?1757271589?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366387/original_e6397c76c9da6a993e9706670e8ae315.jpg?1757271590?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366386/original_2a0811024ce5ba7e48297f78e8a55c68.jpg?1757271589?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366385/original_811b3d4d43516c50f4551d3e98c7845d.jpg?1757271588?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366384/original_f1f3266f352908d65695f13db3089f20.jpg?1757271589?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366383/original_e9816e8293560d3342f9f0cd71e2130a.jpg?1757271588?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366382/original_fec84bd45b59172d1f106695a5a6403b.jpg?1757271588?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366381/original_565bb8cd2913807b9dc0623020e7fa85.jpg?1757271588?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366534/original_fb39c28206e067f98330a1992b2227c3.jpg?1757271925?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366536/original_8c56c359cdbbad4072fde7b6667dbcb0.jpg?1757271926?bc=0"/>
+          </div>
+        </div>
+      </article>
+
+      <!-- Ultima Ratio -->
+      <article class="piece" id="ultima-ratio">
+        <div class="lang lang-es active"><strong>ultima ratio — <em>improvisación libre</em></strong><p>improvisación con instrumentos acústicos, objetos y voz.</p></div>
+        <div class="lang lang-en"><strong>ultima ratio — <em>free improvisation</em></strong><p>improvisation with acoustic instruments, objects, and voice.</p></div>
+        <div class="lang lang-fr"><strong>ultima ratio — <em>improvisation libre</em></strong><p>improvisation avec instruments acoustiques, objets et voix.</p></div>
+        <div class="lang lang-jp"><strong>ultima ratio — <em>フリー・インプロ</em></strong><p>アコースティック楽器／オブジェ／声による即興。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366346/original_631f9d3ececcec99dea55213c73f722e.jpg?1757271441?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366345/original_1774e9484f02428dadd2e2ffc90c9166.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366341/original_5b051056de99acd617eb8139e5bdd36f.jpg?1757271469?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366340/original_f1bce4f69a364ac624fe2d2a6161e016.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366339/original_c03325d9b4c355fd21999eb69b6ac301.jpg?1757271441?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366338/original_0a15aa8a487abe49b90cb2772a8f8517.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366337/original_a0114a5d92d9d4f6096710d9c4297652.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366336/original_c7fcc67f7e9270ce165dbdffcd1c1ef8.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366335/original_fef9d4847513baaeb4adcd1d9c2aaf37.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366334/original_daaa0808dc8040db3ce347cbbe4633d3.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366333/original_83c8b9cad1ea3a0295af74ce8e1cfeb5.jpg?1757271440?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366331/original_954e51e4ad3ee320e16b746bc7e02473.jpg?1757271439?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366330/original_afa13bd93ac15a588e51cfcc12630169.jpg?1757271439?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366329/original_1d68eead0c434e8a635780177998955a.jpg?1757271439?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366328/original_4bc545be07a67816ec2c95cb79e32a40.jpg?1757271439?bc=0"/>
+          </div>
+        </div>
+      </article>
+
+      <!-- Jeremy Toussaint-Baptiste -->
+      <article class="piece" id="jeremy-tb">
+        <div class="lang lang-es active"><strong>jeremy toussaint-baptiste — <em>y’all don’t wanna hear me, you just wanna dance</em></strong><p>reapropiación de un lrad como dispositivo performático de escucha colectiva.</p></div>
+        <div class="lang lang-en"><strong>jeremy toussaint-baptiste — <em>y’all don’t wanna hear me, you just wanna dance</em></strong><p>reappropriation of an lrad as a performative device for collective listening.</p></div>
+        <div class="lang lang-fr"><strong>jeremy toussaint-baptiste — <em>y’all don’t wanna hear me, you just wanna dance</em></strong><p>réappropriation d’un lrad comme dispositif performatif d’écoute collective.</p></div>
+        <div class="lang lang-jp"><strong>jeremy toussaint-baptiste — <em>y’all don’t wanna hear me, you just wanna dance</em></strong><p>lradを共同聴取のためのパフォーマティブ装置として再解釈。</p></div>
+        <div class="carousel" data-carousel>
+          <div class="track">
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366251/original_b4be6d08cf5a8593643dbdb20f89f3ac.jpg?1757271290?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366253/original_67b9ed04f1c5d99791e8f692d52ab486.jpg?1757271290?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366254/original_4c313edee78b53bdca5847a25c6a0066.jpg?1757271291?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366247/original_815e307198935830a0775de54a1ec0c9.jpg?1757271289?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366249/original_df816a64783a97ba78c98095395c947e.jpg?1757271291?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366246/original_60e15dd92b1df6e26549d82f2fe7b978.jpg?1757271289?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366244/original_20b7414c6e7fc28fde6f69694104126c.jpg?1757271288?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366245/original_005f096656acc9a99709943049856105.jpg?1757271288?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366252/original_6fc983087075a677787171ad4f28087f.jpg?1757271290?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366250/original_f6c0f08af288256d96854710ec8171b9.jpg?1757271289?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366248/original_97eed9a609c9bb831f650457531baf07.jpg?1757271288?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366242/original_fa2d075d21750d99d55182849627b150.jpg?1757271289?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366243/original_9736b6169c76f8c402779d164f1e4895.jpg?1757271288?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366241/original_e48443f20726d68900ac217a53ad684b.jpg?1757271289?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366240/original_054082840fe8e556b96d1160794569f4.jpg?1757271288?bc=0"/>
+            <img class="thumb" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39366239/original_f056fc75cde6b14803383e1f2540cde7.jpg?1757271288?bc=0"/>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Importancia -->
+    <section class="section" id="importancia">
+      <div class="lang lang-es active">
+        <p>[ sound + — listening material ] consolidó un espacio inédito dentro de una feria de arte contemporáneo en méxico, posicionando las prácticas sonoras en el centro y ofreciendo a lxs artistas un entorno de alto impacto para la escucha y la experimentación.</p>
+      </div>
+      <div class="lang lang-en">
+        <h2>significance</h2>
+        <p>[ sound + — listening material ] established a rare platform within a contemporary art fair in mexico, placing sonic practices at the center and offering artists a high-impact environment for listening and experimentation.</p>
+      </div>
+      <div class="lang lang-fr">
+        <h2>importance</h2>
+        <p>[ sound + — listening material ] a instauré un espace inédit au sein d’une foire d’art contemporain au mexique, recentrant les pratiques sonores et offrant un contexte à fort impact pour l’écoute et l’expérimentation.</p>
+      </div>
+      <div class="lang lang-jp">
+        <h2>意義</h2>
+        <p>[ sound + — listening material ] は、メキシコの現代美術フェアにおいて稀有な基盤を築き、サウンド・プラクティスを中心に据え、聴取と実験のための高いインパクトをもつ環境を提示した。</p>
+      </div>
+    </section>
+
+
+    <section aria-label="tg-media" class="section" id="grid-tg">
+    <div class="grid grid-6m-4d" id="tg"></div>
+    </section>
+
+
+    <!-- Créditos -->
+    <section class="section" id="creditos">
+      <div class="lang lang-es active">
+        <h2>curaduría y producción</h2>
+        <ul>
+          <li>curaduría: moisés sacal hadid (sound +), amanda contrada.</li>
+          <li>intervención arquitectónica: césar nuñez, humberto cuapio, ramón saturnino.</li>
+          <li>registro fotográfico: josué medina (pozole).</li>
+          <li>asistencia: héctor obregón (dj iori 69).</li>
+        </ul>
+      </div>
+      <div class="lang lang-en">
+        <h2>curation and production</h2>
+        <ul>
+          <li>curation: moisés sacal hadid (sound +), amanda contrada.</li>
+          <li>architectural intervention: césar nuñez, humberto cuapio, ramón saturnino.</li>
+          <li>photo documentation: josué medina (pozole).</li>
+          <li>assistance: héctor obregón (dj iori 69).</li>
+        </ul>
+      </div>
+      <div class="lang lang-fr">
+        <h2>curation et production</h2>
+        <ul>
+          <li>curation : moisés sacal hadid (sound +), amanda contrada.</li>
+          <li>intervention architecturale : césar nuñez, humberto cuapio, ramón saturnino.</li>
+          <li>documentation photo : josué medina (pozole).</li>
+          <li>assistance : héctor obregón (dj iori 69).</li>
+        </ul>
+      </div>
+      <div class="lang lang-jp">
+        <h2>キュレーション／制作</h2>
+        <ul>
+          <li>キュレーション：moisés sacal hadid（sound +）、amanda contrada。</li>
+          <li>建築介入：césar nuñez、humberto cuapio、ramón saturnino。</li>
+          <li>写真記録：josué medina（pozole）。</li>
+          <li>アシスタンス：héctor obregón（dj iori 69）。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox global -->
+  <div id="lightbox" aria-hidden="true"><figure></figure></div>
+
+  <!-- Interacción: selector de idioma, lightbox y carruseles auto-avance -->
+  <script>
+  (()=>{
+
+    // Selector de idioma
+    const setLang = (code)=>{
+      document.querySelectorAll('.language-selector button').forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
+      document.querySelectorAll('.lang').forEach(n=>n.classList.remove('active'));
+      document.querySelectorAll('.lang-'+code).forEach(n=>n.classList.add('active'));
+    };
+    document.querySelectorAll('.language-selector button').forEach(btn=>{
+      btn.addEventListener('click', ()=> setLang(btn.dataset.lang));
+    });
+
+    // Utilidad: materializar src desde data-src
+    const materializeSrc = (el)=>{
+      if(!el) return;
+      if(el.dataset && el.dataset.src && !el.src){ el.src = el.dataset.src }
+      if(el.querySelectorAll) el.querySelectorAll('source[data-src]').forEach(s=>{ if(!s.src) s.src = s.dataset.src });
+    };
+
+    // LIGHTBOX
+    const lb = document.getElementById('lightbox');
+    const lbFigure = lb.querySelector('figure');
+    let lbOpen = false;
+
+    const openLB = (node)=>{
+      lbFigure.innerHTML = '';
+      const tag = node.tagName.toLowerCase();
+      let clone;
+      if(tag==='video'){
+        clone = node.cloneNode(true);
+        clone.removeAttribute('controls');
+        clone.muted = true; clone.loop = true; clone.playsInline = true;
+        clone.querySelectorAll('source').forEach(s=>{ if(!s.src && s.dataset && s.dataset.src) s.src = s.dataset.src; });
+        clone.play().catch(()=>{});
+      }else{
+        clone = document.createElement('img');
+        clone.src = node.currentSrc || node.src || node.dataset.src || '';
+        clone.decoding = 'async'; clone.loading = 'eager';
+        clone.referrerPolicy = 'no-referrer';
+      }
+      lbFigure.appendChild(clone);
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden','false');
+      lbOpen = true;
+    };
+
+    const closeLB = ()=>{
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden','true');
+      lbOpen = false;
+      lbFigure.innerHTML='';
+    };
+
+    lb.addEventListener('click', e=>{
+      if(e.target === lb || e.target === lbFigure) closeLB();
+    });
+    document.addEventListener('keydown', e=>{
+      if(lbOpen && (e.key==='Escape' || e.key==='Esc')) closeLB();
+    });
+
+    // Click en thumbs y media para abrir fullscreen
+    document.querySelectorAll('.carousel .thumb, .grid .tile video, .grid .tile img').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        materializeSrc(el);
+        openLB(el);
+      }, {passive:true});
+    });
+
+    // CARRUSEL AUTO-AVANCE sin scroll
+    const SPEED = 0.66; // px/frame
+    const GAP   = 8;    // coincide con gap:.5rem
+    const DUP   = 2;    // duplicado para loop
+
+    document.querySelectorAll('[data-carousel]').forEach(carousel=>{
+      const track = carousel.querySelector('.track');
+      if(!track) return;
+
+      // materializar media
+      track.querySelectorAll('img.thumb, video').forEach(materializeSrc);
+
+      // duplicar items
+      const original = Array.from(track.children);
+      for(let i=0;i<DUP;i++){
+        original.forEach(node=>{
+          const clone = node.cloneNode(true);
+          if(clone.tagName.toLowerCase()==='img') materializeSrc(clone);
+          if(clone.querySelectorAll) clone.querySelectorAll('img,video,source').forEach(materializeSrc);
+          track.appendChild(clone);
+        });
+      }
+
+      let x = 0, w = 0, paused = false;
+
+      const computeWidth = ()=>{
+        w = Array.from(track.children).reduce((acc,child)=>{
+          const rect = child.getBoundingClientRect();
+          return acc + rect.width + GAP;
+        },0);
+      };
+      computeWidth();
+      new ResizeObserver(()=>computeWidth()).observe(track);
+
+      const step = ()=>{
+        // Pausar si lightbox está abierto
+        const effectivePause = paused || lbOpen;
+        if(!effectivePause){
+          x -= SPEED;
+          if(Math.abs(x) >= w/2){ x = 0 }
+          track.style.transform = `translate3d(${x}px,0,0)`;
+        }
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+
+      ['mouseenter','touchstart','pointerdown'].forEach(ev=>{
+        carousel.addEventListener(ev, ()=>{ paused = true }, {passive:true});
+      });
+      ['mouseleave','touchend','pointerup','pointercancel'].forEach(ev=>{
+        carousel.addEventListener(ev, ()=>{ paused = false }, {passive:true});
+      });
+    });
+
+    // Asegurar loop y autoplay silencioso en videos
+    document.querySelectorAll('video').forEach(v=>{
+      v.muted = true; v.loop = true; v.playsInline = true;
+      materializeSrc(v);
+      v.play().catch(()=>{});
+    });
+
+  })();
+  </script>
+  <style>
+/* Evita scroll de fondo al abrir lightbox */
+.no-scroll-lb, .no-scroll-lb * { overscroll-behavior: contain; }
+</style>
+
+<script>
+/* === xpan — Lightbox con swipe y next/prev, sin tocar el resto === */
+(function(){
+  const lb = document.getElementById('lightbox');
+  if(!lb) return;
+  const fig = lb.querySelector('figure');
+
+  let INDEX = [];
+  let cur = -1;
+
+  function lockScroll(on){
+    document.documentElement.style.overflow = on ? 'hidden' : '';
+    document.body.style.overflow = on ? 'hidden' : '';
+    document.body.classList.toggle('no-scroll-lb', !!on);
+  }
+
+  function normSrc(node){
+    if(!node) return null;
+    // soporta <img> con data-src y <video><source data-src>
+    if(node.tagName === 'IMG'){
+      return node.currentSrc || node.src || node.getAttribute('data-src') || null;
+    }
+    if(node.tagName === 'VIDEO'){
+      const s = node.querySelector('source[src], source[data-src]');
+      return s ? (s.getAttribute('src') || s.getAttribute('data-src')) : null;
+    }
+    return node.getAttribute('src') || node.getAttribute('data-src') || null;
+  }
+
+  function buildIndex(){
+    INDEX = [];
+    // Orden natural en DOM: carouseles y grids si los hubiera
+    const candidates = document.querySelectorAll(
+      '.carousel .track img.thumb, .grid .tile img, .grid .tile video'
+    );
+    candidates.forEach(el=>{
+      const src = normSrc(el);
+      if(!src) return;
+      if(el.tagName === 'VIDEO'){
+        INDEX.push({type:'video', src, el});
+      }else{
+        INDEX.push({type:'img', src, el});
+      }
+    });
+  }
+
+  function renderItem(i){
+    const it = INDEX[i];
+    if(!it) return;
+    cur = i;
+    if(it.type === 'img'){
+      fig.innerHTML = `<img src="${it.src}" alt="" style="max-width:96vw;max-height:96vh;object-fit:contain">`;
+    }else{
+      fig.innerHTML = `<video controls playsinline preload="metadata" style="max-width:96vw;max-height:96vh;object-fit:contain">
+        <source src="${it.src}" type="video/mp4">
+      </video>`;
+      const v = fig.querySelector('video');
+      // abrir con sonido tras gesto que abrió el LB
+      v.muted = false; v.volume = 1;
+      v.play().catch(()=>{});
+      // tap alterna mute dentro del LB
+      v.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        v.muted = !v.muted;
+        if(!v.muted) v.play().catch(()=>{});
+      }, {passive:true});
+    }
+  }
+
+  function openAt(i){
+    if(!INDEX.length) buildIndex();
+    if(i < 0) i = 0;
+    if(i >= INDEX.length) i = INDEX.length - 1;
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden','false');
+    lockScroll(true);
+    renderItem(i);
+  }
+  function closeLB(){
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden','true');
+    lockScroll(false);
+    fig.innerHTML = '';
+    cur = -1;
+  }
+  function next(){ if(INDEX.length) renderItem((cur+1)%INDEX.length); }
+  function prev(){ if(INDEX.length) renderItem((cur-1+INDEX.length)%INDEX.length); }
+
+  // Cerrar al tocar fondo
+  lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLB(); }, {passive:true});
+
+  // Teclado
+  window.addEventListener('keydown', (e)=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key === 'ArrowRight') next();
+    else if(e.key === 'ArrowLeft') prev();
+    else if(e.key === 'Escape') closeLB();
+  });
+
+  // Swipe táctil
+  (function(){
+    let x0=null, y0=null, t0=0;
+    const THRESH = 42;
+    lb.addEventListener('touchstart', (e)=>{
+      if(!lb.classList.contains('open')) return;
+      const t = e.changedTouches[0];
+      x0 = t.clientX; y0 = t.clientY; t0 = Date.now();
+    }, {passive:true});
+    lb.addEventListener('touchend', (e)=>{
+      if(x0==null) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - x0;
+      const dy = t.clientY - y0;
+      const dt = Date.now() - t0;
+      x0 = y0 = null;
+      if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > THRESH && dt < 800){
+        if(dx < 0) next(); else prev();
+      }
+    }, {passive:true});
+  })();
+
+  // Interceptar los clics que actualmente abren el LB "simple"
+  // para iniciar la versión con índice + swipe. No rompe nada existente.
+  document.addEventListener('click', (e)=>{
+    const el = e.target.closest('.carousel .thumb, .grid .tile img, .grid .tile video');
+    if(!el) return;
+    // materializar data-src si aún no
+    if(el.dataset && el.dataset.src && !el.src) el.src = el.dataset.src;
+    if(el.tagName === 'VIDEO'){
+      el.querySelectorAll('source[data-src]').forEach(s=>{
+        if(!s.src) s.src = s.dataset.src;
+      });
+      el.load?.();
+    }
+    // Mapear índice por src normalizado
+    if(!INDEX.length) buildIndex();
+    const src = normSrc(el);
+    const i = INDEX.findIndex(it => it.src === src);
+    if(i >= 0){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      openAt(i);
+    }
+  }, true); // capture para adelantarnos al listener previo
+
+  // Rebuild si cambia el DOM
+  const root = document.querySelector('main') || document.body;
+  new MutationObserver(()=>buildIndex()).observe(root, {childList:true, subtree:true});
+  window.addEventListener('load', buildIndex);
+})();
+</script>
+
+
+<script>
+/* === tight grid estilo POZOLE, en desorden, tap a fullscreen compatible con tu lightbox actual === */
+(function(){
+  // 1) Lista base
+  const TG_SRC = [
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368822/original_b9a39b49bd2eef8f73933a50d6f4673e.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368823/original_bda29e0b8096b019e45ace54ca320526.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368824/original_37f8b6d7234c5edad8444ef598b2ad54.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368826/original_a7fbb51797cb22b7c042f9d4a5987bfd.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368827/original_98a5d1f2d6d9525fe5343ce18ff5c576.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368828/original_b0f315b973b0957d3392ad74be7f9001.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368829/original_53798e6d8ce18f18eeb61ff6b97dcaec.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368830/original_96a9c5a478ed3a59b8160002933d908f.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368831/original_c39e13d58fd558c57a9112237b37fe45.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368833/original_21ba4b646d338eac7764e1ed4d3e5891.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368834/original_88bc1eb67f5a7501a5a6d8dfd93d9934.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368832/original_d7fe45cb35a46f8acaf569a348f2b082.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368835/original_d38c7f6926b0846c9a795dc5ecbe5898.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368836/original_8645c1186228a67dbf4aa88976eb3fd0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368838/original_af5b2312b9fbdd50a27901c625449049.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368837/original_55a1bd18821f836d47596ca4020209fa.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368840/original_91a436f5ab591db164b550c1407889a9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368839/original_e5037629b8c0a893e2a3de0999120c9d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368841/original_8d4d258aa9313880e132ba4792e523fb.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368842/original_e39562e4f883db1bcfb20b58ae91c7f7.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368843/original_8723c464071a2a54ca6fe828fa5fa870.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368844/original_b8d5978a6c158003d4bb7d01610bf8a7.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368845/original_8890b2c3a9ef738b2f7be90156b0025a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368848/original_5faa5f4b7a1edd995eca28001d48c517.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368846/original_def8635417c976e5c7805b7ab6df7df2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368847/original_2aac2b1ca0f91a5f59b725eb45b7d2f3.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368849/original_b792128dd573acd28952cd0f4e5cd58b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368851/original_e77a65ed44218a19afa725192b3f3daa.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368850/original_67e4422d1d9ae7227c04ed4f5ed85ad1.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368852/original_95e8bf7a109665073588ecc34d590b1d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368853/original_70d7aacec076a9410271afb25ca53981.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368854/original_1c8eb90f12e26a2ec9edc790dc161c1a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368855/original_b9fe8e2f8a38e24a851b773398ef82ab.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368856/original_231f27a2ad68b54b353752e895a109ed.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368857/original_8e4f62e1a475647ce241e74773c5ffd0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368899/original_275fe69b2dac13f8d594ff3cfa2b8f3d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368901/original_d5243bdaf261ad11620e0751af2d8d85.jpg",
+    "https://attachments.are.na/39368903/9b41584428b35f9cff8451f7740b2539.mov",
+    "https://attachments.are.na/39368905/94901255d384213985831d4cfb185e55.mov",
+    "https://attachments.are.na/39368906/f20c94237983ec060fe7f9e885092efe.mp4",
+    "https://attachments.are.na/39368907/440306edb9ebf0576ed2fa61befbc957.mov",
+    "https://attachments.are.na/39368908/d6e4edf528b0ddebea84caa807b126a1.mov",
+    "https://attachments.are.na/39368909/647fed6560f3f8f7b7d81bc4733d2642.mov",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368910/original_5dfa2d4fc8644ac09be142752bac3d41.jpg",
+    "https://attachments.are.na/39368912/9a550816c4e2651a8095e936b9a75e22.mov",
+    "https://attachments.are.na/39368911/586463cc97d98b27a3f92e5d0d862359.mov",
+    "https://attachments.are.na/39368913/bc02480cbcd7325c1b44266c30f2ca2a.mov",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368915/original_48b8d83c28b3e7dcde76e0fd9c2ee425.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368914/original_caadeb36862d84e4fcc8e14f69b8e428.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368916/original_315653d9c0049debeb60cae5fd482331.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368917/original_be26332aca6423a5924eb8944b5c0cba.heic",
+    "https://attachments.are.na/39368918/07ac48ff1db1ae01fe470cbd5971f65f.mp4",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368921/original_65787dbc661bf7bf861d7215e30363e2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368920/original_8aaa03958029a4de38ae65caad3a0edb.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368922/original_b401ba9bcad08e082ebdd4574c595a59.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368919/original_904c8228468bd59bacfe770338ddac1d.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368925/original_44ecf2102b981e3bd0f8097f98864d63.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368923/original_9a32d6b60a2d787dca189e3bd45d72c7.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368924/original_2dce557b6ee830543a7ed0f1a21f8c5c.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368926/original_88c3af1f267053087896a38e06f9daa0.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368928/original_c7797049739ee229fca911ea858a6daf.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368929/original_f46a707dd9fbe834d22cc4646f4dc145.heic",
+    "https://attachments.are.na/39368930/8c14e15c574395e4d702b639773d5088.mp4",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368931/original_bfab0a4470d47530f560c3714a7041fb.heic",
+    "https://attachments.are.na/39368932/0cc71debf85088203a55fc25f32ddb4e.mp4",
+    "https://attachments.are.na/39368933/83d19088e877d869da62cbb80bb6a288.mov",
+    "https://attachments.are.na/39368934/6bcb606cd187f46b5bd19948362dac0a.mov",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368935/original_33ee668d2e44ea44bd04e6180eef6a2c.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368937/original_94e845fd4ac168bc9f29fac244f98f8a.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368938/original_ef298db9f3922c77fcae1302d649f70b.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368941/original_41f54aafb7ec6c9952fd7ad4bf4b35ed.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368944/original_71be9ed9ec8ffa01ea4831e494a4bf43.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368942/original_bb0d1c5b1403f0fd2ef0c81b93738157.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368945/original_23199bd135dc5669ee2d7f97c366b5a2.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368946/original_839a836537a6397a5fb15665580d6af9.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368948/original_962e94731bf905bfecebf41353e09715.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368949/original_7d4e655197c6408bc620bc40c9f048fe.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368964/original_193a885d058b7e53c402c14261fc6395.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368965/original_55688aa7adb54b863e1895f02f068cf0.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368966/original_5394c0898e421b6c54d5fbd2b3e11a70.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368967/original_642d0967f403e85e64559bc708ccb94a.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368968/original_8feef924000b1e45613492020eb6d648.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368969/original_7e150b96931f15c65c661904572bce68.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368970/original_381f7363b78c96485001843a48639885.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368971/original_68c78c7b265562c36c37c6acfd374bb0.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368972/original_8118cbf03ec52921a4df1ebcf4cee0af.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368974/original_8d8ff5aa9c654eae409adba70ed7a737.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368975/original_9bb438eec64297b23420df1ca77aaa83.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368976/original_661fa042f1557474272762d228bc0dab.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368977/original_2979cd7662941475074fb6b93d18fe89.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368978/original_6dcafa563a0d944b77b27037916426c6.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368979/original_8fbaf2b4eafc638931c816275e6aabdd.heic",
+    "https://attachments.are.na/39368980/671a7e0b92acbeef51f6640e42255107.mov",
+    "https://attachments.are.na/39368981/6a6bde236b761f63d394cea66c15c16f.mov",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368982/original_ff2710589d65620a2b06b22bfe0b57f1.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368983/original_4c17dd7448e2cabe1666a9853a30d60a.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368984/original_70460051c73b1137ec5db2592ae4f619.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368985/original_3f3dd0d40abc9ccb143e4fc4f0eec11c.heic",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39368986/original_59b7cbf0a3c8d4cfd402b9e22915bc3d.heic",
+    "https://attachments.are.na/39368987/d428c545efd69f6ff8b885e816cfa13c.mov",
+    "https://attachments.are.na/39368988/16d8a95a89ab5e4f25c2128ed2492d3c.mov",
+    "https://attachments.are.na/39368989/c7c464d08c8e406dd43e9aa3a30dc860.mp4"
+  ];
+
+  // 2) Shuffle
+  const TG_SHUFFLED = TG_SRC
+    .map((u,i)=>({u, r: (Math.sin(i*9301+49297)*233280)%1 + Math.random()*0.0001}))
+    .sort((a,b)=>a.r-b.r).map(o=>o.u);
+
+  // 3) Normaliza: imágenes como string, videos como {v:...}
+  const TG_MEDIA = TG_SHUFFLED.map(u=>{
+    const l=u.toLowerCase();
+    return (l.endsWith('.mp4')||l.endsWith('.mov')) ? {v:u} : u;
+  });
+
+  // 4) Render idéntico a POZOLE
+  function tgCreateTile(src, isVideo=false){
+    const fig=document.createElement('figure');
+    fig.className='tile';
+    if(isVideo){
+      const v=document.createElement('video');
+      v.muted=true; v.loop=true; v.autoplay=true; v.playsInline=true; v.preload='metadata';
+      const s=document.createElement('source'); s.src=src; s.type='video/mp4';
+      v.appendChild(s);
+      fig.appendChild(v);
+    }else{
+      const img=document.createElement('img');
+      img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer';
+      img.src=src; fig.appendChild(img);
+    }
+    return fig;
+  }
+  function tgRender(containerId, list){
+    const wrap=document.getElementById(containerId);
+    if(!wrap) return;
+    const frag=document.createDocumentFragment();
+    list.forEach(item=>{
+      if(typeof item==='string'){ frag.appendChild(tgCreateTile(item,false)); }
+      else if(item && item.v){ frag.appendChild(tgCreateTile(item.v,true)); }
+    });
+    wrap.appendChild(frag);
+  }
+
+  tgRender('tg', TG_MEDIA);
+})();
+</script>
+
+</body>
+</html>
