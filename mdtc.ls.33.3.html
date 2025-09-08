@@ -249,7 +249,7 @@
       <div class="xpan-audio-block audio-local">
         <div class="audio-meta">
           <div class="title">ls.33.3</div>
-          <div class="info">[ grabación completa - isaiah barr/ nimrock11/sofia tormenta/ msh ]</div>
+          <div class="info">𝔤𝔯𝔞𝔟𝔞𝔠𝔦ó𝔫 𝔠𝔬𝔪𝔭𝔩𝔢𝔱𝔞 - 𝔦𝔰𝔞𝔦𝔞𝔥 𝔟𝔞𝔯𝔯/ 𝔫𝔦𝔪𝔯𝔬𝔠𝔨11/𝔰𝔬𝔣𝔦𝔞 𝔱𝔬𝔯𝔪𝔢𝔫𝔱𝔞/ 𝔪𝔰𝔥</div>
         </div>
         <div class="audio-controls">
           <button class="play-button" aria-label="play">play</button>
@@ -448,5 +448,59 @@
     v.addEventListener('click', closeLB, {passive:true});  // igual que img
 
 </script>
+<!-- PATCH: no tap-through + tap-to-exit fullscreen -->
+<script>
+(function(){
+  const lb = document.getElementById('lightbox');
+  let shield;
+
+  function ensureShield(){
+    if (shield) return shield;
+    shield = document.createElement('div');
+    shield.id = 'fs-shield';
+    Object.assign(shield.style, {
+      position:'fixed', inset:'0', background:'transparent',
+      zIndex:'2147483647', pointerEvents:'none'
+    });
+    const stopAll = (e)=>{
+      // bloquea taps detrás y cierra si corresponde
+      e.preventDefault(); e.stopPropagation(); try{ e.stopImmediatePropagation(); }catch{}
+      if (document.fullscreenElement) { document.exitFullscreen().catch(()=>{}); }
+      if (lb.classList.contains('open')) {
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden','true');
+        // opcional: reactivar scroll si tu código lo desactiva
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
+      deactivate();
+    };
+    ['click','pointerup','touchend'].forEach(ev=>{
+      shield.addEventListener(ev, stopAll, {capture:true, passive:false});
+    });
+    document.body.appendChild(shield);
+    return shield;
+  }
+
+  function activate(){ ensureShield().style.pointerEvents = 'auto'; }
+  function deactivate(){ if (shield) shield.style.pointerEvents = 'none'; }
+
+  // Activa al entrar a fullscreen, desactiva al salir
+  document.addEventListener('fullscreenchange', ()=>{
+    if (document.fullscreenElement) activate(); else deactivate();
+  }, true);
+
+  // iOS video fullscreen nativo
+  document.addEventListener('webkitbeginfullscreen', activate, true);
+  document.addEventListener('webkitendfullscreen',   deactivate, true);
+
+  // También activa el escudo cuando el lightbox esté abierto, aunque no haya fullscreen
+  const mo = new MutationObserver(()=>{
+    if (lb.classList.contains('open')) activate(); else deactivate();
+  });
+  mo.observe(lb, { attributes:true, attributeFilter:['class','aria-hidden'] });
+})();
+</script>
+
 </body>
 </html>
