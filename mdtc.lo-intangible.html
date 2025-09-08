@@ -13,6 +13,11 @@
 
 <link rel="preload" as="video" href="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" fetchpriority="low">
 <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393204/original_76a2cbbbac7b6b5696637cbd2c8a31b6.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393205/original_054219e3cd3a818feb8642cf5a964d4b.jpg">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393206/original_86a1f5c37739bc9eeb66dca818d5c895.jpg">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393207/original_fb85e4701a02ef0efea84ce82e191268.jpg">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393208/original_c376f2680934bb4da00f6be00fd04606.jpg">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393209/original_04decdbba028b76782d8b4a384ba6a70.jpg">
 <link as="video" href="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" rel="preload"/>
 <script defer="" src="/assets/js/media-proxy.js"></script>
 <script defer="" src="/assets/js/video-autoplay-mobile.js"></script>
@@ -60,14 +65,7 @@ h1{font-size:clamp(1.05rem,2vw,1.4rem);margin:.2rem 0;text-transform:lowercase}
 .aei-float{animation:floatY 9s ease-in-out infinite;will-change:transform}
 #aei-lines{position:absolute;inset:0;pointer-events:none;opacity:.18}
 </style>
-<style>
-/* Lightbox minimal */
-html.lb-open, body.lb-open{overflow:hidden}
-#lightbox{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;z-index:9999;touch-action:none}
-#lightbox.open{display:flex}
-#lightbox figure{margin:0}
-#lightbox figure img, #lightbox figure video{max-width:96vw;max-height:96vh;object-fit:contain;display:block;cursor:zoom-out}
-</style>
+<!-- Eliminado bloque CSS de #lightbox no usado -->
 <style id="aei-float-css">
 /* === AEI float — non-destructive enhancement === */
 :root{--aei-line:rgba(0,0,0,.14);--aei-line-strong:rgba(0,0,0,.28)}
@@ -94,9 +92,27 @@ html.lb-open, body.lb-open{overflow:hidden}
   .aei-float .aei-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
-
-
+<!-- Accesibilidad / rendimiento: reduce motion -->
+<style>
+@media (prefers-reduced-motion: reduce){
+  .aei-float .aei-item img,
+  .aei-float .aei-item video,
+  .aei-float .aei-item .aei-float{animation:none !important; transform:none !important}
+}
+</style>
 <style>@media (max-width:360px){.aei-float .aei-grid{grid-template-columns:1fr}h1{font-size:1rem}}</style>
+<style>
+.tight-item,
+.aei-stage img{content-visibility:auto; contain:content;}
+
+.tight-item img,.grid img{
+  max-width:100%;
+  height:auto;
+  object-fit:contain;
+  background:transparent;
+}
+</style>
+
 </head>
 <body>
 <header><a aria-label="xpan" href="/"><img alt="xpan" src="xpan.svg"/></a></header>
@@ -107,36 +123,83 @@ html.lb-open, body.lb-open{overflow:hidden}
 <button aria-selected="false" data-lang="jp" role="tab">jp</button>
 </div>
 <main>
+
 <section aria-labelledby="t-es">
-<div class="lang active" id="lang-es">
-<h1 id="t-es">lo intangible proyectado sobre lo inmutable</h1>
-<div class="meta">acto crítico de intervención — 4–7 febrero 2025 — antiguo hotel reforma, ciudad de méxico</div>
-<div class="description"><p>lo intangible proyectado sobre lo inmutable
-acto crítico de intervención
-4–7 febrero 2025 — antiguo hotel reforma, ciudad de méxico</p><p>xpan presentó en el hotel reforma el cuarto central de xpan.ep.t [paris.25] con su ciclo de piezas en exhibición. el espacio fue trasladado íntegramente desde parís y reconfigurado dentro del edificio, cargando consigo la energía y densidad acumulada durante su primera activación.</p><p>el hotel reforma, cargado de memoria arquitectónica, se convirtió en superficie activa dentro de la topología conectiva. la inserción del núcleo central de xpan.ep.t [paris.25] en la ciudad de méxico abrió un campo de proximidades dinámicas: un territorio en movimiento donde geografías, lenguajes y comunidades distantes se articularon en un mismo sistema. además de un traslado físico, fue una vectorización simbólica que redujo distancias materiales y culturales, generando resonancias significativas. en ese cruce, lo efímero y lo permanente dejaron de ser opuestos para integrarse en un mismo proceso de conexiones.</p></div>
-</div>
-<div aria-labelledby="t-en" class="lang" id="lang-en">
-<h1 id="t-en">the intangible projected onto the immutable</h1>
-<div class="meta">critical act of intervention — 4–7 february 2025 — antiguo hotel reforma, mexico city</div>
-<div class="description"><p>the intangible projected onto the immutable
-critical act of intervention
-4–7 february 2025 — antiguo hotel reforma, mexico city</p><p>xpan presented at hotel reforma the central room of xpan.ep.t [paris.25] with its cycle of pieces on display. the space was transferred in full from paris and reconfigured inside the building, carrying the energy and density accumulated during its first activation.</p><p>the hotel reforma, dense with architectural memory, became an active surface within the connective topology. inserting the central core of xpan.ep.t [paris.25] in mexico city opened a field of dynamic proximities: a moving territory where distant geographies, languages, and communities articulated within one system. beyond a physical relocation, it was a symbolic vectorization that shortened material and cultural distances, generating resonances. in that crossing, the ephemeral and the permanent ceased to be opposites and integrated into the same process of connections.</p></div>
-</div>
-<div aria-labelledby="t-fr" class="lang" id="lang-fr">
-<h1 id="t-fr">l'intangible projeté sur l'immuable</h1>
-<div class="meta">acte critique d'intervention — 4–7 février 2025 — antiguo hotel reforma, mexico</div>
-<div class="description"><p>l'intangible projeté sur l'immuable
-acte critique d'intervention
-4–7 février 2025 — antiguo hotel reforma, mexico</p><p>xpan a présenté à l'hôtel reforma la salle centrale de xpan.ep.t [paris.25] avec son cycle de pièces en exposition. l'espace a été transféré intégralement depuis paris et reconfiguré à l'intérieur du bâtiment, portant l'énergie et la densité accumulées lors de sa première activation.</p><p>l'hôtel reforma, chargé de mémoire architecturale, est devenu une surface active au sein de la topologie connective. l'insertion du noyau central de xpan.ep.t [paris.25] dans la ville de mexico a ouvert un champ de proximités dynamiques : un territoire en mouvement où géographies, langues et communautés lointaines se sont articulées dans un même système. au-delà d'un déplacement physique, il s'agissait d'une vectorisation symbolique qui a réduit les distances matérielles et culturelles, générant des résonances. dans ce croisement, l'éphémère et le permanent ont cessé d'être opposés pour s'intégrer dans un même processus de connexions.</p></div>
-</div>
-<div aria-labelledby="t-jp" class="lang" id="lang-jp">
-<h1 id="t-jp">不変なるものに投影された不可視</h1>
-<div class="meta">批評的介入の行為 — 2025年2月4日–7日 — アンティグオ・ホテル・レフォルマ（メキシコシティ）</div>
-<div class="description"><p>不変なるものに投影された不可視
-批評的介入の行為
-2025年2月4日–7日 — アンティグオ・ホテル・レフォルマ（メキシコシティ）</p><p>xpanはアンティグオ・ホテル・レフォルマにて、xpan.ep.t［paris.25］の中心室と展示中の作品群を提示した。空間はパリからそのまま移送され、館内で再構成され、初回の起動で蓄積したエネルギーと密度を帯びたまま現れた。</p><p>建築的記憶に満ちたホテル・レフォルマは、コネクティブ・トポロジーの内部における能動的な表面となった。メキシコシティにxpan.ep.t［paris.25］の中核を挿入することにより、動的近接の場が開かれた。そこでは、離れた地理・言語・コミュニティが一つのシステムの内で編成される。単なる物理的移動に留まらず、物質的・文化的距離を縮める象徴的ベクトル化でもあり、顕著な共鳴を生んだ。その交差において、儚いものと持続するものは対立をやめ、同一の接続プロセスへと統合された。</p></div>
-</div>
+  <div class="lang active" id="lang-es">
+    <h2 id="t-es">lo intangible sobre lo inmutable</h2>
+    <div class="meta">acto crítico de intervención — 4–7 febrero 2025 — antiguo hotel reforma, ciudad de méxico</div>
+    <div class="description">
+
+      <p>xpan presentó en el hotel reforma el cuarto central de 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
+        con su ciclo de piezas en exhibición. el espacio fue trasladado íntegramente desde parís y reconfigurado dentro del edificio, cargando consigo la energía y densidad acumulada durante su primera activación.
+      </p>
+      <p>el hotel reforma, cargado de memoria arquitectónica, se convirtió en superficie activa dentro de la topología conectiva. la inserción del núcleo central de 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
+        en la ciudad de méxico abrió un campo de proximidades dinámicas: un territorio en movimiento donde geografías, lenguajes y comunidades distantes se articularon en un mismo sistema. además de un traslado físico, fue una vectorización simbólica que redujo distancias materiales y culturales, generando resonancias significativas. en ese cruce, lo efímero y lo permanente dejaron de ser opuestos para integrarse en un mismo proceso de conexiones.
+      </p>
+    </div>
+  </div>
+
+  <div aria-labelledby="t-en" class="lang" id="lang-en">
+    <h2 id="t-en">lo intangible sobre lo inmutable</h2>
+    <div class="meta">critical act of intervention — 4–7 february 2025 — antiguo hotel reforma, mexico city</div>
+    <div class="description">
+
+      <p>xpan presented at hotel reforma the central room of 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
+        with its cycle of pieces on display. the space was transferred in full from paris and reconfigured inside the building, carrying the energy and density accumulated during its first activation.
+      </p>
+      <p>the hotel reforma, dense with architectural memory, became an active surface within the connective topology. inserting the central core of 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
+        in mexico city opened a field of dynamic proximities: a moving territory where distant geographies, languages, and communities articulated within one system. beyond a physical relocation, it was a symbolic vectorization that shortened material and cultural distances, generating resonances. in that crossing, the ephemeral and the permanent ceased to be opposites and integrated into the same process of connections.
+      </p>
+    </div>
+  </div>
+
+  <div aria-labelledby="t-fr" class="lang" id="lang-fr">
+    <h2 id="t-fr">lo intangible sobre lo inmutable</h2>
+    <div class="meta">acte critique d'intervention — 4–7 février 2025 — antiguo hotel reforma, mexico</div>
+    <div class="description">
+
+      <p>xpan a présenté à l'hôtel reforma la salle centrale de 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
+        avec son cycle de pièces en exposition. l'espace a été transféré intégralement depuis paris et reconfiguré à l'intérieur du bâtiment, portant l'énergie et la densité accumulées lors de sa première activation.
+      </p>
+      <p>l'hôtel reforma, chargé de mémoire architecturale, est devenu une surface active au sein de la topologie connective. l'insertion du noyau central de 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
+        dans la ville de mexico a ouvert un champ de proximités dynamiques : un territoire en mouvement où géographies, langues et communautés lointaines se sont articulées dans un même système. au-delà d'un déplacement physique, il s'agissait d'une vectorisation symbolique qui a réduit les distances matérielles et culturelles, générant des résonances. dans ce croisement, l'éphémère et le permanent ont cessé d'être opposés pour s'intégrer dans un même processus de connexions.
+      </p>
+    </div>
+  </div>
+
+  <div aria-labelledby="t-jp" class="lang" id="lang-jp">
+    <h2 id="t-jp">lo intangible sobre lo inmutable</h2>
+    <div class="meta">批評的介入の行為 — 2025年2月4日–7日 — アンティグオ・ホテル・レフォルマ（メキシコシティ）</div>
+    <div class="description">
+
+      <p>xpanはアンティグオ・ホテル・レフォルマにて、 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t［paris.25］</u></em></a> 
+        の中心室と展示中の作品群を提示した。空間はパリからそのまま移送され、館内で再構成され、初回の起動で蓄積したエネルギーと密度を帯びたまま現れた。
+      </p>
+      <p>建築的記憶に満ちたホテル・レフォルマは、コネクティブ・トポロジーの内部における能動的な表面となった。メキシコシティに 
+        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t［paris.25］</u></em></a> 
+        の中核を挿入することにより、動的近接の場が開かれた。そこでは、離れた地理・言語・コミュニティが一つのシステムの内で編成される。単なる物理的移動に留まらず、物質的・文化的距離を縮める象徴的ベクトル化でもあり、顕著な共鳴を生んだ。その交差において、儚いものと持続するものは対立をやめ、同一の接続プロセスへと統合された。
+      </p>
+    </div>
+  </div>
 </section>
+
+<script>
+function openBoth(url1, url2){
+  window.open(url1, '_blank');
+  window.open(url2, '_blank');
+}
+</script>
+
+
+
+
 <section>
 <div class="hero">
 <video aria-label="video principal" autoplay="" id="hero" loop="" muted="" playsinline="" src="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" preload="none"></video>
@@ -358,12 +421,38 @@ acte critique d'intervention
         ln.setAttribute('stroke','currentColor'); ln.setAttribute('stroke-width','0.6'); lines.appendChild(ln);
       }
     }
-    var ticking=false;
-    function onScroll(){ if(!ticking){ requestAnimationFrame(function(){ updateLines(); ticking=false; }); ticking=true; } }
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var ticking=false, lastTS=0;
+    function onScroll(){
+      if(reduceMotion) return;
+      if(!ticking){
+        requestAnimationFrame(function(ts){
+          if(ts - lastTS > 1200){ updateLines(); lastTS = ts; }
+          ticking=false;
+        });
+        ticking = true;
+      }
+    }
+    // Eventos
     aei.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', onScroll);
-    setInterval(updateLines, 1200);
+    window.addEventListener('resize', function(){ if(!reduceMotion){ updateLines(); }});
+    // Bucle suave con rAF + idle como mantenimiento
+    (function loop(ts){
+      if(!reduceMotion){
+        if(ts - lastTS > 1200){
+          if('requestIdleCallback' in window){
+            requestIdleCallback(function(){ updateLines(); }, {timeout:800});
+          }else{
+            updateLines();
+          }
+          lastTS = ts;
+        }
+        requestAnimationFrame(loop);
+      }
+    })(0);
     updateLines();
+
+    
   }
 
   // Data
@@ -408,8 +497,6 @@ g2: [{"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393173/original_a01a9e998ae0e2bb2bbdee46eb61f1be.jpg"},
 {"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393164/original_e59ff72d39b18392f7fe5eec8e899286.jpg"},
-{"type": "img",
-"src": "https://d2w9rnfcy7mm78.cloudfront.net/39393167/original_e3cb0cce72820182f241e84c9df453bc.jpg"},
 {"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393172/original_0070fbef0721fbb59ec010a8988c93bb.jpg"},
 {"type": "img",
@@ -596,8 +683,6 @@ g22: [{"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393113/original_18172efbdeb8cf27233f2b02701ea167.jpg"},
 {"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393114/original_6f40ddaadc5b9a262ea31ca1b16e60de.jpg"},
-{"type": "img",
-"src": "https://d2w9rnfcy7mm78.cloudfront.net/39393115/original_d10b55bf0c88aee85a6652eccd23ad93.jpg"},
 {"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393116/original_de4c0a062779f23c1af2b4d3c9307652.jpg"},
 {"type": "img",
@@ -4587,6 +4672,147 @@ aei: [{"type": "img",
 
 })();
 </script>
+<script>
+(function(){
+  "use strict";
+
+  // === Config adaptable por dispositivo ===
+  var devMem = (navigator.deviceMemory||4);
+  var slowNet = (navigator.connection && (
+    navigator.connection.saveData ||
+    /2g/.test(String(navigator.connection.effectiveType||""))));
+  var MAX_CONCURRENT_VIDEOS = slowNet ? 2 : (devMem<=4 ? 4 : 6);
+  var GRID_CHUNK_SMALL = slowNet ? 12 : (devMem<=4 ? 16 : 24);
+  var AEI_CHUNK_SMALL  = slowNet ? 80 : (devMem<=4 ? 120: 160);
+
+  // 1) Reducir chunking
+  document.querySelectorAll('.tight-grid[data-chunk]').forEach(function(g){
+    var n = Number(g.getAttribute('data-chunk')||40);
+    if(n>GRID_CHUNK_SMALL) g.setAttribute('data-chunk', GRID_CHUNK_SMALL);
+  });
+  var aeiStage = document.getElementById('aeiStage');
+  if(aeiStage && aeiStage.hasAttribute('data-chunk')){
+    var nAEI = Number(aeiStage.getAttribute('data-chunk')||200);
+    if(nAEI>AEI_CHUNK_SMALL) aeiStage.setAttribute('data-chunk', AEI_CHUNK_SMALL);
+  }
+
+  // 2) Limitar videos simultáneos
+  var playing = new Set();
+  function tryPlay(v){
+    if(playing.size < MAX_CONCURRENT_VIDEOS){
+      v.play().catch(function(){});
+      playing.add(v);
+    }else{ v.pause(); }
+  }
+  function stop(v){ if(!v) return; v.pause(); playing.delete(v); }
+
+  var vidIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      var v = en.target;
+      if(en.isIntersecting){
+        if(!v.dataset.bound){
+          v.dataset.bound = "1";
+          if(v.src){ v.dataset.src = v.src; v.removeAttribute('src'); }
+        }
+        if(!v.src && v.dataset.src) v.src = v.dataset.src;
+        v.muted = true; v.loop = true; v.preload = 'none'; v.playsInline = true;
+        tryPlay(v);
+      }else{ stop(v); }
+    });
+  }, {root:null, rootMargin:"800px 0px"});
+
+  document.querySelectorAll('.tight-item video').forEach(function(v){
+    if(v.src){ v.dataset.src = v.src; v.removeAttribute('src'); }
+    vidIO.observe(v);
+  });
+
+  // 3) Pausa global al cambiar de pestaña
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){
+      document.querySelectorAll('video').forEach(stop);
+    }else{
+      document.querySelectorAll('.tight-item video').forEach(function(v){
+        var r = v.getBoundingClientRect();
+        var on = r.bottom>0 && r.top<innerHeight;
+        if(on) tryPlay(v);
+      });
+    }
+  });
+
+  // 4) Decodificación de imágenes en cola
+  var toDecode = Array.prototype.slice.call(
+    document.querySelectorAll('img[loading], .aei-stage img, .tight-item img')
+  );
+  var busy = false;
+  function pump(){
+    if(busy) return;
+    busy = true;
+    var batch = toDecode.splice(0, slowNet?4:8);
+    Promise.all(batch.map(function(img){
+      try{ return img.decode ? img.decode().catch(function(){}) : Promise.resolve(); }
+      catch(e){ return Promise.resolve(); }
+    })).then(function(){ busy=false; if(toDecode.length) requestIdleCallback?requestIdleCallback(pump):setTimeout(pump,50); });
+  }
+  if(toDecode.length) (requestIdleCallback?requestIdleCallback:pump)(pump);
+
+  // 5) Menos repintados de líneas AEI
+  var lines = document.getElementById('aei-lines');
+  if(lines){
+    var ticking=false;
+    function throttleLines(){
+      if(!ticking){
+        ticking = true;
+        setTimeout(function(){ ticking=false; }, 250);
+      }
+    }
+    document.getElementById('aei').addEventListener('scroll', throttleLines, {passive:true});
+  }
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  // Parámetros de thumbnails
+  var W = 1600, Q = 75, FIT = "contain";
+
+  function toThumb(u){
+    if(window.mediaProxy){
+      try{ return window.mediaProxy(u, { w: W, q: Q, fit: FIT }); }
+      catch(e){}
+    }
+    try{
+      var url = new URL(u, location.href);
+      url.searchParams.set("w", W);
+      url.searchParams.set("q", Q);
+      url.searchParams.set("fit", FIT);
+      return url.toString();
+    }catch(e){ return u; }
+  }
+
+  // Thumbs en grillas, originales en fullscreen
+  var thumbSel = ".tight-item img:not([data-full]), .grid img:not([data-full])";
+  document.querySelectorAll(thumbSel).forEach(function(img){
+    var raw = img.getAttribute("data-src-raw") || img.getAttribute("data-src") || img.src;
+    if(!raw) return;
+    if(!img.getAttribute("data-src-raw")) img.setAttribute("data-src-raw", raw);
+    var th = toThumb(raw);
+    if(img.hasAttribute("src")) img.src = th; else img.setAttribute("data-src", th);
+    img.loading = "lazy";
+    img.decoding = "async";
+  });
+
+  // Restaura originales en fullscreen
+  document.addEventListener("fullscreenchange", function(){
+    var fs = document.fullscreenElement;
+    if(!fs) return;
+    fs.querySelectorAll("img[data-src-raw]").forEach(function(img){
+      var raw = img.getAttribute("data-src-raw");
+      if(raw) img.src = raw;
+    });
+  });
+})();
+</script>
+
 
 </body>
 </html>
