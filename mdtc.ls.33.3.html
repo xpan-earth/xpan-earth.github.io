@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>xpan — mdtc.ls.33.3</title>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+
+  <style>
+    :root{ --bg:#fff; --fg:#000; --line:rgba(0,0,0,.14); --muted:rgba(0,0,0,.6); --gap:12px; --maxw:1440px; --radius:14px; }
+    @media (prefers-color-scheme: dark){ :root{ --bg:#000; --fg:#ffffff00; --line:rgba(255,255,255,.18); --muted:rgba(255, 255, 255, 0);} }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
+    img,video{display:block;max-width:100%;height:auto;background:var(--bg);border:0;border-radius:0;box-shadow:none}
+    a{text-decoration:none;color:inherit}
+
+    header{position:fixed;top:16px;left:16px;z-index:40}
+    header img{width:46px;height:auto;display:block}
+
+    main{max-width:var(--maxw);margin:96px auto 64px;padding:0 16px}
+    h1{font-size:clamp(18px,2vw,22px);margin:2px 0 6px;text-transform:lowercase;font-weight:400;letter-spacing:.1px}
+
+    .chips{display:flex;flex-wrap:wrap;gap:8px 10px;margin:6px 0 14px}
+    .chip{border:1px solid var(--line);padding:2px 8px;font-size:14px;border-radius:0}
+    .viz-wrap{position:relative;border:1px solid var(--line);border-radius:0;overflow:hidden}
+    .viz{width:100%;height:280px;display:block}
+
+    /* Player */
+    .xpan-audio-block{border:1px solid var(--fg);padding:1rem;margin:1.5rem 0;background:var(--bg)}
+    .audio-meta .title{font:700 1rem "Times New Roman",serif;text-transform:lowercase;margin-bottom:.2rem}
+    .audio-meta .info{font-size:.85rem;opacity:.6;margin-bottom:1rem}
+    .audio-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .play-button{background:none;border:none;font-size:1rem;cursor:pointer;text-transform:lowercase;padding:.4rem .6rem}
+    .time-display{font-size:.85rem;min-width:60px}
+    .progress-container{position:relative;flex-grow:1;height:2px;background:#ddd;cursor:pointer;touch-action:none}
+    .progress-fill{height:2px;background:var(--fg);width:0%}
+    .xpan-audio-block canvas{width:100%;height:100px;display:block;margin-top:1rem;background:var(--bg)}
+    .tooltip{position:absolute;font-size:.75rem;background:var(--fg);color:var(--bg);padding:.2rem .4rem;border-radius:3px;transform:translateX(-50%);top:-1.5rem;display:none;pointer-events:none;z-index:100}
+    @media (prefers-color-scheme: dark){ .progress-container{background:#666} .progress-fill{background:#fff} .tooltip{background:#fff;color:#000} }
+
+    /* Hero */
+    .hero{margin:10px 0 12px;display:grid;place-items:center}
+    .hero .hero-box{width:100%;max-width:980px}
+    .hero img{display:block;width:100%;max-height:64vh;object-fit:contain;border:0px}
+
+    /* Grids pegados */
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:0;line-height:0;font-size:0}
+    .grid-3 figure{margin:0;position:relative}
+    .grid-3 img{display:block;width:100%;height:auto;object-fit:contain}
+
+    .vwrap{margin-top:12px}
+    .vwrap .note{font-size:13px;opacity:.65;margin:6px 0 8px}
+    .vgrid{display:grid;grid-template-columns:repeat(3,1fr)!important;gap:0!important;margin:0;line-height:0;font-size:0}
+    .vgrid figure{margin:0;position:relative}
+    .vgrid video{display:block;width:100%;height:auto;object-fit:contain;background:var(--bg)}
+    @media(max-width:900px){.vgrid{grid-template-columns:repeat(3,1fr)!important}}
+    @media(max-width:560px){.vgrid{grid-template-columns:repeat(3,1fr)!important}}
+
+    /* Lightbox overlay (como s+lm) */
+    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:9999}
+    #lightbox.open{display:flex}
+    #lightbox figure{margin:0}
+
+
+    header img {
+    background:transparent !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" aria-label="xpan"><img src="xpan.svg" alt="xpan"></a>
+  </header>
+
+  <main>
+    <section>
+      <h2>12.e.ls.33.3 — 16 07 2025</h2>
+
+
+
+      <div class="viz-wrap">
+  <svg id="viz" class="viz" viewBox="0 0 1000 300" preserveAspectRatio="none">
+    <defs>
+      <!-- gradiente espectral para el arco -->
+      <linearGradient id="spectral" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"  stop-color="#7dd3fc"/>
+        <stop offset="25%" stop-color="#a7f3d0"/>
+        <stop offset="50%" stop-color="#fde68a"/>
+        <stop offset="75%" stop-color="#fca5a5"/>
+        <stop offset="100%" stop-color="#c4b5fd"/>
+      </linearGradient>
+      <!-- halo suave -->
+      <filter id="halo"><feGaussianBlur stdDeviation="1.2"/></filter>
+      <filter id="soft"><feGaussianBlur stdDeviation="0.25"/></filter>
+    </defs>
+    <!-- capas -->
+    <g id="layer-arc"></g>         <!-- arco espectral -->
+    <g id="layer-const"></g>       <!-- constelación isóbara -->
+    <g id="layer-callig"></g>      <!-- caligrafía orbital -->
+    <g id="layer-labels"></g>      <!-- etiquetas -->
+  </svg>
+</div>
+
+<script>
+/* ===== viz compuesto: caligrafía + arco espectral + constelación ===== */
+(function(){
+  const cfg = {
+    center:[500,150],
+    // caligrafía orbital
+    amps:[72, 36, 20],
+    freqs:[0.18, 0.47, 0.91],
+    rot: 0.12,
+    tension: 13.34,
+    stroke: 1.1,
+    dash: 180,
+    speed: 3.85,
+    points: 999,
+    // arco espectral
+    arcRadius: 118,
+    arcSpan: Math.PI*1.35,     // apertura del arco
+    arcWidth: 3.5,
+    // constelación isóbara
+    rings:[90, 130, 170],      // radios de “isobaras”
+    links: 333,                 // cantidad de enlaces
+    dashA:[4,12], dashB:[1,18],
+    // etiquetas
+    labels:['ls.33.3','16·07·2025','msh','nimrock11','isaiah barr','sofía tormenta', 'CRHW+QV']
+  };
+
+  const svg = document.getElementById('viz');
+  const gArc  = svg.querySelector('#layer-arc');
+  const gCon  = svg.querySelector('#layer-const');
+  const gCal  = svg.querySelector('#layer-callig');
+  const gLab  = svg.querySelector('#layer-labels');
+  const [Cx,Cy] = cfg.center;
+
+  // elementos base
+  const pathHalo = N('path',{fill:'none',stroke:'currentColor','stroke-width':cfg.stroke*4,opacity:.06,filter:'url(#halo)'});
+  const pathCal  = N('path',{fill:'none',stroke:'currentColor','stroke-width':cfg.stroke,filter:'url(#soft)'});
+  gCal.append(pathHalo,pathCal);
+
+  const arc = N('path',{fill:'none',stroke:'url(#spectral)','stroke-width':cfg.arcWidth,opacity:.9});
+  gArc.append(arc);
+
+  // constelación: líneas + círculos guía (no relleno)
+  const conLines = Array.from({length:cfg.links}, ()=> N('line',{stroke:'currentColor','stroke-width':.6,opacity:.35}));
+  conLines.forEach(l=>gCon.appendChild(l));
+
+  // etiquetas
+  gLab.innerHTML='';
+  cfg.labels.forEach(txt=>{
+    const t=N('text',{ 'font-size':12, opacity:.7, 'text-anchor':'middle' }); t.textContent=txt; gLab.appendChild(t);
+  });
+
+  let t=0;
+  const rad=d=>d*Math.PI/180;
+  function N(tag,attrs){ const el=document.createElementNS('http://www.w3.org/2000/svg',tag); for(const k in attrs) el.setAttribute(k,attrs[k]); return el; }
+
+  function pt(theta){
+    const [a1,a2,a3]=cfg.amps, [f1,f2,f3]=cfg.freqs;
+    const a=theta + t*f1, b=theta*2 + t*f2, c=theta*3 - t*f3;
+    const x = Cx + a1*Math.cos(a) + a2*Math.cos(b) + a3*Math.cos(c);
+    const y = Cy + a1*Math.sin(a) + a2*Math.sin(b) + a3*Math.sin(c);
+    const cr = Math.cos(cfg.rot*t), sr = Math.sin(cfg.rot*t);
+    return [ Cx + (x-Cx)*cr - (y-Cy)*sr, Cy + (x-Cx)*sr + (y-Cy)*cr ];
+  }
+  function smoothPath(points){
+    if(points.length<2) return '';
+    const k=cfg.tension, d=['M',F(points[0][0]),F(points[0][1])];
+    for(let i=1;i<points.length;i++){
+      const p0=points[i-1], p1=points[i], dx=p1[0]-p0[0], dy=p1[1]-p0[1];
+      d.push('C',F(p0[0]+dx*k),F(p0[1]+dy*k),F(p1[0]-dx*k),F(p1[1]-dy*k),F(p1[0]),F(p1[1]));
+    }
+    return d.join(' ');
+  }
+  function F(n){ return n.toFixed(1); }
+
+  function drawArc(){
+    // arco centrado con barrido lento
+    const phi = t*0.22;
+    const a0 = phi - cfg.arcSpan/2, a1 = phi + cfg.arcSpan/2;
+    const p0 = [Cx + cfg.arcRadius*Math.cos(a0), Cy + cfg.arcRadius*Math.sin(a0)];
+    const p1 = [Cx + cfg.arcRadius*Math.cos(a1), Cy + cfg.arcRadius*Math.sin(a1)];
+    const large = cfg.arcSpan > Math.PI ? 1 : 0;
+    arc.setAttribute('d', `M ${F(p0[0])} ${F(p0[1])} A ${cfg.arcRadius} ${cfg.arcRadius} 0 ${large} 1 ${F(p1[0])} ${F(p1[1])}`);
+  }
+
+  function drawConstellation(){
+    // nodos sobre anillos + enlaces
+    const nodes=[];
+    cfg.rings.forEach((R,ri)=>{
+      const n=8+ri*2;
+      for(let i=0;i<n;i++){
+        const ang = (i/n)*Math.PI*2 + t*(0.06+ri*0.02);
+        nodes.push([ Cx+R*Math.cos(ang), Cy+R*Math.sin(ang) ]);
+      }
+    });
+    for(let i=0;i<conLines.length;i++){
+      const a = nodes[(i*3) % nodes.length];
+      const b = nodes[(i*5 + 7) % nodes.length];
+      const L = conLines[i];
+      L.setAttribute('x1',F(a[0])); L.setAttribute('y1',F(a[1]));
+      L.setAttribute('x2',F(b[0])); L.setAttribute('y2',F(b[1]));
+      // alterna patrones de trazo
+      const useA = i%2===0;
+      L.setAttribute('stroke-dasharray', (useA?cfg.dashA:cfg.dashB).join(' '));
+      L.setAttribute('stroke-dashoffset', F((t*40 + i*6)%(useA?sum(cfg.dashA):sum(cfg.dashB))));
+      L.setAttribute('opacity', 0.22 + 0.18*Math.sin(t*0.9+i));
+    }
+  }
+  function sum(a){return a[0]+a[1];}
+
+  function drawLabels(){
+    const R = Math.max(...cfg.amps)+46;
+    cfg.labels.forEach((_,i)=>{
+      const ang = i*(Math.PI*2/cfg.labels.length) + t*0.05;
+      const x = Cx + R*Math.cos(ang);
+      const y = Cy + R*Math.sin(ang);
+      const el = gLab.children[i];
+      el.setAttribute('x',F(x)); el.setAttribute('y',F(y));
+    });
+  }
+
+  function frame(){
+    t += 0.016*cfg.speed;
+
+    // caligrafía
+    const pts=[]; for(let i=0;i<cfg.points;i++){ pts.push(pt((i/cfg.points)*Math.PI*2)); }
+    const d = smoothPath(pts);
+    pathHalo.setAttribute('d', d);
+    pathCal.setAttribute('d', d);
+    const len=2800, off=(t*140)%len;
+    pathCal.setAttribute('stroke-dasharray', `${cfg.dash} ${len}`);
+    pathCal.setAttribute('stroke-dashoffset', off.toFixed(1));
+
+    // arco y constelación
+    drawArc();
+    drawConstellation();
+    drawLabels();
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // interacción: arrastre = velocidad/tensión
+  svg.addEventListener('pointerdown', e=>{
+    const vx0=cfg.speed, ten0=cfg.tension, x0=e.clientX, y0=e.clientY;
+    function mv(ev){
+      const dx=(ev.clientX-x0)/innerWidth, dy=(ev.clientY-y0)/innerHeight;
+      cfg.speed   = Math.max(0.2, Math.min(2.0, vx0 + dx*1.8));
+      cfg.tension = Math.max(0.0, Math.min(0.6, ten0 - dy*0.5));
+    }
+    function up(){ removeEventListener('pointermove',mv); removeEventListener('pointerup',up); }
+    addEventListener('pointermove',mv,{passive:true}); addEventListener('pointerup',up,{passive:true});
+  }, {passive:true});
+})();
+</script>
+
+
+
+    </section>
+
+    <section id="mixtape">
+      <div class="xpan-audio-block audio-local">
+        <div class="audio-meta">
+          <div class="title">ls.33.3</div>
+          <div class="info">[ grabación completa - isaiah barr/ nimrock11/sofia tormenta/ msh ]</div>
+        </div>
+        <div class="audio-controls">
+          <button class="play-button" aria-label="play">play</button>
+          <div class="time-display">0:00 / 0:00</div>
+          <div class="progress-container"><div class="progress-fill"></div><div class="tooltip" role="tooltip">0:00</div></div>
+          <audio preload="metadata" crossorigin="anonymous"><source id="audio-src" type="audio/mpeg"></audio>
+        </div>
+        <canvas></canvas>
+      </div>
+    </section>
+
+    <section class="hero">
+      <div class="hero-box">
+        <img id="hero" src="" alt="imagen principal"/>
+      </div>
+    </section>
+
+    <section class="grid-3" id="grid6"></section>
+
+    <section class="vwrap">
+      <div class="vgrid" id="vgrid"></div>
+    </section>
+  </main>
+
+  <!-- ÚNICO lightbox -->
+  <div id="lightbox" aria-hidden="true"><figure></figure></div>
+
+<script>
+(function(){
+  const px = (u)=> (window.mediaProxy ? window.mediaProxy(u) : u);
+
+  const AUDIO_MP3 = "https://attachments.are.na/39370524/49c3c0299414e63297562f9da002c4f3.mp3";
+  const MAIN_IMAGE = "https://d2w9rnfcy7mm78.cloudfront.net/39370292/original_6c6d8e8ea51a2947ad68a516a08766e0.jpg";
+  const IMG6 = [
+    "https://d2w9rnfcy7mm78.cloudfront.net/39370285/original_171301f384c9d53442043f6e8a48402b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39370286/original_0197b8691209348030b904d40392fe40.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39370288/original_32cfcd0a9cc81a7d6f5f59d15f833f71.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39370289/original_b767df71691afc11a3bfe785dab346a7.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39370290/original_6a17100297c1cc7e3ee7de3eb0cddc77.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39370291/original_5c119be1bde910df8b08329b424bfada.jpg"
+  ];
+const VIDEOS = [
+  "https://attachments.are.na/39370050/454b5c4796841456fcb20f93f9bc5df8.mp4",
+  "https://attachments.are.na/39370052/f7aaa1d32d498df9d0a5124406d4fa74.mp4",
+  "https://attachments.are.na/39370053/b8b394bcdedf23ce719ab0130404a3a0.mp4",
+  "https://attachments.are.na/39370054/502e099d64ce2ea2f185653a82f86b75.mp4",
+  "https://attachments.are.na/39370055/ad95fa8cd0189c38bcfb2b0b3ca76e9c.mp4",
+  "https://attachments.are.na/39370057/3b3174e34cde51265c64120bb5ee3321.mp4",
+  "https://attachments.are.na/39370058/423b7f3d24aedbbf42ce9a52963d95f5.mp4",
+  "https://attachments.are.na/39370059/dc57b6ae8c298c2a80395bce256aa4d5.mp4",
+  "https://attachments.are.na/39370060/e2372ad76cc9d1e2b6a74fea7ed0e7d4.mp4",
+  "https://attachments.are.na/39370063/c3ec62904274514317ccdb7355e75974.mp4",
+  "https://attachments.are.na/39370064/b273dccf142b68e047cec873290f16cc.mp4",
+  "https://attachments.are.na/39370066/c08a4e4e8f3f3adcdf2964b5639c1eed.mp4",
+  "https://attachments.are.na/39370104/5c4f00c3602a81e6180167c7b40cd77d.mp4",
+  "https://attachments.are.na/39370105/98f4f218165458a8bed890e6f16df1c3.mp4",
+  "https://attachments.are.na/39370107/d96f26528097269aa261cca6b15b5798.mp4",
+  "https://attachments.are.na/39370108/07fe011202eb457de73b33a798dbae73.mp4",
+  "https://attachments.are.na/39370109/c8f22f7059cd200eb1cab58eefb90367.mp4",
+  "https://attachments.are.na/39370110/9fb5356248ebfbe83b9ea732f5c20346.mp4",
+  "https://attachments.are.na/39370111/7d17ea93793f40a1dc584583e2f701cf.mp4",
+  "https://attachments.are.na/39370113/d0bdca651b30318966a665942cd51455.mp4",
+  "https://attachments.are.na/39370114/23df3f443f7767150fd76abd197a8a0e.mp4",
+  "https://attachments.are.na/39370115/3137e38a3c7e7088525bb7a8da4c99e2.mp4",
+  "https://attachments.are.na/39370116/87d5273d788c180123b0af95dc8de739.mp4",
+  "https://attachments.are.na/39370117/051894cebd57b5b13eb14bddd1025ad9.mp4",
+  "https://attachments.are.na/39370118/c77fdcf386d13e5c29bfddd0709a42f3.mp4",
+  "https://attachments.are.na/39370119/1360eaf427d899051ff7a326e39e1acd.mp4",
+  "https://attachments.are.na/39370120/727c6e21aef07a4bcc87f2b7022b063f.mp4"
+];
+
+
+  // Media
+  document.getElementById('hero').src = px(MAIN_IMAGE);
+
+  const g6 = document.getElementById('grid6');
+  IMG6.forEach(u=>{
+    const f=document.createElement('figure');
+    const img=new Image();
+    img.loading='eager'; img.decoding='async'; img.src=px(u); img.alt='';
+    f.appendChild(img); g6.appendChild(f);
+  });
+
+  const vgrid=document.getElementById('vgrid');
+  VIDEOS.forEach(u=>{
+    const f=document.createElement('figure');
+    const v=document.createElement('video');
+    v.muted=true; v.playsInline=true; v.loop=true; v.autoplay=true; v.preload='metadata';
+    const s=document.createElement('source'); s.src=px(u); s.type='video/mp4'; v.appendChild(s);
+    f.appendChild(v); vgrid.appendChild(f);
+  });
+
+  // Player
+  const audioBlock=document.querySelector('.xpan-audio-block');
+  const canvas=audioBlock.querySelector('canvas');
+  const playBtn=audioBlock.querySelector('.play-button');
+  const timeDisplay=audioBlock.querySelector('.time-display');
+  const bar=audioBlock.querySelector('.progress-container');
+  const fill=audioBlock.querySelector('.progress-fill');
+  const tip=audioBlock.querySelector('.tooltip');
+  const audio=audioBlock.querySelector('audio');
+  audio.querySelector('#audio-src').src=px(AUDIO_MP3);
+
+  const ctx=canvas.getContext('2d'); let ac, srcNode, analyser, raf;
+  const fmt=t=>{ if(!isFinite(t)) return '0:00'; const m=Math.floor(t/60); const s=Math.floor(t%60); return `${m}:${s.toString().padStart(2,'0')}`; };
+  function draw(){ if(!analyser) return; const w=canvas.width=canvas.clientWidth; const h=canvas.height=canvas.clientHeight; const data=new Uint8Array(analyser.frequencyBinCount); analyser.getByteTimeDomainData(data); ctx.clearRect(0,0,w,h); ctx.beginPath(); const step=Math.max(1,Math.floor(data.length/w)); for(let x=0,i=0;x<w;x++,i+=step){ const y=(data[i]/255)*h; if(x===0) ctx.moveTo(0,y); else ctx.lineTo(x,y);} ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--fg')||'#000'; ctx.lineWidth=1; ctx.stroke(); raf=requestAnimationFrame(draw);} 
+  async function ensureAudio(){ if(ac) return; ac=new (window.AudioContext||window.webkitAudioContext)(); srcNode=ac.createMediaElementSource(audio); analyser=ac.createAnalyser(); analyser.fftSize=2048; srcNode.connect(analyser); analyser.connect(ac.destination);} 
+  function updateTime(){ timeDisplay.textContent=`${fmt(audio.currentTime)} / ${fmt(audio.duration||0)}`; const p=(audio.currentTime/(audio.duration||1))*100; fill.style.width=p+"%"; }
+  playBtn.addEventListener('click', async ()=>{ await ensureAudio(); if(audio.paused){ audio.play(); playBtn.textContent='pause'; draw(); } else { audio.pause(); playBtn.textContent='play'; cancelAnimationFrame(raf);} });
+  audio.addEventListener('timeupdate', updateTime); audio.addEventListener('loadedmetadata', updateTime);
+  const posToTime=(clientX)=>{ const r=bar.getBoundingClientRect(); const x=Math.min(Math.max(clientX-r.left,0),r.width); const ratio=x/r.width; return ratio*(audio.duration||0); };
+  bar.addEventListener('pointermove',(e)=>{ const t=posToTime(e.clientX); tip.style.left=(e.clientX-bar.getBoundingClientRect().left)+"px"; tip.textContent=fmt(t); tip.style.display='block';});
+  bar.addEventListener('pointerleave',()=>{ tip.style.display='none';});
+  bar.addEventListener('pointerdown',(e)=>{ audio.currentTime=posToTime(e.clientX); updateTime();});
+
+  // SVG (basado en ∞6) — parámetros editables:
+  const cfg = {
+    names: ['mdtc.ls.33.3','16·jul·2025','3h improvisación','nimrock11','isaiah barr','sofía tormenta'],
+    belt: 'mdtc.ls.33.3 · 16·jul·2025 · improvisación continua · registro en vivo',
+    speed: .9,
+    intensity: .6
+  };
+  (function(){
+    const svg=document.getElementById('viz');
+    const axes=svg.querySelector('#axes');
+    const labels=svg.querySelector('#labels');
+    const links=svg.querySelector('#links');
+    const beltPath=svg.querySelector('#beltPath');
+    const revealDisk=svg.querySelector('#revealDisk');
+    beltPath.textContent=' '+cfg.belt+' ';
+    const CENTER={x:500,y:190}; let rot=0,last=0,inten=cfg.intensity;
+    const rad=d=>d*Math.PI/180, lerp=(a,b,t)=>a+(b-a)*t, rand=(a,b)=>a+Math.random()*(b-a);
+    const el=(t,a)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',t); for(const k in a) n.setAttribute(k,a[k]); return n;};
+    const polar=(cx,cy,deg,r)=>[cx+r*Math.cos(rad(deg)+rot), cy+r*Math.sin(rad(deg)+rot)];
+    function build(){ const Rmin=lerp(120,160,inten), Rmax=lerp(220,300,inten); return Array.from({length:6},(_,i)=>{ const base=i*60-90, r=rand(Rmin,Rmax), d=base+rand(-6,6)*inten*2; return {p:polar(CENTER.x,CENTER.y,d,r)}; }); }
+    function draw(pts){ axes.innerHTML=''; labels.innerHTML=''; links.innerHTML=''; pts.forEach((pt,i)=>{ const [x,y]=pt.p; axes.appendChild(el('line',{x1:CENTER.x,y1:CENTER.y,x2:x,y2:y,class:'axis'})); const t=el('text',{class:'lbl',x:CENTER.x+(x-CENTER.x)*1.04,y:CENTER.y+(y-CENTER.y)*1.04,'text-anchor':(x<CENTER.x)?'end':'start'}); t.textContent=cfg.names[i]||''; labels.appendChild(t); }); for(let k=0;k<Math.floor(lerp(6,18,inten));k++){ const i=Math.floor(rand(0,6)), j=(i+Math.floor(rand(1,5)))%6; const a=pts[i].p,b=pts[j].p; links.appendChild(el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'link'})); } const off=parseFloat(beltPath.getAttribute('startOffset'))||0; beltPath.setAttribute('startOffset',((off+cfg.speed)%100)+'%'); revealDisk.setAttribute('r', lerp(40,220,inten)); }
+    function frame(ts){ if(!last) last=ts; const dt=(ts-last)/1000; last=ts; rot+=dt*cfg.speed*0.3; draw(build()); requestAnimationFrame(frame);} 
+    svg.addEventListener('pointerdown',e=>{ const x0=e.clientX, base=inten; function mv(ev){ const dx=(ev.clientX-x0)/innerWidth; inten=Math.min(1,Math.max(0, base+dx*1.2)); } function up(){ removeEventListener('pointermove',mv); removeEventListener('pointerup',up);} addEventListener('pointermove',mv,{passive:true}); addEventListener('pointerup',up,{passive:true}); });
+    requestAnimationFrame(frame);
+  })();
+
+  // Lightbox unificado (como s+lm)
+  const materializeSrc=(el)=>{ if(!el) return; if(el.dataset && el.dataset.src && !el.src) el.src=el.dataset.src; if(el.querySelectorAll) el.querySelectorAll('source[data-src]').forEach(s=>{ if(!s.src) s.src=s.dataset.src; }); };
+  (function(){
+    const SELECTORS = '#grid6 img, #vgrid video';
+    const lb=document.getElementById('lightbox'); const fig=lb.querySelector('figure');
+    let open=false, INDEX=[], cur=-1;
+    function lockScroll(on){ document.documentElement.style.overflow=on?'hidden':''; document.body.style.overflow=on?'hidden':''; }
+    const normSrc=(el)=>{ if(el.currentSrc) return el.currentSrc; if(el.src) return el.src; const s=el.querySelector&&el.querySelector('source'); return (s&&s.src)||(el.dataset&&el.dataset.src)||''; };
+    function buildIndex(){ INDEX=[]; document.querySelectorAll(SELECTORS).forEach(el=>{ const src=normSrc(el); if(src) INDEX.push({type:el.tagName==='VIDEO'?'video':'img',src}); }); }
+    function render(i){ const it=INDEX[i]; if(!it) return; cur=i; fig.innerHTML=''; if(it.type==='img'){ fig.innerHTML=`<img src="${it.src}" alt="" style="max-width:96vw;max-height:96vh;object-fit:contain">`; } else { fig.innerHTML=`<video playsinline preload="metadata" style="max-width:96vw;max-height:96vh;object-fit:contain"><source src="${it.src}" type="video/mp4"></video>`; const v=fig.querySelector('video'); v.muted=false; v.loop=true; v.play().catch(()=>{}); v.addEventListener('click',e=>{ e.stopPropagation(); v.muted=!v.muted; if(!v.muted) v.play().catch(()=>{}); },{passive:true}); } }
+    function openAt(i){ if(!INDEX.length) buildIndex(); if(i<0)i=0; if(i>=INDEX.length)i=INDEX.length-1; lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); open=true; lockScroll(true); render(i); }
+    function closeLB(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); open=false; lockScroll(false); fig.innerHTML=''; cur=-1; }
+    function next(){ if(INDEX.length) render((cur+1)%INDEX.length); }
+    function prev(){ if(INDEX.length) render((cur-1+INDEX.length)%INDEX.length); }
+    lb.addEventListener('click',e=>{ if(e.target===lb || e.target===fig) closeLB(); },{passive:true});
+    addEventListener('keydown',e=>{ if(!open) return; if(e.key==='Escape') closeLB(); if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
+    (function(){ let x0=null; lb.addEventListener('pointerdown',e=>{ if(!open) return; x0=e.clientX; },{passive:true}); lb.addEventListener('pointerup',e=>{ if(x0==null) return; const dx=e.clientX-x0; if(Math.abs(dx)>40){ dx<0?next():prev(); } else { closeLB(); } x0=null; },{passive:true}); })();
+    document.addEventListener('click',(e)=>{ const el=e.target.closest(SELECTORS); if(!el) return; materializeSrc(el); if(!INDEX.length) buildIndex(); const i=INDEX.findIndex(it=>it.src===normSrc(el)); if(i>=0){ e.preventDefault(); e.stopImmediatePropagation(); openAt(i); } }, true);
+  })();
+})();
+</script>
+</body>
+</html>
