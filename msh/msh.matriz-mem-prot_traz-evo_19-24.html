@@ -31,11 +31,11 @@
       width: calc(100% - 40px);
       padding: 6px 12px;
       background: rgba(0, 0, 0, 0.75);
-      color: rgb(0, 255, 38);
+      color: rgba(0, 255, 38);
       font-size: 12px;
       font-family: monospace;
       z-index: 10;
-      border-bottom: 1px solid rgb(0, 255, 38);
+      border-bottom: 1px solid rgba(0, 255, 38, 0.331);
       pointer-events: none;
       white-space: nowrap;
       overflow-x: auto;
@@ -52,8 +52,8 @@
       z-index: 11;
       cursor: pointer;
       user-select: none;
-      border-left: 1px solid rgb(0, 255, 38);
-      border-bottom: 1px solid rgb(0, 255, 38);
+      border-left: 1px solid rgb(0, 255, 38, 0.331);
+      border-bottom: 1px solid rgb(0, 255, 38, 0.331);
     }
     .timeline, .grid {
       display: none;
@@ -117,20 +117,12 @@
       height: 2px;
       z-index: 5;
     }
-  
-/* performance overrides for mobile */
-@media (max-width: 768px){
-  .item{ mix-blend-mode: normal !important; contain: content; }
-  .item img, .item video{ filter: none !important; }
-}
-.timeline{ will-change: transform; } /* single high-value hint */
-
-</style>
+  </style>
 </head>
 <body>
   <div class="metadata-bar" id="metadata"></div>
   <div class="toggle-button" id="toggle">𒁝𒀽𒀄</div>
-  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(0, 255, 38)" stroke-width="1" /></svg>
+  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(0, 255, 38, 0.331)" stroke-width="1" /></svg>
   <div class="timeline active" id="timeline"></div>
   <div class="grid" id="grid"></div>
   <div class="fullscreen-view" id="fullscreen" onclick="this.style.display='none'"></div>
@@ -192,7 +184,7 @@
         media.src = item.url;                // video directo
         media.autoplay = true;
         media.loop = true;
-        media.muted = true; 
+        media.muted = true;
         media.playsInline = true;
         media.preload = 'metadata';
       } else {
@@ -233,7 +225,7 @@
         .filter(u => u && !/\.(mp4|webm|mov)(\?|$)/i.test(u))
         .map(proxifyImage);
 
-      (function(){ var isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent); return preloadImages(imgURLs, isMobile?2:8); })(); // subir a 10 si tu red lo permite
+      preloadImages(imgURLs, 10); // subir a 10 si tu red lo permite
 
 
       const updateMetadata = () => {
@@ -252,20 +244,9 @@
         });
 
         if (closest) {
-  const rawDate = closest.dataset.date || '';
-  const desc = closest.dataset.desc || '';
-  let date = '';
-  if (rawDate) {
-    const [year, month] = rawDate.split('-');
-    const meses = [
-      'enero','febrero','marzo','abril','mayo','junio',
-      'julio','agosto','septiembre','octubre','noviembre','diciembre'
-    ];
-    const m = parseInt(month, 10) - 1;
-    date = `${year} ${meses[m]}`;
-  }
-  metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
-
+          const date = closest.dataset.date;
+          const desc = closest.dataset.desc;
+          metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
         }
       };
 
@@ -284,64 +265,6 @@
 
     loadTimeline();
   </script>
-
-<script>
-(function(){
-  try{
-    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
-    const timeline = document.querySelector('.timeline') || document.querySelector('#timeline') || window;
-
-    // Throttled updateMetadata
-    const update = (typeof window.updateMetadata === 'function') ? window.updateMetadata : function(){};
-    let ticking = false, lastRun = 0;
-    function onScroll(){
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function(){
-        const now = performance.now();
-        if (now - lastRun > 120) { try { update(); } catch(e){} lastRun = now; }
-        ticking = false;
-      });
-    }
-    if (timeline && timeline.addEventListener){
-      timeline.addEventListener('scroll', onScroll, {passive:true});
-    } else {
-      window.addEventListener('scroll', onScroll, {passive:true});
-    }
-
-    // 3) Video cost controls
-    document.querySelectorAll('video').forEach(function(v){
-      try {
-        v.setAttribute('playsinline', '');
-        v.setAttribute('preload', 'metadata');
-        // Avoid filters on video at runtime
-        v.style.filter = 'none';
-      } catch(e){}
-    });
-
-    // 4) Preload concurrency limiter: if there is a global preloadImages(urls, concurrency),
-    // defer start and drop concurrency on mobile. If start function already ran, we do nothing.
-    function startPreloadWithLimit(){
-      try {
-        var urls = window.imgURLs || window.imageURLs || window.mediaURLs || null;
-        var fn = window.preloadImages || window.preloadMedia || null;
-        if (fn && urls && !startPreloadWithLimit._started){
-          startPreloadWithLimit._started = true;
-          var conc = isMobile ? 2 : 8;
-          try { fn(urls, conc); } catch(e){ fn(urls); }
-        }
-      } catch(e){}
-    }
-    if ('requestIdleCallback' in window){
-      requestIdleCallback(startPreloadWithLimit);
-    } else {
-      setTimeout(startPreloadWithLimit, 600);
-    }
-
-  }catch(err){}
-})();
-</script>
-
 </body>
 </html>
 
