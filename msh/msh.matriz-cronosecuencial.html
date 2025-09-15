@@ -4,119 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>matriz cronosecuencial</title>
-  
+
   <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
-<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
-<link rel="preconnect" href="https://attachments.are.na" crossorigin>
-<link rel="dns-prefetch" href="https://images.weserv.nl">
-<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
-<link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://images.weserv.nl">
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
   <script src="/assets/js/video-autoplay-mobile.js" defer></script>
   <script src="/assets/js/media-proxy.js" defer></script>
 
-
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      color: #fff;
-      font-family: "Times New Roman", serif;
-      overflow-x: hidden;
-    }
+    html, body { margin:0; padding:0; background:#000; color:#fff; font-family:"Times New Roman",serif; overflow-x:hidden; }
     .metadata-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: calc(100% - 40px);
-      padding: 6px 12px;
-      background: rgba(0, 0, 0, 0.75);
-      color: rgb(255, 0, 0);
-      font-size: 12px;
-      font-family: monospace;
-      z-index: 10;
-      border-bottom: 1px solid rgb(255, 0, 0);
-      pointer-events: none;
-      white-space: nowrap;
-      overflow-x: auto;
+      position:fixed; top:0; left:0; width:calc(100% - 40px); padding:6px 12px;
+      background:rgba(0,0,0,.75); color:rgb(255,0,0); font-size:12px; font-family:monospace; z-index:10;
+      border-bottom:1px solid rgb(255,0,0); pointer-events:none; white-space:nowrap; overflow-x:auto;
     }
     .toggle-button {
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 6px 12px;
-      font-size: 18px;
-      font-family: monospace;
-      color: rgb(255, 0, 0);
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 11;
-      cursor: pointer;
-      user-select: none;
-      border-left: 1px solid rgb(255, 0, 0);
-      border-bottom: 1px solid rgb(255, 0, 0);
+      position:fixed; top:0; right:0; padding:6px 12px; font-size:18px; font-family:monospace; color:rgb(255,0,0);
+      background:rgba(0,0,0,.75); z-index:11; cursor:pointer; user-select:none; border-left:1px solid rgb(255,0,0); border-bottom:1px solid rgb(255,0,0);
     }
-    .timeline, .grid {
-      display: none;
-    }
-    .timeline.active {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .grid.active {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 2px;
-      padding-top: 36px;
-    }
+    .timeline, .grid { display:none; }
+    .timeline.active { display:flex; flex-wrap:nowrap; overflow-x:scroll; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+    .grid.active { display:grid; grid-template-columns:repeat(auto-fit, minmax(100px, 1fr)); gap:2px; padding-top:36px; }
     .item {
-      flex: 0 0 auto;
-      width: 100vw;
-      scroll-snap-align: center;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transform: scale(1);
-      transition: transform 0.5s ease;
-      mix-blend-mode: lighten;
+      flex:0 0 auto; width:100vw; scroll-snap-align:center; position:relative; display:flex; justify-content:center; align-items:center;
+      transform:scale(1); transition:transform .5s ease; mix-blend-mode:lighten;
+      content-visibility:auto; contain-intrinsic-size:1000px 1000px;
     }
-    .item img, .item video {
-      max-width: 100%;
-      max-height: 100vh;
-      object-fit: contain;
-      filter: contrast(1.2) brightness(1.1);
-      cursor: pointer;
-    }
-    .item:hover {
-      transform: scale(1.05);
-      z-index: 2;
-    }
-    .fullscreen-view {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.9);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-    }
-    .fullscreen-view img, .fullscreen-view video {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-    svg#line {
-      position: fixed;
-      top: 30px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      z-index: 5;
-    }
+    .item img, .item video { max-width:100%; max-height:100vh; object-fit:contain; filter:contrast(1.2) brightness(1.1); cursor:pointer; }
+    .item:hover { transform:scale(1.05); z-index:2; }
+    .fullscreen-view { position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; z-index:20; }
+    .fullscreen-view img, .fullscreen-view video { max-width:100%; max-height:100%; object-fit:contain; }
+    svg#line { position:fixed; top:30px; left:0; width:100%; height:2px; z-index:5; }
   </style>
 </head>
 <body>
@@ -127,145 +48,110 @@
   <div class="grid" id="grid"></div>
   <div class="fullscreen-view" id="fullscreen" onclick="this.style.display='none'"></div>
 
-  <script>
-  // Proxy seguro para imágenes (no videos)
-  function proxifyImage(url){
-    if (!url) return url;
-    if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return url;         // no proxy a video
-    const clean = url.replace(/^https?:\/\//,'');                 // weserv recomienda sin protocolo
-    // 1600px máx, contención, webp, q=85
-    return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&w=1600&fit=inside&output=webp&q=85`;
-  }
+<script>
+function proxifyImage(url){
+  if(!url) return url;
+  if(/\.(mp4|webm|mov)(\?|$)/i.test(url)) return url;
+  const clean = url.replace(/^https?:\/\//,'');
+  return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&w=1600&fit=inside&output=webp&q=85`;
+}
 
-  // Precargador en background sin lazy (concurrencia limitada)
-  function preloadImages(urls, concurrency=8){
-    let i = 0, active = 0;
-    return new Promise(resolve=>{
-      function pump(){
-        while(active < concurrency && i < urls.length){
-          const src = urls[i++]; if(!src) continue;
-          active++;
-          const img = new Image();
-          img.decoding = 'async';
-          img.referrerPolicy = 'no-referrer';
-          img.onload = img.onerror = () => { active--; pump(); };
-          img.src = src;
-        }
-        if(active === 0 && i >= urls.length) resolve();
-      }
-      pump();
-    });
-  }
-</script>
-
-  <script>
-    async function loadTimeline() {
-      const res = await fetch('timeline.index.json');
-      let data = await res.json();
-
-      for (let i = data.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [data[i], data[j]] = [data[j], data[i]];
-      }
-
-      const timeline = document.getElementById('timeline');
-      const grid = document.getElementById('grid');
-      const metadataBar = document.getElementById('metadata');
-      const fullscreen = document.getElementById('fullscreen');
-
-      const createItem = (item, index) => {
-        const el = document.createElement('div');
-        el.className = 'item';
-
-      const isVideo = /\.(mp4|webm|mov)(\?|$)/i.test(item.url) || item.url.includes('video');
-      const media = document.createElement(isVideo ? 'video' : 'img');
-
-      if (isVideo) {
-        media.src = item.url;                // video directo
-        media.autoplay = true;
-        media.loop = true;
-        media.muted = true;
-        media.playsInline = true;
-        media.preload = 'metadata';
-      } else {
-        const proxied = proxifyImage(item.url);
-        media.decoding = 'async';
-        media.fetchPriority = (index < 8 ? 'high' : 'auto'); // primeras piezas más agresivas
-        media.referrerPolicy = 'no-referrer';
-        media.src = proxied;
-      }
-
-
-        el.appendChild(media);
-        const date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
-        const desc = item.description || '';
-        el.dataset.date = date;
-        el.dataset.desc = desc;
-        el.dataset.index = index;
-
-        el.addEventListener('click', () => {
-          fullscreen.innerHTML = '';
-          const fsMedia = media.cloneNode(true);
-          if (fsMedia.tagName === 'VIDEO') fsMedia.muted = false;
-          fullscreen.appendChild(fsMedia);
-          fullscreen.style.display = 'flex';
-        });
-
-        return el;
-      };
-
-      data.forEach((item, index) => {
-        timeline.appendChild(createItem(item, index));
-        grid.appendChild(createItem(item, index));
-      });
-
-      // Preload agresivo de imágenes para swipe/scroll rápido
-      const imgURLs = data
-        .map(d => d.url)
-        .filter(u => u && !/\.(mp4|webm|mov)(\?|$)/i.test(u))
-        .map(proxifyImage);
-
-      preloadImages(imgURLs, 10); // subir a 10 si tu red lo permite
-
-
-      const updateMetadata = () => {
-        const items = [...document.querySelector('.timeline.active')?.children || []];
-        const center = window.innerWidth / 2;
-        let closest = null;
-        let minDist = Infinity;
-
-        items.forEach(item => {
-          const rect = item.getBoundingClientRect();
-          const dist = Math.abs(rect.left + rect.width / 2 - center);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = item;
-          }
-        });
-
-        if (closest) {
-          const date = closest.dataset.date;
-          const desc = closest.dataset.desc;
-          metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
-        }
-      };
-
-      document.getElementById('timeline').addEventListener('scroll', () => {
-        requestAnimationFrame(updateMetadata);
-      });
-
-      updateMetadata();
-
-      document.getElementById('toggle').addEventListener('click', () => {
-        timeline.classList.toggle('active');
-        grid.classList.toggle('active');
-        updateMetadata();
-      });
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    const m = e.target.querySelector('img,video'); if(!m) return;
+    const isVid = m.tagName==='VIDEO';
+    if(e.isIntersecting){
+      if(!m.src) m.src = m.dataset.src;
+      if(isVid){ m.autoplay = true; m.play().catch(()=>{}); }
+    }else{
+      if(isVid){ m.autoplay = false; m.pause(); m.removeAttribute('src'); m.load(); }
     }
+  });
+},{root:null, rootMargin:'250px', threshold:0.01});
 
-    loadTimeline();
-  </script>
+function createItem(item, index){
+  const el = document.createElement('div'); el.className='item';
+  const isVideo = /\.(mp4|webm|mov)(\?|$)/i.test(item.url) || (item.url||'').includes('video');
+  const m = document.createElement(isVideo?'video':'img');
+  if(isVideo){
+    m.preload='none'; m.loop=true; m.muted=true; m.playsInline=true;
+  }else{
+    m.loading='lazy'; m.decoding='async'; m.fetchPriority = (index<8?'high':'auto');
+  }
+  m.dataset.src = isVideo ? item.url : proxifyImage(item.url);
+  m.dataset.fullsrc = item.url;
+
+  const date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
+  const desc = item.description || '';
+  el.dataset.date = date; el.dataset.desc = desc; el.dataset.index = index;
+
+  el.addEventListener('click', ()=>{
+    const fs = document.getElementById('fullscreen');
+    fs.innerHTML='';
+    const fsMedia = m.cloneNode(true);
+    if(fsMedia.tagName==='VIDEO') fsMedia.muted=false;
+    fs.appendChild(fsMedia);
+    fs.style.display='flex';
+  });
+
+  el.appendChild(m);
+  io.observe(el);
+  return el;
+}
+
+function buildView(container, data){
+  container.innerHTML='';
+  const frag = document.createDocumentFragment();
+  data.forEach((it,i)=>frag.appendChild(createItem(it,i)));
+  container.appendChild(frag);
+}
+
+function destroyView(container){
+  container.querySelectorAll('video').forEach(v=>{ v.pause(); v.removeAttribute('src'); v.load(); });
+  container.innerHTML='';
+}
+
+function updateMetadata(){
+  const metadataBar = document.getElementById('metadata');
+  const items = [...document.querySelector('.timeline.active')?.children || []];
+  const center = window.innerWidth/2;
+  let closest=null, min=Infinity;
+  items.forEach(it=>{
+    const r = it.getBoundingClientRect();
+    const d = Math.abs(r.left + r.width/2 - center);
+    if(d<min){ min=d; closest=it; }
+  });
+  if(closest){
+    const date = closest.dataset.date || '';
+    const desc = closest.dataset.desc || '';
+    metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
+  }
+}
+
+async function loadTimeline(){
+  const res = await fetch('timeline.index.json'); let data = await res.json();
+  for(let i=data.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [data[i],data[j]]=[data[j],data[i]]; }
+
+  const timeline = document.getElementById('timeline');
+  const grid = document.getElementById('grid');
+
+  buildView(timeline, data);
+  timeline.classList.add('active'); grid.classList.remove('active');
+  updateMetadata();
+
+  document.getElementById('timeline').addEventListener('scroll', ()=>requestAnimationFrame(updateMetadata));
+
+  let showing='timeline';
+  document.getElementById('toggle').addEventListener('click', ()=>{
+    if(showing==='timeline'){
+      buildView(grid, data); grid.classList.add('active'); timeline.classList.remove('active'); destroyView(timeline); showing='grid';
+    }else{
+      buildView(timeline, data); timeline.classList.add('active'); grid.classList.remove('active'); destroyView(grid); showing='timeline';
+      updateMetadata();
+    }
+  });
+}
+loadTimeline();
+</script>
 </body>
 </html>
-
-
