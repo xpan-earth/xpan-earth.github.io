@@ -31,11 +31,11 @@
       width: calc(100% - 40px);
       padding: 6px 12px;
       background: rgba(0, 0, 0, 0.75);
-      color: rgb(255, 0, 0);
+      color: rgb(0, 255, 38);
       font-size: 12px;
       font-family: monospace;
       z-index: 10;
-      border-bottom: 1px solid rgb(255, 0, 0);
+      border-bottom: 1px solid rgb(0, 255, 38);
       pointer-events: none;
       white-space: nowrap;
       overflow-x: auto;
@@ -47,13 +47,13 @@
       padding: 6px 12px;
       font-size: 18px;
       font-family: monospace;
-      color: rgb(255, 0, 0);
+      color: rgb(0, 255, 38);
       background: rgba(0, 0, 0, 0.75);
       z-index: 11;
       cursor: pointer;
       user-select: none;
-      border-left: 1px solid rgb(255, 0, 0);
-      border-bottom: 1px solid rgb(255, 0, 0);
+      border-left: 1px solid rgb(0, 255, 38);
+      border-bottom: 1px solid rgb(0, 255, 38);
     }
     .timeline, .grid {
       display: none;
@@ -121,8 +121,8 @@
 </head>
 <body>
   <div class="metadata-bar" id="metadata"></div>
-  <div class="toggle-button" id="toggle">𒅒𒄆</div>
-  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(255, 0, 0)" stroke-width="1" /></svg>
+  <div class="toggle-button" id="toggle">𒁝𒀽𒀄</div>
+  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(0, 255, 38)" stroke-width="1" /></svg>
   <div class="timeline active" id="timeline"></div>
   <div class="grid" id="grid"></div>
   <div class="fullscreen-view" id="fullscreen" onclick="this.style.display='none'"></div>
@@ -160,7 +160,7 @@
 
   <script>
     async function loadTimeline() {
-      const res = await fetch('timeline.index.json');
+      const res = await fetch('mem-prot_traz-timeline.index.json');
       let data = await res.json();
 
       for (let i = data.length - 1; i > 0; i--) {
@@ -184,7 +184,7 @@
         media.src = item.url;                // video directo
         media.autoplay = true;
         media.loop = true;
-        media.muted = true;
+        media.muted = true; 
         media.playsInline = true;
         media.preload = 'metadata';
       } else {
@@ -244,9 +244,20 @@
         });
 
         if (closest) {
-          const date = closest.dataset.date;
-          const desc = closest.dataset.desc;
-          metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
+  const rawDate = closest.dataset.date || '';
+  const desc = closest.dataset.desc || '';
+  let date = '';
+  if (rawDate) {
+    const [year, month] = rawDate.split('-');
+    const meses = [
+      'enero','febrero','marzo','abril','mayo','junio',
+      'julio','agosto','septiembre','octubre','noviembre','diciembre'
+    ];
+    const m = parseInt(month, 10) - 1;
+    date = `${year} ${meses[m]}`;
+  }
+  metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
+
         }
       };
 
