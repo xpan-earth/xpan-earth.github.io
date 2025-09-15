@@ -242,9 +242,20 @@
         });
 
         if (closest) {
-          const date = closest.dataset.date;
-          const desc = closest.dataset.desc;
-          metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
+  const rawDate = closest.dataset.date || '';
+  const desc = closest.dataset.desc || '';
+  let date = '';
+  if (rawDate) {
+    const [year, month] = rawDate.split('-');
+    const meses = [
+      'enero','febrero','marzo','abril','mayo','junio',
+      'julio','agosto','septiembre','octubre','noviembre','diciembre'
+    ];
+    const m = parseInt(month, 10) - 1;
+    date = `${year} ${meses[m]}`;
+  }
+  metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
+
         }
       };
 
