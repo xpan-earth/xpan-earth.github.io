@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cronograma experimental</title>
-
-  <!-- conexiones -->
+  <title>matriz-mem-prot_traz-evo_19-24</title>
+  
   <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
-  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
-  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
-  <link rel="dns-prefetch" href="https://images.weserv.nl">
-  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
-  <link rel="dns-prefetch" href="https://attachments.are.na">
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://images.weserv.nl">
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+
 
   <style>
     html, body {
@@ -29,11 +30,11 @@
       width: calc(100% - 40px);
       padding: 6px 12px;
       background: rgba(0, 0, 0, 0.75);
-      color: rgb(255, 0, 0);
+      color: rgb(0, 255, 38);
       font-size: 12px;
       font-family: monospace;
       z-index: 10;
-      border-bottom: 1px solid rgb(0, 208, 255);
+      border-bottom: 1px solid rgb(0, 255, 38);
       pointer-events: none;
       white-space: nowrap;
       overflow-x: auto;
@@ -45,25 +46,23 @@
       padding: 6px 12px;
       font-size: 18px;
       font-family: monospace;
-      color: rgb(0, 183, 255);
+      color: rgb(0, 255, 38);
       background: rgba(0, 0, 0, 0.75);
       z-index: 11;
       cursor: pointer;
       user-select: none;
-      border-left: 1px solid rgb(0, 136, 255);
-      border-bottom: 1px solid rgb(0, 136, 255);
+      border-left: 1px solid rgb(0, 255, 38);
+      border-bottom: 1px solid rgb(0, 255, 38);
     }
-    .timeline, .grid { display: none; }
-
+    .timeline, .grid {
+      display: none;
+    }
     .timeline.active {
       display: flex;
       flex-wrap: nowrap;
       overflow-x: scroll;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      scroll-snap-stop: always;
-      overscroll-behavior-x: contain;
-      contain: content;
     }
     .grid.active {
       display: grid;
@@ -82,7 +81,6 @@
       transform: scale(1);
       transition: transform 0.5s ease;
       mix-blend-mode: lighten;
-      will-change: transform;
     }
     .item img, .item video {
       max-width: 100%;
@@ -91,16 +89,10 @@
       filter: contrast(1.2) brightness(1.1);
       cursor: pointer;
     }
-    .item:hover { transform: scale(1.05); z-index: 2; }
-
-    @media (hover:none),(pointer:coarse){
-      .item:hover{ transform:none }
+    .item:hover {
+      transform: scale(1.05);
+      z-index: 2;
     }
-    @media (prefers-reduced-motion: reduce){
-      .item{ transition:none }
-      .timeline.active{ scroll-snap-type:none }
-    }
-
     .fullscreen-view {
       position: fixed;
       top: 0; left: 0;
@@ -110,21 +102,12 @@
       align-items: center;
       justify-content: center;
       z-index: 20;
-      pointer-events: auto;
     }
     .fullscreen-view img, .fullscreen-view video {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
     }
-    .no-scroll{ position:fixed; inset:0; overflow:hidden; width:100%; }
-
-    /* virtual timeline spacers */
-    .tl-spacer{ flex:0 0 auto; width:0; height:1px }
-
-    /* grid barata */
-    .grid .item{ content-visibility:auto; contain-intrinsic-size: 800px 600px }
-
     svg#line {
       position: fixed;
       top: 30px;
@@ -138,39 +121,33 @@
 <body>
   <div class="metadata-bar" id="metadata"></div>
   <div class="toggle-button" id="toggle">𒁝𒀽𒀄</div>
-  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(255, 0, 0)" stroke-width="1" /></svg>
+  <svg id="line"><line x1="0" y1="1" x2="100%" y2="1" stroke="rgb(0, 255, 38)" stroke-width="1" /></svg>
   <div class="timeline active" id="timeline"></div>
   <div class="grid" id="grid"></div>
-  <div class="fullscreen-view" id="fullscreen"></div>
+  <div class="fullscreen-view" id="fullscreen" onclick="this.style.display='none'"></div>
 
   <script>
-  // --- proxy imágenes con DPR (no videos)
+  // Proxy seguro para imágenes (no videos)
   function proxifyImage(url){
     if (!url) return url;
-    if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return url;
-    const clean = url.replace(/^https?:\/\//,'');
-    const dpr = Math.min(Math.max(window.devicePixelRatio||1,1),3);
-    const w = Math.min(Math.round((window.innerWidth||1280)*dpr), 1920);
-    return "https://images.weserv.nl/?url=" + encodeURIComponent(clean) + "&w=" + w + "&fit=inside&output=webp&q=85&dpr=" + dpr;
+    if (/\.(mp4|webm|mov)(\?|$)/i.test(url)) return url;         // no proxy a video
+    const clean = url.replace(/^https?:\/\//,'');                 // weserv recomienda sin protocolo
+    // 1600px máx, contención, webp, q=85
+    return `https://images.weserv.nl/?url=${encodeURIComponent(clean)}&w=1600&fit=inside&output=webp&q=85`;
   }
 
-  // precargador en background con concurrencia adaptable
-  function preloadImages(urls, concurrency){
-    const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
-    const SAVE_DATA = !!(conn && conn.saveData);
-    const SLOW_NET = !!(conn && /^(2g|slow-2g|3g)$/.test(conn.effectiveType||''));
-    const maxC = SAVE_DATA ? 2 : (SLOW_NET ? 4 : (concurrency||8));
-
+  // Precargador en background sin lazy (concurrencia limitada)
+  function preloadImages(urls, concurrency=8){
     let i = 0, active = 0;
-    return new Promise(function(resolve){
+    return new Promise(resolve=>{
       function pump(){
-        while(active < maxC && i < urls.length){
+        while(active < concurrency && i < urls.length){
           const src = urls[i++]; if(!src) continue;
           active++;
           const img = new Image();
           img.decoding = 'async';
           img.referrerPolicy = 'no-referrer';
-          img.onload = img.onerror = function(){ active--; pump(); };
+          img.onload = img.onerror = () => { active--; pump(); };
           img.src = src;
         }
         if(active === 0 && i >= urls.length) resolve();
@@ -178,317 +155,115 @@
       pump();
     });
   }
-  </script>
+</script>
 
   <script>
-  (function(){
-    // ---------- 1) Desbloqueo de audio en primer gesto ----------
-    var AUDIO_UNLOCKED = false;
-    function unlockAudioOnce(){
-      if (AUDIO_UNLOCKED) return;
-      AUDIO_UNLOCKED = true;
-      document.removeEventListener('pointerdown', unlockAudioOnce, true);
-      var vids = document.querySelectorAll('video');
-      vids.forEach(function(v){
-        try{
-          v.muted = false;
-          var p = v.play();
-          if(p && p.then){
-            p.then(function(){ v.pause(); v.muted = true; }).catch(function(){ v.muted = true; });
-          }else{
-            v.pause(); v.muted = true;
-          }
-        }catch(e){ v.muted = true; }
-      });
-    }
-    document.addEventListener('pointerdown', unlockAudioOnce, {capture:true});
-
-    // ---------- 2) Fullscreen robusto ----------
-    var fs = document.getElementById('fullscreen');
-    var body = document.body;
-
-    function openFS(fromEl){
-      if (!fs || !fromEl) return;
-      fs.innerHTML = '';
-      var m = fromEl.cloneNode(true);
-      m.style.maxWidth = '100%';
-      m.style.maxHeight = '100%';
-      m.playsInline = true;
-
-      if (m.tagName === 'VIDEO'){
-        m.loop = true;
-        m.controls = true;
-        m.autoplay = true;
-        m.muted = !AUDIO_UNLOCKED;
-        m.setAttribute('disablepictureinpicture','');
-        m.setAttribute('controlslist','nofullscreen noplaybackrate nodownload');
-        try { m.play(); } catch(e) {}
-        m.addEventListener('click', function(ev){
-          ev.stopPropagation();
-          m.muted = !m.muted;
-          try { if (m.paused) m.play(); } catch(e){}
-        });
-      }
-      fs.appendChild(m);
-      fs.classList.add('is-open');
-      fs.style.display = 'flex';
-      body.classList.add('no-scroll');
-    }
-    function closeFS(){
-      if (!fs) return;
-      var v = fs.querySelector('video');
-      if (v){ try{ v.pause(); }catch(e){} }
-      fs.classList.remove('is-open');
-      fs.style.display = 'none';
-      fs.innerHTML = '';
-      body.classList.remove('no-scroll');
-    }
-    if (fs){
-      fs.addEventListener('click', function(e){ if(e.target === fs) closeFS(); });
-    }
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && fs && fs.style.display!=='none'){ closeFS(); } });
-
-    // ---------- 3) Virtual timeline ----------
-    function isVideoURL(u){
-      return /\.(mp4|webm|mov)(\?|$)/i.test(u||'') || (u && u.indexOf('video')>-1);
-    }
-
-    async function buildVirtual(){
-      const res = await fetch('media_mem-prot_traz-evo_19-24.created.json');
+    async function loadTimeline() {
+      const res = await fetch('mem-prot_traz-timeline.index.json');
       let data = await res.json();
 
-      // shuffle
-      for (let i=data.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1));
-        const tmp = data[i]; data[i]=data[j]; data[j]=tmp;
+      for (let i = data.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [data[i], data[j]] = [data[j], data[i]];
       }
 
-      var timeline = document.getElementById('timeline');
-      var grid     = document.getElementById('grid');
-      var metaBar  = document.getElementById('metadata');
+      const timeline = document.getElementById('timeline');
+      const grid = document.getElementById('grid');
+      const metadataBar = document.getElementById('metadata');
+      const fullscreen = document.getElementById('fullscreen');
 
-      // limpiar
-      timeline.innerHTML = '';
-      grid.innerHTML = '';
-
-      // spacers
-      var leftSpacer  = document.createElement('div');  leftSpacer.className='tl-spacer';
-      var rightSpacer = document.createElement('div');  rightSpacer.className='tl-spacer';
-      timeline.append(leftSpacer, rightSpacer);
-
-      function VW(){ return window.innerWidth || 1; }
-      var WIN = 10, BUF = 6;
-      var iStart = 0, iEnd = -1;
-      var mounts = new Map();
-
-      function createItem(item, index){
-        var el = document.createElement('div');
+      const createItem = (item, index) => {
+        const el = document.createElement('div');
         el.className = 'item';
-        var isV = isVideoURL(item.url);
-        var m = document.createElement(isV ? 'video' : 'img');
 
-        if(isV){
-          m.src = item.url;
-          m.autoplay = true; m.loop = true; m.muted = true; m.playsInline = true; m.preload='metadata';
-          m.setAttribute('disablepictureinpicture','');
-          m.setAttribute('controlslist','nofullscreen noplaybackrate nodownload');
-        }else{
-          m.decoding='async'; m.referrerPolicy='no-referrer';
-          m.fetchPriority = (index<8 ? 'high' : 'auto');
-          m.loading='lazy';
-          m.src = proxifyImage(item.url);
-        }
+      const isVideo = /\.(mp4|webm|mov)(\?|$)/i.test(item.url) || item.url.includes('video');
+      const media = document.createElement(isVideo ? 'video' : 'img');
 
-        el.appendChild(m);
-        var date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
+      if (isVideo) {
+        media.src = item.url;                // video directo
+        media.autoplay = true;
+        media.loop = true;
+        media.playsInline = true;
+        media.preload = 'metadata';
+      } else {
+        const proxied = proxifyImage(item.url);
+        media.decoding = 'async';
+        media.fetchPriority = (index < 8 ? 'high' : 'auto'); // primeras piezas más agresivas
+        media.referrerPolicy = 'no-referrer';
+        media.src = proxied;
+      }
+
+
+        el.appendChild(media);
+        const date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
+        const desc = item.description || '';
         el.dataset.date = date;
-        el.dataset.desc = item.description || '';
+        el.dataset.desc = desc;
         el.dataset.index = index;
 
-        el.addEventListener('click', function(e){
-          e.preventDefault(); e.stopPropagation();
-          openFS(m);
+        el.addEventListener('click', () => {
+          fullscreen.innerHTML = '';
+          const fsMedia = media.cloneNode(true);
+          if (fsMedia.tagName === 'VIDEO') fsMedia.muted = false;
+          fullscreen.appendChild(fsMedia);
+          fullscreen.style.display = 'flex';
         });
 
-        el.style.flex = '0 0 auto';
-        el.style.width = '100vw';
         return el;
-      }
+      };
 
-      function renderWindow(targetStart){
-        var vw = VW();
-        var N = data.length;
-        var start = Math.max(0, Math.min(N-1, targetStart));
-        var end   = Math.min(N-1, start + WIN + BUF*2 - 1);
+      data.forEach((item, index) => {
+        timeline.appendChild(createItem(item, index));
+        grid.appendChild(createItem(item, index));
+      });
 
-        leftSpacer.style.width  = (start * vw) + 'px';
-        rightSpacer.style.width = ((N - end - 1) * vw) + 'px';
+      // Preload agresivo de imágenes para swipe/scroll rápido
+      const imgURLs = data
+        .map(d => d.url)
+        .filter(u => u && !/\.(mp4|webm|mov)(\?|$)/i.test(u))
+        .map(proxifyImage);
 
-        mounts.forEach(function(node, idx){
-          if (idx < start || idx > end){
-            node.remove();
-            mounts.delete(idx);
+      preloadImages(imgURLs, 10); // subir a 10 si tu red lo permite
+
+
+      const updateMetadata = () => {
+        const items = [...document.querySelector('.timeline.active')?.children || []];
+        const center = window.innerWidth / 2;
+        let closest = null;
+        let minDist = Infinity;
+
+        items.forEach(item => {
+          const rect = item.getBoundingClientRect();
+          const dist = Math.abs(rect.left + rect.width / 2 - center);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = item;
           }
         });
 
-        var anchor = leftSpacer.nextSibling;
-        for (var i=start;i<=end;i++){
-          if (!mounts.has(i)){
-            var el = createItem(data[i], i);
-            timeline.insertBefore(el, anchor);
-            mounts.set(i, el);
-          }
-          anchor = mounts.get(i).nextSibling;
-        }
-        iStart = start; iEnd = end;
-      }
-
-      function centerIndex(){
-        var scrollLeft = timeline.scrollLeft;
-        var idx = Math.round(scrollLeft / VW());
-        return idx;
-      }
-
-      function updateMetadata(){
-        var cx = window.innerWidth/2;
-        var best=null, bestD=1e9;
-        var items = timeline.querySelectorAll('.item');
-        items.forEach(function(it){
-          var r = it.getBoundingClientRect();
-          var d = Math.abs((r.left+r.width/2)-cx);
-          if(d<bestD){ bestD=d; best=it; }
-        });
-        if(best){
-          var date = best.dataset.date||'';
-          var desc = best.dataset.desc||'';
-          metaBar.textContent = "fecha: " + date + (desc? " — " + desc : "");
-        }
-      }
-
-      var centerPlay = {
-        current:null,
-        set:function(v){
-          if (this.current && this.current!==v){
-            try{ this.current.pause(); }catch(e){}
-          }
-          this.current = v;
-          if (v){ v.muted = true; try{ v.play(); }catch(e){} }
+        if (closest) {
+          const date = closest.dataset.date;
+          const desc = closest.dataset.desc;
+          metadataBar.textContent = `fecha: ${date}${desc ? ' — ' + desc : ''}`;
         }
       };
 
-      var io = new IntersectionObserver(function(entries){
-        var vis = [];
-        entries.forEach(function(e){
-          if(e.isIntersecting) vis.push(e.target);
-          else { try{ e.target.pause(); }catch(err){} }
-        });
-        if(!vis.length) return;
-        var best = vis[0], bestDist = 1e9, cx = innerWidth/2;
-        vis.forEach(function(v){
-          var ci = v.closest ? v.closest('.item') : null;
-          var r = (ci && ci.getBoundingClientRect) ? ci.getBoundingClientRect() : v.getBoundingClientRect();
-          var d = Math.abs((r.left+r.width/2)-cx);
-          if(d<bestDist){ bestDist=d; best=v; }
-        });
-        centerPlay.set(best);
-      }, {root:null, rootMargin:'200px 0px', threshold:0.25});
+      document.getElementById('timeline').addEventListener('scroll', () => {
+        requestAnimationFrame(updateMetadata);
+      });
 
-      renderWindow(0);
       updateMetadata();
 
-      var mo = new MutationObserver(function(muts){
-        muts.forEach(function(m){
-          m.addedNodes.forEach(function(n){
-            if(!(n instanceof HTMLElement)) return;
-            var v = (n.querySelector) ? n.querySelector('video') : null;
-            if(v) io.observe(v);
-            if(n.querySelectorAll){
-              n.querySelectorAll('img').forEach(function(img){
-                img.loading='lazy'; img.decoding='async'; if (img.decode) { img.decode().catch(function(){}); }
-              });
-            }
-          });
-        });
-      });
-      mo.observe(timeline, {childList:true, subtree:true});
-
-      var ticking = false;
-      function onScroll(){
-        if(ticking) return;
-        ticking = true;
-        requestAnimationFrame(function(){
-          ticking=false;
-          var idx = centerIndex();
-          var desiredStart = Math.max(0, idx - BUF);
-          if (desiredStart < iStart - BUF || desiredStart > iStart + BUF){
-            renderWindow(desiredStart);
-          }
-          updateMetadata();
-        });
-      }
-      timeline.addEventListener('scroll', onScroll, {passive:true});
-      window.addEventListener('resize', function(){ renderWindow(iStart); });
-
-      // grid barata
-      data.forEach(function(item, index){
-        var el = document.createElement('div');
-        el.className='item';
-        var isV = isVideoURL(item.url);
-        var m = document.createElement(isV?'video':'img');
-        if(isV){
-          m.src=item.url; m.autoplay=true; m.loop=true; m.muted=true; m.playsInline=true; m.preload='metadata';
-          m.setAttribute('disablepictureinpicture','');
-          m.setAttribute('controlslist','nofullscreen noplaybackrate nodownload');
-        }else{
-          m.decoding='async'; m.loading='lazy'; m.referrerPolicy='no-referrer';
-          m.src = proxifyImage(item.url);
-        }
-        el.appendChild(m);
-        el.dataset.date = item.ts ? new Date(item.ts).toISOString().split('T')[0] : '';
-        el.dataset.desc = item.description || '';
-        el.addEventListener('click', function(e){
-          e.preventDefault(); e.stopPropagation();
-          openFS(m);
-        });
-        grid.appendChild(el);
-      });
-
-      // preload imágenes
-      var imgURLs = data
-        .map(function(d){ return d.url; })
-        .filter(function(u){ return u && !/\.(mp4|webm|mov)(\?|$)/i.test(u); })
-        .map(proxifyImage);
-      preloadImages(imgURLs, 10);
-    }
-
-    // toggle timeline/grid
-    var toggleBtn = document.getElementById('toggle');
-    if (toggleBtn){
-      toggleBtn.addEventListener('click', function(){
-        var timeline = document.getElementById('timeline');
-        var grid = document.getElementById('grid');
+      document.getElementById('toggle').addEventListener('click', () => {
         timeline.classList.toggle('active');
         grid.classList.toggle('active');
+        updateMetadata();
       });
     }
 
-    // construir
-    buildVirtual();
-
-    // pausa global si pestaña oculta
-    document.addEventListener('visibilitychange', function(){
-      var vids = document.querySelectorAll('video');
-      if (document.hidden){
-        vids.forEach(function(v){ try{ v.pause(); }catch(e){} });
-      }else{
-        vids.forEach(function(v){
-          var r = v.getBoundingClientRect();
-          var vis = r.bottom>0 && r.right>0 && r.top<(innerHeight||document.documentElement.clientHeight) && r.left<(innerWidth||document.documentElement.clientWidth);
-          if (vis){ v.muted = true; try { v.play(); } catch(e) { } }
-        });
-      }
-    });
-  })();
+    loadTimeline();
   </script>
 </body>
 </html>
+
+
