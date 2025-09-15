@@ -117,7 +117,15 @@
       height: 2px;
       z-index: 5;
     }
-  </style>
+  
+/* performance overrides for mobile */
+@media (max-width: 768px){
+  .item{ mix-blend-mode: normal !important; contain: content; }
+  .item img, .item video{ filter: none !important; }
+}
+.timeline{ will-change: transform; } /* single high-value hint */
+
+</style>
 </head>
 <body>
   <div class="metadata-bar" id="metadata"></div>
@@ -225,7 +233,7 @@
         .filter(u => u && !/\.(mp4|webm|mov)(\?|$)/i.test(u))
         .map(proxifyImage);
 
-      preloadImages(imgURLs, 10); // subir a 10 si tu red lo permite
+      (function(){ var isMobile=/iPhone|iPad|Android/i.test(navigator.userAgent); return preloadImages(imgURLs, isMobile?2:8); })(); // subir a 10 si tu red lo permite
 
 
       const updateMetadata = () => {
@@ -276,6 +284,64 @@
 
     loadTimeline();
   </script>
+
+<script>
+(function(){
+  try{
+    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
+    const timeline = document.querySelector('.timeline') || document.querySelector('#timeline') || window;
+
+    // Throttled updateMetadata
+    const update = (typeof window.updateMetadata === 'function') ? window.updateMetadata : function(){};
+    let ticking = false, lastRun = 0;
+    function onScroll(){
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){
+        const now = performance.now();
+        if (now - lastRun > 120) { try { update(); } catch(e){} lastRun = now; }
+        ticking = false;
+      });
+    }
+    if (timeline && timeline.addEventListener){
+      timeline.addEventListener('scroll', onScroll, {passive:true});
+    } else {
+      window.addEventListener('scroll', onScroll, {passive:true});
+    }
+
+    // 3) Video cost controls
+    document.querySelectorAll('video').forEach(function(v){
+      try {
+        v.setAttribute('playsinline', '');
+        v.setAttribute('preload', 'metadata');
+        // Avoid filters on video at runtime
+        v.style.filter = 'none';
+      } catch(e){}
+    });
+
+    // 4) Preload concurrency limiter: if there is a global preloadImages(urls, concurrency),
+    // defer start and drop concurrency on mobile. If start function already ran, we do nothing.
+    function startPreloadWithLimit(){
+      try {
+        var urls = window.imgURLs || window.imageURLs || window.mediaURLs || null;
+        var fn = window.preloadImages || window.preloadMedia || null;
+        if (fn && urls && !startPreloadWithLimit._started){
+          startPreloadWithLimit._started = true;
+          var conc = isMobile ? 2 : 8;
+          try { fn(urls, conc); } catch(e){ fn(urls); }
+        }
+      } catch(e){}
+    }
+    if ('requestIdleCallback' in window){
+      requestIdleCallback(startPreloadWithLimit);
+    } else {
+      setTimeout(startPreloadWithLimit, 600);
+    }
+
+  }catch(err){}
+})();
+</script>
+
 </body>
 </html>
 
