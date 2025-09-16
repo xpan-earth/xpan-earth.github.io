@@ -36,8 +36,11 @@
     main{max-width:var(--maxw);margin:100px auto 6rem;padding:0 1rem}
 
     .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
-    .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin:.2rem 0 .6rem}
-    .section h2{margin:0;font-size:1.1rem;text-transform:lowercase}
+    /* Oculta títulos de secciones generales */
+    .section>.head{display:none}
+    /* Mantén visibles atlas.1 y atlas.2 */
+    #atlas1>.head,#atlas2>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin:.2rem 0 .6rem}
+    #atlas1 h2,#atlas2 h2{margin:0;font-size:1.1rem;text-transform:lowercase}
     .muted{opacity:.68;font-size:.92rem}
 
     .lang{display:none}
@@ -53,7 +56,7 @@
     .jump{display:flex;gap:.6rem;flex-wrap:wrap;margin:.8rem 0 1.2rem}
     .btn{border:1px solid currentColor;border-radius:999px;padding:.35rem .9rem;background:#fff;cursor:pointer;text-transform:lowercase;font-size:.92rem}
 
-    /* Last shoot gallery: 5 columns tight flushed */
+    /* Last shoot gallery: 5 columns tight flushed (siempre 5) */
     .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:.25rem}
     figure.tile{margin:0;position:relative;background:#fff}
     .tile img,.tile video{width:100%;height:100%;object-fit:contain;background:#fff}
@@ -66,16 +69,11 @@
     #lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
     #lbClose{position:fixed;top:12px;right:12px;background:#000;color:#fff;border:none;border-radius:999px;padding:.55rem .8rem;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2)}
 
-    /* Floating mini player */
-    .mini-player{position:fixed;right:1rem;bottom:1rem;z-index:45;backdrop-filter:blur(6px);background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.1);border-radius:999px;padding:.35rem .6rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-    .mini-btn{width:34px;height:34px;border-radius:999px;border:1px solid #000;background:transparent;display:grid;place-items:center;cursor:pointer}
-    .mini-label{font-size:.85rem;opacity:.7;text-transform:lowercase}
-
-    /* Main video language-aware */
+    /* Main hero */
     .hero-video{position:relative}
     .hero-video video{width:100%;height:auto;max-height:92vh;object-fit:contain;background:#000;outline:1px solid var(--line);border-radius:8px}
 
-    /* Two-column layout for artists + side videos */
+    /* Dos columnas fijas: videos (5) + lista artistas */
     .cols{display:grid;grid-template-columns:1fr clamp(260px,28vw,420px);gap:1.2rem;align-items:start}
     .artists{border:1px solid var(--line);border-radius:var(--radius);padding:1rem;background:#fff;position:sticky;top:90px;max-height:calc(100vh - 140px);overflow:auto}
     .artists h3{margin:.2rem 0 .6rem;text-transform:lowercase;font-size:1.02rem}
@@ -84,7 +82,9 @@
     .side-col{display:grid;gap:.6rem;position:sticky;top:90px;max-height:calc(100vh - 140px);overflow:auto}
     .side-col video{width:100%;height:auto;background:#000;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line);border-radius:8px}
 
-    /* Tight grids utility */
+
+    
+    /* Utilidades de grillas apretadas (siempre fijas) */
     .grid{display:grid;gap:.25rem}
     .grid.cols-3{grid-template-columns:repeat(3,1fr)}
     .grid.cols-4{grid-template-columns:repeat(4,1fr)}
@@ -94,7 +94,7 @@
     .center{display:grid;place-items:center}
     .center .wide{max-width:min(1000px,92vw)}
 
-    /* Four-up video rows */
+    /* Filas de 4 videos fijas */
     .row4{display:grid;grid-template-columns:repeat(4,1fr);gap:.25rem}
 
     /* Instagram link */
@@ -104,6 +104,11 @@
     .embed{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
     .embed iframe{width:100%;height:72vh;border:0}
 
+    /* CTA adquirir estilizado */
+    .buy{font-style:italic}
+    .buy a{border:1px solid currentColor;border-radius:999px;padding:.2rem .6rem;text-decoration:none}
+
+    
   </style>
 </head>
 <body>
@@ -152,7 +157,7 @@
         <p>atlas est une publication périodique de xpan qui relie les pratiques culturelles grâce à un système éditorial indépendant.</p>
         <p>elle fonctionne comme un nœud au sein de la topologie connective, articulant langages, méthodes et formes d'intervention sans filtres externes ni structures commerciales.</p>
         <p>sa sélection répond à une relation de confiance avec chaque collaborateur et à la capacité de chaque article à activer des connexions au sein de l'écosystème global.</p>
-        <p>publié au mexique et tiré semestriellement à 1 000 exemplaires, atlas fonctionne comme une infrastructure éditoriale et une plateforme d'échange critique à l'échelle mondiale.</p>
+        <p>publié au mexique et tiré semestriellement à 1 000 exemplaires, atlas fonctionne comme une infrastructure éditoriale et une plateforme d'échange critique à l'échelle mondiale.</p>
         <div class="jump">
           <a class="btn" href="#atlas1">atlas.1</a>
           <a class="btn" href="#atlas2">atlas.2</a>
@@ -174,25 +179,18 @@
       </div>
     </section>
 
-    <!-- Galería último shoot: 5 columnas -->
+    <!-- Galería último shoot: 5 columnas (sin título visible) -->
     <section class="section" id="ultimo-shoot">
       <div class="head"><h2>galería</h2><div class="muted">último shoot</div></div>
       <div class="grid5" id="grid-last"></div>
     </section>
 
-    <!-- Mini player flotante -->
-    <div class="mini-player" id="miniPlayer" aria-label="mini audio player">
-      <button class="mini-btn" id="mpToggle" aria-label="play/pause">▶</button>
-      <span class="mini-label">atlas · motivo</span>
-      <audio id="mpAudio" preload="none" src="https://attachments.are.na/39582740/4558d52432813868065c8a5082d2203c.wav"></audio>
-    </div>
-
-    <!-- Video principal por idioma, autoplay con gestión de permisos -->
+    <!-- Video principal por idioma -->
     <section class="section hero-video">
-      <div class="lang es active"><video class="hero" id="hero-es" playsinline loop src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
-      <div class="lang en"><video class="hero" id="hero-en" playsinline loop src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
-      <div class="lang fr"><video class="hero" id="hero-fr" playsinline loop src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
-      <div class="lang jp"><video class="hero" id="hero-jp" playsinline loop src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang es active"><video class="hero" id="hero-es" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang en"><video class="hero" id="hero-en" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang fr"><video class="hero" id="hero-fr" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang jp"><video class="hero" id="hero-jp" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
     </section>
 
     <!-- atlas.1 -->
@@ -216,8 +214,8 @@
 
       <!-- pulsera + gif centrados -->
       <div class="section center">
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582566/original_3ec8573f4781548a021c64d64340acd8.jpg" alt="pulsera"></figure>
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582568/original_fc8ae219b5c99d7c9765f31aef5ab066.gif" alt="colaboradores"></figure>
+        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582566/original_3ec8573f4781548a021c64d64340acd8.jpg" alt="pulsera" loading="lazy" decoding="async"></figure>
+        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582568/original_fc8ae219b5c99d7c9765f31aef5ab066.gif" alt="colaboradores" loading="lazy" decoding="async"></figure>
       </div>
 
       <!-- grid media 3 columnas -->
@@ -242,7 +240,7 @@
 
       <!-- 1 imagen columna -->
       <div class="section center">
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582414/original_d0b4cbcbb9247cb14e2c903418c122b8.png?1757980116" alt="atlas.1"></figure>
+        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582414/original_d0b4cbcbb9247cb14e2c903418c122b8.png?1757980116" alt="atlas.1" loading="lazy" decoding="async"></figure>
       </div>
 
       <!-- diagramas yucli (4 y 3 columnas en 2 filas) -->
@@ -258,13 +256,13 @@
 
       <!-- flyer final -->
       <div class="section center">
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582308/original_7ba1a2522a299c350a076432a6634093.jpg?1757979840" alt="flyer atlas.1"></figure>
+        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582308/original_7ba1a2522a299c350a076432a6634093.jpg?1757979840" alt="flyer atlas.1" loading="lazy" decoding="async"></figure>
       </div>
     </section>
 
     <!-- atlas.2 -->
     <section class="section" id="atlas2">
-      <div class="head"><h2>atlas.2</h2><div class="muted">[15.05.25] · adquirir</div></div>
+      <div class="head"><h2>atlas.2</h2><div class="muted buy">[15.05.25] · <a href="https://xpan.earth/comprar_atlas.2.html" target="_blank" rel="noopener">adquirir</a></div></div>
       <div class="cols">
         <div class="side-col" id="a2-videos"></div>
         <aside class="artists">
@@ -298,9 +296,13 @@
       </div>
     </section>
 
-    <!-- Proximidades dinámicas embed -->
+     <section class="section" id="atlas2">
+        <div class="head"><h2>atlas.3</h2><div class="muted">[febrero 2026] · 19.4196, -99.1626</div></div>
+        </section>
+
+    <!-- Proximidades dinámicas (sin título visible) -->
     <section class="section">
-      <div class="head"><h2>proximidades dinámicas</h2><div class="muted"> </div></div>
+      <div class="head"><h2>proximidades dinámicas</h2><div class="muted">embed</div></div>
       <div class="embed"><iframe src="mc_proximidades_dinamicas.html" title="proximidades dinámicas"></iframe></div>
     </section>
   </main>
@@ -321,29 +323,22 @@
   }
   langBtns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
 
-  // ===== Mini audio player =====
-  const mpAudio=document.getElementById('mpAudio');
-  const mpToggle=document.getElementById('mpToggle');
-  let mpStarted=false;
-  function playAudio(){
-    mpAudio.play().then(()=>{mpToggle.textContent='❚❚'}).catch(()=>{mpToggle.textContent='▶'});
-  }
-  function pauseAudio(){ mpAudio.pause(); mpToggle.textContent='▶'; }
-  mpToggle.addEventListener('click',()=>{ if(mpAudio.paused) playAudio(); else pauseAudio(); });
-  // Start on first interaction
-  window.addEventListener('pointerdown',()=>{ if(!mpStarted){ mpStarted=true; playAudio(); } },{once:true});
-
-  // ===== Hero video autoplay with sound intent =====
+  // ===== Hero video autoplay + sonido al primer gesto =====
   function setupHero(id){
     const v=document.getElementById(id);
     if(!v) return;
-    v.muted=false; v.autoplay=true; v.playsInline=true; v.loop=true;
-    const io=new IntersectionObserver((e)=>{e.forEach(x=>{ if(x.isIntersecting){ v.play().catch(()=>{}); } else { v.pause(); } })},{threshold:.35});
+    v.autoplay=true; v.playsInline=true; v.loop=true; v.muted=true; // autoplay garantizado
+    const io=new IntersectionObserver((entries)=>{entries.forEach(x=>{ if(x.isIntersecting){ v.play().catch(()=>{}); } else { v.pause(); } })},{threshold:.35});
     io.observe(v);
-    // unmute on first gesture if blocked
-    window.addEventListener('pointerdown',()=>{v.muted=false; v.play().catch(()=>{});},{once:true});
   }
   ['hero-es','hero-en','hero-fr','hero-jp'].forEach(setupHero);
+
+  // Unmute global al primer gesto (sonará el visible)
+  window.addEventListener('pointerdown',()=>{
+    document.querySelectorAll('.hero-video video').forEach(v=>{
+      v.muted=false; v.volume=1; v.play().catch(()=>{});
+    });
+  },{once:true});
 
   // ===== Lightbox util =====
   const lb=document.getElementById('lightbox');
@@ -489,6 +484,7 @@ yucli`.split('\n');
 "https://d2w9rnfcy7mm78.cloudfront.net/39582556/original_51cca1d40eec96a62cd3a5f95cac0c53.png",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582555/original_2a3a3ec29529b91a806bcdf7b71f8332.png",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582554/original_e74656cfd8bf3f0fcdf7824f9bdc1375.png",
+"https://d2w9rnfcy7mm78.cloudfront.net/39582562/original_3454be97fc1c6b6574792a4adbb61ab0.png",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582553/original_30fc88d0bdf379ab3e9b6b5036a6db1b.png",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582552/original_05b63c3034729d88e0dc7618693c8683.jpg",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582551/original_87b3726c0ca74d873e0201c1708b33c9.jpg",
@@ -715,8 +711,8 @@ zoo as zoo`.split('\n');
 "https://d2w9rnfcy7mm78.cloudfront.net/39582102/original_6b83353a524181dad350da884f35f754.jpg",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582103/original_aa78ee6b3b487282e2726d0c1e8a8c83.jpg",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582104/original_7c44d9f3365cca457c88aeb289371918.jpg",
+"https://d2w9rnfcy7mm78.cloudfront.net/39582107/original_552c14cba5fc434bcf5f3e600ff2f20a.jpg",
 "https://d2w9rnfcy7mm78.cloudfront.net/39582105/original_1c31f333f6240dc5d0826036fda456a6.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582107/original_552c14cba5fc434bcf5f3e600ff2f20a.jpg"
   ];
 
   // ===== Render helpers =====
