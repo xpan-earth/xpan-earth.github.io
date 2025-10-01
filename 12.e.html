@@ -18,10 +18,30 @@
 
     <style>
 html, body {
-  height: 100dvh;
-  overflow: hidden;
+  height: auto;
+  overflow: auto;
 }
 
+article {
+  min-height: 100svh;       /* respeta barras/UA en móvil */
+  overflow: visible;        /* deja que el documento scrollee */
+  gap: 1.25rem;             /* mantiene márgenes entre bloques */
+}
+
+/* 3) Imagen vertical contenida, sin deformar ni desplazar texto */
+article img.portada-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  max-height: 60svh;        /* recorta altura visible en pantallas altas */
+  object-fit: contain;      /* asegura encuadre completo */
+  margin-block: 1rem;
+}
+
+/* 4) Ajuste extra para pantallas muy bajas */
+@media (max-height: 700px) {
+  article img.portada-img { max-height: 50svh; }
+}
 article {
   height: 100%;
   display: flex;
