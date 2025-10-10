@@ -1,0 +1,277 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xpan — 12.e ls timeline [ 03.11.25 - 26.02.26 ]</title>
+  <style>
+    /* base */
+    :root { --fg:#000; --bg:#fff; --line:#000; }
+    *{ box-sizing:border-box }
+    body{
+      margin:0;
+      font-family:"Times New Roman", serif;
+      background:var(--bg);
+      color:var(--fg);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    header{
+      position:fixed;
+      top:1rem;
+      left:1rem;
+      z-index:10;
+    }
+    header img{ width:50px; height:auto; display:block }
+
+    .timeline{
+      position:relative;
+      max-width:700px;
+      margin:6rem auto 10rem auto;
+      padding-left:3.5rem;
+      padding-right:1rem;
+      contain:layout paint;
+    }
+
+    /* línea vertical */
+    .line{
+      position:absolute;
+      top:0; bottom:0;
+      left:1.5rem;
+      width:3px;
+      background:var(--line);
+      border-radius:2px;
+      animation:pulseLine 3s infinite;
+      z-index:1;
+    }
+    @keyframes pulseLine{
+      0%{opacity:1}
+      50%{opacity:.3}
+      100%{opacity:1}
+    }
+
+    .entry{
+      position:relative;
+      max-width:650px;
+      margin-bottom:4rem;
+      padding-left:3.5rem;
+      opacity:0;
+      transform:translateY(-40px) scale(.9);
+      transition:opacity .8s ease, transform .8s ease;
+      text-align:justify;
+    }
+    .entry.visible{
+      opacity:1;
+      transform:translateY(0) scale(1);
+    }
+
+    /* punto circular */
+    .entry::before{
+      content:"";
+      position:absolute;
+      top:.8rem; left:0;
+      width:16px; height:16px;
+      background:#000;
+      border-radius:50%;
+      border:3px solid #fff;
+      z-index:2;
+    }
+
+    .entry h2{
+      margin:0 0 .3rem 0;
+      font-size:1rem;
+      font-weight:normal;
+      line-height:1.2;
+      text-transform:lowercase;
+    }
+    .entry h3{
+      margin:0 0 .6rem 0;
+      font-size:1.3rem;
+      font-style:italic;
+      font-weight:normal;
+      line-height:1.2;
+      text-transform:lowercase;
+    }
+    .entry p{
+      margin:0;
+      font-size:1rem;
+      white-space:pre-wrap;
+    }
+
+    /* móviles */
+    @media (max-width:600px){
+      .timeline{ max-width:90vw; padding-left:2.5rem; padding-right:1rem }
+      .line{ left:1rem; width:2.5px }
+      .entry{ max-width:100%; padding-left:2.5rem; margin-bottom:3rem; font-size:.95rem }
+      .entry::before{ width:14px; height:14px; top:.7rem; border-width:2.5px; left:0 }
+      .entry h2{ font-size:.95rem }
+      .entry h3{ font-size:1.1rem }
+      .entry p{ font-size:.95rem }
+    }
+
+    /* accesibilidad: reduce motion */
+    @media (prefers-reduced-motion:reduce){
+      .line{ animation:none }
+      .entry{ transition:none; transform:none; opacity:1 }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth/arq.xpan.12e" aria-label="xpan home">
+      <img src="./xpan.svg" alt="xpan" />
+    </a>
+  </header>
+
+  <div class="timeline" id="timeline">
+    <div class="line" aria-hidden="true"></div>
+
+    <!-- ls.49 -->
+    <div class="entry" style="transition-delay: 0.75s">
+      <h2>ls.49 — 03.nov.25</h2>
+      <h3>anna von hauswolff — dead magic</h3>
+      <p>destacado por su esencia oscura, dead magic es un viaje a través de sonidos tétricos sobre la contemplación de la muerte a la vez que teje un tapiz sonoro de inmensa profundidad. utilizando el órgano de la iglesia de Gotemburgo como eje central, acompañado de la propia voz de von Hausswolff com un instrumento en sí misma, oscilando entre susurros etéreos y poderosos clímax operísticos, dando lugar así a una obra hipnótica y desafiante donde se enfatiza la naturaleza ritual y las arquitectónicas sonoras.</p>
+    </div>
+
+    <!-- ls.50 -->
+    <div class="entry" style="transition-delay:.6s">
+      <h2>ls.50 — 10.nov.25</h2>
+      <h3>slava parshin — untitled</h3>
+      <p>por definir.</p>
+    </div>
+
+    <!-- ls.51 -->
+    <div class="entry" style="transition-delay:.65s">
+      <h2>ls.51 — 17.nov.25</h2>
+      <h3>sarah neufeld — first sounds</h3>
+      <p>una exploración de sonoridades atmosféricas donde Neufeld interconecta un diálogo íntimo y orgánico en el que prescinde de estructuras convencionales, priorizando la textura, la espacialidad y la improvisación meditativa.  el resultado final de estas expliraciones es una suite experimental de una belleza austera y profundamente conmovedora, un registro puro de un momento creativo único y una propuesta de nuevos sonidos desde lo instrumental.</p>
+    </div>
+
+    <!-- ls.52 -->
+    <div class="entry" style="transition-delay:.7s">
+      <h2>ls.52 — 24.nov.25</h2>
+      <h3>einstürzende neubauten — kollaps</h3>
+      <p>desde kollaps se forja un sonido visceral a partir del caos y la percusión industrial, es un manifiesto de la autodestrucción a través del sonido, donde los instrumentos tradicionales son reemplazados elementos metálicos y herramientas. llegando a crear una orquesta de desechos que genera ritmos martilleantes y texturas ásperas, mientras una voz ambivalent entre un grito desesperado y un recitado histérico. todo este conjunto de sonoridades percursivas dan como resultado final una de las obras fundacionales del industrial.</p>
+    </div>
+
+    <!-- ls.53 -->
+    <div class="entry" style="transition-delay:.75s">
+      <h2>ls.53 — 01.dec.25</h2>
+      <h3>mono — one step more and you die</h3>
+      <p>una monumental inmersión en el post-rock cinematográfico donde se despliega un enfoque orquestal, construyendo paisajes sonoros a partir de dinámicas extremas: pasajes de delicada belleza melódica que estallan en catárticos clímax de distorsión y ritmos arrasadores. las estructuras expansivas y un uso magistral del crescendo, donde capas de guitarra, bajo y batería se entrelazan para generar una intensidad emocional abrumadora, son los principales diferenciadores de esta obra. </p>
+    </div>
+
+    <!-- ls.54 -->
+    <div class="entry" style="transition-delay:.8s">
+      <h2>ls.54 — 08.dic.25</h2>
+      <h3>terraplana — olhar pra trás</h3>
+      <p>terraplana elabora una cautivadora fusión de folk contemplativo y un distorsionado que genera una atmosféra espacial que se construye sobre la delicada interacción entre la guitarra acústica, que traza melodías de aire bossanovístico, y capas etéreas de sintetizadores y samples que expanden este espacio sonoro. la voz se usa más como un instrumento textural que narrativo, se integra en este ecosistema, completando una obra íntima y onírica de introspección auditiva.</p>
+    </div>
+
+   <!-- ls.55 -->
+    <div class="entry" style="transition-delay:.8s">
+      <h2>ls.55 — 15.dic.25</h2>
+      <h3>ryoji ikeda — test pattern</h3>
+      <p>reducir la música a una esencia binaria, entendiendo el sonido como datos digitales, un ejercicio extremo de minimalismo electrónico, donde los pulsos, los tonos sinusoidales y el ruido blanco se convierten en los protagonistas. ikeda manipula frecuencias en los límites del espectro audible, creando ritmos hipnóticos a partir de secuencias de código y patrones que se asemejan a un test de señal. esta escasa paleta sonora es inmensamente textural, desafiando nuestra percepción del ritmo y la melodía. cada clic, glitch y frecuencia está colocada con una exactitud milimétrica, creando una experiencia auditiva que es a la vez abstracta, intelectualmente rigurosa y sensorialmente abrumadora, dando paso a una obra pionera de la música glitch en código y el arte sonoro conceptual.</p>
+    </div>
+
+    <!-- ls.56 -->
+    <div class="entry" style="transition-delay:.8s">
+      <h2>ls.56 — 22.dic.25</h2>
+      <h3>machine girl — wlfgrl</h3>
+      <p>una descarga de energía cruda y digital que mezcla el breakcore hiperacelerado con la agresividad del punk electrónico, con ritmos fracturados y complejos, sampleos distorsionados y melodías de sintetizadores llevados al límite entre la distorsión y el ruido puro. sonidos densos y caóticos, pero con una claridad que permite apreciar cada capa de su intricado diseño sonoro. desde las transiciones bruscas y sorpresivas se va creando una sensación de inmersión en un entorno virtual hostil que esconde una precisión técnica en la colocación de cada elemento, logrando una cohesión desde el aparente desorden.</p>
+    </div>
+
+    <!-- ls.57 -->
+    <div class="entry" style="transition-delay:.8s">
+      <h2>ls.57 — 29.dic.25</h2>
+      <h3>beth gibbons — out of season</h3>
+      <p>en un contexto de melancolía acústica y atmósfera otoñal se presenta a la icónica voz de Gibbons, donde explora un folk oscuro y orquestal, y llega a ser la protagonista principal. acompañada de arreglos, tejidos con cuerdas sobrias, piano melancólico y guitarras acústicas, crean un paisaje íntimo y cinematográfico, a la vez que es cálido y analógico, recordando a piezas clásicas del folk rock, pero desde una sensibilidad modern. el álbum se mueve con paciencia, priorizando el ambiente y la emotividad sobre las estructuras tradicionales, una obra serena y desgarradora que confirma a Gibbons como una de las voces más conmovedoras de su generación.</p>
+    </div>
+
+    <!-- ls.58 -->
+    <div class="entry" style="transition-delay:.6s">
+      <h2>ls.58 — 05.ene.26</h2>
+      <h3>unown — redukqs</h3>
+      <p>poca información existe sobre este proyecto, conocido por pocos e incluso para esos pocos es desconocido que dentro de este álbum se ocultan tres tracks inéditos de clipping, el trío originario de l.a. en redukqs cada track es una sorpresa, una experiencia que te atrapa de principio a fin, atravesando distintos ritmos. </p>
+    </div>
+
+    <!-- ls.59 -->
+    <div class="entry" style="transition-delay:.8s">
+      <h2>ls.59 — 12.ene.26</h2>
+      <h3>sophie — oil of every pearl's un-insides</h3>
+      <p>sophie redefinió los límites del pop experimental con una sintaxis sonora radical, este álbum es un estudio textural donde los sonidos orgánicos, como pieles, agua y metales, son amplificados hasta la exageración y transformados en elementos rítmicos y melódicos, alternando entre beats elásticos de bubblegum bass y paisajes ambientales de inmensa profundidad. las voces son manipuladas como otro instrumento más, desplazándose entre susurros íntimos y coros monumentales. técnicamente, la obra destaca por su uso de compresión extrema y espacios sónicos saturados, creando una sensación táctil y visceral. un viaje de transición entre la euforia dance y la introspección, desmaterializando el pop en una experiencia puramente sensorial.</p>
+    </div>
+
+    <!-- ls.60 -->
+    <div class="entry" style="transition-delay:.9s">
+      <h2>ls.60 — 19.ene.26</h2>
+      <h3>diiv — frog in boiliing water</h3>
+      <p>una metáfora sobre una rana que no se da cuenta de su muerte, siendo lentamente hervida en agua, así se siente la música de diiv. aquí se consolida su evolución hacia un shoegaze más textural y pesimista, expanden sobre el sonido de sus inicios con capas densas de guitarras etéreas que crean un muro de sonido reverberante, evocando una sensación de ansiedad ambiental; acompañado de bajo, melódico y prominente, que actúan como columna vertebral sobre la que se construyen las canciones, mientras que la batería proporciona ritmos sólidos, a menudo mecánicos, que reflejan la alienación lírica. terminado de tomar forma gracias a las voces, a menudo sumergidas en la mezcla, funcionan como otra textura dentro del conjunto. el resultado es un disco cohesivo que captura la parálisis de la era moderna con una belleza sombría y envolvente.</p>
+    </div>
+
+    <!-- ls.61 -->
+    <div class="entry" style="transition-delay:.75s">
+      <h2>ls.61 — 26.ene.26</h2>
+      <h3>缺省 — california nebula</h3>
+      <p>缺省 construye una cartografía cósmica, una arquitectura sonora de ambient atmosférico y drones expansivos con texturas etéreas y evoluciones lentas, donde capas de sintetizadores análogos se superponen para crear masas sonoras en constante movimiento y evolución. las frecuencias bajas proporcionan una base profunda y resonante, sobre la cual flotan melodías tenues y drumpads brillantes que evocan la inmensidad del espacio. el álbum privilegia la inmersión y la sensación de vastedad, utilizando el silencio y la reverberación como elementos estructurales clave, desarrollando cada pieza con paciencia, invitando a la escucha contemplativa más que al engagement melódico tradicional. </p>
+    </div>
+
+    <!-- ls.62 -->
+    <div class="entry" style="transition-delay:.55s">
+      <h2>ls.62 — 02.feb.26</h2>
+      <h3>michael kamal — الزمن الجميل .. انت عمرى</h3>
+      <p>seis violines, una guitarra, una flauta, un chelo, un santur, youtube, pero sobretodo amigos de toda la vida. una presentación improvisada de la música folklórica árabe, traida hacia la modernidad.</p>
+    </div>
+
+    <!-- ls.63 -->
+    <div class="entry" style="transition-delay:.75s">
+      <h2>ls.63 — 09.feb.26</h2>
+      <h3>sade — diamond life</h3>
+      <p>el disco debut de Sade, es una obra fundacional del smooth jazz y el sophisti-pop que perfecciona su estética. este álbum se construye sobre una base impecable de bajos prominentes y sedosos, guitarra funk limpia y suaves percusiones, creando un groove relajado y sensual. desde luego, la voz de Sade Adu actúa como el instrumento central: un contralto sereno y aterciopelado que frasear con una contención hipnótica, donde el espacio entre las notas es tan crucial como las notas mismas. Los arreglos, pulidos y económicos, incorporan toques de cool jazz con saxofones tenues y pianos atmosféricos. La producción, lujosa pero minimalista, prioriza la calidez análoga y el espacio en la mezcla, dando a cada elemento su lugar para respirar.</p>
+    </div>
+
+    <!-- ls.64 -->
+    <div class="entry" style="transition-delay:.85s">
+      <h2>ls.64 — 16.feb.26</h2>
+      <h3>josé josé — reencuentro </h3>
+      <p>josé josé despliega su inconfundible técnica vocal que lo consolidó, en este álbum se centra en baladas románticas con arreglos orquestales elegantes, donde la voz es el instrumento absoluto y esencial. navega con precisión entre un registro barítono aterciopelado y agudos potentes cargados de un vibrato emotivo y controlado. todo acompañado de unos arreglos, orquestados con cuerdas, pianos y suaves percusiones, que crean un marco suntuoso que realza, sin opacar, la interpretación vocal. un álbum que es un ejemplo por excelencia de interpretación vocal en la música romántica, donde se encuentran varias de sus canciones más inolvidables.</p>
+    </div>
+
+    <!-- ls.65 -->
+    <div class="entry" style="transition-delay:.9s">
+      <h2>ls.64 — 23.feb.26</h2>
+      <h3>william basisnki — desintegration loops </h3>
+      <p>una obra monumental de música ambient que transforma el proceso de decadencia física en una experiencia sonora profunda, este proyecto consiste en bucles de cinta magnética de melodías orquestales que se deterioran progresivamente con cada repetición, a medida que el óxido en la cinta magnética borra literalmente fragmentos de sonido. es un estudio sublime sobre el azar, el caos y la entropía, donde la textura se ve convertida en la narrativa principal. las melodías, de una belleza nostálgica y fúnebre, se desintegran lentamente, dejando al descubierto huecos, distorsiones y silencios que se integran en la composición. dando lugar finalmente a una pieza meditativa y profundamente conmovedora que reflexiona sobre la memoria, la pérdida y el paso del tiempo, llevando un fallo técnico a una exploración sonora.</p>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const entries = document.querySelectorAll(".entry");
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReduced){
+        entries.forEach(el => el.classList.add("visible"));
+        return;
+      }
+
+      const io = new IntersectionObserver((list) => {
+        for (const it of list){
+          if (it.isIntersecting){
+            it.target.classList.add("visible");
+          } else {
+            it.target.classList.remove("visible");
+          }
+        }
+      }, { threshold: .1, rootMargin: "0px 0px -10% 0px" });
+
+      entries.forEach(el => io.observe(el));
+    });
+  </script>
+</body>
+</html>
