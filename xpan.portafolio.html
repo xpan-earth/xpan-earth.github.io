@@ -1,15 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan — portafolio</title>
-
-  <!-- preconnects -->
-  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
-  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
-
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>xpan — portafolio</title>
+<!-- preconnects -->
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<style>
     :root { --gap:.5rem; }
     html { scroll-behavior:smooth; }
     body { margin:0; background:#fff; color:#000; font-family:"Times New Roman", serif; overflow-x:hidden; }
@@ -21,7 +20,7 @@
     /* selector de idioma */
     .lang-select{ position:fixed; top:1rem; right:1rem; z-index:40; display:flex; gap:.5rem; }
     .lang-select button{ background:none; border:none; font:inherit; font-size:.9rem; padding:.25rem .5rem; cursor:pointer; opacity:.5; }
-    .lang-select button.active{ opacity:1; background:#000; color:#fff; }
+    .lang-select button.active{ opacity:1; background:#00000030; color:#fff; }
 
     /* hero */
     .hero{ position:relative; width:100%; height:100svh; }
@@ -87,65 +86,71 @@
     @media (prefers-reduced-motion:reduce){
       .aei-bg{ transition:none; }
     }
+
+    /* asegurar lienzo visible para las líneas */
+    #aeiLines{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block; pointer-events:none;
+    }
   </style>
-
-  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
-  <script src="/assets/js/media-proxy.js" defer></script>
-</head>
+<script defer="" src="/assets/js/video-autoplay-mobile.js"></script>
+<script defer="" src="/assets/js/media-proxy.js"></script>
+<style id="hero-final-fix-css">
+/* === HERO FINAL FIX (owns transform) === */
+.hero-logo{
+  backface-visibility:hidden;
+  will-change:transform;
+}
+</style></head>
 <body>
-  <header aria-hidden="true"></header>
-
-  <!-- selector multilingüe -->
-  <nav class="lang-select" id="langSelect" aria-label="idioma">
-    <button type="button" data-lang="es" class="active">es</button>
-    <button type="button" data-lang="en">en</button>
-    <button type="button" data-lang="fr">fr</button>
-    <button type="button" data-lang="jp">jp</button>
-  </nav>
-
-  <!-- hero -->
-  <section class="hero" id="hero">
-    <a href="https://xpan.earth" aria-label="inicio xpan" id="homeLink">
-      <img src="xpan.svg" alt="xpan" id="heroLogo" class="hero-logo" decoding="async" fetchpriority="high">
-    </a>
-  </section>
-
-  <!-- descripción + aei -->
-  <section class="desc-wrap" id="descWrap">
-    <div class="aei-bg" id="aeiBg">
-      <div class="layer" id="aeiLayer"></div>
-      <svg class="lines" id="aeiLines"></svg>
-    </div>
-
-    <div class="desc-inner">
-      <div class="description active" lang="es">
-        <h2>xpan</h2>
-        <p>xpan es un sistema independiente que desarrolla infraestructura cultural: arquitectura, sonido y tecnología integrados en estructuras modulares e intervenibles. opera como plataforma de investigación y producción, generando activaciones espaciales, sistemas de escucha y prototipos técnicos para contextos diversos.</p>
-        <p>su práctica articula diseño, ingeniería y comunidad en procesos de larga duración, conectando nodos que rara vez coexisten en un mismo espacio. el resultado: dispositivos y espacios vivos, pensados para activar y archivar.</p>
-      </div>
-      <div class="description" lang="en">
-        <h2>xpan</h2>
-        <p>xpan is an independent system developing cultural infrastructure: architecture, sound, and technology integrated into modular, intervenable structures. it operates as a platform for research and production, generating spatial activations, listening systems, and technical prototypes across contexts.</p>
-        <p>its practice articulates design, engineering, and community through long-term processes, connecting nodes that rarely coexist in the same space. the result: living devices and spaces, built to activate and to archive.</p>
-      </div>
-      <div class="description" lang="fr">
-        <h2>xpan</h2>
-        <p>xpan est un système indépendant qui développe une infrastructure culturelle : architecture, son et technologie intégrés dans des structures modulaires et intervenables. il fonctionne comme une plateforme de recherche et de production, générant des activations spatiales, des systèmes d’écoute et des prototypes techniques.</p>
-        <p>sa pratique articule design, ingénierie et communauté dans des processus au long cours, connectant des nœuds qui coexistent rarement dans un même espace. résultat : des dispositifs et des espaces vivants, faits pour activer et archiver.</p>
-      </div>
-      <div class="description" lang="jp">
-        <h2>xpan</h2>
-        <p>xpan は、文化的インフラを開発する独立したシステムです。建築・音・テクノロジーを統合し、モジュール式で介入可能な構造として実装します。研究と制作のプラットフォームとして機能し、空間的アクティベーション、リスニング・システム、技術プロトタイプを生み出します。</p>
-        <p>その実践は、長期的なプロセスの中でデザイン・エンジニアリング・コミュニティを編成し、通常は共存しないノード同士を結び合わせます。結果として、アクティベートとアーカイブのために設計された「生きた」装置と空間が生まれます。</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- título traducible y contenedor de proyectos -->
-  <h3 class="section-title" id="portfolio-title">proyectos destacados</h3>
-  <div id="all-entries"></div>
-
-  <script>
+<header aria-hidden="true"></header>
+<!-- selector multilingüe -->
+<nav aria-label="idioma" class="lang-select" id="langSelect">
+<button class="active" data-lang="es" type="button">es</button>
+<button data-lang="en" type="button">en</button>
+<button data-lang="fr" type="button">fr</button>
+<button data-lang="jp" type="button">jp</button>
+</nav>
+<!-- hero -->
+<section class="hero" id="hero">
+<a aria-label="inicio xpan" href="https://xpan.earth" id="homeLink">
+<img alt="xpan" class="hero-logo" decoding="async" fetchpriority="high" id="heroLogo" src="xpan.svg"/>
+</a>
+</section>
+<!-- descripción + aei -->
+<section class="desc-wrap" id="descWrap">
+<div class="aei-bg" id="aeiBg">
+<div class="layer" id="aeiLayer"></div>
+<svg class="lines" id="aeiLines"></svg>
+</div>
+<div class="desc-inner">
+<div class="description active" lang="es">
+<h2>xpan</h2>
+<p>xpan es un sistema independiente que desarrolla infraestructura cultural: arquitectura, sonido y tecnología integrados en estructuras modulares e intervenibles. opera como plataforma de investigación y producción, generando activaciones espaciales, sistemas de escucha y prototipos técnicos para contextos diversos.</p>
+<p>su práctica articula diseño, ingeniería y comunidad en procesos de larga duración, conectando nodos que rara vez coexisten en un mismo espacio. el resultado: dispositivos y espacios vivos, pensados para activar y archivar.</p>
+</div>
+<div class="description" lang="en">
+<h2>xpan</h2>
+<p>xpan is an independent system developing cultural infrastructure: architecture, sound, and technology integrated into modular, intervenable structures. it operates as a platform for research and production, generating spatial activations, listening systems, and technical prototypes across contexts.</p>
+<p>its practice articulates design, engineering, and community through long-term processes, connecting nodes that rarely coexist in the same space. the result: living devices and spaces, built to activate and to archive.</p>
+</div>
+<div class="description" lang="fr">
+<h2>xpan</h2>
+<p>xpan est un système indépendant qui développe une infrastructure culturelle : architecture, son et technologie intégrés dans des structures modulaires et intervenables. il fonctionne comme une plateforme de recherche et de production, générant des activations spatiales, des systèmes d’écoute et des prototypes techniques.</p>
+<p>sa pratique articule design, ingénierie et communauté dans des processus au long cours, connectant des nœuds qui coexistent rarement dans un même espace. résultat : des dispositifs et des espaces vivants, faits pour activer et archiver.</p>
+</div>
+<div class="description" lang="jp">
+<h2>xpan</h2>
+<p>xpan は、文化的インフラを開発する独立したシステムです。建築・音・テクノロジーを統合し、モジュール式で介入可能な構造として実装します。研究と制作のプラットフォームとして機能し、空間的アクティベーション、リスニング・システム、技術プロトタイプを生み出します。</p>
+<p>その実践は、長期的なプロセスの中でデザイン・エンジニアリング・コミュニティを編成し、通常は共存しないノード同士を結び合わせます。結果として、アクティベートとアーカイブのために設計された「生きた」装置と空間が生まれます。</p>
+</div>
+</div>
+</section>
+<!-- título traducible y contenedor de proyectos -->
+<h3 class="section-title" id="portfolio-title">proyectos destacados</h3>
+<div id="all-entries"></div>
+<script>
 /* ================== i18n ================== */
 const I18N = {
   es: { featured:'proyectos destacados' },
@@ -273,6 +278,18 @@ function initAEI(){
     nodes.push({el:img, x:Math.random()*(W-2*pad)+pad, y:Math.random()*(H-2*pad)+pad, vx:(Math.random()-.5)*speed, vy:(Math.random()-.5)*speed});
   });
 
+  /* === asegurar que el SVG tenga tamaño real (atributos + viewBox) === */
+  function sizeSvg(){
+    const r = svg.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width));
+    const h = Math.max(1, Math.round(r.height));
+    svg.setAttribute('width',  w);
+    svg.setAttribute('height', h);
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  }
+  sizeSvg();
+  window.addEventListener('resize', sizeSvg, {passive:true});
+
   function drawEdges(){
     svg.innerHTML='';
     for(let i=0;i<nodes.length;i++){
@@ -317,11 +334,16 @@ function initAEI(){
         if(n.y<0||n.y>H-n.el.clientHeight) n.vy*=-1;
         n.el.style.transform='translate('+n.x+'px,'+n.y+'px)';
       });
+
+      /* líneas actualizadas en este mismo frame (SIN setInterval) */
+      drawEdges();
     }
     requestAnimationFrame(step);
   }
+
+  /* primera pintura y arranque */
   drawEdges();
-  setInterval(drawEdges, 1200);
+  /* ELIMINADO: setInterval(drawEdges, 1200);  → se recalcula cada frame */
   step();
 
   // fade del bloque
@@ -496,5 +518,87 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 });
   </script>
-</body>
+<script id="hero-final-fix-js">
+(function(){
+  var hero = document.querySelector('.hero');
+  var logo = document.querySelector('.hero-logo');
+  if(!hero || !logo) return;
+
+  // Kill any inline style variables that other scripts might be writing
+  logo.style.removeProperty('--tx');
+  logo.style.removeProperty('--ty');
+  logo.style.removeProperty('--s');
+
+  var PAD = 16;
+  var FINAL_W_DESKTOP = 64, FINAL_W_MOBILE = 56;
+  var DESKTOP_BREAK = 768;
+  var baseWidth = null; // measured once to avoid feedback loops
+
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+  function getHeaderRect(){
+    var el = document.querySelector('[data-hero-target]') ||
+             document.querySelector('header img[src*="xpan.svg"]') ||
+             document.querySelector('header .site-logo img') ||
+             document.querySelector('header a[href="/"] img') ||
+             null;
+    if(!el) return null;
+    var r = el.getBoundingClientRect();
+    if(!r.width || !r.height) return null;
+    return r;
+  }
+
+  function compute(){
+    // establish baseWidth once (CSS width before any scaling), using computedStyle
+    if(baseWidth == null){
+      var cs = getComputedStyle(logo);
+      var parsed = parseFloat(cs.width);
+      baseWidth = (parsed && isFinite(parsed)) ? parsed : (logo.naturalWidth || 200);
+    }
+
+    var isMobile = innerWidth < DESKTOP_BREAK;
+    var heroH = Math.max(1, hero.offsetHeight || innerHeight);
+
+    var headerR = getHeaderRect();
+    var finalW = headerR ? Math.max(28, Math.min(160, headerR.width)) : (isMobile ? FINAL_W_MOBILE : FINAL_W_DESKTOP);
+
+    // from: center of viewport
+    var fromCx = innerWidth / 2;
+    var fromCy = innerHeight / 2;
+
+    // to: header logo center (or fallback corner)
+    var toCx = headerR ? (headerR.left + headerR.width/2) : (PAD + finalW/2);
+    var toCy = headerR ? (headerR.top  + headerR.height/2) : (PAD + finalW/2);
+
+    var dx = toCx - fromCx;
+    var dy = toCy - fromCy;
+
+    var t = Math.max(0, Math.min(1, scrollY / (heroH * 0.92)));
+    var e = easeOutCubic(t);
+
+    var s = 1 + ((finalW / baseWidth) - 1) * e;
+    var tx = dx * e;
+    var ty = dy * e;
+
+    // Write transform directly; this owns the visual state.
+    logo.style.transform = 'translate3d(-50%,-50%,0) translate3d('+tx+'px,'+ty+'px,0) scale('+s+')';
+    logo.style.position = 'fixed';
+    logo.style.top = '50%';
+    logo.style.left = '50%';
+    logo.style.margin = '0';
+    logo.style.zIndex = '60';
+  }
+
+  var ticking = false;
+  addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(function(){ compute(); ticking=false; }); } }, {passive:true});
+  addEventListener('resize', function(){ requestAnimationFrame(function(){ baseWidth=null; compute(); }); }, {passive:true});
+  addEventListener('orientationchange', function(){ requestAnimationFrame(function(){ baseWidth=null; compute(); }); }, {passive:true});
+
+  var mo = new MutationObserver(function(){ requestAnimationFrame(function(){ compute(); }); });
+  mo.observe(document.documentElement, { childList:true, subtree:true });
+
+  // First frame
+  requestAnimationFrame(compute);
+})();
+</script></body>
 </html>
