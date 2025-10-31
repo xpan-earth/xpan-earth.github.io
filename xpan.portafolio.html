@@ -5,52 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>xpan — portafolio</title>
 
-  <!-- preconnects habituales -->
+  <!-- preconnects -->
   <link rel="preconnect" href="https://attachments.are.na" crossorigin>
   <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
 
   <style>
-    :root { --gap: .5rem; }
-    html { scroll-behavior: smooth; }
+    :root { --gap:.5rem; }
+    html { scroll-behavior:smooth; }
     body { margin:0; background:#fff; color:#000; font-family:"Times New Roman", serif; overflow-x:hidden; }
 
-    /* header “falso”: el logo que viaja se vuelve fixed y sustituye el header visual */
-    header { position: fixed; top: 1rem; left: 1rem; z-index: 40; pointer-events: none; }
-    /* no mostramos nada aquí; el logo real es el del hero que viaja */
+    /* header “dummy”: el logo visible es el del hero (fijo y único) */
+    header { position:fixed; top:1rem; left:1rem; z-index:40; pointer-events:none; }
     header::after { content:''; display:block; width:50px; height:1px; }
 
     /* selector de idioma */
     .lang-select{ position:fixed; top:1rem; right:1rem; z-index:40; display:flex; gap:.5rem; }
-    .lang-select button{
-      background:none; border:none; font:inherit; font-size:.9rem; padding:.25rem .5rem; cursor:pointer; opacity:.5;
-    }
-    .lang-select button.active{ opacity:1; background:#00000032; color:#fff; }
+    .lang-select button{ background:none; border:none; font:inherit; font-size:.9rem; padding:.25rem .5rem; cursor:pointer; opacity:.5; }
+    .lang-select button.active{ opacity:1; background:#000; color:#fff; }
 
     /* hero */
-    .hero{ position:relative; width:100%; height:100svh; display:grid; place-items:center; overflow:clip; }
-    .hero a{ display:inline-block; }
+    .hero{ position:relative; width:100%; height:100svh; }
+    .hero a{ display:block; }
+
+    /* LOGO: SIEMPRE FIXED (UN SOLO ELEMENTO) */
     .hero-logo{
-    width:min(55vw, 420px);
-    height:auto;
-    max-width:80vw;
-    display:block;                /* evita baseline “brincos” */
-    will-change: transform;       /* solo transform, no opacity */
-    transform-origin:center center;
-    cursor:pointer;
-    /* quitamos la transición CSS para evitar “pelea” con JS */
-    }
-    /* estado pegado como “header” */
-    .hero-logo.stuck{
-      position:fixed !important;
-      top:1rem; left:1rem;
-      width:50px; max-width:none;
-      transform:none !important;
+      position:fixed;               /* clave: nunca cambia a relative/sticky */
+      top:50%;
+      left:50%;
+      width:min(55vw,420px);
+      height:auto;
+      max-width:80vw;
+      display:block;
       z-index:50;
+      transform-origin:center center;
+      will-change:transform;
+      /* del centro (-50%,-50%) hacia destino con variables CSS */
+      transform:
+        translate3d(-50%, -50%, 0)
+        translate3d(var(--tx, 0px), var(--ty, 0px), 0)
+        scale(var(--s, 1));
+      /* sin transition: suavidad la da el easing por JS (scroll) */
     }
 
-    /* descripción + aei */
+    /* descripción + AEI */
     .desc-wrap{ position:relative; padding:6rem 1rem 4rem; display:grid; place-items:center; overflow:clip; }
-    .desc-inner{ max-width:820px; border-left:4px solid #000; padding-left:1rem; transition: opacity .5s ease, filter .5s ease; }
+    .desc-inner{ max-width:820px; border-left:4px solid #000; padding-left:1rem; transition:opacity .5s ease, filter .5s ease; }
     .desc-inner h2{ font-size:1.35rem; margin:0 0 1rem; text-transform:lowercase; }
     .desc-inner p{ font-size:1rem; line-height:1.7; margin:0 0 .9rem; }
     .description{ display:none; }
@@ -67,7 +66,7 @@
     .section-title{ max-width:800px; padding-left:1rem; margin:0 0 1.25rem; font-weight:bold; text-transform:lowercase; opacity:.6; }
 
     /* entradas inyectadas */
-    .entry{ margin-bottom:3.5rem; max-width:800px; position:relative; padding-left:1rem; content-visibility:auto; contain-intrinsic-size: 1px 900px; }
+    .entry{ margin-bottom:3.5rem; max-width:800px; position:relative; padding-left:1rem; content-visibility:auto; contain-intrinsic-size:1px 900px; }
     .entry::before{ content:''; position:absolute; left:0; top:.4rem; width:4px; height:100%; background:#000; opacity:.1; }
     .entry strong{ font-size:1.1rem; font-weight:bold; text-transform:lowercase; display:block; margin-bottom:.25rem; }
     .entry span{ font-size:.85rem; opacity:.5; font-style:italic; display:block; margin-bottom:.25rem; }
@@ -86,12 +85,12 @@
     @media (max-width:480px){ .carousel-track img, .carousel-track video, .carousel-video{ width:100%; } }
 
     @media (prefers-reduced-motion:reduce){
-      .hero-logo{ transition:none; }
       .aei-bg{ transition:none; }
     }
   </style>
-    <script src="/assets/js/video-autoplay-mobile.js" defer></script>
-<script src="/assets/js/media-proxy.js" defer></script>
+
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+  <script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
   <header aria-hidden="true"></header>
@@ -104,7 +103,7 @@
     <button type="button" data-lang="jp">jp</button>
   </nav>
 
-  <!-- hero (logo que viaja y queda fijo con link al inicio) -->
+  <!-- hero -->
   <section class="hero" id="hero">
     <a href="https://xpan.earth" aria-label="inicio xpan" id="homeLink">
       <img src="xpan.svg" alt="xpan" id="heroLogo" class="hero-logo" decoding="async" fetchpriority="high">
@@ -142,105 +141,94 @@
     </div>
   </section>
 
-  <!-- título traducible -->
+  <!-- título traducible y contenedor de proyectos -->
   <h3 class="section-title" id="portfolio-title">proyectos destacados</h3>
-
-  <!-- entradas (se inyectan desde arquitectura.index.html y mdtc.index.html) -->
   <div id="all-entries"></div>
 
   <script>
 /* ================== i18n ================== */
 const I18N = {
-  es: { featured: 'proyectos destacados' },
-  en: { featured: 'featured projects' },
-  fr: { featured: 'projets sélectionnés' },
-  jp: { featured: '主要プロジェクト' }
+  es: { featured:'proyectos destacados' },
+  en: { featured:'featured projects' },
+  fr: { featured:'projets sélectionnés' },
+  jp: { featured:'主要プロジェクト' }
 };
 function setLang(lang){
   document.querySelectorAll('.lang-select button').forEach(b=>{
     b.classList.toggle('active', b.dataset.lang===lang);
   });
   document.querySelectorAll('.description').forEach(d=>d.classList.remove('active'));
-  document.querySelectorAll(`.description[lang="${lang}"]`).forEach(d=>d.classList.add('active'));
-  const t=document.getElementById('portfolio-title'); if(t&&I18N[lang]) t.textContent=I18N[lang].featured;
+  document.querySelectorAll('.description[lang="'+lang+'"]').forEach(d=>d.classList.add('active'));
+  const t=document.getElementById('portfolio-title'); if(t && I18N[lang]) t.textContent=I18N[lang].featured;
   try{ localStorage.setItem('xpan.lang',lang); }catch(e){}
 }
 
-/* ================== HERO: el mismo logo viaja y queda fijo ================== */
+/* ================== HERO — logo fijo que interpola (sin desaparecer) ================== */
 function initHero(){
-  const heroLogo = document.getElementById('heroLogo');
+  const logo = document.getElementById('heroLogo');
   const hero = document.getElementById('hero');
-  if(!heroLogo || !hero) return;
+  if(!logo || !hero) return;
 
-  // destino en header (coincide con 1rem, 50px)
-  const TARGET_SIZE = 50;        // px
-  const TARGET = { x: 16, y: 16 }; // top-left (1rem)
+  const TARGET_SIZE = 50;               // tamaño final (px)
+  const TARGET = { x:16, y:16 };        // esquina (1rem,1rem)
 
-  // baseline (medido una vez, sin transform)
-  let fromCenter = null; // {x,y}
-  let fromWidth  = null; // number
-  let stuck = false;
+  let base = null; // { w0, dxTot, dyTot, heroH }
 
-  // espera a que el layout estabilice un frame
-  requestAnimationFrame(()=>{
-    const r = heroLogo.getBoundingClientRect();
-    fromCenter = { x: r.left + r.width/2, y: r.top + r.height/2 };
-    fromWidth  = r.width;
-    // primer sync
-    onScroll();
-  });
+  function computeBase(){
+    // tamaño inicial real del logo (en centro)
+    const r = logo.getBoundingClientRect();
+    const w0 = r.width;                             // ancho inicial (para la escala)
+    const heroH = hero.offsetHeight || window.innerHeight || 0;
 
-  // easing continuo, sin “curva barata”
-  const smoothstep = t => t*t*(3 - 2*t);
+    // centros
+    const fromCx = window.innerWidth / 2;
+    const fromCy = window.innerHeight / 2;
+    const toCx   = TARGET.x + TARGET_SIZE/2;
+    const toCy   = TARGET.y + TARGET_SIZE/2;
+
+    // delta total del viaje (centro a centro)
+    const dxTot = toCx - fromCx;
+    const dyTot = toCy - fromCy;
+
+    base = { w0, dxTot, dyTot, heroH };
+    sync(); // primera posición
+  }
+
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
 
   function sync(){
-    if(!fromCenter || !fromWidth) return;
+    if(!base) return;
+    const { w0, dxTot, dyTot, heroH } = base;
 
-    const heroH = Math.max(hero.offsetHeight || 0, window.innerHeight || 0);
-    // progreso basado en el alto del hero, con margen de seguridad
-    const raw = window.scrollY / (heroH * 0.9);
-    const t = Math.min(1, Math.max(0, raw));
-    const e = smoothstep(t);
+    // progreso ligado al 92% del alto del hero (margen para no “cortar” el final)
+    const raw = window.scrollY / (heroH * 0.92);
+    const t = Math.max(0, Math.min(1, raw));
+    const e = easeOutCubic(t);
 
-    // centro destino (centro del rectángulo final de 50px)
-    const toCenter = { x: TARGET.x + TARGET_SIZE/2, y: TARGET.y + TARGET_SIZE/2 };
+    // posición y escala
+    const tx = dxTot * e;
+    const ty = dyTot * e;
+    const s  = 1 + ((TARGET_SIZE / Math.max(1,w0)) - 1) * e;
 
-    // escala final deseada
-    const targetScale = TARGET_SIZE / Math.max(1, fromWidth);
-    const s = 1 + (targetScale - 1) * e;
-
-    // delta de posición (del centro inicial al centro destino)
-    const tx = (toCenter.x - fromCenter.x) * e;
-    const ty = (toCenter.y - fromCenter.y) * e;
-
-    // durante el viaje: todo por transform
-    if(e < 0.9995){
-      if(stuck){ heroLogo.classList.remove('stuck'); stuck = false; }
-      heroLogo.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${s})`;
-    } else {
-      // aterrizaje: fija en header una vez, sin parpadeo
-      if(!stuck){
-        heroLogo.classList.add('stuck');
-        heroLogo.style.transform = 'none';
-        stuck = true;
-      }
-    }
+    // volcamos a variables CSS (un mismo elemento, sin clases ni jumps)
+    logo.style.setProperty('--tx', tx + 'px');
+    logo.style.setProperty('--ty', ty + 'px');
+    logo.style.setProperty('--s',  s);
   }
 
-  let ticking = false;
-  function onScroll(){
-    if(!ticking){
-      ticking = true;
-      requestAnimationFrame(()=>{ sync(); ticking = false; });
-    }
-  }
+  // listeners optimizados
+  let ticking=false;
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(()=>{ sync(); ticking=false; }); } }
+  function onResize(){ computeBase(); }
 
-  window.addEventListener('scroll', onScroll, { passive:true });
-  window.addEventListener('resize', onScroll);
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onResize, {passive:true});
+
+  // baseline inicial tras un frame (layout estable)
+  requestAnimationFrame(computeBase);
 }
 
-
-/* ================== AEI: símbolos y líneas ================== */
+/* ================== AEI ================== */
 function initAEI(){
   const layer = document.getElementById('aeiLayer');
   const svg   = document.getElementById('aeiLines');
@@ -274,8 +262,8 @@ function initAEI(){
     "https://d2w9rnfcy7mm78.cloudfront.net/40745972/original_11b16bc1a913438e9162c007bf99a095.png?1761881048&bc=0",
     "https://d2w9rnfcy7mm78.cloudfront.net/40745971/original_7e65b99cfb02801b165310d48f11f001.png?1761881048&bc=0"
   ];
-  const nodes=[];
-  const speed=0.08, repel=90, k=2;
+
+  const nodes=[]; const speed=0.08, repel=90, k=2;
 
   urls.forEach(src=>{
     const img=document.createElement('img');
@@ -327,7 +315,7 @@ function initAEI(){
         n.x+=n.vx; n.y+=n.vy;
         if(n.x<0||n.x>W-n.el.clientWidth) n.vx*=-1;
         if(n.y<0||n.y>H-n.el.clientHeight) n.vy*=-1;
-        n.el.style.transform=`translate(${n.x}px, ${n.y}px)`;
+        n.el.style.transform='translate('+n.x+'px,'+n.y+'px)';
       });
     }
     requestAnimationFrame(step);
@@ -350,7 +338,7 @@ function initAEI(){
   }
 }
 
-/* ================== inyección de entradas ================== */
+/* ================== lazy + carruseles ================== */
 function setupLazyObserver(scope=document){
   if(!('IntersectionObserver'in window)){
     scope.querySelectorAll('img[data-src]').forEach(i=>{i.src=i.dataset.src;});
@@ -391,7 +379,7 @@ function initCarousels(scope=document){
     function animate(){
       if(active&&!isDragging){
         scrollX+=speed; if(scrollX>=track.scrollWidth/2) scrollX=0;
-        track.style.transform=`translateX(${(-scrollX)}px)`;
+        track.style.transform='translateX('+(-scrollX)+'px)';
       }
       requestAnimationFrame(animate);
     }
@@ -402,7 +390,7 @@ function initCarousels(scope=document){
       if(!isDragging) return;
       const dx=e.clientX-startX; scrollX=scrollStart-dx;
       if(scrollX>=track.scrollWidth/2) scrollX=0; if(scrollX<0) scrollX=track.scrollWidth/2+scrollX;
-      track.style.transform=`translateX(${(-scrollX)}px)`;
+      track.style.transform='translateX('+(-scrollX)+'px)';
     });
     ['pointerup','pointerleave'].forEach(ev=>track.addEventListener(ev,()=>{isDragging=false;track.style.cursor='grab';}));
 
@@ -422,10 +410,11 @@ function initCarousels(scope=document){
   if(!isDesktop){ scope.querySelectorAll('video[autoplay]').forEach(v=>v.removeAttribute('autoplay')); }
 }
 
+/* ================== inyección de entries ================== */
 async function injectEntries({sourceUrl,targetId,excludeSelectors=[]}){
   try{
     const res=await fetch(sourceUrl,{credentials:'same-origin'});
-    if(!res.ok) throw new Error(`${sourceUrl} → ${res.status}`);
+    if(!res.ok) throw new Error(sourceUrl+' → '+res.status);
     const html=await res.text();
     const doc=new DOMParser().parseFromString(html,'text/html');
     let entries=[...doc.querySelectorAll('.entry')];
@@ -442,7 +431,7 @@ async function injectEntries({sourceUrl,targetId,excludeSelectors=[]}){
   }catch(err){
     console.error('error al inyectar',sourceUrl,err);
     const mount=document.getElementById(targetId);
-    const p=document.createElement('p'); p.textContent=`error cargando ${sourceUrl}`; p.style.opacity='0.6'; mount.appendChild(p);
+    const p=document.createElement('p'); p.textContent='error cargando '+sourceUrl; p.style.opacity='0.6'; mount.appendChild(p);
     return 0;
   }
 }
