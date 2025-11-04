@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <!-- gtm como en 12.e -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5D3D9DR9');
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content="xpan · s.e.e.v.s_12 · registro"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="./xpan.png"/>
+  <meta property="og:url" content="https://xpan.earth/"/>
+
+  <title>xpan.s.e.e.v.s_12 · registro</title>
+
+  <!-- hoja global existente -->
+  <link rel="stylesheet" href="./style.css" media="screen"/>
+
+  <style>
+    /* base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: #ffffff;
+      color: #000000;
+      font-family: "times new roman", serif;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* header xpan */
+    header {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 40;
+    }
+
+    header a img {
+      width: 52px;
+      height: auto;
+      display: block;
+    }
+
+    /* layout principal */
+    main {
+      min-height: 100vh;
+      padding: 5rem 1.5rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .layout-shell {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+      gap: 2.4rem;
+      position: relative;
+    }
+
+    @media (max-width: 880px) {
+      main {
+        padding: 4.5rem 1rem 2rem;
+        align-items: flex-start;
+      }
+      .layout-shell {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+      }
+    }
+
+    /* aei: capa de media flotante + líneas sobre fondo blanco */
+    .aei-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(0,0,0,0.03), transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(0,0,0,0.03), transparent 55%);
+    }
+
+    .aei-media-layer {
+      position: absolute;
+      inset: 0;
+      overflow: visible;
+    }
+
+    .aei-node {
+      position: absolute;
+      width: clamp(90px, 17vw, 190px);
+      height: clamp(70px, 13vw, 150px);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow:
+        0 14px 35px rgba(0,0,0,0.16),
+        0 0 0 0.5px rgba(0,0,0,0.7);
+      mix-blend-mode: multiply;
+      opacity: 0.86;
+      will-change: transform, opacity;
+      background: #000;
+    }
+
+    .aei-node img,
+    .aei-node video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(0.2) contrast(1.05);
+      transition: filter 0.6s ease, opacity 0.6s ease;
+    }
+
+    .aei-node:nth-child(3n) img,
+    .aei-node:nth-child(3n) video {
+      filter: grayscale(0.05) contrast(1.1);
+    }
+
+    .aei-node:nth-child(4n) {
+      mix-blend-mode: darken;
+      opacity: 0.92;
+    }
+
+    .aei-node.softer {
+      mix-blend-mode: multiply;
+      opacity: 0.7;
+      box-shadow:
+        0 10px 24px rgba(0,0,0,0.12),
+        0 0 0 0.3px rgba(0,0,0,0.45);
+    }
+
+    .aei-node:hover img,
+    .aei-node:hover video {
+      filter: grayscale(0) contrast(1.15);
+      opacity: 1;
+    }
+
+    svg#aoi-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    svg#aoi-lines line {
+      stroke: #000;
+      stroke-width: 0.45px;
+      opacity: 0.22;
+    }
+
+    /* panel de texto / registro */
+    article.rsvp-panel {
+      position: relative;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.166);
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,0.12);
+      padding: 1.7rem 1.6rem 1.5rem;
+      box-shadow:
+        0 26px 90px rgba(0,0,0,0.22),
+        0 0 0 0.7px rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 880px) {
+      article.rsvp-panel {
+        padding: 1.5rem 1.2rem 1.3rem;
+        border-radius: 16px;
+      }
+    }
+
+    article.rsvp-panel h1 {
+      font-size: 1.4rem;
+      line-height: 1.2;
+      text-transform: lowercase;
+    }
+
+    article.rsvp-panel h1 em {
+      font-style: italic;
+    }
+
+    article.rsvp-panel p.meta {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      text-transform: lowercase;
+    }
+
+    article.rsvp-panel p.meta span.label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.66rem;
+    }
+
+    article.rsvp-panel p.meta span.value {
+      display: block;
+    }
+
+    .rsvp-notes {
+      font-size: 0.7rem;
+      line-height: 1.45;
+      color: #555;
+      text-transform: lowercase;
+    }
+
+    /* formulario (estructura 12.e) */
+    form.rsvp-form {
+      width: 100%;
+      margin-top: 0.3rem;
+    }
+
+    form.rsvp-form h2 {
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+      text-transform: lowercase;
+    }
+
+    form.rsvp-form ul {
+      list-style: none;
+    }
+
+    form.rsvp-form li {
+      margin-bottom: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.22rem;
+    }
+
+    form.rsvp-form label {
+      font-size: 0.7rem;
+      text-transform: lowercase;
+    }
+
+    form.rsvp-form input {
+      font-family: "times new roman", serif;
+      font-size: 0.8rem;
+      padding: 0.45rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #000;
+      outline: none;
+      background: #ffffff38;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    form.rsvp-form input:focus {
+      border-color: #000;
+      background: #fdfdfd;
+    }
+
+    form.rsvp-form button[type="submit"] {
+      margin-top: 0.45rem;
+      display: inline-block;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: #0000005d;
+      color: #fff;
+      font-size: 0.75rem;
+      text-transform: lowercase;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    }
+
+    form.rsvp-form button[type="submit"]:hover {
+      background: #fff;
+      color: #000;
+      transform: translateY(-1px);
+    }
+
+    form.rsvp-form button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    .status-foot {
+      margin-top: 0.4rem;
+      font-size: 0.65rem;
+      text-transform: lowercase;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      color: #666;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #0c0;
+      box-shadow: 0 0 0 3px rgba(0,204,0,0.15);
+      margin-right: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .status-left {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* bloque descriptivo a la izquierda */
+    .left-block {
+      position: relative;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding-top: 0.2rem;
+    }
+
+    .left-block h2 {
+      font-size: 1rem;
+      text-transform: lowercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .left-block h2 span.kicker {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: lowercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .left-block p {
+      font-size: 0.75rem;
+      line-height: 1.45;
+      max-width: 26rem;
+      text-transform: lowercase;
+    }
+
+    .left-block p strong {
+      font-weight: normal;
+      text-decoration: underline;
+      text-decoration-thickness: 0.6px;
+    }
+
+    .left-block .micro {
+      font-size: 0.65rem;
+      color: #555;
+    }
+
+    @media (max-width: 880px) {
+      .left-block {
+        order: -1;
+        padding-top: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        cursor: default;
+      }
+      .left-block p,
+      .rsvp-notes {
+        font-size: 0.72rem;
+      }
+      form.rsvp-form input {
+        font-size: 0.78rem;
+      }
+    }
+
+    main {
+  margin-top: 100px;
+}
+
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+
+<body id="seevs12">
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9"></iframe>
+  </noscript>
+
+  <header>
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan">
+    </a>
+  </header>
+
+  <!-- aei sobre fondo blanco -->
+  <div class="aei-backdrop">
+    <svg id="aoi-lines"></svg>
+    <div class="aei-media-layer" id="aei-media-layer"></div>
+  </div>
+
+  <main>
+    <div class="layout-shell">
+      <!-- bloque descriptivo -->
+      <section class="left-block">
+        <div>
+          <h2>
+            <span class="kicker">c&c_xpan.s.e.e.v.s_12</span>
+            sistema escultórico estructural
+          </h2>
+          <p>
+            organismo de doce brazos de acero que integra luz, materia y tecnología en una sola estructura.
+            la disposición radial y el sistema de poros permite acoplar dispositivos y generar configuraciones
+            espaciales, sonoras y sensoriales en torno a un núcleo activo.
+          </p>
+          <p class="micro">
+            c&c_xpan.s.e.e.v.s_12 se presenta para el nuevo laboratorio de
+            @cucuruchoandcompany.
+          </p>
+        </div>
+      </section>
+
+      <!-- panel de registro -->
+      <article class="rsvp-panel">
+        <div>
+          <h1>
+            <em>c&c_xpan.s.e.e.v.s_12</em> · rsvp
+          </h1>
+          <p class="meta">
+            <span class="value">
+              05.11.25 · wed · 18:00 h (st -6:00 utc)<br>
+              río tigris 27, cuauhtémoc, 06500 méxico d.f.<br>
+              19°26'01"n 99°10'07"w
+            </span>
+          </p>
+        </div>
+
+
+        <!-- backend: apps script (puedes usar el mismo de 12.e o uno nuevo) -->
+        <form class="rsvp-form"
+          action="https://script.google.com/macros/s/AKfycbyiMCcf0p9vZRwG8fC-ZiX9nrxpfctVubMTb0o6U2LMDwWCPARAGJEb3zoDLFyRgh5i/exec"
+          method="post">
+          <h2>registro para acceso</h2>
+          <ul>
+            <li>
+              <label for="nombre">nombre completo:</label>
+              <input type="text" name="nombre" maxlength="256" required>
+            </li>
+            <li>
+              <label for="correo">correo electrónico:</label>
+              <input type="email" name="correo" maxlength="254" required>
+            </li>
+            <li>
+              <button type="submit">enviar</button>
+            </li>
+          </ul>
+        </form>
+
+
+      </article>
+    </div>
+  </main>
+
+  <script>
+    // lista de medias para el aei
+    const mediaSources = [
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843067/original_ddb7b8c61d7c51765e69493dda8156db.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843068/original_12e3a08e4e1314fb33a711352a0a778a.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843069/original_de314ec98bc6bde7635c2bc75a31bbba.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843070/original_7c33d575b7172c1446c3f063ac95de19.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843071/original_a43cf1752cfa08beda61d03459b48ac1.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843072/original_c48b854cae81b1dadcefa50e0ee859ac.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843074/original_6d6dc39e3984f69c86143aa70311695c.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843075/original_ee3d50463d836b9d42ea5e923b69f78b.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843076/original_292f3d0f95448abe37c2820e2f50b031.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843077/original_a6b63f7457a367a88cad629b38c49f16.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843078/original_088776768899cc3adf24e30ddbc42e44.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843079/original_41bded31ece6a4d4dbdcb518105c8b3c.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843080/original_152b1cdcb3bacdd3879f98c84e372f6c.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843082/original_9fc9a58496e667bd8643d77303e69633.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843083/original_927d8a1e88091e3a1a198b1a6e1d99da.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843090/original_8e6f0cfe9e1178902597d5fc88238926.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843092/original_2027c9dc18510a302cd905aab54ad468.jpg",
+      "https://attachments.are.na/40843096/195041255be89328c3c2f308fa8d51b8.mp4",
+      "https://attachments.are.na/40843097/37b59240341d3d73bb595f55f89a7acc.mp4",
+      "https://attachments.are.na/40843098/78da2cb08816036a9832c50be0acdef6.mp4",
+      "https://attachments.are.na/40843100/a193bee2433cc7c8aba541a7c3d372fc.mp4",
+      "https://attachments.are.na/40843101/fa4b7afaa9e2f851581173f6d44d2543.mp4",
+      "https://attachments.are.na/40843102/6ff72cad34a91fda0101cad2cd936c01.mp4",
+      "https://attachments.are.na/40843103/9497004f9ee07266f762d4b3b013d2fd.mov",
+      "https://attachments.are.na/40843105/edeeaaac3bfd137e804c626b2f75e810.mp4",
+      "https://attachments.are.na/40843107/4430c85712697a91f492c70ad71de9ae.mov",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843108/original_5150702f7c41406f6666ca9ce5d454f5.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843109/original_aa7cae9e73f3167e3f3537966430daab.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843111/original_ea581d23373efbb90e276f081e407941.png",
+      "https://attachments.are.na/40843112/eb306a444a4878ae1d71775207d6020f.mp4",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843113/original_2f0108e238f24df601cc08cedbdb027c.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843115/original_cd38e179a30c024e6a5615a82568dc78.png",
+      "https://attachments.are.na/40843117/c8834260b3e823b4d07388e8cdc40c29.mp4",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843118/original_a652f8275f888a819b774962338707b9.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843119/original_7fc40fcb0d66b07e14fd43c3b81b77b0.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843120/original_e34c27608631ebeae34c842bee9257de.png",
+      "https://d2w9rnfcy7mm78.cloudfront.net/40843122/original_33becfb1b07a7836369d01a4a7d90ecf.png",
+      "https://attachments.are.na/40843124/bb0c82c6fcca7651ce77b18389388dd9.mp4",
+      "https://attachments.are.na/40843125/25efac99ca452fc432d95faea8f736c6.mp4",
+      "https://attachments.are.na/40843126/a750b596075409371890afdafae5c230.mp4",
+      "https://attachments.are.na/40843127/bdd765e09031fa0a02cb97353fedb755.mp4"
+    ];
+
+    function isVideo(url) {
+      return /\.(mp4|mov)(\?|$)/i.test(url);
+    }
+
+    const mediaLayer = document.getElementById("aei-media-layer");
+    const linesSvg = document.getElementById("aoi-lines");
+
+    let nodes = [];
+    let connections = [];
+    let nextConnUpdate = 0;
+
+    function createNode(src, index, total) {
+      const el = document.createElement("div");
+      el.className = "aei-node";
+      if (Math.random() > 0.7) el.classList.add("softer");
+
+      const inner = isVideo(src) ? document.createElement("video") : document.createElement("img");
+      inner.src = src;
+      if (inner.tagName.toLowerCase() === "video") {
+        inner.autoplay = true;
+        inner.loop = true;
+        inner.muted = true;
+        inner.playsInline = true;
+      } else {
+        inner.loading = "lazy";
+      }
+      inner.alt = "";
+      el.appendChild(inner);
+
+      mediaLayer.appendChild(el);
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      const x = (index / total) * w + (Math.random() - 0.5) * (w * 0.35);
+      const y = Math.random() * h;
+
+      const vx = (Math.random() - 0.5) * 0.25;
+      const vy = (Math.random() - 0.5) * 0.25;
+
+      return { el, x, y, vx, vy };
+    }
+
+    function initAEI() {
+      if (!mediaLayer || !linesSvg) return;
+      mediaLayer.innerHTML = "";
+      linesSvg.innerHTML = "";
+      nodes = [];
+      connections = [];
+
+      const w = window.innerWidth;
+      const baseCount = w < 640 ? 10 : w < 1024 ? 16 : 22;
+      const count = Math.min(baseCount, mediaSources.length);
+
+      for (let i = 0; i < count; i++) {
+        const src = mediaSources[i % mediaSources.length];
+        const node = createNode(src, i, count);
+        nodes.push(node);
+      }
+
+      nextConnUpdate = performance.now();
+    }
+
+    function updateConnections() {
+      connections = [];
+      if (nodes.length < 2) return;
+
+      const maxLines = 28;
+      const chance = 0.18;
+      let added = 0;
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          if (Math.random() < chance) {
+            connections.push([i, j]);
+            added++;
+            if (added >= maxLines) return;
+          }
+        }
+      }
+    }
+
+    function getNodeCenter(node) {
+      const rect = node.el.getBoundingClientRect();
+      return [rect.left + rect.width / 2, rect.top + rect.height / 2];
+    }
+
+    function drawLines() {
+      linesSvg.innerHTML = "";
+      connections.forEach(([i, j]) => {
+        const ni = nodes[i];
+        const nj = nodes[j];
+        if (!ni || !nj) return;
+        const [x1, y1] = getNodeCenter(ni);
+        const [x2, y2] = getNodeCenter(nj);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        linesSvg.appendChild(line);
+      });
+    }
+
+    function animateAEI(now) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      nodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+
+        if (node.x < -100 || node.x > w + 100) node.vx *= -1;
+        if (node.y < -80 || node.y > h + 80) node.vy *= -1;
+
+        node.el.style.transform = `translate3d(${node.x}px, ${node.y}px, 0)`;
+      });
+
+      if (now >= nextConnUpdate) {
+        updateConnections();
+        nextConnUpdate = now + 450 + Math.random() * 700;
+      }
+
+      drawLines();
+      requestAnimationFrame(animateAEI);
+    }
+
+    window.addEventListener("load", () => {
+      initAEI();
+      requestAnimationFrame(animateAEI);
+    });
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(initAEI, 350);
+    });
+  </script>
+</body>
+
+</html>
