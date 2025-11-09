@@ -1,114 +1,212 @@
 <!doctype html>
-<html lang="es">
-
+<html lang="es" data-xpan>
 <head>
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-5D3D9DR9');</script>
-    <link rel="stylesheet" href="./style.css" media="screen"/>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="xpan"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:image" content="./xpan.png"/>
-    <meta property="og:url" content="https://xpan.earth/"/>
-    <title>xpan.12.e</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>xpan.12.e — ls.50</title>
 
-    <style>
-html, body {
-  height: auto;
-  overflow: auto;
+  <style>
+    /* tokens post-tech */
+    [data-xpan]{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; [data-xpan]{
+  --font-ui: "Arial Narrow", "MS Gothic", "Segoe UI", "Helvetica Neue", "Consolas", sans-serif;
 }
 
-article {
-  min-height: 100svh;       /* respeta barras/UA en móvil */
-  overflow: visible;        /* deja que el documento scrollee */
-  gap: 1.25rem;             /* mantiene márgenes entre bloques */
-}
 
-/* 3) Imagen vertical contenida, sin deformar ni desplazar texto */
-article img.portada-img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  max-height: 60svh;        /* recorta altura visible en pantallas altas */
-  object-fit: contain;      /* asegura encuadre completo */
-  margin-block: 1rem;
-}
 
-/* 4) Ajuste extra para pantallas muy bajas */
-@media (max-height: 700px) {
-  article img.portada-img { max-height: 50svh; }
-}
-article {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 1rem 2rem;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; }
+    }
 
-article img.portada-img {
-  max-width: 100%;
-  height: auto;
-}
+    /* base */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{
+      margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-ui);
+      display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
 
-form {
-  width: 100%;
-  max-width: 600px;
-}
+    /* header */
+    header{position:absolute;top:16px;left:16px;z-index:10}
+    header img{width:44px;height:auto;filter:invert(1) brightness(100%)}
+    @media (prefers-color-scheme:light){ header img{filter:none} }
 
-    </style>
-<script src="/assets/js/media-proxy.js" defer></script>
+    /* layout sin scroll: todo cabe */
+    main{
+      width:100%;max-width:760px;height:100%;
+      padding:clamp(8px,2vw,24px);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,2vh,20px);
+    }
+    h1{margin:0;text-transform:lowercase;font:700 clamp(1.1rem,2vw,1.6rem)/1.25 var(--font-ui)}
+    h1 em{font-style:italic}
+    p{margin:0;color:var(--fg-dim);font:400 clamp(.9rem,1.6vw,1rem)/1.5 var(--font-ui)}
 
+    /* portada: sin marco, lista para abrir visor */
+    .portada{
+      width:clamp(180px,45vw,340px);
+      max-height:30vh; height:auto; object-fit:contain;
+      cursor:zoom-in; display:block; margin:0 auto;
+      border:none; background:transparent;
+    }
+    @media (max-width:640px){ .portada{ width:70vw; max-height:25vh } }
+
+    /* formulario compacto */
+    form{width:100%;max-width:380px;display:grid;gap:clamp(8px,1vh,16px)}
+    label{color:var(--fg-dim);text-transform:lowercase;font:600 clamp(.8rem,1.4vw,.9rem)/1.3 var(--font-ui)}
+    input{
+      width:100%;padding:.5rem .7rem;border:1px solid var(--line);background:transparent;color:var(--fg);
+      font:400 .9rem/1.3 var(--font-ui)
+    }
+    button{
+      appearance:none;border:1px solid var(--accent);background:transparent;color:var(--fg);
+      padding:.55rem .8rem;text-transform:lowercase;font:600 .9rem/1 var(--font-ui);cursor:pointer;
+      transition:background-color .15s linear
+    }
+    button:hover{background:rgba(24,96,255,.08)}
+    button[disabled]{opacity:.6;cursor:default}
+
+    /* lightbox flushed */
+    #xpan-lightbox{
+      position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(8px) saturate(120%);-webkit-backdrop-filter:blur(8px) saturate(120%);
+      touch-action:none;overscroll-behavior:contain;
+    }
+    @media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{
+      position:relative;display:inline-flex;align-items:center;justify-content:center;
+      padding:0;margin:0;border:none;background:transparent;
+      transform:scale(.985);opacity:0;transition:transform .15s linear,opacity .15s linear;
+    }
+    #xpan-lightbox.open .sheet{transform:scale(1);opacity:1}
+    #xpan-lightbox img,#xpan-lightbox video{
+      display:block;width:auto;height:auto;object-fit:contain;background:transparent;margin:0;
+      /* límites por viewport; el no-upscale se aplica por JS con natural sizes */
+      max-width:90vw;max-height:90vh;
+    }
+    html.lb-open,body.lb-open{overflow:hidden;touch-action:none}
+  </style>
 </head>
 
-<body id="ls">
-    <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9"></iframe>
-    </noscript>
-    <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
-    </header>
-    <article>
-        <h1>
-<a href="https://xpan.earth/arq.xpan.12e.html" target="_blank">
-    <em>xpan.12.e</em>
-</a> presenta<br>
-            <em>ls.50</em> [sesión de escucha n.º 50]
-        </h1>
-        <p>
-            [album] bajos y ruidos<br>
-            [artista] slava parshin<br>
-            [año] 2025<br>
-            [fecha] 10.11.25 / 18:00 hrs <br>
-            [ubicación] <em> proyectos públicos</em>
-        </p>
-        <img src="https://d2w9rnfcy7mm78.cloudfront.net/40938573/original_7c54f4dde06e2d713a3cb8a210594df3.png?1762541149?bc=0">
-        <form action="https://script.google.com/macros/s/AKfycbxVBYDPBPqY9OO2om-CseZdYgThhWoHowZUpgAp1iKj8tlg1BSZNNxcwKDJYHdTOh_S/exec" method="post">
-            <h1>registro</h1>
-            <ul>
-                <li>
-                    <label for="nombre">nombre completo:</label>
-                    <input type="text" name="nombre" maxlength="256" required>
-                </li>
-                <li>
-                    <label for="correo">correo electrónico:</label>
-                    <input type="email" name="correo" maxlength="254" required>
-                </li>
-                <li>
-                    <button type="submit">enviar</button>
-                </li>
-            </ul>
-        </form>
-    </article>
-</body>
+<body>
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="./xpan.svg" alt="xpan"/>
+    </a>
+  </header>
 
+  <main>
+    <h1>
+      <a href="https://xpan.earth/arq.xpan.12e.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">
+        <em>xpan.12.e</em>
+      </a> presenta<br>
+      <em>ls.50</em> [sesión de escucha n.º 50]
+    </h1>
+
+    <p>
+      [album] bajos y ruidos<br>
+      [artista] slava parshin<br>
+      [año] 2025<br>
+      [fecha] 10.11.25 / 18:00 hrs<br>
+      [ubicación] <em>proyectos públicos</em>
+    </p>
+
+    <!-- portada -->
+    <img class="portada" id="portada"
+         alt="ls.50 — bajos y ruidos — slava parshin"
+         src="https://d2w9rnfcy7mm78.cloudfront.net/40938573/original_7c54f4dde06e2d713a3cb8a210594df3.png?1762541149&bc=0"/>
+
+    <!-- registro -->
+    <form action="https://script.google.com/macros/s/AKfycbxVBYDPBPqY9OO2om-CseZdYgThhWoHowZUpgAp1iKj8tlg1BSZNNxcwKDJYHdTOh_S/exec" method="post" novalidate>
+      <label for="nombre">nombre completo:</label>
+      <input id="nombre" name="nombre" type="text" maxlength="256" required autocomplete="name">
+      <label for="correo">correo electrónico:</label>
+      <input id="correo" name="correo" type="email" maxlength="254" required autocomplete="email">
+      <button type="submit" id="btnSubmit">enviar</button>
+    </form>
+  </main>
+
+  <!-- lightbox -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div>
+
+  <script>
+  // Lightbox FLUSHED con no-upscale real
+  (()=>{
+    const lb=document.getElementById('xpan-lightbox');
+    const sheet=lb.querySelector('.sheet');
+
+    function openMedia(node){
+      sheet.innerHTML='';
+      const isV=node.tagName.toLowerCase()==='video';
+      const el=document.createElement(isV?'video':'img');
+
+      if(isV){
+        el.src=node.currentSrc||node.src; el.playsInline=true; el.controls=true;
+        el.loop=!!node.loop; el.muted=node.muted??true; el.autoplay=true;
+      }else{
+        el.src=node.currentSrc||node.src; el.decoding='async'; el.loading='eager'; el.alt='';
+      }
+
+      // Ajuste: no escalar por arriba del tamaño nativo
+      el.addEventListener(isV?'loadedmetadata':'load', ()=>{
+        const nw=isV?el.videoWidth:el.naturalWidth;
+        const nh=isV?el.videoHeight:el.naturalHeight;
+        const vw=window.innerWidth*0.9, vh=window.innerHeight*0.9;
+        const scale=Math.min(vw/nw, vh/nh, 1); // 1 = no-upscale
+        el.style.width=(nw*scale)+'px';
+        el.style.height=(nh*scale)+'px';
+      },{once:true});
+
+      sheet.appendChild(el);
+      lb.classList.add('open');
+      document.documentElement.classList.add('lb-open');
+      document.body.classList.add('lb-open');
+    }
+
+    function closeLB(){
+      lb.classList.remove('open');
+      sheet.innerHTML='';
+      document.documentElement.classList.remove('lb-open');
+      document.body.classList.remove('lb-open');
+    }
+
+    // abre al click sobre cualquier IMG/VIDEO no enlazado
+    document.body.addEventListener('click',e=>{
+      const t=e.target;
+      if(!t) return;
+      if(t.closest('a')) return; // respeta links
+      if(t.tagName==='IMG' || t.tagName==='VIDEO'){
+        e.preventDefault(); e.stopPropagation();
+        openMedia(t);
+      }
+    },{capture:true});
+
+    lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+    addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+    addEventListener('resize',()=>{
+      const m=sheet.firstElementChild; if(!m) return;
+      const isV=m.tagName.toLowerCase()==='video';
+      const nw=isV?m.videoWidth:m.naturalWidth, nh=isV?m.videoHeight:m.naturalHeight;
+      if(!nw||!nh) return;
+      const vw=innerWidth*0.9, vh=innerHeight*0.9;
+      const scale=Math.min(vw/nw, vh/nh, 1);
+      m.style.width=(nw*scale)+'px';
+      m.style.height=(nh*scale)+'px';
+    });
+  })();
+
+  // Previene doble submit
+  (()=>{
+    const form=document.querySelector('form'), btn=document.getElementById('btnSubmit');
+    if(!form||!btn) return;
+    form.addEventListener('submit', ()=>{
+      btn.disabled=true; btn.textContent='enviando…';
+      setTimeout(()=>{ try{btn.disabled=false; btn.textContent='enviar';}catch{} }, 12000);
+    });
+  })();
+  </script>
+</body>
 </html>
