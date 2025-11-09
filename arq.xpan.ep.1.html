@@ -70,7 +70,7 @@
   .meta{font:400 .9rem/1.5 var(--font-ui); color:var(--fg-dim); margin:0 0 24px}
   .description{font:400 1rem/1.6 var(--font-ui); max-width:720px}
   .description a{color:inherit; border-bottom:1px solid var(--fg-dim)}
-  .description a:hover{border-color:var(--fg)}
+  .description a:hover{border-color: var(--fg);}
 
   /* Galería */
   .gallery{
@@ -82,32 +82,20 @@
     object-fit:cover; aspect-ratio:4/3;
   }
 
-  /* PDFs: tarjeta con <object> + acciones */
+  /* PDFs: estilo gdl (lista de <object>) */
   .pdf-embed{
     max-width:var(--maxw); margin:16px auto 64px; padding:0 var(--pad-x);
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(360px,1fr)); gap:var(--g2);
+    display:grid; grid-template-columns:1fr; gap:var(--g2);
   }
-  .pdf-card{display:flex; flex-direction:column; border:var(--b1); background:transparent}
-  .pdf-card object{width:100%; aspect-ratio:4/3; border:none; background:#0C0D0F}
-  .pdf-actions{
-    display:flex; gap:12px; align-items:center; justify-content:space-between;
-    padding:10px 12px; border-top:var(--b0); font:400 .85rem/1.4 var(--font-ui); color:var(--fg-dim);
-  }
-  .pdf-actions a{color:var(--fg); border:1px solid var(--line); padding:6px 10px; text-decoration:none}
-
-  /* Lightbox overlay */
-  #xpan-lightbox{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.55); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
-  #xpan-lightbox.open{display:flex}
-  #xpan-lightbox .sheet{position:relative; max-width:100vw; max-height:100vh; overflow:hidden; transform:scale(.985); opacity:0; transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}
-  #xpan-lightbox.open .sheet{transform:scale(1); opacity:1}
-  #xpan-lightbox img,#xpan-lightbox video{display:block; width:auto; height:auto; max-width:100vw; max-height:100vh; object-fit:contain; margin:0; background:transparent}
-  html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
-
+  .pdf-embed object{width:100%; height:600px; border:none; background:#0C0D0F}
   @media (max-width:768px){
     header img{width:42px}
     .container{margin:calc(var(--header-h) + 28px) auto 40px}
     .gallery{gap:16px}
-    .pdf-embed{grid-template-columns:1fr; gap:20px}
+    .pdf-embed object{height:auto; aspect-ratio:4/3}
+  }
+  @media (prefers-color-scheme:light){
+    .pdf-embed object{ background:#F3F5F7 }
   }
 </style>
 
@@ -199,25 +187,25 @@
     <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 14" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363">
   </div>
 
-  <!-- PDFs -->
-  <div class="pdf-embed" id="pdfGrid">
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794273/31c710cbdc2ca30c9fb66638d4ea224c.pdf?1747634363"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794272/d62dd6c04e7afd32b9317e3798c2b589.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794271/3f84529d746199ed84c4ccf3f5dcc043.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794269/36aa8995a7e51e49b6ee28669d8b783f.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794270/a20a13bd08470b5e6bb9b8d96c62d68a.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794268/3cc3bdcfd126b910503e64b43e963ee5.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794267/976ea063e02863c0d51f60d1af3c902d.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794265/04709d629c5e29feba815f190a40c651.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794266/c503854d438a9ed3809b6abc6eb15d71.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794264/caa14af2f0df80e0a067bf62b647539d.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794263/6c9ea89fdd12929c4b482143c747222d.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794262/ea4c211b279b3116e03245af883bfc40.pdf?1747634362"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794261/f6b8556bfe618d573690d5d418ad15d5.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794260/1952c52ffb4c6c8dae33986e6a09641f.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794259/684a0928bb0e5062f3fa24f448a2c33c.pdf?1747634361"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794258/20fd12f33e0eb2d4b67f399b4996cd11.pdf?1747634360"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/36794257/b3bad571ea513bc4dd52af01b3250614.pdf?1747634361"></div>
+  <!-- PDFs (estilo gdl) -->
+  <div class="pdf-embed">
+    <object type="application/pdf" aria-label="plano 1" data="https://attachments.are.na/36794273/31c710cbdc2ca30c9fb66638d4ea224c.pdf?1747634363#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 2" data="https://attachments.are.na/36794272/d62dd6c04e7afd32b9317e3798c2b589.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 3" data="https://attachments.are.na/36794271/3f84529d746199ed84c4ccf3f5dcc043.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 4" data="https://attachments.are.na/36794269/36aa8995a7e51e49b6ee28669d8b783f.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 5" data="https://attachments.are.na/36794270/a20a13bd08470b5e6bb9b8d96c62d68a.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 6" data="https://attachments.are.na/36794268/3cc3bdcfd126b910503e64b43e963ee5.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 7" data="https://attachments.are.na/36794267/976ea063e02863c0d51f60d1af3c902d.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 8" data="https://attachments.are.na/36794265/04709d629c5e29feba815f190a40c651.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 9" data="https://attachments.are.na/36794266/c503854d438a9ed3809b6abc6eb15d71.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 10" data="https://attachments.are.na/36794264/caa14af2f0df80e0a067bf62b647539d.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 11" data="https://attachments.are.na/36794263/6c9ea89fdd12929c4b482143c747222d.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 12" data="https://attachments.are.na/36794262/ea4c211b279b3116e03245af883bfc40.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 13" data="https://attachments.are.na/36794261/f6b8556bfe618d573690d5d418ad15d5.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 14" data="https://attachments.are.na/36794260/1952c52ffb4c6c8dae33986e6a09641f.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 15" data="https://attachments.are.na/36794259/684a0928bb0e5062f3fa24f448a2c33c.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 16" data="https://attachments.are.na/36794258/20fd12f33e0eb2d4b67f399b4996cd11.pdf?1747634360#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 17" data="https://attachments.are.na/36794257/b3bad571ea513bc4dd52af01b3250614.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
   </div>
 
   <!-- Lightbox -->
@@ -241,30 +229,16 @@
     // Lazy imgs
     document.querySelectorAll('.gallery img').forEach(img=>{
       img.loading ||= 'lazy'; img.decoding ||= 'async';
-      if(img.dataset.src){ const obs=new IntersectionObserver(es=>{es.forEach(en=>{if(!en.isIntersecting)return; img.src=img.dataset.src; img.removeAttribute('data-src'); obs.unobserve(img);});},{rootMargin:'400px 0px'}); obs.observe(img);}
+      if(img.dataset.src){
+        const obs=new IntersectionObserver(es=>{
+          es.forEach(en=>{
+            if(!en.isIntersecting) return;
+            img.src=img.dataset.src; img.removeAttribute('data-src'); obs.unobserve(img);
+          });
+        },{rootMargin:'400px 0px'});
+        obs.observe(img);
+      }
     });
-
-    // PDFs con <object> y acciones
-    (function mountPDFs(){
-      document.querySelectorAll('.pdf-card').forEach((card,idx)=>{
-        const url = card.getAttribute('data-pdf');
-        const obj = document.createElement('object');
-        obj.type = 'application/pdf';
-        obj.data = url + '#toolbar=1&navpanes=0&statusbar=0&view=FitH';
-        obj.setAttribute('aria-label','plano pdf');
-        card.appendChild(obj);
-
-        const actions = document.createElement('div');
-        actions.className = 'pdf-actions';
-        const label = document.createElement('span');
-        label.textContent = `plano ${idx+1}`;
-        const open = document.createElement('a');
-        open.href = url; open.target = '_blank'; open.rel='noopener';
-        open.textContent = 'abrir';
-        actions.append(label, open);
-        card.appendChild(actions);
-      });
-    })();
 
     // Lightbox (preservado)
     (()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;l.decoding="async";l.loading="eager";l.alt=""}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();

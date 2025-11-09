@@ -30,7 +30,7 @@
     }
     a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
     a:hover{border-bottom-color:var(--accent)}
-    img,video,iframe{display:block; max-width:100%; height:auto; background:transparent}
+    img,video,iframe,object{display:block; max-width:100%; height:auto; background:transparent}
 
     /* ===== header + idioma ===== */
     header{
@@ -69,7 +69,15 @@
     /* ===== pdfs ===== */
     .pdf-embed{margin:1.25rem 0 2.5rem}
     .pdf-embed iframe{width:100%; height:600px; border:var(--b1); background:#0C0D0F; border-radius:0}
-    @media (max-width:768px){ .pdf-embed iframe{height:auto; aspect-ratio:4/3} .container{margin:calc(var(--header-h) + 28px) auto 40px} }
+    .pdf-embed object{width:100%; height:600px; border:none; background:#0C0D0F; border-radius:0}
+    @media (max-width:768px){
+      .pdf-embed iframe{height:auto; aspect-ratio:4/3}
+      .pdf-embed object{height:auto; aspect-ratio:4/3}
+      .container{margin:calc(var(--header-h) + 28px) auto 40px}
+    }
+    @media (prefers-color-scheme:light){
+      .pdf-embed object{ background:#F3F5F7 }
+    }
 
     /* ===== idioma visibilidad ===== */
     .lang{display:none}
@@ -130,7 +138,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="ep.t — planos" loading="lazy" data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+          <object type="application/pdf" aria-label="ep.t — planos"
+            data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -157,7 +166,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="atlas — planos" loading="lazy" data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+          <object type="application/pdf" aria-label="atlas — planos"
+            data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -184,7 +194,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="monitor — planos" loading="lazy" data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+          <object type="application/pdf" aria-label="monitor — planos"
+            data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -208,7 +219,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/40235709/original_c74127815fbfa503367e224251f1c999.jpg?1760125023&bc=0"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="estructura nº4 — planos" loading="lazy" data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965"></iframe>
+          <object type="application/pdf" aria-label="estructura nº4 — planos"
+            data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
     </div>
@@ -248,7 +260,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="ep.t — plans" loading="lazy" data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+          <object type="application/pdf" aria-label="ep.t — plans"
+            data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -275,7 +288,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="atlas — plans" loading="lazy" data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+          <object type="application/pdf" aria-label="atlas — plans"
+            data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -302,7 +316,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="monitor — plans" loading="lazy" data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+          <object type="application/pdf" aria-label="monitor — plans"
+            data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -326,7 +341,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/40235709/original_c74127815fbfa503367e224251f1c999.jpg?1760125023&bc=0"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="aux. nº4 — plans" loading="lazy" data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965"></iframe>
+          <object type="application/pdf" aria-label="aux. nº4 — plans"
+            data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
     </div>
@@ -366,7 +382,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="ep.t — plans (fr)" loading="lazy" data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+          <object type="application/pdf" aria-label="ep.t — plans (fr)"
+            data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -393,7 +410,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="atlas — plans (fr)" loading="lazy" data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+          <object type="application/pdf" aria-label="atlas — plans (fr)"
+            data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -420,7 +438,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="moniteur — plans" loading="lazy" data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+          <object type="application/pdf" aria-label="moniteur — plans"
+            data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -444,7 +463,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/40235709/original_c74127815fbfa503367e224251f1c999.jpg?1760125023&bc=0"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="structure nº4 — plans" loading="lazy" data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965"></iframe>
+          <object type="application/pdf" aria-label="structure nº4 — plans"
+            data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
     </div>
@@ -483,7 +503,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="ep.t — 図面" loading="lazy" data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf"></iframe>
+          <object type="application/pdf" aria-label="ep.t — 図面"
+            data-src="https://attachments.are.na/38321953/0b77462964723e6b2194e2ce07c5d497.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -510,7 +531,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="atlas — 図面" loading="lazy" data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf"></iframe>
+          <object type="application/pdf" aria-label="atlas — 図面"
+            data-src="https://attachments.are.na/38322031/fd650602b4eef63dc17a1f2ea0d05798.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -536,7 +558,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="モニター — 図面" loading="lazy" data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf"></iframe>
+          <object type="application/pdf" aria-label="モニター — 図面"
+            data-src="https://attachments.are.na/38322004/1835fd37008586ec3f416e6565db5182.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
 
@@ -560,7 +583,8 @@
           <img alt="" loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/40235709/original_c74127815fbfa503367e224251f1c999.jpg?1760125023&bc=0"/>
         </div>
         <div class="pdf-embed">
-          <iframe title="補助構造 nº4 — 図面" loading="lazy" data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965"></iframe>
+          <object type="application/pdf" aria-label="補助構造 nº4 — 図面"
+            data-src="https://attachments.are.na/40235684/61eb1d5932682f653bde4fecc4be5bef.pdf?1760124965#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
         </div>
       </div>
     </div>
@@ -580,17 +604,20 @@
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
     }
-    // lazy imágenes/iframes
+    // lazy imágenes/iframes/objects
     (function(){
       const io=new IntersectionObserver((es)=>{
         es.forEach(en=>{
           if(!en.isIntersecting) return;
           const el=en.target, src=el.getAttribute('data-src');
-          if(src){ el.src = src; el.removeAttribute('data-src'); }
+          if(src){
+            if(el.tagName==='OBJECT') el.data = src; else el.src = src;
+            el.removeAttribute('data-src');
+          }
           io.unobserve(el);
         });
       },{rootMargin:'600px 0px', threshold:0});
-      document.querySelectorAll('img[data-src],iframe[data-src]').forEach(el=> io.observe(el));
+      document.querySelectorAll('img[data-src],iframe[data-src],object[data-src]').forEach(el=> io.observe(el));
     })();
     // boot
     window.addEventListener('DOMContentLoaded', ()=>{

@@ -40,7 +40,7 @@
       appearance:none; background:transparent; border:var(--b1); border-radius:0;
       padding:.35rem .6rem; cursor:pointer; color:var(--fg-dim); letter-spacing:.2px;
       transition:color .15s linear, border-color .15s linear, background-color .15s linear, opacity .15s linear;
-      opacity:.72
+      opacity:.72;
     }
     .lang-select button:hover{opacity:1; color:var(--fg)}
     .lang-select button.active{opacity:1; color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
@@ -61,12 +61,15 @@
     video,iframe{border:var(--b1)}
     video{max-height:80vh; background:#000}
     iframe{height:80vh; background:#0C0D0F}
+    /* pdf con <object> */
+    object[type="application/pdf"]{width:100%; height:80vh; border:var(--b1); background:#0C0D0F}
     @media (max-width:768px){
       .container{margin:calc(var(--header-h) + 28px) auto 40px}
       .component{padding:0 var(--pad-x)}
       .gallery{grid-template-columns:1fr}
       video{max-height:50vh}
       iframe{height:60vh}
+      object[type="application/pdf"]{height:auto; aspect-ratio:4/3}
     }
 
     /* PDF placeholder button (ligero) */
@@ -493,9 +496,18 @@
       const s=document.createElement('source'); s.src=src; s.type='video/mp4';
       el.appendChild(s); el.dataset.hydrated='1'; el.poster ||= BLANK; el.preload='metadata';
     }
-    function loadIframe(el, url){ el.src=url; }
 
-    // lazy images + videos + pdfs/iframes
+    // fusiona hash con parámetros estándar del visor
+    function tunePdfUrl(u){
+      if(!u) return u;
+      const [base, raw=''] = u.split('#');
+      const sp = new URLSearchParams(raw);
+      const desired = { page:'1', zoom:'page-width', view:'FitH', toolbar:'1', navpanes:'0', statusbar:'0' };
+      for(const k in desired){ if(!sp.has(k)) sp.set(k, desired[k]); }
+      return base + '#' + sp.toString();
+    }
+
+    // lazy images + videos
     (function(){
       const io=new IntersectionObserver((entries)=>{
         for(const en of entries){
@@ -523,14 +535,15 @@
       },{threshold:.25});
       document.querySelectorAll('video').forEach(v=> ioPlay.observe(v));
 
-      // PDF click-to-load to avoid heavy initial load
+      // PDF click-to-load -> ahora <object type="application/pdf"> normalizado
       document.querySelectorAll('.pdf-ph').forEach(btn=>{
         btn.addEventListener('click', ()=>{
           const url=btn.getAttribute('data-pdf'); if(!url) return;
-          const ifr=document.createElement('iframe');
-          ifr.setAttribute('title','pdf'); ifr.loading='lazy'; ifr.src=url;
-          ifr.style.width='100%'; ifr.style.height='80vh'; ifr.style.border='1px solid transparent';
-          btn.replaceWith(ifr);
+          const obj=document.createElement('object');
+          obj.type='application/pdf';
+          obj.setAttribute('aria-label','plano pdf');
+          obj.data=tunePdfUrl(url);
+          btn.replaceWith(obj);
         });
       });
     })();

@@ -7,7 +7,6 @@
   <title>6ch_r — arquitectura</title>
 
   <style>
-    /* ===== tokens post-tech ===== */
     :root{
       --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
       --line:#2A2E31; --line-weak:#1A1D20;
@@ -21,17 +20,15 @@
       }
     }
 
-    /* ===== base ===== */
     *,*::before,*::after{ box-sizing:border-box }
     html,body{ margin:0; background:var(--bg); color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale }
     a{ color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear }
     a:hover{ border-bottom-color:var(--accent) }
-    img,video,iframe{ display:block; max-width:100%; height:auto; background:transparent }
+    img,video{ display:block; max-width:100%; height:auto; background:transparent }
     body{ overflow-x:hidden }
 
-    /* ===== header + idioma ===== */
     header{ position:fixed; top:12px; left:var(--pad-x); z-index:10; height:var(--header-h); display:flex; align-items:center }
     header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
     @media (prefers-color-scheme:light){ header img{ filter:none } }
@@ -49,27 +46,25 @@
     .language-selector button:hover{ color:var(--fg) }
     .language-selector button.active{ color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06) }
 
-    /* ===== layout ===== */
     .container{ max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 64px; padding:0 var(--pad-x) }
     h1{ font:700 1.5rem/1.25 Inter, system-ui; margin:0 0 .5rem; text-transform:lowercase }
     .meta{ font:400 .9rem/1.5 Inter, system-ui; color:var(--fg-dim); margin:0 0 1.5rem }
     .description{ font:400 1rem/1.65 Inter, system-ui; max-width:700px; margin:0 0 2rem }
 
-    /* ===== galería ===== */
     .gallery{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; margin-bottom:2rem }
     .gallery img{ width:100%; height:auto; object-fit:cover; border:var(--b1); border-radius:0 }
 
-    /* ===== PDF ===== */
+    /* visor pdf idéntico a gdl */
     .pdf-embed{ margin:2rem 0 }
-    .pdf-embed iframe{ width:100%; height:600px; border:var(--b1); border-radius:0; background:#fff }
+    .pdf-embed object{ width:100%; height:600px; border:none; background:#0C0D0F }
     @media (max-width:768px){
       .container{ margin-top:calc(var(--header-h) + 16px) }
-      .pdf-embed iframe{ height:auto; aspect-ratio:4/3 }
+      .pdf-embed object{ height:auto; aspect-ratio:4/3 }
+    }
+    @media (prefers-color-scheme:light){
+      .pdf-embed object{ background:#F3F5F7 }
     }
   </style>
-
-  <!-- util existente del sitio: se preserva -->
-  <script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
 
@@ -160,15 +155,15 @@
       <img loading="lazy" decoding="async" alt="" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38298725/original_16183ea3b2f6e74ae092bf869c5e72f4.jpg?1753227348" />
     </div>
 
-    <!-- PDF -->
+    <!-- PDF: mismo patrón que gdl -->
     <div class="pdf-embed">
-      <iframe loading="lazy" title="6ch_r — planos"
-              data-src="https://attachments.are.na/38299959/62a32d29cdddaeecd77c2610b70d8023.pdf?1753232443"></iframe>
+      <object type="application/pdf" aria-label="6ch_r — planos"
+        data="https://attachments.are.na/38299959/62a32d29cdddaeecd77c2610b70d8023.pdf?1753232443#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0">
+      </object>
     </div>
   </div>
 
   <script>
-    /* idioma persistente */
     function setLang(lang){
       localStorage.setItem('lang', lang);
       document.querySelectorAll('.lang').forEach(el=>{
@@ -183,7 +178,7 @@
     }
     setLang(localStorage.getItem('lang') || (navigator.language.slice(0,2) || 'es'));
 
-    /* lazy (img / iframe) */
+    /* lazy imágenes */
     const io = new IntersectionObserver((ents)=>{
       ents.forEach(en=>{
         if(!en.isIntersecting) return;
@@ -192,10 +187,10 @@
         io.unobserve(el);
       });
     },{rootMargin:'400px 0px', threshold:.05});
-    document.querySelectorAll('img[data-src],iframe[data-src]').forEach(el=> io.observe(el));
+    document.querySelectorAll('img[data-src]').forEach(el=> io.observe(el));
   </script>
 
-  <!-- lightbox existente: preservado tal cual -->
+  <!-- lightbox existente: intacto -->
   <style>#xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.45);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}#xpan-lightbox.open{display:flex}#xpan-lightbox .sheet{position:relative;max-width:100vw;max-height:100vh;overflow:hidden;transform:scale(.985);opacity:0;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}#xpan-lightbox.open .sheet{transform:scale(1);opacity:1}#xpan-lightbox img{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:none}#xpan-lightbox video{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:auto}html.lb-open,body.lb-open{overflow:hidden;touch-action:none}@media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}</style>
   <div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div>
   <script>(()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;o.srcset&&(l.srcset=o.srcset);o.sizes&&(l.sizes=o.sizes);l.alt=o.alt||"";l.decoding="async";l.loading="eager"}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();</script>

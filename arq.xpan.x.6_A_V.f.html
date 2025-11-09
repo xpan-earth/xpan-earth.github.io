@@ -55,7 +55,12 @@
     /* ===== pdfs ===== */
     .pdf-embed{margin:2rem 0}
     .pdf-embed iframe{width:100%;height:600px;border:var(--b1);background:#0C0D0F}
-    @media (max-width:768px){ .container{margin:calc(var(--header-h) + 28px) auto 40px;padding:0 var(--pad-x)} .pdf-embed iframe{height:auto;aspect-ratio:4/3} }
+    .pdf-embed object{width:100%;height:600px;border:var(--b1);background:#0C0D0F}
+    @media (max-width:768px){
+      .container{margin:calc(var(--header-h) + 28px) auto 40px;padding:0 var(--pad-x)}
+      .pdf-embed iframe{height:auto;aspect-ratio:4/3}
+      .pdf-embed object{height:auto;aspect-ratio:4/3}
+    }
 
     /* ===== lightbox (preservado) ===== */
     #xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.45);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}
@@ -65,7 +70,6 @@
     #xpan-lightbox img,#xpan-lightbox video{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent}
     html.lb-open,body.lb-open{overflow:hidden;touch-action:none}
     @media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}
-
   </style>
 
   <script src="/assets/js/media-proxy.js" defer></script>
@@ -99,7 +103,7 @@
       </div>
     </div>
 
-    <!-- English -->
+  <!-- English -->
     <div class="lang lang-en" style="display:none">
       <h1>x.6_A/V.f</h1>
       <div class="meta">february 2024 — mexico city</div>
@@ -132,7 +136,7 @@
       </div>
     </div>
 
-    <!-- Galería: src -> data-src para lazy y corrección &bc=0 -->
+    <!-- Galería -->
     <div class="gallery" id="gallery">
       <img alt="" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38376758/original_b95df38401a25ab8a462d5652cdb4a0d.jpg?1753559880&bc=0"/>
       <img alt="" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38376755/original_685195aeb3338c340d3349b92a5fa461.jpg?1753559880&bc=0"/>
@@ -148,7 +152,8 @@
     </div>
 
     <div class="pdf-embed">
-      <iframe loading="lazy" title="x.6_A/V.f — planos" data-src="https://attachments.are.na/38376740/90a32ba5c0921fb9a07475874bb3fe86.pdf?1753559833"></iframe>
+      <object loading="lazy" title="x.6_A/V.f — planos" type="application/pdf"
+              data-src="https://attachments.are.na/38376740/90a32ba5c0921fb9a07475874bb3fe86.pdf?1753559833#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -174,18 +179,21 @@
       setLang(saved);
     })();
 
-    // lazy para img/iframe con data-src (+ fix '?ts?bc=0')
+    // lazy para img/iframe/object con data-src (+ fix '?ts?bc=0')
     (function lazy(){
       function fixUrl(u){ return typeof u==='string' ? u.replace(/\?(\d+)\?bc=0$/,'?$1&bc=0') : u; }
       const io=new IntersectionObserver((es)=>{
         es.forEach(en=>{
           if(!en.isIntersecting) return;
           const el=en.target, src=fixUrl(el.dataset.src||'');
-          if(src){ el.src=src; el.removeAttribute('data-src'); }
+          if(src){
+            if(el.tagName==='OBJECT') el.data=src; else el.src=src;
+            el.removeAttribute('data-src');
+          }
           io.unobserve(el);
         });
       },{rootMargin:'600px 0px',threshold:0});
-      document.querySelectorAll('img[data-src],iframe[data-src]').forEach(el=> io.observe(el));
+      document.querySelectorAll('img[data-src],iframe[data-src],object[data-src]').forEach(el=> io.observe(el));
     })();
   </script>
 

@@ -65,9 +65,12 @@
     /* ===== pdfs ===== */
     .pdf-embed{display:flex; flex-direction:column; gap:1.5rem; margin-bottom:2rem; overflow-x:auto}
     .pdf-embed iframe{min-width:1000px; height:600px; border:var(--b1); background:#0C0D0F}
+    /* añadido: estilo equivalente para <object> PDF */
+    .pdf-embed object{min-width:1000px; height:600px; border:var(--b1); background:#0C0D0F}
     @media (max-width:768px){
       .container{margin:calc(var(--header-h) + 28px) auto 40px}
       .pdf-embed iframe{min-width:100%; height:auto; aspect-ratio:4/3}
+      .pdf-embed object{min-width:100%; height:auto; aspect-ratio:4/3}
     }
 
     /* ===== SVG (riel) ===== */
@@ -178,8 +181,10 @@
 
     <!-- PDFs -->
     <div class="pdf-embed">
-      <iframe title="i8oppa — planos 1" loading="lazy" data-src="https://attachments.are.na/38004245/223ae6825a6387b8c3c44810c88b519b.pdf?1752106540"></iframe>
-      <iframe title="i8oppa — planos 2" loading="lazy" data-src="https://attachments.are.na/38004272/edc67bb9603941e5a1af0aeacd71c734.pdf?1752106586"></iframe>
+      <object type="application/pdf" title="i8oppa — planos 1"
+              data-src="https://attachments.are.na/38004245/223ae6825a6387b8c3c44810c88b519b.pdf?1752106540#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+      <object type="application/pdf" title="i8oppa — planos 2"
+              data-src="https://attachments.are.na/38004272/edc67bb9603941e5a1af0aeacd71c734.pdf?1752106586#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -202,17 +207,20 @@
       const saved = localStorage.getItem('lang') || (navigator.language||'es').slice(0,2);
       setLang(['es','en','fr','jp'].includes(saved)?saved:'es');
     })();
-    // lazy imágenes/iframes
+    // lazy imágenes/iframes/objects
     (function(){
       const io=new IntersectionObserver((es)=>{
         es.forEach(en=>{
           if(!en.isIntersecting) return;
           const el=en.target, src=el.getAttribute('data-src');
-          if(src){ el.src=src; el.removeAttribute('data-src'); }
+          if(src){
+            if(el.tagName==='OBJECT') el.data = src; else el.src = src;
+            el.removeAttribute('data-src');
+          }
           io.unobserve(el);
         });
       },{rootMargin:'600px 0px', threshold:0});
-      document.querySelectorAll('img[data-src],iframe[data-src]').forEach(el=> io.observe(el));
+      document.querySelectorAll('img[data-src],iframe[data-src],object[data-src]').forEach(el=> io.observe(el));
     })();
   </script>
 

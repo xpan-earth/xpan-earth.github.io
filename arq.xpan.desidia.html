@@ -52,10 +52,15 @@
     .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:2rem}
     .gallery img{width:100%;height:auto;object-fit:cover;border:var(--b1);border-radius:0}
 
-    /* pdf */
+    /* pdf (existente) */
     .pdf-embed{margin:2rem 0}
     .pdf-embed iframe{width:100%;height:600px;border:var(--b1);background:#fff;border-radius:0}
     @media (max-width:768px){.pdf-embed iframe{height:auto;aspect-ratio:4/3}}
+
+    /* pdf normalizado igual a gdl (añadido, no reemplaza) */
+    .pdf-embed object{width:100%;height:600px;border:none;background:#0C0D0F}
+    @media (max-width:768px){.pdf-embed object{height:auto;aspect-ratio:4/3}}
+    @media (prefers-color-scheme:light){ .pdf-embed object{background:#F3F5F7} }
   </style>
 
   <script src="/assets/js/media-proxy.js" defer></script>
@@ -155,7 +160,8 @@
   </div>
 
   <div class="pdf-embed">
-    <iframe loading="lazy" title="desidia — planos" data-src="https://attachments.are.na/38342207/07b721c016d2d97e43f3befc01b5b4c6.pdf?1753383201"></iframe>
+    <object type="application/pdf" aria-label="desidia — planos"
+      data-src="https://attachments.are.na/38342207/07b721c016d2d97e43f3befc01b5b4c6.pdf?1753383201#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
   </div>
 </div>
 
@@ -179,11 +185,14 @@
     ents.forEach(en=>{
       if(!en.isIntersecting) return;
       const el=en.target, src=el.dataset.src;
-      if(src){ el.src=src; el.removeAttribute('data-src'); }
+      if(src){
+        if(el.tagName==='OBJECT') el.data = src; else el.src = src;
+        el.removeAttribute('data-src');
+      }
       io.unobserve(el);
     });
   },{rootMargin:'400px 0px', threshold:.05});
-  document.querySelectorAll('img[data-src],iframe[data-src]').forEach(el=> io.observe(el));
+  document.querySelectorAll('img[data-src],iframe[data-src],object[data-src]').forEach(el=> io.observe(el));
 </script>
 
 <!-- lightbox existente preservado -->
