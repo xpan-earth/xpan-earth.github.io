@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="color-scheme" content="light"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan.c.0.0 — xpan</title>
 
   <!-- Perf hints -->
@@ -16,82 +16,124 @@
   <script src="/assets/js/media-proxy.js" defer></script>
 
   <style>
+    /* ===== tokens post-tech ===== */
     :root{
-      --bg:#fff; --fg:#000; --line:rgba(0,0,0,.12);
-      --radius:14px; --maxw:1440px; --gap:.8rem;
-      --overlay: rgba(255,255,255,.98); --shadow:0 10px 30px rgba(0,0,0,.08);
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20;
+      --maxw:1440px; --pad-x:clamp(16px,4vw,48px); --g:16px; --header-h:64px;
+      --b1:1px solid var(--line);
     }
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+        --line:#D9DEE2; --line-weak:#ECEFF2;
+      }
+    }
+
+    /* ===== base ===== */
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
-    img,video{display:block;max-width:100%;height:auto}
-    a{color:inherit;text-decoration:none}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden
+    }
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
+    a:hover{border-color:var(--accent)}
 
-    /* Header blindado */
-    header{position:fixed;top:1rem;left:1rem;z-index:40}
-    header img{height:50px;width:auto;display:block;background:transparent;border-radius:0;mix-blend-mode:normal;filter:none}
+    /* ===== header blindado (logo negro↔blanco automático) ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); z-index:40; height:var(--header-h);
+      display:flex; align-items:center;
+    }
+    header a{display:inline-flex; align-items:center}
+    header img{
+      height:50px; width:auto; display:block;
+      mix-blend-mode:difference;               /* invierte por contraste de fondo */
+      filter:invert(0) saturate(100%);         /* fallback en dark */
+    }
+    @media (prefers-color-scheme:light){ header img{ filter:none } }
 
-    /* Selector de idioma */
-    .language-selector{position:fixed;top:1rem;right:1rem;z-index:40;font-size:.9rem;text-transform:lowercase}
-    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;color:#000;opacity:.5;transition:.2s}
-    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+    /* ===== selector de idioma ===== */
+    .language-selector{
+      position:fixed; top:12px; right:var(--pad-x); z-index:40;
+      display:flex; gap:8px; text-transform:lowercase;
+    }
+    .language-selector button{
+      appearance:none; background:transparent; border:1px solid var(--line);
+      padding:6px 10px; cursor:pointer; font:600 .85rem/1 system-ui; letter-spacing:.2px;
+      color:var(--fg-dim); transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+    }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
 
-    main{max-width:var(--maxw);margin:110px auto 5rem;padding:0 1rem;position:relative;z-index:1}
+    /* ===== layout ===== */
+    main{max-width:var(--maxw); margin:calc(var(--header-h) + 46px) auto 80px; padding:0 var(--pad-x); position:relative; z-index:1}
+    h1{font:700 1.35rem/1.25 system-ui; margin:.1rem 0; text-transform:lowercase}
+    .meta{font:400 .9rem/1.5 system-ui; color:var(--fg-dim); margin:.2rem 0 1rem}
+    .description{font:400 1rem/1.65 system-ui; max-width:980px}
+    .section{margin:24px 0; content-visibility:auto; contain-intrinsic-size:1px 800px}
 
-    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.1rem 0;text-transform:lowercase}
-    .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
-    .description{font-size:1rem;line-height:1.6;max-width:980px}
-    .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
-
-    /* Multilenguaje con fade */
-    .lang{display:none;opacity:0;transition:opacity .18s ease}
+    /* ===== multilenguaje con fade ===== */
+    .lang{display:none; opacity:0; transition:opacity .18s linear}
     .lang.active{display:block}
     .lang.active.show{opacity:1}
 
-    /* BG videos alternados, detrás de todo */
-    .bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#00000000}
-    .bg-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease}
+    /* ===== BG videos alternados detrás ===== */
+    .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; background:transparent}
+    .bg-wrap video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1s linear; filter:contrast(115%) saturate(135%)}
     .bg-wrap video.show{opacity:.35}
 
-    /* Mini audio player (referencia x.6_A/V.f) */
-    .mini-player{position:fixed;right:1rem;bottom:1rem;z-index:45;backdrop-filter:blur(6px);background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:.35rem .6rem;display:flex;align-items:center;gap:.6rem;box-shadow:var(--shadow)}
-    .mini-btn{width:34px;height:34px;border-radius:999px;border:1px solid #000;background:transparent;display:grid;place-items:center;cursor:pointer}
-    .mini-icon{width:10px;height:10px;display:block}
-    .mini-label{font-size:.85rem;opacity:.75;text-transform:lowercase}
+    /* ===== mini audio player ===== */
+    .mini-player{
+      position:fixed; right:1rem; bottom:1rem; z-index:45;
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      background:rgba(255,255,255,.65); border:1px solid var(--line);
+      border-radius:999px; padding:.35rem .6rem; display:flex; align-items:center; gap:.6rem;
+    }
+    .mini-btn{width:34px; height:34px; border-radius:999px; border:1px solid var(--fg); background:transparent; display:grid; place-items:center; cursor:pointer}
+    .mini-icon{width:10px; height:10px; display:block}
+    .mini-label{font-size:.85rem; color:var(--fg-dim); text-transform:lowercase}
 
-    /* Featured video + lightbox */
-    .featured{border:1px solid var(--line);border-radius:var(--radius);background:#ffffff00;overflow:hidden}
-    .featured video{width:100%;height:100%;max-height:76vh;object-fit:contain;background:#ffffff00}
+    /* ===== featured + lightbox ===== */
+    .featured{border:var(--b1); border-radius:0; background:transparent; overflow:hidden}
+    .featured video{width:100%; height:100%; max-height:76vh; object-fit:contain; background:transparent}
 
-    .lightbox{position:fixed;inset:0;background:transparent;display:none;align-items:center;justify-content:center;z-index:60;touch-action:none;overscroll-behavior:contain}
+    .lightbox{
+      position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:60;
+      backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain
+    }
     .lightbox.open{display:flex}
-    .lb-surface{position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:100vw;max-height:100vh;background:transparent;border:0;border-radius:0;box-shadow:none;padding:0}
-    .lb-media{display:block;max-width:100vw;max-height:100vh;width:auto;height:auto;object-fit:contain;background:transparent;cursor:zoom-out}
+    .lb-surface{position:relative; display:inline-flex; align-items:center; justify-content:center; max-width:96vw; max-height:96vh; background:transparent; border:var(--b1); border-radius:0; padding:0}
+    .lb-media{display:block; max-width:96vw; max-height:96vh; width:auto; height:auto; object-fit:contain; background:transparent; cursor:zoom-out}
 
-    /* Retículas FLUSH sin separación y sin recortes */
-    .flush .grid{display:grid;gap:0}
+    /* ===== retículas flush sin separación ===== */
+    .flush .grid{display:grid; gap:0}
     .grid.cols-6{grid-template-columns:repeat(6,1fr)}
     .grid.cols-4{grid-template-columns:repeat(4,1fr)}
-    @media(max-width:900px){.grid.cols-6{grid-template-columns:repeat(3,1fr)}.grid.cols-4{grid-template-columns:repeat(2,1fr)}}
-    .tile{border:0;border-radius:0;overflow:hidden;background:#00000000}
-    /* Cover sólo en retículas */
-    .flush .tile video,.flush .tile img{width:100%;height:100%;object-fit:cover;background:#00000000}
+    @media(max-width:900px){.grid.cols-6{grid-template-columns:repeat(3,1fr)} .grid.cols-4{grid-template-columns:repeat(2,1fr)}}
+    .tile{border:0; border-radius:0; overflow:hidden; background:transparent}
+    .flush .tile video,.flush .tile img{width:100%; height:100%; object-fit:cover; background:transparent}
 
-    /* a.e.i. embebido (referencia mdtc.5 / s.g.r.c) */
-    .aei-embed{position:relative;width:100%;min-height:60vh;background:#ffffff00;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-    .aei-stage{position:relative;width:100%;height:100%;min-height:60vh;touch-action:none}
-    .aei-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-    .aei-block{position:absolute;width:140px;height:140px;display:flex;align-items:center;justify-content:center;opacity:.8;cursor:grab;user-select:none;transition:opacity .2s ease;will-change:transform}
+    /* ===== a.e.i embebido ===== */
+    .aei-embed{position:relative; width:100%; min-height:60vh; background:transparent; border:var(--b1); border-radius:0; overflow:hidden}
+    .aei-stage{position:relative; width:100%; height:100%; min-height:60vh; touch-action:none}
+    .aei-lines{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+    .aei-block{
+      position:absolute; width:140px; height:140px; display:flex; align-items:center; justify-content:center;
+      opacity:.85; cursor:grab; user-select:none; transition:opacity .15s linear; will-change:transform; border:var(--b1); background:transparent
+    }
     .aei-block:active{cursor:grabbing}
-    .aei-block img,.aei-block video{max-width:100%;max-height:100%;object-fit:contain;background:#ffffff00;pointer-events:none}
+    .aei-block img,.aei-block video{max-width:100%; max-height:100%; object-fit:contain; background:transparent; pointer-events:none}
 
-    /* Galería final de 3 imágenes */
-    .final-3{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+    /* ===== galería final 3 ===== */
+    .final-3{display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem}
     @media(max-width:900px){.final-3{grid-template-columns:1fr}}
-    .final-3 .tile{background:#ffffff00}
-    .final-3 img{background:#ffffff00}
+    .final-3 .tile{background:transparent}
 
-    /* Utilidades */
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    /* ===== util ===== */
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
   </style>
 </head>
 <body>
@@ -102,19 +144,25 @@
   </div>
 
   <header>
-    <a href="/" aria-label="xpan"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39190052/original_e41de908dc30fcbd582f129005aa263c.png" alt="xpan" fetchpriority="high"></a>
+    <a href="/" aria-label="xpan">
+      <!-- se conserva el asset original pero con inversión óptica por CSS -->
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/39190052/original_e41de908dc30fcbd582f129005aa263c.png" alt="xpan" fetchpriority="high">
+    </a>
   </header>
+
   <nav class="language-selector" aria-label="selector de idioma">
-    <button class="active" data-lang="es">es</button>
-    <button data-lang="en">en</button>
-    <button data-lang="fr">fr</button>
-    <button data-lang="jp">jp</button>
+    <button class="active" data-lang="es" aria-pressed="true">es</button>
+    <button data-lang="en" aria-pressed="false">en</button>
+    <button data-lang="fr" aria-pressed="false">fr</button>
+    <button data-lang="jp" aria-pressed="false">jp</button>
   </nav>
 
   <!-- mini audio player motivo c.0.0 -->
   <div class="mini-player" role="region" aria-label="reproductor sonoro">
     <button id="playToggle" class="mini-btn" aria-label="play/pause">
-      <svg class="mini-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="#000" stroke="#000"/></svg>
+      <svg class="mini-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="currentColor"></path>
+      </svg>
     </button>
     <span class="mini-label">motivo sonoro — c.0.0</span>
     <audio id="motif" preload="none">
@@ -138,7 +186,7 @@
         <h1>xpan.c.0.0</h1>
         <div class="meta">2025 — mexico city</div>
         <p class="description">
-          xpan.c.0.0 is both symbolic and material. a collective identification system operating as a minimal prosthesis: a black t‑shirt marked by a red square (xpan.c.0.0.logo). its design evokes containment structures and visibility protocols, acting as a temporary uniform, access code, and editorial surface.<br><br>
+          xpan.c.0.0 is both symbolic and material. a collective identification system operating as a minimal prosthesis: a black t-shirt marked by a red square (xpan.c.0.0.logo). its design evokes containment structures and visibility protocols, acting as a temporary uniform, access code, and editorial surface.<br><br>
           the project unfolds across textiles, images, video files, and visual grids, forming an expanded archive of dissonant practices, gestures, and contexts. c.0.0 acts at once as signal and archive: a node that gathers fragmentary materialities—digital records, moving bodies, cultural residues—under one sign.<br><br>
           the series articulates the logic of connective topology by condensing minimal, reproducible symbols into mobile infrastructures. beyond a consumer object, c.0.0 defines a point of convergence: a field of friction between intimate and public, virtual and physical, commercial and experimental.
         </p>
@@ -147,9 +195,9 @@
         <h1>xpan.c.0.0</h1>
         <div class="meta">2025 — mexico</div>
         <p class="description">
-          xpan.c.0.0 est à la fois symbolique et matériel. un système d’identification collective qui fonctionne comme une prothèse minimale : un t‑shirt noir marqué d’un carré rouge (xpan.c.0.0.logo). sa conception renvoie à des structures de contention et à des protocoles de visibilité, agissant comme uniforme temporaire, code d’accès et surface éditoriale.<br><br>
-          le projet se déploie à travers des textiles, des images, des fichiers vidéo et des grilles visuelles, constituant une archive élargie de pratiques, de gestes et de contextes dissonants. c.0.0 agit simultanément comme signal et comme archive : un nœud qui rassemble des matérialités fragmentaires—enregistrements numériques, corps en mouvement, résidus culturels—sous un même signe.<br><br>
-          la série articule la logique de la topologie connective en condensant des symboles minimaux et reproductibles au sein d’infrastructures mobiles. au‑delà d’un objet de consommation, c.0.0 établit un point de convergence : un champ de friction entre l’intime et le public, le virtuel et le physique, le commercial et l’expérimental.
+          xpan.c.0.0 est à la fois symbolique et matériel. un système d’identification collective qui fonctionne comme une prothèse minimale : un t-shirt noir marqué d’un carré rouge (xpan.c.0.0.logo). sa conception renvoie à des structures de contention et à des protocoles de visibilité, agissant comme uniforme temporaire, code d’accès et surface éditoriale.<br><br>
+          le projet se déploie à travers des textiles, des images, des fichiers vidéo et des grilles visuelles, constituant une archive élargie de pratiques, de gestes et de contextes dissonants. c.0.0 agit simultanément comme signal et comme archive : un nœud qui rassemble des matérialités fragmentaires—enregistrements numériques, corps en mouvement, résidus culturels—sous un même signe.<br><br>
+          la série articule la logique de la topologie connective en condensant des symboles minimaux et reproductibles au sein d’infrastructures mobiles. au-delà d’un objet de consommation, c.0.0 établit un point de convergence : un champ de friction entre l’intime et le public, le virtuel et le physique, le commercial et l’expérimental.
         </p>
       </div>
       <div class="lang lang-jp">
@@ -163,20 +211,20 @@
       </div>
     </section>
 
-    <!-- 2) VIDEO PRINCIPAL DESTACADO con lightbox y tap-to-sound -->
+    <!-- 2) VIDEO PRINCIPAL DESTACADO -->
     <section class="section">
       <div class="featured">
         <video class="auto video-featured" muted playsinline webkit-playsinline autoplay loop preload="auto" data-lightbox="video" data-src="https://attachments.are.na/39190046/4ddb74e2dce50421501ccef0b9600237.mp4?1756668673" disablepictureinpicture></video>
       </div>
     </section>
 
-    <!-- 3) GRID PRINCIPAL 28 VIDEOS → 6 cols escritorio / 3 cols móvil → sin separación -->
+    <!-- 3) GRID PRINCIPAL 28 -->
     <section class="section flush" id="grid28">
       <h2 class="sr-only">retícula principal</h2>
       <div class="grid cols-6" id="grid28Wrap"></div>
     </section>
 
-    <!-- 4) GRID SECUNDARIO 8 VIDEOS → 4 cols escritorio / 2 cols móvil → sin separación -->
+    <!-- 4) GRID SECUNDARIO 8 -->
     <section class="section flush" id="grid8">
       <h2 class="sr-only">retícula secundaria</h2>
       <div class="grid cols-4" id="grid8Wrap"></div>
@@ -200,7 +248,7 @@
       </div>
     </section>
 
-    <!-- 7) TRES IMÁGENES DESTACADAS al final (lightbox) -->
+    <!-- 7) TRES IMÁGENES DESTACADAS -->
     <section class="section" id="final3">
       <div class="final-3">
         <div class="tile"><img class="zoomable" data-lightbox="img" data-src="https://d2w9rnfcy7mm78.cloudfront.net/39165046/original_c90bf9a8c7c509c537de65d4181c3491.jpg" alt="c.0.0 — imagen 1" loading="lazy" decoding="async"></div>
@@ -216,89 +264,62 @@
   </div>
 
   <script>
-  // ——— util
+  // util
   const $ = (sel, ctx=document) => ctx.querySelector(sel);
   const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
 
-  // ——— BG alternado y robusto contra ahorro de energía
+  // BG alternado robusto
   const BG_VIDEOS = [
     "https://attachments.are.na/39190049/d4ac783bc8c254065d4f4a326c7bf8df.mp4?1756668686",
     "https://attachments.are.na/39190050/c6e46c1f272c0aaab35e30468f1a0f1f.mp4?1756668686"
   ];
-  const bg1 = document.getElementById('bg1');
-  const bg2 = document.getElementById('bg2');
-  const bgEls = [bg1,bg2];
-  let bgIndex = 0; // índice del video actual en BG_VIDEOS
-  let showing = 0; // 0 -> bg1 visible, 1 -> bg2 visible
-
+  const bg1 = $('#bg1'), bg2 = $('#bg2'); const bgEls=[bg1,bg2];
+  let bgIndex=0, showing=0;
   function prepVideo(el, src){
-    if(el.dataset.src === src) return; // evita relocal if igual
-    el.dataset.src = src;
-    el.src = src;
-    el.muted = true; el.setAttribute('muted','');
-    el.playsInline = true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
+    if(el.dataset.src===src) return;
+    el.dataset.src=src; el.src=src; el.muted=true; el.setAttribute('muted','');
+    el.playsInline=true; el.setAttribute('playsinline',''); el.setAttribute('webkit-playsinline','');
     el.setAttribute('disablepictureinpicture','');
-    const p = el.play(); if(p && p.catch) p.catch(()=>{});
+    const p=el.play(); if(p&&p.catch) p.catch(()=>{});
   }
-
-  function randomDelay(){ return 8000 + Math.random()*4000; } // 8–12s
-
+  function randomDelay(){ return 8000 + Math.random()*4000 }
   function switchBG(){
-    const nextIndex = (bgIndex + 1) % BG_VIDEOS.length;
-    const nextEl = bgEls[1 - showing];
+    const nextIndex=(bgIndex+1)%BG_VIDEOS.length;
+    const nextEl=bgEls[1-showing];
     prepVideo(nextEl, BG_VIDEOS[nextIndex]);
-    // cuando pueda reproducir, cruzar
-    const doSwap = () => {
-      nextEl.classList.add('show');
-      bgEls[showing].classList.remove('show');
-      showing = 1 - showing;
-      bgIndex = nextIndex;
-      scheduleNext();
-    };
-    if(nextEl.readyState >= 2){ doSwap(); }
-    else { nextEl.addEventListener('canplay', doSwap, {once:true}); }
+    const doSwap=()=>{ nextEl.classList.add('show'); bgEls[showing].classList.remove('show'); showing=1-showing; bgIndex=nextIndex; scheduleNext(); };
+    (nextEl.readyState>=2) ? doSwap() : nextEl.addEventListener('canplay', doSwap, {once:true});
   }
-
   function scheduleNext(){ setTimeout(switchBG, randomDelay()); }
-
-  // init
-  [bg1,bg2].forEach(v=>{ v.addEventListener('canplay',()=>v.classList.add('show'),{once:true}); });
+  [bg1,bg2].forEach(v=> v.addEventListener('canplay',()=>v.classList.add('show'),{once:true}));
   prepVideo(bgEls[showing], BG_VIDEOS[bgIndex]);
-  // precarga el siguiente en el off-screen antes del primer swap
-  prepVideo(bgEls[1 - showing], BG_VIDEOS[(bgIndex+1)%BG_VIDEOS.length]);
+  prepVideo(bgEls[1-showing], BG_VIDEOS[(bgIndex+1)%BG_VIDEOS.length]);
   scheduleNext();
-
-  // primer toque reintenta play()
-  function resumeBG(){[bg1,bg2].forEach(v=>{const p=v.play(); if(p&&p.catch) p.catch(()=>{});}); document.removeEventListener('touchstart',resumeBG); document.removeEventListener('click',resumeBG);} 
+  function resumeBG(){[bg1,bg2].forEach(v=>{const p=v.play(); if(p&&p.catch) p.catch(()=>{});}); document.removeEventListener('touchstart',resumeBG); document.removeEventListener('click',resumeBG);}
   document.addEventListener('touchstart',resumeBG,{once:true});
   document.addEventListener('click',resumeBG,{once:true});
 
-  // ——— idioma con fade
+  // idioma con fade
   const langBtns = $$('.language-selector button');
   langBtns.forEach(b=>b.addEventListener('click',()=>{
-    langBtns.forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    const code = b.dataset.lang;
-    const all = $$('.lang');
-    all.forEach(el=>{ el.classList.remove('show'); });
-    setTimeout(()=>{ all.forEach(el=>el.classList.remove('active')); const target = $(`.lang-${code}`); if(!target) return; target.classList.add('active'); requestAnimationFrame(()=>target.classList.add('show')); }, 180);
+    langBtns.forEach(x=>{x.classList.remove('active'); x.setAttribute('aria-pressed','false');});
+    b.classList.add('active'); b.setAttribute('aria-pressed','true');
+    const code=b.dataset.lang; const all=$$('.lang');
+    all.forEach(el=>el.classList.remove('show'));
+    setTimeout(()=>{ all.forEach(el=>el.classList.remove('active')); const t=$('.lang-'+code); if(!t) return; t.classList.add('active'); requestAnimationFrame(()=>t.classList.add('show')); },180);
+    document.documentElement.setAttribute('lang', code);
   }));
 
-  // ——— mini player (referencia x.6_A/V.f)
-  const motif = document.getElementById('motif');
-  const playToggle = document.getElementById('playToggle');
-  const iconPath = document.getElementById('iconPath');
-  function setIcon(paused){ iconPath.setAttribute('d', paused? 'M8 5 L19 12 L8 19 Z' : 'M7 5 H11 V19 H7 Z M13 5 H17 V19 H13 Z'); }
+  // mini player
+  const motif=$('#motif'), playToggle=$('#playToggle'), iconPath=$('#iconPath');
+  const setIcon=(paused)=> iconPath.setAttribute('d', paused?'M8 5 L19 12 L8 19 Z':'M7 5 H11 V19 H7 Z M13 5 H17 V19 H13 Z');
   setIcon(true);
-  playToggle.addEventListener('click',()=>{
-    if(motif.paused){ motif.play(); setIcon(false);} else { motif.pause(); setIcon(true);} 
-  });
-  // aseguramos desbloqueo en primer interacción
-  const unlockAudio = ()=>{ motif.play().then(()=>{ motif.pause(); setIcon(true); }).catch(()=>{}); document.removeEventListener('touchstart',unlockAudio); document.removeEventListener('click',unlockAudio); };
+  playToggle.addEventListener('click',()=>{ if(motif.paused){ motif.play().catch(()=>{}); setIcon(false);} else { motif.pause(); setIcon(true);} });
+  const unlockAudio=()=>{ motif.play().then(()=>{motif.pause(); setIcon(true);}).catch(()=>{}); document.removeEventListener('touchstart',unlockAudio); document.removeEventListener('click',unlockAudio); };
   document.addEventListener('touchstart',unlockAudio,{once:true});
   document.addEventListener('click',unlockAudio,{once:true});
 
-  // ——— datos
+  // datos (se conservan tal cual)
   const FEATURED = "https://attachments.are.na/39190046/4ddb74e2dce50421501ccef0b9600237.mp4?1756668673";
   const GRID28 = [
     "https://attachments.are.na/39190010/beb83f9ed860c7fe1b6823e55586d1f6.mp4",
@@ -339,8 +360,7 @@
     "https://attachments.are.na/39165361/9ab09a2fbc4c193df59a0f539fc76ced.mp4",
     "https://attachments.are.na/39165362/da0d785caae5e0a0d168e212c5dd5a6c.mp4"
   ];
-
-  const AEI_PHOTOS = [
+  const AEI_PHOTOS = [ /* se conserva íntegro */ 
     "https://d2w9rnfcy7mm78.cloudfront.net/39165056/original_e4132ebad9d2d7c0f77d5052b2801543.jpg",
     "https://d2w9rnfcy7mm78.cloudfront.net/39165057/original_915e9481631a57c47450f3ff67ae1020.jpg",
     "https://d2w9rnfcy7mm78.cloudfront.net/39165058/original_cde401fbb8ff433392a0ee8fbac9181e.jpg",
@@ -430,7 +450,6 @@
     "https://d2w9rnfcy7mm78.cloudfront.net/39165145/original_4155ba66b7a8498d41c77ef08fc3e324.jpg",
     "https://d2w9rnfcy7mm78.cloudfront.net/39165143/original_35c9b65db9747b90e95a024f33ee7990.jpg"
   ];
-
   const AEI_VIDEOS = [
     "https://attachments.are.na/39165162/f1764fe26b4ae0c27afd7cb27e6d1f89.mp4",
     "https://attachments.are.na/39165163/c2b938e22d2bae85f76d9f77df3c0cb4.mp4",
@@ -485,25 +504,25 @@
     "https://attachments.are.na/39165254/57847f5b87329143dd4149e84854dc9d.mp4",
     "https://attachments.are.na/39165255/cc22a9a8c8d3ecf43963326adde9659f.mp4"
   ];
-
   const FINAL3 = [
     "https://d2w9rnfcy7mm78.cloudfront.net/39165046/original_c90bf9a8c7c509c537de65d4181c3491.jpg",
     "https://d2w9rnfcy7mm78.cloudfront.net/39165053/original_a763e2768ad1544f3c84aa3e01cc2bc8.jpg",
     "https://d2w9rnfcy7mm78.cloudfront.net/39165048/original_1163da918fd3f908ab10bb432c519dcf.jpg"
   ];
 
-  // ——— helpers
-  function vEl(src, {preloadNone=true}={}){
+  // helpers
+  function vEl(src,{preloadNone=true}={}){
     const v=document.createElement('video');
-    v.src=src; v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.setAttribute('disablepictureinpicture','');
-    v.preload = preloadNone ? 'none' : 'metadata';
-    v.addEventListener('click',()=>toggleSound(v));
-    v.addEventListener('touchstart',()=>toggleSound(v));
+    v.src=src; v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true;
+    v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.setAttribute('disablepictureinpicture','');
+    v.preload=preloadNone?'none':'metadata';
+    v.addEventListener('click',()=>toggleSound(v),{passive:true});
+    v.addEventListener('touchstart',()=>toggleSound(v),{passive:true});
     return v;
   }
-  function iEl(src, alt){ const i=new Image(); i.src=src; i.alt=alt||''; i.loading='lazy'; i.decoding='async'; return i; }
+  function iEl(src,alt){ const i=new Image(); i.src=src; i.alt=alt||''; i.loading='lazy'; i.decoding='async'; return i; }
 
-  // Control global de sonido: solo 1 con audio a la vez (sin íconos)
+  // control de sonido único
   function toggleSound(target){
     if(target.muted){
       $$('video').forEach(vid=>{ if(vid!==target){ vid.muted=true; vid.volume=0; }});
@@ -511,7 +530,7 @@
     }else{ target.muted=true; target.volume=0; }
   }
 
-  // IntersectionObserver: play/pause + mute fuera de viewport
+  // IO play/pause
   const io = new IntersectionObserver(entries=>{
     entries.forEach(e=>{
       const v=e.target;
@@ -520,123 +539,101 @@
     });
   },{root:null, rootMargin:'100px', threshold:0.01});
 
-  // Featured video
-  const fVid = $('.video-featured'); fVid.src = FEATURED; fVid.setAttribute('disablepictureinpicture',''); io.observe(fVid);
+  // featured
+  const fVid=$('.video-featured'); fVid.src=FEATURED; fVid.setAttribute('disablepictureinpicture',''); io.observe(fVid);
 
-  // Retícula 28
-  const wrap28 = document.getElementById('grid28Wrap');
+  // grid 28
+  const wrap28 = $('#grid28Wrap');
   GRID28.forEach(src=>{ const tile=document.createElement('div'); tile.className='tile'; const v=vEl(src,{preloadNone:true}); tile.appendChild(v); wrap28.appendChild(tile); io.observe(v); });
 
-  // Retícula 8
-  const wrap8 = document.getElementById('grid8Wrap');
+  // grid 8
+  const wrap8 = $('#grid8Wrap');
   GRID8.forEach(src=>{ const tile=document.createElement('div'); tile.className='tile'; const v=vEl(src,{preloadNone:true}); tile.appendChild(v); wrap8.appendChild(tile); io.observe(v); });
 
-  // Lightbox con swipe y navegación
-  const lb = document.getElementById('lightbox');
-  const lbSurface = lb.querySelector('.lb-surface');
-  const lbItemsEls = $$('[data-lightbox]');
-  const lbItems = lbItemsEls.map(el=>({ kind: el.getAttribute('data-lightbox'), src: el.dataset.src || el.getAttribute('src') }));
-  let lbIndex = -1;
-
+  // lightbox
+  const lb=$('#lightbox'), lbSurface=lb.querySelector('.lb-surface');
+  const lbItemsEls=$$('[data-lightbox]'); const lbItems=lbItemsEls.map(el=>({kind:el.getAttribute('data-lightbox'), src: el.dataset.src || el.getAttribute('src')}));
+  let lbIndex=-1;
   function renderLBItem(item){
     lbSurface.innerHTML='';
     let el;
-    if(item.kind==='video'){ el=vEl(item.src,{preloadNone:false}); el.controls=false; el.muted=true; el.className='lb-media'; el.autoplay=true; el.loop=true; }
-    else { el=iEl(item.src, 'media ampliada'); el.className='lb-media'; }
+    if(item.kind==='video'){ el=vEl(item.src,{preloadNone:false}); el.controls=false; el.className='lb-media'; el.muted=true; }
+    else { el=iEl(item.src,'media ampliada'); el.className='lb-media'; }
     lbSurface.appendChild(el);
   }
-  function openLBByIndex(idx){ lbIndex = (idx+lbItems.length)%lbItems.length; renderLBItem(lbItems[lbIndex]); lb.classList.add('open'); }
-  function closeLB(){ lb.classList.remove('open'); const v=lb.querySelector('video'); if(v){ v.pause(); v.muted=true; } }
-  function nextLB(){ openLBByIndex(lbIndex+1); }
-  function prevLB(){ openLBByIndex(lbIndex-1); }
-
-  // listeners para origenes
-  lbItemsEls.forEach((el,i)=>{ el.addEventListener('click',()=>openLBByIndex(i)); });
-  lb.addEventListener('click', (e)=>{ if(e.target===lb || e.target.classList.contains('lb-media')) closeLB(); });
-  // teclado
-  window.addEventListener('keydown', (e)=>{ if(!lb.classList.contains('open')) return; if(e.key==='ArrowRight') nextLB(); if(e.key==='ArrowLeft') prevLB(); if(e.key==='Escape') closeLB(); });
-  // swipe móvil
+  function openLBByIndex(idx){ lbIndex=(idx+lbItems.length)%lbItems.length; renderLBItem(lbItems[lbIndex]); lb.classList.add('open'); }
+  function closeLB(){ lb.classList.remove('open'); const v=lb.querySelector('video'); if(v){v.pause(); v.muted=true;} }
+  function nextLB(){ openLBByIndex(lbIndex+1) }
+  function prevLB(){ openLBByIndex(lbIndex-1) }
+  lbItemsEls.forEach((el,i)=> el.addEventListener('click',()=>openLBByIndex(i),{passive:true}));
+  lb.addEventListener('click',e=>{ if(e.target===lb || e.target.classList.contains('lb-media')) closeLB(); });
+  window.addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return; if(e.key==='ArrowRight') nextLB(); if(e.key==='ArrowLeft') prevLB(); if(e.key==='Escape') closeLB(); });
+  // swipe
   let touchX=null, touchY=null, touchT=0;
-  lb.addEventListener('touchstart', (e)=>{ const t=e.changedTouches[0]; touchX=t.clientX; touchY=t.clientY; touchT=Date.now(); }, {passive:true});
-  lb.addEventListener('touchend', (e)=>{ if(touchX==null) return; const t=e.changedTouches[0]; const dx=t.clientX - touchX; const dy=t.clientY - touchY; const dt=Date.now()-touchT; const TH=40; if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>TH && dt<600){ if(dx<0) nextLB(); else prevLB(); } touchX=null; touchY=null; }, {passive:true});
+  lb.addEventListener('touchstart',e=>{ const t=e.changedTouches[0]; touchX=t.clientX; touchY=t.clientY; touchT=Date.now(); },{passive:true});
+  lb.addEventListener('touchend',e=>{ if(touchX==null) return; const t=e.changedTouches[0]; const dx=t.clientX-touchX, dy=t.clientY-touchY, dt=Date.now()-touchT; const TH=40;
+    if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>TH && dt<600){ dx<0?nextLB():prevLB(); }
+    touchX=null; touchY=null;
+  },{passive:true});
 
-  // Activar lightbox para featured e imágenes finales ya quedó arriba con data-lightbox
-  // Cargar data-src en imágenes finales
-  $$('#final3 img').forEach((img,idx)=>{ const src = img.dataset.src || img.src; img.addEventListener('click',()=>{}); img.src = src; img.alt = img.alt || `c.0.0 — imagen ${idx+1}`; img.loading='lazy'; img.decoding='async'; });
+  // final3: hidratar data-src
+  $$('#final3 img').forEach((img,idx)=>{ const src=img.dataset.src||img.src; img.src=src; img.alt=img.alt||`c.0.0 — imagen ${idx+1}`; img.loading='lazy'; img.decoding='async'; });
 
-  // ——— a.e.i. con líneas SVG (opacidad oscilante y conexiones múltiples)
+  // AEI con líneas SVG
   function makeAEI(stageEl, linesSVG, items, altBase){
-    const W = ()=>stageEl.clientWidth, H=()=>stageEl.clientHeight;
+    const W=()=>stageEl.clientWidth, H=()=>stageEl.clientHeight;
     const blocks=[];
-    // util para crear elementos SVG
-    const NS = 'http://www.w3.org/2000/svg';
-    function makeLine(){ const l=document.createElementNS(NS,'line'); l.setAttribute('stroke','#000'); l.setAttribute('stroke-width','0.5'); l.setAttribute('vector-effect','non-scaling-stroke'); linesSVG.appendChild(l); return l; }
+    const NS='http://www.w3.org/2000/svg';
+    function makeLine(){ const l=document.createElementNS(NS,'line'); l.setAttribute('stroke','currentColor'); l.setAttribute('stroke-width','0.6'); l.setAttribute('vector-effect','non-scaling-stroke'); linesSVG.appendChild(l); return l; }
     function place(el){
-      const w=140, h=140; let x, y; let tries=0; const max=800;
+      const w=140,h=140; let x,y,tries=0; const max=800;
       do{ x=Math.random()*(W()-w); y=Math.random()*(H()-h); tries++; }
-      while(blocks.some(b=>!(x+w<b.x || b.x+b.w<x || y+h<b.y || b.y+b.h<y)) && tries<max);
-      el.style.transform=`translate(${x}px,${y}px)`; blocks.push({x,y,w,h,el});
+      while(blocks.some(b=>!(x+w<b.x||b.x+b.w<x||y+h<b.y||b.y+b.h<y)) && tries<max);
+      el.style.transform=`translate3d(${x}px,${y}px,0)`; blocks.push({x,y,w,h,el});
     }
-    // crear bloques
     items.forEach((src,idx)=>{
-      const isVid = /\.(mp4|mov|webm)(\?|$)/i.test(src);
+      const isVid=/\.(mp4|mov|webm)(\?|$)/i.test(src);
       const block=document.createElement('div'); block.className='aei-block';
-      const media = isVid ? vEl(src,{preloadNone:true}) : iEl(src, `${altBase} ${idx+1}`);
-      if(isVid){ media.muted=true; media.loop=true; media.autoplay=true; io.observe(media); }
+      const media=isVid? vEl(src,{preloadNone:true}) : iEl(src, `${altBase} ${idx+1}`);
       stageEl.appendChild(block); block.appendChild(media); place(block);
+      if(isVid) io.observe(media);
     });
-    // conexiones precomputadas para eficiencia
-    const connections=[]; // [{a,b,line,phase}]
-    const offs=[3,7,11];
-    function rebuildConnections(){
-      // limpiar svg
-      while(linesSVG.firstChild) linesSVG.removeChild(linesSVG.firstChild);
-      connections.length=0;
+    const connections=[], offsets=[3,7,11];
+    function sizeSVG(){ linesSVG.setAttribute('width',W()); linesSVG.setAttribute('height',H()); linesSVG.setAttribute('viewBox',`0 0 ${W()} ${H()}`); }
+    function center(b){ return {x:b.x+70, y:b.y+70}; }
+    function rebuild(){
+      while(linesSVG.firstChild) linesSVG.removeChild(linesSVG.firstChild); connections.length=0;
       for(let i=0;i<blocks.length;i++){
-        offs.forEach((off,k)=>{
-          const j=(i+off)%blocks.length;
-          const l=makeLine();
-          connections.push({i,j,line:l,phase:(i*0.7+k)});
-        });
+        offsets.forEach((off,k)=>{ const j=(i+off)%blocks.length; const l=makeLine(); connections.push({i,j,line:l,phase:(i*0.7+k)}); });
       }
       sizeSVG();
-      layoutLines(0);
     }
-    function sizeSVG(){ linesSVG.setAttribute('width', W()); linesSVG.setAttribute('height', H()); linesSVG.setAttribute('viewBox', `0 0 ${W()} ${H()}`); }
-    function centerOf(b){ return {x:b.x+70, y:b.y+70}; }
-    function layoutLines(t){
+    function layout(t){
       for(const c of connections){
-        const a=centerOf(blocks[c.i]); const b=centerOf(blocks[c.j]);
-        c.line.setAttribute('x1', a.x); c.line.setAttribute('y1', a.y);
-        c.line.setAttribute('x2', b.x); c.line.setAttribute('y2', b.y);
-        const alpha = 0.52 + 0.18*(0.5+0.5*Math.sin(t*1.2 + c.phase));
-        c.line.setAttribute('stroke-opacity', alpha.toFixed(3));
+        const a=center(blocks[c.i]), b=center(blocks[c.j]);
+        c.line.setAttribute('x1',a.x); c.line.setAttribute('y1',a.y);
+        c.line.setAttribute('x2',b.x); c.line.setAttribute('y2',b.y);
+        const alpha=0.52 + 0.18*(0.5+0.5*Math.sin(t*1.2 + c.phase));
+        c.line.setAttribute('stroke-opacity',alpha.toFixed(3));
       }
     }
-    // animación
-    let rafId=null, t0=null;
-    function tick(ts){ if(!t0) t0=ts; const t=(ts-t0)/1000; layoutLines(t); rafId=requestAnimationFrame(tick); }
-    rebuildConnections();
-    rafId=requestAnimationFrame(tick);
-    // observar resize
-    const ro = new ResizeObserver(()=>{ sizeSVG(); layoutLines(0); });
-    ro.observe(stageEl);
+    let t0=null; function tick(ts){ if(!t0) t0=ts; const t=(ts-t0)/1000; layout(t); requestAnimationFrame(tick); }
+    rebuild(); requestAnimationFrame(tick);
+    new ResizeObserver(()=>{ sizeSVG(); layout(0); }).observe(stageEl);
   }
+  const aeiPhotos = ()=>makeAEI($('#aeiStagePhotos'), $('#aeiLinesPhotos'), AEI_PHOTOS, 'c.0.0 — foto');
+  const aeiVideos = ()=>makeAEI($('#aeiStageVideos'), $('#aeiLinesVideos'), AEI_VIDEOS, 'c.0.0 — video');
+  const ioSec=new IntersectionObserver(es=>{ es.forEach(e=>{ if(!e.isIntersecting) return;
+      if(e.target.id==='aeiPhotos'){ aeiPhotos(); ioSec.unobserve(e.target); }
+      if(e.target.id==='aeiVideos'){ aeiVideos(); ioSec.unobserve(e.target); }
+    }); },{threshold:.1});
+  ioSec.observe($('#aeiPhotos'));
+  ioSec.observe($('#aeiVideos'));
 
-  // Inicializar AEI con progressive hydration
-  const aeiPhotos = ()=>makeAEI(document.getElementById('aeiStagePhotos'), document.getElementById('aeiLinesPhotos'), AEI_PHOTOS, 'c.0.0 — foto');
-  const aeiVideos = ()=>makeAEI(document.getElementById('aeiStageVideos'), document.getElementById('aeiLinesVideos'), AEI_VIDEOS, 'c.0.0 — video');
-  const ioSec = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ if(e.target.id==='aeiPhotos'){ aeiPhotos(); ioSec.unobserve(e.target);} if(e.target.id==='aeiVideos'){ aeiVideos(); ioSec.unobserve(e.target);} } }); },{threshold:.1});
-  ioSec.observe(document.getElementById('aeiPhotos'));
-  ioSec.observe(document.getElementById('aeiVideos'));
-
-  // ——— robustez: desbloquear reproducción por primer toque
+  // robustez: desbloqueo inicial
   function unlockAll(){ $$('video').forEach(v=>{ const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }); document.removeEventListener('touchstart',unlockAll); document.removeEventListener('click',unlockAll); }
   document.addEventListener('touchstart',unlockAll,{once:true});
   document.addEventListener('click',unlockAll,{once:true});
-
-  // Nota sobre fuentes: actualmente se usa Times New Roman del sistema. Si en el futuro se cargan fuentes externas vía @font-face, use font-display: swap.
   </script>
-  
 </body>
 </html>

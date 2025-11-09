@@ -4,79 +4,137 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>mdtc.hipersensoria — xpan</title>
+
   <style>
-    body { margin:0; background:#fff; font-family:'Times New Roman',serif; color:#000; overflow-x:hidden; }
-    header { position:fixed; top:1rem; left:1rem; z-index:10; }
-    header img { width:50px; height:auto; }
-    .language-selector { position:fixed; top:1rem; right:1rem; z-index:20; font-size:.9rem; text-transform:lowercase; }
-    .language-selector button { background:none; border:none; margin-left:.5rem; cursor:pointer; color:#000; opacity:.5; transition:.2s; }
-    .language-selector button.active, .language-selector button:hover { opacity:1; text-decoration:underline; }
-
-    .container { max-width:1000px; margin:7rem auto 4rem; padding:0 3rem; }
-    h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase; }
-    .meta { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem; }
-    .description { font-size:1rem; line-height:1.6; max-width:700px; margin-bottom:2rem; }
-
-    .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; margin-bottom:3rem; }
-    .gallery img,.gallery video { width:100%; height:auto; border-radius:4px; object-fit:cover; aspect-ratio:4/3; transition:.3s; }
-    .gallery img:hover,.gallery video:hover { transform:scale(1.02); opacity:.9; }
-
-    /* Audio blocks */
-    .xpan-audio-block { border: 1px solid black; padding: 0.5rem 1rem 1rem 1rem; margin-bottom: 2rem; }
-    .audio-meta .title { font-size:0.95rem; font-weight:bold; text-transform:lowercase; margin-bottom:0.2rem; }
-    .audio-meta .info { font-size:0.75rem; opacity:0.6; margin-bottom:0.6rem; line-height:1.2; }
-    .audio-controls { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
-    .play-button { background:none; border:none; font-size:0.9rem; cursor:pointer; text-transform:lowercase; padding:0.3rem 0.5rem; }
-    .time-display { font-size:0.75rem; min-width:50px; }
-    .progress-container { position:relative; flex-grow:1; height:2px; background:#ddd; cursor:pointer; touch-action:none; }
-    .progress-fill { height:2px; background:black; width:0%; }
-    canvas { width:100%; height:60px; display:block; margin-top:0.5rem; background:white; }
-    .tooltip { position:absolute; font-size:0.7rem; background:black; color:white; padding:0.15rem 0.35rem; border-radius:3px; transform:translateX(-50%); top:-1.3rem; display:none; pointer-events:none; z-index:100; }
-
-    .video-credits { font-size:0.75rem; opacity:0.6; margin-top:0.3rem; line-height:1.2; }
-
-    .experimental-gallery { position: relative; width: 100%; min-height: 100vh; overflow: hidden; background: #fff; cursor: crosshair; margin-top:3rem;}
-    .experimental-gallery .background-star { position: absolute; top: 50%; left: 50%; width: 100vmin; max-width: 900px; transform: translate(-50%,-50%); opacity: .05; pointer-events: none; }
-    .experimental-gallery .container { position: relative; width: 100%; min-height: 100vh; }
-    .image-block { width:160px; height:160px; position:absolute; opacity:.6; transition:opacity .3s ease; cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
-    .image-block:active { cursor:grabbing; }
-    .image-block:hover { opacity:.85; z-index:5; }
-    .image-block img,.image-block video,.image-block audio { max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; }
-    #audio-notice { position:fixed; bottom:.5rem; right:.5rem; background:rgba(255,255,255,.8); padding:.4rem .7rem; font-size:.8rem; font-style:italic; cursor:pointer; border:1px solid #000; border-radius:3px; opacity:.9; transition:opacity 0.8s ease; z-index:999; }
-    svg.lines { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
-    svg.lines line { stroke:#000; stroke-width:.3px; opacity:.15; }
-
-    @media(max-width:768px){
-      .container{margin-top:6rem;padding:0 1.5rem;}
-      .gallery img,.gallery video{aspect-ratio:auto;}
-      .audio-controls{flex-direction:column;align-items:flex-start;}
-      .image-block{width:100px;height:100px;}
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20;
+      --maxw:1120px; --pad-x:clamp(16px,4vw,48px); --g:20px; --header-h:64px;
+      --b1:1px solid var(--line);
+      --aei-stroke: rgba(224,227,230,.14);
+    }
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+        --line:#D9DEE2; --line-weak:#ECEFF2;
+        --aei-stroke: rgba(14,17,19,.18);
+      }
     }
 
-    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:9999}
-#lightbox.open{display:flex}
-#lightbox figure{margin:0;max-width:92vw;max-height:92vh}
-#lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-color:var(--accent)}
+    img,video,audio{display:block; max-width:100%; height:auto; background:transparent}
 
+    /* ===== header ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); z-index:10; height:var(--header-h);
+      display:flex; align-items:center;
+    }
+    header a{display:inline-flex; align-items:center}
+    header img{width:48px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ filter:none } }
+
+    /* ===== selector de idioma ===== */
+    .language-selector{
+      position:fixed; top:12px; right:var(--pad-x); z-index:20;
+      display:flex; gap:8px; text-transform:lowercase;
+    }
+    .language-selector button{
+      appearance:none; font:600 .85rem/1 system-ui;
+      color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+      padding:6px 10px; cursor:pointer; letter-spacing:.2px;
+      transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+    }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+    /* ===== layout ===== */
+    .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 48px; padding:0 var(--pad-x)}
+    h1{font:700 1.35rem/1.25 system-ui; margin:0 0 6px; text-transform:lowercase}
+    .meta{font:400 .9rem/1.5 system-ui; color:var(--fg-dim); margin:0 0 22px}
+    .description{font:400 1rem/1.65 system-ui; max-width:700px; margin-bottom:24px}
+
+    /* ===== galería genérica ===== */
+    .gallery{
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:var(--g); margin:24px 0 32px;
+    }
+    .gallery img,.gallery video{
+      border:var(--b1); border-radius:0; object-fit:contain; aspect-ratio:4/3;
+      transition:opacity .15s linear, transform .15s linear;
+    }
+    .gallery img:hover,.gallery video:hover{opacity:.9; transform:scale(1.01)}
+    @media(max-width:768px){ .gallery img,.gallery video{aspect-ratio:auto} }
+
+    /* ===== audio blocks (post-tech) ===== */
+    .xpan-audio-block{border:var(--b1); padding:16px; margin:24px 0; background:transparent}
+    .audio-meta .title{font:700 1rem system-ui; text-transform:lowercase; margin-bottom:.25rem}
+    .audio-meta .info{font-size:.85rem; color:var(--fg-dim); margin-bottom:12px; line-height:1.35}
+    .audio-controls{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+    .play-button{background:transparent; border:1px solid var(--line); padding:6px 10px; font-size:.9rem; cursor:pointer; color:var(--fg)}
+    .time-display{font-size:.85rem; min-width:68px; color:var(--fg-dim)}
+    .progress-container{position:relative; flex-grow:1; height:2px; background:var(--line-weak); cursor:pointer; touch-action:none}
+    .progress-fill{height:2px; background:var(--fg); width:0%}
+    canvas{width:100%; height:60px; display:block; margin-top:8px; background:transparent; border:var(--b1)}
+    .tooltip{position:absolute; font-size:.75rem; background:var(--fg); color:var(--bg); padding:.2rem .4rem; transform:translateX(-50%); top:-1.5rem; display:none; pointer-events:none; z-index:100}
+
+    .video-credits{font-size:.85rem; color:var(--fg-dim); margin-top:6px; line-height:1.35}
+
+    /* ===== AEI experimental ===== */
+    .experimental-gallery{position:relative; width:100%; min-height:100vh; overflow:hidden; background:transparent; cursor:crosshair; margin-top:32px; border-top:var(--b1)}
+    .experimental-gallery .background-star{
+      position:absolute; top:50%; left:50%; width:100vmin; max-width:900px; transform:translate(-50%,-50%); opacity:.06; pointer-events:none;
+    }
+    .experimental-gallery .container{position:relative; width:100%; min-height:100vh}
+    .image-block{
+      width:160px; height:160px; position:absolute; opacity:.68; transition:opacity .2s linear;
+      cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; border:1px solid var(--line); background:transparent;
+    }
+    .image-block:active{cursor:grabbing}
+    .image-block:hover{opacity:.9; z-index:5}
+    .image-block img,.image-block video,.image-block audio{max-width:100%; max-height:100%; object-fit:contain; pointer-events:none; background:transparent}
+    @media(max-width:768px){ .image-block{width:100px; height:100px} }
+
+    svg.lines{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+    svg.lines line{stroke:var(--aei-stroke); stroke-width:.6}
+
+    /* perf */
+    [data-lazy-section]{content-visibility:auto; contain-intrinsic-size:1px 1000px}
+
+    /* lightbox flush */
+    #lightbox{position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:9999;
+      backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
+    #lightbox.open{display:flex}
+    #lbFig{margin:0; display:flex; align-items:center; justify-content:center}
+    #lightbox img,#lightbox video{max-width:96vw; max-height:96vh; width:auto; height:auto; object-fit:contain}
+    html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
   </style>
-  <script src="/assets/js/media-proxy.js" defer></script>
 
+  <script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
-  <header><a href="https://xpan.earth" target="_blank"><img src="xpan.svg" alt="xpan logo"/></a></header>
-  <div class="language-selector">
-    <button onclick="setLang('es')" class="active">es</button>
-    <button onclick="setLang('en')">en</button>
-    <button onclick="setLang('fr')">fr</button>
-    <button onclick="setLang('jp')">jp</button>
+  <header><a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan"/></a></header>
+
+  <div class="language-selector" role="tablist" aria-label="selector de idioma">
+    <button onclick="setLang('es')" class="active" aria-pressed="true" role="tab">es</button>
+    <button onclick="setLang('en')" aria-pressed="false" role="tab">en</button>
+    <button onclick="setLang('fr')" aria-pressed="false" role="tab">fr</button>
+    <button onclick="setLang('jp')" aria-pressed="false" role="tab">jp</button>
   </div>
 
-  
   <div class="container">
     <h1>hipersensoria</h1>
     <div class="meta">febrero 2022 — torre de los vientos, ciudad de méxico</div>
 
-<!-- Español -->
+    <!-- ES -->
     <div class="lang lang-es description">
       en febrero de 2022, xpan activó la torre de los vientos con <strong>hipersensoria</strong>.<br>
       se desplegó un <strong>circuito multicanal de 16 inputs</strong>: micrófonos en la calle, debajo de los asientos del público, alrededor y dentro de la torre.<br>
@@ -87,7 +145,7 @@
       el resultado fue un estado temporal de hipersensibilidad arquitectónica, donde la torre absorbió, procesó y devolvió su entorno como señal.
     </div>
 
-    <!-- English -->
+    <!-- EN -->
     <div class="lang lang-en description" style="display:none;">
       in february 2022, xpan activated the torre de los vientos with <strong>hipersensoria</strong>.<br>
       a <strong>16-channel input circuit</strong> was deployed: microphones on the street, under audience seats, around and inside the tower.<br>
@@ -98,7 +156,7 @@
       the result was a temporary state of architectural hypersensitivity, where the tower absorbed, processed, and emitted its surroundings as signal.
     </div>
 
-    <!-- Français -->
+    <!-- FR -->
     <div class="lang lang-fr description" style="display:none;">
       en février 2022, xpan a activé la torre de los vientos avec <strong>hipersensoria</strong>.<br>
       un <strong>circuit d'entrée multicanal 16 voies</strong> a été déployé : microphones dans la rue, sous les sièges du public, autour et à l’intérieur de la tour.<br>
@@ -106,25 +164,22 @@
       tous les signaux ont été traités en direct via des chemins analogiques et numériques, générant un flux entrée/sortie qui a amplifié la sensibilité de la tour.<br>
       l’action a forcé la sculpture à écouter son propre environnement et à le renvoyer en temps réel.<br><br>
       <strong>hipersensoria</strong> a fonctionné comme une intervention directe : activation structurelle, sans récit, uniquement lecture et émission brute du contexte.<br>
-      le résultat fut un état temporaire d’hypersensibilité architecturale, où la tour a absorbé, traité et renvoyé son environnement comme signal.
+      le résultat fut un état temporaire d’hypersensibilité architecturale.
     </div>
 
-    <!-- 日本語 -->
+    <!-- JP -->
     <div class="lang lang-jp description" style="display:none;">
       2022年2月、xpanは<strong>hipersensoria</strong>によってトーレ・デ・ロス・ビエントスを起動しました。<br>
-      <strong>16チャンネルの入力回路</strong>を展開し、街路、観客席の下、塔の周囲、塔の内部にマイクを設置。<br>
-      彫刻はセンサーであり、同時にエミッターとして機能しました。<br><br>
-      すべての信号はアナログとデジタルの経路でリアルタイム処理され、塔の感度を増幅する入出力フローを形成しました。<br>
-      行為は彫刻自身にその環境を聴かせ、即時に返すことを強制しました。<br><br>
-      <strong>hipersensoria</strong>は直接的な介入として機能し、構造的活性化であり、物語はなく、文脈の生の読み取りと出力のみ。<br>
-      結果として塔は周囲を吸収し、処理し、信号として返す建築的過敏状態を一時的に生み出しました。
+      <strong>16チャンネル入力回路</strong>を展開し、街路・観客席の下・塔の周囲および内部にマイクを配置。彫刻はセンサーでありエミッターとして機能しました。<br><br>
+      すべての信号をアナログ／デジタルでリアルタイム処理し、塔の感度を増幅。彫刻に環境を聴かせ、そのまま即時に返す行為でした。<br><br>
+      物語ではなく構造的活性化。塔は周囲を吸収し、処理し、信号として放射する一時的過敏状態となりました。
     </div>
 
-    <!-- 4 Audio blocks -->
+    <!-- Audio blocks -->
     <div class="xpan-audio-block audio-local">
       <div class="audio-meta">
         <div class="title">hs-tdlv pt.1 (0.00–8.56) — 08:56</div>
-        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch · feb 2022</div>
       </div>
       <div class="audio-controls">
         <button class="play-button">play</button>
@@ -138,7 +193,7 @@
     <div class="xpan-audio-block audio-local">
       <div class="audio-meta">
         <div class="title">hs-tdlv pt.2 (8.56–21.00) — 12:03</div>
-        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch · feb 2022</div>
       </div>
       <div class="audio-controls">
         <button class="play-button">play</button>
@@ -152,7 +207,7 @@
     <div class="xpan-audio-block audio-local">
       <div class="audio-meta">
         <div class="title">hs-tdlv pt.3 (21.00–35.13) — 14:13</div>
-        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch · feb 2022</div>
       </div>
       <div class="audio-controls">
         <button class="play-button">play</button>
@@ -166,7 +221,7 @@
     <div class="xpan-audio-block audio-local">
       <div class="audio-meta">
         <div class="title">hs-tdlv pt.4 (35.13–50.34) — 15:20</div>
-        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch<br>performance en torre de los vientos [ruta de la amistad] feb 2022</div>
+        <div class="info">hipersensoria en tdlv / versión estereofónica 16ch · feb 2022</div>
       </div>
       <div class="audio-controls">
         <button class="play-button">play</button>
@@ -178,151 +233,144 @@
     </div>
 
     <!-- Registro en video -->
-    <div class="gallery">
-      <video autoplay muted loop playsinline controls>
+    <div class="gallery" data-lazy-section>
+      <video autoplay muted loop playsinline controls preload="metadata" poster="https://d2w9rnfcy7mm78.cloudfront.net/38509044/original_039d37c3c2270c6aba5fda4249311f1e.jpg?1754087059">
         <source src="https://ia600902.us.archive.org/7/items/torre-de-sonido-edit-h-264/TORRE%20DE%20SONIDO%20EDIT%20H264.mp4" type="video/mp4">
-        tu navegador no soporta video html5.
       </video>
       <div class="video-credits">
-        video realizado, grabado y editado por magaly ugarte de pablo<br>
-        sonido: extracto de la acción en torre de los vientos por sites, ramón saturnino y moisés sacal hadid
+        video: magaly ugarte de pablo · audio: extracto de la acción en torre de los vientos — sites, ramón saturnino, moisés sacal hadid
       </div>
     </div>
 
     <!-- Galería principal -->
-    <div class="gallery">
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591095/original_d1882f5ac3cb0ea4ad6e14a29cea0730.jpg?1754420550?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591096/original_1e9a79f10e9fb307784ad6343fbc0afa.jpg?1754420550?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591097/original_4da4d21c57e2f35fe586678731bd9378.jpg?1754420550?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591098/original_4dcc84e872a3c3e78356f58d47d29011.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591099/original_ad1c99a44eb493daecbc27fa9657ed4d.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591100/original_61c8b13788e7770af8e993acc6f5aeb8.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591101/original_e5c2ac76900061912f4c31f8e3ac1605.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591102/original_4f525fe8f9463d73d4e3ef3485a73f18.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591103/original_ba6002b200708a501fc6cff39a528e93.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591104/original_1d211e56c4dfd0a99575c54b6b3171e0.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591105/original_f380d62dc7ce4637b88f78a802be2ba7.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591106/original_888c885d350897ec8df2a06d01432b29.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591107/original_edaa9536f3282a45e46132b88af7355a.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591108/original_76383cc36ffc9c3438c986524d1d5d36.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591109/original_cab0061516e61fddee24b497a51e1e11.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591110/original_b47fb308284ac1c70cdf8dc60261e41f.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591111/original_bee60b4992cd39abc04bfb0bfd640634.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591112/original_582feb55341a08e7b95f85f58b972876.jpg?1754420551?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591113/original_ecce8636e9853759a0bc34c6a16a1072.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591114/original_3c252f0dbe9de924b67194a34f4bba4c.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591115/original_245c5e8b48668e92a81077b82e589b13.jpg?1754420552?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591116/original_a84a316b18ff2858a8ce4114418f9a13.jpg?1754420553?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591117/original_284f1f9c15ef2c0711ac89b8bd67a2d5.jpg?1754420553?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591118/original_359629658aadccdb956949f6a9cdb906.jpg?1754420554?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591125/original_4243fb93b7131abd980756e5b913d848.jpg?1754420554?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591119/original_e96dd3c989fa9b1c82f4d008ecc78c16.jpg?1754420555?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591124/original_7cac81f3d2e2647e56529c38b888afe6.jpg?1754420555?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591122/original_46f3d86520148e8a197827d190145444.jpg?1754420555?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591121/original_205dfcc1a93979e55db2bbbe1cd19b92.jpg?1754420555?bc=0" />
-<img src="https://d2w9rnfcy7mm78.cloudfront.net/38591132/original_e9f6a700bd4cd7572dca8af9c9fcd975.png?1754420555?bc=0" />
+    <div class="gallery" data-lazy-section>
+      <!-- imágenes originales conservadas -->
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591095/original_d1882f5ac3cb0ea4ad6e14a29cea0730.jpg?1754420550?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591096/original_1e9a79f10e9fb307784ad6343fbc0afa.jpg?1754420550?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591097/original_4da4d21c57e2f35fe586678731bd9378.jpg?1754420550?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591098/original_4dcc84e872a3c3e78356f58d47d29011.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591099/original_ad1c99a44eb493daecbc27fa9657ed4d.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591100/original_61c8b13788e7770af8e993acc6f5aeb8.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591101/original_e5c2ac76900061912f4c31f8e3ac1605.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591102/original_4f525fe8f9463d73d4e3ef3485a73f18.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591103/original_ba6002b200708a501fc6cff39a528e93.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591104/original_1d211e56c4dfd0a99575c54b6b3171e0.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591105/original_f380d62dc7ce4637b88f78a802be2ba7.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591106/original_888c885d350897ec8df2a06d01432b29.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591107/original_edaa9536f3282a45e46132b88af7355a.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591108/original_76383cc36ffc9c3438c986524d1d5d36.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591109/original_cab0061516e61fddee24b497a51e1e11.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591110/original_b47fb308284ac1c70cdf8dc60261e41f.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591111/original_bee60b4992cd39abc04bfb0bfd640634.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591112/original_582feb55341a08e7b95f85f58b972876.jpg?1754420551?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591113/original_ecce8636e9853759a0bc34c6a16a1072.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591114/original_3c252f0dbe9de924b67194a34f4bba4c.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591115/original_245c5e8b48668e92a81077b82e589b13.jpg?1754420552?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591116/original_a84a316b18ff2858a8ce4114418f9a13.jpg?1754420553?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591117/original_284f1f9c15ef2c0711ac89b8bd67a2d5.jpg?1754420553?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591118/original_359629658aadccdb956949f6a9cdb906.jpg?1754420554?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591125/original_4243fb93b7131abd980756e5b913d848.jpg?1754420554?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591119/original_e96dd3c989fa9b1c82f4d008ecc78c16.jpg?1754420555?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591124/original_7cac81f3d2e2647e56529c38b888afe6.jpg?1754420555?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591122/original_46f3d86520148e8a197827d190145444.jpg?1754420555?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591121/original_205dfcc1a93979e55db2bbbe1cd19b92.jpg?1754420555?bc=0" alt="">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/38591132/original_e9f6a700bd4cd7572dca8af9c9fcd975.png?1754420555?bc=0" alt="">
     </div>
   </div>
-  </div>
 
-  
+  <!-- AEI -->
   <section class="experimental-gallery">
     <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
     <div class="container" id="experimental-container">
-      <svg class="lines" id="dynamic-lines"></svg>
+      <svg class="lines" id="dynamic-lines" aria-hidden="true"></svg>
     </div>
   </section>
 
+  <!-- idioma -->
   <script>
     function setLang(lang){
-      document.querySelectorAll('.lang').forEach(l => l.style.display='none');
-      document.querySelectorAll('.lang-'+lang).forEach(l => l.style.display='block');
-      document.querySelectorAll('.language-selector button').forEach(b => b.classList.remove('active'));
-      document.querySelector('.language-selector button[onclick="setLang(\''+lang+'\')"]').classList.add('active');
+      document.querySelectorAll('.lang').forEach(l=>l.style.display='none');
+      document.querySelectorAll('.lang-'+lang).forEach(l=>l.style.display='block');
+      document.querySelectorAll('.language-selector button').forEach(b=>{
+        const on = b.textContent===lang;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', on?'true':'false');
+      });
+      document.documentElement.setAttribute('lang', lang);
     }
-    setLang('es');
+    setLang(localStorage.getItem('lang') || 'es');
+  </script>
 
-    /* ---- Audio Players con Web Audio API para ondas reales ---- */
-    document.querySelectorAll('.xpan-audio-block').forEach(block => {
+  <!-- audio players (Web Audio) -->
+  <script>
+    document.querySelectorAll('.audio-local').forEach((block, idx, all) => {
       const audio = block.querySelector('audio');
-      const playBtn = block.querySelector('.play-button');
-      const timeDisplay = block.querySelector('.time-display');
-      const progressFill = block.querySelector('.progress-fill');
-      const progressContainer = block.querySelector('.progress-container');
+      const button = block.querySelector('.play-button');
+      const fill = block.querySelector('.progress-fill');
       const canvas = block.querySelector('canvas');
       const ctx = canvas.getContext('2d');
-      let audioCtx, source, analyser, dataArray, bufferLength, rafId;
+      const timeDisplay = block.querySelector('.time-display');
+      const progress = block.querySelector('.progress-container');
 
-      function initAnalyser(){
-        if(audioCtx) return;
-        audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-        source = audioCtx.createMediaElementSource(audio);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize=256;
-        bufferLength = analyser.frequencyBinCount;
-        dataArray=new Uint8Array(bufferLength);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
+      let ac=null, src, an, arr, raf;
+
+      function init(){
+        if(ac) return;
+        ac = new (window.AudioContext||window.webkitAudioContext)();
+        src = ac.createMediaElementSource(audio);
+        an = ac.createAnalyser(); an.fftSize=256;
+        arr = new Uint8Array(an.frequencyBinCount);
+        src.connect(an); an.connect(ac.destination);
       }
-
       function draw(){
-        rafId=requestAnimationFrame(draw);
-        analyser.getByteTimeDomainData(dataArray);
-        ctx.fillStyle='white';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.lineWidth=1;
-        ctx.strokeStyle='black';
+        raf = requestAnimationFrame(draw);
+        an.getByteTimeDomainData(arr);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         ctx.beginPath();
-        let slice=canvas.width*1.0/bufferLength;
-        let x=0;
-        for(let i=0;i<bufferLength;i++){
-          let v=dataArray[i]/128.0;
-          let y=v*canvas.height/2;
-          if(i===0) ctx.moveTo(x,y);
-          else ctx.lineTo(x,y);
-          x+=slice;
-        }
-        ctx.lineTo(canvas.width,canvas.height/2);
-        ctx.stroke();
+        const step = canvas.width/arr.length; let x=0;
+        for(let i=0;i<arr.length;i++){ const v=arr[i]/128; const y=v*canvas.height/2; i?ctx.lineTo(x,y):ctx.moveTo(x,y); x+=step; }
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--fg') || '#E0E3E6';
+        ctx.lineWidth=1; ctx.stroke();
+      }
+      function fmt(s){ const m=Math.floor(s/60)|0, ss=Math.floor(s%60)|0; return `${m}:${ss<10?'0':''}${ss}` }
+
+      // un solo bloque audible a la vez
+      function muteOthers(){
+        all.forEach((b)=>{ if(b!==block){ const a=b.querySelector('audio'); a.pause(); b.querySelector('.play-button').textContent='play'; } });
       }
 
-      playBtn.addEventListener('click',()=>{
+      button.addEventListener('click', async ()=>{
         if(audio.paused){
-          initAnalyser();
-          audio.play();
-          audioCtx.resume();
-          playBtn.textContent='pause';
-          draw();
+          init(); await ac.resume(); muteOthers(); await audio.play().catch(()=>{});
+          button.textContent='pause'; draw();
         }else{
-          audio.pause();
-          playBtn.textContent='play';
-          cancelAnimationFrame(rafId);
+          audio.pause(); button.textContent='play'; cancelAnimationFrame(raf);
         }
       });
 
-      audio.addEventListener('timeupdate',()=>{
-        if(audio.duration){
-          timeDisplay.textContent=formatTime(audio.currentTime)+' / '+formatTime(audio.duration);
-          progressFill.style.width=(audio.currentTime/audio.duration*100)+'%';
-        }
+      audio.addEventListener('timeupdate', ()=>{
+        const d = isNaN(audio.duration)?0:audio.duration;
+        if(d>0){ fill.style.width = (audio.currentTime/d)*100 + '%'; timeDisplay.textContent = `${fmt(audio.currentTime)} / ${fmt(d)}`; }
       });
-      progressContainer.addEventListener('click',e=>{
-        const rect=progressContainer.getBoundingClientRect();
-        const pct=(e.clientX-rect.left)/rect.width;
-        audio.currentTime=pct*audio.duration;
+      audio.addEventListener('ended', ()=>{ button.textContent='play'; cancelAnimationFrame(raf); fill.style.width='0%' });
+
+      progress.addEventListener('click', e=>{
+        const r=progress.getBoundingClientRect(); const p=(e.clientX-r.left)/r.width;
+        if(audio.duration) audio.currentTime = Math.max(0, Math.min(1,p))*audio.duration;
       });
 
-      function formatTime(sec){
-        const m=Math.floor(sec/60)||0;
-        const s=Math.floor(sec%60)||0;
-        return m+":"+(s<10?"0":"")+s;
-      }
+      const resize=()=>{ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight };
+      window.addEventListener('resize', resize, {passive:true}); resize();
     });
+  </script>
 
-    /* ---- Galería experimental igual que antes ---- */
-    const expContainer=document.getElementById('experimental-container'),svgLines=document.getElementById('dynamic-lines'),blocks=[];
+  <!-- AEI: carga diferida + líneas k-vecinos adaptativas -->
+  <script>
+    const expContainer=document.getElementById('experimental-container');
+    const svgLines=document.getElementById('dynamic-lines');
+    const blocks=[];
 
-const expMedia = [
+    const expMedia = [
   "https://d2w9rnfcy7mm78.cloudfront.net/38591128/original_60e5592b74ebf7c7d7e10233e561f9b2.jpg?1754420556?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/38591130/original_7d2650a26ea4625d0208933f15603ce0.png?1754420555?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/38591134/original_b5aae0d6b69150023374c6b9c6642b55.png?1754420555?bc=0",
@@ -447,166 +495,96 @@ const expMedia = [
   "https://attachments.are.na/38590733/b5fad9bc05c5e33d3fa59e5f9ca3f8b5.mp4?1754419829",
   "https://attachments.are.na/38590732/817fc93a17c5dc994666a4247f089348.mp4?1754419828"
 ];
-    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const el=entry.target;if(el.dataset.src){el.src=el.dataset.src;el.removeAttribute('data-src');}observer.unobserve(el);}})},{rootMargin:'200px'});
+
+
+    const io = new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const el=en.target;
+        if(el.dataset.src){ el.src=el.dataset.src; el.removeAttribute('data-src'); if(el.tagName==='VIDEO') el.load(); }
+        io.unobserve(el);
+      });
+    },{rootMargin:'200px'});
+
     expMedia.forEach(url=>{
-      const block=document.createElement('div');block.className='image-block';
+      const block=document.createElement('div'); block.className='image-block';
       let el;
-      if(url.match(/\.(mp4|mov)$/i)){el=document.createElement('video');el.loop=true;el.muted=true;el.autoplay=true;el.playsInline=true;el.dataset.src=url;}
-      else if(url.match(/\.m4a$/i)){el=document.createElement('audio');el.controls=true;el.dataset.src=url;}
-      else{el=document.createElement('img');el.loading="lazy";el.dataset.src=url;}
+      if(/\.(mp4|mov)$/i.test(url)){ el=document.createElement('video'); el.loop=true; el.muted=true; el.autoplay=true; el.playsInline=true; el.dataset.src=url; }
+      else if(/\.m4a$/i.test(url)){ el=document.createElement('audio'); el.controls=true; el.dataset.src=url; }
+      else{ el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.dataset.src=url; }
       block.appendChild(el);
       block.x=Math.random()*(window.innerWidth-200);
       block.y=Math.random()*(window.innerHeight-200);
       block.style.transform=`translate3d(${block.x}px,${block.y}px,0)`;
       makeDraggable(block);
-      expContainer.appendChild(block);blocks.push(block);
-      observer.observe(el);
+      expContainer.appendChild(block); blocks.push(block);
+      io.observe(el);
     });
 
     function makeDraggable(el){
-      let isDragging=false,lastX,lastY,vx=0,vy=0;
-      const move=(cx,cy)=>{const dx=cx-lastX,dy=cy-lastY;el.x+=dx;el.y+=dy;vx=dx;vy=dy;el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`;lastX=cx;lastY=cy;drawLines();};
-      el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true;lastX=e.clientX;lastY=e.clientY;});
-      window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
-      window.addEventListener('mouseup',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
-      el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;lastX=t.clientX;lastY=t.clientY;});
-      el.addEventListener('touchmove',e=>{if(!isDragging)return;e.preventDefault();const t=e.touches[0];move(t.clientX,t.clientY);},{passive:false});
-      el.addEventListener('touchend',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
+      let drag=false,x0=0,y0=0;
+      const move=(cx,cy)=>{ const dx=cx-x0, dy=cy-y0; el.x+=dx; el.y+=dy; el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`; x0=cx; y0=cy; scheduleRecalc(); };
+      el.addEventListener('mousedown',e=>{e.preventDefault(); drag=true; x0=e.clientX; y0=e.clientY;});
+      window.addEventListener('mousemove',e=>{ if(drag) move(e.clientX,e.clientY); });
+      window.addEventListener('mouseup',()=>{ drag=false; });
+      el.addEventListener('touchstart',e=>{ const t=e.touches[0]; drag=true; x0=t.clientX; y0=t.clientY; },{passive:true});
+      el.addEventListener('touchmove',e=>{ if(!drag) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY); },{passive:false});
+      el.addEventListener('touchend',()=>{ drag=false; },{passive:true});
     }
 
-    function drawLines(){
-      svgLines.innerHTML='';
-      const rect=expContainer.getBoundingClientRect();
-      for(let i=0;i<blocks.length;i++){
-        const a=blocks[i],ax=a.x+a.offsetWidth/2-rect.left,ay=a.y+a.offsetHeight/2-rect.top;
-        for(let j=i+1;j<blocks.length;j++){
-          if(Math.random()>0.8){
-            const b=blocks[j],bx=b.x+b.offsetWidth/2-rect.left,by=b.y+b.offsetHeight/2-rect.top;
+    let recalcPending=false;
+    function scheduleRecalc(){ if(recalcPending) return; recalcPending=true; requestAnimationFrame(()=>{ drawStableLines(); recalcPending=false; }); }
+    function drawStableLines(){
+      const pts = blocks.map(b=>({ x:b.x + b.offsetWidth/2, y:b.y + b.offsetHeight/2 }));
+      const k = Math.min(3, Math.max(1, Math.floor(Math.sqrt(blocks.length)/2)));
+      while(svgLines.firstChild) svgLines.removeChild(svgLines.firstChild);
+      for(let i=0;i<pts.length;i++){
+        const dists = pts.map((p,j)=>({j, d:(i===j)?Infinity:((p.x-pts[i].x)**2 + (p.y-pts[i].y)**2)})).sort((a,b)=>a.d-b.d);
+        for(let n=0;n<k;n++){
+          const j=dists[n].j; if(j>i){
             const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',ax);line.setAttribute('y1',ay);line.setAttribute('x2',bx);line.setAttribute('y2',by);
+            line.setAttribute('x1',pts[i].x); line.setAttribute('y1',pts[i].y);
+            line.setAttribute('x2',pts[j].x); line.setAttribute('y2',pts[j].y);
             svgLines.appendChild(line);
           }
         }
       }
     }
-    requestAnimationFrame(function animate(){drawLines();requestAnimationFrame(animate)});
+    window.addEventListener('resize', scheduleRecalc, {passive:true});
   </script>
 
-<div id="lightbox" aria-hidden="true">
-  <figure id="lbFig"></figure>
-</div>
+  <!-- Lightbox flush -->
+  <div id="lightbox" aria-hidden="true" role="dialog"><figure id="lbFig"></figure></div>
+  <script>
+    (function(){
+      const lb=document.getElementById('lightbox'), fig=document.getElementById('lbFig');
+      const items=[...document.querySelectorAll('.gallery img, .gallery video')]; let i=0;
 
-<script>
-(function(){
-  const lb = document.getElementById('lightbox');
-  const fig = document.getElementById('lbFig');
-
-  // Elementos reales de la galería (no URLs estáticas)
-  const itemsEls = Array.from(document.querySelectorAll('.gallery img, .gallery video'));
-  let idx = 0;
-
-  function getSrc(el){
-    if (el.tagName.toLowerCase() === 'video') {
-      const s = el.querySelector('source');
-      return (el.currentSrc || el.src || (s && (s.currentSrc || s.src || s.dataset.src)) || el.poster || '');
-    }
-    return el.currentSrc || el.src || el.dataset.src || '';
-  }
-
-  function ensureLoaded(el){
-    if (el.tagName.toLowerCase() === 'img') {
-      if (!el.src && el.dataset.src) el.src = el.dataset.src;
-    } else {
-      const s = el.querySelector('source');
-      if (s && !s.src && s.dataset.src) { s.src = s.dataset.src; el.load(); }
-    }
-  }
-
-  function render(i){
-    const el = itemsEls[i];
-    const src = getSrc(el);
-    if (!src) return; // no render si aún no hay URL
-    fig.innerHTML = (el.tagName.toLowerCase() === 'video')
-      ? `<video controls autoplay playsinline preload="metadata"><source src="${src}" type="video/mp4"></video>`
-      : `<img src="${src}" alt="" draggable="false">`;
-  }
-
-  function open(i){ idx=i; ensureLoaded(itemsEls[idx]); render(idx); lb.classList.add('open'); }
-  function close(){ lb.classList.remove('open'); fig.innerHTML=''; }
-
-  // Abrir desde miniaturas
-  itemsEls.forEach((el,i)=>{
-    el.addEventListener('click', e => {
-       e.preventDefault();
-       ensureLoaded(el);
-       open(i);
-    }, {passive:true});
-  });
-
-  // Cerrar tocando overlay
-  lb.addEventListener('click', e => { if (e.target === lb) close(); });
-
-  // Teclado
-  document.addEventListener('keydown', e=>{
-    if(!lb.classList.contains('open')) return;
-    if(e.key==='Escape') close();
-    if(e.key==='ArrowRight'){ idx=(idx+1)%itemsEls.length; ensureLoaded(itemsEls[idx]); render(idx); }
-    if(e.key==='ArrowLeft'){ idx=(idx-1+itemsEls.length)%itemsEls.length; ensureLoaded(itemsEls[idx]); render(idx); }
-  });
-
-  // Swipe mouse/touch
-  let startX=null, dragging=false;
-  function getX(e){ return e.touches?.[0]?.clientX ?? e.changedTouches?.[0]?.clientX ?? e.clientX; }
-  function onDown(e){ if(lb.classList.contains('open')){ startX=getX(e); dragging=true; } }
-  function onUp(e){
-    if(!dragging) return;
-    const dx = getX(e) - startX, TH = 40;
-    if(Math.abs(dx) > TH){
-      idx = dx < 0 ? (idx+1)%itemsEls.length : (idx-1+itemsEls.length)%itemsEls.length;
-      ensureLoaded(itemsEls[idx]); render(idx);
-    } else { close(); }
-    dragging=false; startX=null;
-  }
-  lb.addEventListener('pointerdown', onDown);
-  lb.addEventListener('pointerup', onUp);
-  lb.addEventListener('touchstart', onDown, {passive:true});
-  lb.addEventListener('touchend', onUp, {passive:true});
-
-  lb.addEventListener('dragstart', e => e.preventDefault());
-})();
-</script>
-
-<script>
-/* Anti tap-through global: bloquea re-click 400ms después de cerrar */
-(() => {
-  let suppressUntil = 0;
-
-  // 1) Cancela cualquier click mientras esté activo el supresor (captura)
-  document.addEventListener('click', (e) => {
-    if (Date.now() < suppressUntil) {
-      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  }, true);
-
-  // 2) Detecta el overlay de lightbox si existe y activa supresión al cerrar por tap
-  const lb = document.getElementById('lightbox');
-  if (lb) {
-    // Cerrar por tap en overlay suele ocurrir aquí. Marcamos supresión y dejamos que tu close() haga lo suyo.
-    lb.addEventListener('click', (e) => {
-      // Si el tap fue sobre el propio overlay (no dentro de la figura/media), activa supresión
-      const insideFigure = e.target.closest('#lbFig') || e.target.closest('#lbFigure');
-      if (!insideFigure && (e.target === lb || lb.contains(e.target))) {
-        suppressUntil = Date.now() + 400;
+      function srcOf(el){
+        if(el.tagName==='VIDEO'){ const s=el.querySelector('source'); return el.currentSrc||el.src||(s&&(s.currentSrc||s.src||s.dataset.src))||el.poster||''; }
+        return el.currentSrc||el.src||el.dataset.src||'';
       }
-    }, true); // captura para adelantarnos a tus otros listeners
-  }
+      function ensure(el){
+        if(el.tagName==='IMG'){ if(!el.src && el.dataset.src) el.src=el.dataset.src; }
+        else{ const s=el.querySelector('source'); if(s && !s.src && s.dataset.src){ s.src=s.dataset.src; el.load(); } }
+      }
+      function render(idx){
+        const el=items[idx]; const src=srcOf(el); if(!src) return;
+        fig.innerHTML=(el.tagName==='VIDEO')
+          ? `<video controls autoplay playsinline preload="metadata"><source src="${src}" type="video/mp4"></video>`
+          : `<img src="${src}" alt="" draggable="false">`;
+      }
+      function open(idx){ i=idx; ensure(items[i]); render(i); lb.classList.add('open'); document.documentElement.classList.add('lb-open'); document.body.classList.add('lb-open'); }
+      function close(){ lb.classList.remove('open'); fig.innerHTML=''; document.documentElement.classList.remove('lb-open'); document.body.classList.remove('lb-open'); }
 
-  // 3) Si tus scripts disparan un evento propio al cerrar, también lo atendemos
-  window.addEventListener('xpan-lb-closed', () => { suppressUntil = Date.now() + 400; });
-})();
-</script>
+      items.forEach((el,idx)=> el.addEventListener('click',e=>{ e.preventDefault(); ensure(el); open(idx); },{passive:true}));
+      lb.addEventListener('click',e=>{ if(e.target===lb) close(); });
+      document.addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return; if(e.key==='Escape') close(); if(e.key==='ArrowRight'){ i=(i+1)%items.length; ensure(items[i]); render(i); } if(e.key==='ArrowLeft'){ i=(i-1+items.length)%items.length; ensure(items[i]); render(i); } });
 
+      // anti tap-through 400ms
+      let sup=0; document.addEventListener('click',(e)=>{ if(Date.now()<sup){ e.stopImmediatePropagation?.(); e.stopPropagation(); e.preventDefault(); }},true);
+      lb.addEventListener('click',(e)=>{ const inside=e.target.closest('#lbFig'); if(!inside && (e.target===lb || lb.contains(e.target))){ sup=Date.now()+400; }},true);
+    })();
+  </script>
 </body>
 </html>

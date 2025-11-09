@@ -1,85 +1,97 @@
 <!DOCTYPE html>
-
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
-<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>
-   scs+22 — showcase sound + 2022
-  </title>
-<!-- perf hints -->
-<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect">
-<link crossorigin="" href="https://attachments.are.na" rel="preconnect">
-<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
-<link href="https://attachments.are.na" rel="dns-prefetch"/>
-<style>
-   :root{
-      --bg:#fff; --fg:#0a0a0a; --line:rgba(0,0,0,.12); --radius:14px; --gap:.9rem; --gap-lg:1.2rem; --ease:cubic-bezier(.22,.61,.36,1);
-      --maxw:1440px;
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>scs+22 — showcase sound + 2022</title>
+
+  <!-- perf hints -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+
+  <!-- utils existentes (conservados) -->
+  <script src="/assets/js/media-proxy.js" defer></script>
+
+  <!-- ===== post-tech inline tokens (scope: [data-xpan]) ===== -->
+  <style>
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20; --b1:1px solid var(--line);
+      --maxw:1120px; --pad-x:clamp(16px,4vw,48px); --g:24px; --header-h:64px;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      color-scheme: light dark;
     }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#E6E8EA; --line-weak:#F1F3F5; }
+    }
+
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman", Times, ui-serif, Georgia, serif}
-    img,video{display:block;max-width:100%;height:auto}
-    a{color:inherit;text-decoration:none}
-    body{overflow-x:hidden}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden;
+    }
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s var(--ease)}
+    a:hover{border-color:var(--accent)}
 
-    /* header */
-    header{position:fixed;inset:auto 1rem auto 1rem;top:1rem;z-index:40;display:flex;gap:.8rem;align-items:center;justify-content:space-between}
-    header img{width:50px;height:auto}
-    .language-selector{display:flex;gap:.5rem}
-    .language-selector button{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.25rem .6rem;cursor:pointer;opacity:.75;text-transform:lowercase}
-    .language-selector button.active{background:#000;color:#fff;opacity:1}
+    /* header + idiomas */
+    header{position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);z-index:40;display:flex;align-items:center;justify-content:space-between;height:var(--header-h)}
+    header img{width:48px;height:auto;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ filter:none } }
+    .language-selector{display:flex;gap:8px;text-transform:lowercase}
+    .language-selector button{
+      appearance:none;border:var(--b1);background:transparent;color:var(--fg-dim);
+      font:600 .85rem/1 system-ui;padding:6px 10px;cursor:pointer;letter-spacing:.2px;
+      transition:color .18s var(--ease),border-color .18s var(--ease),background-color .18s var(--ease)
+    }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg);border-color:var(--accent);background:rgba(24,96,255,.06)}
 
-    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1.1rem}
-    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.1rem 0;text-transform:lowercase}
-    .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
-    .description{font-size:1rem;line-height:1.58;max-width:980px}
-
-    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    /* layout */
+    main{max-width:var(--maxw);margin:calc(var(--header-h) + 40px) auto 64px;padding:0 var(--pad-x)}
+    h1{font:700 1.35rem/1.25 system-ui;margin:0 0 6px;text-transform:lowercase}
+    h2{font:700 1.02rem/1.25 system-ui;margin:0;text-transform:lowercase}
+    .meta{color:var(--fg-dim);margin:.2rem 0 1rem;font-size:.9rem;font-style:italic}
+    .description{font:400 1rem/1.65 system-ui;max-width:980px}
+    .section{margin:1.5rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
     .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin-bottom:.6rem}
-    .section h2{font-size:1.02rem;margin:0;text-transform:lowercase}
     .muted{opacity:.68;font-size:.92rem}
 
-    /* grid systems */
-    .tight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem}
+    /* lang */
+    .lang{display:none}
+    .lang.active{display:block}
+
+    /* grids */
+    .tight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
     @media(min-width:720px){.tight-grid{grid-template-columns:repeat(3,1fr)}}
-    @media(min-width:1100px){.tight-grid{grid-template-columns:repeat(3,1fr)}}
-
-    .tight-grid .tile{border:1px solid var(--line);border-radius:var(--radius);overflow:visible;background:#fff}
-    .frame{position:relative;width:100%;background:#000}
-.frame::before { content: none; }
-.frame > img, .frame > video { width: 100%; height: 100%; object-fit: contain; }
-
-    /* corregir solo para videos que necesiten proporción exacta */
-.frame > video.preserve-ratio {
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
-
-
-    /* flyers 4 horizontal */
-    .flyers4{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+    .flyers4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
     @media(min-width:900px){.flyers4{grid-template-columns:repeat(4,1fr)}}
-.frame::before { content: none; }
-    .flyers4 .frame>img{object-fit:contain;background:#fff}
+    .media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    @media(min-width:720px){.media-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(min-width:1200px){.media-grid{grid-template-columns:repeat(4,1fr)}}
 
-    /* documentation blocks */
-    details.block{border:1px solid var(--line);border-radius:var(--radius);overflow:visible;background:#fff}
+    .tile{background:transparent}
+    .frame{position:relative;width:100%;background:transparent;border:var(--b1)}
+    .frame>img,.frame>video{width:100%;height:100%;object-fit:contain;background:transparent}
+
+    /* 4 videos verticales */
+    .v4{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    @media(min-width:900px){.v4{grid-template-columns:repeat(4,1fr)}}
+    .v4 video{object-fit:cover}
+
+    /* details blocks */
+    details.block{border:var(--b1);background:transparent}
     details.block+details.block{margin-top:.6rem}
     details.block summary{padding:.7rem .9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem;font-size:1rem}
     details.block summary::-webkit-details-marker{display:none}
     .block .wrap{padding:.7rem .7rem 1rem}
-    .media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
-    @media(min-width:720px){.media-grid{grid-template-columns:repeat(3,1fr)}}
-    @media(min-width:1200px){.media-grid{grid-template-columns:repeat(4,1fr)}}
-.frame::before { content: none; }
-    .media-grid .frame>img{object-fit:contain;background:#fff}
 
-    /* artists list */
-    details.listado{border:1px solid var(--line);border-radius:var(--radius);overflow:visible}
+    /* listado artistas */
+    details.listado{border:var(--b1);background:transparent}
     details.listado summary{padding:.7rem .9rem;cursor:pointer;list-style:none;font-size:1rem}
     details.listado summary::-webkit-details-marker{display:none}
     .cols{display:grid;grid-template-columns:repeat(1,1fr);gap:.4rem;padding:.1rem .9rem .9rem}
@@ -87,494 +99,160 @@
     .cols h3{margin:.6rem 0 .2rem;font-size:.96rem;text-transform:lowercase}
     ul.clean{margin:.1rem 0 .6rem;padding-left:1rem}
 
-    /* 4 vertical videos */
-    .v4{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
-    @media(min-width:900px){.v4{grid-template-columns:repeat(4,1fr)}}
-.frame::before { content: none; }
-    .v4 video{object-fit:cover}
-
-    /* gallery toggle */
-    .view-controls{display:flex;gap:.6rem;justify-content:flex-end}
-    .btn{background:#fff;border:1px solid var(--line);padding:.25rem .6rem;border-radius:999px;cursor:pointer}
-    .btn.active{background:#000;color:#fff}
+    /* toggle secciones / todo */
+    .view-controls{display:flex;gap:.6rem;justify-content:flex-end;margin:.6rem 0}
+    .btn{background:transparent;border:var(--b1);padding:.25rem .6rem;cursor:pointer}
+    .btn.active{border-color:var(--accent);background:rgba(24,96,255,.06)}
     #allGallery{display:none}
 
-    /* lang show/hide */
-    .lang{display:none}
-    .lang.active{display:block}
+    /* lightbox */
+    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);
+      display:none;align-items:center;justify-content:center;z-index:300000;touch-action:none;overscroll-behavior:contain}
+    #lightbox.open{display:flex}
+    #lightbox figure{margin:0;max-width:92vw;max-height:92vh;transform:scale(.985);opacity:0;transition:transform .18s var(--ease),opacity .18s ease}
+    #lightbox.open figure{transform:scale(1);opacity:1}
+    #lightbox img,#lightbox video{max-width:92vw;max-height:92vh;object-fit:contain;background:transparent;display:block}
+  </style>
+</head>
 
-    /* video helpers */
-    video{background:#000}
-  
-.tight-grid .tile {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.tight-grid .frame {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000;
-}
-
-
-
-</style>
-<style>
-/* refinamiento visual general */
-body {
-  font-family: 'Times New Roman', serif;
-  background: #fff;
-  color: #000;
-  line-height: 1.6;
-  font-size: 16px;
-  margin: 0;
-  padding: 0;
-}
-
-/* encabezados */
-h1, h2, h3 {
-  font-weight: normal;
-  margin-top: 3rem;
-  margin-bottom: 1rem;
-}
-
-/* secciones con espaciado suave */
-.section {
-  padding: 3rem 1rem;
-  max-width: 1000px;
-  margin: 0 auto;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  animation: fadeIn 1s ease-in-out both;
-}
-
-/* videos en galería */
-video {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  border-radius: 0;
-  transition: transform 0.4s ease, opacity 0.4s ease;
-  cursor: pointer;
-}
-
-/* al tocar/hover */
-video:hover {
-  opacity: 0.9;
-  transform: scale(1.01);
-}
-
-/* sistema de 4 videos verticales */
-.v4 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-/* título + subtítulo refinado */
-.head h2 {
-  font-size: 1.4rem;
-  text-transform: lowercase;
-  margin-bottom: 0.5rem;
-}
-
-.head .muted {
-  font-size: 0.9rem;
-  color: rgba(0,0,0,0.5);
-}
-
-/* animación entrada */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-</style>
-<style>
-/* fullscreen unificado xpan */
-#lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:300000;touch-action:none}
-#lightbox.open{display:flex}
-#lightbox figure{margin:0;max-width:92vw;max-height:92vh}
-#lightbox img,#lightbox video{max-width:92vw;max-height:92vh;object-fit:contain;background:#fff;display:block}
-#lightbox{cursor:grab} #lightbox:active{cursor:grabbing}
-</style>
-
-<script defer="" src="/assets/js/media-proxy.js"></script>
-</link></link></head>
 <body>
 <header>
-<a aria-label="xpan" href="/">
-<img alt="xpan" decoding="async" fetchpriority="high" src="sound+.png"/>
-</a>
-<nav aria-label="selector de idioma" class="language-selector">
-<button class="active" data-lang="es">
-     es
-    </button>
-<button data-lang="en">
-     en
-    </button>
-<button data-lang="fr">
-     fr
-    </button>
-<button data-lang="jp">
-     jp
-    </button>
-</nav>
+  <a href="/" aria-label="xpan"><img src="sound+.png" alt="xpan" decoding="async" fetchpriority="high"></a>
+  <nav class="language-selector" aria-label="selector de idioma">
+    <button class="active" data-lang="es">es</button>
+    <button data-lang="en">en</button>
+    <button data-lang="fr">fr</button>
+    <button data-lang="jp">jp</button>
+  </nav>
 </header>
+
 <main>
-<!-- title + meta -->
-<section class="section">
-<div class="lang lang-es active">
-<h1>
-      scs+22 — showcase sound + 2022
-     </h1>
-<div class="meta">
-      03–06 noviembre 2022 — ciudad de méxico
-     </div>
-<p class="description">
-      sound + se configuró como un puente donde convergen distintas vertientes de la cultura sonora dentro de la escena artística mexicana. para su quinta activación satelital, la plataforma reunió a artistas nacionales e internacionales a través de esculturas sonoras, instalaciones, piezas acusmáticas y performances en vivo. durante cuatro días se presentaron más de veinticinco obras e instalaciones, junto con veinte performances que integraron tecnologías de espacialización multicanal. por primera vez en méxico se experimentó una estructura esférica de doce bocinas (<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>), diseñada para generar una inmersión sonora total en el espacio. esta infraestructura expandió las posibilidades perceptuales del público y marcó un precedente en la experiencia del arte sonoro en el país. la activación transformó el recinto en un entorno de comunión y recreación, donde la propuesta curatorial articuló la vanguardia sonora con prácticas de arte contemporáneo. sound + consolidó así su constancia en abrir nuevos puentes para la difusión de la experimentación, fortaleciendo la relevancia cultural del sonido como práctica transversal.
-     </p>
-</div>
-<div class="lang lang-en">
-<h1>
-      scs+22 — showcase sound + 2022
-     </h1>
-<div class="meta">
-      03–06 november 2022 — mexico city
-     </div>
-<p class="description">
-      sound + acted as a bridge where different strands of sonic culture converge within mexico’s art scene. for its fifth satellite activation, the platform brought together national and international artists through sound sculptures, installations, acousmatic works, and live performances. over four days, more than twenty-five works and installations were presented alongside twenty performances that employed multichannel spatialization. for the first time in mexico, a twelve-speaker spherical structure (<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>) was experienced, designed to create full spatial immersion. this infrastructure expanded the audience’s perceptual range and set a precedent for sound-art experiences in the country. the activation transformed the venue into a space of communion and recreation, where the curatorial approach articulated sonic vanguard with contemporary art practices, consolidating sound + as a persistent bridge for experimentation and strengthening the cultural relevance of sound as a transversal practice.
-     </p>
-</div>
-<div class="lang lang-fr">
-<h1>
-      scs+22 — showcase sound + 2022
-     </h1>
-<div class="meta">
-      03–06 novembre 2022 — mexico
-     </div>
-<p class="description">
-      sound + s’est défini comme un pont où convergent diverses branches de la culture sonore au sein de la scène artistique mexicaine. pour sa cinquième activation satellitaire, la plateforme a réuni des artistes nationaux et internationaux à travers des sculptures sonores, des installations, des pièces acousmatiques et des performances en direct. pendant quatre jours, plus de vingt-cinq œuvres et installations ont été présentées, accompagnées de vingt performances utilisant des technologies de spatialisation multicanale. pour la première fois au mexique, une structure sphérique de douze enceintes (<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>) a été expérimentée, conçue pour générer une immersion spatiale totale. cette infrastructure a élargi les possibilités perceptuelles du public et a marqué un précédent dans l’expérience de l’art sonore dans le pays. l’activation a transformé le lieu en un environnement de communion et de recréation, où la proposition curatoriale a articulé l’avant-garde sonore avec les pratiques de l’art contemporain, consolidant sound + comme pont durable pour l’expérimentation et renforçant la pertinence culturelle du son en tant que pratique transversale.
-     </p>
-</div>
-<div class="lang lang-jp">
-<h1>
-      scs+22 — showcase sound + 2022
-     </h1>
-<div class="meta">
-      2022年11月3日–6日 — メキシコシティ
-     </div>
-<p class="description">
-      sound + は、メキシコのアートシーンにおける多様な音文化の潮流が交差する橋として機能した。第5回サテライト・アクティベーションでは、サウンドスカルプチャー、インスタレーション、アクースマティック作品、ライブ・パフォーマンスを通じて国内外のアーティストを集めた。4日間で25を超える作品とインスタレーション、さらに多チャンネル空間化技術を用いた20のパフォーマンスを提示。メキシコで初めて、12台のスピーカーによる球体構造（<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>）が体験され、空間全体での没入を実現した。このインフラは観客の知覚可能性を拡張し、国内のサウンドアート体験に前例をつくった。会場は交感とレクリエーションの場へと変容し、キュラトリアル提案は音の前衛と現代美術の実践を接続した。sound + は実験のための新たな橋を開き続け、音を横断的な実践として位置づける文化的関連性を強化した。
-     </p>
-</div>
-</section>
+  <!-- title + meta -->
+  <section class="section">
+    <div class="lang lang-es active">
+      <h1>scs+22 — showcase sound + 2022</h1>
+      <div class="meta">03–06 noviembre 2022 — ciudad de méxico</div>
+      <p class="description">
+        sound + se configuró como un puente donde convergen distintas vertientes de la cultura sonora dentro de la escena artística mexicana. para su quinta activación satelital, la plataforma reunió a artistas nacionales e internacionales a través de esculturas sonoras, instalaciones, piezas acusmáticas y performances en vivo. durante cuatro días se presentaron más de veinticinco obras e instalaciones, junto con veinte performances que integraron tecnologías de espacialización multicanal. por primera vez en méxico se experimentó una estructura esférica de doce bocinas (<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>), diseñada para generar una inmersión sonora total en el espacio. esta infraestructura expandió las posibilidades perceptuales del público y marcó un precedente en la experiencia del arte sonoro en el país. la activación transformó el recinto en un entorno de comunión y recreación, donde la propuesta curatorial articuló la vanguardia sonora con prácticas de arte contemporáneo. sound + consolidó así su constancia en abrir nuevos puentes para la difusión de la experimentación, fortaleciendo la relevancia cultural del sonido como práctica transversal.
+      </p>
+    </div>
+    <div class="lang lang-en">
+      <h1>scs+22 — showcase sound + 2022</h1>
+      <div class="meta">03–06 november 2022 — mexico city</div>
+      <p class="description">
+        sound + acted as a bridge where different strands of sonic culture converge within mexico’s art scene. for its fifth satellite activation, the platform brought together national and international artists through sound sculptures, installations, acousmatic works, and live performances. over four days, more than twenty-five works and installations were presented alongside twenty performances that employed multichannel spatialization. for the first time in mexico, a twelve-speaker spherical structure (<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>) was experienced, designed to create full spatial immersion. this infrastructure expanded the audience’s perceptual range and set a precedent for sound-art experiences in the country. the activation transformed the venue into a space of communion and recreation, where the curatorial approach articulated sonic vanguard with contemporary art practices, consolidating sound + as a persistent bridge for experimentation and strengthening the cultural relevance of sound as a transversal practice.
+      </p>
+    </div>
+    <div class="lang lang-fr">
+      <h1>scs+22 — showcase sound + 2022</h1>
+      <div class="meta">03–06 novembre 2022 — mexico</div>
+      <p class="description">
+        sound + s’est défini comme un pont où convergent diverses branches de la culture sonore au sein de la scène artistique mexicaine. pour sa cinquième activation satellitaire, la plateforme a réuni des artistes nationaux et internationaux à travers des sculptures sonores, des installations, des pièces acousmatiques et des performances en direct. pendant quatre jours, plus de vingt-cinq œuvres et installations ont été présentées, accompagnées de vingt performances utilisant des technologies de spatialisation multicanale. pour la première fois au mexique, une structure sphérique de douze enceintes (<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>) a été expérimentée, conçue pour générer une immersion spatiale totale. cette infrastructure a élargi les possibilités perceptuelles du public et a marqué un précédent dans l’expérience de l’art sonore dans le pays. l’activation a transformé le lieu en un environnement de communion et de recréation, où la proposition curatoriale a articulé l’avant-garde sonore avec les pratiques de l’art contemporain, consolidant sound + comme pont durable pour l’expérimentation et renforçant la pertinence culturelle du son en tant que pratique transversale.
+      </p>
+    </div>
+    <div class="lang lang-jp">
+      <h1>scs+22 — showcase sound + 2022</h1>
+      <div class="meta">2022年11月3日–6日 — メキシコシティ</div>
+      <p class="description">
+        sound + は、メキシコのアートシーンにおける多様な音文化の潮流が交差する橋として機能した。第5回サテライト・アクティベーションでは、サウンドスカルプチャー、インスタレーション、アクースマティック作品、ライブ・パフォーマンスを通じて国内外のアーティストを集めた。4日間で25を超える作品とインスタレーション、さらに多チャンネル空間化技術を用いた20のパフォーマンスを提示。メキシコで初めて、12台のスピーカーによる球体構造（<a href="arq.xpan.12e.html" target="_blank"><em><u>xpan.12.e</u></em></a>）が体験され、空間全体での没入を実現した。このインフラは観客の知覚可能性を拡張し、国内のサウンドアート体験に前例をつくった。会場は交感とレクリエーションの場へと変容し、キュラトリアル提案は音の前衛と現代美術の実践を接続した。sound + は実験のための新たな橋を開き続け、音を横断的な実践として位置づける文化的関連性を強化した。
+      </p>
+    </div>
+  </section>
 
-<!-- controls: sections vs all-media -->
-<div class="view-controls">
-<button aria-pressed="true" class="btn active" id="btnSections">
-     ver por secciones
-    </button>
-<button aria-pressed="false" class="btn" id="btnAll">
-     ver todo junto
-    </button>
-</div>
-<!-- ALL MEDIA GALLERY (auto-built) -->
-<section class="section" id="allGallery">
-<div class="head">
-<h2>
-      galería scs+22
-     </h2>
+  <!-- controls: sections vs all-media -->
+  <div class="view-controls">
+    <button class="btn active" id="btnSections" aria-pressed="true">ver por secciones</button>
+    <button class="btn" id="btnAll" aria-pressed="false">ver todo junto</button>
+  </div>
 
-<div class="tight-grid" id="allGrid">
-</div>
-</section>
-<!-- SECTIONED CONTENT -->
-<section id="sections">
-<!-- artists + portraits slideshow -->
-<section class="section" data-collect="">
-<div class="head">
-</div>
-<details class="listado">
-<summary>
-<h2>
-<div class="muted">
-       artistas participantes
-     </div>
-</h2>
-</summary>
-<div class="cols">
-<div>
-<h3>
-         performances e instalaciones multicanal (12.e)
-        </h3>
-<ul class="clean">
-<li>
-          Carlos Iturralde
-         </li>
-<li>
-          Enrique Arriaga
-         </li>
-<li>
-          Interspecifics
-         </li>
-<li>
-          Iván Naranjo
-         </li>
-<li>
-          Malitzin Cortés
-         </li>
-<li>
-          Roberto Morales Manzanares
-         </li>
-<li>
-          Sol Oosel
-         </li>
-<li>
-          Tito Rivas
-         </li>
-</ul>
-<h3>
-         piezas acusmáticas en soporte fijo
-        </h3>
-<ul class="clean">
-<li>
-          Arturo Capur
-         </li>
-<li>
-          Concepción Huerta
-         </li>
-<li>
-          Diente de León
-         </li>
-<li>
-          Ecotonalismo Fluido
-         </li>
-<li>
-          Emiliano Mendoza
-         </li>
-<li>
-          Fabián Coronado
-         </li>
-<li>
-          For Feria
-         </li>
-<li>
-          Fonoteca Tlacuilo
-         </li>
-<li>
-          Jorge Martínez
-         </li>
-<li>
-          Josue Medina Mario Alberto Bravo
-         </li>
-<li>
-          Pedro Dascaleskis
-         </li>
-<li>
-          Strange Attractor
-         </li>
-</ul>
-</div>
-<div>
-<h3>
-         esculturas sonoras
-        </h3>
-<ul class="clean">
-<li>
-          Alonso Hernández
-         </li>
-<li>
-          Armando Rosales
-         </li>
-<li>
-          Danielle Firoozi
-         </li>
-<li>
-          Emilio Algo
-         </li>
-<li>
-          Gabriel O’Shea
-         </li>
-<li>
-          John Giorno
-         </li>
-<li>
-          José Orozco Mora
-         </li>
-<li>
-          Lucas Cantú
-         </li>
-<li>
-          Maximiliano Rosiles
-         </li>
-</ul>
-<h3>
-         performances exteriores
-        </h3>
-<ul class="clean">
-<li>
-          Alina Maldonado
-         </li>
-<li>
-          Alonso Hernández
-         </li>
-<li>
-          Ángel Florido
-         </li>
-<li>
-          Dios Bestial
-         </li>
-<li>
-          Exesposos
-         </li>
-<li>
-          Jorge Berumen
-         </li>
-<li>
-          La Fem
-         </li>
-<li>
-          La Kriego + La Cal
-         </li>
-<li>
-          Los Poporitos
-         </li>
-<li>
-          Mito del Desierto
-         </li>
-<li>
-          Sites + Cyrus Bayandor
-         </li>
-<li>
-          Sofía Legarreta
-         </li>
-<li>
-          Última Ratio
-         </li>
-</ul>
-</div>
-</div>
-</details>
-<div class="tight-grid" style="margin-top:.6rem">
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39027747/1821e1daf25b6f8082732194c3927711.mov?1756152042" type="video/mp4"/>
-</video>
-</div>
-</div>
-</div>
-</section>
-<!-- principal slideshow video + panfleto -->
-<section class="section" data-collect="">
-<div class="tight-grid">
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028005/9be55de52cb12f4ebe8e65b5e8d15180.mp4?1756152662" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame" style="background:#fff">
-<img alt="panfleto principal" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028398/original_6b57e2acd9d2c5e7ed8e8105ffde63b9.png?1756153435?bc=0" style="object-fit:contain"/>
-</div>
-</div>
-</div>
-</section>
-<!-- 9 flyers cuadrados (video con sonido) -->
-<section class="section" data-collect="">
-<div class="tight-grid">
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028276/bbadd08731d383dbce3d7211351f3c2c.mp4?1756153186" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028298/0dbd8a862bb7a0073a69455cb0ee5d63.mov?1756153208" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028344/a3c63fb2e789a0cc7c9fe9a61775d650.mov?1756153303" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028258/ce31e48e84e467403666deb4a2fd9ca6.mov?1756153171" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028256/234ab06c88f80aec47912f5a0bb97127.mov?1756153171" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028255/0ea2174fbd401b7dada13f5194500804.mov?1756153170" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028245/961cde328d7975ce673b048beb6aa9f2.mov?1756153134" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028247/3806a00ce0547f5c33019e588190eeb3.mov?1756153144" type="video/mp4"/>
-</video>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<video autoplay="" loop="" muted="" playsinline=""><source src="https://attachments.are.na/39028253/573b7976487fb31a83c9bb8b3056ba76.mov?1756153169" type="video/mp4"/>
-</video>
-</div>
-</div>
-</div>
-</section>
-<!-- 4 flyers imagen programa por día -->
-<section class="section" data-collect="">
-<div class="head">
-<h2>
-       programa por día
-      </h2>
-</div>
-<div class="flyers4">
-<div class="tile">
-<div class="frame">
-<img alt="programa 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028403/original_29ecf7620b0c590695fe84006f1faef3.png?1756153468?bc=0"/>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<img alt="programa 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028405/original_3b8a4c719761464c76206f7676dda878.png?1756153469?bc=0"/>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<img alt="programa 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028407/original_0536e3e8164642cc3a33ea5f8ce201b6.png?1756153472?bc=0"/>
-</div>
-</div>
-<div class="tile">
-<div class="frame">
-<img alt="programa 4" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028408/original_021a847bc8f73373b7d6877606187c89.png?1756153474?bc=0"/>
-</div>
-</div>
-</div>
-</section>
-<!-- DOCUMENTACIÓN POR DÍA/SECCIÓN -->
+  <!-- ALL MEDIA GALLERY (auto-built) -->
+  <section class="section" id="allGallery">
+    <div class="head"><h2>galería scs+22</h2></div>
+    <div class="tight-grid" id="allGrid"></div>
+  </section>
+
+  <!-- SECTIONED CONTENT -->
+  <section id="sections">
+    <!-- artists + portraits slideshow -->
+    <section class="section" data-collect>
+      <div class="head"></div>
+      <details class="listado">
+        <summary><h2><div class="muted">artistas participantes</div></h2></summary>
+        <div class="cols">
+          <div>
+            <h3>performances e instalaciones multicanal (12.e)</h3>
+            <ul class="clean">
+              <li>Carlos Iturralde</li><li>Enrique Arriaga</li><li>Interspecifics</li><li>Iván Naranjo</li>
+              <li>Malitzin Cortés</li><li>Roberto Morales Manzanares</li><li>Sol Oosel</li><li>Tito Rivas</li>
+            </ul>
+            <h3>piezas acusmáticas en soporte fijo</h3>
+            <ul class="clean">
+              <li>Arturo Capur</li><li>Concepción Huerta</li><li>Diente de León</li><li>Ecotonalismo Fluido</li>
+              <li>Emiliano Mendoza</li><li>Fabián Coronado</li><li>For Feria</li><li>Fonoteca Tlacuilo</li>
+              <li>Jorge Martínez</li><li>Josue Medina Mario Alberto Bravo</li><li>Pedro Dascaleskis</li><li>Strange Attractor</li>
+            </ul>
+          </div>
+          <div>
+            <h3>esculturas sonoras</h3>
+            <ul class="clean">
+              <li>Alonso Hernández</li><li>Armando Rosales</li><li>Danielle Firoozi</li><li>Emilio Algo</li>
+              <li>Gabriel O’Shea</li><li>John Giorno</li><li>José Orozco Mora</li><li>Lucas Cantú</li><li>Maximiliano Rosiles</li>
+            </ul>
+            <h3>performances exteriores</h3>
+            <ul class="clean">
+              <li>Alina Maldonado</li><li>Alonso Hernández</li><li>Ángel Florido</li><li>Dios Bestial</li><li>Exesposos</li>
+              <li>Jorge Berumen</li><li>La Fem</li><li>La Kriego + La Cal</li><li>Los Poporitos</li><li>Mito del Desierto</li>
+              <li>Sites + Cyrus Bayandor</li><li>Sofía Legarreta</li><li>Última Ratio</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+      <div class="tight-grid" style="margin-top:.6rem">
+        <div class="tile"><div class="frame">
+          <video autoplay loop muted playsinline><source src="https://attachments.are.na/39027747/1821e1daf25b6f8082732194c3927711.mov?1756152042" type="video/mp4"></video>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- principal slideshow video + panfleto -->
+    <section class="section" data-collect>
+      <div class="tight-grid">
+        <div class="tile"><div class="frame">
+          <video autoplay loop muted playsinline><source src="https://attachments.are.na/39028005/9be55de52cb12f4ebe8e65b5e8d15180.mp4?1756152662" type="video/mp4"></video>
+        </div></div>
+        <div class="tile"><div class="frame" style="background:transparent">
+          <img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028398/original_6b57e2acd9d2c5e7ed8e8105ffde63b9.png?1756153435?bc=0" alt="panfleto principal">
+        </div></div>
+      </div>
+    </section>
+
+    <!-- 9 flyers cuadrados (video con sonido) -->
+    <section class="section" data-collect>
+      <div class="tight-grid">
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028276/bbadd08731d383dbce3d7211351f3c2c.mp4?1756153186" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028298/0dbd8a862bb7a0073a69455cb0ee5d63.mov?1756153208" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028344/a3c63fb2e789a0cc7c9fe9a61775d650.mov?1756153303" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028258/ce31e48e84e467403666deb4a2fd9ca6.mov?1756153171" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028256/234ab06c88f80aec47912f5a0bb97127.mov?1756153171" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028255/0ea2174fbd401b7dada13f5194500804.mov?1756153170" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028245/961cde328d7975ce673b048beb6aa9f2.mov?1756153134" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028247/3806a00ce0547f5c33019e588190eeb3.mov?1756153144" type="video/mp4"></video></div></div>
+        <div class="tile"><div class="frame"><video autoplay loop muted playsinline><source src="https://attachments.are.na/39028253/573b7976487fb31a83c9bb8b3056ba76.mov?1756153169" type="video/mp4"></video></div></div>
+      </div>
+    </section>
+
+    <!-- 4 flyers imagen programa por día -->
+    <section class="section" data-collect>
+      <div class="head"><h2>programa por día</h2></div>
+      <div class="flyers4">
+        <div class="tile"><div class="frame"><img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028403/original_29ecf7620b0c590695fe84006f1faef3.png?1756153468?bc=0" alt="programa 1"></div></div>
+        <div class="tile"><div class="frame"><img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028405/original_3b8a4c719761464c76206f7676dda878.png?1756153469?bc=0" alt="programa 2"></div></div>
+        <div class="tile"><div class="frame"><img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028407/original_0536e3e8164642cc3a33ea5f8ce201b6.png?1756153472?bc=0" alt="programa 3"></div></div>
+        <div class="tile"><div class="frame"><img loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/39028408/original_021a847bc8f73373b7d6877606187c89.png?1756153474?bc=0" alt="programa 4"></div></div>
+      </div>
+    </section>
+
+    <!-- DOCUMENTACIÓN POR DÍA/SECCIÓN -->
 <section class="section" data-collect="">
 <div class="head">
 <h2>
@@ -2538,216 +2216,123 @@ video:hover {
 </section>
 </section>
 </main>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const videos = document.querySelectorAll("video");
 
-  videos.forEach(video => {
-    video.muted = true;
-    video.autoplay = true;
-    video.loop = true;
-    video.playsInline = true;
-
-    const toggleAudio = () => {
-      videos.forEach(v => {
-        if (v !== video) v.muted = true;
-      });
-      video.muted = false;
-      video.play().catch(() => {});
-    };
-
-    video.addEventListener("click", toggleAudio);
-    video.addEventListener("touchend", toggleAudio);
-    video.addEventListener("pointerup", toggleAudio);
-  });
-});
-</script>
-<script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const select = document.getElementById("lang-select");
-        const sections = {
-          es: document.getElementById("descripcion"),
-          en: document.getElementById("descripcion-en"),
-          fr: document.getElementById("descripcion-fr"),
-          jp: document.getElementById("descripcion-jp")
-        };
-        function updateLang(lang) {
-          for (const key in sections) {
-            if (sections[key]) sections[key].style.display = key === lang ? "block" : "none";
-          }
-          localStorage.setItem("lang", lang);
-        }
-        const storedLang = localStorage.getItem("lang") || "es";
-        select.value = storedLang;
-        updateLang(storedLang);
-        select.addEventListener("change", () => updateLang(select.value));
-      });
-    </script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const buttons = document.querySelectorAll(".language-selector button");
-  const sections = document.querySelectorAll(".lang");
-
-  function activateLang(lang) {
-    localStorage.setItem("lang", lang);
-    buttons.forEach(btn => btn.classList.toggle("active", btn.dataset.lang === lang));
-    sections.forEach(sec => sec.classList.toggle("active", sec.classList.contains("lang-" + lang)));
-  }
-
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => activateLang(btn.dataset.lang));
-  });
-
-  const savedLang = localStorage.getItem("lang") || "es";
-  activateLang(savedLang);
-});
-</script>
-<script>
-   // small helper for autoplay on mobile
-    document.addEventListener('DOMContentLoaded',()=>{
-      document.querySelectorAll('video[autoplay]').forEach(v=>{
-        v.muted = v.hasAttribute('muted');
-        v.playsInline = true;
-        const play = ()=> v.play().catch(()=>{});
-        play();
-        ['touchstart','pointerdown','click'].forEach(ev=>document.addEventListener(ev,play,{once:true,capture:true}));
-      });
-
-      // language selector
-      const $btns=[...document.querySelectorAll('.language-selector button')];
-      const sync=(lang)=>{
-        $btns.forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
-        document.querySelectorAll('.lang').forEach(n=>n.style.display = n.classList.contains('lang-'+lang)?'block':'none');
-      };
-      $btns.forEach(b=>b.addEventListener('click',()=>sync(b.dataset.lang)));
-      sync('es');
-
-      // gallery toggle
-      const btnAll=document.getElementById('btnAll');
-      const btnSections=document.getElementById('btnSections');
-      const all=document.getElementById('allGallery');
-      const sections=document.getElementById('sections');
-      btnAll.addEventListener('click',()=>{btnAll.classList.add('active');btnSections.classList.remove('active');all.style.display='block';sections.style.display='none'});
-      btnSections.addEventListener('click',()=>{btnSections.classList.add('active');btnAll.classList.remove('active');all.style.display='none';sections.style.display='block'});
-
-      // build all‑media gallery by cloning every media element src
-      const collect = [];
-      document.querySelectorAll('[data-collect] img,[data-collect] video').forEach(m=>{
-        const isVideo = m.tagName.toLowerCase()==='video';
-        collect.push({type:isVideo?'video':'img',src:m.currentSrc||m.src});
-      });
-      const grid=document.getElementById('allGrid');
-      collect.forEach(item=>{
-        const tile=document.createElement('div');tile.className='tile';
-        const fr=document.createElement('div');fr.className='frame';tile.appendChild(fr);
-        const el=document.createElement(item.type);
-        if(item.type==='video'){el.src=item.src;el.autoplay=true;el.loop=true;el.muted=true;el.playsInline=true}
-        else{el.src=item.src;el.loading='lazy'}
-        fr.appendChild(el);grid.appendChild(tile);
-      });
-    });
-  </script>
 <!-- lightbox fullscreen -->
 <div id="lightbox" aria-hidden="true"><figure id="lbFig"></figure></div>
+
+<!-- ===== Interacción unificada: idioma, autoplay, toggle vistas, build all-media, lightbox ===== -->
 <script>
-(() => {
-  // 0) ANTI TAP-THROUGH GLOBAL (no deja reabrir al cerrar)
-  let suppressUntil = 0;
-  document.addEventListener('click', e => {
-    if (performance.now() < suppressUntil) {
-      e.preventDefault(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); e.stopPropagation();
-    }
-  }, true);
+(()=>{
 
-  // 1) Refs lightbox
-  const lb = document.getElementById('lightbox');
-  const fig = document.getElementById('lbFig');
+  /* idioma */
+  const setLang=(code)=>{
+    localStorage.setItem('lang', code);
+    document.querySelectorAll('.language-selector button').forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
+    document.querySelectorAll('.lang').forEach(n=>n.classList.toggle('active', n.classList.contains('lang-'+code)));
+    document.documentElement.setAttribute('lang', code);
+  };
+  const saved = localStorage.getItem('lang') || (navigator.language?.slice(0,2) || 'es');
+  setLang(saved);
+  document.querySelectorAll('.language-selector button').forEach(btn=>{
+    btn.addEventListener('click', ()=> setLang(btn.dataset.lang));
+  });
 
-  // 2) Helper: obtiene src real
-  function getMedia(el){
+  /* autoplay + tap para audio exclusivo por video */
+  const videos = document.querySelectorAll('video');
+  videos.forEach(v=>{
+    v.muted = true; v.autoplay = true; v.loop = true; v.playsInline = true;
+    const enableAudio=()=>{
+      videos.forEach(o=>{ if(o!==v) o.muted = true; });
+      v.muted = false; v.play().catch(()=>{});
+    };
+    ['click','touchend','pointerup'].forEach(ev=> v.addEventListener(ev, enableAudio, {passive:true}));
+    v.play().catch(()=>{});
+  });
+
+  /* toggle secciones / todo */
+  const btnAll=document.getElementById('btnAll');
+  const btnSections=document.getElementById('btnSections');
+  const all=document.getElementById('allGallery');
+  const sections=document.getElementById('sections');
+  btnAll.addEventListener('click',()=>{btnAll.classList.add('active');btnSections.classList.remove('active');all.style.display='block';sections.style.display='none';});
+  btnSections.addEventListener('click',()=>{btnSections.classList.add('active');btnAll.classList.remove('active');all.style.display='none';sections.style.display='block';});
+
+  /* build all-media gallery clonado desde secciones */
+  const collect=[];
+  document.querySelectorAll('[data-collect] img,[data-collect] video').forEach(m=>{
+    const isV = m.tagName.toLowerCase()==='video';
+    collect.push({type:isV?'video':'img',src:(m.currentSrc||m.src)});
+  });
+  const grid=document.getElementById('allGrid');
+  collect.forEach(item=>{
+    const tile=document.createElement('div'); tile.className='tile';
+    const fr=document.createElement('div'); fr.className='frame'; tile.appendChild(fr);
+    const el=document.createElement(item.type);
+    if(item.type==='video'){ el.src=item.src; el.autoplay=true; el.loop=true; el.muted=true; el.playsInline=true; }
+    else{ el.src=item.src; el.loading='lazy'; el.decoding='async'; }
+    fr.appendChild(el); grid.appendChild(tile);
+  });
+
+  /* lightbox por grupo (media-grid) con swipe/teclado */
+  let suppressUntil=0;
+  document.addEventListener('click', e=>{ if(performance.now()<suppressUntil){ e.preventDefault(); e.stopImmediatePropagation?.(); e.stopPropagation(); }}, true);
+
+  const lb=document.getElementById('lightbox');
+  const fig=document.getElementById('lbFig');
+  function mediaInfo(el){
     if(!el) return null;
-    if (el.tagName === 'IMG') return {type:'img', src: el.currentSrc || el.src || el.dataset?.src || ''};
-    if (el.tagName === 'VIDEO'){
-      const s = el.querySelector('source');
-      const src = (el.currentSrc || el.src || (s && (s.currentSrc || s.src || s.dataset?.src)) || '');
-      return {type:'video', src};
-    }
+    if(el.tagName==='IMG') return {type:'img',src:el.currentSrc||el.src||''};
+    if(el.tagName==='VIDEO'){ const s=el.querySelector('source'); const src=(el.currentSrc||el.src||(s&&(s.currentSrc||s.src))||''); return {type:'video',src}; }
     return null;
   }
-
-  // 3) Render en LB
-  function render(item){
-    if(!item || !item.src) return;
-    fig.innerHTML = item.type === 'video'
-      ? `<video src="${item.src}" controls autoplay playsinline preload="metadata"></video>`
-      : `<img src="${item.src}" alt="" draggable="false">`;
+  let group=[], idx=0;
+  function render(i){
+    const it=group[i]; if(!it) return;
+    fig.innerHTML = it.type==='video'
+      ? `<video src="${it.src}" controls autoplay playsinline preload="metadata" style="max-width:92vw;max-height:92vh;object-fit:contain"></video>`
+      : `<img src="${it.src}" alt="" draggable="false" style="max-width:92vw;max-height:92vh;object-fit:contain">`;
   }
-
-  // 4) Abre por grupo (cada .media-grid es un grupo)
-  let groupItems = []; let idx = 0;
-  function openFrom(el){
-    const grid = el.closest('.media-grid'); if(!grid) return;
-    const nodes = Array.from(grid.querySelectorAll('.frame img, .frame video'));
-    groupItems = nodes.map(n => getMedia(n)).filter(Boolean);
-    idx = nodes.indexOf(el);
-    render(groupItems[idx]);
-    lb.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  function openFrom(node){
+    const grid = node.closest('.media-grid'); if(!grid) return;
+    const nodes=[...grid.querySelectorAll('.frame img, .frame video')];
+    group = nodes.map(mediaInfo).filter(Boolean);
+    idx = nodes.indexOf(node);
+    render(idx);
+    lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
+    document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden';
   }
-
   function closeLB(){
-    lb.classList.remove('open');
-    fig.innerHTML = '';
-    document.body.style.overflow = '';
-    suppressUntil = performance.now() + 350; // evita re-click fantasma
+    lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); fig.innerHTML='';
+    document.documentElement.style.overflow=''; document.body.style.overflow='';
+    suppressUntil = performance.now()+350;
   }
-
-  // 5) Delegación: click en cualquier media dentro de .media-grid
-  document.addEventListener('click', e => {
+  document.addEventListener('click', e=>{
     const media = e.target.closest('.media-grid .frame img, .media-grid .frame video');
-    if(!media) return;
-    e.preventDefault();
-    openFrom(media);
+    if(!media) return; e.preventDefault(); openFrom(media);
   }, {passive:false});
-
-  // 6) Cierre tocando overlay (sin burbujeo)
-  lb.addEventListener('click', e => {
-    if (e.target === lb) {
-      e.preventDefault(); e.stopPropagation();
-      setTimeout(closeLB, 0);
-    }
-  }, {passive:false});
-
-  // 7) Teclado
-  document.addEventListener('keydown', e => {
+  lb.addEventListener('click', e=>{ if(e.target===lb){ e.preventDefault(); e.stopPropagation(); closeLB(); } }, {passive:false});
+  document.addEventListener('keydown', e=>{
     if(!lb.classList.contains('open')) return;
-    if(e.key === 'Escape') return closeLB();
-    if(e.key === 'ArrowRight'){ idx = (idx+1) % groupItems.length; render(groupItems[idx]); }
-    if(e.key === 'ArrowLeft'){ idx = (idx-1+groupItems.length) % groupItems.length; render(groupItems[idx]); }
+    if(e.key==='Escape') return closeLB();
+    if(e.key==='ArrowRight'){ idx=(idx+1)%group.length; render(idx); }
+    if(e.key==='ArrowLeft'){ idx=(idx-1+group.length)%group.length; render(idx); }
   });
-
-  // 8) Swipe touch + mouse
-  let x0=null, dragging=false;
-  function getX(ev){ return ev.touches?.[0]?.clientX ?? ev.changedTouches?.[0]?.clientX ?? ev.clientX; }
-  lb.addEventListener('touchstart', e=>{ if(lb.classList.contains('open')){ x0=getX(e); dragging=true; } }, {passive:true});
-  lb.addEventListener('touchend',   e=>{
-    if(!dragging) return;
-    const dx = getX(e) - x0; const TH = 40;
-    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%groupItems.length : (idx-1+groupItems.length)%groupItems.length; render(groupItems[idx]); }
-    else { closeLB(); }
-    x0=null; dragging=false;
+  let x0=null;
+  const getX=e=> e.touches?.[0]?.clientX ?? e.changedTouches?.[0]?.clientX ?? e.clientX;
+  lb.addEventListener('touchstart', e=>{ if(lb.classList.contains('open')) x0=getX(e); }, {passive:true});
+  lb.addEventListener('touchend', e=>{
+    if(x0==null) return; const dx=getX(e)-x0; const TH=42;
+    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%group.length : (idx-1+group.length)%group.length; render(idx); } else { closeLB(); }
+    x0=null;
   }, {passive:true});
-  lb.addEventListener('pointerdown', e=>{ if(lb.classList.contains('open')) x0 = getX(e); });
-  lb.addEventListener('pointerup',   e=>{
-    if(x0==null) return;
-    const dx = getX(e) - x0; const TH = 40;
-    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%groupItems.length : (idx-1+groupItems.length)%groupItems.length; render(groupItems[idx]); }
-    else { closeLB(); }
+  lb.addEventListener('pointerdown', e=>{ if(lb.classList.contains('open')) x0=getX(e); });
+  lb.addEventListener('pointerup', e=>{
+    if(x0==null) return; const dx=getX(e)-x0; const TH=42;
+    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%group.length : (idx-1+group.length)%group.length; render(idx); } else { closeLB(); }
     x0=null;
   });
-  lb.addEventListener('dragstart', e=> e.preventDefault());
+
 })();
 </script>
-  
 </body>
 </html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="color-scheme" content="light"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>sound + anahuacalli — xpan</title>
 
   <!-- Perf hints -->
@@ -13,71 +13,84 @@
   <link rel="dns-prefetch" href="https://attachments.are.na">
   <script src="/assets/js/media-proxy.js" defer></script>
 
+  <!-- ===== post-tech tokens (scope: [data-xpan]) ===== -->
   <style>
-    :root{
-      --bg:#fff; --fg:#000; --line:rgba(0,0,0,.12);
-      --radius:14px; --gap:.8rem; --maxw:1440px;
-      --overlay: rgba(255,255,255,.98);
-      --shadow: 0 8px 24px rgba(0,0,0,.08);
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20; --b1:1px solid var(--line);
+      --radius:14px; --g:16px; --maxw:1160px; --pad-x:clamp(16px,4vw,48px); --header-h:64px;
+      --overlay: rgba(0,0,0,.55);
+      color-scheme: light dark;
     }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#E6E8EA; --line-weak:#F1F3F5; --overlay: rgba(255,255,255,.96); }
+    }
+
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman", serif;overflow-x:hidden}
-    img,video{display:block;max-width:100%;height:auto}
-    a{color:inherit;text-decoration:none}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden
+    }
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s cubic-bezier(.22,.61,.36,1)}
+    a:hover{border-color:var(--accent)}
 
-    /* Header blindado */
-    .logo-header{position:fixed;top:1rem;left:1rem;z-index:30;isolation:isolate}
-    .logo-header img{height:50px;width:auto;display:block;background:transparent;border-radius:0;mix-blend-mode:normal;filter:none}
-/* removed duplicate img rule */
-/* removed conflicting rounded img rule */
-    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
-    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;color:#000;opacity:.5;transition:.2s}
-    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+    /* Header */
+    .logo-header{position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);z-index:40;display:flex;align-items:center;justify-content:space-between;isolation:isolate;height:var(--header-h)}
+    .logo-header img{height:48px;width:auto;display:block;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ .logo-header img{ filter:none } }
 
-    main{max-width:var(--maxw);margin:120px auto 5rem;padding:0 1rem;position:relative;z-index:0}
+    .language-selector{display:flex;gap:8px;text-transform:lowercase}
+    .language-selector button{
+      background:transparent;border:var(--b1);padding:6px 10px;cursor:pointer;
+      font:600 .85rem/1 system-ui;color:var(--fg-dim);letter-spacing:.2px;
+      transition:color .18s, border-color .18s, background-color .18s
+    }
+    .language-selector button.active,
+    .language-selector button[aria-pressed="true"]{color:var(--fg);border-color:var(--accent);background:rgba(24,96,255,.06)}
 
-    .section{margin:1.6rem 0;position:relative;z-index:0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    /* Layout */
+    main{max-width:var(--maxw);margin:calc(var(--header-h) + 40px) auto 64px;padding:0 var(--pad-x);position:relative;z-index:0}
+    .section{margin:24px 0;position:relative;z-index:0;content-visibility:auto;contain-intrinsic-size:1px 800px}
     .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin:.2rem 0 .8rem}
-    .section h2{margin:0;font-size:1.12rem;text-transform:lowercase}
-    .muted{opacity:.68;font-size:.92rem}
+    h1{font:700 1.35rem/1.25 system-ui;margin:0 0 .25rem;text-transform:lowercase}
+    .section h2{margin:0;font:700 1.12rem/1.25 system-ui;text-transform:lowercase}
+    .muted{color:var(--fg-dim);font-size:.92rem}
+    .meta{color:var(--fg-dim);font-style:italic;margin:.2rem 0 1rem}
 
-    /* Tarjetas de info */
-    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    /* Tarjetas info */
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
     @media(max-width:900px){.info-grid{grid-template-columns:1fr}}
-    .info-card{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.03)}
-    .info-card header{display:flex;justify-content:space-between;align-items:center;padding:.7rem .9rem;border-bottom:1px solid var(--line)}
-    .info-card .tag{font-size:.92rem;text-transform:lowercase;opacity:.85}
+    .info-card{border:var(--b1);border-radius:var(--radius);background:transparent;overflow:hidden}
+    .info-card header{display:flex;justify-content:space-between;align-items:center;padding:.7rem .9rem;border-bottom:var(--b1)}
+    .info-card .tag{font-size:.92rem;text-transform:lowercase;color:var(--fg-dim)}
     .info-card .content{padding:.9rem}
     .scroll-y{max-height:360px;overflow:auto}
     .two-cols{columns:2;column-gap:1.2rem}
     @media(max-width:720px){.two-cols{columns:1}}
 
-    /* Bloques contraíbles elegantes */
-    details.block{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
+    /* Bloques contraíbles */
+    details.block{border:var(--b1);border-radius:var(--radius);background:transparent;overflow:hidden}
     details.block+details.block{margin-top:.7rem}
     details.block summary{padding:.8rem .9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem;font-size:1rem}
     details.block summary::-webkit-details-marker{display:none}
     .block .wrap{padding:.7rem .9rem 1rem}
 
-    /* Grids compactos */
+    /* Grids */
     .tight-grid{display:grid;gap:.5rem}
     .tight-grid.cols-2{grid-template-columns:repeat(2,1fr)}
     .tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}
     .tight-grid.cols-4{grid-template-columns:repeat(4,1fr)}
-    /* Mantener 3 columnas también en móvil para flyers y exp9 */
     [data-keep3] .tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}
-    @media(max-width:900px){
-      .tight-grid.cols-4{grid-template-columns:repeat(2,1fr)}
-    }
-    @media(max-width:600px){
-      .tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}
-    }
+    @media(max-width:900px){.tight-grid.cols-4{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.tight-grid.cols-3{grid-template-columns:repeat(3,1fr)}}
 
-    .tile{position:relative;z-index:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-    .frame{position:relative;z-index:0;width:100%;background:#fff}
-    .frame>*{width:100%;height:100%;object-fit:contain;background:#fff}
+    .tile{position:relative;z-index:0;border:var(--b1);border-radius:var(--radius);overflow:hidden;background:transparent}
+    .frame{position:relative;z-index:0;width:100%;background:transparent}
+    .frame>*{width:100%;height:100%;object-fit:contain;background:transparent}
 
-    /* Ratios que no recortan */
+    /* Ratios */
     .ratio-1-1::before,.ratio-9-16::before,.ratio-16-9::before{content:"";display:block}
     .ratio-1-1::before{padding-top:100%}
     .ratio-9-16::before{padding-top:177.77%}
@@ -85,123 +98,89 @@
     .ratio-1-1>*,.ratio-9-16>*,.ratio-16-9>*{position:absolute;inset:0}
 
     /* Hero */
-    .hero-portrait{display:grid;place-items:center;background:#fff;min-height:40vh}
+    .hero-portrait{display:grid;place-items:center;min-height:40vh}
     #heroImg{position:relative;display:block;width:auto;height:auto;max-width:none;max-height:none;transform-origin:center center}
     .is-landscape #heroImg.rot{transform:rotate(90deg)}
 
-/* Lightbox unificado (igual a mdtc.5 / fluxus) */
-#lightbox{
-  position:fixed; inset:0;
-  background:rgba(255,255,255,.96);
-  display:none; align-items:center; justify-content:center;
-  z-index:300000; touch-action:none;
-}
-#lightbox.open{ display:flex; }
-#lightbox img, #lightbox video{
-  max-width:92vw; max-height:92vh;
-  object-fit:contain; display:block; background:#fff;
-}
+    /* Lightbox */
+    #lightbox{position:fixed;inset:0;background:var(--overlay);display:none;align-items:center;justify-content:center;z-index:300000;touch-action:none}
+    #lightbox.open{display:flex}
+    .lb-surface{position:relative;max-width:98vw;max-height:98vh;display:flex;align-items:center;justify-content:center}
+    .lb-media{display:block;max-width:98vw;max-height:98vh;width:auto;height:auto;object-fit:contain;background:transparent;cursor:zoom-out;touch-action:none;transform:translate3d(0,0,0) scale(1);will-change:transform}
+    .lb-media.grabbing{cursor:grabbing}
 
-  .lb-surface{position:relative; max-width:98vw; max-height:98vh; display:flex; align-items:center; justify-content:center}
-  .lb-media{
-    display:block; max-width:98vw; max-height:98vh; width:auto; height:auto;
-    object-fit:contain; background:#fff; cursor:zoom-out; touch-action:none;
-    transform:translate3d(0,0,0) scale(1); will-change:transform;
-  }
-  .lb-media.grabbing{cursor:grabbing}
-  .lb-hint{
-    position:absolute; bottom:.6rem; left:50%; transform:translateX(-50%);
-    font-size:.78rem; opacity:.6; background:rgba(255,255,255,.85);
-    padding:.15rem .4rem; border-radius:4px; user-select:none; -webkit-user-select:none;
-  }
-
-    /* PDF */
-    .pdf-wrap{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-    .pdf-frame{width:100%;height:80vh;border:0;display:block}
-    .pdf-fallback{padding:.8rem;font-size:.92rem}
-
-    /* Nada por encima del header */
-    main, .section, .tile, .frame, .info-card, .tight-grid{position:relative;z-index:0}
-
+    /* util */
     .zoomable{cursor:zoom-in}
-    .meta{opacity:.85;font-style:italic;margin:.2rem 0 1rem}
     .lang{display:none}
     .lang.active{display:block}
-  
-    /* FIX: logo sin redondeo ni máscaras, prioridad máxima */
-    .logo-header, .logo-header * { border-radius:0 !important; clip-path:none !important; -webkit-mask:none !important; mask:none !important; filter:none !important; backdrop-filter:none !important; }
-    .logo-header img, img[src$="xpan.svg"], img[alt="xpan"] { border-radius:0 !important; background:transparent !important; mix-blend-mode:normal !important; }
-    .logo-header { overflow:visible !important; }
 
-  /* Grids FLUSH: media al ras, sin cajas más grandes que la imagen/video */
-  .flush .tile{border:0;border-radius:0;background:transparent}
-  .flush .frame{border-radius:0;overflow:visible;background:transparent}
-  .flush .frame::before{display:none}
-  .flush .frame>*{position:static;width:100%;height:auto;object-fit:contain;display:block}
-  .flush .tight-grid{gap:.4rem}
-
-  
-</style>
+    /* flush (borde al ras) */
+    .flush .tile{border:0;border-radius:0;background:transparent}
+    .flush .frame{border-radius:0;overflow:visible;background:transparent}
+    .flush .frame::before{display:none}
+    .flush .frame>*{position:static;width:100%;height:auto;object-fit:contain;display:block}
+    .flush .tight-grid{gap:.4rem}
+  </style>
 </head>
+
 <body>
   <div class="logo-header">
     <a href="/" aria-label="xpan"><img src="sound+.png" alt="xpan" data-fs="off"></a>
     <nav class="language-selector" aria-label="selector de idioma">
-      <button class="active" data-lang="es">es</button>
-      <button data-lang="en">en</button>
-      <button data-lang="fr">fr</button>
-      <button data-lang="jp">jp</button>
+      <button class="active" data-lang="es" aria-pressed="true">es</button>
+      <button data-lang="en" aria-pressed="false">en</button>
+      <button data-lang="fr" aria-pressed="false">fr</button>
+      <button data-lang="jp" aria-pressed="false">jp</button>
     </nav>
   </div>
 
   <main>
     <!-- 1) DESCRIPCIÓN MULTILENGUAJE -->
-<section class="section">
-  <div class="lang lang-es active">
-    <h1>sound + anahuacalli</h1>
-    <div class="meta">11–14 noviembre 2021 — museo anahuacalli, ciudad de méxico</div>
-    <p class="description">
-      sound + nace en 2021 como una respuesta a la urgencia de formalizar y difundir el talento emergente en torno al arte sonoro y la música experimental en méxico. su primera edición se manifestó en el museo anahuacalli, marcando un inicio decisivo y estableciendo la vanguardia como un epicentro masivo de interés cultural.<br><br>
-      durante cuatro días, más de 60 artistas presentaron un programa que incluyó instalaciones para sitio específico, esculturas sonoras, piezas multicanal, performances audiovisuales, improvisaciones, conciertos de música electroacústica, charlas y talleres. la diversidad de formatos convirtió al sonido en un eje transversal capaz de articular disciplinas y generaciones. más de 4500 asistentes se encontraron en este espacio, consolidando un puente doble: entre artistas emergentes y consolidados, y entre públicos de distintas generaciones.<br><br>
-      este primer encuentro inauguró un territorio accesible, colectivo y no institucional, donde la escucha se configuró como lenguaje crítico y como forma de comunidad. anahuacalli no fue un evento aislado, sino el primer nodo de una plataforma en despliegue que conecta prácticas disociadas, amplifica comunidades y abre procesos de largo alcance.<br><br>
-      como gesto final, la edición coincidió con la inauguración de la extensión arquitectónica del museo, diseñada por mauricio rocha iturbide, inscribiendo así el nacimiento de sound + en un cruce entre historia y futuro.
-    </p>
-  </div>
+    <section class="section">
+      <div class="lang lang-es active">
+        <h1>sound + anahuacalli</h1>
+        <div class="meta">11–14 noviembre 2021 — museo anahuacalli, ciudad de méxico</div>
+        <p class="description">
+          sound + nace en 2021 como una respuesta a la urgencia de formalizar y difundir el talento emergente en torno al arte sonoro y la música experimental en méxico. su primera edición se manifestó en el museo anahuacalli, marcando un inicio decisivo y estableciendo la vanguardia como un epicentro masivo de interés cultural.<br><br>
+          durante cuatro días, más de 60 artistas presentaron un programa que incluyó instalaciones para sitio específico, esculturas sonoras, piezas multicanal, performances audiovisuales, improvisaciones, conciertos de música electroacústica, charlas y talleres. la diversidad de formatos convirtió al sonido en un eje transversal capaz de articular disciplinas y generaciones. más de 4500 asistentes se encontraron en este espacio, consolidando un puente doble: entre artistas emergentes y consolidados, y entre públicos de distintas generaciones.<br><br>
+          este primer encuentro inauguró un territorio accesible, colectivo y no institucional, donde la escucha se configuró como lenguaje crítico y como forma de comunidad. anahuacalli no fue un evento aislado, sino el primer nodo de una plataforma en despliegue que conecta prácticas disociadas, amplifica comunidades y abre procesos de largo alcance.<br><br>
+          como gesto final, la edición coincidió con la inauguración de la extensión arquitectónica del museo, diseñada por mauricio rocha iturbide, inscribiendo así el nacimiento de sound + en un cruce entre historia y futuro.
+        </p>
+      </div>
 
-  <div class="lang lang-en">
-    <h1>sound + anahuacalli</h1>
-    <div class="meta">11–14 november 2021 — museo anahuacalli, mexico city</div>
-    <p class="description">
-      sound + was born in 2021 as a response to the urgency of formalizing and disseminating emerging talent around sound art and experimental music in mexico. its first edition took place at museo anahuacalli, marking a decisive beginning and establishing the avant-garde as a massive epicenter of cultural interest.<br><br>
-      over four days, more than 60 artists presented a program that included site-specific installations, sound sculptures, multichannel works, audiovisual performances, improvisations, electroacoustic concerts, talks, and workshops. the diversity of formats turned sound into a transversal axis capable of articulating disciplines and generations. more than 4,500 attendees gathered in this space, consolidating a double bridge: between emerging and established artists, and between audiences of different generations.<br><br>
-      this first encounter inaugurated an accessible, collective, and non-institutional territory, where listening was configured as a critical language and as a form of community. anahuacalli was not an isolated event but the first node of an expanding platform that connects dissociated practices, amplifies communities, and opens long-term processes.<br><br>
-      as a final gesture, the edition coincided with the inauguration of the museum’s architectural extension, designed by mauricio rocha iturbide, thus inscribing the birth of sound + at a crossroads between history and future.
-    </p>
-  </div>
+      <div class="lang lang-en">
+        <h1>sound + anahuacalli</h1>
+        <div class="meta">11–14 november 2021 — museo anahuacalli, mexico city</div>
+        <p class="description">
+          sound + was born in 2021 as a response to the urgency of formalizing and disseminating emerging talent around sound art and experimental music in mexico. its first edition took place at museo anahuacalli, marking a decisive beginning and establishing the avant-garde as a massive epicenter of cultural interest.<br><br>
+          over four days, more than 60 artists presented a program that included site-specific installations, sound sculptures, multichannel works, audiovisual performances, improvisations, electroacoustic concerts, talks, and workshops. the diversity of formats turned sound into a transversal axis capable of articulating disciplines and generations. more than 4,500 attendees gathered in this space, consolidating a double bridge: between emerging and established artists, and between audiences of different generations.<br><br>
+          this first encounter inaugurated an accessible, collective, and non-institutional territory, where listening was configured as a critical language and as a form of community. anahuacalli was not an isolated event but the first node of an expanding platform that connects dissociated practices, amplifies communities, and opens long-term processes.<br><br>
+          as a final gesture, the edition coincided with the inauguration of the museum’s architectural extension, designed by mauricio rocha iturbide, thus inscribing the birth of sound + at a crossroads between history and future.
+        </p>
+      </div>
 
-  <div class="lang lang-fr">
-    <h1>sound + anahuacalli</h1>
-    <div class="meta">11–14 novembre 2021 — musée anahuacalli, mexico</div>
-    <p class="description">
-      sound + est né en 2021 comme une réponse à l’urgence de formaliser et de diffuser le talent émergent autour de l’art sonore et de la musique expérimentale au mexique. sa première édition s’est tenue au musée anahuacalli, marquant un début décisif et établissant l’avant-garde comme un épicentre majeur de l’intérêt culturel.<br><br>
-      pendant quatre jours, plus de 60 artistes ont présenté un programme comprenant des installations in situ, des sculptures sonores, des pièces multicanal, des performances audiovisuelles, des improvisations, des concerts de musique électroacoustique, ainsi que des conférences et des ateliers. la diversité des formats a fait du son un axe transversal capable d’articuler disciplines et générations. plus de 4500 personnes se sont rassemblées dans cet espace, consolidant un double pont : entre artistes émergents et établis, et entre publics de différentes générations.<br><br>
-      cette première rencontre a inauguré un territoire accessible, collectif et non institutionnel, où l’écoute s’est configurée comme un langage critique et une forme de communauté. anahuacalli n’a pas été un événement isolé, mais le premier nœud d’une plateforme en expansion qui relie des pratiques dissociées, amplifie des communautés et ouvre des processus de longue durée.<br><br>
-      en geste final, l’édition a coïncidé avec l’inauguration de l’extension architecturale du musée, conçue par mauricio rocha iturbide, inscrivant ainsi la naissance de sound + dans un croisement entre histoire et futur.
-    </p>
-  </div>
+      <div class="lang lang-fr">
+        <h1>sound + anahuacalli</h1>
+        <div class="meta">11–14 novembre 2021 — musée anahuacalli, mexico</div>
+        <p class="description">
+          sound + est né en 2021 comme une réponse à l’urgence de formaliser et de diffuser le talent émergent autour de l’art sonore et de la musique expérimentale au mexique. sa première édition s’est tenue au musée anahuacalli, marquant un début décisif et établissant l’avant-garde comme un épicentre majeur de l’intérêt culturel.<br><br>
+          pendant quatre jours, plus de 60 artistes ont présenté un programme comprenant des installations in situ, des sculptures sonores, des pièces multicanal, des performances audiovisuelles, des improvisations, des concerts de musique électroacoustique, ainsi que des conférences et des ateliers. la diversité des formats a fait du son un axe transversal capable d’articuler disciplines et générations. plus de 4500 personnes se sont rassemblées dans cet espace, consolidant un double pont : entre artistes émergents et établis, et entre publics de différentes générations.<br><br>
+          cette première rencontre a inauguré un territoire accessible, collectif et non institutionnel, où l’écoute s’est configurée comme un langage critique et une forme de communauté. anahuacalli n’a pas été un événement isolé, mais le premier nœud d’une plateforme en expansion qui relie des pratiques dissociées, amplifie des communautés et ouvre des processus de longue durée.<br><br>
+          en geste final, l’édition a coïncidé avec l’inauguration de l’extension architecturale du musée, conçue par mauricio rocha iturbide, inscrivant ainsi la naissance de sound + dans un croisement entre histoire et futur.
+        </p>
+      </div>
 
-  <div class="lang lang-jp">
-    <h1>sound + anahuacalli</h1>
-    <div class="meta">2021年11月11日–14日 — アナワカリ美術館（メキシコシティ）</div>
-    <p class="description">
-      sound + は2021年に誕生し、メキシコにおけるサウンドアートと実験音楽をめぐる新しい才能を制度化し普及させる緊急性に応えるものでした。最初のエディションはアナワカリ美術館で実施され、決定的な出発点となり、前衛を文化的関心の大規模な中心地として確立しました。<br><br>
-      4日間にわたり、60人以上のアーティストが、サイトスペシフィックなインスタレーション、サウンドスカルプチャー、多チャンネル作品、視聴覚パフォーマンス、即興演奏、電子音楽コンサート、講演、ワークショップを含むプログラムを発表しました。多様な形式は、サウンドを分野や世代を横断して結びつける軸としました。4500人以上の来場者がこの空間に集い、新進と確立済みのアーティスト、そして異なる世代の観客をつなぐ二重の橋を築きました。<br><br>
-      この最初の出会いは、アクセス可能で集合的かつ非制度的な領域を開き、そこで「聴取」が批評的な言語でありコミュニティの形態として位置づけられました。アナワカリは孤立したイベントではなく、分断された実践を結びつけ、コミュニティを拡張し、長期的なプロセスを開く展開中のプラットフォームの最初のノードとなりました。<br><br>
-      最後のジェスチャーとして、このエディションは建築家マウリシオ・ロチャ・イトゥルビデによって設計された美術館の新館の開館と重なり、sound + の誕生を歴史と未来の交差点に刻み込みました。
-    </p>
-  </div>
-</section>
-
+      <div class="lang lang-jp">
+        <h1>sound + anahuacalli</h1>
+        <div class="meta">2021年11月11日–14日 — アナワカリ美術館（メキシコシティ）</div>
+        <p class="description">
+          sound + は2021年に誕生し、メキシコにおけるサウンドアートと実験音楽をめぐる新しい才能を制度化し普及させる緊急性に応えるものでした。最初のエディションはアナワカリ美術館で実施され、決定的な出発点となり、前衛を文化的関心の大規模な中心地として確立しました。<br><br>
+          4日間にわたり、60人以上のアーティストが、サイトスペシフィックなインスタレーション、サウンドスカルプチャー、多チャンネル作品、視聴覚パフォーマンス、即興演奏、電子音楽コンサート、講演、ワークショップを含むプログラムを発表しました。多様な形式は、サウンドを分野や世代を横断して結びつける軸としました。4500人以上の来場者がこの空間に集い、新進と確立済みのアーティスト、そして異なる世代の観客をつなぐ二重の橋を築きました。<br><br>
+          この最初の出会いは、アクセス可能で集合的かつ非制度的な領域を開き、そこで「聴取」が批評的な言語でありコミュニティの形態として位置づけられました。アナワカリは孤立したイベントではなく、分断された実践を結びつけ、コミュニティを拡張し、長期的なプロセスを開く展開中のプラットフォームの最初のノードとなりました。<br><br>
+          最後のジェスチャーとして、このエディションは建築家マウリシオ・ロチャ・イトゥルビデによって設計された美術館の新館の開館と重なり、sound + の誕生を歴史と未来の交差点に刻み込みました。
+        </p>
+      </div>
+    </section>
 
     <!-- 2) INFORMACIÓN GENERAL -->
     <section class="section info-elevated">
@@ -442,34 +421,30 @@
 
     <!-- 9) PDF embed -->
     <section class="section">
-      <div class="pdf-wrap">
-        <object class="pdf-frame" data="https://attachments.are.na/39135799/9beedbfc8b54addb8dff5b6e582b42b2.pdf" type="application/pdf">
-          <div class="pdf-fallback">
-            Tu navegador no puede mostrar el PDF. <a href="https://attachments.are.na/39135799/9beedbfc8b54addb8dff5b6e582b42b2.pdf" target="_blank" rel="noopener noreferrer">Abrir en nueva pestaña</a>.
-          </div>
-        </object>
+      <div class="pdf-wrap" style="border:var(--b1);border-radius:var(--radius);overflow:hidden;background:transparent">
+        <object class="pdf-frame" data="https://attachments.are.na/39135799/9beedbfc8b54addb8dff5b6e582b42b2.pdf" type="application/pdf" style="width:100%;height:80vh;border:0;display:block"></object>
       </div>
     </section>
 
-    <!-- 10) Retículas extensas: 3 colecciones -->
+    <!-- 10) Retículas extensas -->
     <section class="section flush" id="archivo-extenso" data-keep3>
       <div class="head"><h2>archivo fotográfico</h2></div>
 
-      <details class="block" >
+      <details class="block">
         <summary><span class="muted">noel higareda</span></summary>
         <div class="wrap">
           <div id="grid-noel" class="tight-grid cols-3"></div>
         </div>
       </details>
 
-      <details class="block" >
+      <details class="block">
         <summary><span class="muted">pozole</span></summary>
         <div class="wrap">
           <div id="grid-pozole" class="tight-grid cols-3"></div>
         </div>
       </details>
 
-      <details class="block" >
+      <details class="block">
         <summary><span class="muted">david franco</span></summary>
         <div class="wrap">
           <div id="grid-dfranco" class="tight-grid cols-3"></div>
@@ -478,71 +453,97 @@
     </section>
   </main>
 
-  <!-- Lightbox overlay unificado -->
+  <!-- Lightbox -->
   <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="media fullscreen">
     <div class="lb-surface">
-      <img id="lbImg" class="lb-media" alt="" />
+      <img id="lbImg" class="lb-media" alt=""/>
       <video id="lbVid" class="lb-media" playsinline preload="auto" controlslist="nodownload noplaybackrate" disablePictureInPicture disableremoteplayback></video>
-        </div>
+    </div>
   </div>
 
-
   <script>
-  // Helpers
+  /* helpers */
   const qs=(s,r=document)=>r.querySelector(s); const qsa=(s,r=document)=>Array.from(r.querySelectorAll(s));
 
-  // Language selector
-  (()=>{const btns=qsa('.language-selector button');const blocks=qsa('.lang');btns.forEach(b=>b.addEventListener('click',()=>{btns.forEach(x=>x.classList.remove('active'));b.classList.add('active');const code=b.dataset.lang;blocks.forEach(el=>el.classList.toggle('active',el.classList.contains('lang-'+code)));}));})();
+  /* idioma */
+  (()=>{const btns=qsa('.language-selector button');const blocks=qsa('.lang');
+    const set=(code)=>{ btns.forEach(b=>{ const on=b.dataset.lang===code; b.classList.toggle('active',on); b.setAttribute('aria-pressed', String(on)); });
+      blocks.forEach(el=> el.classList.toggle('active', el.classList.contains('lang-'+code))); localStorage.setItem('lang', code); };
+    const init=localStorage.getItem('lang')||'es'; set(init);
+    btns.forEach(b=>b.addEventListener('click',()=>set(b.dataset.lang)));
+  })();
 
-  // Inline videos autoplay muted, pause fuera de viewport
-  function ensureMutedAutoplay(v){if(!v)return;v.muted=true;v.setAttribute('muted','');v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');const p=v.play();if(p&&typeof p.catch==='function'){p.catch(()=>{const resume=()=>{v.play().finally(()=>window.removeEventListener('touchstart',resume));};window.addEventListener('touchstart',resume,{once:true});});}}
-  function observeInlineVideos(){const vids=qsa('video.fs-video');const io=new IntersectionObserver(es=>{es.forEach(e=>{const v=e.target;if(qs('#lightbox').classList.contains('open'))return;if(e.isIntersecting){ensureMutedAutoplay(v);}else{v.pause();}});},{threshold:.2});vids.forEach(v=>{ensureMutedAutoplay(v);io.observe(v);});}
+  /* videos inline */
+  function ensureMutedAutoplay(v){
+    if(!v) return; v.muted=true; v.setAttribute('muted',''); v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    const p=v.play(); if(p&&p.catch){ p.catch(()=>{ const resume=()=>{ v.play().finally(()=>window.removeEventListener('touchstart',resume)); }; window.addEventListener('touchstart',resume,{once:true}); });}
+  }
+  function observeInlineVideos(){
+    const vids=qsa('video.fs-video');
+    const io=new IntersectionObserver(es=>{
+      es.forEach(e=>{const v=e.target; if(qs('#lightbox').classList.contains('open')) return;
+        if(e.isIntersecting){ ensureMutedAutoplay(v); } else { v.pause(); }
+      });
+    },{threshold:.2});
+    vids.forEach(v=>{ ensureMutedAutoplay(v); io.observe(v); });
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', observeInlineVideos); } else { observeInlineVideos(); }
 
-  // Hero rotate-fit
-  (()=>{const img=qs('#heroImg');function setVP(){document.body.classList.toggle('is-landscape',innerWidth>innerHeight);}function layout(){if(!img)return;const vw=innerWidth*.86,vh=innerHeight*.86;const iw=img.naturalWidth||1200,ih=img.naturalHeight||1800;const rot=innerWidth>innerHeight;img.classList.toggle('rot',rot);const ar=rot?ih/iw:iw/ih;let W=vw,H=W/ar;if(H>vh){H=vh;W=H*ar;}img.style.width=Math.round(W)+'px';img.style.height=Math.round(H)+'px';}setVP();['load','resize','orientationchange'].forEach(ev=>addEventListener(ev,()=>{setVP();layout();}));img&&img.addEventListener('load',layout);layout();})();
+  /* hero rotate-fit */
+  (()=>{const img=qs('#heroImg');
+    function setVP(){ document.body.classList.toggle('is-landscape', innerWidth>innerHeight); }
+    function layout(){ if(!img) return; const vw=innerWidth*.86,vh=innerHeight*.86; const iw=img.naturalWidth||1200,ih=img.naturalHeight||1800;
+      const rot=innerWidth>innerHeight; img.classList.toggle('rot',rot); const ar=rot?ih/iw:iw/ih; let W=vw,H=W/ar; if(H>vh){H=vh;W=H*ar;} img.style.width=Math.round(W)+'px'; img.style.height=Math.round(H)+'px';
+    }
+    setVP(); ['load','resize','orientationchange'].forEach(ev=>addEventListener(ev,()=>{setVP();layout();})); img&&img.addEventListener('load',layout); layout();
+  })();
 
-  // Lightbox / Fullscreen unificado
-  (()=>{const lb=qs('#lightbox'),lbImg=qs('#lbImg'),lbVid=qs('#lbVid');   let blockUntil = 0; let groupEls=[],groupIndex=0,currentGroup=null,startX=0;function openOverlay(){
-  document.body.style.overflow='hidden';
-  lb.classList.add('open');
+  /* lightbox */
+  (()=>{const lb=qs('#lightbox'), lbImg=qs('#lbImg'), lbVid=qs('#lbVid');
+    let groupEls=[],groupIndex=0,currentGroup=null,startX=0;
+    function openOverlay(){ document.body.style.overflow='hidden'; lb.classList.add('open'); }
+    function closeOverlay(){ lb.classList.remove('open'); document.body.style.overflow=''; lbVid.muted=true; lbVid.pause(); lbVid.removeAttribute('src'); lbVid.load(); lbImg.removeAttribute('src'); }
+    function setGroupFrom(el){
+      const tile=el.closest('.zoomable');
+      if(tile&&tile.dataset.zoomGroup){
+        currentGroup=tile.dataset.zoomGroup;
+        groupEls=qsa(`.zoomable[data-zoom-group="${currentGroup}"] .frame img, .zoomable[data-zoom-group="${currentGroup}"] .frame video`);
+        groupIndex=groupEls.indexOf(el);
+      }else{ currentGroup=null; groupEls=[el]; groupIndex=0; }
+    }
+    function openFrom(el){
+      const isVideo=el.tagName.toLowerCase()==='video';
+      const src=isVideo?(el.currentSrc||el.querySelector('source')?.src||el.src):(el.currentSrc||el.src);
+      setGroupFrom(el);
+      if(isVideo){ lbImg.style.display='none'; lbVid.style.display='block'; lbVid.src=src; lbVid.muted=false; lbVid.volume=1.0; openOverlay(); lbVid.play().catch(()=>{}); }
+      else{ lbVid.pause(); lbVid.removeAttribute('src'); lbVid.load(); lbVid.style.display='none'; lbImg.style.display='block'; lbImg.src=src; openOverlay(); }
+    }
+    function show(d){ if(!currentGroup||groupEls.length<2) return; groupIndex=(groupIndex+d+groupEls.length)%groupEls.length; openFrom(groupEls[groupIndex]); }
+    function bind(){ qsa('.zoomable img, .zoomable video').forEach(el=>{ if(el.dataset._b) return; el.dataset._b='1'; el.addEventListener('click',e=>{e.preventDefault(); openFrom(el);},{passive:false}); }); }
+    lb.addEventListener('click',e=>{ if(e.target===lb||e.target===lbImg||e.target===lbVid) closeOverlay(); });
+    document.addEventListener('keydown',e=>{ if(!lb.classList.contains('open'))return; if(e.key==='Escape') closeOverlay(); if(e.key==='ArrowRight') show(1); if(e.key==='ArrowLeft') show(-1); });
+    lb.addEventListener('touchstart',e=>{ startX=e.changedTouches[0].clientX; },{passive:true});
+    lb.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-startX; if(Math.abs(dx)>50) show(dx<0?1:-1); },{passive:true});
+    let startPX=null; lb.addEventListener('pointerdown',e=>{ if(!lb.classList.contains('open'))return; startPX=e.clientX; });
+    lb.addEventListener('pointerup',e=>{ if(startPX==null) return; const dx=e.clientX-startPX; if(Math.abs(dx)>40){ show(dx<0?1:-1); } else { closeOverlay(); } startPX=null; });
+    bind(); window.__bindZoomables=bind;
+  })();
 
+  /* grandes grids */
+  function buildGrid(containerId, urls){
+    const wrap=document.getElementById(containerId); if(!wrap||!Array.isArray(urls))return; wrap.innerHTML='';
+    urls.forEach((u,i)=>{
+      const isVideo=/\.(mp4|mov|m4v)(\?|$)/i.test(u);
+      const tile=document.createElement('div'); tile.className='tile zoomable'; tile.dataset.zoomGroup=containerId; tile.dataset.zoomIndex=String(i);
+      const frame=document.createElement('div'); frame.className='frame '+(isVideo?'ratio-16-9':'ratio-1-1');
+      frame.innerHTML=isVideo?`<video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto"><source src="${u}" type="video/mp4"></video>`:`<img src="${u}" alt="">`;
+      tile.appendChild(frame); wrap.appendChild(tile);
+    });
+    qsa('#'+containerId+' video.fs-video').forEach(ensureMutedAutoplay);
+    if(window.__bindZoomables) window.__bindZoomables();
+  }
 
-}
-    function closeOverlay(){
-  blockUntil = performance.now() + 350;
-  lb.classList.remove('open');
-  document.body.style.overflow='';
-  lbVid.muted=true; lbVid.pause(); lbVid.removeAttribute('src'); lbVid.load();
-  lbImg.removeAttribute('src');
-}
-    function setGroupFrom(el){const tile=el.closest('.zoomable');if(tile&&tile.dataset.zoomGroup){currentGroup=tile.dataset.zoomGroup;groupEls=qsa(`.zoomable[data-zoom-group="${currentGroup}"] .frame img, .zoomable[data-zoom-group="${currentGroup}"] .frame video`);groupIndex=groupEls.indexOf(el);}else{currentGroup=null;groupEls=[el];groupIndex=0;}}
-    function openFrom(el){const isVideo=el.tagName.toLowerCase()==='video';const src=isVideo?(el.currentSrc||el.querySelector('source')?.src||el.src):(el.currentSrc||el.src);setGroupFrom(el);if(isVideo){lbImg.style.display='none';lbVid.style.display='block';lbVid.src=src;lbVid.muted=false;lbVid.volume=1.0;openOverlay();lbVid.play().catch(()=>{});}else{lbVid.pause();lbVid.removeAttribute('src');lbVid.load();lbVid.style.display='none';lbImg.style.display='block';lbImg.src=src;openOverlay();}}
-    function show(d){if(!currentGroup||groupEls.length<2)return;groupIndex=(groupIndex+d+groupEls.length)%groupEls.length;openFrom(groupEls[groupIndex]);}
-    function bind(){qsa('.zoomable img, .zoomable video').forEach(el=>{if(el.dataset._b)return;el.dataset._b='1';el.addEventListener('click',e=>{e.preventDefault();openFrom(el);},{passive:false});});}
-    lb.addEventListener('click',e=>{if(e.target===lb||e.target===lbImg||e.target===lbVid)closeOverlay();});
-    document.addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')closeOverlay();if(e.key==='ArrowRight')show(1);if(e.key==='ArrowLeft')show(-1);});
-    lb.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX;},{passive:true});
-    lb.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>50)show(dx<0?1:-1);},{passive:true});
-    // Swipe con mouse (escritorio) dentro del IIFE
-let startPX=null;
-lb.addEventListener('pointerdown', e => {
-  if(!lb.classList.contains('open')) return;
-  startPX = e.clientX;
-});
-lb.addEventListener('pointerup', e => {
-  if(startPX==null) return;
-  const dx = e.clientX - startPX;
-  if(Math.abs(dx) > 40) { show(dx < 0 ? 1 : -1); } else { closeOverlay(); }
-  startPX = null;
-});
-
-    bind(); window.__bindZoomables=bind;})();
-    
-
-
-  // Construcción de grandes grids cuando lleguen URLs
-  function buildGrid(containerId, urls){const wrap=document.getElementById(containerId);if(!wrap||!Array.isArray(urls))return;wrap.innerHTML='';urls.forEach((u,i)=>{const isVideo=/\.(mp4|mov|m4v)(\?|$)/i.test(u);const tile=document.createElement('div');tile.className='tile zoomable';tile.dataset.zoomGroup=containerId;tile.dataset.zoomIndex=String(i);const frame=document.createElement('div');frame.className='frame '+(isVideo?'ratio-16-9':'ratio-1-1');frame.innerHTML=isVideo?`<video class="fs-video" muted playsinline webkit-playsinline autoplay loop preload="auto"><source src="${u}" type="video/mp4"></video>`:`<img src="${u}" alt="">`;tile.appendChild(frame);wrap.appendChild(tile);});qsa('#'+containerId+' video.fs-video').forEach(ensureMutedAutoplay);if(window.__bindZoomables)window.__bindZoomables();}
-
+  /* datos de grids (preservados) */
 window.GRID_NOEL = [
   "https://d2w9rnfcy7mm78.cloudfront.net/39135473/original_f2eb1560718d1a096f2897bd346158b8.jpg",
   "https://d2w9rnfcy7mm78.cloudfront.net/39135474/original_893910c78e9b256f2d79273f47e9fbe6.jpg",
@@ -1305,45 +1306,17 @@ window.GRID_POZOLE = [
   "https://d2w9rnfcy7mm78.cloudfront.net/39134866/original_020e62c06cad2cac392e27d39ea01bb2.jpg"
 ];
 
-  // Inicializar si existen arrays globales
   buildGrid('grid-noel', window.GRID_NOEL);
   buildGrid('grid-pozole', window.GRID_POZOLE);
   buildGrid('grid-dfranco', window.GRID_DFRANCO);
 
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded', observeInlineVideos);} else { observeInlineVideos(); }
+  /* anti tap-through (al cerrar LB) */
+  (()=>{ let suppressUntil=0;
+    document.addEventListener('click',(e)=>{ if(Date.now()<suppressUntil){ e.stopImmediatePropagation?.(); e.stopPropagation(); e.preventDefault(); }},true);
+    const lb=document.getElementById('lightbox');
+    if(lb){ lb.addEventListener('click',(e)=>{ const inside=e.target.closest('#lbFig')||e.target.closest('#lbFigure'); if(!inside && (e.target===lb || lb.contains(e.target))){ suppressUntil=Date.now()+400; } },true); }
+    window.addEventListener('xpan-lb-closed',()=>{ suppressUntil=Date.now()+400; });
+  })();
   </script>
-
-  <script>
-/* Anti tap-through global: bloquea re-click 400ms después de cerrar!!!!!!!! */
-(() => {
-  let suppressUntil = 0;
-
-  // 1) Cancela cualquier click mientras esté activo el supresor (captura)
-  document.addEventListener('click', (e) => {
-    if (Date.now() < suppressUntil) {
-      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  }, true);
-
-  // 2) Detecta el overlay de lightbox si existe y activa supresión al cerrar por tap
-  const lb = document.getElementById('lightbox');
-  if (lb) {
-    // Cerrar por tap en overlay suele ocurrir aquí. Marcamos supresión y dejamos que tu close() haga lo suyo.
-    lb.addEventListener('click', (e) => {
-      // Si el tap fue sobre el propio overlay (no dentro de la figura/media), activa supresión
-      const insideFigure = e.target.closest('#lbFig') || e.target.closest('#lbFigure');
-      if (!insideFigure && (e.target === lb || lb.contains(e.target))) {
-        suppressUntil = Date.now() + 400;
-      }
-    }, true); // captura para adelantarnos a tus otros listeners
-  }
-
-  // 3) Si tus scripts disparan un evento propio al cerrar, también lo atendemos
-  window.addEventListener('xpan-lb-closed', () => { suppressUntil = Date.now() + 400; });
-})();
-</script>
-
 </body>
 </html>

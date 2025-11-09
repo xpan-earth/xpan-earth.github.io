@@ -1,174 +1,188 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>mdl.c — xpan × c. h. matos — sfmoma — mdtc</title>
-  <!-- Performance: preconnect to CDNs -->
-  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
-  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
-  <style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="color-scheme" content="light"/>
+<title>mdl.c — xpan × c. h. matos — sfmoma — mdtc</title>
+
+<!-- cdn -->
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+
+<!-- utils -->
+<script src="/assets/js/media-proxy.js" defer></script>
+<script src="/assets/js/video-autoplay-mobile.js" defer></script>
+
+<style>
+  /* ===== tokens post-tech — LIGHT-ONLY ===== */
+  :root{
+    --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+    --line:#D9DEE2; --line-weak:#ECEFF2;
+    --maxw:1120px; --pad-x:clamp(16px,4vw,48px); --g:20px; --header-h:64px;
+    --b1:1px solid var(--line); --card:rgba(255,255,255,.85); --shadow:0 8px 24px rgba(0,0,0,.08);
+  }
+  /* mantener claro aunque el sistema esté en dark */
+  @media (prefers-color-scheme:dark){
     :root{
-      --fg:#000; --bg:#fff; --muted:0.6;
-      --card:rgba(255,255,255,.85); --line:rgba(0,0,0,.08);
-      --shadow:0 8px 24px rgba(0,0,0,.08);
-      --car-h: clamp(180px, 32vh, 340px);
-      --radius: 10px;
+      --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+      --line:#D9DEE2; --line-weak:#ECEFF2; --card:rgba(255,255,255,.85); --shadow:0 8px 24px rgba(0,0,0,.08);
     }
-    html,body{ margin:0; padding:0; background:transparent; color:var(--fg); font-family:"Times New Roman", serif; }
-    a{ color:inherit; }
-    body{ overflow-x:hidden; }
+  }
 
-    /* ===== Header / Lang ===== */
-    header{ position:fixed; top:1rem; left:1rem; z-index:30; }
-    header img{ width:50px; height:auto; display:block; }
-    .language-selector{ position:fixed; top:1rem; right:1rem; z-index:30; font-size:.9rem; text-transform:lowercase; }
-    .language-selector button{ background:none; border:none; margin-left:.5rem; cursor:pointer; color:var(--fg); opacity:.5; transition:.2s; }
-    .language-selector button.active, .language-selector button:hover{ opacity:1; text-decoration:underline; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden;
+  }
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+  a:hover{border-color:var(--accent)}
+  img,video{display:block; max-width:100%; height:auto; background:transparent}
 
-    /* ===== Background video (beam) ===== */
-    .bg-video{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
-    .bg-video video{ width:100%; height:100%; object-fit:cover; opacity:1; filter:contrast(120%) saturate(210%); }
+  /* header */
+  header{
+    position:fixed; top:12px; left:var(--pad-x); z-index:20; height:var(--header-h);
+    display:flex; align-items:center;
+  }
+  header a{display:inline-flex; align-items:center}
+  header img{width:48px; height:auto; mix-blend-mode:normal; filter:none}
 
-    /* ===== Mini-player ===== */
-    .mini-player{ position:fixed; right:1rem; bottom:1rem; z-index:40; backdrop-filter:blur(6px); background:rgba(255,255,255,.6); border:1px solid var(--line); border-radius:999px; padding:.35rem .6rem; display:flex; align-items:center; gap:.6rem; box-shadow:var(--shadow); }
-    .mini-btn{ width:34px; height:34px; border-radius:999px; border:1px solid #000; background:transparent; display:grid; place-items:center; cursor:pointer; }
-    .mini-btn:active{ transform:scale(.98); }
-    .mini-icon{ width:9px; height:9px; display:block; }
-    .mini-label{ font-size:.85rem; opacity:.7; text-transform:lowercase; }
-    .mini-sep{ width:1px; height:18px; background:var(--line); }
-    .mini-toggle{ font-size:.8rem; border:none; background:transparent; cursor:pointer; opacity:.7; }
-    .mini-toggle.active{ opacity:1; text-decoration:underline; }
+  /* lang */
+  .language-selector{
+    position:fixed; top:12px; right:var(--pad-x); z-index:20; display:flex; gap:8px; text-transform:lowercase;
+  }
+  .language-selector button{
+    appearance:none; font:600 .85rem/1 system-ui; color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+    padding:6px 10px; cursor:pointer; letter-spacing:.2px; transition:color .15s linear,border-color .15s linear,background-color .15s linear;
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
 
-    /* ===== Layout ===== */
-    .container{ max-width:1100px; margin:7rem auto 6rem; padding:0 3rem; }
-    .entry{ content-visibility:auto; contain-intrinsic-size: 1px 800px; }
-    h1{ font-size:1.5rem; font-weight:700; margin:.25rem 0 .5rem; text-transform:lowercase; }
-    .meta{ font-size:.95rem; opacity:.7; font-style:italic; margin-bottom:1.25rem; }
-    .description{ font-size:1rem; line-height:1.6; max-width:820px; margin-bottom:2rem; }
+  /* layout */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 48px) auto 56px; padding:0 var(--pad-x)}
+  .container > section{margin-bottom:28px}
+  h1{font:700 1.35rem/1.25 system-ui; margin:0 0 6px; text-transform:lowercase}
+  .meta{font:400 .9rem/1.5 system-ui; color:var(--fg-dim); margin:0 0 16px}
+  .description{font:400 1rem/1.65 system-ui; max-width:820px}
 
-    /* ===== Hero ===== */
-    .hero{ margin:2rem 0; }
-    .hero figure{ margin:0; }
-    .hero img{ max-height:92vh; width:auto; max-width:100%; height:auto; border-radius:8px; object-fit:contain; box-shadow:var(--shadow); margin:0 auto; display:block; }
+  /* background beam */
+  .bg-video{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none}
+  .bg-video video{width:100%; height:100%; object-fit:cover; filter:contrast(120%) saturate(180%); opacity:.9}
 
-    /* ===== Carousel (triptych) ===== */
-    .carousel{ display:flex; gap:.5rem; overflow-x:auto; padding:.25rem 0 1rem; margin:1rem 0 2rem; scroll-snap-type:x mandatory; }
-    .carousel img{ flex-shrink:0; height:var(--car-h); width:auto; border-radius:6px; object-fit:cover; box-shadow:var(--shadow); scroll-snap-align:center; }
+  /* hero */
+  .hero figure{margin:0}
+  .hero img{max-height:92vh; width:auto; max-width:100%; object-fit:contain; border:var(--b1); box-shadow:var(--shadow); margin:0 auto}
 
-    /* ===== Tech spec ===== */
-    .techspec{ border:1px solid var(--line); border-radius:var(--radius); padding:1rem 1.25rem; background:var(--card); max-width:820px; margin:1rem 0 2.25rem; box-shadow:var(--shadow); }
-    .techspec h2{ font-size:1.05rem; text-transform:lowercase; margin:0 0 .5rem; }
-    .techspec ul{ margin:.25rem 0 0 1.1rem; }
-    .techspec li{ margin:.15rem 0; }
+  /* carousel */
+  .carousel{display:flex; gap:8px; overflow-x:auto; padding:.25rem 0 1rem; margin:4px 0 8px; scroll-snap-type:x mandatory}
+  .carousel img{flex-shrink:0; height:clamp(180px,32vh,340px); width:auto; object-fit:cover; border:var(--b1); box-shadow:var(--shadow); scroll-snap-align:center}
 
-    /* ===== Galleries (CSS grid, solid) ===== */
-    .gallery{ margin:2.5rem 0; }
-    .gallery h2{ font-size:1.05rem; text-transform:lowercase; margin:0 0 .75rem; opacity:.9; }
-    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:.75rem; }
-    .grid .item{ position:relative; cursor:zoom-in; }
-    .grid .item img{ width:100%; height:auto; border-radius:8px; display:block; box-shadow:var(--shadow); background:#f6f6f6; }
-    .cap{ position:absolute; left:.5rem; bottom:.5rem; background:rgba(255,255,255,.75); padding:.15rem .35rem; border-radius:4px; font-size:.8rem; opacity:.85; }
+  /* tech spec */
+  .techspec{border:var(--b1); padding:16px 18px; background:var(--card); max-width:820px; box-shadow:var(--shadow)}
+  .techspec h2{font:700 1.05rem/1.2 system-ui; margin:0 0 .5rem; text-transform:lowercase}
+  .techspec ul{margin:.25rem 0 0 1.1rem} .techspec li{margin:.15rem 0}
 
-    @media (max-width: 640px){ .container{ padding:0 1.25rem; margin-top:6rem; } }
+  /* galleries */
+  .gallery h2{font:700 1.05rem/1.2 system-ui; margin:0 0 .75rem; text-transform:lowercase}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px}
+  .grid .item{position:relative; cursor:zoom-in}
+  .grid .item img{width:100%; height:auto; display:block; background:transparent; border:var(--b1); box-shadow:var(--shadow)}
+  .cap{position:absolute; left:.5rem; bottom:.5rem; background:var(--card); padding:.15rem .35rem; font-size:.8rem; border:var(--b1)}
 
-    /* ===== Lightbox ===== */
-    .lightbox{ position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:50; }
-    .lightbox.open{ display:flex; }
-    .lightbox img{ max-width:92vw; max-height:90vh; border-radius:8px; }
-    .lb-close, .lb-prev, .lb-next{ position:fixed; top:50%; transform:translateY(-50%); border:none; background:rgba(255,255,255,.8); padding:.5rem .7rem; border-radius:999px; cursor:pointer; z-index:60; }
-    .lb-close{ top:1.25rem; right:1rem; transform:none; }
-    .lb-prev{ left:1rem; }
-    .lb-next{ right:1rem; }
-  </style>
-  <script src="/assets/js/media-proxy.js" defer></script>
+  /* perf */
+  [data-lazy-section]{content-visibility:auto; contain-intrinsic-size:1px 800px}
+  .carousel img,.grid .item img{content-visibility:auto; contain:content}
 
+  /* lightbox canónico */
+  #xpan-lightbox{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.55); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
+  #xpan-lightbox.open{display:flex}
+  #xpan-lightbox .sheet{position:relative; max-width:100vw; max-height:100vh; overflow:hidden; transform:scale(.985); opacity:0; transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}
+  #xpan-lightbox.open .sheet{transform:scale(1); opacity:1}
+  #xpan-lightbox img{display:block; width:auto; height:auto; max-width:100vw; max-height:100vh; object-fit:contain; margin:0; background:transparent}
+  html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
+</style>
 </head>
 <body>
-  <!-- Fondo: beam azul (lazy) -->
-  <div class="bg-video entry" aria-hidden="true">
-    <video id="bgvid" autoplay muted loop playsinline preload="metadata" webkit-playsinline>
+  <!-- beam -->
+  <div class="bg-video" aria-hidden="true">
+    <video id="bgvid" autoplay muted loop playsinline preload="metadata">
       <source data-src="https://attachments.are.na/38646554/ae68710eb2a2fed493586842a9804a7e.mp4?1754605242" type="video/mp4"/>
     </video>
   </div>
 
-  <!-- Header + selector de idioma -->
-  <header>
-    <a href="https://xpan.earth" rel="noopener" target="_blank">
-      <img src="xpan.svg" alt="xpan logo" fetchpriority="high"/>
-    </a>
-  </header>
-  <div class="language-selector" role="navigation" aria-label="selector de idioma">
-    <button class="active" data-lang="es">es</button>
-    <button data-lang="en">en</button>
-    <button data-lang="fr">fr</button>
-    <button data-lang="jp">jp</button>
+  <!-- header -->
+  <header><a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan"/></a></header>
+
+  <!-- lang -->
+  <div class="language-selector" role="tablist" aria-label="selector de idioma">
+    <button onclick="setLang('es')" class="active" aria-pressed="true" role="tab">es</button>
+    <button onclick="setLang('en')" aria-pressed="false" role="tab">en</button>
+    <button onclick="setLang('fr')" aria-pressed="false" role="tab">fr</button>
+    <button onclick="setLang('jp')" aria-pressed="false" role="tab">jp</button>
   </div>
 
-  <!-- Mini reproductor sonoro flotante -->
-  <div aria-label="reproductor sonoro breve" class="mini-player" role="region">
-    <button aria-label="play/pause" class="mini-btn" id="playToggle">
-      <svg class="mini-icon" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="#000" stroke="#000"/></svg>
-    </button>
-    <span class="mini-label">motivo sonoro — xcv2</span>
-    <span class="mini-sep"></span>
-    <button id="reverbToggle" class="mini-toggle" aria-pressed="false">reverb</button>
-    <audio id="motif" preload="none" crossorigin="anonymous">
-      <source data-src="https://attachments.are.na/38646553/d3816ba77916894a7b94edd622d0b705.wav?1754605242" type="audio/wav"/>
-    </audio>
-  </div>
-
-  <main class="container">
+  <div class="container">
     <!-- ES -->
-    <section class="lang lang-es entry intro-block">
+    <section class="lang lang-es">
       <h1>mdl.c — xpan × c. h. matos</h1>
       <div class="meta">2024 — san francisco, california — colección permanente del sfmoma</div>
       <div class="description">
-        En 2024, la bocina <strong>mdl.c — xpan × c. h. matos</strong>, desarrollada en colaboración con el artista y diseñador C. H. Matos como parte de la serie <em>XCV2</em> (2023), fue adquirida por el <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> para su colección permanente. Esta incorporación consolida a xpan dentro de uno de los museos de arte contemporáneo más relevantes a nivel internacional.<br/><br/>
+        En 2024, la bocina <strong>mdl.c — xpan × c. h. matos</strong>, desarrollada en colaboración con el artista y diseñador C. H. Matos como parte de la serie <em>XCV2</em> (2023), fue adquirida por el <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> para su colección permanente. Esta incorporación consolida a xpan dentro de uno de los museos de arte contemporáneo más relevantes a nivel internacional.<br><br>
         La pieza se presentó en la exposición <em>Art of Noise</em> (4 de mayo – 18 de agosto de 2024), curada por Joseph Becker, una muestra multisensorial dedicada a explorar cómo el diseño ha transformado la experiencia musical en los últimos cien años.
       </div>
     </section>
-    <section class="lang lang-en entry intro-block" style="display:none;">
+
+    <!-- EN -->
+    <section class="lang lang-en" style="display:none;">
       <h1>mdl.c — xpan × c. h. matos</h1>
       <div class="meta">2024 — San Francisco, California — SFMOMA permanent collection</div>
       <div class="description">
-        In 2024, the <strong>mdl.c — xpan × c. h. matos</strong> speaker, developed in collaboration with artist and designer C. H. Matos as part of the <em>XCV2</em> series (2023), was acquired by the <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> for its permanent collection. This acquisition marks xpan’s inclusion in one of the world’s leading contemporary art institutions.<br/><br/>
+        In 2024, the <strong>mdl.c — xpan × c. h. matos</strong> speaker, developed in collaboration with artist and designer C. H. Matos as part of the <em>XCV2</em> series (2023), was acquired by the <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> for its permanent collection. This acquisition marks xpan’s inclusion in one of the world’s leading contemporary art institutions.<br><br>
         The piece was featured in <em>Art of Noise</em> (May 4 – August 18, 2024), curated by Joseph Becker, a multisensory exhibition exploring how design has shaped the way we experience music over the past century.
       </div>
     </section>
-    <section class="lang lang-fr entry intro-block" style="display:none;">
+
+    <!-- FR -->
+    <section class="lang lang-fr" style="display:none;">
       <h1>mdl.c — xpan × c. h. matos</h1>
       <div class="meta">2024 — San Francisco, Californie — collection permanente du SFMOMA</div>
       <div class="description">
-        En 2024, l’enceinte <strong>mdl.c — xpan × c. h. matos</strong>, développée en collaboration avec l’artiste et designer C. H. Matos dans le cadre de la série <em>XCV2</em> (2023), a été acquise par le <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> pour sa collection permanente. Cette acquisition inscrit xpan au sein de l’un des musées d’art contemporain les plus influents au monde.<br/><br/>
+        En 2024, l’enceinte <strong>mdl.c — xpan × c. h. matos</strong>, développée en collaboration avec l’artiste et designer C. H. Matos dans le cadre de la série <em>XCV2</em> (2023), a été acquise par le <strong>San Francisco Museum of Modern Art (SFMOMA)</strong> pour sa collection permanente. Cette acquisition inscrit xpan au sein de l’un des musées d’art contemporain les plus influents au monde.<br><br>
         La pièce a été présentée dans l’exposition <em>Art of Noise</em> (4 mai – 18 août 2024), commissariée par Joseph Becker, une expérience multisensorielle explorant comment le design a transformé notre manière de vivre la musique depuis un siècle.
       </div>
     </section>
-    <section class="lang lang-jp entry intro-block" style="display:none;">
+
+    <!-- JP -->
+    <section class="lang lang-jp" style="display:none;">
       <h1>mdl.c — xpan × c. h. matos</h1>
       <div class="meta">2024年 — サンフランシスコ（カリフォルニア）— SFMOMA 永久コレクション</div>
       <div class="description">
-        2024年、<strong>mdl.c — xpan × c. h. matos</strong> スピーカーは、アーティスト兼デザイナーの C. H. Matos と協働し、<em>XCV2</em> シリーズ（2023年）の一環として制作された作品であり、<strong>サンフランシスコ近代美術館（SFMOMA）</strong> の永久コレクションに収蔵されました。この収蔵は、世界有数の現代美術館における xpan の位置づけを確固たるものにします。<br/><br/>
-        本作は、ジョセフ・ベッカーのキュレーションによる展覧会 <em>Art of Noise</em>（2024年5月4日〜8月18日）で展示され、過去100年間にわたる音楽体験をデザインがどのように変革してきたかを探る多感覚的な構成となっています。
+        2024年、<strong>mdl.c — xpan × c. h. matos</strong> スピーカーは、アーティスト兼デザイナーの C. H. Matos と協働し、<em>XCV2</em> シリーズ（2023年）の一環として制作された作品であり、<strong>サンフランシスコ近代美術館（SFMOMA）</strong> の永久コレクションに収蔵されました。<br><br>
+        本作はキュレーター Joseph Becker による展覧会 <em>Art of Noise</em>（2024年5月4日〜8月18日）で展示され、過去100年間にわたる音楽体験をデザインがどのように変革してきたかを探る多感覚的な構成となっています。
       </div>
     </section>
 
-    <!-- Hero principal -->
-    <section class="hero entry">
+    <!-- hero -->
+    <section class="hero" data-lazy-section>
       <figure>
-        <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671201/original_1a7de3de9e18b0c19cb156cc78d99334.jpg?1754696653?bc=0" alt="mdl.c — xpan × c. h. matos — main"/>
+        <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671201/original_1a7de3de9e18b0c19cb156cc78d99334.jpg?1754696653?bc=0" alt="mdl.c — main">
       </figure>
     </section>
 
-    <!-- Tríptico de la pieza -->
-    <div class="carousel entry" aria-label="tríptico de la pieza" data-autoscroll>
-      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646397/original_f39777de1906936885d806c60cd8a348.jpg?1754604545?bc=0" alt="vista 1"/>
-      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646399/original_3535dfe3c69dc41415d145b8c7ef1589.jpg?1754604546?bc=0" alt="vista 2"/>
-      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646395/original_a532380ca32e09f2e14d7cc6bc093b83.jpg?1754604543?bc=0" alt="vista 3"/>
+    <!-- tríptico -->
+    <div class="carousel" aria-label="tríptico de la pieza" data-autoscroll>
+      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646397/original_f39777de1906936885d806c60cd8a348.jpg?1754604545?bc=0" alt="">
+      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646399/original_3535dfe3c69dc41415d145b8c7ef1589.jpg?1754604546?bc=0" alt="">
+      <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646395/original_a532380ca32e09f2e14d7cc6bc093b83.jpg?1754604543?bc=0" alt="">
     </div>
 
-    <!-- Enlace a la expo de SFMOMA -->
-    <div class="linkout entry">
+    <!-- link expo -->
+    <div class="description">
       <span class="lang lang-es">exhibición:</span>
       <span class="lang lang-en" style="display:none;">exhibition:</span>
       <span class="lang lang-fr" style="display:none;">exposition :</span>
@@ -177,8 +191,8 @@
       <a href="https://www.sfmoma.org/exhibition/art-of-noise/" target="_blank" rel="noopener">sfmoma.org/exhibition/art-of-noise</a>
     </div>
 
-    <!-- Ficha técnica -->
-    <section class="techspec entry">
+    <!-- ficha -->
+    <section class="techspec">
       <h2>
         <span class="lang lang-es">ficha técnica</span>
         <span class="lang lang-en" style="display:none;">technical specs</span>
@@ -192,257 +206,128 @@
       </ul>
     </section>
 
-    <!-- Galería 1: principales (sin duplicar el tríptico del carrusel) + flyer -->
-    <section class="gallery entry" id="gallery-tier-1">
+    <!-- galerías -->
+    <section class="gallery" id="gallery-tier-1">
       <div class="grid" data-gallery="tier1">
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671199/original_f07b82ae7636bdbf56656e7134fc26fe.jpg?1754696644?bc=0" alt="flyer Art of Noise"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671199/original_f07b82ae7636bdbf56656e7134fc26fe.jpg?1754696644?bc=0" alt="flyer art of noise"></div>
       </div>
     </section>
 
-    <!-- Galería 2: snapshots celular -->
-    <section class="gallery entry" id="gallery-tier-2">
+    <section class="gallery" id="gallery-tier-2">
       <div class="grid" data-gallery="tier2">
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671196/original_e264922727e948a612b00e128edb3008.jpg?1754696634?bc=0" alt="snap 1"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671197/original_d966226f971d07c81b750da30f3ee2a1.jpg?1754696635?bc=0" alt="snap 2"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671198/original_7a51676c79fbab129056ed00ead5188d.jpg?1754696638?bc=0" alt="snap 3"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671196/original_e264922727e948a612b00e128edb3008.jpg?1754696634?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671197/original_d966226f971d07c81b750da30f3ee2a1.jpg?1754696635?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671198/original_7a51676c79fbab129056ed00ead5188d.jpg?1754696638?bc=0" alt=""></div>
       </div>
     </section>
 
-    <!-- Galería 3: proceso -->
-    <section class="gallery entry" id="gallery-tier-3">
+    <section class="gallery" id="gallery-tier-3">
       <div class="grid" data-gallery="tier3">
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671195/original_fccb9db2f501eeec657b05a620017b8b.jpg?1754696633?bc=0" alt="proc 1"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671192/original_6e1911dae7eae513bd512c375d7d9ddd.jpg?1754696623?bc=0" alt="proc 2"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671191/original_f7b7f061aa7d7d4b50bcffa9793813a3.jpg?1754696623?bc=0" alt="proc 3"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671190/original_47ca48bd67dc832060db250ceb10e988.jpg?1754696623?bc=0" alt="proc 4"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671189/original_e159801cbf9e3544f25178374aed0086.jpg?1754696623?bc=0" alt="proc 5"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671188/original_76a4fa6e2a4eb38f9f42a6188e220e52.jpg?1754696623?bc=0" alt="proc 6"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671187/original_8b6c7734802a9ae1a56516335604deae.jpg?1754696623?bc=0" alt="proc 7"></div>
-        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671186/original_6cda644d284066dd925f4c8fbb66420e.jpg?1754696622?bc=0" alt="proc 8"></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671195/original_fccb9db2f501eeec657b05a620017b8b.jpg?1754696633?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671192/original_6e1911dae7eae513bd512c375d7d9ddd.jpg?1754696623?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671191/original_f7b7f061aa7d7d4b50bcffa9793813a3.jpg?1754696623?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671190/original_47ca48bd67dc832060db250ceb10e988.jpg?1754696623?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671189/original_e159801cbf9e3544f25178374aed0086.jpg?1754696623?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671188/original_76a4fa6e2a4eb38f9f42a6188e220e52.jpg?1754696623?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671187/original_8b6c7734802a9ae1a56516335604deae.jpg?1754696623?bc=0" alt=""></div>
+        <div class="item"><img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38671186/original_6cda644d284066dd925f4c8fbb66420e.jpg?1754696622?bc=0" alt=""></div>
       </div>
     </section>
-  </main>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="visor de imagen">
-    <button class="lb-close" id="lbClose" aria-label="cerrar">✕</button>
-    <button class="lb-prev" id="lbPrev" aria-label="anterior">‹</button>
-    <img id="lbImg" alt="preview"/>
-    <button class="lb-next" id="lbNext" aria-label="siguiente">›</button>
   </div>
 
-  <script>
-    // ===== Utilities =====
-    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+  <!-- lightbox -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de imagen"><div class="sheet"></div></div>
 
-    // ===== Multiidioma =====
-    function setLang(lang){
-      localStorage.setItem('lang', lang);
-      $$('.lang').forEach(el=>{ el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none'; });
-      $$('.language-selector button').forEach(btn=>{ btn.classList.toggle('active', btn.dataset.lang===lang); btn.setAttribute('aria-pressed', btn.dataset.lang===lang); });
-    }
-    document.querySelector('.language-selector').addEventListener('click', (e)=>{
-      const btn = e.target.closest('button[data-lang]'); if(!btn) return; setLang(btn.dataset.lang);
-    });
-    setLang(localStorage.getItem('lang') || 'es');
-
-    // ===== Lazy media (images & sources) =====
-    const tiny = 'data:image/gif;base64,R0lGODlhAQABAAAAACw='; // 1x1
-    $$('img[data-src]').forEach(img=>{ img.src = tiny; });
-    const io = new IntersectionObserver((entries, obs)=>{
-      entries.forEach(e=>{
-        if(!e.isIntersecting) return;
-        const el = e.target;
-        if(el.tagName === 'IMG' && el.dataset.src){ el.src = el.dataset.src; el.removeAttribute('data-src'); }
-        if(el.tagName === 'SOURCE' && el.dataset.src){ el.src = el.dataset.src; el.removeAttribute('data-src'); const p = el.parentElement; if(p && p.tagName==='VIDEO'){ p.load(); } }
-        obs.unobserve(el);
-      });
-    }, { rootMargin: '200px 0px' });
-    $$('img[data-src], source[data-src]').forEach(el=> io.observe(el));
-
-    // ===== Mini player + WebAudio reverb =====
-    const audioEl = document.getElementById('motif');
-    const aSrc = audioEl.querySelector('source[data-src]');
-    const toggle = document.getElementById('playToggle');
-    const iconPath = document.getElementById('iconPath');
-    const revBtn = document.getElementById('reverbToggle');
-    let playing = false;
-
-    let ctx, srcNode, gainDry, gainWet, convolver;
-
-    function makeImpulse(ctx, duration=2.8, decay=3.5){
-      const rate = ctx.sampleRate; const length = rate * duration; const buf = ctx.createBuffer(2, length, rate);
-      for(let c=0;c<2;c++){ const ch = buf.getChannelData(c); for(let i=0;i<length;i++){ ch[i] = (Math.random()*2-1) * Math.pow(1 - i/length, decay); } }
-      return buf;
-    }
-
-    async function initAudio(){
-      if(ctx) return;
-      ctx = new (window.AudioContext || window.webkitAudioContext)();
-      srcNode = ctx.createMediaElementSource(audioEl);
-      gainDry = ctx.createGain(); gainWet = ctx.createGain();
-      convolver = ctx.createConvolver(); convolver.buffer = makeImpulse(ctx);
-      gainDry.gain.value = 0.8; gainWet.gain.value = 0.0; // default off // reverb off by default
-      srcNode.connect(gainDry).connect(ctx.destination);
-      srcNode.connect(convolver).connect(gainWet).connect(ctx.destination);
-    }
-
-    function ensureAudioSrc(){ if(aSrc && aSrc.dataset.src && !aSrc._set){ aSrc.src = aSrc.dataset.src; aSrc._set=true; audioEl.load(); } }
-    function setIcon(){ iconPath.setAttribute('d', playing ? 'M8 5 H11 V19 H8 Z M13 5 H16 V19 H13 Z' : 'M8 5 L19 12 L8 19 Z'); }
-
-    toggle.addEventListener('click', async ()=>{
-      ensureAudioSrc(); await initAudio();
-      try{ if(!playing){ await audioEl.play(); playing = true; } else { audioEl.pause(); playing = false; } setIcon(); }catch(e){ console.warn('autoplay blocked', e); }
-    });
-
-    let reverbOn = false;
-    revBtn.addEventListener('click', async ()=>{
-      await initAudio();
-      reverbOn = !reverbOn;
-      if(reverbOn){
-        gainWet.gain.value = 0.9; // exagerado para que se note
-        gainDry.gain.value = 0.3;
-      } else {
-        gainWet.gain.value = 0.0;
-        gainDry.gain.value = 0.8;
-      }
-      revBtn.classList.toggle('active', reverbOn);
-      revBtn.setAttribute('aria-pressed', String(reverbOn));
-    }); 
-
-    // defaults
-    audioEl.volume = 0.6; audioEl.loop = true;
-
-    // ===== Video lazy play/pause & source swap =====
-    const v = document.getElementById('bgvid');
-    const vsrc = v.querySelector('source[data-src]');
-    function enableInline(v){ v.muted = true; v.setAttribute('muted',''); v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); }
-    enableInline(v);
-    const vio = new IntersectionObserver((ents)=>{
-      ents.forEach(en=>{
-        if(!vsrc) return;
-        if(en.isIntersecting){ if(vsrc.dataset.src){ vsrc.src=vsrc.dataset.src; vsrc.removeAttribute('data-src'); v.load(); } v.play().catch(()=>{}); }
-        else { v.pause(); }
-      });
-    }, { threshold: 0.1 });
-    vio.observe(v);
-
-    // ===== Pause carousel autoscroll when offscreen (if enabled) =====
-    const carousels = $$('.carousel[data-autoscroll]');
-    const rafState = new Map();
-    function autoscroll(el){
-      const s = rafState.get(el); if(!s || !s.running) return;
-      el.scrollLeft += 0.4; // gentle
-      s.raf = requestAnimationFrame(()=>autoscroll(el));
-    }
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!prefersReduced){
-      const cio = new IntersectionObserver((ents)=>{
-        ents.forEach(en=>{
-          const el = en.target; let s = rafState.get(el) || { running:false, raf:null };
-          if(en.isIntersecting){ if(!s.running){ s.running=true; rafState.set(el,s); s.raf=requestAnimationFrame(()=>autoscroll(el)); } }
-          else { s.running=false; if(s.raf) cancelAnimationFrame(s.raf); rafState.set(el,s); }
-        });
-      }, { threshold: 0.2 });
-      carousels.forEach(el=> cio.observe(el));
-    }
-
-    // ===== Lightbox minimal =====
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lbImg');
-    const lbClose = document.getElementById('lbClose');
-    const lbPrev = document.getElementById('lbPrev');
-    const lbNext = document.getElementById('lbNext');
-
-    const galleryImgs = $$('.grid .item img');
-    galleryImgs.forEach(img=> io.observe(img)); // ensure lazy
-
-    let idx = -1;
-    function openLB(i){ idx = i; lbImg.src = galleryImgs[idx].src || galleryImgs[idx].dataset.src; lb.classList.add('open'); }
-    function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
-    function prev(){ if(idx>0){ openLB(idx-1); } }
-    function next(){ if(idx<galleryImgs.length-1){ openLB(idx+1); } }
-
-    galleryImgs.forEach((im,i)=> im.addEventListener('click', ()=> openLB(i)) );
-    lbClose.addEventListener('click', closeLB);
-    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
-    lbPrev.addEventListener('click', prev);
-    lbNext.addEventListener('click', next);
-    window.addEventListener('keydown', (e)=>{
-      if(!lb.classList.contains('open')) return;
-      if(e.key==='Escape') closeLB();
-      if(e.key==='ArrowLeft') prev();
-      if(e.key==='ArrowRight') next();
-    });
-
-    // Lower motif volume when any video plays
-    $$('video').forEach(vv=>{
-      vv.addEventListener('play', ()=>{ audioEl.volume = 0.25; });
-      vv.addEventListener('pause', ()=>{ audioEl.volume = 0.6; });
-    });
-  </script>
 <script>
-(function iOSInlineAutoplayFix(){
-  // all variables live inside this IIFE to avoid re-declaration conflicts
-  const bgv = document.getElementById('bgvid');
-  const bgvSrc = bgv ? bgv.querySelector('source[data-src]') : null;
+/* util */
+const $$=(sel,ctx=document)=>Array.from(ctx.querySelectorAll(sel));
+const px=(u)=> (window.mediaProxy ? window.mediaProxy(u) : u);
 
-  function ensureInlineAutoplay(vid){
-    if(!vid) return;
-    vid.muted = true; vid.setAttribute('muted','');
-    vid.playsInline = true; vid.setAttribute('playsinline',''); vid.setAttribute('webkit-playsinline','');
-    vid.autoplay = true; vid.setAttribute('autoplay','');
-    vid.loop = true; vid.setAttribute('loop','');
+/* idioma (canónico) */
+function setLang(lang){
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang').forEach(el=>el.style.display=el.classList.contains(`lang-${lang}`)?'block':'none');
+  document.querySelectorAll('.language-selector button').forEach(btn=>{
+    const on=btn.textContent===lang;
+    btn.classList.toggle('active',on);
+    btn.setAttribute('aria-pressed', on?'true':'false');
+  });
+  document.documentElement.setAttribute('lang', lang);
+}
+setLang(localStorage.getItem('lang') || 'es');
+
+/* lazy media (imgs + sources) */
+(function(){
+  const io=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el=e.target;
+      if(el.tagName==='IMG' && el.dataset.src){ el.src=px(el.dataset.src); el.removeAttribute('data-src'); }
+      if(el.tagName==='SOURCE' && el.dataset.src){
+        el.src=px(el.dataset.src); el.removeAttribute('data-src');
+        const p=el.parentElement; if(p && p.tagName==='VIDEO') p.load();
+      }
+      obs.unobserve(el);
+    });
+  },{rootMargin:'400px 0px'});
+  $$('img[data-src], source[data-src]').forEach(el=>io.observe(el));
+})();
+
+/* beam video inline/autoplay */
+(function(){
+  const v=document.getElementById('bgvid'); if(!v) return;
+  const s=v.querySelector('source[data-src]');
+  v.muted=true; v.setAttribute('muted',''); v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); v.loop=true; v.autoplay=true;
+  const vio=new IntersectionObserver(ents=>{
+    ents.forEach(en=>{
+      if(s && s.dataset.src && en.isIntersecting){ s.src=px(s.dataset.src); s.removeAttribute('data-src'); v.load(); }
+      en.isIntersecting? v.play().catch(()=>{}): v.pause();
+    });
+  },{threshold:.1});
+  vio.observe(v);
+})();
+
+/* carousel autoscroll pause offscreen */
+(function(){
+  const carousels=$$('.carousel[data-autoscroll]');
+  const raf=new Map(), reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tick(el){ const st=raf.get(el); if(!st||!st.run) return; el.scrollLeft+=0.4; st.id=requestAnimationFrame(()=>tick(el)); }
+  if(!reduced){
+    const io=new IntersectionObserver(ents=>{
+      ents.forEach(en=>{
+        const el=en.target; const st=raf.get(el)||{run:false,id:null};
+        if(en.isIntersecting && !st.run){ st.run=true; raf.set(el,st); st.id=requestAnimationFrame(()=>tick(el)); }
+        if(!en.isIntersecting && st.run){ st.run=false; cancelAnimationFrame(st.id); raf.set(el,st); }
+      });
+    },{threshold:.2});
+    carousels.forEach(el=>io.observe(el));
   }
+})();
 
-  function ensureVideoSrc(){
-    if (bgv && bgvSrc && bgvSrc.dataset.src) {
-      bgvSrc.src = bgvSrc.dataset.src;
-      bgvSrc.removeAttribute('data-src');
-      bgv.load();
+/* lightbox canónico */
+(function(){
+  const lb=document.getElementById("xpan-lightbox"), sheet=lb.querySelector(".sheet");
+  let nodes=[], idx=-1;
+  function collect(){ nodes=[...document.querySelectorAll(".grid .item img, .carousel img, .hero img")].filter(n=>!n.closest("#xpan-lightbox")&&!n.closest("a")); }
+  function openAt(i){
+    if(i<0||i>=nodes.length) return; idx=i; sheet.innerHTML="";
+    const src=nodes[idx].currentSrc||nodes[idx].src||nodes[idx].dataset.src;
+    const el=document.createElement('img'); el.src=src; el.decoding="async"; el.loading="eager";
+    sheet.appendChild(el); lb.classList.add("open"); document.documentElement.classList.add("lb-open"); document.body.classList.add("lb-open");
+  }
+  function close(){ lb.classList.remove("open"); sheet.innerHTML=""; document.documentElement.classList.remove("lb-open"); document.body.classList.remove("lb-open"); idx=-1; }
+  function clickMedia(ev){
+    const t=ev.target; if(!t) return; if(t.closest("a")) return;
+    if(t.tagName==="IMG" && (t.closest(".grid")||t.closest(".carousel")||t.closest(".hero"))){
+      ev.preventDefault(); ev.stopPropagation(); if(!nodes.length) collect(); const i=nodes.indexOf(t); if(i>-1) openAt(i);
     }
   }
-
-  function attemptPlay(){
-    if(!bgv) return Promise.resolve();
-    return bgv.play().catch(()=>{});
-  }
-
-  function wireAutoplayRetries(){
-    if(!bgv) return;
-    bgv.addEventListener('loadeddata', attemptPlay, { once:true });
-
-    const onceEvents = ['pageshow','visibilitychange','focus'];
-    onceEvents.forEach(ev => window.addEventListener(ev, attemptPlay, { once:true }));
-
-    const gesture = () => attemptPlay();
-    ['touchstart','pointerdown','mousedown','keydown','scroll','mousemove']
-      .forEach(ev => window.addEventListener(ev, gesture, { once:true, passive:true }));
-
-    const t0 = Date.now();
-    const tick = () => {
-      if (!bgv || !bgv.paused || (Date.now()-t0)>3000) return;
-      attemptPlay().finally(()=> setTimeout(tick, 400));
-    };
-    tick();
-  }
-
-  if (typeof IntersectionObserver !== 'undefined'){
-    const vio = new IntersectionObserver((ents)=>{
-      ents.forEach(en=>{
-        if (!bgv) return;
-        if (!en.isIntersecting) { bgv.pause(); return; }
-        ensureVideoSrc(); attemptPlay();
-      });
-    }, { threshold: 0.1 });
-    if (bgv) vio.observe(bgv);
-  }
-
-  ensureInlineAutoplay(bgv);
-  ensureVideoSrc();
-  wireAutoplayRetries();
+  document.body.addEventListener("click",clickMedia,{capture:true,passive:false});
+  lb.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation(); close(); },{passive:false});
+  addEventListener("keydown",e=>{ if(!lb.classList.contains("open")) return; if(e.key==="Escape") close(); if((e.key==="ArrowRight"||e.key==="l")&&idx<nodes.length-1) openAt(idx+1); if((e.key==="ArrowLeft"||e.key==="h")&&idx>0) openAt(idx-1); });
+  new MutationObserver(()=>collect()).observe(document.documentElement,{subtree:true,childList:true});
+  collect();
 })();
 </script>
-
 </body>
 </html>

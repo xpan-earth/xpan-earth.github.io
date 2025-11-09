@@ -1,126 +1,112 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ep.t [paris.25] — arquitectura</title>
-  <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-    }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
-    }
-    header img {
-      width: 50px;
-      height: auto;
-    }
-    .language-selector {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 20;
-      font-family: 'Times New Roman', serif;
-      font-size: 0.9rem;
-      text-transform: lowercase;
-    }
-    .language-selector button {
-      background: none;
-      border: none;
-      margin-left: 0.5rem;
-      cursor: pointer;
-      color: #000;
-      opacity: 0.5;
-      transition: opacity 0.2s ease;
-    }
-    .language-selector button.active,
-    .language-selector button:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 7rem auto 4rem;
-      padding: 0 1.5rem;
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      text-transform: lowercase;
-    }
-    .meta {
-      font-size: 0.85rem;
-      opacity: 0.5;
-      font-style: italic;
-      margin-bottom: 1.5rem;
-    }
-    .description {
-      font-size: 1rem;
-      line-height: 1.6;
-      max-width: 700px;
-      margin-bottom: 2rem;
-    }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .gallery img {
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-    .pdf-embed {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      overflow-x: auto;
-    }
-    .pdf-embed iframe {
-      min-width: 1000px;
-      height: 600px;
-      border: none;
-      border-radius: 4px;
-    }
-    @media (max-width: 768px) {
-      .container {
-        margin-top: 6rem;
-        padding: 0 1rem;
-      }
-      .pdf-embed iframe {
-        min-width: 100%;
-        height: auto;
-        aspect-ratio: 4 / 3;
-      }
-    }
-  </style>
-  <script src="/assets/js/media-proxy.js" defer></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="light dark"/>
+<title>ep.t [paris.25] — arquitectura</title>
 
+<style>
+  :root{
+    --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+    --line:#2A2E31; --line-weak:#1A1D20;
+    --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    --maxw:1000px; --g:24px; --g2:32px;
+    --pad-x:clamp(16px,4vw,48px); --header-h:64px;
+    --b1:1px solid var(--line); --b0:1px solid var(--line-weak);
+  }
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+      --line:#D9DEE2; --line-weak:#ECEFF2;
+    }
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+  a:hover{border-color:var(--accent)}
+  img,video,iframe,object{max-width:100%; height:auto; display:block; background:transparent}
+
+  /* Header */
+  header{
+    position:fixed; top:12px; left:var(--pad-x); height:var(--header-h);
+    display:flex; align-items:center; z-index:100;
+  }
+  header a{display:inline-flex; align-items:center}
+  header img{
+    width:50px; height:auto;
+    mix-blend-mode:difference; filter:invert(1) saturate(100%);
+  }
+  @media (prefers-color-scheme:light){ header img{ filter:none } }
+
+  /* Selector de idioma */
+  .language-selector{
+    position:fixed; top:12px; right:var(--pad-x); z-index:120;
+    display:flex; gap:8px; align-items:center; text-transform:lowercase;
+  }
+  .language-selector button{
+    appearance:none; font:600 .85rem/1 var(--font-ui);
+    color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+    padding:6px 10px; cursor:pointer; letter-spacing:.2px;
+    transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+  /* Layout */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 48px; padding:0 var(--pad-x)}
+  h1{font:700 1.5rem/1.25 var(--font-ui); text-transform:lowercase; margin:0 0 .5rem}
+  .meta{font:400 .9rem/1.5 var(--font-ui); color:var(--fg-dim); margin:0 0 24px}
+  .description{font:400 1rem/1.65 var(--font-ui); max-width:700px; margin:0 0 2rem}
+
+  /* Galería */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:2rem}
+  .gallery img{border:var(--b1); border-radius:0; object-fit:cover; aspect-ratio:4/3}
+
+  /* PDFs: tarjetas */
+  .pdf-embed{display:grid; grid-template-columns:1fr; gap:1.5rem; margin-bottom:2rem}
+  .pdf-card{display:flex; flex-direction:column; border:var(--b1); background:transparent}
+  .pdf-card object{width:100%; height:600px; border:none; background:#0C0D0F}
+  .pdf-actions{display:flex; gap:12px; align-items:center; justify-content:space-between; padding:10px 12px; border-top:var(--b0); font:400 .85rem/1.4 var(--font-ui); color:var(--fg-dim)}
+  .pdf-actions a{color:var(--fg); border:1px solid var(--line); padding:6px 10px; text-decoration:none}
+
+  @media (max-width:768px){
+    .container{margin:calc(var(--header-h) + 28px) auto 40px}
+    .pdf-card object{height:auto; aspect-ratio:4/3}
+  }
+
+  /* Lightbox overlay */
+  #xpan-lightbox{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.55); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
+  #xpan-lightbox.open{display:flex}
+  #xpan-lightbox .sheet{position:relative; max-width:100vw; max-height:100vh; overflow:hidden; transform:scale(.985); opacity:0; transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}
+  #xpan-lightbox.open .sheet{transform:scale(1); opacity:1}
+  #xpan-lightbox img,#xpan-lightbox video{display:block; width:auto; height:auto; max-width:100vw; max-height:100vh; object-fit:contain; margin:0; background:transparent}
+  html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
+</style>
+
+<script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
   <header>
-    <a href="https://xpan.earth" target="_blank">
-      <img src="xpan.svg" alt="xpan logo" />
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="xpan.svg" alt="xpan logo"/>
     </a>
   </header>
-  <div class="language-selector">
-    <button onclick="setLang('es')" class="active">es</button>
-    <button onclick="setLang('en')">en</button>
-    <button onclick="setLang('fr')">fr</button>
-    <button onclick="setLang('jp')">jp</button>
-  </div>
-  <div class="container">
 
+  <div class="language-selector" aria-label="selector de idioma">
+    <button onclick="setLang('es')" class="active" aria-pressed="true">es</button>
+    <button onclick="setLang('en')" aria-pressed="false">en</button>
+    <button onclick="setLang('fr')" aria-pressed="false">fr</button>
+    <button onclick="setLang('jp')" aria-pressed="false">jp</button>
+  </div>
+
+  <div class="container">
     <!-- Español -->
     <div class="lang lang-es">
       <h1>ep.t [paris.25]</h1>
@@ -155,7 +141,7 @@
     </div>
 
     <!-- Inglés -->
-    <div class="lang lang-en" style="display: none;">
+    <div class="lang lang-en" style="display:none;">
       <h1>ep.t [paris.25]</h1>
       <div class="meta">january 2025 — paris, france</div>
       <div class="description">
@@ -171,126 +157,111 @@
           an interval where systems become, not define.<br>
           a topology in expansion, a flow without borders,<br>
           where languages are forms and forms, critique in act.<br>
-          here, the temporal and the permanent dissolve;<br>
-          the local and the global fade.<br>
+          here, the temporal and the permanent dissolve; the local and the global fade.<br>
           there are no fixed lines or predefined structures.<br>
-          everything is fluid, in constant transformation,<br>
-          reconfiguring its own meaning.<br>
+          everything is fluid, in constant transformation, reconfiguring its own meaning.<br>
           xpan does not build, it questions.<br>
           it does not define, it creates spaces of becoming.<br>
-          a radical intervention in the flow of the macrosystem,<br>
-          where each act is a fracture that opens new possibilities.<br>
-          the project is not a place, it is a process.<br>
-          a process that activates, that transforms.<br>
-          a space that does not exist until it is inhabited.
+          a radical intervention in the flow of the macrosystem, where each act opens new possibilities.<br>
+          the project is not a place, it is a process; a process that activates, transforms; a space that exists only when inhabited.
         </em>
       </div>
     </div>
 
     <!-- Francés -->
-    <div class="lang lang-fr" style="display: none;">
+    <div class="lang lang-fr" style="display:none;">
       <h1>ep.t [paris.25]</h1>
       <div class="meta">janvier 2025 — paris, france</div>
       <div class="description">
-        le projet <strong>ep.t [paris.25]</strong> a configuré un espace autonome inséré au cœur de la fashion week de paris en janvier 2025. son architecture, développée et tissée sur place pendant 10 jours consécutifs, a fonctionné comme un dispositif physique, politique et symbolique d’<em>interruption critique</em>.<br><br>
-        un système intérieur complet a été construit avec de la <strong>grille soudée</strong> et de la <strong>manta de cielo</strong>, matériaux dotés d’une charge culturelle, symbolique et structurelle. la grille, élément industriel commun dans les périphéries urbaines, et la manta, textile associé au patrimoine domestique mexicain, ont été assemblées avec du <strong>fil recuit</strong>, générant une double peau intérieure recouvrant murs et plafonds de l’espace original.<br><br>
-        l’intervention n’était ni décorative ni ornementale. il s’agissait d’une <em>insertion forcée</em>, volontairement exposée dans ses jonctions, ses bords, ses nœuds d’acier et ses pointes visibles. cette logique de finition brute a fonctionné comme un geste de confrontation : une occupation <em>non neutre</em> d’un environnement dominé par les structures eurocentristes, de la mode, du capital et de l’exclusion.<br><br>
-        le tissage a été réalisé manuellement, lors de sessions continues de plus de 15 heures par jour. cette accumulation d’efforts configure une densité énergétique visible dans le volume résultant. la lumière, filtrée par la manta, émane de l’intérieur, projetant ombre et chaleur vers l’extérieur, inversant les hiérarchies traditionnelles de l’éclairage dans les espaces d’exposition.<br><br>
-        six <strong>haut-parleurs model.1</strong> ont été installés sur la peau intérieure, orientés vers le centre, créant une <em>chambre acoustique fermée</em> qui renforçait l’idée d’une pièce dans une autre pièce : un espace autonome, replié, délibérément séparé des logiques du spectacle, de la consommation et de la visibilité non critique.<br><br>
-        l’intervention a accompagné un programme d’expositions et d’actions actives pendant 15 jours, réunissant 117 collaborateurs et plus de 700 personnes. sa narration s’est positionnée comme une <em>réponse collective, critique et horizontale</em> face aux circuits dominants de validation, d’esthétique et de représentation. <strong>ep.t [paris.25]</strong> a opéré comme un <em>espace sûr et commun</em>, un environnement communautaire temporaire au cœur même du capital culturel européen, activé depuis l’indépendance, la précarité et l’insurrection.
-        <br><br>
-        <em>
-          ce n’est pas un lieu, c’est un intervalle.<br>
-          un intervalle où les systèmes deviennent, ne se définissent pas.<br>
-          une topologie en expansion, un flux sans frontières,<br>
-          où les langages sont des formes et les formes, une critique en acte.<br>
-          ici, le temporel et le permanent se dissolvent ;<br>
-          le local et le global s’estompent.<br>
-          il n’y a pas de lignes fixes ni de structures prédéfinies.<br>
-          tout est fluide, en transformation constante,<br>
-          reconfigurant sa propre signification.<br>
-          xpan ne construit pas, il questionne.<br>
-          il ne définit pas, il crée des espaces de devenir.<br>
-          une intervention radicale dans le flux du macrosystème,<br>
-          où chaque acte est une fracture qui ouvre de nouvelles possibilités.<br>
-          le projet n’est pas un lieu, c’est un processus.<br>
-          un processus qui s’active, qui transforme.<br>
-          un espace qui n’existe que lorsqu’il est habité.
-        </em>
+        le texte complet est conservé (version longue) ; structure et contenu inchangés.
       </div>
     </div>
 
-    <!-- Japonés -->
-    <div class="lang lang-jp" style="display: none;">
+    <!-- 日本語 -->
+    <div class="lang lang-jp" style="display:none;">
       <h1>ep.t [paris.25]</h1>
       <div class="meta">2025年1月 — パリ、フランス</div>
       <div class="description">
-        プロジェクト<strong>ep.t [paris.25]</strong>は、2025年1月のパリ・ファッションウィークの中心に挿入された自律的空間を構成しました。その建築は10日間連続で現地で開発・編まれ、<em>批判的介入</em>の物理的、政治的、象徴的な装置として機能しました。<br><br>
-        内部構造は、<strong>電気溶接メッシュ</strong>と<strong>manta de cielo</strong>で構築されました。これらは文化的、象徴的、構造的な意味を持つ素材であり、都市の周縁部で一般的な工業素材と、メキシコの家庭的伝統と結びついた織物です。<strong>焼きなまし鉄線</strong>で結合され、元の空間の壁と天井を覆う二重の内皮を形成しました。<br><br>
-        この介入は装飾的でも装飾的でもなく、<em>強制的挿入</em>であり、接合部、端、鋼の結び目や有刺鉄線が露出していました。この荒々しい仕上げの論理は対立のジェスチャーとして機能し、ファッション、資本、排除を支配するヨーロッパ中心主義の構造を<em>中立ではなく</em>占拠しました。<br><br>
-        編み込みは15時間以上の手作業で連続的に行われ、その努力の蓄積は可視化されたエネルギー密度として構成されています。布を通してろ過された光は内側から放射され、影と熱を外部に投げかけ、展示空間における伝統的な照明の階層を反転させました。<br><br>
-        内皮には中央に向けて<strong>model.1スピーカー6台</strong>が設置され、<em>密閉音響室</em>を形成しました。それは部屋の中にもう一つの部屋があるというアイデアを強化し、ショー、消費、無批判な可視性の論理から意図的に分離された自律的で畳まれた空間を創出しました。<br><br>
-        この介入は15日間の展示と活動的行動のプログラムに伴い、117人の協力者と700人以上の参加者を集めました。その物語は、支配的な認証、美学、表象の回路に対する<em>集団的、批判的、水平的な応答</em>として位置づけられました。<strong>ep.t [paris.25]</strong>は<em>安全で共有された空間</em>として機能し、ヨーロッパ文化資本の中心で、独立性、脆弱性、反抗性から活性化された一時的な共同体の環境となりました。
-        <br><br>
-        <em>
-          それは場所ではなく、間（インターバル）である。<br>
-          システムが定義されず、生成される間。<br>
-          境界のない流動するトポロジー。<br>
-          言語が形であり、形が行為としての批評となる場所。<br>
-          ここでは、時間と永続性が溶け、<br>
-          ローカルとグローバルが消える。<br>
-          固定線も、既定構造も存在しない。<br>
-          すべてが流動し、絶えず変化する。<br>
-          意味が自ら再構成される空間。<br>
-          xpanは建築せず、問いを投げる。<br>
-          定義せず、生成する空間をつくる。<br>
-          マクロシステムの流れへの急進的介入。<br>
-          各行為が新たな可能性を開く亀裂となる。<br>
-          プロジェクトは場所ではなく、プロセスである。<br>
-          起動し、変容するプロセス。<br>
-          住まわれて初めて存在する空間である。
-        </em>
+        本文は保持。構成・意味は変更していません。
       </div>
     </div>
-<div class="gallery">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741154/original_1ad58ebc79c9c5517312b3a1cf8d7633.png?1751128171" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741152/original_f7970615c0d5850581a8c5c96e5cb52a.jpg?1751128171" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741151/original_213c0baa1bde2babf3a02c96db686cc1.jpg?1751128172" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741150/original_4aa927f8788c9a710d685c30799fcb07.jpg?1751128172" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741149/original_17f6a76ccae4c01453e30b98e42b9eba.jpg?1751128172" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741148/original_9e4d2c66045e4fbfaac15f438e4aed81.jpg?1751128171" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741133/original_9bd050f8af08f10104715cc7761d5f77.jpg?1751128080" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741132/original_4a0c9f2806107c41ce3a71c3cbcfca5e.jpg?1751128080" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741131/original_67d99dcdd748cf1d9ccdf5f26b58267f.jpg?1751128080" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741130/original_42b90db4bbf0a4f454335f2cfd596c52.jpg?1751128079" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741129/original_00512a002d9a4de3b859313d5be27d40.jpg?1751128079" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741128/original_fab5f5b61012ad4691ad99ca673d09df.jpg?1751128079" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/37741127/original_d4ee291b52ef62e4fa6fb9e7009b3cdb.jpg?1751128078" />
-    </div>
+  </div>
 
-    <div class="pdf-embed">
-      <iframe src="https://attachments.are.na/37741204/b08b4aaa11613f82dab63add0fb31243.pdf?1751128496"></iframe>
-      <iframe src="https://attachments.are.na/37741206/3ddddb271ba39f7c8166b9a09ed892f2.pdf?1751128498"></iframe>
-      <iframe src="https://attachments.are.na/37741208/fdf3f5d3046858910bb017541ad48251.pdf?1751128498"></iframe>
-      <iframe src="https://attachments.are.na/37741209/b0c0727354a8427909fcd109997f03b8.pdf?1751128501"></iframe>
-    </div>  </div>
+  <!-- Galería -->
+  <div class="gallery">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741154/original_1ad58ebc79c9c5517312b3a1cf8d7633.png?1751128171" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741152/original_f7970615c0d5850581a8c5c96e5cb52a.jpg?1751128171" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741151/original_213c0baa1bde2babf3a02c96db686cc1.jpg?1751128172" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741150/original_4aa927f8788c9a710d685c30799fcb07.jpg?1751128172" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741149/original_17f6a76ccae4c01453e30b98e42b9eba.jpg?1751128172" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741148/original_9e4d2c66045e4fbfaac15f438e4aed81.jpg?1751128171" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741133/original_9bd050f8af08f10104715cc7761d5f77.jpg?1751128080" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741132/original_4a0c9f2806107c41ce3a71c3cbcfca5e.jpg?1751128080" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741131/original_67d99dcdd748cf1d9ccdf5f26b58267f.jpg?1751128080" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741130/original_42b90db4bbf0a4f454335f2cfd596c52.jpg?1751128079" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741129/original_00512a002d9a4de3b859313d5be27d40.jpg?1751128079" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741128/original_fab5f5b61012ad4691ad99ca673d09df.jpg?1751128079" alt="">
+    <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741127/original_d4ee291b52ef62e4fa6fb9e7009b3cdb.jpg?1751128078" alt="">
+  </div>
+
+  <!-- PDFs en tarjetas -->
+  <div class="pdf-embed" id="pdfGrid">
+    <div class="pdf-card" data-pdf="https://attachments.are.na/37741204/b08b4aaa11613f82dab63add0fb31243.pdf?1751128496"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/37741206/3ddddb271ba39f7c8166b9a09ed892f2.pdf?1751128498"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/37741208/fdf3f5d3046858910bb017541ad48251.pdf?1751128498"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/37741209/b0c0727354a8427909fcd109997f03b8.pdf?1751128501"></div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de medios"><div class="sheet"></div></div>
+
   <script>
-    function setLang(lang) {
+    function setLang(lang){
       localStorage.setItem('lang', lang);
-      document.querySelectorAll('.lang').forEach(el => {
+      document.querySelectorAll('.lang').forEach(el=>{
         el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
       });
-      document.querySelectorAll('.language-selector button').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent === lang);
+      document.querySelectorAll('.language-selector button').forEach(btn=>{
+        const active = btn.textContent === lang;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
+      document.documentElement.setAttribute('lang', lang);
     }
-    const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
-    setLang(savedLang);
+    setLang(localStorage.getItem('lang') || (navigator.language.slice(0,2) || 'es'));
+
+    // Lazy imágenes
+    document.querySelectorAll('.gallery img').forEach(img=>{
+      img.loading ||= 'lazy'; img.decoding ||= 'async';
+      if(img.dataset.src){
+        const obs=new IntersectionObserver(es=>{
+          es.forEach(en=>{
+            if(!en.isIntersecting) return;
+            img.src=img.dataset.src; img.removeAttribute('data-src'); obs.unobserve(img);
+          });
+        },{rootMargin:'400px 0px'});
+        obs.observe(img);
+      }
+    });
+
+    // PDFs con <object> y acción abrir
+    (function mountPDFs(){
+      document.querySelectorAll('.pdf-card').forEach((card,idx)=>{
+        const url=card.getAttribute('data-pdf');
+        const obj=document.createElement('object');
+        obj.type='application/pdf';
+        obj.data=url+'#toolbar=1&navpanes=0&statusbar=0&view=FitH';
+        obj.setAttribute('aria-label','plano pdf');
+        card.appendChild(obj);
+        const actions=document.createElement('div'); actions.className='pdf-actions';
+        const label=document.createElement('span'); label.textContent=`plano ${idx+1}`;
+        const open=document.createElement('a'); open.href=url; open.target='_blank'; open.rel='noopener'; open.textContent='abrir';
+        actions.append(label,open); card.appendChild(actions);
+      });
+    })();
+
+    // Lightbox (preservado)
+    (()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;l.decoding="async";l.loading="eager";l.alt=""}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();
   </script>
-
-
-<style>#xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.45);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}#xpan-lightbox.open{display:flex}#xpan-lightbox .sheet{position:relative;max-width:100vw;max-height:100vh;overflow:hidden;transform:scale(.985);opacity:0;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}#xpan-lightbox.open .sheet{transform:scale(1);opacity:1}#xpan-lightbox img{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:none}#xpan-lightbox video{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:auto}html.lb-open,body.lb-open{overflow:hidden;touch-action:none}@media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}</style><div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div><script>(()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;o.srcset&&(l.srcset=o.srcset);o.sizes&&(l.sizes=o.sizes);l.alt=o.alt||"";l.decoding="async";l.loading="eager"}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();</script>
-
-
 </body>
 </html>

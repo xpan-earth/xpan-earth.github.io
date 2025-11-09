@@ -1,409 +1,284 @@
 <!DOCTYPE html>
-
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<meta content="light" name="color-scheme"/>
-<title>sound+ — scores fluxus · index art book fair 2022 — xpan</title>
-<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
-<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
-<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
-<link href="https://attachments.are.na" rel="dns-prefetch"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>sound+ — scores fluxus · index art book fair 2022 — xpan</title>
 
+  <!-- perf hints -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+
+  <!-- utils existentes -->
   <script src="/assets/js/video-autoplay-mobile.js" defer></script>
-<script src="/assets/js/media-proxy.js" defer></script>
-<style>
-    :root{--bg:#fff;--fg:#000;--line:rgba(0,0,0,.12);--maxw:1440px;--radius:14px}
+  <script src="/assets/js/media-proxy.js" defer></script>
+
+  <!-- ===== post-tech tokens ===== -->
+  <style>
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20; --b1:1px solid var(--line);
+      --maxw:1000px; --pad-x:clamp(16px,4vw,48px); --g:16px; --header-h:64px; --radius:14px;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#E6E8EA; --line-weak:#F1F3F5; }
+    }
+
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
-    img,video{display:block;max-width:100%;height:auto}
-    a{text-decoration:none;color:inherit}
-    header{position:fixed;top:1rem;left:1rem;z-index:30}
-    header img{width:50px;height:auto;display:block}
-    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
-    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;opacity:.5;transition:.2s}
-    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
-    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1rem}
-    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
-    .muted{opacity:.68;font-size:.92rem}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden
+    }
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s cubic-bezier(.22,.61,.36,1)}
+    a:hover{border-color:var(--accent)}
+
+    /* header + idioma */
+    header{position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);z-index:40;display:flex;align-items:center;justify-content:space-between;height:var(--header-h)}
+    header img{width:48px;height:auto;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ filter:none } }
+
+    .language-selector{display:flex;gap:8px;text-transform:lowercase}
+    .language-selector button{
+      background:transparent;border:var(--b1);padding:6px 10px;cursor:pointer;
+      font:600 .85rem/1 system-ui;color:var(--fg-dim);letter-spacing:.2px;
+      transition:color .18s, border-color .18s, background-color .18s
+    }
+    .language-selector button.active,
+    .language-selector button[aria-pressed="true"]{color:var(--fg);border-color:var(--accent);background:rgba(24,96,255,.06)}
+
+    /* layout */
+    main{max-width:var(--maxw);margin:calc(var(--header-h) + 40px) auto 64px;padding:0 var(--pad-x)}
+    .section{margin:24px 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    h1{font:700 1.35rem/1.25 system-ui;margin:.2rem 0 .6rem;text-transform:lowercase}
+    h2{font:700 1.02rem/1.25 system-ui;margin:.2rem 0;text-transform:lowercase}
+    .muted{color:var(--fg-dim);font-size:.92rem}
     .lang{display:none}.lang.active{display:block}
+
+    /* grids */
     .grid{display:grid;gap:0}
     .grid-3-fixed{grid-template-columns:repeat(3,1fr)}
     .grid-6m-4d{grid-template-columns:repeat(6,1fr)}
     @media(min-width:760px){.grid-6m-4d{grid-template-columns:repeat(4,1fr)}}
-    figure.tile{margin:0;position:relative;background:#000}
+
+    figure.tile{margin:0;position:relative;background:#000;border:0;border-radius:0}
     .tile>img,.tile>video{width:100%;height:100%;object-fit:cover;background:#000}
-    .contain .tile>img,.contain .tile>video{object-fit:contain;background:#fff}
-    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:9999}
+    .contain .tile>img,.contain .tile>video{object-fit:contain;background:transparent}
+
+    /* lightbox */
+    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);
+      display:none;align-items:center;justify-content:center;z-index:9999}
     #lightbox.open{display:flex}
-    #lightbox figure{margin:0;max-width:92vw;max-height:92vh}
-    #lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
-    #lbClose{position:fixed;top:12px;right:12px;background:#000;color:#fff;border:none;border-radius:999px;padding:.55rem .8rem;cursor:pointer}
-    .sound-badge{position:absolute;right:.35rem;bottom:.35rem;background:rgba(255,255,255,.85);color:#000;border:1px solid rgba(0,0,0,.25);border-radius:999px;padding:.15rem .45rem;font-size:.72rem;letter-spacing:.01em;user-select:none}
-    .muted .sound-badge{opacity:.8}
-    .score-img{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-    .score-img img{width:100%;height:auto;object-fit:contain}
-    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.2rem 0;text-transform:lowercase}
-    h2{font-size:1.02rem;margin:.2rem 0;text-transform:lowercase}
-    .piece{border-top:1px solid var(--line);padding-top:1rem;margin-top:1rem}
-  
-/* === Align typography and container to mdtc.pjt.mdl.1 === */
-body { font-family:'Times New Roman',serif; color:#000; }
+    #lightbox figure{margin:0;max-width:92vw;max-height:92vh;transform:scale(.985);opacity:0;transition:transform .18s,opacity .18s}
+    #lightbox.open figure{transform:scale(1);opacity:1}
+    #lightbox img,#lightbox video{max-width:92vw;max-height:92vh;object-fit:contain}
 
-/* Container rhythm */
-@media (min-width: 1024px){
-  main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
-  #grid-verticales,#grid-destacadas,#grid-grafico,#piezas{max-width:1000px;margin-left:auto;margin-right:auto}
-  /* keep pozole/rebeca as-is (no width cap) */
-}
-@media (max-width: 768px){
-  main{margin-top:6rem;padding:0 1.5rem}
-}
-
-/* Typography copied from reference */
-h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase }
-.muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
-.lang p { font-size:1rem; line-height:1.6; max-width:700px }
-
-</style>
-<style id="xpan-base-style-2025-09-02">
-:root{
-  --bg:#fff; --fg:#000; --line:rgba(0,0,0,.12); --soft:rgba(0,0,0,.06);
-  --maxw:1440px; --pad:16px; --radius:16px;
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
-img,video,canvas,svg{max-width:100%;height:auto;display:block}
-a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line)}
-a:hover{border-color:var(--fg)}
-.container{width:100%;max-width:var(--maxw);margin:0 auto;padding:calc(var(--pad)*1.5) var(--pad)}
-.section{padding:clamp(24px,3vw,48px) 0;border-top:1px solid var(--soft)}
-.grid{display:grid;gap:clamp(12px,1.5vw,20px)}
-.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media(max-width:900px){.grid.cols-3{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:640px){.grid.cols-2,.grid.cols-3{grid-template-columns:1fr}}
-
-.caption{font-size:13px;line-height:1.3;color:#333;margin-top:6px}
-.figure{background:linear-gradient(180deg,rgba(0,0,0,.02),transparent);padding:8px;border-radius:12px}
-.media-fit{width:100%;aspect-ratio:auto;object-fit:contain}
-.hero{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--soft)}
-.hero video,.hero img{width:100%;height:100%;object-fit:cover}
-.light{border:1px solid var(--soft);border-radius:12px;background:#fff}
-small.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;color:#333}
-h1,h2,h3{font-weight:400;margin:0 0 .4em 0}
-h1{font-size:clamp(24px,3.6vw,42px);line-height:1.05}
-h2{font-size:clamp(18px,2.4vw,28px)}
-h3{font-size:clamp(16px,2vw,22px)}
-p{margin:.75em 0;line-height:1.4}
-ul{margin:.5em 0;padding-left:1.2em}
-hr.sep{border:none;border-top:1px solid var(--soft);margin:32px 0}
-/* lightbox container if used by existing markup */
-.lb{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;padding:2vw;z-index:50}
-.lb.open{display:flex}
-.lb media{max-height:92vh;max-width:92vw;object-fit:contain}
-/* subtle fade-in for media once loaded */
-.lazy-ready{transition:opacity .35s ease;opacity:1}
-.lazy-pending{opacity:0}
-
-/* === Align typography and container to mdtc.pjt.mdl.1 === */
-body { font-family:'Times New Roman',serif; color:#000; }
-
-/* Container rhythm */
-@media (min-width: 1024px){
-  main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
-  #grid-verticales,#grid-destacadas,#grid-grafico,#piezas{max-width:1000px;margin-left:auto;margin-right:auto}
-  /* keep pozole/rebeca as-is (no width cap) */
-}
-@media (max-width: 768px){
-  main{margin-top:6rem;padding:0 1.5rem}
-}
-
-/* Typography copied from reference */
-h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase }
-.muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
-.lang p { font-size:1rem; line-height:1.6; max-width:700px }
-
-/* Hide any overlays or hints related to unmute */
-.tap-to-unmute, .tap-hint, [data-audio-toggle], .unmute-hint,
-.badge-unmute, .video-unmute, .mute-overlay, .hint, .overlay-unmute { display:none !important; }
-
-/* Ensure no visual filters for muted videos */
-video[muted]{ filter:none !important; opacity:1 !important; }
-
-/* Desktop media subtlety: constrain width and center; no frames */
-@media(min-width: 1100px){
-  img:not([data-bg="true"]):not(.bg):not(.hero img),
-  video:not([data-bg="true"]):not(.bg):not(.hero video){
-    max-width: 960px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-}
-
-/* Remove borders/frames/radius/background from media */
-img, video{
-  border:none !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  box-shadow:none !important;
-}
-
-/* Lightbox close button hidden; click overlay to exit */
-.lb [data-close], .lb .close,
-.lightbox [data-close], .lightbox .close { display:none !important; }
-
-/* Safe container width and padding for consistency */
-:where(main, .container, .content, .page, .wrap, .layout, .inner, section){
-  max-width: var(--maxw);
-  margin-left:auto;
-  margin-right:auto;
-  padding-left: var(--pad);
-  padding-right: var(--pad);
-}
-
-/* Typo rhythm */
-h1{ letter-spacing:.2px }
-h2,h3{ letter-spacing:.1px }
-p,li{ line-height:1.45 }
-.caption{ color:#333 }
-hr{ border:none; border-top:1px solid var(--soft) }
-
-
-/* Remove any mute dimming */
-.muted{opacity:1 !important}
-
-/* Hide any tap/unmute badges explicitly */
-.sound-badge{display:none !important}
-
-/* Lighter desktop presence for large 3-col grids */
-@media(min-width: 1200px){
-  .grid-3-fixed{grid-template-columns:repeat(3,1fr) !important}
-}
-@media(min-width: 1600px){
-  .grid-3-fixed{grid-template-columns:repeat(5,1fr) !important}
-}
-
-/* Ensure tiles are flat, no rounded placeholders from UA */
-figure.tile, figure.tile>*{border-radius:0 !important}
-
-/* === Align typography and container to mdtc.pjt.mdl.1 === */
-body { font-family:'Times New Roman',serif; color:#000; }
-
-/* Container rhythm */
-@media (min-width: 1024px){
-  main{max-width:1000px;margin:7rem auto 4rem;padding:0 3rem}
-  #grid-verticales,#grid-destacadas,#grid-grafico,#piezas{max-width:1000px;margin-left:auto;margin-right:auto}
-  /* keep pozole/rebeca as-is (no width cap) */
-}
-@media (max-width: 768px){
-  main{margin-top:6rem;padding:0 1.5rem}
-}
-
-/* Typography copied from reference */
-h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase }
-.muted { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem }
-.lang p { font-size:1rem; line-height:1.6; max-width:700px }
-
-.section:first-of-type {
-  border-top: none;
-}
-
-</style>
+    /* helper */
+    .sound-badge{display:none !important}
+  </style>
 </head>
+
 <body>
 <header>
-<a aria-label="xpan" href="/"><img alt="xpan" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="sound+.png"/></a>
-<nav aria-label="selector de idioma" class="language-selector">
-<button class="active" data-lang="es">es</button>
-<button data-lang="en">en</button>
-<button data-lang="fr">fr</button>
-<button data-lang="jp">jp</button>
-</nav>
+  <a aria-label="xpan" href="/"><img alt="xpan" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="sound+.png"/></a>
+  <nav aria-label="selector de idioma" class="language-selector">
+    <button class="active" data-lang="es" aria-pressed="true">es</button>
+    <button data-lang="en" aria-pressed="false">en</button>
+    <button data-lang="fr" aria-pressed="false">fr</button>
+    <button data-lang="jp" aria-pressed="false">jp</button>
+  </nav>
 </header>
+
 <main>
-<section class="section" id="descripcion">
-<div class="lang lang-es active">
-<h1>sound + — scores fluxus · index art book fair 2022</h1>
-<p class="muted">ciudad de méxico — 2022 — index art book fair</p>
-<p>para la edición 2022 de index art book fair, sound+ presentó tres acciones performáticas desarrolladas por cinco artistas mexicanos a partir de <em>scores</em> impresos del movimiento fluxus. la propuesta, curada por daniela kiehnle, se basa en una investigación de piezas representativas del colectivo, seleccionando instrucciones publicadas en distintos momentos de su trayectoria.</p>
-<p>los <em>scores</em> elegidos operan como detonadores: instrucciones a la vez precisas y ambiguas, abiertas a interpretaciones libres o dogmáticas que se transforman según su contexto histórico y sociocultural. su relectura por artistas vinculados a la experimentación sonora y performática activa un diálogo entre artes visuales, acción en vivo, sonido y edición, en sintonía con la ideología fundamental de sound+ como plataforma experimental.</p>
-</div>
-<div class="lang lang-en">
-<h1>sound + — fluxus scores · index art book fair 2022</h1>
-<p class="muted">mexico city — 2022 — index art book fair</p>
-<p>for the 2022 edition of index art book fair, sound+ presented three performative actions developed by five mexican artists from printed fluxus scores. curated by daniela kiehnle, the program draws on research into representative works of the collective, selecting instructions published at different moments of its trajectory.</p>
-<p>the chosen scores act as triggers: instructions that are both precise and ambiguous, open to free or dogmatic interpretations that shift with historical and sociocultural context. their rereading by artists engaged with sonic and performative experimentation generates a dialogue across visual arts, live action, sound, and editorial practice, aligned with sound+’s core experimental ethos.</p>
-</div>
-<div class="lang lang-fr">
-<h1>sound + — partitions fluxus · index art book fair 2022</h1>
-<p class="muted">mexico — 2022 — index art book fair</p>
-<p>pour l’édition 2022 d’index art book fair, sound+ a présenté trois actions performatives développées par cinq artistes mexicains à partir de partitions fluxus imprimées. la proposition, curatée par daniela kiehnle, s’appuie sur une recherche d’œuvres représentatives du collectif, en sélectionnant des instructions publiées à différents moments de son parcours.</p>
-<p>les partitions choisies fonctionnent comme des déclencheurs : des instructions à la fois précises et ambiguës, ouvertes à des interprétations libres ou dogmatiques qui se transforment selon le contexte historique et socioculturel. leur relecture par des artistes liés à l’expérimentation sonore et performative active un dialogue entre arts visuels, action en direct, son et édition, en accord avec l’idéologie expérimentale de sound+.</p>
-</div>
-<div class="lang lang-jp">
-<h1>sound + — フルクサス・スコアズ · index art book fair 2022</h1>
-<p class="muted">メキシコシティ — 2022 — index art book fair</p>
-<p>2022年のindex art book fairでは、sound+がフルクサスの印刷スコアを起点に、メキシコの5名のアーティストとともに3つのパフォーマティブなアクションを発表した。キュレーションはダニエラ・キーンレ。コレクティブの代表的作品を調査し、異なる時期に発表された指示文（スコア）を選定した。</p>
-<p>選ばれたスコアは起爆装置として機能する。厳密さと曖昧さを併せ持つ指示は、歴史的・社会文化的コンテクストに応じて変容し、自由あるいはドグマ的な解釈に開かれている。音響とパフォーマンスの実験に関わるアーティストによる再読は、視覚芸術／ライブアクション／サウンド／エディトリアルのあいだに対話を生み、sound+の実験的理念と共鳴する。</p>
-</div>
-</section>
-<section aria-label="material gráfico" class="section" id="mat-grafico">
-<div class="grid grid-3-fixed" id="grid-grafico"></div>
-</section>
-<section aria-label="12 imágenes destacadas" class="section" id="destacadas">
-<div class="grid grid-3-fixed" id="grid-destacadas"></div>
-</section>
-<section aria-label="piezas" class="section" id="piezas">
-<article class="piece">
-<div class="lang lang-es active">
-<h2>pieza 1 · la máscara</h2>
-<p>sites, gerardo ponce, emiliano cruz jiménez — duración: 45 min</p>
-<p>inspirada en <em>music for electric metronome</em> (ichiyanagi toshi, 1960), publicada en <em>an anthology of chance operations</em> (1963), esta pieza convierte al metrónomo en director de escena. tres intérpretes manipulan metrónomos a distintas escalas y generan una acción circular donde el ritmo mecánico guía la aparición de sonidos electrónicos, ambientales y vocales. la máscara funciona como símbolo de encubrimiento y libertad, proyectando una reflexión performática que solo se completa en el instante de su ejecución.</p>
-</div>
-<div class="lang lang-en">
-<h2>piece 1 · the mask</h2>
-<p>sites, gerardo ponce, emiliano cruz jiménez — duration: 45 min</p>
-<p>inspired by <em>music for electric metronome</em> (ichiyanagi toshi, 1960), published in <em>an anthology of chance operations</em> (1963), this piece turns the metronome into a stage director. three performers manipulate metronomes at different scales to generate a circular action where the mechanical pulse steers electronic, environmental and vocal sounds. the mask works as a symbol of concealment and freedom, casting a performative reflection that completes only in the instant of execution.</p>
-</div>
-<div class="lang lang-fr">
-<h2>pièce 1 · le masque</h2>
-<p>sites, gerardo ponce, emiliano cruz jiménez — durée : 45 min</p>
-<p>inspirée de <em>music for electric metronome</em> (ichiyanagi toshi, 1960), publiée dans <em>an anthology of chance operations</em> (1963), cette pièce fait du métronome un metteur en scène. trois interprètes manipulent des métronomes à différentes échelles et génèrent une action circulaire où le rythme mécanique guide l’apparition de sons électroniques, environnementaux et vocaux. le masque agit comme symbole de dissimulation et de liberté, produisant une réflexion performative qui ne s’achève qu’au moment de l’exécution.</p>
-</div>
-<div class="lang lang-jp">
-<h2>作品1 · マスク</h2>
-<p>sites、gerardo ponce、emiliano cruz jiménez — 上演時間：45分</p>
-<p>本作は<em>music for electric metronome</em>（一柳慧、1960）に着想を得ており、<em>an anthology of chance operations</em>（1963）に収録されたスコアを参照する。3名の演者が異なるスケールのメトロノームを操作し、機械的な拍が電子音／環境音／声の出現を導く円環的なアクションを形成する。マスクは隠蔽と自由の象徴として働き、上演の瞬間にのみ完結するパフォーマティブな省察を投影する。</p>
-</div>
-<div class="score-img" style="margin-top:.8rem"><img alt="partitura — la máscara" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="https://d2w9rnfcy7mm78.cloudfront.net/39251283/original_eb44b667d615b174d7f87b4f89d54eaa.png?1756850684"/></div>
-</article>
-<article class="piece">
-<div class="lang lang-es active">
-<h2>pieza 2 · el método de esteban</h2>
-<p>mario alonso hernández — duración: 20 min</p>
-<p>basada en <em>music for two players I</em> (mieko shiomi, 1963), incluida en <em>events and games</em> (1964), esta acción toma las instrucciones originales como punto de partida. hernández confronta la noción de <em>player</em> con cuestionamientos ontológicos y recurre a la técnica de desfasaje utilizada por steve reich en <em>come out</em> (1966). el resultado es una composición donde texto, repetición y sonido se entrelazan para explorar la relación entre instrucción y ejecución.</p>
-</div>
-<div class="lang lang-en">
-<h2>piece 2 · esteban’s method</h2>
-<p>mario alonso hernández — duration: 20 min</p>
-<p>based on <em>music for two players I</em> (mieko shiomi, 1963), included in <em>events and games</em> (1964), this action takes the original instructions as a starting point. hernández confronts the notion of the <em>player</em> through ontological questioning and employs the phase-shifting technique used by steve reich in <em>come out</em> (1966). the result is a composition where text, repetition and sound interlace to explore the relation between instruction and execution.</p>
-</div>
-<div class="lang lang-fr">
-<h2>pièce 2 · la méthode d’esteban</h2>
-<p>mario alonso hernández — durée : 20 min</p>
-<p>fondée sur <em>music for two players I</em> (mieko shiomi, 1963), incluse dans <em>events and games</em> (1964), cette action prend les instructions originales comme point de départ. hernández confronte la notion de <em>player</em> par un questionnement ontologique et recourt au déphasage employé par steve reich dans <em>come out</em> (1966). il en résulte une composition où texte, répétition et son s’entrelacent pour explorer le rapport entre instruction et exécution.</p>
-</div>
-<div class="lang lang-jp">
-<h2>作品2 · エステバンの方法</h2>
-<p>mario alonso hernández — 上演時間：20分</p>
-<p><em>music for two players I</em>（塩見允枝子、1963。<em>events and games</em>［1964］所収）を基に、オリジナルの指示文を起点として展開する。hernándezは<em>player</em>という概念を存在論的に問い直し、スティーブ・ライヒの<em>come out</em>（1966）で用いられたフェイズ・シフティング技法を参照する。テキスト／反復／音が絡み合い、指示と実行の関係を探る構成となる。</p>
-</div>
-<div class="score-img" style="margin-top:.8rem"><img alt="partitura — el método de esteban" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="https://d2w9rnfcy7mm78.cloudfront.net/39251282/original_551e2e5bc38dfa52080b37c5c2b469a6.png?1756850681"/></div>
-</article>
-<article class="piece">
-<div class="lang lang-es active">
-<h2>pieza 3 · sin título</h2>
-<p>sol oosel — duración: 30 min</p>
-<p>retomando <em>drinking piece for orchestra</em>, publicado en <em>grapefruit</em> (yoko ono, 1964), sol oosel construye una intervención sonoro-espacial. el carácter poético de las instrucciones se transforma en un campo de incertidumbre donde el espectador enfrenta lo incognoscible. la pieza celebra la apertura de fluxus hacia lo indefinido, haciendo del azar y la percepción colectiva los materiales centrales de la acción.</p>
-</div>
-<div class="lang lang-en">
-<h2>piece 3 · untitled</h2>
-<p>sol oosel — duration: 30 min</p>
-<p>drawing on <em>drinking piece for orchestra</em>, published in <em>grapefruit</em> (yoko ono, 1964), sol oosel builds a sound–spatial intervention. the poetic character of the instructions becomes a field of uncertainty in which the spectator faces the unknowable. the piece embraces fluxus’ openness to the indeterminate, making chance and collective perception the central materials of the action.</p>
-</div>
-<div class="lang lang-fr">
-<h2>pièce 3 · sans titre</h2>
-<p>sol oosel — durée : 30 min</p>
-<p>en s’appuyant sur <em>drinking piece for orchestra</em>, publié dans <em>grapefruit</em> (yoko ono, 1964), sol oosel compose une intervention sonoro-spatiale. le caractère poétique des instructions devient un champ d’incertitude où le spectateur affronte l’inconnaissable. la pièce assume l’ouverture de fluxus à l’indéterminé en faisant du hasard et de la perception collective les matériaux centraux de l’action.</p>
-</div>
-<div class="lang lang-jp">
-<h2>作品3 · 無題</h2>
-<p>sol oosel — 上演時間：30分</p>
-<p>小野洋子『<em>grapefruit</em>』（1964）所収の<em>drinking piece for orchestra</em>を参照し、音と空間を横断する介入を構築する。詩的な指示は不確定性の場へと変容し、観客は不可知なものと向き合う。フルクサスが志向した不定形への開放を受け継ぎ、偶然性と集合的知覚を行為の中核に据える。</p>
-</div>
-<div class="score-img" style="margin-top:.8rem"><img alt="partitura — sin título" class="lazy-pending" decoding="async" loading="lazy" referrerpolicy="no-referrer" src="https://d2w9rnfcy7mm78.cloudfront.net/39251281/original_f55fc0061ce199364e8c9ac5e3bae70d.png?1756850679"/></div>
-</article>
-</section>
-<section aria-label="pozole" class="section" id="grid-pozole">
+  <!-- descripción -->
+  <section class="section" id="descripcion">
+    <div class="lang lang-es active">
+      <h1>sound + — scores fluxus · index art book fair 2022</h1>
+      <p class="muted">ciudad de méxico — 2022 — index art book fair</p>
+      <p>para la edición 2022 de index art book fair, sound+ presentó tres acciones performáticas desarrolladas por cinco artistas mexicanos a partir de <em>scores</em> impresos del movimiento fluxus. la propuesta, curada por daniela kiehnle, se basa en una investigación de piezas representativas del colectivo, seleccionando instrucciones publicadas en distintos momentos de su trayectoria.</p>
+      <p>los <em>scores</em> elegidos operan como detonadores: instrucciones a la vez precisas y ambiguas, abiertas a interpretaciones libres o dogmáticas que se transforman según su contexto histórico y sociocultural. su relectura por artistas vinculados a la experimentación sonora y performática activa un diálogo entre artes visuales, acción en vivo, sonido y edición, en sintonía con la ideología fundamental de sound+ como plataforma experimental.</p>
+    </div>
+    <div class="lang lang-en">
+      <h1>sound + — fluxus scores · index art book fair 2022</h1>
+      <p class="muted">mexico city — 2022 — index art book fair</p>
+      <p>for the 2022 edition of index art book fair, sound+ presented three performative actions developed by five mexican artists from printed fluxus scores. curated by daniela kiehnle, the program draws on research into representative works of the collective, selecting instructions published at different moments of its trajectory.</p>
+      <p>the chosen scores act as triggers: instructions that are both precise and ambiguous, open to free or dogmatic interpretations that shift with historical and sociocultural context. their rereading by artists engaged with sonic and performative experimentation generates a dialogue across visual arts, live action, sound, and editorial practice, aligned with sound+’s core experimental ethos.</p>
+    </div>
+    <div class="lang lang-fr">
+      <h1>sound + — partitions fluxus · index art book fair 2022</h1>
+      <p class="muted">mexico — 2022 — index art book fair</p>
+      <p>pour l’édition 2022 d’index art book fair, sound+ a présenté trois actions performatives développées par cinq artistes mexicains à partir de partitions fluxus imprimées. la proposition, curatée par daniela kiehnle, s’appuie sur une recherche d’œuvres représentatives du collectif, en sélectionnant des instructions publiées à différents moments de son parcours.</p>
+      <p>les partitions choisies fonctionnent comme des déclencheurs : des instructions à la fois précises et ambiguës, ouvertes à des interprétations libres ou dogmatiques qui se transforment selon le contexte historique et socioculturel. leur relecture par des artistes liés à l’expérimentation sonore et performative active un dialogue entre arts visuels, action en direct, son et édition, en accord avec l’idéologie expérimentale de sound+.</p>
+    </div>
+    <div class="lang lang-jp">
+      <h1>sound + — フルクサス・スコアズ · index art book fair 2022</h1>
+      <p class="muted">メキシコシティ — 2022 — index art book fair</p>
+      <p>2022年のindex art book fairでは、sound+がフルクサスの印刷スコアを起点に、メキシコの5名のアーティストとともに3つのパフォーマティブなアクションを発表した。キュレーションはダニエラ・キーンレ。コレクティブの代表的作品を調査し、異なる時期に発表された指示文（スコア）を選定した。</p>
+      <p>選ばれたスコアは起爆装置として機能する。厳密さと曖昧さを併せ持つ指示は、歴史的・社会文化的コンテクストに応じて変容し、自由あるいはドグマ的な解釈に開かれている。音響とパフォーマンスの実験に関わるアーティストによる再読は、視覚芸術／ライブアクション／サウンド／エディトリアルのあいだに対話を生み、sound+の実験的理念と共鳴する。</p>
+    </div>
+  </section>
 
-<div class="grid grid-6m-4d" id="pozole"></div>
-</section>
-<section aria-label="rebeca" class="section" id="grid-rebeca">
+  <!-- material gráfico -->
+  <section class="section" id="mat-grafico" aria-label="material gráfico">
+    <div class="grid grid-3-fixed" id="grid-grafico"></div>
+  </section>
 
-<div class="grid grid-6m-4d" id="rebeca"></div>
-</section>
-<section aria-label="verticales" class="section" id="grid-verticales">
-<div class="grid grid-3-fixed" id="verticales"></div>
-</section>
+  <!-- 12 imágenes destacadas -->
+  <section class="section" id="destacadas" aria-label="12 imágenes destacadas">
+    <div class="grid grid-3-fixed" id="grid-destacadas"></div>
+  </section>
+
+  <!-- piezas -->
+  <section class="section" id="piezas" aria-label="piezas">
+    <article class="piece" style="border-top:var(--b1);padding-top:1rem;margin-top:1rem">
+      <div class="lang lang-es active">
+        <h2>pieza 1 · la máscara</h2>
+        <p>sites, gerardo ponce, emiliano cruz jiménez — duración: 45 min</p>
+        <p>inspirada en <em>music for electric metronome</em> (ichiyanagi toshi, 1960), publicada en <em>an anthology of chance operations</em> (1963), esta pieza convierte al metrónomo en director de escena. tres intérpretes manipulan metrónomos a distintas escalas y generan una acción circular donde el ritmo mecánico guía la aparición de sonidos electrónicos, ambientales y vocales. la máscara funciona como símbolo de encubrimiento y libertad, proyectando una reflexión performática que solo se completa en el instante de su ejecución.</p>
+      </div>
+      <div class="lang lang-en">
+        <h2>piece 1 · the mask</h2>
+        <p>sites, gerardo ponce, emiliano cruz jiménez — duration: 45 min</p>
+        <p>inspired by <em>music for electric metronome</em> (ichiyanagi toshi, 1960), published in <em>an anthology of chance operations</em> (1963), this piece turns the metronome into a stage director. three performers manipulate metronomes at different scales to generate a circular action where the mechanical pulse steers electronic, environmental and vocal sounds. the mask works as a symbol of concealment and freedom, casting a performative reflection that completes only in the instant of execution.</p>
+      </div>
+      <div class="lang lang-fr">
+        <h2>pièce 1 · le masque</h2>
+        <p>sites, gerardo ponce, emiliano cruz jiménez — durée : 45 min</p>
+        <p>inspirée de <em>music for electric metronome</em> (ichiyanagi toshi, 1960), publiée dans <em>an anthology of chance operations</em> (1963), cette pièce fait du métronome un metteur en scène. trois interprètes manipulent des métronomes à différentes échelles et génèrent une action circulaire où le rythme mécanique guide l’apparition de sons électroniques, environnementaux et vocaux. le masque agit comme symbole de dissimulation et de liberté, produisant une réflexion performative qui ne s’achève qu’au moment de l’exécution.</p>
+      </div>
+      <div class="lang lang-jp">
+        <h2>作品1 · マスク</h2>
+        <p>sites、gerardo ponce、emiliano cruz jiménez — 上演時間：45分</p>
+        <p>本作は<em>music for electric metronome</em>（一柳慧、1960）に着想を得ており、<em>an anthology of chance operations</em>（1963）に収録されたスコアを参照する。3名の演者が異なるスケールのメトロノームを操作し、機械的な拍が電子音／環境音／声の出現を導く円環的なアクションを形成する。マスクは隠蔽と自由の象徴として働き、上演の瞬間にのみ完結するパフォーマティブな省察を投影する。</p>
+      </div>
+      <div class="score-img" style="margin-top:.8rem;border:var(--b1);border-radius:var(--radius);overflow:hidden;background:transparent">
+        <img alt="partitura — la máscara" decoding="async" loading="lazy" referrerpolicy="no-referrer"
+             src="https://d2w9rnfcy7mm78.cloudfront.net/39251283/original_eb44b667d615b174d7f87b4f89d54eaa.png?1756850684">
+      </div>
+    </article>
+
+    <article class="piece" style="border-top:var(--b1);padding-top:1rem;margin-top:1rem">
+      <div class="lang lang-es active">
+        <h2>pieza 2 · el método de esteban</h2>
+        <p>mario alonso hernández — duración: 20 min</p>
+        <p>basada en <em>music for two players I</em> (mieko shiomi, 1963), incluida en <em>events and games</em> (1964), esta acción toma las instrucciones originales como punto de partida. hernández confronta la noción de <em>player</em> con cuestionamientos ontológicos y recurre a la técnica de desfasaje utilizada por steve reich en <em>come out</em> (1966). el resultado es una composición donde texto, repetición y sonido se entrelazan para explorar la relación entre instrucción y ejecución.</p>
+      </div>
+      <div class="lang lang-en">
+        <h2>piece 2 · esteban’s method</h2>
+        <p>mario alonso hernández — duration: 20 min</p>
+        <p>based on <em>music for two players I</em> (mieko shiomi, 1963), included in <em>events and games</em> (1964), this action takes the original instructions as a starting point. hernández confronts the notion of the <em>player</em> through ontological questioning and employs the phase-shifting technique used by steve reich in <em>come out</em> (1966). the result is a composition where text, repetition and sound interlace to explore the relation between instruction and execution.</p>
+      </div>
+      <div class="lang lang-fr">
+        <h2>pièce 2 · la méthode d’esteban</h2>
+        <p>mario alonso hernández — durée : 20 min</p>
+        <p>fondée sur <em>music for two players I</em> (mieko shiomi, 1963), incluse dans <em>events and games</em> (1964), cette action prend les instructions originales comme point de départ. hernández confronte la notion de <em>player</em> par un questionnement ontologique et recourt au déphasage employé par steve reich dans <em>come out</em> (1966). il en résulte une composition où texte, répétition et son s’entrelacent pour explorer le rapport entre instruction et exécution.</p>
+      </div>
+      <div class="lang lang-jp">
+        <h2>作品2 · エステバンの方法</h2>
+        <p>mario alonso hernández — 上演時間：20分</p>
+        <p><em>music for two players I</em>（塩見允枝子、1963。<em>events and games</em>［1964］所収）を基に、オリジナルの指示文を起点として展開する。hernándezは<em>player</em>という概念を存在論的に問い直し、スティーブ・ライヒの<em>come out</em>（1966）で用いられたフェイズ・シフティング技法を参照する。テキスト／反復／音が絡み合い、指示と実行の関係を探る構成となる。</p>
+      </div>
+      <div class="score-img" style="margin-top:.8rem;border:var(--b1);border-radius:var(--radius);overflow:hidden;background:transparent">
+        <img alt="partitura — el método de esteban" decoding="async" loading="lazy" referrerpolicy="no-referrer"
+             src="https://d2w9rnfcy7mm78.cloudfront.net/39251282/original_551e2e5bc38dfa52080b37c5c2b469a6.png?1756850681">
+      </div>
+    </article>
+
+    <article class="piece" style="border-top:var(--b1);padding-top:1rem;margin-top:1rem">
+      <div class="lang lang-es active">
+        <h2>pieza 3 · sin título</h2>
+        <p>sol oosel — duración: 30 min</p>
+        <p>retomando <em>drinking piece for orchestra</em>, publicado en <em>grapefruit</em> (yoko ono, 1964), sol oosel construye una intervención sonoro-espacial. el carácter poético de las instrucciones se transforma en un campo de incertidumbre donde el espectador enfrenta lo incognoscible. la pieza celebra la apertura de fluxus hacia lo indefinido, haciendo del azar y la percepción colectiva los materiales centrales de la acción.</p>
+      </div>
+      <div class="lang lang-en">
+        <h2>piece 3 · untitled</h2>
+        <p>sol oosel — duration: 30 min</p>
+        <p>drawing on <em>drinking piece for orchestra</em>, published in <em>grapefruit</em> (yoko ono, 1964), sol oosel builds a sound–spatial intervention. the poetic character of the instructions becomes a field of uncertainty in which the spectator faces the unknowable. the piece embraces fluxus’ openness to the indeterminate, making chance and collective perception the central materials of the action.</p>
+      </div>
+      <div class="lang lang-fr">
+        <h2>pièce 3 · sans titre</h2>
+        <p>sol oosel — durée : 30 min</p>
+        <p>en s’appuyant sur <em>drinking piece for orchestra</em>, publié dans <em>grapefruit</em> (yoko ono, 1964), sol oosel compose une intervention sonoro-spatiale. le caractère poétique des instructions devient un champ d’incertitude où le spectateur affronte l’inconnaissable. la pièce assume l’ouverture de fluxus à l’indéterminé en faisant du hasard et de la perception collective les matériaux centraux de l’action.</p>
+      </div>
+      <div class="lang lang-jp">
+        <h2>作品3 · 無題</h2>
+        <p>sol oosel — 上演時間：30分</p>
+        <p>小野洋子『<em>grapefruit</em>』（1964）所収の<em>drinking piece for orchestra</em>を参照し、音と空間を横断する介入を構築する。詩的な指示は不確定性の場へと変容し、観客は不可知なものと向き合う。フルクサスが志向した不定形への開放を受け継ぎ、偶然性と集合的知覚を行為の中核に据える。</p>
+      </div>
+      <div class="score-img" style="margin-top:.8rem;border:var(--b1);border-radius:var(--radius);overflow:hidden;background:transparent">
+        <img alt="partitura — sin título" decoding="async" loading="lazy" referrerpolicy="no-referrer"
+             src="https://d2w9rnfcy7mm78.cloudfront.net/39251281/original_f55fc0061ce199364e8c9ac5e3bae70d.png?1756850679">
+      </div>
+    </article>
+  </section>
+
+  <!-- grids -->
+  <section class="section" id="grid-pozole" aria-label="pozole">
+    <div class="grid grid-6m-4d" id="pozole"></div>
+  </section>
+  <section class="section" id="grid-rebeca" aria-label="rebeca">
+    <div class="grid grid-6m-4d" id="rebeca"></div>
+  </section>
+  <section class="section" id="grid-verticales" aria-label="verticales">
+    <div class="grid grid-3-fixed" id="verticales"></div>
+  </section>
 </main>
-<div aria-hidden="true" id="lightbox">
-<button aria-label="cerrar" id="lbClose" style="display:none !important">cerrar</button>
-<figure id="lbFig"></figure>
-</div>
-<script>
-  (function(){
-    const buttons = document.querySelectorAll('.language-selector button');
-    function setLang(code){
-      document.querySelectorAll('.language-selector button').forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
-      document.querySelectorAll('.lang').forEach(el=>el.classList.toggle('active', el.classList.contains('lang-'+code)));
-    }
-    buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));
-  })();
 
-  function createTile(src, isVideo=false){
-  const fig=document.createElement('figure');
-  fig.className='tile';
+<!-- lightbox -->
+<div id="lightbox" aria-hidden="true">
+  <figure id="lbFig"></figure>
+</div>
+
+<script>
+/* idioma */
+(()=>{const btns=[...document.querySelectorAll('.language-selector button')], blocks=[...document.querySelectorAll('.lang')];
+  const set=(code)=>{btns.forEach(b=>{const on=b.dataset.lang===code; b.classList.toggle('active',on); b.setAttribute('aria-pressed',String(on));});
+    blocks.forEach(el=>el.classList.toggle('active',el.classList.contains('lang-'+code))); localStorage.setItem('lang',code);}
+  set(localStorage.getItem('lang')||'es'); btns.forEach(b=>b.addEventListener('click',()=>set(b.dataset.lang)));
+})();
+
+/* tiles */
+function createTile(src,isVideo=false){
+  const fig=document.createElement('figure'); fig.className='tile';
   if(isVideo){
-    const v=document.createElement('video');
-    v.muted=true; v.loop=true; v.autoplay=true; v.playsInline=true; v.preload='metadata';
-    const s=document.createElement('source'); s.src=src; s.type='video/mp4';
-    v.appendChild(s);
-    fig.appendChild(v);
-    // no overlay, no click-to-unmute
+    const v=document.createElement('video'); v.muted=true; v.loop=true; v.autoplay=true; v.playsInline=true; v.preload='metadata';
+    const s=document.createElement('source'); s.src=src; s.type='video/mp4'; v.appendChild(s); fig.appendChild(v);
   }else{
-    const img=document.createElement('img');
-    img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer';
-    img.src=src; fig.appendChild(img);
-    fig.addEventListener('click',()=>openLightbox(`<img src="${src}" alt="">`));
+    const img=document.createElement('img'); img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer'; img.src=src; fig.appendChild(img);
+    fig.addEventListener('click',()=>openLightbox(`<img src="${src}" alt="">`),{passive:true});
   }
   return fig;
 }
 
-  function openLightbox(html){
-  const lb=document.getElementById('lightbox');
-  const fig=document.getElementById('lbFig');
-  fig.innerHTML=html;
-  lb.classList.add('open');
-}
-  
-  const MAT_GRAFICO = [
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251308/original_41184e5f9b0eb13554b59f8d2cd9cfd7.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251311/original_5f5268fae3d31054ed4a432a4fe3b84c.png',
-    {v:'https://attachments.are.na/39251312/e723c22e9bb319423669107db52fd939.mp4'},
-    {v:'https://attachments.are.na/39251315/ae3a2a33d18b558acdc214096d678bff.mp4'},
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251316/original_92d7662f39ec03bf049621c1318c5f48.png',
-    {v:'https://attachments.are.na/39251317/c2233f2171560872a8884873dae929cb.mp4'},
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251318/original_6c98ff019cade6792238e22448c676c8.png',
-    {v:'https://attachments.are.na/39251320/586e3f8fb669e5227365c4004e6bea2c.mp4'},
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251322/original_a1849d6a0ada237c5a15ed2c96707b3e.png'
-  ];
-
-  const DESTACADAS_12 = [
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251289/original_3b33a27cef16acc23549044f7a538fb6.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251290/original_b88e5877204ad80c18000c0a1cf4b8cf.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251291/original_3dfcbd0944c741d05a7fcd47ba8365d9.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251293/original_411c61486afe48f1e2a7a6ae03c6838e.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251294/original_19db52a34d47cbf8ed135c1bbeb8b943.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251295/original_b955c90326c79939966255aff6625f69.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251296/original_dc11566d69db74de255a70e283dc2cde.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251297/original_2d0828ba255b02fa79d9f13ef581b75e.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251298/original_f92731b482c8264aa4b58bb80f46e656.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251949/original_1c0affad606869ea5d6dfdf6fbeefa10.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251300/original_6ca35622deeff137dc28247c3f87d7d2.jpg',
-    'https://d2w9rnfcy7mm78.cloudfront.net/39251301/original_6915270f0d7b4b2b7863ef6c7cbc28ab.jpg'
-  ];
+/* render lists (preservadas) */
+const MAT_GRAFICO=[ 'https://d2w9rnfcy7mm78.cloudfront.net/39251308/original_41184e5f9b0eb13554b59f8d2cd9cfd7.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251311/original_5f5268fae3d31054ed4a432a4fe3b84c.png',
+  {v:'https://attachments.are.na/39251312/e723c22e9bb319423669107db52fd939.mp4'},
+  {v:'https://attachments.are.na/39251315/ae3a2a33d18b558acdc214096d678bff.mp4'},
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251316/original_92d7662f39ec03bf049621c1318c5f48.png',
+  {v:'https://attachments.are.na/39251317/c2233f2171560872a8884873dae929cb.mp4'},
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251318/original_6c98ff019cade6792238e22448c676c8.png',
+  {v:'https://attachments.are.na/39251320/586e3f8fb669e5227365c4004e6bea2c.mp4'},
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251322/original_a1849d6a0ada237c5a15ed2c96707b3e.png'
+];
+const DESTACADAS_12=[ 'https://d2w9rnfcy7mm78.cloudfront.net/39251289/original_3b33a27cef16acc23549044f7a538fb6.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251290/original_b88e5877204ad80c18000c0a1cf4b8cf.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251291/original_3dfcbd0944c741d05a7fcd47ba8365d9.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251293/original_411c61486afe48f1e2a7a6ae03c6838e.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251294/original_19db52a34d47cbf8ed135c1bbeb8b943.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251295/original_b955c90326c79939966255aff6625f69.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251296/original_dc11566d69db74de255a70e283dc2cde.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251297/original_2d0828ba255b02fa79d9f13ef581b75e.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251298/original_f92731b482c8264aa4b58bb80f46e656.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251949/original_1c0affad606869ea5d6dfdf6fbeefa10.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251300/original_6ca35622deeff137dc28247c3f87d7d2.jpg',
+  'https://d2w9rnfcy7mm78.cloudfront.net/39251301/original_6915270f0d7b4b2b7863ef6c7cbc28ab.jpg'
+];
 
   // POZOLE: lista larga
   const POZOLE = [
@@ -652,321 +527,96 @@ h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowe
     'https://d2w9rnfcy7mm78.cloudfront.net/39251005/original_d2c38463b31b4b43086997098e8bd4cd.jpg',
     'https://d2w9rnfcy7mm78.cloudfront.net/39251006/original_55176b01c562f5184aa73b46f09e0e30.jpg',
     'https://d2w9rnfcy7mm78.cloudfront.net/39251007/original_dbb14e5701052a996754633cb1526ab4.jpg'
-  ];
+];
+const VERTICALES=[ 'https://d2w9rnfcy7mm78.cloudfront.net/39250970/original_2ed57c3db8a078d7f705133bc0138be6.jpg',
+  {v:'https://attachments.are.na/39250971/6a892aa20d7e523a19ec7280eac52d92.mov'},
+  {v:'https://attachments.are.na/39250972/9b45d224bbafd3f1f3d6bd541ad6cb5a.mov'},
+  {v:'https://attachments.are.na/39250973/053c36fb29be6874efeea1d368786dfd.mov'},
+  'https://d2w9rnfcy7mm78.cloudfront.net/39250974/original_b9a4da96a29c0022b876ac7c0afc7ebd.jpg',
+  {v:'https://attachments.are.na/39250975/493c52ec1852bf945f01f8a21a9aa818.mov'},
+  {v:'https://attachments.are.na/39250976/5ab845f060bf27b6e9c09e6096ff6eda.mov'},
+  'https://d2w9rnfcy7mm78.cloudfront.net/39250978/original_43f6be1abcb90f7ce355784188dcae62.jpg',
+  {v:'https://attachments.are.na/39250979/762ed660086644193dadb69e3e5b892f.mp4'},
+  {v:'https://attachments.are.na/39250980/757d52dabe90c6d41711c036082d8626.mov'},
+  {v:'https://attachments.are.na/39250982/91c596291912db5397fa745c9e9c8e19.mov'},
+  {v:'https://attachments.are.na/39250983/8d07a7300e8c25601ade6994051c5580.mov'}
+];
 
-  const VERTICALES = [
-    'https://d2w9rnfcy7mm78.cloudfront.net/39250970/original_2ed57c3db8a078d7f705133bc0138be6.jpg',
-    {v:'https://attachments.are.na/39250971/6a892aa20d7e523a19ec7280eac52d92.mov'},
-    {v:'https://attachments.are.na/39250972/9b45d224bbafd3f1f3d6bd541ad6cb5a.mov'},
-    {v:'https://attachments.are.na/39250973/053c36fb29be6874efeea1d368786dfd.mov'},
-    'https://d2w9rnfcy7mm78.cloudfront.net/39250974/original_b9a4da96a29c0022b876ac7c0afc7ebd.jpg',
-    {v:'https://attachments.are.na/39250975/493c52ec1852bf945f01f8a21a9aa818.mov'},
-    {v:'https://attachments.are.na/39250976/5ab845f060bf27b6e9c09e6096ff6eda.mov'},
-    'https://d2w9rnfcy7mm78.cloudfront.net/39250978/original_43f6be1abcb90f7ce355784188dcae62.jpg',
-    {v:'https://attachments.are.na/39250979/762ed660086644193dadb69e3e5b892f.mp4'},
-    {v:'https://attachments.are.na/39250980/757d52dabe90c6d41711c036082d8626.mov'},
-    {v:'https://attachments.are.na/39250982/91c596291912db5397fa745c9e9c8e19.mov'},
-    {v:'https://attachments.are.na/39250983/8d07a7300e8c25601ade6994051c5580.mov'}
-  ];
-  
-  function renderList(containerId, list){
-    const wrap=document.getElementById(containerId);
-    const frag=document.createDocumentFragment();
-    list.forEach(item=>{
-      if(typeof item==='string'){
-        frag.appendChild(createTile(item,false));
-      }else if(item && item.v){
-        frag.appendChild(createTile(item.v,true));
-      }
-    });
-    wrap.appendChild(frag);
-  }
-
-  renderList('grid-grafico', MAT_GRAFICO);
-  renderList('grid-destacadas', DESTACADAS_12);
-  renderList('pozole', POZOLE);
-  renderList('rebeca', REBECA);
-  renderList('verticales', VERTICALES);
-
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      const v=e.target;
-      if(e.isIntersecting){ v.play().catch(()=>{}); }
-      else { v.pause(); }
-    })
-  },{threshold:.25});
-  const obs=()=>document.querySelectorAll('video').forEach(v=>io.observe(v));
-  document.addEventListener('DOMContentLoaded', obs);
-  
-// click anywhere on overlay to close
-(function(){
-  const lb=document.getElementById('lightbox');
-  if(!lb) return;
-  lb.addEventListener('click', ()=>{
-    lb.classList.remove('open');
-  }, {passive:true});
-})();
-</script>
-<script id="xpan-boot-2025-09-02">
-(() => {
-  // Lazy load images
-  const imgs = Array.from(document.querySelectorAll('img.lazy-pending'));
-  const vids = Array.from(document.querySelectorAll('video.lazy-pending'));
-  const onEnter = (el) => {
-    if (el.tagName === 'IMG') {
-      el.addEventListener('load', () => { el.classList.remove('lazy-pending'); el.classList.add('lazy-ready'); }, { once:true });
-      if (el.complete) { el.classList.remove('lazy-pending'); el.classList.add('lazy-ready'); }
-    } else if (el.tagName === 'VIDEO') {
-      const sources = el.querySelectorAll('source[data-src]');
-      let assigned = false;
-      sources.forEach(s => {
-        if (!s.getAttribute('src')) { s.setAttribute('src', s.getAttribute('data-src')); assigned = true; }
-      });
-      if (assigned) { el.load(); }
-      const playIfAllowed = () => {
-        if (el.hasAttribute('autoplay') || el.dataset.bg === 'true' || (el.muted && el.loop)) {
-          el.play().catch(()=>{});
-        }
-      };
-      el.addEventListener('loadeddata', () => {
-        el.classList.remove('lazy-pending'); el.classList.add('lazy-ready'); playIfAllowed();
-      }, { once:true });
-    }
-  };
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(({isIntersecting, target}) => {
-      if (isIntersecting) { onEnter(target); io.unobserve(target); }
-    });
-  }, { rootMargin: '400px' });
-  imgs.forEach(el => io.observe(el));
-  vids.forEach(el => io.observe(el));
-
-  // iOS autoplay assist for background videos
-  window.addEventListener('load', () => {
-    document.querySelectorAll('video[data-bg="true"]').forEach(v => {
-      v.muted = true; v.loop = true; v.playsInline = true;
-      v.play().catch(()=>{});
-    });
+function renderList(containerId,list){
+  const wrap=document.getElementById(containerId); if(!wrap) return;
+  const frag=document.createDocumentFragment();
+  list.forEach(item=>{
+    if(typeof item==='string') frag.appendChild(createTile(item,false));
+    else if(item && item.v) frag.appendChild(createTile(item.v,true));
   });
+  wrap.appendChild(frag);
+}
+renderList('grid-grafico',MAT_GRAFICO);
+renderList('grid-destacadas',DESTACADAS_12);
+renderList('pozole',POZOLE);
+renderList('rebeca',REBECA);
+renderList('verticales',VERTICALES);
 
-  // Lightbox: tap/click anywhere to close. No explicit close button needed.
-  const overlaySelectors = ['.lb', '.lightbox', '.image-viewer', '.modal--lightbox', '.viewer'];
-  document.addEventListener('click', (ev) => {
-    const ov = ev.target.closest(overlaySelectors.join(','));
-    if (!ov) return;
-    // Close only if it's an image/video overlay
-    if (!ov.querySelector('img, picture, video, figure')) return;
-    if (ov.classList.contains('open')) ov.classList.remove('open');
-    ov.style.display = 'none';
-    ov.setAttribute('aria-hidden', 'true');
-  }, { passive:true });
+/* autoplay/pause en viewport */
+(()=>{const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{const v=e.target; if(e.isIntersecting){ v.play().catch(()=>{});} else { v.pause(); }});
+},{threshold:.25});
+const obs=()=>document.querySelectorAll('video').forEach(v=>io.observe(v));
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',obs):obs();
 })();
-</script>
-<script>
-/* ===== xpan — fix tap-to-unmute + lightbox con swipe ===== */
-(function(){
-  const lbEl = document.getElementById('lightbox');
-  const lbFig = document.getElementById('lbFig');
-  const BODY_LOCK_CLASS = 'no-scroll-lb';
-  let INDEX = [];
-  let cur = -1;
 
-  /* 1) Construir índice global a partir de las galerías existentes */
+/* lightbox con galería + swipe */
+(function(){
+  const lb=document.getElementById('lightbox'), fig=document.getElementById('lbFig');
+  let INDEX=[], cur=-1;
   function buildIndex(){
-    INDEX = [];
-    const containers = [
-      '#grid-grafico', '#grid-destacadas', '#verticales', '#pozole', '#rebeca'
-    ].map(sel => document.querySelector(sel)).filter(Boolean);
-
-    containers.forEach(container=>{
-      container.querySelectorAll('figure.tile').forEach(fig=>{
-        const v = fig.querySelector('video');
-        if (v){
-          const s = v.querySelector('source');
-          if (s && s.src) INDEX.push({type:'video', src:s.src, el:fig});
-        }else{
-          const img = fig.querySelector('img');
-          if (img && img.src) INDEX.push({type:'img', src:img.src, el:fig});
-        }
+    INDEX=[];
+    ['#grid-grafico','#grid-destacadas','#verticales','#pozole','#rebeca'].forEach(sel=>{
+      const c=document.querySelector(sel); if(!c) return;
+      c.querySelectorAll('figure.tile').forEach(f=>{
+        const v=f.querySelector('video'); if(v){ const s=v.querySelector('source'); if(s&&s.src) INDEX.push({type:'video',src:s.src,el:f}); }
+        else{ const i=f.querySelector('img'); if(i&&i.src) INDEX.push({type:'img',src:i.src,el:f}); }
       });
     });
   }
-
-  /* 2) Tap-to-unmute inline: tocar el video alterna mute y silencia los demás */
-  function muteAllExcept(target){
-    document.querySelectorAll('video').forEach(v=>{
-      if (v !== target) v.muted = true;
-    });
+  function render(i){
+    const it=INDEX[i]; if(!it) return; cur=i;
+    fig.innerHTML = it.type==='img'
+      ? `<img src="${it.src}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain">`
+      : `<video controls playsinline preload="metadata" style="max-width:92vw;max-height:92vh;object-fit:contain"><source src="${it.src}" type="video/mp4"></video>`;
+    const v=fig.querySelector('video'); if(v){ v.muted=false; v.volume=1; v.play().catch(()=>{}); v.addEventListener('click',ev=>{ev.stopPropagation(); v.muted=!v.muted; if(!v.muted) v.play().catch(()=>{});},{passive:true}); }
   }
-  function enableInlineTapToUnmute(){
-    document.querySelectorAll('figure.tile video').forEach(v=>{
-      // Evitar duplicar listeners
-      if (v.dataset._tapBound) return;
-      v.dataset._tapBound = '1';
-      v.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        if (v.muted){
-          muteAllExcept(v);
-          v.muted = false;
-          v.volume = 1;
-          v.play().catch(()=>{});
-        }else{
-          v.muted = true;
-        }
-      }, {passive:true});
-    });
-  }
-
-  /* 3) Lightbox con soporte de imágenes y video, navegación y swipe */
-  function lockScroll(lock){
-    document.documentElement.style.overflow = lock ? 'hidden' : '';
-    document.body.style.overflow = lock ? 'hidden' : '';
-    document.body.classList.toggle(BODY_LOCK_CLASS, !!lock);
-  }
-
-  function renderItem(i){
-    const item = INDEX[i];
-    if (!item) return;
-    cur = i;
-    if (item.type === 'img'){
-      lbFig.innerHTML = `<img src="${item.src}" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain">`;
-    }else{
-      lbFig.innerHTML = `
-        <video controls playsinline preload="metadata" style="max-width:92vw;max-height:92vh;object-fit:contain">
-          <source src="${item.src}" type="video/mp4">
-        </video>`;
-      const v = lbFig.querySelector('video');
-      // Abrir sin mute tras gesto de usuario (click que abrió el lightbox)
-      v.muted = false;
-      v.volume = 1;
-      v.play().catch(()=>{ /* iOS puede requerir otra interacción */ });
-      // Tap dentro del lightbox para alternar mute
-      v.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        if (v.muted){
-          v.muted = false; v.volume = 1; v.play().catch(()=>{});
-        }else{
-          v.muted = true;
-        }
-      });
-    }
-  }
-
-  function openAt(i){
-    if (!INDEX.length) buildIndex();
-    if (i < 0) i = 0;
-    if (i >= INDEX.length) i = INDEX.length - 1;
-    lbEl.classList.add('open');
-    lockScroll(true);
-    renderItem(i);
-  }
-  function closeLB(){
-    lbEl.classList.remove('open');
-    lockScroll(false);
-    lbFig.innerHTML = '';
-    cur = -1;
-  }
-  function next(){ if (INDEX.length) renderItem((cur+1)%INDEX.length); }
-  function prev(){ if (INDEX.length) renderItem((cur-1+INDEX.length)%INDEX.length); }
-
-  // Cerrar al tocar fondo (no dentro del figure)
-  lbEl.addEventListener('click', (e)=>{
-    if (e.target === lbEl) closeLB();
-  });
-
-  // Navegación por teclado
-  window.addEventListener('keydown', (e)=>{
-    if (!lbEl.classList.contains('open')) return;
-    if (e.key === 'ArrowRight') next();
-    else if (e.key === 'ArrowLeft') prev();
-    else if (e.key === 'Escape') closeLB();
-  });
-
-  // Swipe táctil en lightbox
-  (function enableSwipe(){
-    let x0=null, y0=null, t0=0;
-    const THRESH = 42;
-    lbEl.addEventListener('touchstart', (e)=>{
-      if (!lbEl.classList.contains('open')) return;
-      const t = e.changedTouches[0];
-      x0 = t.clientX; y0 = t.clientY; t0 = Date.now();
-    }, {passive:true});
-    lbEl.addEventListener('touchend', (e)=>{
-      if (x0==null) return;
-      const t = e.changedTouches[0];
-      const dx = t.clientX - x0;
-      const dy = t.clientY - y0;
-      const dt = Date.now() - t0;
-      x0 = y0 = null;
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > THRESH && dt < 800){
-        if (dx < 0) next(); else prev();
-      }
-    }, {passive:true});
+  function openAt(i){ if(!INDEX.length) buildIndex(); i=Math.max(0,Math.min(i,INDEX.length-1)); lb.classList.add('open'); render(i); }
+  function closeLB(){ lb.classList.remove('open'); fig.innerHTML=''; cur=-1; }
+  function next(){ if(INDEX.length) render((cur+1)%INDEX.length); }
+  function prev(){ if(INDEX.length) render((cur-1+INDEX.length)%INDEX.length); }
+  lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); },{passive:true});
+  window.addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return; if(e.key==='Escape') closeLB(); if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
+  (function swipe(){ let x0=null,y0=null,t0=0; const TH=42;
+    lb.addEventListener('touchstart',e=>{ if(!lb.classList.contains('open')) return; const t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); },{passive:true});
+    lb.addEventListener('touchend',e=>{ if(x0==null) return; const t=e.changedTouches[0]; const dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0; x0=y0=null;
+      if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>TH && dt<800) dx<0?next():prev();
+    },{passive:true});
   })();
-
-  /* 4) Interceptar el lightbox original para añadir swipe */
-  // Guardar referencia previa si existía
-  const _origOpenLB = window.openLightbox ? window.openLightbox.bind(window) : null;
-
-  // Reemplazar por versión que detecta src y abre la galería
-  window.openLightbox = function(argHTMLorNode){
-    try{
-      if (!INDEX.length) buildIndex();
-      let src = null;
-      if (typeof argHTMLorNode === 'string'){
-        const m = argHTMLorNode.match(/src="([^"]+)"/i);
-        if (m) src = m[1];
-      }else if (argHTMLorNode && argHTMLorNode.src){
-        src = argHTMLorNode.src;
-      }
-      if (src){
-        const i = INDEX.findIndex(it => it.src === src);
-        if (i >= 0){ openAt(i); return; }
-      }
-    }catch(_e){}
-    // Fallback al comportamiento previo si no se pudo mapear
-    if (_origOpenLB) _origOpenLB(argHTMLorNode);
-  };
-
-  /* 5) Click en figuras para abrir lightbox con swipe.
-        En videos: tap sobre el propio <video> solo alterna mute. */
-  function bindFigureClicks(){
-    if (!INDEX.length) buildIndex();
-    INDEX.forEach((item, i)=>{
-      if (!item.el || item.el.dataset._lbBound) return;
-      item.el.dataset._lbBound = '1';
-      item.el.addEventListener('click', ()=>{
-        openAt(i);
-      });
-      const v = item.el.querySelector('video');
-      if (v){
-        // Ya se agregó el tap-to-unmute en enableInlineTapToUnmute()
-        // Asegurar que el click al video no abra el lightbox
-        v.addEventListener('click', (e)=>e.stopPropagation());
-      }
+  function muteOthers(ex){ document.querySelectorAll('video').forEach(v=>{ if(v!==ex) v.muted=true; }); }
+  function enableInlineUnmute(){
+    document.querySelectorAll('figure.tile video').forEach(v=>{
+      if(v.dataset._tapBound) return; v.dataset._tapBound='1';
+      v.addEventListener('click',e=>{ e.stopPropagation(); if(v.muted){ muteOthers(v); v.muted=false; v.volume=1; v.play().catch(()=>{}); } else { v.muted=true; } },{passive:true});
     });
   }
-
-  /* 6) Observar inserciones tardías y aplicar bindings */
-  const obs = new MutationObserver(()=>{
-    buildIndex();
-    enableInlineTapToUnmute();
-    bindFigureClicks();
-  });
-
-  window.addEventListener('load', ()=>{
-    buildIndex();
-    enableInlineTapToUnmute();
-    bindFigureClicks();
-    const root = document.querySelector('main') || document.body;
-    obs.observe(root, {childList:true, subtree:true});
-  });
+  function bindOpen(){
+    if(!INDEX.length) buildIndex();
+    INDEX.forEach((it,i)=>{ if(it.el && !it.el.dataset._lb){ it.el.dataset._lb='1'; it.el.addEventListener('click',()=>openAt(i),{passive:true}); const v=it.el.querySelector('video'); if(v) v.addEventListener('click',ev=>ev.stopPropagation(),{passive:true}); }});
+  }
+  const mo=new MutationObserver(()=>{ buildIndex(); enableInlineUnmute(); bindOpen(); });
+  window.addEventListener('load',()=>{ buildIndex(); enableInlineUnmute(); bindOpen(); const root=document.querySelector('main')||document.body; mo.observe(root,{childList:true,subtree:true}); });
 })();
 </script>
+
 <style>
-/* Evita scroll de fondo al abrir lightbox */
+/* evita scroll de fondo al abrir lightbox en iOS */
 .no-scroll-lb, .no-scroll-lb * { overscroll-behavior: contain; }
 </style>
-
 </body>
 </html>

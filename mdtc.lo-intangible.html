@@ -1,462 +1,361 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<meta content="light" name="color-scheme"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>lo intangible proyectado sobre lo inmutable — xpan</title>
-<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
-<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
-<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
-<link href="https://attachments.are.na" rel="dns-prefetch"/>
 
+<!-- cdn -->
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+
+<!-- preload clave -->
 <link rel="preload" as="video" href="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" fetchpriority="low">
 <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393204/original_76a2cbbbac7b6b5696637cbd2c8a31b6.jpg" fetchpriority="high">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393205/original_054219e3cd3a818feb8642cf5a964d4b.jpg">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393206/original_86a1f5c37739bc9eeb66dca818d5c895.jpg">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393207/original_fb85e4701a02ef0efea84ce82e191268.jpg">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393208/original_c376f2680934bb4da00f6be00fd04606.jpg">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/39393209/original_04decdbba028b76782d8b4a384ba6a70.jpg">
-<link as="video" href="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" rel="preload"/>
-<script defer="" src="/assets/js/media-proxy.js"></script>
-<script defer="" src="/assets/js/video-autoplay-mobile.js"></script>
+
+<!-- utilidades del sitio (idempotentes) -->
+<script defer src="/assets/js/media-proxy.js"></script>
+<script defer src="/assets/js/video-autoplay-mobile.js"></script>
+
 <style>
-:root{--bg:#fff;--fg:#000;--line:rgba(0,0,0,.12);--maxw:1440px}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif}
-img,video{display:block;max-width:100%;height:auto;background:#fff}
-a{text-decoration:none;color:inherit}
-header{position:fixed;top:12px;left:12px;z-index:50}
-header img{width:40px;height:auto;display:block}
-header img{width:46px;height:auto;display:block;background:transparent !important}
-.language-selector{position:fixed;top:12px;right:12px;z-index:50;font-size:.9rem;text-transform:lowercase}
-.language-selector button{background:none;border:none;margin:0 .35rem;padding:.1rem .2rem;cursor:pointer;opacity:.6}
-.language-selector button.active,.language-selector button:focus-visible{opacity:1;text-decoration:underline;outline:none}
-main{max-width:var(--maxw);margin:80px auto 48px;padding:0 12px}
-.lang{display:none}.lang.active{display:block}
-h1{font-size:clamp(1.05rem,2vw,1.4rem);margin:.2rem 0;text-transform:lowercase}
-.meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
-.description p{font-size:1rem;line-height:1.6;max-width:980px;margin:.6rem 0}
-.hero{margin:8px 0 16px;display:grid;place-items:center;border:1px solid var(--line);overflow:hidden;background:#fff}
-.hero video{width:100%;max-height:78vh;object-fit:contain;background:#fff}
-
-/* Tight grids */
-.tight-wrap{margin:16px 0}
-.tight-grid{display:grid;gap:0;line-height:0;font-size:0}
-.cols-2{grid-template-columns:repeat(2,1fr)}
-.cols-3{grid-template-columns:repeat(3,1fr)}
-.cols-4{grid-template-columns:repeat(4,1fr)}
-.tight-item img,.tight-item video{width:100%;height:auto}
-
-/* Lightbox */
-#lb{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;z-index:9999;touch-action:none}
-#lb.open{display:flex}
-#lb figure{margin:0}
-#lb img,#lb video{max-width:96vw;max-height:96vh;object-fit:contain;display:block}
-#lbClose{position:fixed;top:10px;right:10px;background:#000;color:#fff;border:none;border-radius:999px;padding:.5rem .75rem;cursor:pointer}
-.no-scroll, .no-scroll body{overflow:hidden}
-
-/* AEI scroll grid with motion */
-.aei{position:relative;width:100%;border:1px solid var(--line);background:#fff;overflow:auto;max-height:80vh}
-.aei-stage{display:grid;grid-template-columns:repeat(6,1fr);gap:0;padding:0;line-height:0;font-size:0}
-.aei-stage img{width:100%;height:auto;display:block}
-@keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
-.aei-float{animation:floatY 9s ease-in-out infinite;will-change:transform}
-#aei-lines{position:absolute;inset:0;pointer-events:none;opacity:.18}
-</style>
-<!-- Eliminado bloque CSS de #lightbox no usado -->
-<style id="aei-float-css">
-/* === AEI float — non-destructive enhancement === */
-:root{--aei-line:rgba(0,0,0,.14);--aei-line-strong:rgba(0,0,0,.28)}
-.aei-float{position:relative;overflow:auto;background:#fff;border:1px solid rgba(0,0,0,.08)}
-.aei-float .aei-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;line-height:0;font-size:0}
-.aei-float .aei-item{position:relative;contain:content}
-.aei-float .aei-item img,
-.aei-float .aei-item video{width:100%;height:auto;display:block;mix-blend-mode:multiply;opacity:.72;transition:opacity .25s ease, transform .25s ease;background:#fff}
-/* micro-acentos al pasar o al pausar */
-.aei-float .aei-item:hover img,
-.aei-float .aei-item:hover video{opacity:.92}
-/* overlay de líneas */
-.aei-float .aei-lines{position:absolute;inset:0;pointer-events:none}
-.aei-float .aei-lines path{stroke:var(--aei-line);stroke-width:1;fill:none;vector-effect:non-scaling-stroke;opacity:.85}
-.aei-float .aei-lines .pulse{stroke:var(--aei-line-strong);opacity:.6}
-/* pausa global al hacer hover o touch dentro */
-.aei-float[data-paused="true"] .aei-item img,
-.aei-float[data-paused="true"] .aei-item video{transform:none !important}
-/* responsive fallback si el layout del documento ya define columnas: no forzamos nada */
-@media (max-width:900px){
-  .aei-float .aei-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media (max-width:520px){
-  .aei-float .aei-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-</style>
-<!-- Accesibilidad / rendimiento: reduce motion -->
-<style>
-@media (prefers-reduced-motion: reduce){
-  .aei-float .aei-item img,
-  .aei-float .aei-item video,
-  .aei-float .aei-item .aei-float{animation:none !important; transform:none !important}
-}
-</style>
-<style>@media (max-width:360px){.aei-float .aei-grid{grid-template-columns:1fr}h1{font-size:1rem}}</style>
-<style>
-.tight-item,
-.aei-stage img{content-visibility:auto; contain:content;}
-
-.tight-item img,.grid img{
-  max-width:100%;
-  height:auto;
-  object-fit:contain;
-  background:transparent;
-}
-</style>
-
-</head>
-<body>
-<header><a aria-label="xpan" href="/"><img alt="xpan" src="xpan.svg"/></a></header>
-<div aria-label="selector de idioma" class="language-selector" role="tablist">
-<button aria-selected="true" class="active" data-lang="es" role="tab">es</button>
-<button aria-selected="false" data-lang="en" role="tab">en</button>
-<button aria-selected="false" data-lang="fr" role="tab">fr</button>
-<button aria-selected="false" data-lang="jp" role="tab">jp</button>
-</div>
-<main>
-
-<section aria-labelledby="t-es">
-  <div class="lang active" id="lang-es">
-    <h2 id="t-es">lo intangible sobre lo inmutable</h2>
-    <div class="meta">acto crítico de intervención — 4–7 febrero 2025 — antiguo hotel reforma, ciudad de méxico</div>
-    <div class="description">
-
-      <p>xpan presentó en el hotel reforma el cuarto central de 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
-        con su ciclo de piezas en exhibición. el espacio fue trasladado íntegramente desde parís y reconfigurado dentro del edificio, cargando consigo la energía y densidad acumulada durante su primera activación.
-      </p>
-      <p>el hotel reforma, cargado de memoria arquitectónica, se convirtió en superficie activa dentro de la topología conectiva. la inserción del núcleo central de 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
-        en la ciudad de méxico abrió un campo de proximidades dinámicas: un territorio en movimiento donde geografías, lenguajes y comunidades distantes se articularon en un mismo sistema. además de un traslado físico, fue una vectorización simbólica que redujo distancias materiales y culturales, generando resonancias significativas. en ese cruce, lo efímero y lo permanente dejaron de ser opuestos para integrarse en un mismo proceso de conexiones.
-      </p>
-    </div>
-  </div>
-
-  <div aria-labelledby="t-en" class="lang" id="lang-en">
-    <h2 id="t-en">lo intangible sobre lo inmutable</h2>
-    <div class="meta">critical act of intervention — 4–7 february 2025 — antiguo hotel reforma, mexico city</div>
-    <div class="description">
-
-      <p>xpan presented at hotel reforma the central room of 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
-        with its cycle of pieces on display. the space was transferred in full from paris and reconfigured inside the building, carrying the energy and density accumulated during its first activation.
-      </p>
-      <p>the hotel reforma, dense with architectural memory, became an active surface within the connective topology. inserting the central core of 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
-        in mexico city opened a field of dynamic proximities: a moving territory where distant geographies, languages, and communities articulated within one system. beyond a physical relocation, it was a symbolic vectorization that shortened material and cultural distances, generating resonances. in that crossing, the ephemeral and the permanent ceased to be opposites and integrated into the same process of connections.
-      </p>
-    </div>
-  </div>
-
-  <div aria-labelledby="t-fr" class="lang" id="lang-fr">
-    <h2 id="t-fr">lo intangible sobre lo inmutable</h2>
-    <div class="meta">acte critique d'intervention — 4–7 février 2025 — antiguo hotel reforma, mexico</div>
-    <div class="description">
-
-      <p>xpan a présenté à l'hôtel reforma la salle centrale de 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
-        avec son cycle de pièces en exposition. l'espace a été transféré intégralement depuis paris et reconfiguré à l'intérieur du bâtiment, portant l'énergie et la densité accumulées lors de sa première activation.
-      </p>
-      <p>l'hôtel reforma, chargé de mémoire architecturale, est devenu une surface active au sein de la topologie connective. l'insertion du noyau central de 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t [paris.25]</u></em></a> 
-        dans la ville de mexico a ouvert un champ de proximités dynamiques : un territoire en mouvement où géographies, langues et communautés lointaines se sont articulées dans un même système. au-delà d'un déplacement physique, il s'agissait d'une vectorisation symbolique qui a réduit les distances matérielles et culturelles, générant des résonances. dans ce croisement, l'éphémère et le permanent ont cessé d'être opposés pour s'intégrer dans un même processus de connexions.
-      </p>
-    </div>
-  </div>
-
-  <div aria-labelledby="t-jp" class="lang" id="lang-jp">
-    <h2 id="t-jp">lo intangible sobre lo inmutable</h2>
-    <div class="meta">批評的介入の行為 — 2025年2月4日–7日 — アンティグオ・ホテル・レフォルマ（メキシコシティ）</div>
-    <div class="description">
-
-      <p>xpanはアンティグオ・ホテル・レフォルマにて、 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t［paris.25］</u></em></a> 
-        の中心室と展示中の作品群を提示した。空間はパリからそのまま移送され、館内で再構成され、初回の起動で蓄積したエネルギーと密度を帯びたまま現れた。
-      </p>
-      <p>建築的記憶に満ちたホテル・レフォルマは、コネクティブ・トポロジーの内部における能動的な表面となった。メキシコシティに 
-        <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em><u>xpan.ep.t［paris.25］</u></em></a> 
-        の中核を挿入することにより、動的近接の場が開かれた。そこでは、離れた地理・言語・コミュニティが一つのシステムの内で編成される。単なる物理的移動に留まらず、物質的・文化的距離を縮める象徴的ベクトル化でもあり、顕著な共鳴を生んだ。その交差において、儚いものと持続するものは対立をやめ、同一の接続プロセスへと統合された。
-      </p>
-    </div>
-  </div>
-</section>
-
-<script>
-function openBoth(url1, url2){
-  window.open(url1, '_blank');
-  window.open(url2, '_blank');
-}
-</script>
-
-
-
-
-<section>
-<div class="hero">
-<video aria-label="video principal" autoplay="" id="hero" loop="" muted="" playsinline="" src="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" preload="none"></video>
-</div>
-</section>
-<!-- Order visible per tu pedido original: top10 → g2 → g22 → f3 → vids → AEI -->
-<section>
-<h2 style="font:400 1rem/1 serif;margin:0 0 .5rem;text-transform:lowercase">1875–1884 — top 10 foto</h2>
-<div class="tight-wrap" id="gridTop10"><div class="tight-grid cols-2" data-chunk="20"></div></div>
-</section>
-<section>
-<h2 style="font:400 1rem/1 serif;margin:0 0 .5rem;text-transform:lowercase">1850–1874 — 2 foto general</h2>
-<div class="tight-wrap" id="gridG2"><div class="tight-grid cols-3" data-chunk="40"></div></div>
-</section>
-<section>
-<h2 style="font:400 1rem/1 serif;margin:0 0 .5rem;text-transform:lowercase">1746–1849 — 2.2 generalfoto final secundaria</h2>
-<div class="tight-wrap" id="gridG22"><div class="tight-grid cols-4" data-chunk="60"></div></div>
-</section>
-<section>
-<h2 style="font:400 1rem/1 serif;margin:0 0 .5rem;text-transform:lowercase">1707–1745 — fotos 3 montaje editadas</h2>
-<div class="tight-wrap" id="gridF3"><div class="tight-grid cols-3" data-chunk="36"></div></div>
-</section>
-<section>
-<h2 style="font:400 1rem/1 serif;margin:0 0 .5rem;text-transform:lowercase">1034–1706 — videos raw</h2>
-<div class="tight-wrap" id="gridV"><div class="tight-grid cols-3" data-chunk="30"></div></div>
-</section>
-<section>
-<h2 style="font:400 1rem/1 serif;margin:0 0 .5rem;text-transform:lowercase">0–1033 — fotos raw · a.e.i</h2>
-<div class="aei" id="aei">
-<svg id="aei-lines"></svg>
-<div class="aei-stage" data-chunk="200" id="aeiStage"></div>
-</div>
-</section>
-</main>
-<div aria-modal="true" id="lb" role="dialog">
-<button aria-label="cerrar" id="lbClose">cerrar</button>
-<figure id="lbFig"></figure>
-</div>
-<script>
-(function(){
-  "use strict";
-  var px = function(u){ return (window.mediaProxy? window.mediaProxy(u): u); };
-
-  // Language selector
-  var sel = document.querySelector('.language-selector');
-  sel.addEventListener('click', function(e){
-    var b = e.target.closest('button'); if(!b) return;
-    var lang = b.getAttribute('data-lang');
-    sel.querySelectorAll('button').forEach(function(x){
-      var act = x===b; x.classList.toggle('active', act); x.setAttribute('aria-selected', String(act));
-    });
-    document.querySelectorAll('.lang').forEach(function(x){ x.classList.remove('active'); });
-    document.getElementById('lang-'+lang).classList.add('active');
-  });
-
-  // Hero: toggle FS on tap, unmute in FS
-  var hv = document.getElementById('hero');
-  hv.addEventListener('click', function(){
-    if(document.fullscreenElement === hv){ document.exitFullscreen(); }
-    else if(hv.requestFullscreen){ hv.requestFullscreen(); }
-  });
-  document.addEventListener('fullscreenchange', function(){
-    var fs = document.fullscreenElement === hv;
-    hv.muted = !fs;
-    if(fs){ hv.play().catch(function(){}); }
-  });
-
-  // Lightbox
-  var lb = document.getElementById('lb');
-  var lbFig = document.getElementById('lbFig');
-  var lbClose = document.getElementById('lbClose');
-  var lbState = { list: [], idx: 0, fs:false };
-  function lockScroll(on){
-    document.documentElement.classList.toggle('no-scroll', on);
-    document.body.classList.toggle('no-scroll', on);
+  /* ===== tokens post-tech ===== */
+  :root{
+    --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+    --line:#2A2E31; --line-weak:#1A1D20; --aei-stroke: rgba(224,227,230,.14);
+    --maxw:1120px; --pad-x:clamp(16px,4vw,48px); --g:20px; --header-h:64px;
+    --b1:1px solid var(--line);
   }
-  function openLB(list, idx){
-    lbState.list = list; lbState.idx = idx; lb.classList.add('open'); lockScroll(true); renderLB();
-  }
-  function renderLB(){
-    lbFig.replaceChildren();
-    var it = lbState.list[lbState.idx]; if(!it) return;
-    if(it.type==='img'){
-      var img = new Image(); img.src = px(it.src); img.decoding='async'; img.loading='eager';
-      img.addEventListener('click', closeLB); // tap to exit
-      lbFig.appendChild(img);
-    } else {
-      var v = document.createElement('video');
-      v.src = px(it.src); v.playsInline = true; v.loop = true; v.autoplay = true; v.muted = true; v.controls = false; v.preload='none';
-      lbFig.appendChild(v);
-      // enter FS immediately, then unmute; tap exits FS or closes
-      function enterFS(){ if(v.requestFullscreen){ v.requestFullscreen(); } }
-      v.addEventListener('loadeddata', enterFS, {once:true});
-      document.addEventListener('fullscreenchange', function onfs(){
-        var inFS = document.fullscreenElement === v;
-        v.muted = !inFS;
-        lbState.fs = inFS;
-        if(!inFS){ document.removeEventListener('fullscreenchange', onfs); }
-      });
-      v.addEventListener('click', function(){
-        if(document.fullscreenElement === v){ document.exitFullscreen(); }
-        else { closeLB(); }
-      });
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+      --line:#D9DEE2; --line-weak:#ECEFF2; --aei-stroke: rgba(14,17,19,.18);
     }
   }
-  function closeLB(){
-    if(document.fullscreenElement){ try{ document.exitFullscreen(); }catch(e){} }
-    var v = lbFig.querySelector('video'); if(v){ v.muted = true; v.pause(); }
-    lb.classList.remove('open'); lbFig.replaceChildren(); lockScroll(false);
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden;
   }
-  lb.addEventListener('click', function(e){ if(e.target===lb || e.target===lbFig) closeLB(); });
-  lbClose.addEventListener('click', closeLB);
-  document.addEventListener('keydown', function(e){
-    if(!lb.classList.contains('open')) return;
-    if(e.key==='Escape') closeLB();
-    if(e.key==='ArrowRight' && lbState.idx<lbState.list.length-1){ lbState.idx++; renderLB(); }
-    if(e.key==='ArrowLeft' && lbState.idx>0){ lbState.idx--; renderLB(); }
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+  a:hover{border-color:var(--accent)}
+  img,video{display:block; max-width:100%; height:auto; background:transparent}
+
+  /* ===== header ===== */
+  header{
+    position:fixed; top:12px; left:var(--pad-x); z-index:10; height:var(--header-h);
+    display:flex; align-items:center;
+  }
+  header a{display:inline-flex; align-items:center}
+  header img{width:48px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+  @media (prefers-color-scheme:light){ header img{ filter:none } }
+
+  /* ===== selector de idioma ===== */
+  .language-selector{
+    position:fixed; top:12px; right:var(--pad-x); z-index:20;
+    display:flex; gap:8px; text-transform:lowercase;
+  }
+  .language-selector button{
+    appearance:none; font:600 .85rem/1 system-ui;
+    color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+    padding:6px 10px; cursor:pointer; letter-spacing:.2px;
+    transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+  /* ===== layout ===== */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 48px; padding:0 var(--pad-x)}
+  h1,h2{font:700 1.35rem/1.25 system-ui; margin:0 0 6px; text-transform:lowercase}
+  .meta{font:400 .9rem/1.5 system-ui; color:var(--fg-dim); margin:0 0 22px}
+  .description{font:400 1rem/1.65 system-ui; max-width:700px; margin-bottom:24px}
+
+  /* ===== hero ===== */
+  .hero{margin:8px 0 16px; display:grid; place-items:center; border:var(--b1); overflow:hidden; background:transparent}
+  .hero video{width:100%; max-height:78vh; object-fit:contain}
+
+  /* ===== grids compactas ===== */
+  .tight-wrap{margin:16px 0}
+  .tight-grid{display:grid; gap:0; line-height:0; font-size:0}
+  .cols-2{grid-template-columns:repeat(2,1fr)}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .cols-4{grid-template-columns:repeat(4,1fr)}
+  .tight-item img,.tight-item video{width:100%; height:auto; border:var(--b1)}
+  @media(max-width:768px){ .tight-item img,.tight-item video{border:var(--b1)} }
+
+  /* ===== AEI ===== */
+  .aei{position:relative; width:100%; border:var(--b1); background:transparent; overflow:auto; max-height:80vh}
+  .aei-stage{display:grid; grid-template-columns:repeat(6,1fr); gap:0; line-height:0; font-size:0}
+  .aei-stage img{width:100%; height:auto; display:block}
+  @media (max-width:900px){ .aei-stage{grid-template-columns:repeat(3,1fr)} }
+  @media (max-width:520px){ .aei-stage{grid-template-columns:repeat(2,1fr)} }
+  .aei-stage img.aei-float{animation:floatY 9s ease-in-out infinite; will-change:transform; opacity:.9}
+  @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  .aei-lines{position:absolute; inset:0; pointer-events:none}
+  .aei-lines line{stroke:var(--aei-stroke); stroke-width:.6}
+
+  /* ===== perf hints ===== */
+  [data-lazy-section]{content-visibility:auto; contain-intrinsic-size:1px 1000px}
+  .tight-item,.aei-stage img{content-visibility:auto; contain:content}
+
+  /* ===== lightbox canónico ===== */
+  #xpan-lightbox{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.55); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
+  #xpan-lightbox.open{display:flex}
+  #xpan-lightbox .sheet{position:relative; max-width:100vw; max-height:100vh; overflow:hidden; transform:scale(.985); opacity:0; transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}
+  #xpan-lightbox.open .sheet{transform:scale(1); opacity:1}
+  #xpan-lightbox img,#xpan-lightbox video{display:block; width:auto; height:auto; max-width:100vw; max-height:100vh; object-fit:contain; margin:0; background:transparent}
+  html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
+</style>
+</head>
+<body>
+  <!-- header -->
+  <header><a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan"></a></header>
+
+  <!-- selector idioma -->
+  <div class="language-selector" role="tablist" aria-label="selector de idioma">
+    <button onclick="setLang('es')" class="active" aria-pressed="true" role="tab">es</button>
+    <button onclick="setLang('en')" aria-pressed="false" role="tab">en</button>
+    <button onclick="setLang('fr')" aria-pressed="false" role="tab">fr</button>
+    <button onclick="setLang('jp')" aria-pressed="false" role="tab">jp</button>
+  </div>
+
+  <div class="container">
+    <!-- ES -->
+    <div class="lang lang-es">
+      <h1>lo intangible sobre lo inmutable</h1>
+      <div class="meta">acto crítico de intervención — 4–7 febrero 2025 — antiguo hotel reforma, ciudad de méxico</div>
+      <div class="description">
+        <p>xpan presentó en el hotel reforma el cuarto central de 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t [paris.25]</em></a> con su ciclo de piezas en exhibición. el espacio fue trasladado íntegramente desde parís y reconfigurado dentro del edificio, cargando consigo la energía y densidad acumulada durante su primera activación.</p>
+        <p>el hotel reforma, cargado de memoria arquitectónica, se convirtió en superficie activa dentro de la topología conectiva. la inserción del núcleo central de 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t [paris.25]</em></a> en la ciudad de méxico abrió un campo de proximidades dinámicas: un territorio en movimiento donde geografías, lenguajes y comunidades distantes se articularon en un mismo sistema. además de un traslado físico, fue una vectorización simbólica que redujo distancias materiales y culturales, generando resonancias significativas. en ese cruce, lo efímero y lo permanente dejaron de ser opuestos para integrarse en un mismo proceso de conexiones.</p>
+      </div>
+    </div>
+
+    <!-- EN -->
+    <div class="lang lang-en" style="display:none;">
+      <h1>lo intangible sobre lo inmutable</h1>
+      <div class="meta">critical act of intervention — 4–7 february 2025 — antiguo hotel reforma, mexico city</div>
+      <div class="description">
+        <p>xpan presented at hotel reforma the central room of 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t [paris.25]</em></a> with its cycle of pieces on display. the space was transferred in full from paris and reconfigured inside the building, carrying the energy and density accumulated during its first activation.</p>
+        <p>the hotel reforma, dense with architectural memory, became an active surface within the connective topology. inserting the central core of 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t [paris.25]</em></a> in mexico city opened a field of dynamic proximities: a moving territory where distant geographies, languages, and communities articulated within one system. beyond a physical relocation, it was a symbolic vectorization that shortened material and cultural distances, generating resonances. in that crossing, the ephemeral and the permanent ceased to be opposites and integrated into the same process of connections.</p>
+      </div>
+    </div>
+
+    <!-- FR -->
+    <div class="lang lang-fr" style="display:none;">
+      <h1>lo intangible sobre lo inmutable</h1>
+      <div class="meta">acte critique d'intervention — 4–7 février 2025 — antiguo hotel reforma, mexico</div>
+      <div class="description">
+        <p>xpan a présenté à l'hôtel reforma la salle centrale de 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t [paris.25]</em></a> avec son cycle de pièces en exposition. l'espace a été transféré intégralement depuis paris et reconfiguré à l'intérieur du bâtiment, portant l'énergie et la densité accumulées lors de sa première activation.</p>
+        <p>l'hôtel reforma, chargé de mémoire architecturale, est devenu une surface active au sein de la topologie connective. l'insertion du noyau central de 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t [paris.25]</em></a> dans la ville de mexico a ouvert un champ de proximités dynamiques : un territoire en mouvement où géographies, langues et communautés lointaines se sont articulées dans un même système. au-delà d'un déplacement physique, il s'agissait d'une vectorisation symbolique qui a réduit les distances matérielles et culturelles, générant des résonances. dans ce croisement, l'éphémère et le permanent ont cessé d'être opposés pour s'intégrer dans un même processus de connexions.</p>
+      </div>
+    </div>
+
+    <!-- JP -->
+    <div class="lang lang-jp" style="display:none;">
+      <h1>lo intangible sobre lo inmutable</h1>
+      <div class="meta">批評的介入の行為 — 2025年2月4日–7日 — アンティグオ・ホテル・レフォルマ（メキシコシティ）</div>
+      <div class="description">
+        <p>xpanはアンティグオ・ホテル・レフォルマにて、 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t［paris.25］</em></a> の中心室と展示中の作品群を提示した。空間はパリからそのまま移送され、館内で再構成され、初回の起動で蓄積したエネルギーと密度を帯びたまま現れた。</p>
+        <p>建築的記憶に満ちたホテル・レフォルマは、コネクティブ・トポロジーの内部における能動的な表面となった。メキシコシティに 
+          <a href="javascript:void(0)" onclick="openBoth('mdtc.ep.t.paris.25.html','arq.xpan.ep.t[paris.25].html')"><em>xpan.ep.t［paris.25］</em></a> の中核を挿入することにより、動的近接の場が開かれた。そこでは、離れた地理・言語・コミュニティが一つのシステムの内で編成される。単なる物理的移動に留まらず、物質的・文化的距離を縮める象徴的ベクトル化でもあり、顕著な共鳴を生んだ。その交差において、儚いものと持続するものは対立をやめ、同一の接続プロセスへと統合された。</p>
+      </div>
+    </div>
+
+    <!-- hero -->
+    <section class="hero" data-lazy-section>
+      <video id="hero" aria-label="video principal" src="https://attachments.are.na/39393250/b8287266514a96fa5e9c13f05043ca4f.mp4" autoplay loop muted playsinline preload="none"></video>
+    </section>
+
+    <!-- grids -->
+    <section>
+      <div class="tight-wrap" id="gridTop10"><div class="tight-grid cols-2" data-chunk="20"></div></div>
+    </section>
+    <section>
+      <div class="tight-wrap" id="gridG2"><div class="tight-grid cols-3" data-chunk="40"></div></div>
+    </section>
+    <section>
+      <div class="tight-wrap" id="gridG22"><div class="tight-grid cols-4" data-chunk="60"></div></div>
+    </section>
+    <section>
+      <div class="tight-wrap" id="gridF3"><div class="tight-grid cols-3" data-chunk="36"></div></div>
+    </section>
+    <section>
+      <div class="tight-wrap" id="gridV"><div class="tight-grid cols-3" data-chunk="30"></div></div>
+    </section>
+
+    <!-- a.e.i -->
+    <section>
+      <div class="aei" id="aei">
+        <svg class="aei-lines" id="aei-lines" aria-hidden="true"></svg>
+        <div class="aei-stage" id="aeiStage" data-chunk="200"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- lightbox canónico -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de medios"><div class="sheet"></div></div>
+
+<script>
+/* ===== util ===== */
+function px(u){ return (window.mediaProxy ? window.mediaProxy(u) : u); }
+function openBoth(u1,u2){ window.open(u1,'_blank','noopener'); window.open(u2,'_blank','noopener'); }
+
+/* ===== idioma (canónico) ===== */
+function setLang(lang){
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang').forEach(el=>el.style.display=el.classList.contains(`lang-${lang}`)?'block':'none');
+  document.querySelectorAll('.language-selector button').forEach(btn=>{
+    const on = btn.textContent===lang;
+    btn.classList.toggle('active',on);
+    btn.setAttribute('aria-pressed', on?'true':'false');
   });
-  // Swipe
-  var sx=0, sy=0;
-  lb.addEventListener('touchstart', function(e){ var t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
-  lb.addEventListener('touchend', function(e){
-    var t=e.changedTouches[0]; var dx=t.clientX-sx; var dy=t.clientY-sy;
-    if(Math.abs(dx)>48 && Math.abs(dy)<40){
-      if(dx<0 && lbState.idx<lbState.list.length-1){ lbState.idx++; renderLB(); }
-      else if(dx>0 && lbState.idx>0){ lbState.idx--; renderLB(); }
-    } else if(Math.abs(dx)<12 && Math.abs(dy)<12){ closeLB(); }
-  }, {passive:true});
+  document.documentElement.setAttribute('lang', lang);
+}
+setLang(localStorage.getItem('lang') || 'es');
 
-  // Pause out-of-view videos
-  var videoIO = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ var v=en.target; if(en.isIntersecting){ v.play().catch(function(){}); } else { v.pause(); } });
-  }, {rootMargin:"200px 0px"});
+/* ===== hero: política de audio simple ===== */
+(function(){
+  const v=document.getElementById('hero'); if(!v) return;
+  // tocar para intentar habilitar audio en hero en viewport
+  document.addEventListener('click', ()=>{ v.muted=false; v.play().catch(()=>{}); }, {once:true});
+})();
 
-  // Tile factory
-  function tileFactory(list){
-    return function(it, idx){
-      var wrap = document.createElement('div'); wrap.className='tight-item';
+/* ===== lightbox unificado ===== */
+(function(){
+  const lb=document.getElementById("xpan-lightbox"), sheet=lb.querySelector(".sheet");
+  let nodes=[], idx=-1;
+  function collect(){ nodes=[...document.querySelectorAll("img,video")].filter(n=>!n.closest("#xpan-lightbox")&&!n.closest("a")&&(n.currentSrc||n.src)); }
+  function openAt(i){
+    if(i<0||i>=nodes.length) return; idx=i; sheet.innerHTML="";
+    const srcEl=nodes[idx]; const isVideo=srcEl.tagName.toLowerCase()==="video";
+    const el=document.createElement(isVideo?"video":"img");
+    if(isVideo){
+      el.src=srcEl.currentSrc||srcEl.src; el.playsInline=true; el.controls=true; el.loop=!!srcEl.loop; el.muted=srcEl.muted??true; el.autoplay=true;
+      el.addEventListener("click",ev=>ev.stopPropagation(),{passive:true});
+    }else{
+      el.src=srcEl.currentSrc||srcEl.src; el.decoding="async"; el.loading="eager";
+    }
+    sheet.appendChild(el); lb.classList.add("open"); document.documentElement.classList.add("lb-open"); document.body.classList.add("lb-open");
+  }
+  function close(){ lb.classList.remove("open"); sheet.innerHTML=""; document.documentElement.classList.remove("lb-open"); document.body.classList.remove("lb-open"); idx=-1; }
+  function clickMedia(ev){
+    const t=ev.target; if(!t) return; if(t.closest("a")) return;
+    if(t.tagName==="IMG"||t.tagName==="VIDEO"){ ev.preventDefault(); ev.stopPropagation(); collect(); const i=nodes.indexOf(t); if(i>-1) openAt(i); }
+  }
+  document.body.addEventListener("click",clickMedia,{capture:true,passive:false});
+  lb.addEventListener("click",e=>{e.preventDefault(); e.stopPropagation(); close()},{passive:false});
+  window.addEventListener("keydown",e=>{ if(!lb.classList.contains("open")) return; if(e.key==="Escape") close(); if((e.key==="ArrowRight"||e.key==="l")&&idx<nodes.length-1) openAt(idx+1); if((e.key==="ArrowLeft"||e.key==="h")&&idx>0) openAt(idx-1); });
+  new MutationObserver(()=>collect()).observe(document.documentElement,{subtree:true,childList:true});
+  collect();
+})();
+
+/* ===== fábrica de tiles + montaje de grids ===== */
+(function(){
+  function tileFactory(){
+    return function(it){
+      const wrap=document.createElement('div'); wrap.className='tight-item';
       if(it.type==='img'){
-        var img = new Image(); img.src = px(it.src); img.decoding='async'; img.loading='lazy';
-        img.addEventListener('click', function(){ openLB(list, idx); });
+        const img=new Image(); img.src=px(it.src); img.decoding='async'; img.loading='lazy';
         wrap.appendChild(img);
-      } else {
-        var v = document.createElement('video');
-        v.src = px(it.src); v.playsInline = true; v.muted = true; v.loop = true; v.autoplay = true; v.preload='none';
-        v.addEventListener('click', function(){ openLB(list, idx); });
-        videoIO.observe(v);
+      }else{
+        const v=document.createElement('video'); v.playsInline=true; v.muted=true; v.loop=true; v.autoplay=true; v.preload='none'; v.src=px(it.src);
         wrap.appendChild(v);
       }
       return wrap;
     };
   }
+  window.mountGrid=function(containerId,list){
+    const grid=document.querySelector('#'+containerId+' .tight-grid'); if(!grid||!list) return;
+    const make=tileFactory(); let i=0; const CHUNK=Number(grid.getAttribute('data-chunk'))||40;
+    function add(){ if(i>=list.length) return; const frag=document.createDocumentFragment(); for(let k=0;k<CHUNK && i<list.length;k++,i++){ frag.appendChild(make(list[i])); } grid.appendChild(frag); }
+    add();
+    const sentinel=document.createElement('div'); sentinel.style.height='1px'; sentinel.setAttribute('aria-hidden','true'); grid.appendChild(sentinel);
+    const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ add(); if(i>=list.length) io.disconnect(); } },{root:null,rootMargin:"1200px 0px"}); io.observe(sentinel);
 
-  // Chunked grids
-  function mountGrid(containerId, list){
-    var grid = document.querySelector('#'+containerId+' .tight-grid');
-    var make = tileFactory(list);
-    var CHUNK = Number(grid.getAttribute('data-chunk')) || 40;
-    var i=0;
-    function addChunk(){
-      if(i>=list.length) return;
-      var frag = document.createDocumentFragment();
-      for(var k=0; k<CHUNK && i<list.length; k++, i++){ frag.appendChild(make(list[i], i)); }
-      grid.appendChild(frag);
-    }
-    addChunk();
-    var sentinel = document.createElement('div'); sentinel.style.height='1px'; sentinel.setAttribute('aria-hidden','true');
-    grid.appendChild(sentinel);
-    var io = new IntersectionObserver(function(es){
-      if(es.some(function(e){ return e.isIntersecting; })){ addChunk(); }
-      if(i>=list.length){ io.disconnect(); }
-    }, {root:null, rootMargin:"1200px 0px"});
-    io.observe(sentinel);
-  }
+    // videos: play solo al entrar en viewport
+    const vio=new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        const v=en.target;
+        if(en.isIntersecting){ if(v.paused) v.play().catch(()=>{}); }
+        else { try{v.pause();}catch(_){} }
+      });
+    },{root:null,rootMargin:"800px 0px", threshold:.1});
+    grid.querySelectorAll('video').forEach(v=>vio.observe(v));
+  };
+})();
 
-  // AEI: scroll grid that grows to fit all images + subtle motion + SVG lines
-  function initAEI(images){
-    var aei = document.getElementById('aei');
-    var stage = document.getElementById('aeiStage');
-    var lines = document.getElementById('aei-lines');
-    var make = function(it, idx){
-      var img = new Image(); img.src = px(it.src); img.decoding='async'; img.loading='lazy';
-      if (idx % 11 === 0){ img.classList.add('aei-float'); img.style.animationDelay=(Math.random()*4).toFixed(2)+'s'; }
-      img.addEventListener('click', function(){ openLB(images, idx); });
+/* ===== AEI con líneas k-vecinos estables ===== */
+(function(){
+  window.initAEI=function(images){
+    const aei=document.getElementById('aei'); const stage=document.getElementById('aeiStage'); const svg=document.getElementById('aei-lines');
+    if(!aei||!stage||!svg||!images) return;
+
+    function cell(it,idx){
+      const img=new Image(); img.src=px(it.src); img.decoding='async'; img.loading='lazy';
+      if(idx%11===0){ img.classList.add('aei-float'); img.style.animationDelay=(Math.random()*4).toFixed(2)+'s'; }
       return img;
-    };
-    var CHUNK = Number(stage.getAttribute('data-chunk')) || 200;
-    var i=0;
-    function addChunk(){
-      if(i>=images.length) return;
-      var frag = document.createDocumentFragment();
-      for(var k=0;k<CHUNK && i<images.length;k++,i++){ frag.appendChild(make(images[i], i)); }
-      stage.appendChild(frag);
     }
-    addChunk();
-    var sentinel = document.createElement('div'); sentinel.style.height='1px'; sentinel.setAttribute('aria-hidden','true');
-    stage.appendChild(sentinel);
-    var io = new IntersectionObserver(function(es){
-      if(es.some(function(e){ return e.isIntersecting; })){ addChunk(); }
-      if(i>=images.length){ io.disconnect(); }
-    }, {root: aei, rootMargin:"1500px 0px"});
-    io.observe(sentinel);
+    let i=0; const CHUNK=Number(stage.getAttribute('data-chunk'))||200;
+    function add(){ if(i>=images.length) return; const f=document.createDocumentFragment(); for(let k=0;k<CHUNK && i<images.length;k++,i++){ f.appendChild(cell(images[i],i)); } stage.appendChild(f); }
+    add();
+    const sentinel=document.createElement('div'); sentinel.style.height='1px'; sentinel.setAttribute('aria-hidden','true'); stage.appendChild(sentinel);
+    const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ add(); if(i>=images.length) io.disconnect(); } },{root:aei,rootMargin:"1500px 0px"}); io.observe(sentinel);
 
-    function updateLines(){
-      var rect = stage.getBoundingClientRect();
-      var vw = rect.width, vh = rect.height;
-      lines.setAttribute('viewBox','0 0 '+vw+' '+vh);
-      lines.innerHTML = '';
-      var nodes = Array.prototype.slice.call(stage.querySelectorAll('img'));
-      var vis = nodes.filter(function(n){ var r=n.getBoundingClientRect(); return r.bottom>0 && r.top<window.innerHeight; });
-      var pick = [];
-      for(var p=0; p<Math.min(30, vis.length); p+=3) pick.push(vis[p]);
-      for(var a=0; a<pick.length-1; a++){
-        var A=pick[a].getBoundingClientRect(), B=pick[a+1].getBoundingClientRect();
-        var x1=A.left-rect.left + A.width/2, y1=A.top-rect.top + A.height/2;
-        var x2=B.left-rect.left + B.width/2, y2=B.top-rect.top + B.height/2;
-        var ln = document.createElementNS('http://www.w3.org/2000/svg','line');
-        ln.setAttribute('x1',x1); ln.setAttribute('y1',y1); ln.setAttribute('x2',x2); ln.setAttribute('y2',y2);
-        ln.setAttribute('stroke','currentColor'); ln.setAttribute('stroke-width','0.6'); lines.appendChild(ln);
-      }
-    }
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var ticking=false, lastTS=0;
-    function onScroll(){
-      if(reduceMotion) return;
-      if(!ticking){
-        requestAnimationFrame(function(ts){
-          if(ts - lastTS > 1200){ updateLines(); lastTS = ts; }
-          ticking=false;
-        });
-        ticking = true;
-      }
-    }
-    // Eventos
-    aei.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', function(){ if(!reduceMotion){ updateLines(); }});
-    // Bucle suave con rAF + idle como mantenimiento
-    (function loop(ts){
-      if(!reduceMotion){
-        if(ts - lastTS > 1200){
-          if('requestIdleCallback' in window){
-            requestIdleCallback(function(){ updateLines(); }, {timeout:800});
-          }else{
-            updateLines();
+    const blocks=stage; let recalcPending=false;
+    function schedule(){ if(recalcPending) return; recalcPending=true; requestAnimationFrame(()=>{ draw(); recalcPending=false; }); }
+    function draw(){
+      const rect=stage.getBoundingClientRect(); const vw=rect.width, vh=rect.height;
+      svg.setAttribute('viewBox',`0 0 ${vw} ${vh}`); while(svg.firstChild) svg.removeChild(svg.firstChild);
+      const els=[...stage.querySelectorAll('img')];
+      const pts = els.map(e=>{ const r=e.getBoundingClientRect(); return { x:r.left-rect.left+r.width/2, y:r.top-rect.top+r.height/2 }; });
+      const k = Math.min(3, Math.max(1, Math.floor(Math.sqrt(pts.length)/2)));
+      for(let a=0;a<pts.length;a++){
+        const dists = pts.map((p,j)=>({j, d:(a===j)?Infinity:((p.x-pts[a].x)**2 + (p.y-pts[a].y)**2)})).sort((A,B)=>A.d-B.d);
+        for(let n=0;n<k;n++){
+          const j=dists[n].j; if(j>a){
+            const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+            line.setAttribute('x1',pts[a].x); line.setAttribute('y1',pts[a].y);
+            line.setAttribute('x2',pts[j].x); line.setAttribute('y2',pts[j].y);
+            svg.appendChild(line);
           }
-          lastTS = ts;
         }
-        requestAnimationFrame(loop);
       }
-    })(0);
-    updateLines();
+    }
+    aei.addEventListener('scroll', schedule, {passive:true});
+    window.addEventListener('resize', schedule, {passive:true});
+    schedule();
+  };
+})();
 
-    
+/* ===== performance adaptativa ===== */
+(function(){
+  const devMem=(navigator.deviceMemory||4);
+  const slowNet=(navigator.connection && (navigator.connection.saveData || /2g/.test(String(navigator.connection.effectiveType||""))));
+  const GRID_CHUNK_SMALL = slowNet?12:(devMem<=4?16:24);
+  const AEI_CHUNK_SMALL  = slowNet?80:(devMem<=4?120:160);
+
+  document.querySelectorAll('.tight-grid[data-chunk]').forEach(g=>{
+    const n=+g.getAttribute('data-chunk')||40; if(n>GRID_CHUNK_SMALL) g.setAttribute('data-chunk',GRID_CHUNK_SMALL);
+  });
+  const aeiStage=document.getElementById('aeiStage');
+  if(aeiStage && aeiStage.hasAttribute('data-chunk')){
+    const nAEI=+aeiStage.getAttribute('data-chunk')||200; if(nAEI>AEI_CHUNK_SMALL) aeiStage.setAttribute('data-chunk',AEI_CHUNK_SMALL);
   }
+})();
 
-  // Data
-  var DATA = {
+window.DATA  = {
     top10: [{"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393204/original_76a2cbbbac7b6b5696637cbd2c8a31b6.jpg"},
 {"type": "img",
@@ -4201,618 +4100,26 @@ aei: [{"type": "img",
 "src": "https://d2w9rnfcy7mm78.cloudfront.net/39391775/original_8dd55feda5aa2d946dadafae8307a8ba.jpg"}]
   };
 
-  mountGrid('gridTop10', DATA.top10);
-  mountGrid('gridG2',    DATA.g2);
-  mountGrid('gridG22',   DATA.g22);
-  mountGrid('gridF3',    DATA.f3);
-  mountGrid('gridV',     DATA.vids);
-  initAEI(DATA.aei);
-})();
-</script>
-<div aria-hidden="true" id="lightbox"><figure></figure></div><script>
 (function(){
-  "use strict";
-  if (window.__xpan_lb_applied) return; 
-  window.__xpan_lb_applied = true;
-
-  const $ = (s, r=document)=> r.querySelector(s);
-  const $$ = (s, r=document)=> Array.from(r.querySelectorAll(s));
-  const px = (u)=> (window.mediaProxy ? window.mediaProxy(u) : u);
-
-  const LB = {
-    el: $('#lightbox'),
-    fig: $('#lightbox figure'),
-    list: [], idx: 0,
-    open(list, idx){
-      this.list = list; this.idx = idx|0;
-      this.render();
-      this.el.classList.add('open');
-      document.documentElement.classList.add('lb-open');
-      document.body.classList.add('lb-open');
-    },
-    close(){
-      try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(_){}
-      const v = this.fig.querySelector('video'); if(v){ v.muted = true; try{v.pause();}catch(_){}} 
-      this.el.classList.remove('open');
-      document.documentElement.classList.remove('lb-open');
-      document.body.classList.remove('lb-open');
-      this.fig.replaceChildren();
-    },
-    render(){
-      this.fig.replaceChildren();
-      const it = this.list[this.idx]; if(!it) return;
-      if(it.type === 'img'){
-        const img = new Image();
-        img.src = px(it.src); img.decoding='async';
-        img.addEventListener('click', ()=> this.close());
-        this.fig.appendChild(img);
-      } else {
-        const v = document.createElement('video');
-        v.src = px(it.src);
-        v.playsInline = true; v.loop = true; v.autoplay = true; v.muted = true; v.controls = false; v.preload = 'metadata';
-        this.fig.appendChild(v);
-        // Fullscreen on load. Unmute only in FS.
-        const onLoaded = ()=> { if(v.requestFullscreen) v.requestFullscreen().catch(()=>{}); };
-        v.addEventListener('loadeddata', onLoaded, { once:true });
-        const onFS = ()=>{
-          const inFS = document.fullscreenElement === v;
-          v.muted = !inFS;
-          if(!inFS) document.removeEventListener('fullscreenchange', onFS);
-        };
-        document.addEventListener('fullscreenchange', onFS);
-        v.addEventListener('click', ()=>{
-          if(document.fullscreenElement === v) document.exitFullscreen();
-          else LB.close();
-        });
-      }
-    }
-  };
-
-  // Overlay click to close. Prevent tap-through.
-  $('#lightbox').addEventListener('click', (e)=>{
-    if(e.target.id === 'lightbox' || e.target.tagName === 'FIGURE') LB.close();
-  });
-  document.addEventListener('keydown', (e)=>{
-    if(!LB.el.classList.contains('open')) return;
-    if(e.key === 'Escape') LB.close();
-    if(e.key === 'ArrowRight' && LB.idx < LB.list.length-1){ LB.idx++; LB.render(); }
-    if(e.key === 'ArrowLeft'  && LB.idx > 0){ LB.idx--; LB.render(); }
-  });
-  // Basic swipe
-  (function swipe(){
-    let sx=0, sy=0;
-    LB.el.addEventListener('touchstart', e=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
-    LB.el.addEventListener('touchend', e=>{
-      const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
-      if(Math.abs(dx)>48 && Math.abs(dy)<40){
-        if(dx<0 && LB.idx<LB.list.length-1){ LB.idx++; LB.render(); }
-        else if(dx>0 && LB.idx>0){ LB.idx--; LB.render(); }
-      } else if(Math.abs(dx)<12 && Math.abs(dy)<12){ LB.close(); }
-    }, {passive:true});
-  })();
-
-  function bindGallery(scope){
-    if(!scope) return;
-    const nodes = Array.from(scope.querySelectorAll('img,video'));
-    const list = nodes.map(n=>({ type: n.tagName.toLowerCase()==='video' ? 'video' : 'img', src: n.currentSrc || n.getAttribute('src') }));
-    nodes.forEach((node, i)=>{
-      node.style.cursor = 'zoom-in';
-      node.addEventListener('click', (ev)=>{
-        ev.stopPropagation();
-        LB.open(list, i);
-      }, { passive:true });
-    });
-  }
-
-  // Bind known sections conservando todo lo demás
-  ['#gridTop10','#gridG2','#gridG22','#gridF3','#gridV','#aeiStage','main','body']
-    .forEach(sel=> bindGallery(document.querySelector(sel)));
-
-  // Hero si existe
-  const hv = document.getElementById('hero');
-  if(hv){
-    hv.style.cursor = 'zoom-in';
-    hv.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      LB.open([{type: hv.tagName.toLowerCase()==='video' ? 'video' : 'img', src: hv.currentSrc || hv.getAttribute('src')}], 0);
-    }, { passive:true });
-  }
-
-  // Pause videos out of view
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(en=>{
-      const v=en.target;
-      if(en.isIntersecting) { try{v.play();}catch(_){}} else { try{v.pause();}catch(_){} }
-    });
-  }, {rootMargin:"200px 0px"});
-  Array.from(document.querySelectorAll('video')).forEach(v=> io.observe(v));
-})();
-</script>
-<script>
-(function(){
-  "use strict";
-  if (window.__xpan_global_fs_audio) return;
-  window.__xpan_global_fs_audio = true;
-
-  function remuteOthers(except){
-    document.querySelectorAll('video').forEach(function(v){
-      if(v !== except){ try{ v.muted = true; }catch(_){ } }
-    });
-  }
-
-  document.addEventListener('fullscreenchange', function(){
-    var fe = document.fullscreenElement;
-    if (fe && fe.tagName && fe.tagName.toLowerCase() === 'video'){
-      try {
-        fe.muted = false;
-        fe.play && fe.play().catch(function(){});
-        remuteOthers(fe);
-      } catch(_){}
-    } else {
-      // On exit, ensure any lightbox video returns to muted state
-      try{
-        var lbv = document.querySelector('#lb video, #lightbox video');
-        if(lbv){ lbv.muted = true; }
-      }catch(_){}
-    }
-  });
-})();
-</script>
-
-<script>
-(function(){
-  "use strict";
-  if (window.__xpan_aei_float_applied) return;
-  window.__xpan_aei_float_applied = true;
-
-  // Utilities
-  var px = function(u){ return (window.mediaProxy ? window.mediaProxy(u) : u); };
-  function rand(min, max){ return Math.random()*(max-min)+min; }
-  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
-
-  // Elements
-  var aei = document.getElementById('aei');
-  var stage = document.getElementById('aeiStage');
-  var lines = document.getElementById('aei-lines');
-  if(!aei || !stage || !lines) return;
-
-  // Ensure correct CSS for absolute layout inside scrollable AEI
-  (function ensureCSS(){
-    var css = document.createElement('style');
-    css.textContent = [
-      '.aei{position:relative; overflow:auto; max-height:80vh; background:#fff; border:1px solid var(--line);}',
-      '.aei-stage{position:relative; width:100%; height:auto; min-height:180vh;}',  // tall canvas to preserve scroll
-      '.aei-float-item{position:absolute; will-change:transform; line-height:0; font-size:0;}',
-      '.aei-float-item img{display:block; width:auto; height:auto; max-width:28vw; max-height:30vh; object-fit:contain;}',
-      '#aei-lines{position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; opacity:.18;}'
-    ].join('');
-    document.head.appendChild(css);
-  })();
-
-  // Collect image list
-  function collectAEIImages(){
-    // Priority 1: DATA.aei if present
+  window.DATA = window.DATA || { top10:[], g2:[], g22:[], f3:[], vids:[], aei:[] };
+  function boot(){
     try{
-      if (window.DATA && Array.isArray(window.DATA.aei) && window.DATA.aei.length){
-        return window.DATA.aei.map(function(d){ return { type:'img', src: d.src || d }; });
-      }
-    }catch(_){}
-    // Priority 2: existing children in stage
-    var arr = [];
-    stage.querySelectorAll('img').forEach(function(img){
-      var src = img.currentSrc || img.getAttribute('src');
-      if(src) arr.push({type:'img', src: src});
-    });
-    return arr;
+      mountGrid('gridTop10', window.DATA.top10 || []);
+      mountGrid('gridG2',    window.DATA.g2    || []);
+      mountGrid('gridG22',   window.DATA.g22   || []);
+      mountGrid('gridF3',    window.DATA.f3    || []);
+      mountGrid('gridV',     window.DATA.vids  || []);
+      initAEI(window.DATA.aei || []);
+    }catch(e){}
   }
-
-  var ITEMS = collectAEIImages();
-  if (!ITEMS.length) return;
-
-  // Rebuild stage as floating canvas
-  stage.innerHTML = ''; // clear grid if any
-  var STAGE_W = stage.clientWidth;
-  var STAGE_H = Math.max(stage.clientHeight, Math.round(window.innerHeight * 1.8)); // ensure tall area
-  stage.style.height = STAGE_H + 'px';
-
-  // Create nodes with velocities. Split into two groups to mirror a.e.i.index logic.
-  var nodesA = [], nodesB = [];
-  ITEMS.forEach(function(it, i){
-    var wrap = document.createElement('div');
-    wrap.className = 'aei-float-item';
-    var img = new Image();
-    img.src = px(it.src);
-    img.decoding = 'async';
-    img.loading = 'lazy';
-    wrap.appendChild(img);
-    stage.appendChild(wrap);
-
-    // Random initial size constraints to vary visuals
-    var maxW = Math.round(rand(16, 28)); // vw
-    var maxH = Math.round(rand(16, 30)); // vh
-    img.style.maxWidth  = maxW + 'vw';
-    img.style.maxHeight = maxH + 'vh';
-
-    // Random position in stage
-    var node = {
-      el: wrap,
-      img: img,
-      x: rand(0, Math.max(1, STAGE_W - 200)),
-      y: rand(0, Math.max(1, STAGE_H - 200)),
-      vx: (Math.random()-0.5) * 0.35,
-      vy: (Math.random()-0.5) * 0.35
-    };
-
-    // Simple grouping: alternate into two sets
-    if (i % 2 === 0) nodesA.push(node); else nodesB.push(node);
-
-    // Lightbox binding if available (from your page's LB)
-    wrap.addEventListener('click', function(e){
-      e.stopPropagation();
-      try{
-        if (typeof openLB === 'function'){
-          var list = ITEMS.map(function(it2){ return { type:'img', src: px(it2.src) }; });
-          openLB(list, i);
-        }
-      }catch(_){}
-    }, {passive:true});
-  });
-
-  var allNodes = nodesA.concat(nodesB);
-
-  // Resize observer to adapt to container size changes
-  var resizeObs = new ResizeObserver(function(){
-    STAGE_W = stage.clientWidth;
-    // keep height stable to preserve scroll experience
-  });
-  resizeObs.observe(stage);
-
-  // Lines handling similar to a.e.i.index: regenerate at random intervals
-  var currentLines = [];
-  var nextAt = performance.now() + 300;
-  function regenLines(){
-    currentLines = [];
-    [nodesA, nodesB].forEach(function(group){
-      for (var i=0;i<group.length;i++){
-        for (var j=i+1;j<group.length;j++){
-          if (Math.random() < 0.12){ // slightly sparser to keep clarity
-            currentLines.push([group[i], group[j]]);
-          }
-        }
-      }
-    });
-  }
-  function drawLines(){
-    // Make SVG cover the full scrollable stage
-    var viewW = STAGE_W;
-    var viewH = STAGE_H;
-    lines.setAttribute('viewBox', '0 0 '+viewW+' '+viewH);
-    lines.innerHTML = '';
-    currentLines.forEach(function(pair){
-      var a = pair[0], b = pair[1];
-      var ax = clamp(a.x, 0, viewW), ay = clamp(a.y, 0, viewH);
-      var bx = clamp(b.x, 0, viewW), by = clamp(b.y, 0, viewH);
-      var ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      ln.setAttribute('x1', ax + (a.img.naturalWidth  ? Math.min(a.img.naturalWidth,  a.img.clientWidth )/2 : 40));
-      ln.setAttribute('y1', ay + (a.img.naturalHeight ? Math.min(a.img.naturalHeight, a.img.clientHeight)/2 : 40));
-      ln.setAttribute('x2', bx + (b.img.naturalWidth  ? Math.min(b.img.naturalWidth,  b.img.clientWidth )/2 : 40));
-      ln.setAttribute('y2', by + (b.img.naturalHeight ? Math.min(b.img.naturalHeight, b.img.clientHeight)/2 : 40));
-      ln.setAttribute('stroke', 'currentColor');
-      ln.setAttribute('stroke-width', '0.6');
-      lines.appendChild(ln);
-    });
-  }
-
-  // Animation loop inside AEI only. Does not block page scroll.
-  var paused = false;
-  aei.addEventListener('mouseenter', function(){ paused = true; }, {passive:true});
-  aei.addEventListener('mouseleave', function(){ paused = false; }, {passive:true});
-  aei.addEventListener('touchstart', function(){ paused = true; }, {passive:true});
-  aei.addEventListener('touchend', function(){ paused = false; }, {passive:true});
-
-  function step(ts){
-    if (!paused){
-      // move
-      allNodes.forEach(function(n){
-        // If no size known yet, assume small box
-        var w = n.img.clientWidth  || 120;
-        var h = n.img.clientHeight || 120;
-        n.x += n.vx;
-        n.y += n.vy;
-        // Bounce in bounds
-        if (n.x < 0 || n.x > (STAGE_W - w)){ n.vx *= -1; n.x = clamp(n.x, 0, STAGE_W - w); }
-        if (n.y < 0 || n.y > (STAGE_H - h)){ n.vy *= -1; n.y = clamp(n.y, 0, STAGE_H - h); }
-        n.el.style.transform = 'translate('+n.x+'px,'+n.y+'px)';
-      });
-
-      // lines
-      if (ts >= nextAt){
-        regenLines();
-        nextAt = ts + (100 + Math.random()*500);
-      }
-      drawLines();
-    }
-    requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-
-  // Update lines on scroll of AEI to keep visual in sync
-  aei.addEventListener('scroll', function(){ drawLines(); }, {passive:true});
-  window.addEventListener('resize', function(){ drawLines(); }, {passive:true});
-
-  // First draw
-  regenLines();
-  drawLines();
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',boot,{once:true}); } else { boot(); }
 })();
 </script>
 
-<script id="aei-float-js">
-(()=>{
-  const selCandidates = ['#aei', '.aei', '[data-aei]', '.aei-embed'];
-  const root = document.querySelector(selCandidates.join(','));
-  if(!root) return; // no AEI presente, no tocamos nada
-
-  // No destruir DOM existente: solo organizar elementos media dentro de un grid wrapper
-  if(!root.classList.contains('aei-float')) root.classList.add('aei-float');
-
-  // Tomar todos los hijos que sean img o video como items
-  let mediaEls = Array.from(root.querySelectorAll('img,video'));
-  // Si ya hay un contenedor grid, respetar; si no, crearlo
-  let grid = root.querySelector('.aei-grid');
-  if(!grid){
-    grid = document.createElement('div');
-    grid.className = 'aei-grid';
-    // mover sólo los elementos media directos en orden visual
-    mediaEls.forEach(el=>{
-      const wrap = document.createElement('figure');
-      wrap.className = 'aei-item';
-      el.parentElement && el.parentElement.contains(el) ? el.parentElement.replaceChild(wrap, el) : root.appendChild(wrap);
-      wrap.appendChild(el);
-    });
-    // si root quedó con elementos previos, insertar grid al inicio y mover figures dentro
-    const figures = Array.from(root.querySelectorAll('figure.aei-item'));
-    root.insertAdjacentElement('afterbegin', grid);
-    figures.forEach(f=>grid.appendChild(f));
-  }else{
-    // asegurar clases en hijos existentes
-    Array.from(grid.children).forEach(ch=>{
-      if(!ch.classList.contains('aei-item')) ch.classList.add('aei-item');
-    });
-  }
-
-  // Recolectar items finales
-  const items = Array.from(grid.querySelectorAll('.aei-item'));
-  if(items.length===0) return;
-
-  // Crear SVG overlay para líneas
-  let svg = root.querySelector('svg.aei-lines');
-  if(!svg){
-    svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('class','aei-lines');
-    svg.setAttribute('width','100%');
-    svg.setAttribute('height','100%');
-    svg.setAttribute('viewBox','0 0 100 100');
-    root.appendChild(svg);
-    const ro = new ResizeObserver(()=>{
-      const r = root.getBoundingClientRect();
-      svg.setAttribute('viewBox', `0 0 ${Math.max(1,r.width)} ${Math.max(1,r.height)}`);
-    });
-    ro.observe(root);
-  }
-
-  // Movimiento flotante sutil por item
-  const phases = new Map();
-  items.forEach((it,idx)=>{
-    phases.set(it, Math.random()*Math.PI*2 + idx*0.37);
-  });
-  let t0 = performance.now();
-  let paused = false;
-
-  const amp = 6; // px máximo
-  function tick(now){
-    if(!paused){
-      const dt = (now - t0)/1000;
-      items.forEach((it)=>{
-        const ph = phases.get(it) || 0;
-        const dx = Math.sin(dt*0.6 + ph)*amp;
-        const dy = Math.cos(dt*0.8 + ph)*amp*0.6;
-        const m = it.querySelector('img,video');
-        if(m) m.style.transform = `translate3d(${dx.toFixed(2)}px,${dy.toFixed(2)}px,0)`;
-      });
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-
-  // Líneas de interconexión: conectar centros de N elementos al azar y regenerar cada 500ms
-  function centerOf(el){
-    const r = el.getBoundingClientRect();
-    const rr = root.getBoundingClientRect();
-    return { x: r.left - rr.left + r.width/2, y: r.top - rr.top + r.height/2 };
-  }
-  function drawLines(){
-    if(!svg) return;
-    svg.innerHTML = '';
-    const N = Math.min(24, items.length); // máximo 24 líneas
-    for(let i=0;i<N;i++){
-      const a = items[Math.floor(Math.random()*items.length)];
-      const b = items[Math.floor(Math.random()*items.length)];
-      if(a===b) continue;
-      const pa = centerOf(a);
-      const pb = centerOf(b);
-      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-      // curva suave tipo a.e.i.index
-      const cx = (pa.x + pb.x)/2;
-      const cy = (pa.y + pb.y)/2;
-      const d = `M ${pa.x.toFixed(1)} ${pa.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${pb.x.toFixed(1)} ${pb.y.toFixed(1)}`;
-      path.setAttribute('d', d);
-      if(i%7===0) path.classList.add('pulse');
-      svg.appendChild(path);
-    }
-  }
-  drawLines();
-  let lineTimer = setInterval(drawLines, 500);
-
-  // Pausa al interactuar para “mimetización” y lectura
-  function setPaused(p){ paused = p; root.dataset.paused = p ? 'true':'false'; }
-  root.addEventListener('pointerdown', ()=>setPaused(true));
-  root.addEventListener('pointerup',   ()=>setPaused(false));
-  root.addEventListener('pointercancel',()=>setPaused(false));
-  root.addEventListener('mouseenter', ()=>setPaused(true), {passive:true});
-  root.addEventListener('mouseleave', ()=>setPaused(false), {passive:true});
-
-  // Si hay videos, asegurar loop + mute inicial sin romper lógica previa del sitio
-  grid.querySelectorAll('video').forEach(v=>{
-    v.loop = true;
-    if(typeof v.muted === 'boolean') v.muted = true;
-    v.playsInline = true;
-    v.autoplay = v.autoplay || true;
-    v.addEventListener('canplay', ()=>{ try{ v.play(); }catch(e){} }, {once:true});
-  });
-
-})();
-</script>
+<!-- ejemplo DATA:
 <script>
-(function(){
-  "use strict";
-
-  // === Config adaptable por dispositivo ===
-  var devMem = (navigator.deviceMemory||4);
-  var slowNet = (navigator.connection && (
-    navigator.connection.saveData ||
-    /2g/.test(String(navigator.connection.effectiveType||""))));
-  var MAX_CONCURRENT_VIDEOS = slowNet ? 2 : (devMem<=4 ? 4 : 6);
-  var GRID_CHUNK_SMALL = slowNet ? 12 : (devMem<=4 ? 16 : 24);
-  var AEI_CHUNK_SMALL  = slowNet ? 80 : (devMem<=4 ? 120: 160);
-
-  // 1) Reducir chunking
-  document.querySelectorAll('.tight-grid[data-chunk]').forEach(function(g){
-    var n = Number(g.getAttribute('data-chunk')||40);
-    if(n>GRID_CHUNK_SMALL) g.setAttribute('data-chunk', GRID_CHUNK_SMALL);
-  });
-  var aeiStage = document.getElementById('aeiStage');
-  if(aeiStage && aeiStage.hasAttribute('data-chunk')){
-    var nAEI = Number(aeiStage.getAttribute('data-chunk')||200);
-    if(nAEI>AEI_CHUNK_SMALL) aeiStage.setAttribute('data-chunk', AEI_CHUNK_SMALL);
-  }
-
-  // 2) Limitar videos simultáneos
-  var playing = new Set();
-  function tryPlay(v){
-    if(playing.size < MAX_CONCURRENT_VIDEOS){
-      v.play().catch(function(){});
-      playing.add(v);
-    }else{ v.pause(); }
-  }
-  function stop(v){ if(!v) return; v.pause(); playing.delete(v); }
-
-  var vidIO = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      var v = en.target;
-      if(en.isIntersecting){
-        if(!v.dataset.bound){
-          v.dataset.bound = "1";
-          if(v.src){ v.dataset.src = v.src; v.removeAttribute('src'); }
-        }
-        if(!v.src && v.dataset.src) v.src = v.dataset.src;
-        v.muted = true; v.loop = true; v.preload = 'none'; v.playsInline = true;
-        tryPlay(v);
-      }else{ stop(v); }
-    });
-  }, {root:null, rootMargin:"800px 0px"});
-
-  document.querySelectorAll('.tight-item video').forEach(function(v){
-    if(v.src){ v.dataset.src = v.src; v.removeAttribute('src'); }
-    vidIO.observe(v);
-  });
-
-  // 3) Pausa global al cambiar de pestaña
-  document.addEventListener('visibilitychange', function(){
-    if(document.hidden){
-      document.querySelectorAll('video').forEach(stop);
-    }else{
-      document.querySelectorAll('.tight-item video').forEach(function(v){
-        var r = v.getBoundingClientRect();
-        var on = r.bottom>0 && r.top<innerHeight;
-        if(on) tryPlay(v);
-      });
-    }
-  });
-
-  // 4) Decodificación de imágenes en cola
-  var toDecode = Array.prototype.slice.call(
-    document.querySelectorAll('img[loading], .aei-stage img, .tight-item img')
-  );
-  var busy = false;
-  function pump(){
-    if(busy) return;
-    busy = true;
-    var batch = toDecode.splice(0, slowNet?4:8);
-    Promise.all(batch.map(function(img){
-      try{ return img.decode ? img.decode().catch(function(){}) : Promise.resolve(); }
-      catch(e){ return Promise.resolve(); }
-    })).then(function(){ busy=false; if(toDecode.length) requestIdleCallback?requestIdleCallback(pump):setTimeout(pump,50); });
-  }
-  if(toDecode.length) (requestIdleCallback?requestIdleCallback:pump)(pump);
-
-  // 5) Menos repintados de líneas AEI
-  var lines = document.getElementById('aei-lines');
-  if(lines){
-    var ticking=false;
-    function throttleLines(){
-      if(!ticking){
-        ticking = true;
-        setTimeout(function(){ ticking=false; }, 250);
-      }
-    }
-    document.getElementById('aei').addEventListener('scroll', throttleLines, {passive:true});
-  }
-})();
+window.DATA = { top10:[/*...*/], g2:[/*...*/], g22:[/*...*/], f3:[/*...*/], vids:[/*...*/], aei:[/*...*/] };
 </script>
-<script>
-(function(){
-  "use strict";
-  // Parámetros de thumbnails
-  var W = 1600, Q = 75, FIT = "contain";
-
-  function toThumb(u){
-    if(window.mediaProxy){
-      try{ return window.mediaProxy(u, { w: W, q: Q, fit: FIT }); }
-      catch(e){}
-    }
-    try{
-      var url = new URL(u, location.href);
-      url.searchParams.set("w", W);
-      url.searchParams.set("q", Q);
-      url.searchParams.set("fit", FIT);
-      return url.toString();
-    }catch(e){ return u; }
-  }
-
-  // Thumbs en grillas, originales en fullscreen
-  var thumbSel = ".tight-item img:not([data-full]), .grid img:not([data-full])";
-  document.querySelectorAll(thumbSel).forEach(function(img){
-    var raw = img.getAttribute("data-src-raw") || img.getAttribute("data-src") || img.src;
-    if(!raw) return;
-    if(!img.getAttribute("data-src-raw")) img.setAttribute("data-src-raw", raw);
-    var th = toThumb(raw);
-    if(img.hasAttribute("src")) img.src = th; else img.setAttribute("data-src", th);
-    img.loading = "lazy";
-    img.decoding = "async";
-  });
-
-  // Restaura originales en fullscreen
-  document.addEventListener("fullscreenchange", function(){
-    var fs = document.fullscreenElement;
-    if(!fs) return;
-    fs.querySelectorAll("img[data-src-raw]").forEach(function(img){
-      var raw = img.getAttribute("data-src-raw");
-      if(raw) img.src = raw;
-    });
-  });
-})();
-</script>
-
-
+-->
 </body>
 </html>

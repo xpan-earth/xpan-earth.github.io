@@ -1,137 +1,136 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="color-scheme" content="light dark"/>
-<title>sound + sensemayá — xpan</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>sound + sensemayá — xpan</title>
 
-<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
-<link rel="preconnect" href="https://attachments.are.na" crossorigin>
-<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
-<link rel="dns-prefetch" href="https://attachments.are.na">
-<script src="/assets/js/media-proxy.js" defer></script>
+  <!-- perf hints -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <script src="/assets/js/media-proxy.js" defer></script>
 
-<style>
-  :root{--bg:#fff;--fg:#000;--line:rgba(0,0,0,.12);--radius:14px;--maxw:1440px}
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
-  img,video{display:block;max-width:100%;height:auto}
-  a{color:inherit;text-decoration:none}
+  <!-- ===== post-tech tokens (scope) ===== -->
+  <style>
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20; --b1:1px solid var(--line);
+      --radius:14px; --maxw:1160px; --pad-x:clamp(16px,4vw,48px); --g:16px; --header-h:64px;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#E6E8EA; --line-weak:#F1F3F5; }
+    }
 
-  header{position:fixed;top:1rem;left:1rem;z-index:30}
-  header img{height:50px;width:auto;display:block}
-  .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
-  .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;opacity:.5;transition:.2s}
-  .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden
+    }
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s cubic-bezier(.22,.61,.36,1)}
+    a:hover{border-color:var(--accent)}
 
-  main{max-width:var(--maxw);margin:120px auto 5rem;padding:0 1rem}
-  .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
-  .muted{opacity:.68;font-size:.92rem}
-  .lang{display:none}.lang.active{display:block}
+    /* header */
+    header{position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);z-index:40;display:flex;align-items:center;justify-content:space-between;height:var(--header-h)}
+    header img{height:48px;width:auto;display:block;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ filter:none } }
 
-  /* featured square video */
-.ratio-1-1::before {
-  content: none; /* elimina el cuadrado forzado */
-}
+    .language-selector{display:flex;gap:8px;text-transform:lowercase}
+    .language-selector button{
+      background:transparent;border:var(--b1);padding:6px 10px;cursor:pointer;
+      font:600 .85rem/1 system-ui;color:var(--fg-dim);letter-spacing:.2px;
+      transition:color .18s, border-color .18s, background-color .18s
+    }
+    .language-selector button.active,
+    .language-selector button[aria-pressed="true"]{color:var(--fg);border-color:var(--accent);background:rgba(24,96,255,.06)}
 
-.ratio-1-1 > video {
-  position: static;      /* ya no absoluto */
-  width: 100%;
-  height: auto;
-  max-height: 100vh;     /* nunca más alto que la pantalla */
-  object-fit: contain;   /* siempre entero */
-}
-/* flyer */
-.flyer img {
-  width: 100%;
-  height: auto;
-  max-height: 100vh;     /* nunca más alto que la pantalla */
-  object-fit: contain;   /* siempre entero */
-}
+    /* layout */
+    main{max-width:var(--maxw);margin:calc(var(--header-h) + 40px) auto 64px;padding:0 var(--pad-x)}
+    .section{margin:24px 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    .muted{color:var(--fg-dim);font-size:.92rem}
+    .lang{display:none}.lang.active{display:block}
+    h1{font:700 1.35rem/1.25 system-ui;margin:0 0 .5rem;text-transform:lowercase}
+    h2{font:700 1.02rem/1.25 system-ui;margin:.2rem 0;text-transform:lowercase}
 
+    /* featured square video (no crop) */
+    .ratio-1-1::before{content:none}
+    .ratio-1-1 > video{position:static;width:100%;height:auto;max-height:100vh;object-fit:contain}
 
-  
+    /* flyer */
+    .flyer img{width:100%;height:auto;max-height:100vh;object-fit:contain}
 
-  /* ====== PLAYER 4CH (estilo reference) ====== */
-  .x4-block{border:1px solid currentColor;border-radius:10px;padding:1.2rem;margin:1.2rem 0;background:#fff}
-  .x4-title{font-weight:700;text-transform:lowercase}
-  .x4-info{opacity:.66;font-size:.9rem}
-  .x4-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.75rem}
-  .x4-btn{border:1px solid currentColor;background:none;padding:.35rem .9rem;border-radius:999px;text-transform:lowercase;cursor:pointer}
-  .x4-time{font-size:.85rem;min-width:74px}
-  .x4-bar{flex:1;height:3px;background:color-mix(in srgb,currentColor 18%,transparent);border-radius:2px;position:relative;cursor:pointer}
-  .x4-fill{position:absolute;inset:0 auto 0 0;width:0%;background:currentColor;border-radius:2px}
-  .x4-viz{position:relative;margin-top:.8rem;border-radius:10px;overflow:hidden}
-  svg.quad{width:100%;height:40vh;min-height:260px;display:block}
-  .quad *{vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}
-  .gridDot{fill:currentColor;opacity:.18}
-  .ring{fill:none;stroke:url(#grad);stroke-width:1.4;opacity:.95;stroke-linecap:round;stroke-linejoin:round}
-  .ring.fill{fill:url(#grad);opacity:.08}
-  .liss{fill:none;stroke:url(#grad);stroke-width:1.6;opacity:.95;stroke-linecap:round;stroke-linejoin:round}
-  .lissGhost{fill:none;stroke:url(#grad);stroke-width:.9;opacity:.35}
-  .spoke{stroke:url(#grad);stroke-width:1;opacity:.28;stroke-linecap:round}
-  .rib{fill:currentColor;opacity:.06}
-  .ribEdge{fill:none;stroke:currentColor;stroke-width:.9;opacity:.55;stroke-linecap:round}
-  .spine{fill:none;stroke:currentColor;stroke-width:1.4;opacity:.85;stroke-linecap:round;stroke-linejoin:round}
-  .particle{fill:currentColor;opacity:.28}
-  .meters{position:absolute;left:clamp(12px,3vmin,28px);bottom:clamp(12px,3vmin,28px);display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;width:min(460px,42vw);z-index:5}
-  .meter{height:8px;border:1px solid currentColor;border-radius:6px;overflow:hidden}
-  .meter>i{display:block;height:100%;width:0;background:currentColor}
-  @media(prefers-color-scheme:dark){.x4-bar{background:color-mix(in srgb,#fff 24%,transparent)} .rib{opacity:.08}}
-
-.language-selector{
-  position:fixed; top:1rem; right:1rem; z-index:30;
-  font-size:.9rem; text-transform:lowercase;
-}
-.language-selector button{
-  background:none; border:none; margin:0 .4rem; padding:.1rem .2rem;
-  cursor:pointer; color:#000; opacity:.5; transition:.2s;
-}
-.language-selector button.active,
-.language-selector button:hover{ opacity:1; text-decoration:underline; }
-
-</style>
+    /* ====== PLAYER 4CH (visual neutral) ====== */
+    .x4-block{border:var(--b1);border-radius:10px;padding:1.2rem;margin:1.2rem 0;background:transparent}
+    .x4-title{font-weight:700;text-transform:lowercase}
+    .x4-info{color:var(--fg-dim);font-size:.9rem}
+    .x4-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.75rem}
+    .x4-btn{border:var(--b1);background:transparent;padding:.35rem .9rem;border-radius:999px;text-transform:lowercase;cursor:pointer;color:var(--fg)}
+    .x4-time{font-size:.85rem;min-width:74px;color:var(--fg-dim)}
+    .x4-bar{flex:1;height:3px;background:var(--line-weak);border-radius:2px;position:relative;cursor:pointer}
+    .x4-fill{position:absolute;inset:0 auto 0 0;width:0%;background:var(--fg);border-radius:2px}
+    .x4-viz{position:relative;margin-top:.8rem;border-radius:10px;overflow:hidden}
+    svg.quad{width:100%;height:40vh;min-height:260px;display:block}
+    .quad *{vector-effect:non-scaling-stroke;shape-rendering:geometricPrecision}
+    .gridDot{fill:currentColor;opacity:.18}
+    .ring{fill:none;stroke:url(#grad);stroke-width:1.4;opacity:.95;stroke-linecap:round;stroke-linejoin:round}
+    .ring.fill{fill:url(#grad);opacity:.08}
+    .liss{fill:none;stroke:url(#grad);stroke-width:1.6;opacity:.95;stroke-linecap:round;stroke-linejoin:round}
+    .lissGhost{fill:none;stroke:url(#grad);stroke-width:.9;opacity:.35}
+    .spoke{stroke:url(#grad);stroke-width:1;opacity:.28;stroke-linecap:round}
+    .rib{fill:currentColor;opacity:.06}
+    .ribEdge{fill:none;stroke:currentColor;stroke-width:.9;opacity:.55;stroke-linecap:round}
+    .spine{fill:none;stroke:currentColor;stroke-width:1.4;opacity:.85;stroke-linecap:round;stroke-linejoin:round}
+    .particle{fill:currentColor;opacity:.28}
+    .meters{position:absolute;left:clamp(12px,3vmin,28px);bottom:clamp(12px,3vmin,28px);display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;width:min(460px,42vw);z-index:5}
+    .meter{height:8px;border:var(--b1);border-radius:6px;overflow:hidden}
+    .meter>i{display:block;height:100%;width:0;background:currentColor}
+    @media(prefers-color-scheme:dark){.x4-bar{background:color-mix(in srgb,#fff 24%,transparent)} .rib{opacity:.08}}
+  </style>
 </head>
+
 <body>
 <header>
   <a href="/" aria-label="xpan"><img src="sound+.png" alt="xpan"></a>
   <nav class="language-selector" aria-label="selector de idioma">
-    <button class="active" data-lang="es">es</button>
-    <button data-lang="en">en</button>
-    <button data-lang="fr">fr</button>
-    <button data-lang="jp">jp</button>
+    <button class="active" data-lang="es" aria-pressed="true">es</button>
+    <button data-lang="en" aria-pressed="false">en</button>
+    <button data-lang="fr" aria-pressed="false">fr</button>
+    <button data-lang="jp" aria-pressed="false">jp</button>
   </nav>
 </header>
 
 <main>
   <!-- 1) DESCRIPCIÓN -->
   <section class="section">
-  <div class="lang lang-es active">
-    <h1>sound + sensemayá</h1>
-    <div class="muted">ciudad de méxico — febrero 2022 — presentado en la muestra neomaya — c.b.a.</div>
-    <p>este proyecto recontextualiza <em>sensemayá</em>, poema sinfónico de silvestre revueltas inspirado en el texto de nicolás guillén. el poema sinfónico, género decisivo en el siglo xx, expandió la música hacia narrativas poéticas y políticas; revueltas lo llevó a un plano radical en la modernidad mexicana, y <em>sensemayá</em> se convirtió en su obra más emblemática.<br><br>sound + traslada esa pieza histórica a un sistema multicanal, convocando a cinco artistas mexicanxs a manipular y redistribuir sus objetos sonoros en cuatro canales. el resultado desplaza la partitura original hacia un espacio inmersivo y tangible, ofreciendo una lectura contemporánea donde el legado sinfónico se vuelve experiencia directa, habitable y crítica.</p>
-  </div>
+    <div class="lang lang-es active">
+      <h1>sound + sensemayá</h1>
+      <div class="muted">ciudad de méxico — febrero 2022 — presentado en la muestra neomaya — c.b.a.</div>
+      <p>este proyecto recontextualiza <em>sensemayá</em>, poema sinfónico de silvestre revueltas inspirado en el texto de nicolás guillén. el poema sinfónico, género decisivo en el siglo xx, expandió la música hacia narrativas poéticas y políticas; revueltas lo llevó a un plano radical en la modernidad mexicana, y <em>sensemayá</em> se convirtió en su obra más emblemática.<br><br>sound + traslada esa pieza histórica a un sistema multicanal, convocando a cinco artistas mexicanxs a manipular y redistribuir sus objetos sonoros en cuatro canales. el resultado desplaza la partitura original hacia un espacio inmersivo y tangible, ofreciendo una lectura contemporánea donde el legado sinfónico se vuelve experiencia directa, habitable y crítica.</p>
+    </div>
 
-  <div class="lang lang-en">
-    <h1>sound + sensemayá</h1>
-    <div class="muted">mexico city — february 2022 — presented at the neomaya exhibition — c.b.a.</div>
-    <p>This project recontextualizes <em>Sensemayá</em>, a symphonic poem by Silvestre Revueltas inspired by Nicolás Guillén. The symphonic poem, a decisive genre in the 20th century, expanded music into poetic and political narratives; Revueltas pushed it to a radical plane in modern Mexico, and <em>Sensemayá</em> became his emblematic work.<br><br>sound + translates this historical piece into a multichannel system, inviting five Mexican artists to manipulate and redistribute its sonic objects across four channels. The result shifts the original score into an immersive and tangible space, offering a contemporary reading where the symphonic legacy becomes direct, inhabitable, and critical experience.</p>
-  </div>
+    <div class="lang lang-en">
+      <h1>sound + sensemayá</h1>
+      <div class="muted">mexico city — february 2022 — presented at the neomaya exhibition — c.b.a.</div>
+      <p>This project recontextualizes <em>Sensemayá</em>, a symphonic poem by Silvestre Revueltas inspired by Nicolás Guillén. The symphonic poem, a decisive genre in the 20th century, expanded music into poetic and political narratives; Revueltas pushed it to a radical plane in modern Mexico, and <em>Sensemayá</em> became his emblematic work.<br><br>sound + translates this historical piece into a multichannel system, inviting five Mexican artists to manipulate and redistribute its sonic objects across four channels. The result shifts the original score into an immersive and tangible space, offering a contemporary reading where the symphonic legacy becomes direct, inhabitable, and critical experience.</p>
+    </div>
 
-  <div class="lang lang-fr">
-    <h1>sound + sensemayá</h1>
-    <div class="muted">mexico — février 2022 — présenté dans l’exposition neomaya — c.b.a.</div>
-    <p>Ce projet recontextualise <em>Sensemayá</em>, poème symphonique de Silvestre Revueltas inspiré par Nicolás Guillén. Le poème symphonique, genre décisif du XXe siècle, a élargi la musique vers des récits poétiques et politiques ; Revueltas l’a porté à un plan radical dans le Mexique moderne, et <em>Sensemayá</em> est devenu son œuvre emblématique.<br><br>sound + transpose cette pièce historique dans un système multicanal, invitant cinq artistes mexicains à manipuler et redistribuer ses objets sonores sur quatre canaux. Le résultat déplace la partition originale vers un espace immersif et tangible, offrant une lecture contemporaine où l’héritage symphonique devient expérience directe, habitable et critique.</p>
-  </div>
+    <div class="lang lang-fr">
+      <h1>sound + sensemayá</h1>
+      <div class="muted">mexico — février 2022 — présenté dans l’exposition neomaya — c.b.a.</div>
+      <p>Ce projet recontextualise <em>Sensemayá</em>, poème symphonique de Silvestre Revueltas inspiré par Nicolás Guillén. Le poème symphonique, genre décisif du XXe siècle, a élargi la musique vers des récits poétiques et politiques ; Revueltas l’a porté à un plan radical dans le Mexique moderne, et <em>Sensemayá</em> est devenu son œuvre emblématique.<br><br>sound + transpose cette pièce historique dans un système multicanal, invitant cinq artistes mexicains à manipuler et redistribuer ses objets sonores sur quatre canaux. Le résultat déplace la partition originale vers un espace immersif et tangible, offrant une lecture contemporaine où l’héritage symphonique devient expérience directe, habitable et critique.</p>
+    </div>
 
-  <div class="lang lang-jp">
-    <h1>sound + sensemayá</h1>
-    <div class="muted">メキシコシティ — 2022年2月 — ネオマヤ展 c.b.a. にて発表</div>
-    <p>本プロジェクトは、ニコラス・ギジェンに触発されたシルヴェストレ・レブエルタスの交響詩 <em>Sensemayá</em> を再文脈化する。交響詩という20世紀を代表するジャンルは、音楽を詩的かつ政治的な物語へと拡張した。レブエルタスはそれをメキシコ近代において急進的な次元へ押し上げ、<em>Sensemayá</em> は彼の代表作となった。<br><br>sound + は、この歴史的作品をマルチチャンネル・システムへと移行し、5名のメキシコ人アーティストが4チャンネルに音響オブジェクトを再配置することで、原曲を没入的で触知可能かつ批評的な体験へと変換する。</p>
-  </div>
-</section>
-
+    <div class="lang lang-jp">
+      <h1>sound + sensemayá</h1>
+      <div class="muted">メキシコシティ — 2022年2月 — ネオマヤ展 c.b.a. にて発表</div>
+      <p>本プロジェクトは、ニコラス・ギジェンに触発されたシルヴェストレ・レブエルタスの交響詩 <em>Sensemayá</em> を再文脈化する。交響詩という20世紀を代表するジャンルは、音楽を詩的かつ政治的な物語へと拡張した。レブエルタスはそれをメキシコ近代において急進的な次元へ押し上げ、<em>Sensemayá</em> は彼の代表作となった。<br><br>sound + は、この歴史的作品をマルチチャンネル・システムへと移行し、5名のメキシコ人アーティストが4チャンネルに音響オブジェクトを再配置することで、原曲を没入的で触知可能かつ批評的な体験へと変換する。</p>
+    </div>
+  </section>
 
   <!-- 2) VIDEO CUADRADO -->
   <section class="section featured" aria-label="video principal">
@@ -142,7 +141,7 @@
     </div>
   </section>
 
-  <!-- 3) CINCO PLAYERS 4CH EMBEBIDOS (sin iframes) -->
+  <!-- 3) CINCO PLAYERS 4CH -->
   <section class="section" id="piezas">
     <!-- Sites -->
     <article class="x4-block" id="x4-sites" data-audio="https://attachments.are.na/39228756/27fd1dfc5ca307e1f3e873b1a0b32b00.mp3?1756788091">
@@ -205,7 +204,10 @@
       <div class="x4-info">“3 respuestas a una reinterpretación de sensemayá”</div>
       <div class="x4-controls"><button class="x4-btn x4-play">play</button><div class="x4-time">0:00 / 0:00</div><div class="x4-bar"><div class="x4-fill"></div></div></div>
       <div class="x4-viz">
-        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g><g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="visualización cuadrafónica">
+          <defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>
+          <g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g>
+          <g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
         <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
       </div>
       <audio preload="auto" playsinline crossorigin="anonymous"></audio>
@@ -217,7 +219,10 @@
       <div class="x4-info">“Al final. Su memoria”</div>
       <div class="x4-controls"><button class="x4-btn x4-play">play</button><div class="x4-time">0:00 / 0:00</div><div class="x4-bar"><div class="x4-fill"></div></div></div>
       <div class="x4-viz">
-        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g><g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="visualización cuadrafónica">
+          <defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>
+          <g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g>
+          <g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
         <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
       </div>
       <audio preload="auto" playsinline crossorigin="anonymous"></audio>
@@ -229,18 +234,21 @@
       <div class="x4-info">“Santa Fé”</div>
       <div class="x4-controls"><button class="x4-btn x4-play">play</button><div class="x4-time">0:00 / 0:00</div><div class="x4-bar"><div class="x4-fill"></div></div></div>
       <div class="x4-viz">
-        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs><g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g><g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
+        <svg class="quad" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="visualización cuadrafónica">
+          <defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="currentColor" stop-opacity="1"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>
+          <g class="room"></g><g class="ribbons"></g><g class="particles"></g><g class="FL" transform="translate(250,150)"></g><g class="FR" transform="translate(750,150)"></g><g class="RL" transform="translate(250,450)"></g><g class="RR" transform="translate(750,450)"></g>
+          <g class="labels"><text x="260" y="120">FL</text><text x="740" y="120">FR</text><text x="260" y="480">RL</text><text x="740" y="480">RR</text></g><circle cx="500" cy="300" r="5.5" fill="currentColor" opacity=".4"/></svg>
         <div class="meters"><div class="meter"><i class="mFL"></i></div><div class="meter"><i class="mFR"></i></div><div class="meter"><i class="mRL"></i></div><div class="meter"><i class="mRR"></i></div></div>
       </div>
       <audio preload="auto" playsinline crossorigin="anonymous"></audio>
     </article>
   </section>
 
-  <!-- 4) POEMA INLINE (Mariana Híjar) -->
+  <!-- 4) POEMA INLINE -->
   <section class="section" id="poema">
     <h2 style="margin:.2rem 0 .6rem;text-transform:lowercase">poema de mariana híjar — creado para sound +</h2>
     <article class="poem" aria-label="Poema" style="max-width:760px;margin:0 auto;padding:0 20px">
-      <blockquote class="small" style="margin:0 0 1.1em 0;padding:0 0 0 1.1em;border-left:2px solid #000">
+      <blockquote class="small" style="margin:0 0 1.1em 0;padding:0 0 0 1.1em;border-left:2px solid currentColor">
         <p>Si alguien tuviera la ocurrencia de tocar mis composiciones, lo hará a su placer. Están</p>
         <p>escritas sólo para mí, y es por eso que no están sujetas a ninguna regla.</p>
       </blockquote>
@@ -317,11 +325,16 @@
 <script>
   // selector de idioma
   const btns=[...document.querySelectorAll('.language-selector button')];
-  const setLang=lang=>{btns.forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));document.querySelectorAll('.lang').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.lang-'+lang).forEach(el=>el.classList.add('active'));try{localStorage.setItem('xpan.lang',lang)}catch(e){}};
+  const setLang=lang=>{
+    btns.forEach(b=>{const on=b.dataset.lang===lang; b.classList.toggle('active',on); b.setAttribute('aria-pressed',String(on));});
+    document.querySelectorAll('.lang').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.lang-'+lang).forEach(el=>el.classList.add('active'));
+    try{localStorage.setItem('xpan.lang',lang)}catch(e){}
+  };
   btns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
   setLang(localStorage.getItem('xpan.lang')||'es');
 
-  // ====== LÓGICA DEL PLAYER 4CH (namespacing por instancia) ======
+  // ====== LÓGICA DEL PLAYER 4CH ======
   document.querySelectorAll('.x4-block').forEach(initPlayer);
 
   function initPlayer(root){
@@ -406,7 +419,7 @@
     }
     function liss(cx,cy,rx,ry,a,b,d1,d2,N){ let d=''; for(let i=0;i<=N;i++){ const t=(i/N)*Math.PI*2; const x=cx+rx*Math.sin(a*t+d1); const y=cy+ry*Math.sin(b*t+d2); d += (i?' L':'M')+x.toFixed(2)+' '+y.toFixed(2); } return d; }
 
-    // audio + analysers L/R (como 4chplayer)
+    // audio + analysers
     const ctx=new (window.AudioContext||window.webkitAudioContext)();
     const src=ctx.createMediaElementSource(audio);
     const split=ctx.createChannelSplitter(2);
@@ -415,7 +428,7 @@
     src.connect(split); split.connect(anL,0); split.connect(anR,1); src.connect(ctx.destination);
     const dL=new Uint8Array(anL.frequencyBinCount), dR=new Uint8Array(anR.frequencyBinCount);
 
-    // mapas log por cuadrante (25–950 Hz low, 950–18 kHz high)
+    // mapas log por cuadrante
     let sampleRate=48000;
     function hzToIndex(hz,fft){ const nyq=sampleRate/2; return Math.max(0, Math.min((fft/2)-1, Math.floor(hz/nyq*(fft/2)))); }
     function logMap(minHz,maxHz,n,fft){ const out=[]; const A=Math.log10(minHz), B=Math.log10(maxHz); for(let i=0;i<n;i++){ const t0=i/n, t1=(i+1)/n; const lo=10**(A+(B-A)*t0), hi=10**(A+(B-A)*t1); out.push([hzToIndex(lo,fft), hzToIndex(hi,fft)]); } return out; }
@@ -426,198 +439,78 @@
     const quadMap=q=> maps[q.id];
     function avgEnergy(q){ const arr=quadArr(q), map=quadMap(q); let s=0; for(const [i0,i1] of map) s+=band(arr,i0,i1); return s/map.length; }
 
-    // --- features por audio ---
-const tBuf=new Uint8Array(2048);
-const fBufL=new Float32Array(anL.frequencyBinCount);
-const fBufR=new Float32Array(anR.frequencyBinCount);
-let feat={rms:0, bright:0, stereo:0, onsets:0, dyn:0}, featFrames=0, locked=false, style=null;
+    // partículas iniciales
+    const tBuf=new Uint8Array(2048);
+    const fBufL=new Float32Array(anL.frequencyBinCount);
+    const fBufR=new Float32Array(anR.frequencyBinCount);
+    let feat={rms:0, bright:0, stereo:0, onsets:0, dyn:0}, featFrames=0, locked=false, style=null;
 
-function updateFeatures(){
-  // time-domain RMS y onsets
-  anL.getByteTimeDomainData(tBuf);
-  let sum=0, zc=0;
-  for(let i=1;i<tBuf.length;i++){
-    const v=(tBuf[i]-128)/128; sum+=v*v;
-    zc += ((tBuf[i-1]-128)>=0)!==( (tBuf[i]-128)>=0 ) ? 1:0;
-  }
-  const rms=Math.sqrt(sum/tBuf.length);
-  const onsets = zc/(tBuf.length/ctx.sampleRate); // aprox transitorios/s
+    function updateFeatures(){
+      // time-domain RMS y onsets
+      anL.getByteTimeDomainData(tBuf);
+      let sum=0, zc=0;
+      for(let i=1;i<tBuf.length;i++){
+        const v=(tBuf[i]-128)/128; sum+=v*v;
+        zc += ((tBuf[i-1]-128)>=0)!==( (tBuf[i]-128)>=0 ) ? 1:0;
+      }
+      const rms=Math.sqrt(sum/tBuf.length);
+      const onsets = zc/(tBuf.length/ctx.sampleRate);
 
-  // espectro y brillo
-  anL.getFloatFrequencyData(fBufL);
-  anR.getFloatFrequencyData(fBufR);
-  let num=0, den=0, numR=0, denR=0;
-  const sr=ctx.sampleRate, n=fBufL.length, nyq=sr/2;
-  for(let i=0;i<n;i++){
-    const mag=Math.pow(10, fBufL[i]/20); // lineal
-    const hz=i*nyq/n;
-    num+=hz*mag; den+=mag;
-    const magR=Math.pow(10, fBufR[i]/20);
-    numR+=hz*magR; denR+=magR;
-  }
-  const centL = den? num/den: 0, centR = denR? numR/denR: 0;
-  const bright = (centL+centR)/2; // Hz
+      // espectro y brillo
+      anL.getFloatFrequencyData(fBufL);
+      anR.getFloatFrequencyData(fBufR);
+      let num=0, den=0, numR=0, denR=0;
+      const sr=ctx.sampleRate, n=fBufL.length, nyq=sr/2;
+      for(let i=0;i<n;i++){
+        const mag=Math.pow(10, fBufL[i]/20);
+        const hz=i*nyq/n;
+        num+=hz*mag; den+=mag;
+        const magR=Math.pow(10, fBufR[i]/20);
+        numR+=hz*magR; denR+=magR;
+      }
+      const centL = den? num/den: 0, centR = denR? numR/denR: 0;
+      const bright = (centL+centR)/2;
 
-  // ancho estéreo por correlación burda
-  let corr=0;
-  for(let i=0;i<256;i++){
-    const li = Math.max(0, Math.min(n-1, (i/n)*n|0));
-    const ri = li;
-    const l = Math.pow(10, fBufL[li]/20);
-    const r = Math.pow(10, fBufR[ri]/20);
-    corr += (l*r);
-  }
-  const stereo = corr/256;
+      // ancho estéreo (aprox)
+      let corr=0;
+      for(let i=0;i<256;i++){
+        const li = Math.max(0, Math.min(n-1, (i/n)*n|0));
+        const ri = li;
+        const l = Math.pow(10, fBufL[li]/20);
+        const r = Math.pow(10, fBufR[ri]/20);
+        corr += (l*r);
+      }
+      const stereo = corr/256;
 
-  // acumular y bloquear a los 3 s
-  feat.rms += rms; feat.bright += bright; feat.stereo += stereo; feat.onsets += onsets; featFrames++;
-  if(!locked && audio.currentTime>3){
-    // promedios
-    for(const k of Object.keys(feat)) feat[k]/=featFrames;
-    // variabilidad dinámica en la ventana
-    feat.dyn = Math.min(1, Math.max(0, (feat.rms*1.8)));
-    style = styleFromFeatures(feat, audio.src);
-    locked=true;
-  }
-}
-
-function styleFromFeatures(f, src){
-  // hash determinista por src para pequeñas diferencias
-  let h=0; for(let i=0;i<src.length;i++) h=(h*131 + src.charCodeAt(i))>>>0;
-  const rnd=(min,max)=> min + (h%997/997)*(max-min);
-
-  // normalizaciones
-  const br = Math.min(1, f.bright/6000); // 0…~1 para 0–6 kHz
-  const tr = Math.min(1, f.onsets/8);    // 0…1 para 0–8 Hz aprox
-  const st = Math.min(1, Math.max(0, 1 - f.stereo*0.6)); // más alto = más ancho
-
-  return {
-    // Lissajous
-    aBase: 1.2 + 3.0*br,
-    bBase: 2.0 + 3.8*st,
-    rxMul: 0.78 + 0.25*st,
-    ryMul: 0.62 + 0.30*br,
-    phaseSpin: rnd(0.2, 1.1),
-
-    // Spokes
-    spokeJitter: 0.06 + 0.22*tr,
-    spokeOpacityMin: 0.18 + 0.12*st,
-
-    // Ribbons
-    ribLiftMul: 0.9 + 0.6*st,
-    ribWidthMul: 0.9 + 0.8*br,
-
-    // Partículas
-    particleCount: 28 + Math.round(30*st),
-    particleSpeedMul: 0.8 + 0.9*tr,
-
-    // Anillos / meters
-    ringThickMul: 0.9 + 0.5*f.dyn,
-    meterCurve: 0.8 + 0.4*br
-  };
-}
-
-function tick(){
-  if(!running) return;
-  anL.getByteFrequencyData(dL); anR.getByteFrequencyData(dR);
-  updateFeatures();
-  const t=performance.now()/1000;
-
-  // fallback si aún no bloquea
-  const S = style || {
-    aBase:1.6, bBase:2.6, rxMul:0.9, ryMul:0.7, phaseSpin:0.6,
-    spokeJitter:0.1, spokeOpacityMin:0.22,
-    ribLiftMul:1.0, ribWidthMul:1.0,
-    particleCount:40, particleSpeedMul:1.0,
-    ringThickMul:1.0, meterCurve:1.0
-  };
-
-  // meters con curva
-  for(const q of quads){
-    const arr=quadArr(q), map=quadMap(q);
-    let s=0; for(const [i0,i1] of map) s+=band(arr,i0,i1); const avg=s/map.length;
-    const eased = Math.pow(avg/255, S.meterCurve);
-    meters[q.id].style.width = (eased*100).toFixed(1)+'%';
-  }
-
-  // anillos + lissajous
-  for(const q of quads){
-    const E=q.E;
-    const avg=avgEnergy(q);
-    const r0=72*S.ringThickMul;
-    const rOut=r0 + Math.min(48, avg*0.11);
-    const rIn =r0*0.62 + Math.min(22, avg*0.06);
-    const rF  =r0*0.48 + Math.min(32, avg*0.09);
-    E.rOut.setAttribute('r', rOut.toFixed(2));
-    E.rIn .setAttribute('r', rIn .toFixed(2));
-    E.rFill.setAttribute('r', rF  .toFixed(2));
-
-    const a=S.aBase + (avg/255)*0.8;
-    const b=S.bBase + (avg/255)*1.0;
-    const rx=rOut*S.rxMul, ry=rOut*S.ryMul;
-    const phase = t*S.phaseSpin;
-    E.liss.setAttribute('d', liss(0,0,rx,ry,a,b,phase*0.9, phase*0.63, 280));
-    E.lissG.setAttribute('d', liss(0,0,rx*0.98,ry*0.98,a*1.02,b*0.98,phase*0.92, phase*0.61, 200));
-
-    // spokes con jitter determinista por índice
-    const sp=E.spokes.length;
-    for(let i=0;i<sp;i++){
-      const ang=(i/sp)*Math.PI*2;
-      const idx=Math.min(arr.length-1, Math.floor((i/sp)*arr.length));
-      const v=arr[idx]/255;
-      const jitter = 1 + S.spokeJitter*Math.sin(i*0.37 + phase);
-      const r1=rIn; const r2=rIn + v*(rOut-rIn)*jitter;
-      const x2=Math.cos(ang)*r2, y2=Math.sin(ang)*r2;
-      const ln=E.spokes[i];
-      ln.setAttribute('x2',x2.toFixed(2));
-      ln.setAttribute('y2',y2.toFixed(2));
-      ln.setAttribute('opacity',(S.spokeOpacityMin + 0.5*v).toFixed(2));
+      feat.rms += rms; feat.bright += bright; feat.stereo += stereo; feat.onsets += onsets; featFrames++;
+      if(!locked && audio.currentTime>3){
+        for(const k of Object.keys(feat)) feat[k]/=featFrames;
+        feat.dyn = Math.min(1, Math.max(0, (feat.rms*1.8)));
+        style = styleFromFeatures(feat, audio.src);
+        locked=true;
+      }
     }
-  }
 
-  // ribbons con multiplicadores
-  const energies={ FL:avgEnergy(quads[0]), FR:avgEnergy(quads[1]), RL:avgEnergy(quads[2]), RR:avgEnergy(quads[3]) };
-  const pos={ FL:{x:250,y:150}, FR:{x:750,y:150}, RL:{x:250,y:450}, RR:{x:750,y:450} };
-  arcPairs.forEach(([a,b],i)=>{
-    const e1=energies[a], e2=energies[b];
-    const lift = (70 + (e1+e2)/255*110)*S.ribLiftMul;
-    const wMax = (6 + (e1+e2)/255*10)*S.ribWidthMul;
-    const {poly,center,edge1,edge2} = bezierRibbon(pos[a].x,pos[a].y,pos[b].x,pos[b].y,lift,wMax);
-    arcs[i].rib.setAttribute('d', poly);
-    arcs[i].spine.setAttribute('d', center);
-    arcs[i].edge1.setAttribute('d', edge1);
-    arcs[i].edge2.setAttribute('d', edge2);
-  });
-
-  // partículas: ajusta cantidad una sola vez
-  if(particles.length!==S.particleCount){
-    while(particles.length>S.particleCount){ const p=particles.pop(); p.el.remove(); }
-    while(particles.length<S.particleCount){
-      const c=elNS('circle'); c.setAttribute('class','particle'); particlesG.append(c);
-      particles.push({el:c, x:Math.random()*W, y:Math.random()*H, vx:0, vy:0});
+    function styleFromFeatures(f, src){
+      let h=0; for(let i=0;i<src.length;i++) h=(h*131 + src.charCodeAt(i))>>>0;
+      const rnd=(min,max)=> min + (h%997/997)*(max-min);
+      const br = Math.min(1, f.bright/6000);
+      const tr = Math.min(1, f.onsets/8);
+      const st = Math.min(1, Math.max(0, 1 - f.stereo*0.6));
+      return {
+        aBase: 1.2 + 3.0*br, bBase: 2.0 + 3.8*st, rxMul: 0.78 + 0.25*st, ryMul: 0.62 + 0.30*br, phaseSpin: rnd(0.2, 1.1),
+        spokeJitter: 0.06 + 0.22*tr, spokeOpacityMin: 0.18 + 0.12*st,
+        ribLiftMul: 0.9 + 0.6*st, ribWidthMul: 0.9 + 0.8*br,
+        particleCount: 28 + Math.round(30*st), particleSpeedMul: 0.8 + 0.9*tr,
+        ringThickMul: 0.9 + 0.5*f.dyn, meterCurve: 0.8 + 0.4*br
+      };
     }
-  }
-  const master=(energies.FL+energies.FR+energies.RL+energies.RR)/4;
-  particles.forEach(p=>{
-    const spd = (0.35 + (master/255)*1.2)*S.particleSpeedMul;
-    const ang = Math.sin((p.x+cx)*0.006 + t*0.9) + Math.cos((p.y+cy)*0.004 + t*0.7);
-    p.vx=Math.cos(ang)*spd; p.vy=Math.sin(ang)*spd;
-    p.x+=p.vx; p.y+=p.vy;
-    if(p.x<0||p.x>W||p.y<0||p.y>H){ p.x=Math.random()*W; p.y=Math.random()*H; }
-    p.el.setAttribute('cx',p.x.toFixed(1));
-    p.el.setAttribute('cy',p.y.toFixed(1));
-    p.el.setAttribute('r',(0.7 + (master/255)*2.2).toFixed(2));
-    p.el.setAttribute('opacity',(0.24 + (master/255)*0.45).toFixed(2));
-  });
-
-  raf=requestAnimationFrame(tick);
-}
 
     // controles
     let raf=0, dragging=false, running=false;
     playBtn.addEventListener('click', async ()=>{
       if(ctx.state==='suspended'){try{await ctx.resume();}catch{}}
-      if(audio.paused){await audio.play(); playBtn.textContent='pause'; running=true; cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);}
+      if(audio.paused){await audio.play(); playBtn.textContent='pause'; running=true; cancelAnimationFrame(raf); raf=requestAnimationFrame(tickDyn);}
       else{audio.pause(); playBtn.textContent='play'; running=false; cancelAnimationFrame(raf);}
     });
     audio.addEventListener('loadedmetadata',updateTime);
@@ -629,33 +522,61 @@ function tick(){
     window.addEventListener('pointerup',()=>dragging=false);
     function seek(e){const r=bar.getBoundingClientRect(); const k=Math.min(Math.max(0,(e.clientX-r.left)/r.width),1); if(audio.duration) audio.currentTime=k*audio.duration;}
 
-    // animación
-    function tick(){
+    // animación enriquecida (usa styleFromFeatures si disponible)
+    function tickDyn(){
       if(!running) return;
       anL.getByteFrequencyData(dL); anR.getByteFrequencyData(dR);
+      updateFeatures();
       const t=performance.now()/1000;
 
-      // actualizar cuadrantes
+      const S = style || {
+        aBase:1.6, bBase:2.6, rxMul:0.9, ryMul:0.7, phaseSpin:0.6,
+        spokeJitter:0.1, spokeOpacityMin:0.22,
+        ribLiftMul:1.0, ribWidthMul:1.0,
+        particleCount:40, particleSpeedMul:1.0,
+        ringThickMul:1.0, meterCurve:1.0
+      };
+
+      // meters con curva
       for(const q of quads){
-        const E=q.E; const arr=quadArr(q); const map=quadMap(q);
+        const arr=quadArr(q), map=quadMap(q);
         let s=0; for(const [i0,i1] of map) s+=band(arr,i0,i1); const avg=s/map.length;
-        meters[q.id].style.width = Math.min(100,(avg/255)*100).toFixed(1)+'%';
+        const eased = Math.pow(avg/255, S.meterCurve);
+        meters[q.id].style.width = (eased*100).toFixed(1)+'%';
+      }
 
-        const r0=72; const rOut=r0 + Math.min(48, avg*0.11); const rIn=r0*0.62 + Math.min(22, avg*0.06); const rF=r0*0.48 + Math.min(32, avg*0.09);
-        E.rOut.setAttribute('r', rOut.toFixed(2)); E.rIn.setAttribute('r', rIn.toFixed(2)); E.rFill.setAttribute('r', rF.toFixed(2));
+      // anillos + lissajous
+      for(const q of quads){
+        const E=q.E;
+        const avg=avgEnergy(q);
+        const r0=72*S.ringThickMul;
+        const rOut=r0 + Math.min(48, avg*0.11);
+        const rIn =r0*0.62 + Math.min(22, avg*0.06);
+        const rF  =r0*0.48 + Math.min(32, avg*0.09);
+        E.rOut.setAttribute('r', rOut.toFixed(2));
+        E.rIn .setAttribute('r', rIn .toFixed(2));
+        E.rFill.setAttribute('r', rF  .toFixed(2));
 
-        const a=1.3 + (avg/255)*2.2, b=2.1 + (avg/255)*3.1; const rx=rOut*0.92, ry=rOut*0.68;
-        E.liss.setAttribute('d', liss(0,0,rx,ry,a,b,t*0.9, t*0.63, 280));
-        E.lissG.setAttribute('d', liss(0,0,rx*0.98,ry*0.98,a*1.02,b*0.98,t*0.92, t*0.61, 200));
+        const a=S.aBase + (avg/255)*0.8;
+        const b=S.bBase + (avg/255)*1.0;
+        const rx=rOut*S.rxMul, ry=rOut*S.ryMul;
+        const phase = t*S.phaseSpin;
+        E.liss.setAttribute('d', liss(0,0,rx,ry,a,b,phase*0.9, phase*0.63, 280));
+        E.lissG.setAttribute('d', liss(0,0,rx*0.98,ry*0.98,a*1.02,b*0.98,phase*0.92, phase*0.61, 200));
 
-        const sp=E.spokes.length;
+        // spokes
+        const arr=quadArr(q); const sp=E.spokes.length;
         for(let i=0;i<sp;i++){
           const ang=(i/sp)*Math.PI*2;
           const idx=Math.min(arr.length-1, Math.floor((i/sp)*arr.length));
           const v=arr[idx]/255;
-          const r1=rIn; const r2=rIn + v*(rOut-rIn);
+          const jitter = 1 + S.spokeJitter*Math.sin(i*0.37 + phase);
+          const r1=rIn; const r2=rIn + v*(rOut-rIn)*jitter;
           const x2=Math.cos(ang)*r2, y2=Math.sin(ang)*r2;
-          const ln=E.spokes[i]; ln.setAttribute('x2',x2.toFixed(2)); ln.setAttribute('y2',y2.toFixed(2)); ln.setAttribute('opacity',0.26 + 0.44*v);
+          const ln=E.spokes[i];
+          ln.setAttribute('x2',x2.toFixed(2));
+          ln.setAttribute('y2',y2.toFixed(2));
+          ln.setAttribute('opacity',(S.spokeOpacityMin + 0.5*v).toFixed(2));
         }
       }
 
@@ -663,7 +584,9 @@ function tick(){
       const energies={ FL:avgEnergy(quads[0]), FR:avgEnergy(quads[1]), RL:avgEnergy(quads[2]), RR:avgEnergy(quads[3]) };
       const pos={ FL:{x:250,y:150}, FR:{x:750,y:150}, RL:{x:250,y:450}, RR:{x:750,y:450} };
       arcPairs.forEach(([a,b],i)=>{
-        const e1=energies[a], e2=energies[b]; const lift = 70 + (e1+e2)/255*110; const wMax = 6 + (e1+e2)/255*10;
+        const e1=energies[a], e2=energies[b];
+        const lift = (70 + (e1+e2)/255*110)*S.ribLiftMul;
+        const wMax = (6 + (e1+e2)/255*10)*S.ribWidthMul;
         const {poly,center,edge1,edge2} = bezierRibbon(pos[a].x,pos[a].y,pos[b].x,pos[b].y,lift,wMax);
         arcs[i].rib.setAttribute('d', poly);
         arcs[i].spine.setAttribute('d', center);
@@ -676,22 +599,29 @@ function tick(){
         arcs[i].edge2.setAttribute('opacity', op*0.7);
       });
 
-      // partículas globales
+      // partículas
+      if(particles.length!==S.particleCount){
+        while(particles.length>S.particleCount){ const p=particles.pop(); p.el.remove(); }
+        while(particles.length<S.particleCount){
+          const c=elNS('circle'); c.setAttribute('class','particle'); particlesG.append(c);
+          particles.push({el:c, x:Math.random()*W, y:Math.random()*H, vx:0, vy:0});
+        }
+      }
       const master=(energies.FL+energies.FR+energies.RL+energies.RR)/4;
       particles.forEach(p=>{
-        const spd = 0.35 + (master/255)*1.2;
+        const spd = (0.35 + (master/255)*1.2)* (style? style.particleSpeedMul:1);
         const ang = Math.sin((p.x+cx)*0.006 + t*0.9) + Math.cos((p.y+cy)*0.004 + t*0.7);
         p.vx=Math.cos(ang)*spd; p.vy=Math.sin(ang)*spd;
         p.x+=p.vx; p.y+=p.vy;
         if(p.x<0||p.x>W||p.y<0||p.y>H){ p.x=Math.random()*W; p.y=Math.random()*H; }
-        p.el.setAttribute('cx',p.x.toFixed(1)); p.el.setAttribute('cy',p.y.toFixed(1));
+        p.el.setAttribute('cx',p.x.toFixed(1));
+        p.el.setAttribute('cy',p.y.toFixed(1));
         p.el.setAttribute('r',(0.7 + (master/255)*2.2).toFixed(2));
         p.el.setAttribute('opacity',(0.24 + (master/255)*0.45).toFixed(2));
       });
 
-      raf=requestAnimationFrame(tick);
+      raf=requestAnimationFrame(tickDyn);
     }
-    
   }
 </script>
 </body>

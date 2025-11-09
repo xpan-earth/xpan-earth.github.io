@@ -1,175 +1,252 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>12.e hv9a — xpan</title>
-<link as="image" href="xpan.svg" rel="preload"/>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="preload" as="image" href="xpan.svg"/>
+
 <style>
-    body { margin:0; background:#fff; font-family:'Times New Roman',serif; color:#000; overflow-x:hidden; }
-    header { position:fixed; top:1rem; left:1rem; z-index:10; }
-    header img { width:50px; height:auto; }
-
-    .language-selector { position:fixed; top:1rem; right:1rem; z-index:20; font-size:.9rem; text-transform:lowercase; }
-    .language-selector button { background:none; border:none; margin-left:.5rem; cursor:pointer; color:#000; opacity:.5; transition:.2s; }
-    .language-selector button.active, .language-selector button:hover { opacity:1; text-decoration:underline; }
-
-    .container { max-width:1000px; margin:7rem auto 4rem; padding:0 3rem; }
-    h1 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; text-transform:lowercase; }
-    .meta { font-size:.85rem; opacity:.5; font-style:italic; margin-bottom:1.5rem; }
-    .description { font-size:1rem; line-height:1.6; max-width:700px; margin-bottom:2rem; }
-
-    .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; margin-bottom:3rem; }
-    .gallery img,.gallery video { width:100%; height:auto; border-radius:4px; object-fit:contain; aspect-ratio:4/3; transition:.3s; }
-    .gallery img:hover,.gallery video:hover { transform:scale(1.02); opacity:.9; }
-
-    .experimental-gallery { position: relative; width: 100%; min-height: 100vh; overflow: hidden; background: #fff; cursor: crosshair; margin-top:3rem; }
-    .experimental-gallery .background-star { position: absolute; top: 50%; left: 50%; width: 100vmin; max-width: 900px; transform: translate(-50%,-50%); opacity: .05; pointer-events: none; }
-    .experimental-gallery .container { position: relative; width: 100%; min-height: 100vh; }
-    .image-block { width:160px; height:160px; position:absolute; opacity:.6; transition:opacity .3s ease; cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center; }
-    .image-block:active { cursor:grabbing; }
-    .image-block:hover { opacity:.85; z-index:5; }
-    .image-block img,.image-block video { max-width:100%; max-height:100%; object-fit:contain; display:block; pointer-events:none; }
-    svg.lines { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
-    svg.lines line { stroke:#000; stroke-width:.3px; opacity:.15; }
-
-    @media(max-width:768px){
-      .container{margin-top:6rem;padding:0 1.5rem;}
-      .gallery img,.gallery video{aspect-ratio:auto;}
-      .image-block{width:100px;height:100px;}
+  /* tokens post-tech */
+  :root{
+    --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+    --line:#2A2E31; --line-weak:#1A1D20; --accent:#1860FF;
+    --maxw:1120px; --pad-x: clamp(16px,4vw,48px); --g:20px; --header-h:64px;
+    --b1:1px solid var(--line);
+    --aei-stroke: rgba(224,227,230,.14); /* líneas AEI en dark */
+  }
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158;
+      --line:#D9DEE2; --line-weak:#ECEFF2; --accent:#1860FF;
+      --aei-stroke: rgba(14,17,19,.18); /* líneas AEI en light */
     }
+  }
 
-    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;z-index:9999}
-#lightbox.open{display:flex}
-#lightbox figure{margin:0;max-width:92vw;max-height:92vh}
-#lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+  a:hover{border-color:var(--accent)}
+  img,video{display:block; max-width:100%; height:auto}
 
-  </style>
-<link crossorigin="True" href="https://attachments.are.na" rel="preconnect"/><link crossorigin="True" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
-<style>
-/* Performance hints (non-invasive) */
-[data-lazy-section] { content-visibility:auto; contain-intrinsic-size: 1px 1000px; }
-.gallery img, .gallery video { height:auto; }
+  /* header */
+  header{
+    position:fixed; top:12px; left:var(--pad-x); z-index:10; height:var(--header-h);
+    display:flex; align-items:center;
+  }
+  header a{display:inline-flex; align-items:center}
+  header img{width:48px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+  @media (prefers-color-scheme:light){ header img{ filter:none } }
+
+  /* lenguaje */
+  .language-selector{
+    position:fixed; top:12px; right:var(--pad-x); z-index:20;
+    display:flex; gap:8px; text-transform:lowercase;
+  }
+  .language-selector button{
+    appearance:none; font:600 .85rem/1 system-ui;
+    color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+    padding:6px 10px; cursor:pointer; letter-spacing:.2px;
+    transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+  /* layout */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 48px; padding:0 var(--pad-x)}
+  h1{font:700 1.35rem/1.25 system-ui; margin:0 0 6px; text-transform:lowercase}
+  .meta{font:400 .9rem/1.5 system-ui; color:var(--fg-dim); margin:0 0 22px}
+  .description{font:400 1rem/1.65 system-ui; max-width:700px; margin-bottom:24px}
+
+  /* galería */
+  .gallery{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:var(--g); margin:24px var(--pad-x) 32px;
+  }
+  .gallery img,.gallery video{
+    border:var(--b1); border-radius:0; object-fit:contain; aspect-ratio:4/3;
+    background:transparent; transition:opacity .15s linear, transform .15s linear;
+  }
+  .gallery img:hover,.gallery video:hover{opacity:.9; transform:scale(1.01)}
+  @media(max-width:768px){ .gallery img,.gallery video{aspect-ratio:auto} }
+
+  /* experimental AEI */
+  .experimental-gallery{
+    position:relative; width:100%; min-height:100vh; overflow:hidden; background:transparent; cursor:crosshair; margin-top:32px; border-top:var(--b1);
+  }
+  .experimental-gallery .background-star{
+    position:absolute; top:50%; left:50%; width:100vmin; max-width:900px; transform:translate(-50%,-50%);
+    opacity:.06; pointer-events:none;
+  }
+  .experimental-gallery .container{position:relative; width:100%; min-height:100vh}
+  .image-block{
+    width:160px; height:160px; position:absolute; opacity:.68; transition:opacity .2s linear;
+    cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center;
+    border:1px solid var(--line); background:transparent;
+  }
+  .image-block:active{cursor:grabbing}
+  .image-block:hover{opacity:.9; z-index:5}
+  .image-block img,.image-block video{max-width:100%; max-height:100%; object-fit:contain; pointer-events:none; background:transparent}
+  @media(max-width:768px){ .image-block{width:100px; height:100px} }
+
+  svg.lines{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+  svg.lines line{stroke:var(--aei-stroke); stroke-width:.6}
+
+  /* perf hints */
+  [data-lazy-section]{content-visibility:auto; contain-intrinsic-size:1px 1000px}
+  .gallery img, .gallery video { height:auto }
+
+  /* lightbox flush unificado */
+  #lightbox{position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:9999;
+    backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
+  #lightbox.open{display:flex}
+  #lbFig{margin:0; display:flex; align-items:center; justify-content:center}
+  #lightbox img,#lightbox video{
+    display:block; max-width:96vw; max-height:96vh; width:auto; height:auto; object-fit:contain; background:transparent
+  }
+  html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
 </style>
-<script src="/assets/js/media-proxy.js" defer></script>
 
+<script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
-<header><a href="https://xpan.earth" target="_blank"><img alt="xpan logo" decoding="async" fetchpriority="high" src="xpan.svg"/></a></header>
-<div class="language-selector">
-<button class="active" data-lang="es">es</button>
-<button data-lang="en">en</button>
-<button data-lang="fr">fr</button>
-<button data-lang="jp">jp</button>
+<header><a href="https://xpan.earth" target="_blank" rel="noopener"><img alt="xpan" decoding="async" fetchpriority="high" src="xpan.svg"/></a></header>
+
+<div class="language-selector" role="tablist" aria-label="selector de idioma">
+  <button class="active" data-lang="es" aria-pressed="true" role="tab">es</button>
+  <button data-lang="en" aria-pressed="false" role="tab">en</button>
+  <button data-lang="fr" aria-pressed="false" role="tab">fr</button>
+  <button data-lang="jp" aria-pressed="false" role="tab">jp</button>
 </div>
+
 <div class="container">
-<h1>12.e hv9a</h1>
-<div class="meta">octubre 2023 — 12.e, ciudad de méxico</div>
-<div class="lang lang-es description">
-      el 15 de octubre de 2023, xpan recibió en 12.e el noveno aniversario de la disquera halcyon veil, sello fundamental en la configuración de nuevas estéticas sonoras globales.<br/><br/>
-      la activación presentó tres actos distintos:<br/>
-      — bapari, con un listening session de su ep oasis<br/>
-      — rabit, fundador del sello, con un dj set centrado en los archivos de halcyon veil<br/>
-      — tati au miel, con un set en vivo con texturas de distorsión y adelantos de su ep carousel<br/><br/>
-      el evento fue de entrada libre, pero el acceso se gestionó mediante una condición específica: portar la camiseta xpan.c.0.0. esta prenda no había sido lanzada oficialmente y los asistentes recurrieron a recrearla o intervenirla por cuenta propia.<br/><br/>
-      la noche consolidó un vínculo natural entre halcyon veil y xpan, como intersección activa entre plataformas que comparten una sensibilidad común: construir desde los márgenes, experimentar de manera deliberada y activar comunidades a través de encuentros directos.
-    </div>
-<div class="lang lang-en description" style="display:none;">
-      on october 15, 2023, xpan hosted the ninth anniversary of halcyon veil at 12.e, a label essential in shaping new global sonic aesthetics.<br/><br/>
-      the activation featured three distinct acts:<br/>
-      — bapari, with a listening session of their EP <em>oasis</em><br/>
-      — rabit, the label's founder, with a DJ set focused on halcyon veil archives<br/>
-      — tati au miel, with a live set blending distortion textures and previews of her EP <em>carousel</em><br/><br/>
-      the event was free to enter, but access required a specific condition: wearing the xpan.c.0.0 shirt. this item had not been officially released, so attendees recreated or modified it on their own.<br/><br/>
-      the night solidified a natural link between halcyon veil and xpan, as an active intersection between platforms that share a common sensitivity: building from the margins, deliberate experimentation, and activating communities through direct encounters.
-    </div>
-<div class="lang lang-fr description" style="display:none;">
-      le 15 octobre 2023, xpan a accueillie le neuvième anniversaire du label halcyon veil à 12.e, un label essentiel dans la formation de nouvelles esthétiques sonores mondiales.<br/><br/>
-      l'activation a présenté trois actes distincts :<br/>
-      — bapari, avec une session d'écoute de son EP <em>oasis</em><br/>
-      — rabit, fondateur du label, avec un DJ set centré sur les archives de halcyon veil<br/>
-      — tati au miel, avec un live set de textures distordues et avant-premières de son EP <em>carousel</em><br/><br/>
-      l'événement était en entrée libre, mais l'accès était soumis à une condition : porter le t-shirt xpan.c.0.0. cette pièce n'était pas encore sortie, les participant·es l'ont donc recréé ou modifié par leurs propres moyens.<br/><br/>
-      la soirée a consolidé un lien naturel entre halcyon veil et xpan, comme intersection active entre plateformes partageant une sensibilité commune : construire depuis les marges, expérimenter délibérément et activer les communautés par des rencontres directes.
-    </div>
-<div class="lang lang-jp description" style="display:none;">
-      2023年10月15日、xpanは12.eで音楽レーベルhalcyon veilの9周年を歓迎しました。合理性と性感を共有するプラットフォームの間での跡線となりました。<br/><br/>
-      3つの行為が紹介されました：<br/>
-      － bapari：EP<em>oasis</em>のリスニングセッション<br/>
-      － rabit：halcyon veilのアーカイブに基づくDJ set<br/>
-      － tati au miel：EP<em>carousel</em>の予告を含むライブset<br/><br/>
-      入場は自由でしたが、xpan.c.0.0のTシャツ着用が条件とされました。非公開の商品であったため、参加者は自らで製作したり、変形させたりしました。<br/><br/>
-      この夜はhalcyon veilとxpanの自然な繋がりを定立させました。周辺の辱れの地で創造し、意図的に実験し、直接的な出会いを通してコミュニティを活性化させるプラットフォームとして、xpanは活動しました。
-    </div>
-<!-- Galería principal (orden aleatorio) -->
-<div class="gallery">
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642560/original_6945cf30cc92d41bb21d4c59a31495bf.jpg?1754594834?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642636/original_a4afb456e5e0e2793d144d39e6fb018f.jpg?1754595069?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642622/original_74b64e31ae7ddca47f05956b6adb19e0.jpg?1754595035?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642666/original_e9dcd95ffb59d6f6ab145f492f1f10d8.jpg?1754595180?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642645/original_bb892335a9062f1d591ccd896cea6e92.jpg?1754595123?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642631/original_d689a920b66da8e4224bcff8cf9ed154.jpg?1754595055?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642583/original_d8192476aace344eda6a4a6f8049e8a1.jpg?1754594924?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642603/original_d254484091c32f165bbef2a37e00877f.jpg?1754594978?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642642/original_a6affde2167c3aeb28a2aedca23d54ee.jpg?1754595105?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642639/original_9cc66947b607243d8e0d517888fc874e.jpg?1754595085?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642570/original_b5bb630648fbd4fd7f93154547788cd0.jpg?1754594882?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642593/original_5cd46a47d4b1246fb12c4ff36ed609a6.jpg?1754594954?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642615/original_3c3b9fd07b36b56e330f30c4d932be9b.jpg?1754595020?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642610/original_ec833f2f15439c144d20b3f8555a9741.jpg?1754595001?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642630/original_f28a46a6c28f2e6c8a277f44c7c3e516.jpg?1754595054?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642591/original_d3b6199cd1e3d6e7ec03671162d421b3.jpg?1754594949?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642564/original_024fc637943c5b4324fada23b7915b4d.jpg?1754594860?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642637/original_17a2918da3a3beaa7bf8f6f8d3611682.jpg?1754595072?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642633/original_bc20d9f7ee41fc4499749c7e3fc7528f.jpg?1754595058?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642662/original_d50eae0eac053e26c612dd444e53f99b.jpg?1754595176?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642664/original_c6c6023fc08ed2a2a3b24df7b6217548.jpg?1754595177?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642623/original_9fe3f366e42e0f0cc5fd0ad4328af94b.jpg?1754595036?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642665/original_7d70debe3854658a6b6050c23a964e5f.jpg?1754595180?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642667/original_f0f5156c3a28308e922666b74d946756.jpg?1754595186?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642651/original_5fcf7d4ec137ba9981ff610d1edc26cd.jpg?1754595140?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642578/original_b0a30afe9d66f766352fd9caa1217bf7.jpg?1754594903?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642596/original_8dc4c5fd0ff417bb4c5cd6990d98b744.jpg?1754594960?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642648/original_f51d59f3e0a6fbc552c0bd1e828277a3.jpg?1754595136?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-<img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642657/original_10b42f6c41a5e31eb2ceca4867354280.jpg?1754595162?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer"/>
-</div>
-<!-- Galería secundaria como tríptico de video -->
-<div class="gallery">
-<video autoplay="" class="lazy-video" controls="" loop="" muted="" playsinline="True" preload="metadata">
-<source data-src="https://attachments.are.na/38642489/eb45aef0d172256ee1bf8e0223c2f80b.mov?1754594630" type="video/mp4"/>
-</video>
-<video autoplay="" class="lazy-video" controls="" loop="" muted="" playsinline="True" preload="metadata">
-<source data-src="https://attachments.are.na/38642501/8c4e52c2d53465f7a51e81ed48bd9517.mov?1754594660" type="video/mp4"/>
-</video>
-<video autoplay="" class="lazy-video" controls="" loop="" muted="" playsinline="True" preload="metadata">
-<source data-src="https://attachments.are.na/38641793/48a48efe7ae41e6bfc4e5577e957bd92.mov?1754593299" type="video/mp4"/>
-</video>
-</div>
+  <h1>12.e hv9a</h1>
+  <div class="meta">octubre 2023 — 12.e, ciudad de méxico</div>
+
+  <div class="lang lang-es description">
+    el 15 de octubre de 2023, xpan recibió en 12.e el noveno aniversario de la disquera halcyon veil, sello fundamental en la configuración de nuevas estéticas sonoras globales.<br><br>
+    la activación presentó tres actos distintos:<br>
+    — bapari, con un listening session de su ep oasis<br>
+    — rabit, fundador del sello, con un dj set centrado en los archivos de halcyon veil<br>
+    — tati au miel, con un set en vivo con texturas de distorsión y adelantos de su ep carousel<br><br>
+    el evento fue de entrada libre, pero el acceso se gestionó mediante una condición específica: portar la camiseta xpan.c.0.0. esta prenda no había sido lanzada oficialmente y los asistentes recurrieron a recrearla o intervenirla por cuenta propia.<br><br>
+    la noche consolidó un vínculo natural entre halcyon veil y xpan, como intersección activa entre plataformas que comparten una sensibilidad común: construir desde los márgenes, experimentar de manera deliberada y activar comunidades a través de encuentros directos.
+  </div>
+
+  <div class="lang lang-en description" style="display:none;">
+    on october 15, 2023, xpan hosted the ninth anniversary of halcyon veil at 12.e, a label essential in shaping new global sonic aesthetics.<br><br>
+    the activation featured three distinct acts:<br>
+    — bapari, with a listening session of their EP <em>oasis</em><br>
+    — rabit, the label's founder, with a DJ set focused on halcyon veil archives<br>
+    — tati au miel, with a live set blending distortion textures and previews of her EP <em>carousel</em><br><br>
+    the event was free to enter, but access required a specific condition: wearing the xpan.c.0.0 shirt. this item had not been officially released, so attendees recreated or modified it on their own.<br><br>
+    the night solidified a natural link between halcyon veil and xpan, as an active intersection between platforms that share a common sensitivity: building from the margins, deliberate experimentation, and activating communities through direct encounters.
+  </div>
+
+  <div class="lang lang-fr description" style="display:none;">
+    le 15 octobre 2023, xpan a accueillie le neuvième anniversaire du label halcyon veil à 12.e, un label essentiel dans la formation de nouvelles esthétiques sonores mondiales.<br><br>
+    l'activation a présenté trois actes distincts :<br>
+    — bapari, avec une session d'écoute de son EP <em>oasis</em><br>
+    — rabit, fondateur du label, avec un DJ set centré sur les archives de halcyon veil<br>
+    — tati au miel, avec un live set de textures distordues et avant-premières de son EP <em>carousel</em><br><br>
+    l'événement était en entrée libre, mais l'accès était soumis à une condition : porter le t-shirt xpan.c.0.0. cette pièce n'était pas encore sortie, les participant·es l'ont donc recréé ou modifié par leurs propres moyens.<br><br>
+    la soirée a consolidé un lien naturel entre halcyon veil et xpan, comme intersection active entre plateformes partageant une sensibilité commune : construire depuis les marges, expérimenter délibérément et activer les communautés par des rencontres directes.
+  </div>
+
+  <div class="lang lang-jp description" style="display:none;">
+    2023年10月15日、xpanは12.eで音楽レーベルhalcyon veilの9周年を歓迎しました。<br><br>
+    3つの行為が紹介されました：<br>
+    － bapari：EP<em>oasis</em>のリスニングセッション<br>
+    － rabit：halcyon veilのアーカイブに基づくDJ set<br>
+    － tati au miel：EP<em>carousel</em>の予告を含むライブset<br><br>
+    入場は自由でしたが、xpan.c.0.0のTシャツ着用が条件とされました。非公開の商品であったため、参加者は自らで製作したり、変形させたりしました。<br><br>
+    この夜はhalcyon veilとxpanの自然な繋がりを確立しました。周縁から構築し、意図的に実験し、直接的な出会いを通してコミュニティを活性化させる交差点として機能しました。
+  </div>
+
+  <!-- Galería principal -->
+  <div class="gallery" data-lazy-section>
+    <!-- imgs con data-src conservadas -->
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642560/original_6945cf30cc92d41bb21d4c59a31495bf.jpg?1754594834?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642636/original_a4afb456e5e0e2793d144d39e6fb018f.jpg?1754595069?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642622/original_74b64e31ae7ddca47f05956b6adb19e0.jpg?1754595035?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642666/original_e9dcd95ffb59d6f6ab145f492f1f10d8.jpg?1754595180?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642645/original_bb892335a9062f1d591ccd896cea6e92.jpg?1754595123?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642631/original_d689a920b66da8e4224bcff8cf9ed154.jpg?1754595055?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642583/original_d8192476aace344eda6a4a6f8049e8a1.jpg?1754594924?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642603/original_d254484091c32f165bbef2a37e00877f.jpg?1754594978?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642642/original_a6affde2167c3aeb28a2aedca23d54ee.jpg?1754595105?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642639/original_9cc66947b607243d8e0d517888fc874e.jpg?1754595085?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642570/original_b5bb630648fbd4fd7f93154547788cd0.jpg?1754594882?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642593/original_5cd46a47d4b1246fb12c4ff36ed609a6.jpg?1754594954?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642615/original_3c3b9fd07b36b56e330f30c4d932be9b.jpg?1754595020?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642610/original_ec833f2f15439c144d20b3f8555a9741.jpg?1754595001?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642630/original_f28a46a6c28f2e6c8a277f44c7c3e516.jpg?1754595054?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642591/original_d3b6199cd1e3d6e7ec03671162d421b3.jpg?1754594949?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642564/original_024fc637943c5b4324fada23b7915b4d.jpg?1754594860?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642637/original_17a2918da3a3beaa7bf8f6f8d3611682.jpg?1754595072?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642633/original_bc20d9f7ee41fc4499749c7e3fc7528f.jpg?1754595058?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642662/original_d50eae0eac053e26c612dd444e53f99b.jpg?1754595176?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642664/original_c6c6023fc08ed2a2a3b24df7b6217548.jpg?1754595177?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642623/original_9fe3f366e42e0f0cc5fd0ad4328af94b.jpg?1754595036?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642665/original_7d70debe3854658a6b6050c23a964e5f.jpg?1754595180?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642667/original_f0f5156c3a28308e922666b74d946756.jpg?1754595186?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642651/original_5fcf7d4ec137ba9981ff610d1edc26cd.jpg?1754595140?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642578/original_b0a30afe9d66f766352fd9caa1217bf7.jpg?1754594903?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642596/original_8dc4c5fd0ff417bb4c5cd6990d98b744.jpg?1754594960?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642648/original_f51d59f3e0a6fbc552c0bd1e828277a3.jpg?1754595136?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+    <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/38642657/original_10b42f6c41a5e31eb2ceca4867354280.jpg?1754595162?bc=0" decoding="async" loading="lazy" referrerpolicy="no-referrer" alt="">
+  </div>
+
+  <!-- tríptico de video -->
+  <div class="gallery" data-lazy-section>
+    <video class="lazy-video" controls loop muted playsinline preload="metadata">
+      <source data-src="https://attachments.are.na/38642489/eb45aef0d172256ee1bf8e0223c2f80b.mov?1754594630" type="video/mp4">
+    </video>
+    <video class="lazy-video" controls loop muted playsinline preload="metadata">
+      <source data-src="https://attachments.are.na/38642501/8c4e52c2d53465f7a51e81ed48bd9517.mov?1754594660" type="video/mp4">
+    </video>
+    <video class="lazy-video" controls loop muted playsinline preload="metadata">
+      <source data-src="https://attachments.are.na/38641793/48a48efe7ae41e6bfc4e5577e957bd92.mov?1754593299" type="video/mp4">
+    </video>
+  </div>
 </div>
 
+<!-- AEI -->
 <section class="experimental-gallery">
-<object class="background-star" data="mdtc.4 estrella.svg" type="image/svg+xml"></object>
-<div class="container" id="experimental-container">
-<svg class="lines" id="dynamic-lines"></svg>
-</div>
+  <object class="background-star" data="mdtc.4 estrella.svg" type="image/svg+xml"></object>
+  <div class="container" id="experimental-container">
+    <svg class="lines" id="dynamic-lines" aria-hidden="true"></svg>
+  </div>
 </section>
-<script defer="">
-    document.querySelectorAll('.language-selector button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const lang = btn.dataset.lang;
-        document.querySelectorAll('.lang').forEach(l => l.style.display = 'none');
-        document.querySelectorAll('.lang-' + lang).forEach(l => l.style.display = 'block');
-        document.querySelectorAll('.language-selector button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
+
+<!-- idioma -->
+<script>
+  document.querySelectorAll('.language-selector button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const lang=btn.dataset.lang;
+      document.querySelectorAll('.lang').forEach(l=>l.style.display='none');
+      document.querySelectorAll('.lang-'+lang).forEach(l=>l.style.display='block');
+      document.querySelectorAll('.language-selector button').forEach(b=>{b.classList.remove('active'); b.setAttribute('aria-pressed','false')});
+      btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+      document.documentElement.setAttribute('lang', lang);
     });
+  });
+</script>
 
-    const expContainer = document.getElementById('experimental-container');
-    const svgLines = document.getElementById('dynamic-lines');
-    const blocks = [];
-
-   const expMedia = [
+<!-- AEI adaptativo y estable -->
+<script>
+  const expContainer=document.getElementById('experimental-container');
+  const svgLines=document.getElementById('dynamic-lines');
+  const blocks=[];
+  const expMedia=[/* conservado tal cual */ 
   "https://d2w9rnfcy7mm78.cloudfront.net/38642290/original_71a7d7d88fd153f00ce52aef4a90f690.jpg?1754594279?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/38642289/original_3648814cd0db582287dc1e98540333b5.jpg?1754594280?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/38642288/original_b0c4f3aad1e6c1e13415c2d5335b3708.jpg?1754594274?bc=0",
@@ -198,172 +275,125 @@
   "https://d2w9rnfcy7mm78.cloudfront.net/38642138/original_9aacf0c4bba98c7dad642ba7f81004af.jpg?1754593940?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/38642133/original_698a1c2bfda12453d04f216759733d1e.jpg?1754593934?bc=0",
   "https://d2w9rnfcy7mm78.cloudfront.net/38642131/original_ae049a18449b3f7516e3fdafce06f2ea.jpg?1754593927?bc=0",
-  "https://d2w9rnfcy7mm78.cloudfront.net/38642058/original_0840a11c5bdbfd137f38b7e0c7efba87.jpg?1754593791?bc=0",
-];
+  "https://d2w9rnfcy7mm78.cloudfront.net/38642058/original_0840a11c5bdbfd137f38b7e0c7efba87.jpg?1754593791?bc=0"
+  ];
 
-    let index = 0;
-    function loadNextMedia() {
-      if (index >= expMedia.length) return;
-      const url = expMedia[index++];
-      const block = document.createElement('div');
-      block.className = 'image-block';
-      let el;
-      if (url.match(/\.(mp4|mov)$/i)) {
-        el = document.createElement('video');
-        el.loop = true; el.muted = true; el.autoplay = true; el.playsInline = true;
-        el.src = url;
-      } else {
-        el = document.createElement('img');
-        el.loading = "lazy";
-        el.decoding = "async";
-        el.src = url;
-      }
-      block.appendChild(el);
-      block.x = Math.random() * (window.innerWidth - 200);
-      block.y = Math.random() * (window.innerHeight - 200);
-      block.style.transform = `translate3d(${block.x}px,${block.y}px,0)`;
-      makeDraggable(block);
-      expContainer.appendChild(block);
-      blocks.push(block);
-      setTimeout(loadNextMedia, 50); // carga progresiva
-    }
-    loadNextMedia();
+  let idx=0;
+  function addNext(){
+    if(idx>=expMedia.length) return;
+    const url=expMedia[idx++], block=document.createElement('div'); block.className='image-block';
+    let el;
+    if(/\.(mp4|mov)$/i.test(url)){ el=document.createElement('video'); el.loop=true; el.muted=true; el.autoplay=true; el.playsInline=true; el.src=url; }
+    else{ el=document.createElement('img'); el.loading='lazy'; el.decoding='async'; el.src=url; }
+    block.appendChild(el);
+    block.x=Math.random()*(window.innerWidth-200);
+    block.y=Math.random()*(window.innerHeight-200);
+    block.style.transform=`translate3d(${block.x}px,${block.y}px,0)`;
+    makeDraggable(block);
+    expContainer.appendChild(block);
+    blocks.push(block);
+    setTimeout(addNext,45);
+  }
+  addNext();
 
-    function makeDraggable(el){
-      let isDragging=false,lastX,lastY,vx=0,vy=0;
-      const move=(cx,cy)=>{
-        const dx=cx-lastX,dy=cy-lastY;
-        el.x+=dx;el.y+=dy;vx=dx;vy=dy;
-        el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`;
-        lastX=cx;lastY=cy;
-        drawLines();
-      };
-      el.addEventListener('mousedown',e=>{e.preventDefault();isDragging=true;lastX=e.clientX;lastY=e.clientY;});
-      window.addEventListener('mousemove',e=>{if(isDragging) move(e.clientX,e.clientY);});
-      window.addEventListener('mouseup',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
-      el.addEventListener('touchstart',e=>{const t=e.touches[0];isDragging=true;lastX=t.clientX;lastY=t.clientY;});
-      el.addEventListener('touchmove',e=>{if(!isDragging)return;e.preventDefault();const t=e.touches[0];move(t.clientX,t.clientY);},{passive:false});
-      el.addEventListener('touchend',()=>{if(isDragging){el.vx=vx;el.vy=vy;}isDragging=false;});
-    }
-
-    function drawLines(){
-      svgLines.innerHTML='';
-      const rect=expContainer.getBoundingClientRect();
-      for(let i=0;i<blocks.length;i++){
-        const a=blocks[i],ax=a.x+a.offsetWidth/2-rect.left,ay=a.y+a.offsetHeight/2-rect.top;
-        for(let j=i+1;j<blocks.length;j++){
-          if(Math.random()>0.8){
-            const b=blocks[j],bx=b.x+b.offsetWidth/2-rect.left,by=b.y+b.offsetHeight/2-rect.top;
-            const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-            line.setAttribute('x1',ax);line.setAttribute('y1',ay);
-            line.setAttribute('x2',bx);line.setAttribute('y2',by);
-            svgLines.appendChild(line);
-          }
-        }
-      }
-    }
-  </script>
-
-<script>
-(function(){
-  // Images
-  var imgs = document.querySelectorAll('img[data-src]');
-  if (imgs.length) {
-    var io = new IntersectionObserver(function(entries, obs){
-      entries.forEach(function(entry){
-        if (!entry.isIntersecting) return;
-        var el = entry.target;
-        var src = el.getAttribute('data-src');
-        if (src) {
-          el.src = src;
-          el.removeAttribute('data-src');
-        }
-        obs.unobserve(el);
-      });
-    }, { rootMargin: '400px 0px' });
-    imgs.forEach(function(img){ io.observe(img); });
+  function makeDraggable(el){
+    let dragging=false,x0=0,y0=0;
+    const move=(cx,cy)=>{ const dx=cx-x0, dy=cy-y0; el.x+=dx; el.y+=dy; el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`; x0=cx; y0=cy; scheduleRecalc(); };
+    el.addEventListener('mousedown',e=>{e.preventDefault(); dragging=true; x0=e.clientX; y0=e.clientY;});
+    window.addEventListener('mousemove',e=>{ if(dragging) move(e.clientX,e.clientY); });
+    window.addEventListener('mouseup',()=>{ dragging=false; });
+    el.addEventListener('touchstart',e=>{ const t=e.touches[0]; dragging=true; x0=t.clientX; y0=t.clientY; },{passive:true});
+    el.addEventListener('touchmove',e=>{ if(!dragging) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY); },{passive:false});
+    el.addEventListener('touchend',()=>{ dragging=false; },{passive:true});
   }
 
-  // Videos
-  var vids = document.querySelectorAll('video.lazy-video');
-  if (vids.length) {
-    var vio = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        var v = entry.target;
-        var s = v.querySelector('source');
-        if (entry.isIntersecting) {
-          if (s && !s.src && s.dataset.src) {
-            s.src = s.dataset.src;
-            v.load();
-          }
-          // try to play if allowed
-          var p = v.play();
-          if (p && p.catch) p.catch(function(){});
-        } else {
-          v.pause();
+  /* líneas k-vecinos adaptativas */
+  let recalcPending=false;
+  function scheduleRecalc(){ if(recalcPending) return; recalcPending=true; requestAnimationFrame(()=>{ drawStableLines(); recalcPending=false; }); }
+  function drawStableLines(){
+    const pts = blocks.map(b=>({ x:b.x + b.offsetWidth/2, y:b.y + b.offsetHeight/2 }));
+    const k = Math.min(3, Math.max(1, Math.floor(Math.sqrt(blocks.length)/2)));
+    while(svgLines.firstChild) svgLines.removeChild(svgLines.firstChild);
+    for(let i=0;i<pts.length;i++){
+      const dists = pts.map((p,j)=>({j, d:(i===j)?Infinity:((p.x-pts[i].x)**2 + (p.y-pts[i].y)**2)})).sort((a,b)=>a.d-b.d);
+      for(let n=0;n<k;n++){
+        const j=dists[n].j; if(j>i){
+          const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1',pts[i].x); line.setAttribute('y1',pts[i].y);
+          line.setAttribute('x2',pts[j].x); line.setAttribute('y2',pts[j].y);
+          svgLines.appendChild(line);
         }
+      }
+    }
+  }
+  window.addEventListener('resize', scheduleRecalc, {passive:true});
+</script>
+
+<!-- Lazy imágenes y videos -->
+<script>
+(function(){
+  const imgs=document.querySelectorAll('img[data-src]');
+  if(imgs.length){
+    const io=new IntersectionObserver((entries,obs)=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const el=en.target; const src=el.getAttribute('data-src');
+        if(src){ el.src=src; el.removeAttribute('data-src'); }
+        obs.unobserve(el);
       });
-    }, { rootMargin: '300px 0px', threshold: 0.25 });
-    vids.forEach(function(v){ vio.observe(v); });
+    },{rootMargin:'400px 0px'});
+    imgs.forEach(img=>io.observe(img));
+  }
+  const vids=document.querySelectorAll('video.lazy-video');
+  if(vids.length){
+    const vio=new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        const v=en.target; const s=v.querySelector('source');
+        if(en.isIntersecting){
+          if(s && !s.src && s.dataset.src){ s.src=s.dataset.src; v.load(); }
+          v.play().catch(()=>{});
+        } else { v.pause(); }
+      });
+    },{rootMargin:'300px 0px', threshold:.25});
+    vids.forEach(v=>vio.observe(v));
   }
 })();
 </script>
 
-<div id="lightbox" aria-hidden="true">
+<!-- Lightbox flush sin recortes -->
+<div id="lightbox" aria-hidden="true" role="dialog">
   <figure id="lbFig"></figure>
 </div>
-
 <script>
 (function(){
-  const lb = document.getElementById('lightbox');
-  const fig = document.getElementById('lbFig');
-
-  // Elementos reales de la galería (no URLs estáticas)
-  const itemsEls = Array.from(document.querySelectorAll('.gallery img, .gallery video'));
-  let idx = 0;
+  const lb=document.getElementById('lightbox');
+  const fig=document.getElementById('lbFig');
+  const itemsEls=[...document.querySelectorAll('.gallery img, .gallery video')];
+  let idx=0;
 
   function getSrc(el){
-    if (el.tagName.toLowerCase() === 'video') {
-      const s = el.querySelector('source');
-      return (el.currentSrc || el.src || (s && (s.currentSrc || s.src || s.dataset.src)) || el.poster || '');
+    if(el.tagName.toLowerCase()==='video'){
+      const s=el.querySelector('source');
+      return el.currentSrc || el.src || (s&&(s.currentSrc||s.src||s.dataset.src)) || el.poster || '';
     }
     return el.currentSrc || el.src || el.dataset.src || '';
   }
-
   function ensureLoaded(el){
-    if (el.tagName.toLowerCase() === 'img') {
-      if (!el.src && el.dataset.src) el.src = el.dataset.src;
-    } else {
-      const s = el.querySelector('source');
-      if (s && !s.src && s.dataset.src) { s.src = s.dataset.src; el.load(); }
-    }
+    if(el.tagName.toLowerCase()==='img'){ if(!el.src && el.dataset.src) el.src=el.dataset.src; }
+    else{ const s=el.querySelector('source'); if(s && !s.src && s.dataset.src){ s.src=s.dataset.src; el.load(); } }
   }
-
   function render(i){
-    const el = itemsEls[i];
-    const src = getSrc(el);
-    if (!src) return; // no render si aún no hay URL
-    fig.innerHTML = (el.tagName.toLowerCase() === 'video')
+    const el=itemsEls[i]; const src=getSrc(el); if(!src) return;
+    fig.innerHTML = (el.tagName.toLowerCase()==='video')
       ? `<video controls autoplay playsinline preload="metadata"><source src="${src}" type="video/mp4"></video>`
       : `<img src="${src}" alt="" draggable="false">`;
   }
+  function open(i){ idx=i; ensureLoaded(itemsEls[idx]); render(idx); lb.classList.add('open'); document.documentElement.classList.add('lb-open'); document.body.classList.add('lb-open'); }
+  function close(){ lb.classList.remove('open'); fig.innerHTML=''; document.documentElement.classList.remove('lb-open'); document.body.classList.remove('lb-open'); }
 
-  function open(i){ idx=i; ensureLoaded(itemsEls[idx]); render(idx); lb.classList.add('open'); }
-  function close(){ lb.classList.remove('open'); fig.innerHTML=''; }
+  itemsEls.forEach((el,i)=> el.addEventListener('click',e=>{ e.preventDefault(); ensureLoaded(el); open(i); },{passive:true}));
+  lb.addEventListener('click', e=>{ if(e.target===lb) close(); });
 
-  // Abrir desde miniaturas
-  itemsEls.forEach((el,i)=>{
-    el.addEventListener('click', e => {
-       e.preventDefault();
-       ensureLoaded(el);
-       open(i);
-    }, {passive:true});
-  });
-
-  // Cerrar tocando overlay
-  lb.addEventListener('click', e => { if (e.target === lb) close(); });
-
-  // Teclado
   document.addEventListener('keydown', e=>{
     if(!lb.classList.contains('open')) return;
     if(e.key==='Escape') close();
@@ -371,59 +401,23 @@
     if(e.key==='ArrowLeft'){ idx=(idx-1+itemsEls.length)%itemsEls.length; ensureLoaded(itemsEls[idx]); render(idx); }
   });
 
-  // Swipe mouse/touch
-  let startX=null, dragging=false;
-  function getX(e){ return e.touches?.[0]?.clientX ?? e.changedTouches?.[0]?.clientX ?? e.clientX; }
-  function onDown(e){ if(lb.classList.contains('open')){ startX=getX(e); dragging=true; } }
-  function onUp(e){
+  // swipe
+  let x0=null, dragging=false;
+  const getX=e=> e.touches?.[0]?.clientX ?? e.changedTouches?.[0]?.clientX ?? e.clientX;
+  lb.addEventListener('pointerdown',e=>{ x0=getX(e); dragging=true; });
+  lb.addEventListener('pointerup',e=>{
     if(!dragging) return;
-    const dx = getX(e) - startX, TH = 40;
-    if(Math.abs(dx) > TH){
-      idx = dx < 0 ? (idx+1)%itemsEls.length : (idx-1+itemsEls.length)%itemsEls.length;
-      ensureLoaded(itemsEls[idx]); render(idx);
-    } else { close(); }
-    dragging=false; startX=null;
-  }
-  lb.addEventListener('pointerdown', onDown);
-  lb.addEventListener('pointerup', onUp);
-  lb.addEventListener('touchstart', onDown, {passive:true});
-  lb.addEventListener('touchend', onUp, {passive:true});
+    const dx=getX(e)-x0, TH=40;
+    if(Math.abs(dx)>TH){ idx = dx<0 ? (idx+1)%itemsEls.length : (idx-1+itemsEls.length)%itemsEls.length; ensureLoaded(itemsEls[idx]); render(idx); }
+    else close();
+    dragging=false; x0=null;
+  });
 
-  lb.addEventListener('dragstart', e => e.preventDefault());
+  // anti tap-through 400ms
+  let suppressUntil=0;
+  document.addEventListener('click',(e)=>{ if(Date.now()<suppressUntil){ e.stopImmediatePropagation?.(); e.stopPropagation(); e.preventDefault(); }},true);
+  lb.addEventListener('click',(e)=>{ const inside=e.target.closest('#lbFig'); if(!inside && (e.target===lb || lb.contains(e.target))){ suppressUntil=Date.now()+400; }},true);
 })();
 </script>
-
-<script>
-/* Anti tap-through global: bloquea re-click 400ms después de cerrar */
-(() => {
-  let suppressUntil = 0;
-
-  // 1) Cancela cualquier click mientras esté activo el supresor (captura)
-  document.addEventListener('click', (e) => {
-    if (Date.now() < suppressUntil) {
-      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  }, true);
-
-  // 2) Detecta el overlay de lightbox si existe y activa supresión al cerrar por tap
-  const lb = document.getElementById('lightbox');
-  if (lb) {
-    // Cerrar por tap en overlay suele ocurrir aquí. Marcamos supresión y dejamos que tu close() haga lo suyo.
-    lb.addEventListener('click', (e) => {
-      // Si el tap fue sobre el propio overlay (no dentro de la figura/media), activa supresión
-      const insideFigure = e.target.closest('#lbFig') || e.target.closest('#lbFigure');
-      if (!insideFigure && (e.target === lb || lb.contains(e.target))) {
-        suppressUntil = Date.now() + 400;
-      }
-    }, true); // captura para adelantarnos a tus otros listeners
-  }
-
-  // 3) Si tus scripts disparan un evento propio al cerrar, también lo atendemos
-  window.addEventListener('xpan-lb-closed', () => { suppressUntil = Date.now() + 400; });
-})();
-</script>
-
 </body>
 </html>

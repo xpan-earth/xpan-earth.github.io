@@ -1,162 +1,119 @@
-
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: 'Times New Roman', serif;
-      color: #000;
+    /* ===== tokens post-tech ===== */
+    [data-xpan]{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --line-weak:#ECEFF2; }
     }
 
-    .logo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100px;
-      height: auto;
-      z-index: 5;
-      animation: fadeIn 1.5s ease-out;
-      cursor: pointer;
-      transition: opacity 0.4s ease;
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      height:100%; overflow:hidden;
+    }
+    a{color:var(--fg);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+
+    /* ===== logo ===== */
+    .logo{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:100px;height:auto;z-index:5;cursor:pointer;
+      transition:opacity .2s linear;animation:fadeIn .9s linear;
+    }
+    .logo img{
+      width:100%;height:auto;display:block;
+      filter:invert(1) brightness(100%);transition:filter .3s linear;
+    }
+    @media (prefers-color-scheme:light){
+      .logo img{filter:none;}
     }
 
-    .link {
-      position: absolute;
-      font-size: 0.85rem;
-      text-transform: lowercase;
-      text-decoration: none;
-      color: black;
-      z-index: 3;
-      transition: opacity 0.4s ease;
-      transform: translate(-50%, -50%);
+    /* ===== enlaces ===== */
+    .link{
+      position:absolute;transform:translate(-50%,-50%);
+      font:500 .9rem/1 var(--font-ui);text-transform:lowercase;
+      color:var(--fg);z-index:3;transition:opacity .15s linear;
+    }
+    .link:hover{opacity:.7}
+
+    /* ===== líneas ===== */
+    svg.lines{
+      position:absolute;inset:0;width:100%;height:100%;z-index:1;
+      pointer-events:none;transition:opacity .15s linear;
+    }
+    svg.lines line{
+      stroke:var(--fg);stroke-opacity:.35;stroke-width:1;
+      stroke-dasharray:1000;stroke-dashoffset:1000;
+      animation:draw 1.2s linear forwards;
+    }
+    @keyframes draw{to{stroke-dashoffset:0}}
+    @keyframes fadeIn{from{opacity:0;transform:translate(-50%,-50%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+    /* ===== overlay ===== */
+    .overlay{
+      position:fixed;inset:0;padding:2rem 1rem;
+      background:rgba(255,255,255,.08);
+      backdrop-filter:blur(12px) saturate(120%);
+      -webkit-backdrop-filter:blur(12px) saturate(120%);
+      z-index:10;overflow:auto;display:flex;
+      flex-direction:column;align-items:center;
+      opacity:0;pointer-events:none;transition:opacity .15s linear;
+    }
+    @media (prefers-color-scheme:light){
+      .overlay{background:rgba(255,255,255,.66)}
+    }
+    .overlay.active{opacity:1;pointer-events:auto}
+
+    .overlay .language-selector{text-align:center;margin:0 0 1.5rem}
+    .overlay .language-selector button{
+      appearance:none;background:transparent;border:1px solid var(--line);
+      font:600 .9rem/1 var(--font-ui);color:var(--fg-dim);
+      text-transform:lowercase;padding:.35rem .6rem;
+      margin:0 .25rem;cursor:pointer;
+      transition:color .15s linear,border-color .15s linear,background-color .15s linear;
+    }
+    .overlay .language-selector button:hover{color:var(--fg)}
+    .overlay .language-selector button.active{
+      color:var(--fg);border-color:var(--accent);
+      background:rgba(24,96,255,.08)
     }
 
-    .link:hover { opacity: 0.6; }
-
-    svg.lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
+    .description{
+      max-width:800px;width:100%;
+      font:400 1rem/1.62 var(--font-ui);
+      color:var(--fg);text-align:left;
     }
+    .description p{margin:0 0 1em}
+    .description .lang{display:none}
+    .description .lang.active{display:block}
 
-    line {
-      stroke: url(#line-texture);
-      stroke-width: 1.5;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: draw 2s ease-out forwards;
-    }
-
-    @keyframes draw { to { stroke-dashoffset: 0; } }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      padding: 1rem;
-      box-sizing: border-box;
-      background: rgba(255,255,255,0.6);
-      backdrop-filter: blur(12px);
-      z-index: 10;
-      overflow-y: auto;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      z-index: 10;
-      overflow-y: auto;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-      padding: 2rem 1rem;
-    }
-
-    .overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .overlay .language-selector {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .overlay .language-selector button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #000;
-      opacity: .5;
-      transition: .2s;
-      margin: 0 0.5rem;
-      text-transform: lowercase;
-      font-size: 0.9rem;
-    }
-
-    .overlay .language-selector button.active,
-    .overlay .language-selector button:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    .description {
-      max-width: 800px;
-      margin: 0 auto;
-      font-size: 1rem;
-      line-height: 1.55;
-    }
-
-    .description p {
-      margin-bottom: 1em;
-      text-align: justify;
-    }
-
-    .description .lang {
-      display: none;
-    }
-
-    .description .lang.active {
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      .logo { width: 65px; }
-      .link { font-size: 0.75rem; }
-      .description { font-size: 0.9rem; padding: 0 0.5rem; }
+    @media (max-width:768px){
+      .logo{width:65px}
+      .link{font-size:.8rem}
+      .overlay .description{font-size:.95rem;line-height:1.55;padding:1.2rem}
+      .overlay p{word-break:break-word}
     }
   </style>
 </head>
 <body>
+  <!-- logo corregido -->
   <div class="logo" id="logo">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 2226.96">
-      <image width="8000" height="9279" transform="scale(.24)" xlink:href="xpan.svg"/>
-    </svg>
+    <img src="xpan.svg" alt="xpan logo"/>
   </div>
 
+  <!-- enlaces -->
   <a href="12.e.html" class="link" style="top:10%; left:50%;">12.e</a>
   <a href="atlas.html" class="link" style="top:25%; left:80%;">atlas</a>
   <a href="arquitectura.index.html" class="link" style="top:75%; left:80%;">sistemas espaciales</a>
@@ -164,140 +121,117 @@
   <a href="mdtc.index.html" class="link" style="top:75%; left:20%;">mdtc</a>
   <a href="a.e.i.index.html" class="link" style="top:25%; left:20%;">a.e.i.</a>
 
-  <svg class="lines">
-    <defs>
-      <pattern id="line-texture" patternUnits="userSpaceOnUse" width="4" height="4">
-        <path d="M0,0 L4,4 M4,0 L0,4" stroke="black" stroke-width="0.2" />
-      </pattern>
-    </defs>
-  </svg>
+  <svg class="lines" aria-hidden="true"></svg>
 
+  <!-- overlay -->
   <div class="overlay" id="overlay">
     <div class="language-selector">
-      <button data-lang="es" class="active">es</button>
-      <button data-lang="en">en</button>
-      <button data-lang="fr">fr</button>
-      <button data-lang="jp">jp</button>
+      <button data-lang="es" class="active" aria-pressed="true">es</button>
+      <button data-lang="en" aria-pressed="false">en</button>
+      <button data-lang="fr" aria-pressed="false">fr</button>
+      <button data-lang="jp" aria-pressed="false">jp</button>
     </div>
+
     <div class="description">
-<div class="lang lang-es active">
-  <p>xpan es un proyecto que diseña y construye sistemas espaciales, culturales y tecnológicos como parte de un proceso crítico sobre lenguajes, estructuras emergentes y tecnologías de interconexión colectiva.</p>
-  <p>su práctica combina investigación, archivo y construcción material, generando un ecosistema donde espacios, objetos, publicaciones, sonido y herramientas digitales se integran como un sistema vivo en evolución continua.</p>
-  <p>el proyecto despliega activaciones culturales y procesos experimentales, al mismo tiempo que desarrolla proyectos y servicios especializados que operan en múltiples escalas: arquitectura, diseño de sistemas espaciales, ingeniería sonora, dirección creativa, consultoría conceptual y desarrollo de herramientas tecnológicas. cada operación se aborda de manera específica, resolviendo necesidades complejas mediante infraestructuras adaptativas que se conectan al sistema global de xpan.</p>
-  <p>en este marco, los sistemas creados por xpan generan efectos colaterales que van más allá de la conexión entre contextos normalmente separados —lo cultural y lo técnico, lo independiente y lo institucional, lo local y lo global—. de manera natural, emergen nuevas ecologías de colaboración, lenguajes compartidos entre disciplinas disociadas, infraestructuras adaptativas y autónomas, y espacios de coexistencia estructurada donde actores, objetos y medios que antes operaban aislados interactúan sin perder su identidad.</p>
-  <p>cada sistema también produce modelos de archivo y documentación en tiempo real, capaces de escalar o ramificarse en otros territorios, expandiendo el alcance del proyecto sin necesidad de réplica literal.</p>
-  <p>cada intervención —una estructura modular, una instalación sonora o una publicación— alimenta el archivo y la investigación en curso, reforzando la naturaleza colectiva, conectiva y rigurosa de xpan. el proyecto funciona así como un ecosistema en evolución continua, donde investigación, práctica material y tecnologías de interconexión operan juntas para producir procesos vivos, críticos y expansivos.</p>
-</div>
+      <!-- ES -->
+      <div class="lang lang-es active">
+        <p>xpan es un proyecto que diseña y construye sistemas espaciales, culturales y tecnológicos como parte de un proceso crítico sobre lenguajes, estructuras emergentes y tecnologías de interconexión colectiva.</p>
+        <p>su práctica combina investigación, archivo y construcción material, generando un ecosistema donde espacios, objetos, publicaciones, sonido y herramientas digitales se integran como un sistema vivo en evolución continua.</p>
+        <p>el proyecto despliega activaciones culturales y procesos experimentales, al mismo tiempo que desarrolla proyectos y servicios especializados que operan en múltiples escalas: arquitectura, diseño de sistemas espaciales, ingeniería sonora, dirección creativa, consultoría conceptual y desarrollo de herramientas tecnológicas. cada operación se aborda de manera específica, resolviendo necesidades complejas mediante infraestructuras adaptativas que se conectan al sistema global de xpan.</p>
+        <p>en este marco, los sistemas creados por xpan generan efectos colaterales que van más allá de la conexión entre contextos normalmente separados —lo cultural y lo técnico, lo independiente y lo institucional, lo local y lo global—. de manera natural, emergen nuevas ecologías de colaboración, lenguajes compartidos entre disciplinas disociadas, infraestructuras adaptativas y autónomas, y espacios de coexistencia estructurada donde actores, objetos y medios que antes operaban aislados interactúan sin perder su identidad.</p>
+        <p>cada sistema también produce modelos de archivo y documentación en tiempo real, capaces de escalar o ramificarse en otros territorios, expandiendo el alcance del proyecto sin necesidad de réplica literal.</p>
+        <p>cada intervención —una estructura modular, una instalación sonora o una publicación— alimenta el archivo y la investigación en curso, reforzando la naturaleza colectiva, conectiva y rigurosa de xpan. el proyecto funciona así como un ecosistema en evolución continua, donde investigación, práctica material y tecnologías de interconexión operan juntas para producir procesos vivos, críticos y expansivos.</p>
+      </div>
 
-<div class="lang lang-en">
-  <p>xpan is a project that designs and builds spatial, cultural, and technological systems as part of a critical process on languages, emerging structures, and technologies of collective interconnection.</p>
-  <p>its practice combines research, archiving, and material construction, generating an ecosystem where spaces, objects, publications, sound, and digital tools integrate as a living system in continuous evolution.</p>
-  <p>the project unfolds cultural activations and experimental processes, while developing specialized projects and services that operate at multiple scales: architecture, spatial system design, sound engineering, creative direction, conceptual consulting, and technological tool development. each operation is approached specifically, solving complex needs through adaptive infrastructures connected to the global xpan system.</p>
-  <p>in this framework, xpan systems generate collateral effects that go beyond connecting contexts normally separated—cultural and technical, independent and institutional, local and global. naturally, new ecologies of collaboration emerge, with shared languages across dissociated disciplines, autonomous adaptive infrastructures, and spaces of structured coexistence where actors, objects, and media that once operated in isolation interact without losing their identity.</p>
-  <p>each system also produces real-time archiving and documentation models, capable of scaling or branching into other territories, expanding the project’s reach without literal replication.</p>
-  <p>each intervention—whether a modular structure, a sound installation, or a publication—feeds into the ongoing archive and research, reinforcing xpan’s collective, connective, and rigorous nature. the project thus functions as a continuously evolving ecosystem, where research, material practice, and interconnection technologies work together to produce living, critical, and expansive processes.</p>
-</div>
+      <!-- EN -->
+      <div class="lang lang-en">
+        <p>xpan is a project that designs and builds spatial, cultural, and technological systems as part of a critical process on languages, emerging structures, and technologies of collective interconnection.</p>
+        <p>its practice combines research, archiving, and material construction, generating an ecosystem where spaces, objects, publications, sound, and digital tools integrate as a living system in continuous evolution.</p>
+        <p>the project unfolds cultural activations and experimental processes, while developing specialized projects and services that operate at multiple scales: architecture, spatial system design, sound engineering, creative direction, conceptual consulting, and technological tool development. each operation is approached specifically, solving complex needs through adaptive infrastructures connected to the global xpan system.</p>
+        <p>in this framework, xpan systems generate collateral effects that go beyond connecting contexts normally separated—cultural and technical, independent and institutional, local and global. naturally, new ecologies of collaboration emerge, with shared languages across dissociated disciplines, autonomous adaptive infrastructures, and spaces of structured coexistence where actors, objects, and media that once operated in isolation interact without losing their identity.</p>
+        <p>each system also produces real-time archiving and documentation models, capable of scaling or branching into other territories, expanding the project’s reach without literal replication.</p>
+        <p>each intervention—whether a modular structure, a sound installation, or a publication—feeds into the ongoing archive and research, reinforcing xpan’s collective, connective, and rigorous nature. the project thus functions as a continuously evolving ecosystem, where research, material practice, and interconnection technologies work together to produce living, critical, and expansive processes.</p>
+      </div>
 
-<div class="lang lang-fr">
-  <p>xpan est un projet qui conçoit et construit des systèmes spatiaux, culturels et technologiques dans le cadre d’un processus critique sur les langages, les structures émergentes et les technologies d’interconnexion collective.</p>
-  <p>sa pratique combine recherche, archivage et construction matérielle, générant un écosystème où espaces, objets, publications, son et outils numériques s’intègrent comme un système vivant en évolution continue.</p>
-  <p>le projet déploie des activations culturelles et des processus expérimentaux, tout en développant des projets et services spécialisés qui opèrent à plusieurs échelles : architecture, conception de systèmes spatiaux, ingénierie sonore, direction créative, conseil conceptuel et développement d’outils technologiques. chaque opération est abordée spécifiquement, en résolvant des besoins complexes à travers des infrastructures adaptatives connectées au système global de xpan.</p>
-  <p>dans ce cadre, les systèmes créés par xpan génèrent des effets collatéraux qui vont au-delà de la simple connexion de contextes normalement séparés — culturel et technique, indépendant et institutionnel, local et global. naturellement, de nouvelles écologies de collaboration émergent, des langages partagés entre disciplines dissociées, des infrastructures autonomes et adaptatives, et des espaces de coexistence structurée où acteurs, objets et médias auparavant isolés interagissent sans perdre leur identité.</p>
-  <p>chaque système produit également des modèles d’archivage et de documentation en temps réel, capables de s’étendre ou de se ramifier vers d’autres territoires, étendant la portée du projet sans duplication littérale.</p>
-  <p>chaque intervention — structure modulaire, installation sonore ou publication — alimente l’archive et la recherche en cours, renforçant la nature collective, connectée et rigoureuse de xpan. le projet fonctionne ainsi comme un écosystème en évolution continue, où recherche, pratique matérielle et technologies d’interconnexion produisent des processus vivants, critiques et expansifs.</p>
-</div>
+      <!-- FR -->
+      <div class="lang lang-fr">
+        <p>xpan est un projet qui conçoit et construit des systèmes spatiaux, culturels et technologiques dans le cadre d’un processus critique sur les langages, les structures émergentes et les technologies d’interconnexion collective.</p>
+        <p>sa pratique combine recherche, archivage et construction matérielle, générant un écosystème où espaces, objets, publications, son et outils numériques s’intègrent comme un système vivant en évolution continue.</p>
+        <p>le projet déploie des activations culturelles et des processus expérimentaux, tout en développant des projets et services spécialisés qui opèrent à plusieurs échelles : architecture, conception de systèmes spatiaux, ingénierie sonore, direction créative, conseil conceptuel et développement d’outils technologiques. chaque opération est abordée spécifiquement, en résolvant des besoins complexes à travers des infrastructures adaptatives connectées au système global de xpan.</p>
+        <p>dans ce cadre, les systèmes créés par xpan génèrent des effets collatéraux qui vont au-delà de la simple connexion de contextes normalement séparés — culturel et technique, indépendant et institutionnel, local et global. naturellement, de nouvelles écologies de collaboration émergent, des langages partagés entre disciplines dissociées, des infrastructures autonomes et adaptatives, et des espaces de coexistence structurée où acteurs, objets et médias auparavant isolés interagissent sans perdre leur identité.</p>
+        <p>chaque système produit également des modèles d’archivage et de documentation en temps réel, capables de s’étendre ou de se ramifier vers d’autres territoires, étendant la portée du projet sans duplication littérale.</p>
+        <p>chaque intervention — structure modulaire, installation sonore ou publication — alimente l’archive et la recherche en cours, renforçant la nature collective, connectée et rigoureuse de xpan. le projet fonctionne ainsi comme un écosystème en évolution continue, où recherche, pratique matérielle et technologies d’interconnexion produisent des processus vivants, critiques et expansifs.</p>
+      </div>
 
-<div class="lang lang-jp">
-  <p>xpanは、言語、新たな構造、集団的インターコネクション技術に対する批評的プロセスの一環として、空間的・文化的・技術的なシステムを設計・構築するプロジェクトです。</p>
-  <p>その実践は、研究・アーカイブ・物質的構築を組み合わせ、空間・物体・出版物・音・デジタルツールが統合された、絶えず進化する生きたシステムとしてのエコシステムを生成します。</p>
-  <p>本プロジェクトは文化的アクティベーションや実験的プロセスを展開すると同時に、建築、空間システム設計、音響工学、クリエイティブディレクション、概念コンサルティング、技術ツール開発など、複数スケールで機能する専門的なプロジェクトやサービスを開発しています。各オペレーションは個別にアプローチされ、複雑なニーズをxpanのグローバルシステムに接続された適応的インフラを通じて解決します。</p>
-  <p>この枠組みにおいて、xpanが生み出すシステムは、通常は分断されている文脈——文化と技術、独立と制度、ローカルとグローバル——を接続するだけに留まらない副次的効果を生み出します。自然に、新たな協働の生態系が立ち現れ、分断された分野間で共有される言語、適応的で自律的なインフラ、かつては孤立していたアクター・オブジェクト・メディアがアイデンティティを失わずに相互作用する構造化された共存空間が生まれます。</p>
-  <p>各システムはまた、リアルタイムのアーカイブ・ドキュメントモデルを生成し、他の領域へと拡張・分岐可能で、文字通りの複製を必要とせずにプロジェクトの射程を広げます。</p>
-  <p>モジュラー構造、サウンドインスタレーション、出版物などの各介入は進行中のアーカイブと研究に寄与し、xpanの集合的・接続的・厳密な性質を強化します。こうして本プロジェクトは、研究・物質的実践・インターコネクション技術が連動する、生きた批評的で拡張的なプロセスを生み出す、進化し続けるエコシステムとして機能します。</p>
-</div>
-
+      <!-- JP -->
+      <div class="lang lang-jp">
+        <p>xpanは、言語、新たな構造、集団的インターコネクション技術に対する批評的プロセスの一環として、空間的・文化的・技術的なシステムを設計・構築するプロジェクトです。</p>
+        <p>その実践は、研究・アーカイブ・物質的構築を組み合わせ、空間・物体・出版物・音・デジタルツールが統合された、絶えず進化する生きたシステムとしてのエコシステムを生成します。</p>
+        <p>本プロジェクトは文化的アクティベーションや実験的プロセスを展開すると同時に、建築、空間システム設計、音響工学、クリエイティブディレクション、概念コンサルティング、技術ツール開発など、複数スケールで機能する専門的なプロジェクトやサービスを開発しています。各オペレーションは個別にアプローチされ、複雑なニーズをxpanのグローバルシステムに接続された適応的インフラを通じて解決します。</p>
+        <p>この枠組みにおいて、xpanが生み出すシステムは、通常は分断されている文脈——文化と技術、独立と制度、ローカルとグローバル——を接続するだけに留まらない副次的効果を生み出します。自然に、新たな協働の生態系が立ち現れ、分断された分野間で共有される言語、適応的で自律的なインフラ、かつては孤立していたアクター・オブジェクト・メディアがアイデンティティを失わずに相互作用する構造化された共存空間が生まれます。</p>
+        <p>各システムはまた、リアルタイムのアーカイブ・ドキュメントモデルを生成し、他の領域へと拡張・分岐可能で、文字通りの複製を必要とせずにプロジェクトの射程を広げます。</p>
+        <p>モジュラー構造、サウンドインスタレーション、出版物などの各介入は進行中のアーカイブと研究に寄与し、xpanの集合的・接続的・厳密な性質を強化します。こうして本プロジェクトは、研究・物質的実践・インターコネクション技術が連動する、生きた批評的で拡張的なプロセスを生み出す、進化し続けるエコシステムとして機能します。</p>
+      </div>
     </div>
   </div>
 
   <script>
-    const linesContainer = document.querySelector("svg.lines");
-    const logo = document.getElementById("logo");
-    const overlay = document.getElementById("overlay");
-    const langButtons = document.querySelectorAll(".language-selector button");
-    const links = document.querySelectorAll(".link");
-    const descriptions = document.querySelectorAll(".description .lang");
+    const linesContainer=document.querySelector("svg.lines");
+    const logo=document.getElementById("logo");
+    const overlay=document.getElementById("overlay");
+    const langButtons=document.querySelectorAll(".language-selector button");
+    const links=document.querySelectorAll(".link");
+    const descriptions=document.querySelectorAll(".description .lang");
 
-    function drawLines() {
-      linesContainer.innerHTML = `
-        <defs>
-          <pattern id="line-texture" patternUnits="userSpaceOnUse" width="4" height="4">
-            <path d="M0,0 L4,4 M4,0 L0,4" stroke="black" stroke-width="0.2" />
-          </pattern>
-        </defs>
-      `;
-      const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-      links.forEach(link => {
-        const rect = link.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", center.x);
-        line.setAttribute("y1", center.y);
-        line.setAttribute("x2", x);
-        line.setAttribute("y2", y);
-        linesContainer.appendChild(line);
+    function drawLines(){
+      if(!linesContainer)return;
+      linesContainer.innerHTML="";
+      const c={x:innerWidth/2,y:innerHeight/2};
+      links.forEach(link=>{
+        const r=link.getBoundingClientRect();
+        const x=r.left+r.width/2,y=r.top+r.height/2;
+        const ln=document.createElementNS("http://www.w3.org/2000/svg","line");
+        ln.setAttribute("x1",c.x);ln.setAttribute("y1",c.y);
+        ln.setAttribute("x2",x);ln.setAttribute("y2",y);
+        linesContainer.appendChild(ln);
       });
     }
 
-    window.addEventListener("load", () => {
-      requestAnimationFrame(() => {
-        drawLines();
-        setTimeout(drawLines, 50);
-      });
-    });
+    window.addEventListener("load",()=>{requestAnimationFrame(drawLines);setTimeout(drawLines,60)});
+    window.addEventListener("resize",()=>requestAnimationFrame(drawLines));
 
-    window.addEventListener("resize", () => requestAnimationFrame(drawLines));
-
-    logo.addEventListener("click", (e) => {
+    logo.addEventListener("click",e=>{
       e.stopPropagation();
       overlay.classList.add("active");
-      linesContainer.style.opacity = "0";
-      links.forEach(link => link.style.opacity = "0");
-      logo.style.opacity = "0.4";
+      linesContainer.style.opacity="0";
+      links.forEach(l=>l.style.opacity="0");
+      logo.style.opacity=".45";
     });
 
-    overlay.addEventListener("click", () => {
+    overlay.addEventListener("click",()=>{
       overlay.classList.remove("active");
-      linesContainer.style.opacity = "1";
-      links.forEach(link => link.style.opacity = "1");
-      logo.style.opacity = "1";
+      linesContainer.style.opacity="1";
+      links.forEach(l=>l.style.opacity="1");
+      logo.style.opacity="1";
+      requestAnimationFrame(drawLines);
     });
 
-    overlay.querySelector(".description").addEventListener("click", (e) => e.stopPropagation());
+    overlay.querySelector(".description").addEventListener("click",e=>e.stopPropagation());
 
-    langButtons.forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        langButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        const selected = btn.dataset.lang;
-        descriptions.forEach(d => d.classList.remove("active"));
-        document.querySelector(".lang-" + selected).classList.add("active");
+    function setLang(lang){
+      try{localStorage.setItem('lang',lang);}catch{}
+      descriptions.forEach(d=>d.classList.remove("active"));
+      const n=document.querySelector(".lang-"+lang);
+      if(n)n.classList.add("active");
+      langButtons.forEach(b=>{
+        const on=b.dataset.lang===lang;
+        b.classList.toggle("active",on);
+        b.setAttribute("aria-pressed",on?"true":"false");
       });
-    });
+    }
+    const initLang=localStorage.getItem('lang')||(navigator.language||'es').slice(0,2)||'es';
+    setLang(initLang);
+    langButtons.forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();setLang(btn.dataset.lang)}));
   </script>
 </body>
 </html>
-
-<style>
-@media (max-width: 768px) {
-  .overlay .description {
-    font-size: 0.95rem;
-    line-height: 1.55;
-    padding: 1.2rem;
-  }
-  .overlay p {
-    word-break: break-word;
-  }
-}
-</style>

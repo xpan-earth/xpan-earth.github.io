@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="color-scheme" content="light"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>atlas — xpan</title>
 
   <!-- Perf hints -->
@@ -12,103 +12,100 @@
   <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
   <link rel="dns-prefetch" href="https://attachments.are.na">
 
-  <!-- Site helpers (present across xpan) -->
+  <!-- Site helpers -->
   <script src="/assets/js/video-autoplay-mobile.js" defer></script>
   <script src="/assets/js/media-proxy.js" defer></script>
 
   <style>
     :root{
-      --fg:#000; --bg:#fff; --line:rgba(0,0,0,.12);
-      --radius:14px; --maxw:1440px; --gap:.6rem; --gapL:1rem;
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20;
+      --maxw:1440px; --gap:.6rem; --gapL:1rem; --header-h:64px;
+      --b1:1px solid var(--line);
+      --radius:0;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
-    img,video{display:block;max-width:100%;height:auto}
-    a{color:inherit;text-decoration:none}
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:rgba(0,0,0,.12); --line-weak:#ECEFF2; --accent:#1860FF; }
+    }
 
-    header{position:fixed;top:1rem;left:1rem;z-index:30}
-    header img{width:50px;height:auto;display:block}
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-ui);overflow-x:hidden}
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
+    a:hover{border-bottom-color:currentColor}
 
-    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
-    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;color:#000;opacity:.5;transition:.2s}
-    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+    /* header */
+    header{position:fixed;top:12px;left:clamp(16px,4vw,48px);z-index:30}
+    header img{width:50px;height:auto;display:block;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
 
-    main{max-width:var(--maxw);margin:100px auto 6rem;padding:0 1rem}
+    /* idioma */
+    .language-selector{position:fixed;top:12px;right:clamp(16px,4vw,48px);z-index:30;font-size:.9rem;text-transform:lowercase;display:flex;gap:.5rem}
+    .language-selector button{appearance:none;background:transparent;border:var(--b1);border-radius:0;margin:0;padding:.3rem .6rem;cursor:pointer;color:var(--fg-dim)}
+    .language-selector button.active,.language-selector button:hover{color:var(--fg);border-color:var(--accent);background:rgba(24,96,255,.06)}
+
+    main{max-width:var(--maxw);margin:calc(var(--header-h) + 36px) auto 6rem;padding:0 clamp(16px,4vw,48px)}
 
     .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
-    /* Oculta títulos de secciones generales */
     .section>.head{display:none}
-    /* Mantén visibles atlas.1 y atlas.2 */
-    #atlas1>.head,#atlas2>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin:.2rem 0 .6rem}
-    #atlas1 h2,#atlas2 h2{margin:0;font-size:1.1rem;text-transform:lowercase}
+    #atlas1>.head,#atlas2>.head,#atlas3>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin:.2rem 0 .6rem}
+    #atlas1 h2,#atlas2 h2,#atlas3 h2{margin:0;font:700 1.1rem/1 var(--font-ui);text-transform:lowercase}
     .muted{opacity:.68;font-size:.92rem}
 
     .lang{display:none}
     .lang.active{display:block}
 
-    /* Intro */
+    /* intro */
     .intro{max-width:980px}
-    .intro h1{font-size:clamp(1.2rem,2.2vw,1.6rem);margin:.1rem 0;text-transform:lowercase}
+    .intro h1{font:700 clamp(1.2rem,2.2vw,1.6rem)/1.2 var(--font-ui);margin:.1rem 0;text-transform:lowercase}
     .intro .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
-    .intro p{font-size:1rem;line-height:1.6}
+    .intro p{font:400 1rem/1.6 var(--font-ui)}
 
-    /* Buttons to jump */
     .jump{display:flex;gap:.6rem;flex-wrap:wrap;margin:.8rem 0 1.2rem}
-    .btn{border:1px solid currentColor;border-radius:999px;padding:.35rem .9rem;background:#fff;cursor:pointer;text-transform:lowercase;font-size:.92rem}
+    .btn{border:var(--b1);padding:.35rem .9rem;text-transform:lowercase;font:.92rem var(--font-ui);background:transparent}
+    .insta{text-decoration:underline}
 
-    /* Last shoot gallery: 5 columns tight flushed (siempre 5) */
+    /* grillas */
     .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:.25rem}
-    figure.tile{margin:0;position:relative;background:#fff}
-    .tile img,.tile video{width:100%;height:100%;object-fit:contain;background:#fff}
-    .tile .sound-badge{position:absolute;right:.35rem;bottom:.35rem;background:rgba(255,255,255,.9);color:#000;border:1px solid rgba(0,0,0,.2);border-radius:999px;padding:.15rem .45rem;font-size:.72rem;user-select:none}
+    figure.tile{margin:0;position:relative;background:transparent;border:var(--b1)}
+    .tile img,.tile video{width:100%;height:100%;object-fit:contain;background:transparent}
+    .tile .sound-badge{position:absolute;right:.35rem;bottom:.35rem;background:rgba(0,0,0,.6);color:#fff;border:var(--b1);padding:.15rem .45rem;font-size:.72rem;user-select:none}
 
-    /* Lightbox */
-    #lightbox{position:fixed;inset:0;background:rgba(255,255,255,.98);display:none;align-items:center;justify-content:center;z-index:9999;backdrop-filter:saturate(1.2) blur(3px)}
-    #lightbox.open{display:flex}
-    #lightbox figure{margin:0;max-width:92vw;max-height:92vh}
-    #lightbox img,#lightbox video{max-width:92vw;max-height:92vh}
-    #lbClose{position:fixed;top:12px;right:12px;background:#000;color:#fff;border:none;border-radius:999px;padding:.55rem .8rem;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+    .hero-video video{width:100%;height:auto;max-height:92vh;object-fit:contain;background:#000;border:var(--b1)}
 
-    /* Main hero */
-    .hero-video{position:relative}
-    .hero-video video{width:100%;height:auto;max-height:92vh;object-fit:contain;background:#000;outline:1px solid var(--line);border-radius:8px}
-
-    /* Dos columnas fijas: videos (5) + lista artistas */
     .cols{display:grid;grid-template-columns:1fr clamp(260px,28vw,420px);gap:1.2rem;align-items:start}
-    .artists{border:1px solid var(--line);border-radius:var(--radius);padding:1rem;background:#fff;position:sticky;top:90px;max-height:calc(100vh - 140px);overflow:auto}
-    .artists h3{margin:.2rem 0 .6rem;text-transform:lowercase;font-size:1.02rem}
+    .artists{border:var(--b1);padding:1rem;background:transparent;position:sticky;top:90px;max-height:calc(100vh - 140px);overflow:auto}
+    .artists h3{margin:.2rem 0 .6rem;text-transform:lowercase;font:700 1.02rem/1 var(--font-ui)}
     .artists ul{margin:0;padding-left:1rem;columns:1;column-gap:1.2rem}
     .artists li{margin:.22rem 0}
     .side-col{display:grid;gap:.6rem;position:sticky;top:90px;max-height:calc(100vh - 140px);overflow:auto}
-    .side-col video{width:100%;height:auto;background:#000;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line);border-radius:8px}
+    .side-col video{width:100%;height:auto;background:#000;aspect-ratio:4/3;object-fit:cover;border:var(--b1)}
 
-
-    
-    /* Utilidades de grillas apretadas (siempre fijas) */
     .grid{display:grid;gap:.25rem}
+    .grid.cols-2{grid-template-columns:repeat(2,1fr)}
     .grid.cols-3{grid-template-columns:repeat(3,1fr)}
     .grid.cols-4{grid-template-columns:repeat(4,1fr)}
     .grid.cols-5{grid-template-columns:repeat(5,1fr)}
-    .contain .tile img,.contain .tile video{object-fit:contain;background:#fff}
+    .contain .tile img,.contain .tile video{object-fit:contain}
 
     .center{display:grid;place-items:center}
-    .center .wide{max-width:min(1000px,92vw)}
-
-    /* Filas de 4 videos fijas */
+    .center .wide{max-width:min(1000px,92vw);border:var(--b1)}
     .row4{display:grid;grid-template-columns:repeat(4,1fr);gap:.25rem}
 
-    /* Instagram link */
-    .insta{font-size:1rem;text-decoration:underline}
-
-    /* Iframe embed */
-    .embed{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+    .embed{border:var(--b1)}
     .embed iframe{width:100%;height:72vh;border:0}
 
-    /* CTA adquirir estilizado */
     .buy{font-style:italic}
-    .buy a{border:1px solid currentColor;border-radius:999px;padding:.2rem .6rem;text-decoration:none}
+    .buy a{border:var(--b1);padding:.2rem .6rem;text-decoration:none}
 
-    
+    @media (max-width:1024px){ .grid5{grid-template-columns:repeat(3,1fr)} }
+    @media (max-width:768px){
+      main{margin:calc(var(--header-h) + 28px) auto 3.5rem}
+      .cols{grid-template-columns:1fr}
+      .side-col,.artists{position:relative;top:auto;max-height:none}
+      .row4{grid-template-columns:repeat(2,1fr)}
+    }
   </style>
 </head>
 <body>
@@ -179,7 +176,7 @@
       </div>
     </section>
 
-    <!-- Galería último shoot: 5 columnas (sin título visible) -->
+    <!-- Galería último shoot -->
     <section class="section" id="ultimo-shoot">
       <div class="head"><h2>galería</h2><div class="muted">último shoot</div></div>
       <div class="grid5" id="grid-last"></div>
@@ -187,10 +184,10 @@
 
     <!-- Video principal por idioma -->
     <section class="section hero-video">
-      <div class="lang es active"><video class="hero" id="hero-es" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
-      <div class="lang en"><video class="hero" id="hero-en" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
-      <div class="lang fr"><video class="hero" id="hero-fr" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
-      <div class="lang jp"><video class="hero" id="hero-jp" playsinline loop muted src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang es active"><video class="hero" id="hero-es" playsinline loop muted data-src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang en"><video class="hero" id="hero-en" playsinline loop muted data-src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang fr"><video class="hero" id="hero-fr" playsinline loop muted data-src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
+      <div class="lang jp"><video class="hero" id="hero-jp" playsinline loop muted data-src="https://attachments.are.na/39582722/bbe191c1751a440e9cb217f5e73dea64.mov?1757981395"></video></div>
     </section>
 
     <!-- atlas.1 -->
@@ -204,60 +201,25 @@
         </aside>
       </div>
       <div class="center" style="margin-top:1rem">
-        <video class="wide" id="a1-map" autoplay muted loop playsinline src="https://attachments.are.na/39582644/bd53d3d52da0373c738b1f2882d400e8.mp4?1757981096"></video>
+        <video class="wide" id="a1-map" autoplay muted loop playsinline data-src="https://attachments.are.na/39582644/bd53d3d52da0373c738b1f2882d400e8.mp4?1757981096"></video>
       </div>
 
-      <!-- merch 2 cols centradas -->
       <div class="section center">
         <div class="grid cols-2 contain wide" id="a1-merch"></div>
       </div>
 
-      <!-- pulsera + gif centrados -->
       <div class="section center">
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582566/original_3ec8573f4781548a021c64d64340acd8.jpg" alt="pulsera" loading="lazy" decoding="async"></figure>
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582568/original_fc8ae219b5c99d7c9765f31aef5ab066.gif" alt="colaboradores" loading="lazy" decoding="async"></figure>
+        <figure class="tile wide contain"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/39582566/original_3ec8573f4781548a021c64d64340acd8.jpg" alt="pulsera" loading="lazy" decoding="async"></figure>
+        <figure class="tile wide contain"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/39582568/original_fc8ae219b5c99d7c9765f31aef5ab066.gif" alt="colaboradores" loading="lazy" decoding="async"></figure>
       </div>
 
-      <!-- grid media 3 columnas -->
-      <div class="section">
-        <div class="grid cols-3 contain" id="a1-grid"></div>
-      </div>
-
-      <!-- 4 videos simultáneos -->
-      <div class="section">
-        <div class="row4" id="a1-row4a"></div>
-      </div>
-
-      <!-- 1 video columna (mapa rehaciéndose) -->
-      <div class="section center">
-        <video class="wide" autoplay muted loop playsinline src="https://attachments.are.na/39582443/844b8fad30f485808a3b3fee912157c3.mp4?1757980227"></video>
-      </div>
-
-      <!-- 4 videos imprenta -->
-      <div class="section">
-        <div class="row4" id="a1-row4b"></div>
-      </div>
-
-      <!-- 1 imagen columna -->
-      <div class="section center">
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582414/original_d0b4cbcbb9247cb14e2c903418c122b8.png?1757980116" alt="atlas.1" loading="lazy" decoding="async"></figure>
-      </div>
-
-      <!-- diagramas yucli (4 y 3 columnas en 2 filas) -->
-      <div class="section">
-        <div class="grid cols-4 contain" id="a1-yucli-top"></div>
-        <div class="grid cols-3 contain" id="a1-yucli-bot"></div>
-      </div>
-
-      <!-- mapas 4 columnas -->
-      <div class="section">
-        <div class="grid cols-4 contain" id="a1-mapas"></div>
-      </div>
-
-      <!-- flyer final -->
-      <div class="section center">
-        <figure class="tile wide contain"><img src="https://d2w9rnfcy7mm78.cloudfront.net/39582308/original_7ba1a2522a299c350a076432a6634093.jpg?1757979840" alt="flyer atlas.1" loading="lazy" decoding="async"></figure>
-      </div>
+      <div class="section"><div class="grid cols-3 contain" id="a1-grid"></div></div>
+      <div class="section"><div class="row4" id="a1-row4a"></div></div>
+      <div class="section center"><video class="wide" autoplay muted loop playsinline data-src="https://attachments.are.na/39582443/844b8fad30f485808a3b3fee912157c3.mp4?1757980227"></video></div>
+      <div class="section"><div class="row4" id="a1-row4b"></div></div>
+      <div class="section"><div class="grid cols-4 contain" id="a1-yucli-top"></div><div class="grid cols-3 contain" id="a1-yucli-bot"></div></div>
+      <div class="section"><div class="grid cols-4 contain" id="a1-mapas"></div></div>
+      <div class="section center"><figure class="tile wide contain"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/39582308/original_7ba1a2522a299c350a076432a6634093.jpg?1757979840" alt="flyer atlas.1" loading="lazy" decoding="async"></figure></div>
     </section>
 
     <!-- atlas.2 -->
@@ -271,137 +233,166 @@
         </aside>
       </div>
       <div class="center" style="margin-top:1rem">
-        <video class="wide" autoplay muted loop playsinline src="https://attachments.are.na/39582260/dd1ff8fe78145b592a67c297c92043fe.mp4?1757979610"></video>
+        <video class="wide" autoplay muted loop playsinline data-src="https://attachments.are.na/39582260/dd1ff8fe78145b592a67c297c92043fe.mp4?1757979610"></video>
       </div>
-
-      <!-- media total especifica -->
-      <div class="section center">
-        <video class="wide" autoplay muted loop playsinline src="https://attachments.are.na/39582241/ad5101a99faa7b22e7b997e545a56118.mp4?1757979533"></video>
-      </div>
-
-      <div class="section">
-        <div class="row4" id="a2-row4"></div>
-      </div>
-
-      <div class="section">
-        <div class="grid cols-3 contain" id="a2-grid20"></div>
-      </div>
-
-      <div class="section">
-        <div class="grid cols-4" id="a2-vids4"></div>
-      </div>
-
-      <div class="section">
-        <div class="grid cols-5 contain" id="a2-row5"></div>
-      </div>
+      <div class="section center"><video class="wide" autoplay muted loop playsinline data-src="https://attachments.are.na/39582241/ad5101a99faa7b22e7b997e545a56118.mp4?1757979533"></video></div>
+      <div class="section"><div class="row4" id="a2-row4"></div></div>
+      <div class="section"><div class="grid cols-3 contain" id="a2-grid20"></div></div>
+      <div class="section"><div class="grid cols-4" id="a2-vids4"></div></div>
+      <div class="section"><div class="grid cols-5 contain" id="a2-row5"></div></div>
     </section>
 
-     <section class="section" id="atlas2">
-        <div class="head"><h2>atlas.3</h2><div class="muted">[febrero 2026] · 19.4196, -99.1626</div></div>
-        </section>
+    <!-- atlas.3 -->
+    <section class="section" id="atlas3">
+      <div class="head"><h2>atlas.3</h2><div class="muted">[febrero 2026] · 19.4196, -99.1626</div></div>
+    </section>
 
-    <!-- Proximidades dinámicas (sin título visible) -->
+    <!-- Proximidades dinámicas -->
     <section class="section">
       <div class="head"><h2>proximidades dinámicas</h2><div class="muted">embed</div></div>
       <div class="embed"><iframe src="mc_proximidades_dinamicas.html" title="proximidades dinámicas"></iframe></div>
     </section>
   </main>
 
-  <!-- Lightbox -->
-  <div id="lightbox" aria-hidden="true">
-    <button id="lbClose" aria-label="close">cerrar</button>
-    <figure id="lbFig"></figure>
-  </div>
+  <!-- Lightbox único -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div>
+  <style>
+    #xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:92vw;max-height:92vh;margin:0;transform:scale(.985);opacity:0;transition:transform .18s linear,opacity .18s linear}
+    #xpan-lightbox.open .sheet{transform:scale(1);opacity:1}
+    #xpan-lightbox img,#xpan-lightbox video{max-width:92vw;max-height:92vh;display:block;object-fit:contain;background:transparent}
+    html.lb-open,body.lb-open{overflow:hidden;touch-action:none}
+    @media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}
+  </style>
 
   <script>
-  // ===== Language toggle =====
-  const langBtns=[...document.querySelectorAll('.language-selector button')];
-  const langBlocks=[...document.querySelectorAll('.lang')];
-  function setLang(code){
-    langBtns.forEach(b=>{const on=b.dataset.lang===code; b.classList.toggle('active',on); b.setAttribute('aria-pressed',on)});
-    langBlocks.forEach(b=>b.classList.toggle('active',b.classList.contains(code)));
-  }
-  langBtns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+  /* ===== idioma ===== */
+  (function(){
+    const btns=[...document.querySelectorAll('.language-selector button')];
+    const blocks=[...document.querySelectorAll('.lang')];
+    function setLang(code){
+      btns.forEach(b=>{ const on=b.dataset.lang===code; b.classList.toggle('active',on); b.setAttribute('aria-pressed',on); });
+      blocks.forEach(b=> b.classList.toggle('active', b.classList.contains(code)));
+      try{ localStorage.setItem('xpan.lang', code); }catch{}
+      document.documentElement.setAttribute('lang', code);
+    }
+    btns.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang) ));
+    setLang(localStorage.getItem('xpan.lang') || (navigator.language||'es').slice(0,2));
+  })();
 
-  // ===== Hero video autoplay + sonido al primer gesto =====
-  function setupHero(id){
-    const v=document.getElementById(id);
-    if(!v) return;
-    v.autoplay=true; v.playsInline=true; v.loop=true; v.muted=true; // autoplay garantizado
-    const io=new IntersectionObserver((entries)=>{entries.forEach(x=>{ if(x.isIntersecting){ v.play().catch(()=>{}); } else { v.pause(); } })},{threshold:.35});
-    io.observe(v);
-  }
-  ['hero-es','hero-en','hero-fr','hero-jp'].forEach(setupHero);
+  /* ===== util ===== */
+  const fixUrl = u => typeof u==='string' ? u.replace(/\?(\d+)\?bc=0$/, '?$1&bc=0') : u;
 
-  // Unmute global al primer gesto (sonará el visible)
-  window.addEventListener('pointerdown',()=>{
-    document.querySelectorAll('.hero-video video').forEach(v=>{
-      v.muted=false; v.volume=1; v.play().catch(()=>{});
+  /* ===== lazy ===== */
+  (function lazy(){
+    const io=new IntersectionObserver((es,obs)=>{
+      es.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const el=en.target;
+        if(el.tagName==='IMG' && el.dataset.src){ el.src=fixUrl(el.dataset.src); el.removeAttribute('data-src'); }
+        if(el.tagName==='VIDEO' && el.dataset.src){ el.src=fixUrl(el.dataset.src); el.load(); el.removeAttribute('data-src'); }
+        if(el.tagName==='SOURCE' && el.dataset.src){ el.src=fixUrl(el.dataset.src); el.removeAttribute('data-src'); el.parentElement?.load?.(); }
+        obs.unobserve(el);
+      });
+    },{rootMargin:'600px 0px',threshold:0});
+    document.querySelectorAll('img[data-src],video[data-src],source[data-src]').forEach(el=> io.observe(el));
+  })();
+
+  /* ===== hero videos ===== */
+  (function(){
+    const vids=document.querySelectorAll('.hero-video video');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const io=new IntersectionObserver((es)=>{
+      es.forEach(async en=>{
+        const v=en.target;
+        if(en.isIntersecting){ try{ await v.play(); }catch{} } else { try{ v.pause(); }catch{} }
+      });
+    },{threshold:.35});
+    vids.forEach(v=>{ if(!reduce) io.observe(v); });
+    window.addEventListener('pointerdown',()=>{ vids.forEach(v=>{ v.muted=false; v.volume=1; v.play().catch(()=>{}); }); },{once:true});
+  })();
+
+  /* ===== lightbox ===== */
+  (function(){
+    const lb=document.getElementById('xpan-lightbox'); const sheet=lb.querySelector('.sheet');
+    let items=[], idx=-1, t0=0, x0=0;
+    function collect(){ items=[...document.querySelectorAll('img,video')].filter(el=>!el.closest('#xpan-lightbox')&&!el.closest('a')&&(el.currentSrc||el.src)); }
+    function openAt(i){
+      if(i<0||i>=items.length) return; idx=i; sheet.innerHTML='';
+      const srcEl=items[idx], isV=srcEl.tagName.toLowerCase()==='video'; const el=document.createElement(isV?'video':'img');
+      if(isV){ el.src=srcEl.currentSrc||srcEl.src; el.playsInline=true; el.controls=true; el.loop=!!srcEl.loop; el.muted=false; el.autoplay=true; }
+      else { el.src=srcEl.currentSrc||srcEl.src; el.decoding='async'; el.loading='eager'; el.alt=''; }
+      sheet.appendChild(el); lb.classList.add('open'); document.documentElement.classList.add('lb-open'); document.body.classList.add('lb-open');
+    }
+    function close(){ lb.classList.remove('open'); sheet.innerHTML=''; document.documentElement.classList.remove('lb-open'); document.body.classList.remove('lb-open'); idx=-1; }
+    function openFrom(el){ collect(); const i=items.indexOf(el); if(i>-1) openAt(i); }
+    document.body.addEventListener('click',e=>{ const el=e.target; if(!el) return; if(el.closest('a')) return;
+      if(el.tagName==='IMG'||el.tagName==='VIDEO'){ e.preventDefault(); e.stopPropagation(); openFrom(el); }
+    },{capture:true});
+    lb.addEventListener('click',e=>{ if(e.target===lb) close(); });
+    addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') return close();
+      if((e.key==='ArrowRight'||e.key==='l') && idx<items.length-1) return openAt(idx+1);
+      if((e.key==='ArrowLeft'||e.key==='h') && idx>0) return openAt(idx-1);
     });
-  },{once:true});
+    lb.addEventListener('touchstart',e=>{ t0=Date.now(); x0=e.touches[0].clientX; },{passive:true});
+    lb.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-x0, dt=Date.now()-t0;
+      if(Math.abs(dx)>50 && dt<600){ if(dx<0 && idx<items.length-1) openAt(idx+1); else if(dx>0 && idx>0) openAt(idx-1); } else { close(); }
+    },{passive:true});
+    new MutationObserver(()=>collect()).observe(document.documentElement,{subtree:true,childList:true});
+    collect();
+  })();
 
-  // ===== Lightbox util =====
-  const lb=document.getElementById('lightbox');
-  const lbFig=document.getElementById('lbFig');
-  const lbClose=document.getElementById('lbClose');
-  function openLB(el){
-    lbFig.innerHTML='';
-    const isVid=el.tagName.toLowerCase()==='video' || /\.mp4|\.mov/i.test(el.currentSrc||el.src||'');
-    const node=isVid?document.createElement('video'):document.createElement('img');
-    if(isVid){ node.src=el.currentSrc||el.src; node.controls=true; node.autoplay=true; node.loop=true; node.playsInline=true; }
-    else { node.src=el.currentSrc||el.src; }
-    lbFig.appendChild(node); lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
-  }
-  function closeLB(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbFig.innerHTML=''; }
-  lbClose.addEventListener('click',closeLB);
-  lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
-
+  /* ===== helpers de render ===== */
   function tileFactory(url){
     const fig=document.createElement('figure'); fig.className='tile';
     const isVid=/\.(mp4|mov)(\?|$)/i.test(url);
     const el=isVid?document.createElement('video'):document.createElement('img');
-    if(isVid){ el.src=url; el.autoplay=true; el.loop=true; el.muted=true; el.playsInline=true; el.preload='metadata'; }
-    else { el.src=url; el.loading='lazy'; el.decoding='async'; }
+    if(isVid){ el.setAttribute('playsinline',''); el.setAttribute('muted',''); el.loop=true; el.muted=true; el.preload='metadata'; el.dataset.src=url; }
+    else { el.loading='lazy'; el.decoding='async'; el.dataset.src=url; }
     fig.appendChild(el);
-    fig.addEventListener('click',()=>openLB(el));
     return fig;
   }
+  function fillGrid(elId, urls){ const el=document.getElementById(elId); urls.forEach(u=> el.appendChild(tileFactory(u)) ); }
+  function fillRow4(elId, urls){ const el=document.getElementById(elId); urls.forEach(u=>{ const f=tileFactory(u); f.querySelector('video')?.setAttribute('muted',''); el.appendChild(f); }); }
+  function fillList(elId, items){ const ul=document.getElementById(elId); items.forEach(t=>{const li=document.createElement('li'); li.textContent=t; ul.appendChild(li)}); }
 
-  // ===== Data =====
+  /* ===== Datos (completos) ===== */
   const lastShoot=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582746/original_dbf63727df2c99c9a0ff3462cdd13ba0.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582747/original_9a1b9f53a6019e76f9e1b717bb4f3665.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582749/original_437a98ce030ec82ca707e7271613e95a.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582751/original_2e6dc52896c37a27f48bc804de44e385.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582752/original_0b126cade21810652e1ee8ffb2475aed.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582753/original_5a05a471e85b8163c7e511ec3d61e10d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582755/original_0fd45099f36af84a5030b0289e9a9527.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582756/original_002d7acf73cd67a10a3531533193cb7a.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582757/original_c653d85d8c04d21d8bf13db0a483e1af.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582758/original_34c1c5cbfbaac4fe1808807d713c21cd.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582759/original_8e5ac6a254ab055230d0454748caba46.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582760/original_5d7abbe8977bdf5398530727b238babb.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582761/original_93555fd8516480ea5cfc7fe091c36fac.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39583136/original_579d17b1c7cb05418666f63c740ba64a.jpg?",
-"https://d2w9rnfcy7mm78.cloudfront.net/39583135/original_b51ee4cff069cb1c547b992472358232.jpg?",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582762/original_03a6f3ddcd0a72baffd9954d3acec909.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582764/original_c8a4c6481512daa7a80fee5b8e31e4c2.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582766/original_339da90095f6ae7c9d09ab3ca3b84830.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582767/original_6ad173db0c85323cec166894c0febc28.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582768/original_5e5da685cd59ca13fc517b153cd7e911.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582769/original_52aad69ae9d8ebdce8fadcb15483c048.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582770/original_0a93a17222432a3103cdd6655df45772.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582748/original_03b830698799e92930d902a52f95c4f9.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582763/original_da097ce6146c9324c0b036c3f5a3235d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582754/original_72fc34896b2f958f034ec7a777d3d0de.jpg"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582746/original_dbf63727df2c99c9a0ff3462cdd13ba0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582747/original_9a1b9f53a6019e76f9e1b717bb4f3665.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582749/original_437a98ce030ec82ca707e7271613e95a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582751/original_2e6dc52896c37a27f48bc804de44e385.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582752/original_0b126cade21810652e1ee8ffb2475aed.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582753/original_5a05a471e85b8163c7e511ec3d61e10d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582755/original_0fd45099f36af84a5030b0289e9a9527.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582756/original_002d7acf73cd67a10a3531533193cb7a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582757/original_c653d85d8c04d21d8bf13db0a483e1af.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582758/original_34c1c5cbfbaac4fe1808807d713c21cd.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582759/original_8e5ac6a254ab055230d0454748caba46.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582760/original_5d7abbe8977bdf5398530727b238babb.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582761/original_93555fd8516480ea5cfc7fe091c36fac.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39583136/original_579d17b1c7cb05418666f63c740ba64a.jpg?",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39583135/original_b51ee4cff069cb1c547b992472358232.jpg?",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582762/original_03a6f3ddcd0a72baffd9954d3acec909.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582764/original_c8a4c6481512daa7a80fee5b8e31e4c2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582766/original_339da90095f6ae7c9d09ab3ca3b84830.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582767/original_6ad173db0c85323cec166894c0febc28.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582768/original_5e5da685cd59ca13fc517b153cd7e911.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582769/original_52aad69ae9d8ebdce8fadcb15483c048.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582770/original_0a93a17222432a3103cdd6655df45772.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582748/original_03b830698799e92930d902a52f95c4f9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582763/original_da097ce6146c9324c0b036c3f5a3235d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582754/original_72fc34896b2f958f034ec7a777d3d0de.jpg"
   ];
 
   const a1Videos=[
-"https://attachments.are.na/39582663/c7ce913b635bbc264a3b1f625afd7797.mp4?1757981149",
-"https://attachments.are.na/39582662/6eec3cf4a90462f357a4f0b005ae668e.mp4?1757981149",
-"https://attachments.are.na/39582661/8889bce16dab28d22f9739faeb56367c.mp4?1757981149",
-"https://attachments.are.na/39582660/bc97b2e3ae238d141ad0865774dab454.mp4?1757981148",
-"https://attachments.are.na/39582659/c9f5567b27972347960556af2b62e2c5.mp4?1757981148"
+    "https://attachments.are.na/39582663/c7ce913b635bbc264a3b1f625afd7797.mp4?1757981149",
+    "https://attachments.are.na/39582662/6eec3cf4a90462f357a4f0b005ae668e.mp4?1757981149",
+    "https://attachments.are.na/39582661/8889bce16dab28d22f9739faeb56367c.mp4?1757981149",
+    "https://attachments.are.na/39582660/bc97b2e3ae238d141ad0865774dab454.mp4?1757981148",
+    "https://attachments.are.na/39582659/c9f5567b27972347960556af2b62e2c5.mp4?1757981148"
   ];
 
   const a1Artists=`adonay sánchez
@@ -469,119 +460,121 @@ wassim el hodayebi
 yucli`.split('\n');
 
   const a1Merch=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582634/original_83a3c1d6e78945d13a7e3d883c013fab.png?1757981042",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582635/original_1f8e62c09d12f24445582f3b36c391e3.png?1757981042"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582634/original_83a3c1d6e78945d13a7e3d883c013fab.png?1757981042",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582635/original_1f8e62c09d12f24445582f3b36c391e3.png?1757981042"
   ];
 
   const a1Grid=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582563/original_2e20b9bb7f8bff880f23b5fc5f1e2616.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582562/original_3454be97fc1c6b6574792a4adbb61ab0.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582561/original_18c834ff54501df7043013f54dc1bd33.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582560/original_98b003a846a5f7e79971e3ebb7ca0f38.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582559/original_ae882f35c59f7f2815e57df51953086b.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582558/original_e5c0d1321b7ea6e2a4390eeb7fb6f8c8.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582557/original_0863512a6aa77ea773ea3059657f8972.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582556/original_51cca1d40eec96a62cd3a5f95cac0c53.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582555/original_2a3a3ec29529b91a806bcdf7b71f8332.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582554/original_e74656cfd8bf3f0fcdf7824f9bdc1375.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582562/original_3454be97fc1c6b6574792a4adbb61ab0.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582553/original_30fc88d0bdf379ab3e9b6b5036a6db1b.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582552/original_05b63c3034729d88e0dc7618693c8683.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582551/original_87b3726c0ca74d873e0201c1708b33c9.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582550/original_5590f227370fd12faf054cc1aa1c043b.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582548/original_a6ce28deee0af322ebb4491cd7724539.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582547/original_1c10cd50e726ad393e62349801bbe9ef.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582546/original_45bf4c0d62f55aa828e90e51f7bf539f.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582545/original_424a12bcb260efe7d311247f87beead0.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582544/original_4a91fa1bf745bff8441e15163962f8c8.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582543/original_72487dedbfe6524ee307a64bd7357a68.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582542/original_3109c3100b69825bb6e5356bca4144e3.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582541/original_ba390411894192f7d4a2a9d2cb0817dd.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582539/original_eec5f77782339fc448c4b47cc57c786b.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582538/original_c0bfa521103f3ce42128700e0f58bbbd.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582537/original_13c41f12ed54d3b96043241f3598b33d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582536/original_dd6c425a9e5b15629382450bcb524396.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582535/original_053b90291ac5c0d690ad9cd2d90e1f77.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582534/original_9f2d2232bc1e7f47222bc7334f991cb4.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582533/original_dd86ee45f1d643bde8cf2e103d4cdc4d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582532/original_807676e40a2784b2102b0dd3aac68a9c.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582530/original_fb680e7e4c94857562d673197facbf43.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582529/original_1df5f1f65839d6cd740cacbdd1c27696.jpg",
-"https://attachments.are.na/39582524/32d9c522637c2b459c53c501936c1ea4.mp4",
-"https://attachments.are.na/39582521/eba578c215c199263a8ff32ea82edc8f.mp4",
-"https://attachments.are.na/39582520/2a1401a37cc880601fb4417ae4bb2ba0.mp4",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582519/original_9b97042a249650e9c187c3febfb5796d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582518/original_30db31b2cbdff91b9132f016bfb3281a.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582515/original_730fa010c807b246983bf4a2070251ed.jpg",
-"https://attachments.are.na/39582514/c12fd323b1f4ce0b3b6effc154128d33.mp4",
-"https://attachments.are.na/39582513/52a66f5a29cc341ea473e2ddacc352eb.mp4",
-"https://attachments.are.na/39582510/e9a2db9629db84309c02939949f92d80.mp4",
-"https://attachments.are.na/39582509/311d5b9118ca0bf51e933123aff0a38d.mp4",
-"https://attachments.are.na/39582507/5d691c628501ecac9997311c5e4a73d9.mp4"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582563/original_2e20b9bb7f8bff880f23b5fc5f1e2616.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582562/original_3454be97fc1c6b6574792a4adbb61ab0.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582561/original_18c834ff54501df7043013f54dc1bd33.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582560/original_98b003a846a5f7e79971e3ebb7ca0f38.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582559/original_ae882f35c59f7f2815e57df51953086b.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582558/original_e5c0d1321b7ea6e2a4390eeb7fb6f8c8.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582557/original_0863512a6aa77ea773ea3059657f8972.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582556/original_51cca1d40eec96a62cd3a5f95cac0c53.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582555/original_2a3a3ec29529b91a806bcdf7b71f8332.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582554/original_e74656cfd8bf3f0fcdf7824f9bdc1375.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582562/original_3454be97fc1c6b6574792a4adbb61ab0.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582553/original_30fc88d0bdf379ab3e9b6b5036a6db1b.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582552/original_05b63c3034729d88e0dc7618693c8683.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582551/original_87b3726c0ca74d873e0201c1708b33c9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582550/original_5590f227370fd12faf054cc1aa1c043b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582548/original_a6ce28deee0af322ebb4491cd7724539.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582547/original_1c10cd50e726ad393e62349801bbe9ef.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582546/original_45bf4c0d62f55aa828e90e51f7bf539f.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582545/original_424a12bcb260efe7d311247f87beead0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582544/original_4a91fa1bf745bff8441e15163962f8c8.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582543/original_72487dedbfe6524ee307a64bd7357a68.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582542/original_3109c3100b69825bb6e5356bca4144e3.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582541/original_ba390411894192f7d4a2a9d2cb0817dd.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582539/original_eec5f77782339fc448c4b47cc57c786b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582538/original_c0bfa521103f3ce42128700e0f58bbbd.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582537/original_13c41f12ed54d3b96043241f3598b33d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582536/original_dd6c425a9e5b15629382450bcb524396.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582535/original_053b90291ac5c0d690ad9cd2d90e1f77.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582534/original_9f2d2232bc1e7f47222bc7334f991cb4.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582533/original_dd86ee45f1d643bde8cf2e103d4cdc4d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582532/original_807676e40a2784b2102b0dd3aac68a9c.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582530/original_fb680e7e4c94857562d673197facbf43.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582529/original_1df5f1f65839d6cd740cacbdd1c27696.jpg",
+    "https://attachments.are.na/39582524/32d9c522637c2b459c53c501936c1ea4.mp4",
+    "https://attachments.are.na/39582521/eba578c215c199263a8ff32ea82edc8f.mp4",
+    "https://attachments.are.na/39582520/2a1401a37cc880601fb4417ae4bb2ba0.mp4",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582519/original_9b97042a249650e9c187c3febfb5796d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582518/original_30db31b2cbdff91b9132f016bfb3281a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582515/original_730fa010c807b246983bf4a2070251ed.jpg",
+    "https://attachments.are.na/39582514/c12fd323b1f4ce0b3b6effc154128d33.mp4",
+    "https://attachments.are.na/39582513/52a66f5a29cc341ea473e2ddacc352eb.mp4",
+    "https://attachments.are.na/39582510/e9a2db9629db84309c02939949f92d80.mp4",
+    "https://attachments.are.na/39582509/311d5b9118ca0bf51e933123aff0a38d.mp4",
+    "https://attachments.are.na/39582507/5d691c628501ecac9997311c5e4a73d9.mp4"
   ];
 
   const a1Row4a=[
-"https://attachments.are.na/39582481/2ff7b0b88932b7825a720578c58f9b8c.mp4?1757980460",
-"https://attachments.are.na/39582480/cacc654dd85a979ab52a971bd3613312.mp4?1757980460",
-"https://attachments.are.na/39582479/985eaee0dff5bc1fbc9dde27b962051e.mp4?1757980460",
-"https://attachments.are.na/39582478/b0ac0113afd7799e0cade9135c40545c.mp4?1757980460"
+    "https://attachments.are.na/39582481/2ff7b0b88932b7825a720578c58f9b8c.mp4?1757980460",
+    "https://attachments.are.na/39582480/cacc654dd85a979ab52a971bd3613312.mp4?1757980460",
+    "https://attachments.are.na/39582479/985eaee0dff5bc1fbc9dde27b962051e.mp4?1757980460",
+    "https://attachments.are.na/39582478/b0ac0113afd7799e0cade9135c40545c.mp4?1757980460"
   ];
+
   const a1Row4b=[
-"https://attachments.are.na/39582434/2b4c165c16f0bd518ee3fa8efa3b11fe.mp4?1757980172",
-"https://attachments.are.na/39582432/8073c4c6481cef58159416dee2e63b6d.mp4?1757980173",
-"https://attachments.are.na/39582431/f6ee88210937f0e9fadec9333a2efa29.mp4?1757980172",
-"https://attachments.are.na/39582430/f0204ec347451e773134e7f0c772aac2.mp4?1757980170"
+    "https://attachments.are.na/39582434/2b4c165c16f0bd518ee3fa8efa3b11fe.mp4?1757980172",
+    "https://attachments.are.na/39582432/8073c4c6481cef58159416dee2e63b6d.mp4?1757980173",
+    "https://attachments.are.na/39582431/f6ee88210937f0e9fadec9333a2efa29.mp4?1757980172",
+    "https://attachments.are.na/39582430/f0204ec347451e773134e7f0c772aac2.mp4?1757980170"
   ];
 
   const a1YucliTop=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582391/original_b044df661e100e9ec9d9df3ab2fe3a41.png?1757980006",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582390/original_23c685fc1aea9d64f8c4fa9a6d776a6d.png?1757980005",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582389/original_cd3ff56d43a48a97140d011fbafdf754.png?1757980005",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582387/original_3eafc0a991b189f18c8eb143585932df.png?1757980005"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582391/original_b044df661e100e9ec9d9df3ab2fe3a41.png?1757980006",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582390/original_23c685fc1aea9d64f8c4fa9a6d776a6d.png?1757980005",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582389/original_cd3ff56d43a48a97140d011fbafdf754.png?1757980005",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582387/original_3eafc0a991b189f18c8eb143585932df.png?1757980005"
   ];
+
   const a1YucliBot=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582388/original_161a861ae88d709edb3962f6010c3f3e.png?1757980006",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582386/original_832de54a365746b73030ce822533138f.png?1757980005",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582385/original_e7eb388b00c0bdefec86895c319daa42.png?1757980005"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582388/original_161a861ae88d709edb3962f6010c3f3e.png?1757980006",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582386/original_832de54a365746b73030ce822533138f.png?1757980005",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582385/original_e7eb388b00c0bdefec86895c319daa42.png?1757980005"
   ];
 
   const a1Mapas=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582319/original_4f6ee25a1be0eb6a37ccd342ebda5248.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582320/original_4fcdd170c54b05c19b9826cdeaa9050e.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582321/original_1ff8c4c2fb2f0c0eaa08a4049297a274.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582322/original_042d0d0134b84f30262e9cf781319cea.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582323/original_9872b7a104b4e291640173b4c32751d1.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582325/original_848829375b136336ebd448ab1cc35ef2.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582326/original_6ac4908a5b81142f1ac5a120630fd321.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582327/original_129f23c6b59e2f6b9548c98761330795.svg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582328/original_e8cbffba4b718ae8d133ae3ebe754cb3.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582329/original_65e774d2f5e4c4e4c4ac2b63b212c4b7.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582330/original_b3a74a8fbee8a4fe7ecdb81c49e9f6da.png",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582331/original_9ce0a313c5d20410f980198d44bc5ba7.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582332/original_832559b88ed6c17aa6c9bc36079e45e7.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582333/original_c641ee0847cff7bfc3a329acaa135e52.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582335/original_8b1495b96426c9c388851e9003881c02.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582334/original_97ade0844461b68c77ed85eef9d3ca12.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582344/original_128b9ad550163babcd2c3397997bd613.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582347/original_7386ab67b1d85e2af90b93b452cd8fc7.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582338/original_6f84ae814bb55a49852f6d12bb6e92b5.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582346/original_ffca8ff8f250e05d2af507df8b8bb135.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582341/original_9bcf0a4dca6880c681c157676c4ab429.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582349/original_a2ee54a4946bc997db000ef78488f54b.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582343/original_06149046e851774700752d46032ff510.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582340/original_e2d1229ea5bac5604e14125a566069e0.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582339/original_e56a575039d9d7968edab24d77164522.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582337/original_00bf4748cf191c0da9812d40dc279beb.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582348/original_893602d35c4ac94eb54a45787ec71935.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582345/original_10c656ca2e425f6a350dcacd3512abf1.jpg"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582319/original_4f6ee25a1be0eb6a37ccd342ebda5248.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582320/original_4fcdd170c54b05c19b9826cdeaa9050e.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582321/original_1ff8c4c2fb2f0c0eaa08a4049297a274.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582322/original_042d0d0134b84f30262e9cf781319cea.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582323/original_9872b7a104b4e291640173b4c32751d1.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582325/original_848829375b136336ebd448ab1cc35ef2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582326/original_6ac4908a5b81142f1ac5a120630fd321.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582327/original_129f23c6b59e2f6b9548c98761330795.svg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582328/original_e8cbffba4b718ae8d133ae3ebe754cb3.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582329/original_65e774d2f5e4c4e4c4ac2b63b212c4b7.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582330/original_b3a74a8fbee8a4fe7ecdb81c49e9f6da.png",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582331/original_9ce0a313c5d20410f980198d44bc5ba7.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582332/original_832559b88ed6c17aa6c9bc36079e45e7.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582333/original_c641ee0847cff7bfc3a329acaa135e52.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582335/original_8b1495b96426c9c388851e9003881c02.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582334/original_97ade0844461b68c77ed85eef9d3ca12.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582344/original_128b9ad550163babcd2c3397997bd613.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582347/original_7386ab67b1d85e2af90b93b452cd8fc7.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582338/original_6f84ae814bb55a49852f6d12bb6e92b5.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582346/original_ffca8ff8f250e05d2af507df8b8bb135.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582341/original_9bcf0a4dca6880c681c157676c4ab429.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582349/original_a2ee54a4946bc997db000ef78488f54b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582343/original_06149046e851774700752d46032ff510.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582340/original_e2d1229ea5bac5604e14125a566069e0.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582339/original_e56a575039d9d7968edab24d77164522.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582337/original_00bf4748cf191c0da9812d40dc279beb.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582348/original_893602d35c4ac94eb54a45787ec71935.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582345/original_10c656ca2e425f6a350dcacd3512abf1.jpg"
   ];
 
   const a2Videos=[
-"https://attachments.are.na/39582280/a4270907cac3ecb304fad37083c661d6.mp4?1757979684",
-"https://attachments.are.na/39582279/e30c22185799fcb87b1eb239d8925e6a.mp4?1757979684",
-"https://attachments.are.na/39582278/05282bee47d3d4277dd3aca5663884cd.mp4?1757979684",
-"https://attachments.are.na/39582277/5795cf8d1a71d65f5d5aa4d46d2f3f39.mp4?1757979684",
-"https://attachments.are.na/39582276/ffae5915b35ffb0d0a1b046d51622454.mp4?1757979683"
+    "https://attachments.are.na/39582280/a4270907cac3ecb304fad37083c661d6.mp4?1757979684",
+    "https://attachments.are.na/39582279/e30c22185799fcb87b1eb239d8925e6a.mp4?1757979684",
+    "https://attachments.are.na/39582278/05282bee47d3d4277dd3aca5663884cd.mp4?1757979684",
+    "https://attachments.are.na/39582277/5795cf8d1a71d65f5d5aa4d46d2f3f39.mp4?1757979684",
+    "https://attachments.are.na/39582276/ffae5915b35ffb0d0a1b046d51622454.mp4?1757979683"
   ];
 
   const a2Artists=`anna kalinina /polina tarasova /alisa dyundik
@@ -647,87 +640,85 @@ yang seung-woo by zen photo gallery
 zoo as zoo`.split('\n');
 
   const a2Row4=[
-"https://attachments.are.na/39582183/961f729f1aaeaf54ff848278bac1aa6c.mov?1757979360",
-"https://attachments.are.na/39582185/ecb37f8a5f78e642a8a22324bcc1bcd5.mov?1757979363",
-"https://attachments.are.na/39582187/2e8c2f0b058a3d95ba3e388004c218b4.mov?1757979364",
-"https://attachments.are.na/39582189/a204a767bde888d5a5e5d26b91316dc8.mov?1757979365"
+    "https://attachments.are.na/39582183/961f729f1aaeaf54ff848278bac1aa6c.mov?1757979360",
+    "https://attachments.are.na/39582185/ecb37f8a5f78e642a8a22324bcc1bcd5.mov?1757979363",
+    "https://attachments.are.na/39582187/2e8c2f0b058a3d95ba3e388004c218b4.mov?1757979364",
+    "https://attachments.are.na/39582189/a204a767bde888d5a5e5d26b91316dc8.mov?1757979365"
   ];
 
   const a2Grid20=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582208/original_5eaa0f62a971a4d26767282dd7d56ee3.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582209/original_9f88cb977c367df3b8bd7b368009f05f.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582210/original_717a38ac1e71343891e0ee2d047a1849.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582211/original_d9bf65f6e2b87793a9276c1868d7d897.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582212/original_adb2c7b6154073f304dc4c08278e6b00.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582213/original_e1e9c5fd8876b9dcebc7db1d0b2b442d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582214/original_3dc7e48f290348c630ac4fa57190c5c1.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582216/original_411586865ebc406afaf2b8e45fd78d49.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582217/original_594928b4fc5db89d364a0ab6b692fbc2.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582218/original_835291b2b55da48d8fcde1356f582e80.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582219/original_aaec0cf3adbeb604926fed9d28f695ce.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582220/original_835aa5725ebb6c1c0e49b6724c9498b5.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582222/original_f1145c5a6bf5955fc44e9eab78e4feda.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582223/original_6bb7a7320255aa2e2ac37d95a7083b0d.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582224/original_9ea7d90a42b1fd794b0f2d8dd4b1c8f5.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582225/original_5d6b057c652e8d75aa6e69b1dac1c6e1.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582226/original_298deea73e0ef0383f0081eeee4488f1.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582227/original_e016871a5a504375cb1d636a33e784d9.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582228/original_e79107a38a1e042f5d1cdade4b485d20.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582229/original_d9d0af59643f1675c0b639c9302abe35.jpg"
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582208/original_5eaa0f62a971a4d26767282dd7d56ee3.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582209/original_9f88cb977c367df3b8bd7b368009f05f.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582210/original_717a38ac1e71343891e0ee2d047a1849.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582211/original_d9bf65f6e2b87793a9276c1868d7d897.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582212/original_adb2c7b6154073f304dc4c08278e6b00.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582213/original_e1e9c5fd8876b9dcebc7db1d0b2b442d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582214/original_3dc7e48f290348c630ac4fa57190c5c1.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582216/original_411586865ebc406afaf2b8e45fd78d49.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582217/original_594928b4fc5db89d364a0ab6b692fbc2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582218/original_835291b2b55da48d8fcde1356f582e80.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582219/original_aaec0cf3adbeb604926fed9d28f695ce.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582220/original_835aa5725ebb6c1c0e49b6724c9498b5.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582222/original_f1145c5a6bf5955fc44e9eab78e4feda.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582223/original_6bb7a7320255aa2e2ac37d95a7083b0d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582224/original_9ea7d90a42b1fd794b0f2d8dd4b1c8f5.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582225/original_5d6b057c652e8d75aa6e69b1dac1c6e1.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582226/original_298deea73e0ef0383f0081eeee4488f1.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582227/original_e016871a5a504375cb1d636a33e784d9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582228/original_e79107a38a1e042f5d1cdade4b485d20.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582229/original_d9d0af59643f1675c0b639c9302abe35.jpg"
   ];
 
   const a2Vids4=[
-"https://attachments.are.na/39582117/473e50aa87e03fc8f486dc40ad1657c9.mov",
-"https://attachments.are.na/39582118/3625f6885c2047019d5f5a39f04eea7f.mov",
-"https://attachments.are.na/39582120/a4f32b85625392770d6a9227db6c8b1a.mov",
-"https://attachments.are.na/39582121/a5eed785233a3b578521a87515ccb1e3.mp4",
-"https://attachments.are.na/39582124/ddf3d07f7ec3788decee66ff91c40de2.mp4",
-"https://attachments.are.na/39582125/496fa91bdab244a45f6eae0717dfd8e4.mov",
-"https://attachments.are.na/39582126/7b67a2cc2ddeb35611fd1dc2d3c61f9d.mov",
-"https://attachments.are.na/39582127/a849e38bd3cd47b26f5ebf8f63039058.mov",
-"https://attachments.are.na/39582130/f0e9edf75b44fa350fe59d2331763b79.mp4",
-"https://attachments.are.na/39582131/7a9aa58ff6606fd2c9c421f23acaea24.mov",
-"https://attachments.are.na/39582134/9c7bc5522d34422548c3b87291743abc.mp4",
-"https://attachments.are.na/39582135/323544e3de5574ddb61b404bc1a0b7e6.mov",
-"https://attachments.are.na/39582136/5a7b008630b100aa7ec185b8d06db4c2.mp4",
-"https://attachments.are.na/39582137/86b0d7dec40489ce3e79ef2f3be090ed.mp4",
-"https://attachments.are.na/39582138/8926b4547f0d557a5b52f8fdc6bdb1c5.mp4",
-"https://attachments.are.na/39582140/1895d5b5878ae82d7be4f04c98d32ed7.mp4",
-"https://attachments.are.na/39582141/32a40ecdd32029f89ff6d7eb1119ca44.mp4",
-"https://attachments.are.na/39582142/3277d4cf1e447d249cf1b26704036ffe.mp4",
-"https://attachments.are.na/39582143/ca72724382f70583b3831b0a2c3895d7.mp4",
-"https://attachments.are.na/39582144/83bf47ed78859254a9874c2ac358bfe7.mp4",
-"https://attachments.are.na/39582145/0f521a392be170487a6f758b3bcf9fea.mp4",
-"https://attachments.are.na/39582147/27367a90b613b4f3e073234a4ea9daba.mp4",
-"https://attachments.are.na/39582148/737fcacef6153f1dcf32da77847aa8d5.mp4",
-"https://attachments.are.na/39582149/860cfff00d2cefad944dbc16f66ec748.mp4",
-"https://attachments.are.na/39582150/c36d5ccffb66cca0e96057fd7eb9e7cd.mp4",
-"https://attachments.are.na/39582151/ddc3972e07b883d5484583b8e073df79.mp4",
-"https://attachments.are.na/39582152/9138a8fadeb3b4f323968518f2bee673.mp4",
-"https://attachments.are.na/39582153/eb0ea14d0843acf654c86c36b74757f9.mp4"
+    "https://attachments.are.na/39582117/473e50aa87e03fc8f486dc40ad1657c9.mov",
+    "https://attachments.are.na/39582118/3625f6885c2047019d5f5a39f04eea7f.mov",
+    "https://attachments.are.na/39582120/a4f32b85625392770d6a9227db6c8b1a.mov",
+    "https://attachments.are.na/39582121/a5eed785233a3b578521a87515ccb1e3.mp4",
+    "https://attachments.are.na/39582124/ddf3d07f7ec3788decee66ff91c40de2.mp4",
+    "https://attachments.are.na/39582125/496fa91bdab244a45f6eae0717dfd8e4.mov",
+    "https://attachments.are.na/39582126/7b67a2cc2ddeb35611fd1dc2d3c61f9d.mov",
+    "https://attachments.are.na/39582127/a849e38bd3cd47b26f5ebf8f63039058.mov",
+    "https://attachments.are.na/39582130/f0e9edf75b44fa350fe59d2331763b79.mp4",
+    "https://attachments.are.na/39582131/7a9aa58ff6606fd2c9c421f23acaea24.mov",
+    "https://attachments.are.na/39582134/9c7bc5522d34422548c3b87291743abc.mp4",
+    "https://attachments.are.na/39582135/323544e3de5574ddb61b404bc1a0b7e6.mov",
+    "https://attachments.are.na/39582136/5a7b008630b100aa7ec185b8d06db4c2.mp4",
+    "https://attachments.are.na/39582137/86b0d7dec40489ce3e79ef2f3be090ed.mp4",
+    "https://attachments.are.na/39582138/8926b4547f0d557a5b52f8fdc6bdb1c5.mp4",
+    "https://attachments.are.na/39582140/1895d5b5878ae82d7be4f04c98d32ed7.mp4",
+    "https://attachments.are.na/39582141/32a40ecdd32029f89ff6d7eb1119ca44.mp4",
+    "https://attachments.are.na/39582142/3277d4cf1e447d249cf1b26704036ffe.mp4",
+    "https://attachments.are.na/39582143/ca72724382f70583b3831b0a2c3895d7.mp4",
+    "https://attachments.are.na/39582144/83bf47ed78859254a9874c2ac358bfe7.mp4",
+    "https://attachments.are.na/39582145/0f521a392be170487a6f758b3bcf9fea.mp4",
+    "https://attachments.are.na/39582147/27367a90b613b4f3e073234a4ea9daba.mp4",
+    "https://attachments.are.na/39582148/737fcacef6153f1dcf32da77847aa8d5.mp4",
+    "https://attachments.are.na/39582149/860cfff00d2cefad944dbc16f66ec748.mp4",
+    "https://attachments.are.na/39582150/c36d5ccffb66cca0e96057fd7eb9e7cd.mp4",
+    "https://attachments.are.na/39582151/ddc3972e07b883d5484583b8e073df79.mp4",
+    "https://attachments.are.na/39582152/9138a8fadeb3b4f323968518f2bee673.mp4",
+    "https://attachments.are.na/39582153/eb0ea14d0843acf654c86c36b74757f9.mp4"
   ];
 
   const a2Row5=[
-"https://d2w9rnfcy7mm78.cloudfront.net/39582102/original_6b83353a524181dad350da884f35f754.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582103/original_aa78ee6b3b487282e2726d0c1e8a8c83.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582104/original_7c44d9f3365cca457c88aeb289371918.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582107/original_552c14cba5fc434bcf5f3e600ff2f20a.jpg",
-"https://d2w9rnfcy7mm78.cloudfront.net/39582105/original_1c31f333f6240dc5d0826036fda456a6.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582102/original_6b83353a524181dad350da884f35f754.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582103/original_aa78ee6b3b487282e2726d0c1e8a8c83.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582104/original_7c44d9f3365cca457c88aeb289371918.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582107/original_552c14cba5fc434bcf5f3e600ff2f20a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/39582105/original_1c31f333f6240dc5d0826036fda456a6.jpg"
   ];
 
-  // ===== Render helpers =====
-  function fillGrid(elId, urls){ const el=document.getElementById(elId); urls.forEach(u=>el.appendChild(tileFactory(u))); }
-  function fillRow4(elId, urls){ const el=document.getElementById(elId); urls.forEach(u=>{ const f=tileFactory(u); f.querySelector('video')?.setAttribute('muted',''); el.appendChild(f); }); }
-  function fillList(elId, items){ const ul=document.getElementById(elId); items.forEach(t=>{const li=document.createElement('li'); li.textContent=t; ul.appendChild(li)}); }
-
-  // Last shoot
+  /* ===== Render ===== */
   fillGrid('grid-last', lastShoot);
 
-  // atlas.1 blocks
-  fillRow4('a1-videos', a1Videos);
+  a1Videos.forEach(u=>{
+    const v=document.createElement('video');
+    v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.preload='metadata'; v.dataset.src=u;
+    const f=document.createElement('figure'); f.className='tile'; f.appendChild(v);
+    document.getElementById('a1-videos').appendChild(f);
+  });
   fillList('a1-art', a1Artists);
-  // merch 2 cols
-  const merchWrap=document.getElementById('a1-merch'); a1Merch.forEach(u=>{ merchWrap.appendChild(tileFactory(u)); });
+  a1Merch.forEach(u=> document.getElementById('a1-merch').appendChild(tileFactory(u)) );
   fillGrid('a1-grid', a1Grid);
   fillRow4('a1-row4a', a1Row4a);
   fillRow4('a1-row4b', a1Row4b);
@@ -735,16 +726,17 @@ zoo as zoo`.split('\n');
   fillGrid('a1-yucli-bot', a1YucliBot);
   fillGrid('a1-mapas', a1Mapas);
 
-  // atlas.2 blocks
-  fillRow4('a2-videos', a2Videos);
+  a2Videos.forEach(u=>{
+    const v=document.createElement('video');
+    v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.preload='metadata'; v.dataset.src=u;
+    const f=document.createElement('figure'); f.className='tile'; f.appendChild(v);
+    document.getElementById('a2-videos').appendChild(f);
+  });
   fillList('a2-art', a2Artists);
   fillRow4('a2-row4', a2Row4);
   fillGrid('a2-grid20', a2Grid20);
   fillGrid('a2-vids4', a2Vids4);
   fillGrid('a2-row5', a2Row5);
-
-  // Keyboard close lightbox
-  window.addEventListener('keydown',e=>{ if(e.key==='Escape') closeLB(); });
   </script>
 </body>
 </html>

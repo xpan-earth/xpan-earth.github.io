@@ -1,66 +1,87 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light"/>
   <title>x.6_A/V.f — xpan</title>
 
-  <!-- Priorizar BEAM -->
+  <!-- perf / origins -->
   <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
   <link rel="preconnect" href="https://attachments.are.na" crossorigin>
   <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
   <link rel="dns-prefetch" href="https://attachments.are.na">
+
+  <!-- preload medios clave -->
   <link rel="preload" as="video" href="https://attachments.are.na/39071236/224495abd52e40b79149605ebc8d9db6.mov?1756254381" type="video/mp4" fetchpriority="high">
-  <!-- Restaurar optimización v3: preload del video principal con prioridad baja -->
   <link rel="preload" as="video" href="https://attachments.are.na/39071034/26519fce69fd547f4dd74b5df863b0da.mp4?1756253586" type="video/mp4" fetchpriority="low">
 
   <style>
-    :root{--fg:#000;--line:rgba(0,0,0,.12);--radius:14px;--maxw:1440px}
+    /* ===== tokens post-tech (solo light) ===== */
+    [data-xpan]{
+      --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+      --accent:#1860FF; --line:#E6E8EA; --line-weak:#F1F3F5;
+      --radius:14px; --maxw:1160px; --pad-x:clamp(16px,4vw,48px); --g:16px; --header-h:64px;
+    }
+
     *{box-sizing:border-box}
-    html,body{margin:0;background:#fff;color:var(--fg);font-family:"Times New Roman",serif;overflow-x:hidden}
-    img,video{display:block;max-width:100%;height:auto}
-    a{text-decoration:none;color:inherit}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden
+    }
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:var(--fg);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .18s cubic-bezier(.22,.61,.36,1)}
+    a:hover{border-color:var(--fg)}
 
-    /* Header + lenguaje estilo xcv2 */
-    header{position:fixed;top:1rem;left:1rem;z-index:30}
+    /* header + lenguaje */
+    header{position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);z-index:30;display:flex;align-items:center;justify-content:space-between;height:var(--header-h)}
     header img{width:50px;height:auto;display:block}
-    .language-selector{position:fixed;top:1rem;right:1rem;z-index:30;font-size:.9rem;text-transform:lowercase}
-    .language-selector button{background:none;border:none;margin:0 .4rem;padding:.1rem .2rem;cursor:pointer;color:#000;opacity:.5;transition:.2s}
-    .language-selector button.active,.language-selector button:hover{opacity:1;text-decoration:underline}
+    .language-selector{display:flex;gap:8px;text-transform:lowercase}
+    .language-selector button{
+      appearance:none;background:transparent;border:1px solid var(--line);
+      padding:6px 10px;cursor:pointer;font:600 .85rem/1 system-ui;color:var(--fg-dim);letter-spacing:.2px;
+      transition:color .18s, border-color .18s, background-color .18s
+    }
+    .language-selector button.active,
+    .language-selector button[aria-pressed="true"]{color:var(--fg);border-color:var(--accent);background:rgba(24,96,255,.06)}
 
-    main{max-width:var(--maxw);margin:96px auto 5rem;padding:0 1.1rem}
-    h1{font-size:clamp(1.1rem,2.2vw,1.5rem);margin:.1rem 0;text-transform:lowercase}
-    .meta{opacity:.8;font-style:italic;margin:.2rem 0 1rem}
-    .description{font-size:1rem;line-height:1.58;max-width:980px}
-    .section{margin:1.35rem 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+    /* layout */
+    main{max-width:var(--maxw);margin:calc(var(--header-h) + 40px) auto 64px;padding:0 var(--pad-x);position:relative;z-index:1}
+    h1{font:700 1.35rem/1.25 system-ui;margin:.1rem 0;text-transform:lowercase}
+    .meta{color:var(--fg-dim);font-style:italic;margin:.2rem 0 1rem}
+    .description{font:400 1rem/1.6 system-ui;max-width:980px}
+    .section{margin:24px 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
     .section>.head{display:flex;align-items:flex-end;justify-content:space-between;gap:.8rem;margin-bottom:.6rem}
-    .section h2{font-size:1.02rem;margin:0;text-transform:lowercase}
-    .muted{opacity:.68;font-size:.92rem}
+    .section h2{font:700 1.02rem/1.25 system-ui;margin:0;text-transform:lowercase}
+    .muted{color:var(--fg-dim);font-size:.92rem}
+    .lang{display:none}.lang.active{display:block}
 
-    /* BEAM background: z-index corregido para que sea visible */
+    /* BEAM background */
     .bg-video{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
-      background:#000 url('https://d2w9rnfcy7mm78.cloudfront.net/39072351/original_12eee1b9a1a2b4278c69d2d7acf1aad2.png?1756258293?bc=0') center/cover no-repeat}
+      background:#000 url('https://d2w9rnfcy7mm78.cloudfront.net/39072351/original_12eee1b9a1a2b4278c69d2d7acf1aad2.png?1756258293&bc=0') center/cover no-repeat}
     .bg-video video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s ease;filter:contrast(120%) saturate(210%)}
     .bg-video video.ready{opacity:1}
 
-    main{
-  position: relative;
-  z-index: 1;
-}
-    /* mini audio player */
-    .mini-player{position:fixed;right:1rem;bottom:1rem;z-index:45;backdrop-filter:blur(6px);background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.12);border-radius:999px;padding:.35rem .6rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-    .mini-btn{width:34px;height:34px;border-radius:999px;border:1px solid #000;background:transparent;display:grid;place-items:center;cursor:pointer}
+    /* mini player */
+    .mini-player{
+      position:fixed;right:1rem;bottom:1rem;z-index:45;
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+      background:rgba(255,255,255,.65);border:1px solid var(--line);border-radius:999px;
+      padding:.35rem .6rem;display:flex;align-items:center;gap:.6rem;
+      box-shadow:0 8px 24px rgba(0,0,0,.08)
+    }
+    .mini-btn{width:34px;height:34px;border-radius:999px;border:1px solid var(--fg);background:transparent;display:grid;place-items:center;cursor:pointer}
     .mini-btn:active{transform:scale(.98)}
     .mini-icon{width:9px;height:9px;display:block}
-    .mini-label{font-size:.85rem;opacity:.7;text-transform:lowercase}
+    .mini-label{font-size:.85rem;color:var(--fg-dim);text-transform:lowercase}
 
-    /* featured video */
-    .featured{display:grid;place-items:center;border:1px solid var(--line);border-radius:var(--radius);background:#fff}
-    .featured video{width:100%;height:100%;max-height:76vh;object-fit:contain;background:#fff}
+    /* featured */
+    .featured{display:grid;place-items:center;border:1px solid var(--line);border-radius:var(--radius);background:transparent}
+    .featured video{width:100%;height:100%;max-height:76vh;object-fit:contain}
 
     /* collapsible program */
-    details.block{border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+    details.block{border:1px solid var(--line);border-radius:var(--radius);background:transparent}
     details.block+details.block{margin-top:.6rem}
     details.block summary{padding:.7rem .9rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem;font-size:1rem}
     details.block summary::-webkit-details-marker{display:none}
@@ -68,38 +89,35 @@
     .block .wrap h3{margin:1rem 0 .5rem;font-size:1rem;text-transform:lowercase}
     .block .wrap ul{margin:.25rem 0 1rem;padding-left:1rem}
 
-    /* three key videos row */
+    /* tri videos */
     .tri-videos{display:grid;grid-template-columns:1fr minmax(0,720px) 1fr;gap:.6rem;align-items:center}
-    .tri-videos .cell{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
-    .tri-videos .cell video{width:100%;height:100%;object-fit:contain;background:#fff}
+    .tri-videos .cell{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:transparent}
+    .tri-videos .cell video{width:100%;height:100%;object-fit:contain}
     @media(max-width:1000px){.tri-videos{grid-template-columns:1fr}}
 
     /* 9 horizontales por día */
     .days9{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
     @media(max-width:900px){.days9{grid-template-columns:1fr}}
-    .days9 .tile{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-    .days9 video{width:100%;height:100%;object-fit:contain;background:#fff}
+    .days9 .tile{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:transparent}
+    .days9 video{width:100%;height:100%;object-fit:contain}
     .badge{position:absolute;top:.4rem;left:.4rem;background:rgba(255,255,255,.85);color:#000;padding:.15rem .4rem;border-radius:4px;font-size:.72rem;letter-spacing:.01em}
     .info{position:absolute;bottom:.4rem;left:.4rem;background:rgba(0,0,0,.55);color:#fff;padding:.15rem .4rem;border-radius:4px;font-size:.72rem;letter-spacing:.01em;max-width:90%}
 
-    /* 9 flyers cuadrados */
+    /* flyers */
     .flyers9{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-    .flyers9 .tile{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
+    .flyers9 .tile{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:transparent}
     .flyers9 .frame{position:relative}
     .flyers9 .frame::before{content:"";display:block;aspect-ratio:1/1}
-    .flyers9 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff}
-
-    .lang{display:none}.lang.active{display:block}
+    .flyers9 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   </style>
-
-  <script defer src="/assets/js/media-proxy.js"></script>
-  
 </head>
+
 <body>
-  <!-- BEAM: z-index corregido, poster, preload alto y fade-in -->
+  <!-- BEAM -->
   <div class="bg-video" aria-hidden="true">
     <video id="beam" autoplay loop muted playsinline preload="auto" webkit-playsinline
-      poster="https://d2w9rnfcy7mm78.cloudfront.net/39072351/original_12eee1b9a1a2b4278c69d2d7acf1aad2.png?1756258293?bc=0">
+      poster="https://d2w9rnfcy7mm78.cloudfront.net/39072351/original_12eee1b9a1a2b4278c69d2d7acf1aad2.png?1756258293&bc=0"
+      controlslist="nodownload noplaybackrate nofullscreen" disablepictureinpicture>
       <source src="https://attachments.are.na/39072498/696b6c11123dcd9a3dee6227c52bce3b.mov?1756258801" type="video/mp4">
     </video>
   </div>
@@ -107,18 +125,18 @@
   <header>
     <a href="/" aria-label="xpan"><img src="xpan.svg" alt="xpan"></a>
     <nav class="language-selector" aria-label="selector de idioma">
-      <button class="active" data-lang="es">es</button>
-      <button data-lang="en">en</button>
-      <button data-lang="fr">fr</button>
-      <button data-lang="jp">jp</button>
+      <button class="active" data-lang="es" aria-pressed="true">es</button>
+      <button data-lang="en" aria-pressed="false">en</button>
+      <button data-lang="fr" aria-pressed="false">fr</button>
+      <button data-lang="jp" aria-pressed="false">jp</button>
     </nav>
   </header>
 
   <!-- mini audio player -->
   <div class="mini-player" role="region" aria-label="reproductor sonoro">
     <button id="playToggle" class="mini-btn" aria-label="play/pause">
-      <svg class="mini-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="#000" stroke="#000"></path>
+      <svg class="mini-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="currentColor"></path>
       </svg>
     </button>
     <span class="mini-label">motivo sonoro — x.6_A/V.f</span>
@@ -168,12 +186,12 @@
       </div>
     </section>
 
-
     <!-- programa completo -->
     <section class="section">
       <details class="block">
         <summary><span>programa completo x.6_A/V.f — wig, cdmx, febrero 2024</span><span>ver/ocultar</span></summary>
         <div class="wrap">
+          <!-- contenido original conservado -->
           <h3>semana 1</h3>
           <h4>jueves 01.feb</h4>
           <ul>
@@ -227,9 +245,7 @@
 
           <h3>semana 3</h3>
           <h4>jueves 15.feb</h4>
-          <ul>
-            <li>20:00 → Lazaro — F/W24 colección chopo [runway show]</li>
-          </ul>
+          <ul><li>20:00 → Lazaro — F/W24 colección chopo [runway show]</li></ul>
           <h4>sábado 17.feb</h4>
           <ul>
             <li>17:00–17:40 → Hola Bebé [muestra de video] — con Erika Maish, Celia Calderon Asensio, Sacred Scraps, Krystal Paniagua, Heavy Boots, Vanebon, No Sesso, Tacha</li>
@@ -254,10 +270,11 @@
       </details>
     </section>
 
-        <!-- video principal -->
+    <!-- video principal -->
     <section class="section">
       <div class="featured">
-        <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+        <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline
+          controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
           <source src="https://attachments.are.na/39071034/26519fce69fd547f4dd74b5df863b0da.mp4?1756253586" type="video/mp4">
         </video>
       </div>
@@ -267,17 +284,20 @@
     <section class="section">
       <div class="tri-videos">
         <div class="cell">
-          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline
+            controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
             <source src="https://attachments.are.na/39071279/c5a9070ed3b4670f57953be759db6123.mov?1756254524" type="video/quicktime">
           </video>
         </div>
         <div class="cell">
-          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline
+            controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
             <source src="https://attachments.are.na/39071250/d489ac12bae4f5b4d31f516101c80adb.mp4?1756254427" type="video/mp4">
           </video>
         </div>
         <div class="cell">
-          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline
+            controlslist="nodownload noplaybackrate nofullscreen" data-tap-sound>
             <source src="https://attachments.are.na/39071256/eb413b698865502b6faca523ee766d51.mov?1756254452" type="video/quicktime">
           </video>
         </div>
@@ -287,104 +307,87 @@
     <!-- 9 por día -->
     <section class="section">
       <div class="head"><h2>registro por día</h2><div class="muted"></div></div>
-<div class="days9">
-  <div class="tile">
-    <span class="badge">01.feb</span>
-    <span class="info">
-      jose darío fernández; maureen muse; sindicato mexicano de fotografía
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074071/e5aed89893983db42b200d8d34237a5e.mp4?1756266986" type="video/mp4">
-    </video>
-  </div>
+      <div class="days9">
+        <!-- bloques originales conservados -->
+        <div class="tile">
+          <span class="badge">01.feb</span>
+          <span class="info">jose darío fernández; maureen muse; sindicato mexicano de fotografía</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074071/e5aed89893983db42b200d8d34237a5e.mp4?1756266986" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">02.feb</span>
-    <span class="info">
-      nimodo ft goma xantana; maría josé cruz; fendi fentanil; ich_nore; kai, do you love me?
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074073/ebc130071f26cc95aeea4c6ad5e099f0.mp4?1756266990" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">02.feb</span>
+          <span class="info">nimodo ft goma xantana; maría josé cruz; fendi fentanil; ich_nore; kai, do you love me?</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074073/ebc130071f26cc95aeea4c6ad5e099f0.mp4?1756266990" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">03.feb</span>
-    <span class="info">
-      pálida®; kat._.chi; cuachic ft dont trust me; vuulpees ft missora; alejandro marcial
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074074/9a52bd107f60be4d46332f729cf805bb.mp4?1756266999" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">03.feb</span>
+          <span class="info">pálida®; kat._.chi; cuachic ft dont trust me; vuulpees ft missora; alejandro marcial</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074074/9a52bd107f60be4d46332f729cf805bb.mp4?1756266999" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">08.feb</span>
-    <span class="info">
-      alanamey; lorena vega; nik mantilla; pln; dj clout chaser ft tacky samantha
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074075/0e5d5f9a69e1304692f345afdad9ed3b.mp4?1756267002" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">08.feb</span>
+          <span class="info">alanamey; lorena vega; nik mantilla; pln; dj clout chaser ft tacky samantha</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074075/0e5d5f9a69e1304692f345afdad9ed3b.mp4?1756267002" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">09.feb</span>
-    <span class="info">
-      sites; theorama; orbe_nacimiento; sophie sound; alonso hernández
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074076/4d51d01c3d8eefcf24873497284edb83.mp4?1756267004" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">09.feb</span>
+          <span class="info">sites; theorama; orbe_nacimiento; sophie sound; alonso hernández</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074076/4d51d01c3d8eefcf24873497284edb83.mp4?1756267004" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">10.feb</span>
-    <span class="info">
-      Δlt+m8ç; ilusiones perceptivas; renata pereira lima; illuzion; isaiah barr + gabriel lauder
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074077/12bfc2c447f4bfdd648e2ba20ab71616.mp4?1756267006" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">10.feb</span>
+          <span class="info">Δlt+m8ç; ilusiones perceptivas; renata pereira lima; illuzion; isaiah barr + gabriel lauder</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074077/12bfc2c447f4bfdd648e2ba20ab71616.mp4?1756267006" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">15.feb</span>
-    <span class="info">
-      lazaro — f/w24 colección chopo
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39074079/b79770c00d538aa4b47e8e9e6bab095f.mp4?1756267018" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">15.feb</span>
+          <span class="info">lazaro — f/w24 colección chopo</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39074079/b79770c00d538aa4b47e8e9e6bab095f.mp4?1756267018" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">17.feb</span>
-    <span class="info">
-      hola bebé; alicia nieto; eyaculo lagrimas; marte; mi$ha
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39129378/4f768b0e4a1adcf7f1491f4c9085e5a6.mp4?1756404791" type="video/mp4">
-    </video>
-  </div>
+        <div class="tile">
+          <span class="badge">17.feb</span>
+          <span class="info">hola bebé; alicia nieto; eyaculo lagrimas; marte; mi$ha</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39129378/4f768b0e4a1adcf7f1491f4c9085e5a6.mp4?1756404791" type="video/mp4">
+          </video>
+        </div>
 
-  <div class="tile">
-    <span class="badge">23.feb</span>
-    <span class="info">
-      marie dubus; atracciones mágicas; yin; louis f cota; tomás díaz cedeño + tomás altamirano; cyrus bayandor; el insulto
-    </span>
-    <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
-      <source src="https://attachments.are.na/39129368/0461e69864b91e33c0d4392024f6bdfe.mp4?1756404749" type="video/mp4">
-    </video>
-  </div>
-</div>
-
+        <div class="tile">
+          <span class="badge">23.feb</span>
+          <span class="info">marie dubus; atracciones mágicas; yin; louis f cota; tomás díaz cedeño + tomás altamirano; cyrus bayandor; el insulto</span>
+          <video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline data-tap-sound>
+            <source src="https://attachments.are.na/39129368/0461e69864b91e33c0d4392024f6bdfe.mp4?1756404749" type="video/mp4">
+          </video>
+        </div>
+      </div>
     </section>
 
     <!-- flyers -->
     <section class="section">
       <div class="head"><h2>programa — flyers</h2><div class="muted"></div></div>
       <div class="flyers9">
+        <!-- contenido original conservado -->
         <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071386/645816de61e63defb78685f511706f82.mov?1756254869" type="video/mp4"></video></div></div>
         <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071381/f3beaa2afeae524b40bc1a60aeb88b77.mov?1756254847" type="video/mp4"></video></div></div>
         <div class="tile"><div class="frame"><video class="auto-video" autoplay muted loop playsinline preload="metadata" webkit-playsinline><source src="https://attachments.are.na/39071385/0adc08698552cd0a0279ebb9493cb251.mov?1756254869" type="video/mp4"></video></div></div>
@@ -401,95 +404,70 @@
   </main>
 
   <script>
-    // Beam: marcar listo al primer frame para el fade-in
-    const beam = document.getElementById('beam');
-    beam?.addEventListener('loadeddata',()=>beam.classList.add('ready'),{once:true});
-
-    // Selector de idioma
-    const langButtons = document.querySelectorAll('.language-selector button');
-    function setLang(code){
-      langButtons.forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
-      document.querySelectorAll('.lang').forEach(el=>el.classList.remove('active'));
-      document.querySelectorAll('.lang-' + code).forEach(el=>el.classList.add('active'));
-    }
-    langButtons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.lang)));
-
-    // Mini audio
-    const motif = document.getElementById('motif');
-    const playToggle = document.getElementById('playToggle');
-    const iconPath = document.getElementById('iconPath');
-    let motifPlaying = false;
-    playToggle.addEventListener('click', async ()=>{
-      if(!motifPlaying){
-        try{ await motif.play(); motifPlaying = true; iconPath.setAttribute('d','M7 5 H11 V19 H7 Z M13 5 H17 V19 H13 Z'); }catch(e){}
-      }else{
-        motif.pause(); motifPlaying = false; iconPath.setAttribute('d','M8 5 L19 12 L8 19 Z');
+    // beam fade-in + robust autoplay (sin tema oscuro)
+    (function(){
+      const v = document.getElementById('beam');
+      if(!v) return;
+      v.muted = true; v.setAttribute('muted','');
+      v.autoplay = true; v.setAttribute('autoplay','');
+      v.loop = true; v.setAttribute('loop','');
+      v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+      v.setAttribute('disablePictureInPicture',''); v.setAttribute('controlslist','nodownload noplaybackrate nofullscreen');
+      v.addEventListener('loadeddata',()=>v.classList.add('ready'),{once:true});
+      function tryPlay(){ const p=v.play?.(); if(p&&p.catch) p.catch(()=>armGesture()); }
+      function armGesture(){
+        const resume=()=>{ v.play().finally(()=>['touchstart','pointerdown','click'].forEach(ev=>window.removeEventListener(ev,resume,{passive:true}))); };
+        ['touchstart','pointerdown','click'].forEach(ev=>window.addEventListener(ev,resume,{once:true,passive:true}));
       }
-    });
+      window.addEventListener('load', tryPlay,{once:true});
+      window.addEventListener('pageshow', tryPlay);
+      window.addEventListener('focus', tryPlay);
+      document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tryPlay(); });
+      setInterval(()=>{ if(document.visibilityState==='visible' && v.paused) tryPlay(); }, 5000);
+    })();
 
-    // Video control: tap-to-unmute y pausar fuera de viewport
-    const autoVideos = Array.from(document.querySelectorAll('video.auto-video'));
-    let currentWithSound = null;
-    autoVideos.forEach(v=>{
-      if(v.hasAttribute('data-tap-sound')){
-        v.addEventListener('click', ()=>{
-          if(currentWithSound && currentWithSound!==v){ currentWithSound.muted = true; currentWithSound = null; }
-          if(v.muted){ v.muted = false; currentWithSound = v; } else { v.muted = true; currentWithSound = null; }
-        }, {passive:true});
+    // idioma con persistencia
+    (function(){
+      const btns=[...document.querySelectorAll('.language-selector button')];
+      function setLang(code){
+        btns.forEach(b=>{const on=b.dataset.lang===code; b.classList.toggle('active',on); b.setAttribute('aria-pressed',String(on));});
+        document.querySelectorAll('.lang').forEach(el=>el.classList.remove('active'));
+        document.querySelectorAll('.lang-'+code).forEach(el=>el.classList.add('active'));
+        try{ localStorage.setItem('xpan.lang', code); }catch(_){}
       }
-    });
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        const vid = e.target;
-        if(e.isIntersecting && e.intersectionRatio > 0.33){
-          if(vid.paused){ vid.play().catch(()=>{}); }
-          if(vid !== currentWithSound){ vid.muted = true; }
-        }else{
-          vid.muted = true;
-          if(!vid.paused) vid.pause();
-          if(currentWithSound === vid) currentWithSound = null;
+      btns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+      setLang(localStorage.getItem('xpan.lang')||'es');
+    })();
+
+    // videos: tap-to-unmute único + pausa fuera de viewport
+    (function(){
+      const videos=[...document.querySelectorAll('video.auto-video')];
+      let currentWithSound=null;
+      videos.forEach(v=>{
+        if(v.hasAttribute('data-tap-sound')){
+          v.addEventListener('click',()=>{
+            if(currentWithSound && currentWithSound!==v){ currentWithSound.muted=true; currentWithSound=null; }
+            v.muted = !v.muted;
+            currentWithSound = v.muted ? null : v;
+            if(!v.paused) v.play().catch(()=>{});
+          },{passive:true});
         }
       });
-    }, {threshold:[0,.33,1]});
-    autoVideos.forEach(v=>io.observe(v));
+      const io=new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          const vid=e.target;
+          if(e.isIntersecting && e.intersectionRatio>0.33){
+            if(vid.paused){ vid.play().catch(()=>{}); }
+            if(vid!==currentWithSound){ vid.muted=true; }
+          }else{
+            vid.muted=true;
+            if(!vid.paused) vid.pause();
+            if(currentWithSound===vid) currentWithSound=null;
+          }
+        });
+      },{threshold:[0,.33,1]});
+      videos.forEach(v=>io.observe(v));
+    })();
   </script>
-  <script>
-(function(){
-  const v = document.getElementById('beam');
-  if(!v) return;
-
-  // flags robustos para iOS/Android
-  v.muted = true; v.setAttribute('muted','');
-  v.autoplay = true; v.setAttribute('autoplay','');
-  v.loop = true; v.setAttribute('loop','');
-  v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
-  v.setAttribute('disablePictureInPicture',''); v.setAttribute('controlslist','nodownload noplaybackrate nofullscreen');
-
-  function tryPlay(){
-    const p = v.play?.();
-    if (p && p.catch) p.catch(() => armGesture());
-  }
-  function armGesture(){
-    const resume = () => {
-      v.play().finally(() => {
-        ['touchstart','pointerdown','click'].forEach(ev=>window.removeEventListener(ev,resume,{passive:true}));
-      });
-    };
-    ['touchstart','pointerdown','click'].forEach(ev=>window.addEventListener(ev,resume,{once:true,passive:true}));
-  }
-
-  // reintentos sin nunca pausar el beam
-  window.addEventListener('load', tryPlay, {once:true});
-  window.addEventListener('pageshow', tryPlay);
-  window.addEventListener('focus', tryPlay);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
-
-  // watchdog suave para ahorro de energía
-  setInterval(() => {
-    if (document.visibilityState === 'visible' && v.paused) tryPlay();
-  }, 5000);
-})();
-</script>
-
 </body>
 </html>

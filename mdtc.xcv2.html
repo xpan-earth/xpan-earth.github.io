@@ -1,611 +1,621 @@
 <!DOCTYPE html>
-
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>xcv2 — mdtc</title>
+
+<!-- solo light en este archivo -->
+<meta name="color-scheme" content="light"/>
+
 <style>
-    /* ===== Base ===== */
-    :root{ --fg:#000; --bg:#fff; --muted:0.55; }
-    html,body{ margin:0; padding:0; background:transparent; color:var(--fg); font-family:"Times New Roman", serif; }
-    body{ overflow-x:hidden; }
-    a{ color:inherit; }
-
-    /* ===== Header / Lang ===== */
-    header{ position:fixed; top:1rem; left:1rem; z-index:30; }
-    header img{ width:50px; height:auto; display:block; }
-    .language-selector{ position:fixed; top:1rem; right:1rem; z-index:30; font-size:.9rem; text-transform:lowercase; }
-    .language-selector button{ background:none; border:none; margin-left:.5rem; cursor:pointer; color:var(--fg); opacity:.5; transition:.2s; }
-    .language-selector button.active, .language-selector button:hover{ opacity:1; text-decoration:underline; }
-
-    /* ===== Background video (beam azul) ===== */
-    .bg-video{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
-    .bg-video video{ width:100%; height:100%; object-fit:cover; opacity:1; filter:contrast(120%) saturate(210%); }
-
-    /* ===== Floating mini-player ===== */
-    .mini-player{ position:fixed; right:1rem; bottom:1rem; z-index:40; backdrop-filter:blur(6px); background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.1); border-radius:999px; padding:.35rem .6rem; display:flex; align-items:center; gap:.6rem; box-shadow:0 8px 24px rgba(0,0,0,.08); }
-    .mini-btn{ width:34px; height:34px; border-radius:999px; border:1px solid #000; background:transparent; display:grid; place-items:center; cursor:pointer; }
-    .mini-btn:active{ transform:scale(.98); }
-    .mini-icon{ width:9px; height:9px; display:block; }
-    .mini-label{ font-size:.85rem; opacity:.7; text-transform:lowercase; }
-
-    /* ===== Layout ===== */
-    .container{ max-width:1000px; margin:7rem auto 5rem; padding:0 3rem; }
-    h1{ font-size:1.5rem; font-weight:700; margin:.25rem 0 .5rem; text-transform:lowercase; }
-    .meta{ font-size:.9rem; opacity:.6; font-style:italic; margin-bottom:1.5rem; }
-    .description{ font-size:1rem; line-height:1.6; max-width:760px; margin-bottom:2rem; }
-
-    /* ===== Imagen general ===== */
-    .hero{ margin:2.5rem 0; }
-    .hero img{ width:100%; height:auto; border-radius:4px; }
-
-    /* ===== mdl.C — grid de tarjetas ===== */
-    .mdlC{ margin:3rem 0; }
-    .mdlC h2{ font-size:1.1rem; text-transform:lowercase; margin-bottom:.75rem; }
-    .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; }
-    .card{ border:1px solid rgba(0,0,0,.08); border-radius:6px; padding:1rem; background:#fff; }
-    .card h3{ font-size:1rem; margin:.25rem 0 .25rem; text-transform:lowercase; }
-    .tech{ font-size:.9rem; opacity:.8; margin:.3rem 0 .6rem; line-height:1.5; }
-    .carousel{ display:flex; gap:.5rem; overflow-x:auto; }
-    .carousel img{ flex-shrink:0; height:auto; border-radius:4px; object-fit:contain; max-height:260px; width:auto; }
-
-    /* ===== Video de texturas ===== */
-    .textures{ margin:3rem 0; }
-    .textures video{ width:100%; height:auto; max-height:70vh; border-radius:4px; object-fit:cover; }
-
-    /* ===== Sesiones (video + tracklist) ===== */
-    .sessions{ margin:3.5rem 0; }
-    .session{ margin-bottom:2.5rem; }
-    .session h3{ font-size:1rem; text-transform:lowercase; margin:.25rem 0 .5rem; }
-    .session .session-media{ margin:.5rem 0; }
-    .session video{ width:100%; height:auto; max-height:65vh; border-radius:4px; object-fit:cover; }
-    .tracklist{ border-left:2px solid #000; padding:.5rem 0 .5rem 1rem; margin-top:.5rem; }
-    .tracklist h3{ font-size:.9rem; margin:.2rem 0 .4rem; opacity:.7; text-transform:lowercase; }
-    .tracklist ul{ margin:.25rem 0 0; padding-left:1.1rem; }
-    .tracklist li{ margin:.1rem 0; font-size:.95rem; }
-
-    /* ===== PDF planos ===== */
-    .plans{ margin:3rem 0; }
-    .plans iframe{ width:100%; height:calc(100vh - 150px); border:1px solid rgba(0,0,0,.1); border-radius:4px; background:#fff; }
-
-    /* ===== Imagen de cierre ===== */
-    .closing{ margin:3rem 0 1rem; }
-    .closing img{ width:100%; height:auto; border-radius:4px; }
-
-    /* ===== Responsive tweaks ===== */
-    @media (max-width: 768px){
-      .container{ padding:0 1.25rem; margin-top:6rem; }
-      .carousel img{ max-height:200px; }
-      .mini-player{ right:.75rem; bottom:.75rem; }
-    }
-  
-/* Ajustes para mantener proporción sin recortes */
-.carousel img,
-.hero img,
-.textures video,
-.session video,
-.plans iframe,
-.closing img {
-    object-fit: contain !important;
-    max-width: 100%;
-    height: auto;
-}
-
-/* Estilo para recaps contraíbles */
-.sessions details {
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 4px;
-    padding: 0.5rem 0.75rem;
-    margin-bottom: 1rem;
-    background: rgba(255,255,255,0.6);
-}
-.sessions summary {
-    cursor: pointer;
-    font-weight: bold;
-    list-style: none;
-}
-.sessions summary::-webkit-details-marker {
-    display: none;
-}
-
-/* Estética mejorada para recaps */
-.sessions details {
-    border: none;
-    border-radius: 8px;
-    padding: 0;
-    margin-bottom: 1.5rem;
-    background: rgba(255,255,255,0.85);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
-}
-.sessions details[open] {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
-}
-.sessions summary {
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-    background: rgba(0,0,0,0.05);
-    transition: background 0.3s ease;
-}
-.sessions summary:hover {
-    background: rgba(0,0,0,0.08);
-}
-.sessions summary::-webkit-details-marker {
-    display: none;
-}
-.sessions .session-media, 
-.sessions .tracklist {
-    padding: 1rem;
-}
-</style>
-<script src="/assets/js/media-proxy.js" defer></script>
-
-</head>
-<body>
-<!-- Fondo: beam azul -->
-<div aria-hidden="true" class="bg-video">
-<video autoplay="" id="bgvid" loop="" muted="" playsinline="" preload="metadata" webkit-playsinline="">
-<source src="https://attachments.are.na/38646554/ae68710eb2a2fed493586842a9804a7e.mp4?1754605242" type="video/mp4"/>
-</video>
-</div>
-<!-- Header + selector de idioma -->
-<header><a href="https://xpan.earth" rel="noopener" target="_blank"><img alt="xpan logo" src="xpan.svg"/></a></header>
-<div class="language-selector">
-<button class="active" onclick="setLang('es')">es</button>
-<button onclick="setLang('en')">en</button>
-<button onclick="setLang('fr')">fr</button>
-<button onclick="setLang('jp')">jp</button>
-</div>
-<!-- Mini reproductor sonoro flotante -->
-<div aria-label="reproductor sonoro breve" class="mini-player" role="region">
-<button aria-label="play/pause" class="mini-btn" id="playToggle">
-<!-- icono play (triángulo) -->
-<svg class="mini-icon" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 5 L19 12 L8 19 Z" fill="#000" id="iconPath" stroke="#000"></path>
-</svg>
-</button>
-<span class="mini-label">motivo sonoro — xcv2</span>
-<audio id="motif" preload="none">
-<source src="https://attachments.are.na/38646553/d3816ba77916894a7b94edd622d0b705.wav?1754605242" type="audio/wav"/>
-</audio>
-</div>
-<div class="container">
-<!-- Título + descripción multiidioma -->
-<div class="lang lang-es">
-<h1>xcv2</h1>
-<div class="meta">mayo 2023 — ciudad de méxico</div>
-<div class="description">
-        xcv2 [xpan collaborations volume 2] fue una intervención colectiva entre xpan y cinco artistas/diseñadores radicados en ciudad de méxico: <strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>.<br/><br/>
-        cada uno rediseñó nuestra bocina mdl.1 para generar cinco modelos únicos de la nueva serie mdl.C. estos objetos fueron presentados en un showroom abierto al público, activado por cinco sesiones de escucha curadas por proyectos culturales invitados: <strong>hod, marble stones, suave, ketvoid, minena</strong>.<br/><br/>
-        cada sesión articuló una red de comunidades distintas: las de cada artista/diseñador, las de cada proyecto cultural, la comunidad extendida de xpan, y nuevas audiencias emergentes. este sistema expandido de encuentros configuró un mapa sonoro–afectivo de 11 nodos simultáneos: una intersección de intersecciones.<br/><br/>
-        xcv2 operó como infraestructura interdependiente de colaboración, escucha y creación cultural compartida.
-      </div>
-</div>
-<div class="lang lang-en" style="display:none;">
-<h1>xcv2</h1>
-<div class="meta">may 2023 — mexico city</div>
-<div class="description">
-        xcv2 [xpan collaborations volume 2] was a collective intervention between xpan and five mexico city–based artists/designers: <strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>.<br/><br/>
-        each collaborator redesigned our mdl.1 speaker to create five unique models of the new mdl.C series. these objects were presented in a public showroom and activated by five listening sessions curated by invited cultural projects: <strong>hod, marble stones, suave, ketvoid, minena</strong>.<br/><br/>
-        each session articulated a network of distinct communities: those of each artist/designer, each cultural project, xpan’s extended community, and emerging audiences. this expanded system of encounters mapped an affective–sonic field of 11 simultaneous nodes: an intersection of intersections.<br/><br/>
-        xcv2 operated as an interdependent infrastructure for collaboration, listening, and shared cultural making.
-      </div>
-</div>
-<div class="lang lang-fr" style="display:none;">
-<h1>xcv2</h1>
-<div class="meta">mai 2023 — mexico</div>
-<div class="description">
-        xcv2 [xpan collaborations volume 2] fut une intervention collective entre xpan et cinq artistes/designers basés à mexico : <strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>.<br/><br/>
-        chacun a repensé notre enceinte mdl.1 afin de créer cinq modèles uniques de la nouvelle série mdl.C. ces objets furent présentés dans un showroom ouvert au public et activés par cinq sessions d’écoute, curatées par des projets culturels invités : <strong>hod, marble stones, suave, ketvoid, minena</strong>.<br/><br/>
-        chaque session a articulé un réseau de communautés distinctes : celles de chaque artiste/designer, de chaque projet culturel, la communauté étendue de xpan et de nouveaux publics émergents. ce système élargi de rencontres a dessiné une cartographie sonoro–affective de 11 nœuds simultanés : une intersection d’intersections.<br/><br/>
-        xcv2 a fonctionné comme une infrastructure interdépendante de collaboration, d’écoute et de création culturelle partagée.
-      </div>
-</div>
-<div class="lang lang-jp" style="display:none;">
-<h1>xcv2</h1>
-<div class="meta">2023年5月 — メキシコシティ</div>
-<div class="description">
-        xcv2［xpan collaborations volume 2］は、xpan とメキシコシティ拠点の5名のアーティスト／デザイナー（<strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>）による共同介入でした。<br/><br/>
-        各コラボレーターは自作の mdl.1 スピーカーを再設計し、新シリーズ mdl.C の固有モデルを5点制作。これらのオブジェクトは一般公開のショールームで発表され、招待プロジェクトによる5つのリスニング・セッション（<strong>hod, marble stones, suave, ketvoid, minena</strong>）によって起動されました。<br/><br/>
-        各セッションは、アーティスト／デザイナー毎のコミュニティ、各文化プロジェクト、xpan の拡張コミュニティ、新たに生まれる観客を結び、相互に異なる共同体のネットワークを編成しました。これにより、同時的に11のノードが結ばれる感情−音響的マップ—交差の交差—が形成されました。<br/><br/>
-        xcv2 は、協働・傾聴・共有的な文化生成のための相互依存的インフラとして機能しました。
-      </div>
-</div>
-<!-- Imagen general del proyecto -->
-<section class="hero">
-<img alt="mdtc.xcv2 — imagen general" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646413/original_91c11b85c6f202822195303bd73b4adf.jpg?1754604580?bc=0"/>
-</section>
-<!-- Sección mdl.C -->
-<section class="mdlC">
-<h2>serie mdl.c — colaboraciones</h2>
-<div class="cards">
-<!-- Panorammma -->
-<div class="card">
-<h3>mdl.c — panorammma</h3>
-<div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
-<div class="carousel">
-<img alt="panorammma 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646404/original_f6cff9635fedea1e5aeb5b67f5f57bb4.jpg?1754604560?bc=0"/>
-<img alt="panorammma 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646403/original_e3e8d485e290065554fd1056ddda14bd.jpg?1754604556?bc=0"/>
-<img alt="panorammma 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646401/original_25a4eb292121fdedbb9f35bedd1c34c6.jpg?1754604553?bc=0"/>
-</div>
-</div>
-<!-- C. H. Matos -->
-<div class="card">
-<h3>mdl.c — c. h. matos</h3>
-<div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
-<div class="carousel">
-<img alt="c. h. matos 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646399/original_3535dfe3c69dc41415d145b8c7ef1589.jpg?1754604546?bc=0"/>
-<img alt="c. h. matos 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646397/original_f39777de1906936885d806c60cd8a348.jpg?1754604545?bc=0"/>
-<img alt="c. h. matos 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646395/original_a532380ca32e09f2e14d7cc6bc093b83.jpg?1754604543?bc=0"/>
-</div>
-</div>
-<!-- Tomás Díaz Cedeño -->
-<div class="card">
-<h3>mdl.c — tomás díaz cedeño</h3>
-<div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
-<div class="carousel">
-<img alt="tomás díaz cedeño 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646394/original_1566821bd11405ef892852a87c3169a1.jpg?1754604541?bc=0"/>
-<img alt="tomás díaz cedeño 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646393/original_e37af3d4c6ede0a9224bc562a67f47be.jpg?1754604535?bc=0"/>
-<img alt="tomás díaz cedeño 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646390/original_144a74c5d2d4ef8bd8e10852e1543fb3.jpg?1754604534?bc=0"/>
-</div>
-</div>
-<!-- Emilio Algo -->
-<div class="card">
-<h3>mdl.c — emilio algo</h3>
-<div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
-<div class="carousel">
-<img alt="emilio algo 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646385/original_6375b846c6ba90eaf558c798c24fc532.jpg?1754604521?bc=0"/>
-<img alt="emilio algo 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646388/original_1221853b21e1582d7e9a1659379cf12f.jpg?1754604524?bc=0"/>
-<img alt="emilio algo 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646389/original_840e8f66d41afc7e53b3e2e1bebf2ba0.jpg?1754604527?bc=0"/>
-</div>
-</div>
-<!-- Brian Thoreen (sub.C) -->
-<div class="card">
-<h3>sub.c — brian thoreen</h3>
-<div class="tech">subwoofer pasivo · 15hz–1000khz · 4Ω · 98dB · 500W máx</div>
-<div class="carousel">
-<img alt="brian thoreen 1" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646379/original_be83ad705ea34eea010269708674189b.jpg?1754604502?bc=0"/>
-<img alt="brian thoreen 2" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646378/original_55f1c4470b084b1d1ca5067d1e7d8e09.jpg?1754604497?bc=0"/>
-<img alt="brian thoreen 3" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646383/original_73c892d39158efce51bd7bf86e619977.jpg?1754604513?bc=0"/>
-</div>
-</div>
-</div>
-</section>
-<!-- Video de texturas colaborativas -->
-<section class="textures">
-<video autoplay="" loop="" muted="" playsinline="" preload="none">
-<source src="https://attachments.are.na/38646486/e507a0e31066852b7e4458af6d7a228d.mov?1754605019" type="video/mp4"/>
-</video>
-</section>
-<!-- Cinco sesiones (video + tracklist) -->
-<section class="sessions">
-<!-- Marble Stones -->
-<div class="session" id="session-marble-stones"><details><summary>marble stones — recap</summary>
-<div class="session-media">
-<video controls="" playsinline="" poster="" preload="none">
-<source src="https://attachments.are.na/38646615/63d62eeff328b5706dd13ab8608bfdef.mov?1754605619" type="video/mp4"/>
-</video>
-</div>
-<!-- Tracklist provista -->
-<div class="tracklist">
-<h3>tracklist</h3>
-<ul>
-<li>Ohm Chanting with Tibetan Singing Bowls (Deep Mantra Meditation)</li>
-<li>Sfojg=owfE – Le Berger</li>
-<li>Looking You in Silence – Suso Saiz</li>
-<li>Sleep in a Warm Room – Kenji Kihara</li>
-<li>Fr3sh – Kareem Lofty</li>
-<li>No. 3 – Aphex Twin</li>
-<li>Luminous – Haruhisa Tanaka</li>
-<li>Celest – Doon Kanda</li>
-<li>En Casa de los Abuelos – Un Reve</li>
-<li>Held Apart – Arca</li>
-<li>Las Aves se Reúnen en tu Interior – Un Reve</li>
-<li>El Destello Oculto en las Hojas – Un Reve</li>
-<li>Forest of Eternity – Depressive Silence</li>
-<li>Coeur Saignant – Marsen Jules</li>
-<li>Oeillet Sauvage – Marsen Jules</li>
-<li>Healing – Kutmah</li>
-<li>Making of Cyborg – Kenji Kawai</li>
-<li>警報 – Omar Alejandro</li>
-<li>不安 – Omar Alejandro</li>
-<li>Calibrating Senses – Sofie Birch, Johan Caroe</li>
-<li>Reticent Reminiscence – Christopher Willits, Ryuichi Sakamoto</li>
-<li>Memory Act – Rival Consoles</li>
-<li>Violence – Andy Stott</li>
-<li>New Romantic – Andy Stott</li>
-<li>Xen – Arca</li>
-<li>Async (Arca Remix) – Ryuichi Sakamoto</li>
-<li>Hana – Asa-Chang &amp; Junray</li>
-<li>Woosah – Dean Blunt</li>
-<li>Semtex Dub (Kwake Dubs Remix) – Dean Blunt</li>
-<li>About Breathing – Healion</li>
-<li>Gimme Some – Weval</li>
-<li>Manners – Arca</li>
-<li>It'll Be Just Fine – Weval</li>
-<li>Apricots – Bicep</li>
-<li>Flor de Sakura (Neutro Gris Remix) – Rosalía</li>
-<li>Iced Out (Slowed) – Riley The Musician</li>
-<li>Kick in the Hell (HellzavIelerJP Remix) – 春ねむり (Haru Nemuri)</li>
-</ul>
-</div>
-</details></div>
-<!-- Ketvoid -->
-<div class="session" id="session-ketvoid"><details><summary>ketvoid — recap</summary>
-<div class="session-media">
-<video controls="" playsinline="" poster="" preload="none">
-<source src="https://attachments.are.na/38646557/8db11f922666dc3da5a3f76fdffe1ad3.mov?1754605258" type="video/mp4"/>
-</video>
-</div>
-<div class="tracklist">
-<h3>tracklist</h3>
-<ul>
-<li>1. Gatekeeper – Flames of Displeasure</li>
-<li>2. Jocelyn Pook – Masked Ball</li>
-<li>3. Fatima Al Qadiri – Medieval Femme</li>
-<li>4. Laurel Halo – WOW</li>
-<li>5. OXHY – Neli Andreeva Chop</li>
-<li>6. Bergsonist – Faith</li>
-<li>7. Primitive Art – Elitism</li>
-<li>8. Chantal – The Realm</li>
-<li>9. Elite Gymnastics – So Close to Paradise</li>
-<li>10. The Future Sound of London – Life Forms</li>
-<li>11. Alma Matris – Ritmo Quimico (acapella)</li>
-<li>12. Gatekeeper – Forgotten</li>
-<li>13. Banzai Netpune – Hanayo</li>
-<li>14. Chris Korda and the Church of Euthanasia – Buy MORE</li>
-<li>15. AND3 – Doughnut Dollies</li>
-<li>16. Ultradyne – Iron Age</li>
-<li>17. FF – I Do It Because I Couldn't Care Less</li>
-<li>18. Laurent Garnier – Greed</li>
-<li>19. Acen – Trip to the Moon Pt. 1</li>
-<li>20. Logo – Bussines Man</li>
-<li>21. COil – Love Secret Domain</li>
-<li>22. Friends of Carlotta – Finger F.O.C</li>
-<li>23. Juan Atkins – The Mission</li>
-<li>24. Fatima Al Qadiri – D-Medley</li>
-<li>25. Araab Muzik – Lost in a Maze</li>
-<li>26. The Body – Wanderings</li>
-</ul>
-</div>
-</details></div>
-<!-- Hod -->
-<div class="session" id="session-hod"><details><summary>hod — recap</summary>
-<div class="session-media">
-<video controls="" playsinline="" poster="" preload="none">
-<source src="https://attachments.are.na/38646584/1de8a101dd32e591fd536552d1cf3edd.mov?1754605376" type="video/mp4"/>
-</video>
-</div>
-<div class="tracklist">
-<h3>tracklist</h3>
-<ul>
-<li>1. Foretold – Death In June</li>
-<li>2. Ay Çürüdü – Anadol</li>
-<li>3. Ecdysisyphus – Eartheater</li>
-<li>4. Szechuan – Fatima Al Qadiri</li>
-<li>5. Shine Marsh – Samuel Organ, L.Cie</li>
-<li>6. Torment – Dirty K</li>
-<li>7. gxthgirlpxrty – ÖTENAZI</li>
-<li>8. Lali – Paddy Free</li>
-<li>9. Curse – Last Life</li>
-<li>10. Radiance II – Basic Channel</li>
-<li>11. New Age – New Scene</li>
-<li>12. Torn/Enhanced – FAKETHIAS</li>
-<li>13. "O"rgasm – Hetero-Version – "O"</li>
-<li>14. Show Me Love (Fabricated Remix) – t.A.T.u., Sven Martin, Domen Vajevec</li>
-<li>15. Haunting – Greg Beato</li>
-<li>16. Transperu – Koudlam</li>
-<li>17. Nine O' Three – Donato Dozzy</li>
-<li>18. FMRA – Subjected</li>
-<li>19. Disorder – AX&amp;P, Adam X, Perc</li>
-<li>20. A Moon Fell On Me – Joey Anderson</li>
-<li>21. Voices – Neon</li>
-<li>22. Energy Flash – Joey Beltram</li>
-<li>23. People Are Still Having Sex – Latour</li>
-<li>24. Origin – Luke Slater</li>
-<li>25. Sigil Life – Eartheater</li>
-<li>26. Avatar (Remastered) – Dead Can Dance</li>
-</ul>
-</div>
-</details></div>
-<!-- Suave -->
-<div class="session" id="session-suave"><details><summary>suave — recap</summary>
-<div class="session-media">
-<video controls="" playsinline="" poster="" preload="none">
-<source src="https://attachments.are.na/38646596/9877550b296a723debeb79ede20a3bf8.mov?1754605490" type="video/mp4"/>
-</video>
-</div>
-<div class="tracklist">
-<h3>tracklist</h3>
-<ul>
-<li>1. Overture – Björk</li>
-<li>2. Tristan &amp; Isolde: Einleitung – Richard Wagner, Edo de Waart</li>
-<li>3. Unmade – Thom Yorke</li>
-<li>4. Highschool Lover – Air</li>
-<li>5. Les marionnettes – Zbigniew Preisner</li>
-<li>6. White Flag – Dido</li>
-<li>7. End Credits – Harry Escott</li>
-<li>8. I’m With You (Always) – Trent Reznor and Atticus Ross</li>
-<li>9. Bang Bang (My Baby Shot Me Down) – Nancy Sinatra</li>
-<li>10. Followed – Daniel Lopatin</li>
-<li>11. And A Colored Sky Colored Grey – Vincent Gallo</li>
-<li>12. Hey Joe – Charlotte Gainsbourg</li>
-<li>13. Phantom Thread II – Jonny Greenwood</li>
-<li>14. Young And Beautiful (Orchestral Version) – Lana Del Rey</li>
-<li>15. Radiation – Stuart A. Staples</li>
-<li>16. Erutpar – Robert Levon Been</li>
-<li>17. Stillness Of The Mind – Firth</li>
-<li>18. HALCYON + ON + ON – Orbital</li>
-<li>19. Dragostea Din Tei – O-Zone</li>
-<li>20. Walk of Fame – Howard Shore</li>
-<li>21. Sunshine – Rye Rye, M.I.A.</li>
-<li>22. In My Dreams – ANOHNI</li>
-<li>23. Under Your Spell – Desire</li>
-<li>24. Distance (End Credits) – Keegan DeWitt</li>
-<li>25. Everytime – Britney Spears</li>
-<li>26. Big Pink Loser – Kai do u love me?, angelspit</li>
-<li>27. The Jumps – Thom Yorke</li>
-<li>28. Suicide Underground – Air</li>
-<li>29. Sabor a Mí – Eydie Gormé, Los Panchos</li>
-</ul>
-</div>
-</details></div>
-<!-- Minena -->
-<div class="session" id="session-minena"><details><summary>minena — recap</summary>
-<div class="session-media">
-<video controls="" playsinline="" poster="" preload="none">
-<source src="https://attachments.are.na/38646606/902c1eb0960b4528db0471ac035e54b1.mov?1754605546" type="video/mp4"/>
-</video>
-</div>
-<div class="tracklist">
-<h3>tracklist</h3>
-<ul>
-<li>1. Forevertime Journeys – naran ratan</li>
-<li>2. Raindrops, Pt. I – Pearson Sound</li>
-<li>3. Is it Some Devil That Crawls Inside of You? – Ricky Eat Acid</li>
-<li>4. wreck – Rei Harakami</li>
-<li>5. Olson – Boards of Canada</li>
-<li>6. Incoherencia pt. 1 – Rogelio the Illrd</li>
-<li>7. Fantasy – 90sFlav</li>
-<li>8. Her Femininineness – Susumu Yokota</li>
-<li>9. Clouds – Gigi Masin</li>
-<li>10. While You Doooo – Teebs</li>
-<li>11. Ur My Bby – Ricky Eat Acid</li>
-<li>12. braincells – tomcbumps</li>
-<li>13. Liquid Sound Waves – Harmonious Thelonious</li>
-<li>14. Boa – Leftlow</li>
-<li>15. 〒160-0014 Tokyo '82 – 猫シCorp.</li>
-<li>16. blurred moon – daniel.mp3</li>
-<li>17. Bass.int – Daniel Aged</li>
-<li>18. Rain – Ryuichi Sakamoto, Jaques Morelenbaum, David Nadien</li>
-<li>19. Dust – You'll Never Get to Heaven</li>
-<li>20. (forever??????????) – glass beach</li>
-<li>21. あしもとひかる さかのうえ – Kikiyama</li>
-<li>22. さむくてあったかい、ふゆ〜雪の世界〜 – Kikiyama</li>
-<li>23. Frutta E Verdura – Whitearmor, Gud</li>
-<li>24. ghostie – Seb Wildblood, Buddy Love</li>
-<li>25. From The Seams – Tristan Arp</li>
-<li>26. Dance PM – Hiroshi Yoshimura</li>
-<li>27. Sweet – Mansur Brown</li>
-<li>28. Trois Gymnopedies (First Movement) – Gary Numan</li>
-<li>29. Baby Boo – Paulie Leparik</li>
-<li>30. Dill Big Choo – O$VMV$M</li>
-<li>31. Out of Limbo – Niobe</li>
-<li>32. Yesterday, 2095 – desert sand feels warm at night</li>
-<li>33. Dystopian Mall – Incorporeal Visions Deluxe</li>
-<li>34. Dill Big Choo (alt) – O$VMV$M</li>
-<li>35. Centered Shell – yes/and</li>
-<li>36. Blind Aesthetics – Taylor McFerrin</li>
-<li>37. Movements (Chapter III) – Leon Vynehall</li>
-<li>38. Five Hundred Miles – Mamman Sani</li>
-<li>39. Ryan – Ricky Eat Acid</li>
-<li>40. Cupidwing – Clams Casino</li>
-<li>41. Daijoubu? – Kidkanevil</li>
-<li>42. Survivors – Flying Lotus</li>
-<li>43. Marilyn Set Me Free – Casino Versus Japan</li>
-<li>44. Loving on Moon – r mccarthy</li>
-<li>45. Miano Little Miss 1565 – Casino Versus Japan</li>
-<li>46. Otter Shadows – Bibio</li>
-<li>47. ラクエン – Yoko Kanno</li>
-<li>48. Dance (Ambient Version) – Ryuichi Sakamoto</li>
-<li>49. Touching Myself (Ryuichi Sakamoto Edit) – CFCF</li>
-<li>50. 2000004 (ambient) – Jessy Lanza</li>
-</ul>
-</div>
-</details></div>
-</section>
-<!-- PDF de planos -->
-<section class="plans">
-<iframe loading="lazy" src="https://attachments.are.na/38646487/fac40e883a4b93a6ae5655a76b8c9473.pdf?1754605022" title="planos xcv2"></iframe>
-</section>
-<!-- Imagen de cierre -->
-<section class="closing">
-<img alt="mdtc.xcv2 — cierre" loading="lazy" src="https://d2w9rnfcy7mm78.cloudfront.net/38646406/original_be38a13f89e08d72737ed7f24641fee4.jpg?1754604560?bc=0"/>
-</section>
-</div>
-<script>
-    // ===== Multiidioma =====
-    function setLang(lang){
-      localStorage.setItem('lang', lang);
-      document.querySelectorAll('.lang').forEach(el=>{
-        el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
-      });
-      document.querySelectorAll('.language-selector button').forEach(btn=>{
-        btn.classList.toggle('active', btn.textContent===lang);
-      });
-    }
-    setLang(localStorage.getItem('lang') || 'es');
-
-    // ===== Mini player =====
-    const audio = document.getElementById('motif');
-    const toggle = document.getElementById('playToggle');
-    const iconPath = document.getElementById('iconPath');
-    let playing = false;
-
-    function setIcon(){
-      if(playing){
-        // icono pausa
-        iconPath.setAttribute('d','M8 5 H11 V19 H8 Z M13 5 H16 V19 H13 Z');
-      } else {
-        // icono play
-        iconPath.setAttribute('d','M8 5 L19 12 L8 19 Z');
-      }
-    }
-
-    toggle.addEventListener('click', async ()=>{
-      try{
-        if(!playing){ await audio.play(); playing = true; } else { audio.pause(); playing = false; }
-        setIcon();
-      }catch(e){ console.warn('autoplay blocked', e); }
-    });
-
-    // volumen confortable por defecto
-    audio.volume = 0.6;
-    audio.loop = true;
-
-    // ===== Mejora UX: si el usuario reproduce algún video, baja volumen del motivo =====
-    document.querySelectorAll('video').forEach(v=>{
-      v.addEventListener('play', ()=>{ audio.volume = 0.25; });
-      v.addEventListener('pause', ()=>{ audio.volume = 0.6; });
-    });
-  </script>
-<script>
-(function(){
-  const v = document.getElementById('bgvid');
-  if(!v) return;
-
-  // Asegurar flags en runtime
-  v.muted = true;
-  v.setAttribute('muted','');
-  v.playsInline = true;
-  v.setAttribute('playsinline','');
-  v.setAttribute('webkit-playsinline','');
-
-  function tryPlay(){
-    const p = v.play();
-    if (p && typeof p.catch === 'function') {
-      p.catch(() => {
-        // Fallback: primer toque en pantalla
-        const resume = () => {
-          v.play().finally(() => {
-            window.removeEventListener('touchstart', resume);
-          });
-        };
-        window.addEventListener('touchstart', resume, { once: true, passive: true });
-      });
-    }
+  /* ===== tokens post-tech (LIGHT ONLY) ===== */
+  :root{
+    --bg:#ffffff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+    --line:#D9DEE2; --line-weak:#ECEFF2;
+    --maxw:1000px; --pad-x:clamp(16px,4vw,48px); --g:16px; --header-h:64px;
+    --b1:1px solid var(--line);
   }
 
-  window.addEventListener('load', tryPlay);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) tryPlay();
-  });
-})();
-</script>
+  /* ===== base ===== */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
+  a:hover{border-bottom-color:var(--accent)}
+  img,video,iframe{display:block;max-width:100%;height:auto;background:transparent}
 
+  /* ===== header + idioma ===== */
+  header{position:fixed; top:12px; left:var(--pad-x); z-index:30; height:var(--header-h); display:flex; align-items:center}
+  header img{width:50px;height:auto;display:block; filter:none; mix-blend-mode:normal}
+  .language-selector{position:fixed; top:12px; right:var(--pad-x); z-index:30; display:flex; gap:8px; text-transform:lowercase}
+  .language-selector button{
+    appearance:none; background:transparent; border:var(--b1); padding:.35rem .6rem; cursor:pointer;
+    color:var(--fg-dim); font:600 .85rem/1 Inter, system-ui; letter-spacing:.2px;
+    transition:color .15s linear, border-color .15s linear, background-color .15s linear
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+  /* ===== beam azul (fondo) ===== */
+  .bg-video{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; background:#000}
+  .bg-video video{width:100%;height:100%;object-fit:cover;opacity:.9;filter:contrast(120%) saturate(210%)}
+
+  /* ===== mini player ===== */
+  .mini-player{
+    position:fixed; right:1rem; bottom:1rem; z-index:40;
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    background:rgba(255,255,255,.7); border:var(--b1);
+    border-radius:0; padding:.35rem .6rem; display:flex; align-items:center; gap:.6rem
+  }
+  .mini-btn{width:34px;height:34px;border-radius:0;border:1px solid var(--fg);background:transparent;display:grid;place-items:center;cursor:pointer}
+  .mini-btn:active{transform:scale(.98)}
+  .mini-icon{width:9px;height:9px;display:block}
+  .mini-label{font-size:.85rem;color:var(--fg-dim);text-transform:lowercase}
+
+  /* ===== layout ===== */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 48px) auto 64px; padding:0 var(--pad-x); position:relative; z-index:1}
+  h1{font:700 1.5rem/1.25 Inter, system-ui; margin:.25rem 0 .5rem; text-transform:lowercase}
+  .meta{font:400 .9rem/1.5 Inter, system-ui; color:var(--fg-dim); margin-bottom:1.5rem}
+  .description{font:400 1rem/1.65 Inter, system-ui; max-width:760px; margin-bottom:2rem}
+
+  /* tipografía técnica */
+  .tech{font:400 .95rem/1.5 "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; color:var(--fg-dim)}
+
+  /* ===== hero ===== */
+  .hero{margin:2.5rem 0}
+  .hero img{border:var(--b1); border-radius:0; object-fit:contain}
+
+  /* ===== mdl.C ===== */
+  .mdlC{margin:3rem 0}
+  .mdlC h2{font:700 1.1rem/1 Inter, system-ui; text-transform:lowercase; margin:0 0 .75rem}
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem}
+  .card{border:var(--b1); border-radius:0; padding:1rem; background:rgba(255,255,255,.65)}
+  .card h3{font:700 1rem/1 Inter, system-ui; margin:.25rem 0 .25rem; text-transform:lowercase}
+  .carousel{display:flex; gap:.5rem; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:.25rem}
+  .carousel img{flex-shrink:0; width:auto; max-height:260px; object-fit:contain; border:var(--b1); border-radius:0; scroll-snap-align:start}
+
+  /* ===== textures ===== */
+  .textures{margin:3rem 0}
+  .textures video{width:100%; max-height:70vh; object-fit:contain; border:var(--b1); border-radius:0}
+
+  /* ===== sesiones ===== */
+  .sessions{margin:3.5rem 0}
+  .session{margin-bottom:2.5rem}
+  .session h3{font:700 1rem/1 Inter, system-ui; text-transform:lowercase; margin:.25rem 0 .5rem}
+  .session .session-media{margin:.5rem 0}
+  .session video{width:100%; max-height:65vh; object-fit:contain; border:var(--b1); border-radius:0}
+
+  /* recaps contraíbles sin sombras ni radios */
+  .sessions details{border:var(--b1); border-radius:0; padding:0; margin-bottom:1.2rem; background:rgba(255,255,255,.6)}
+  .sessions details[open]{background:rgba(255,255,255,.8)}
+  .sessions summary{cursor:pointer; list-style:none; font:700 1rem/1 Inter, system-ui; padding:.75rem 1rem; background:rgba(0,0,0,.04)}
+  .sessions summary::-webkit-details-marker{display:none}
+  .sessions .session-media, .sessions .tracklist{padding:1rem}
+  .tracklist{border-left:1px solid var(--line)}
+  .tracklist h3{font:700 .9rem/1 Inter, system-ui; margin:.2rem 0 .4rem; color:var(--fg-dim)}
+  .tracklist ul{margin:.25rem 0 0; padding-left:1.1rem}
+  .tracklist li{margin:.1rem 0; font:400 .95rem/1.5 Inter, system-ui}
+
+  /* ===== planos ===== */
+  .plans{margin:3rem 0}
+  .plans iframe{width:100%; height:calc(100vh - 150px); border:var(--b1); border-radius:0; background:#fff}
+
+  /* ===== cierre ===== */
+  .closing{margin:3rem 0 1rem}
+  .closing img{border:var(--b1); border-radius:0; object-fit:contain}
+
+  /* ===== responsive ===== */
+  @media (max-width:768px){
+    .container{padding:0 var(--pad-x)}
+    .carousel img{max-height:200px}
+    .mini-player{right:.75rem; bottom:.75rem}
+  }
+</style>
+
+<script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <!-- Fondo: beam azul -->
+  <div class="bg-video" aria-hidden="true">
+    <video id="bgvid" autoplay loop muted playsinline preload="metadata" webkit-playsinline>
+      <source src="https://attachments.are.na/38646554/ae68710eb2a2fed493586842a9804a7e.mp4?1754605242" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- Header + selector de idioma -->
+  <header><a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan logo" fetchpriority="high"></a></header>
+  <nav class="language-selector" aria-label="selector de idioma">
+    <button class="active" onclick="setLang('es')" aria-pressed="true">es</button>
+    <button onclick="setLang('en')" aria-pressed="false">en</button>
+    <button onclick="setLang('fr')" aria-pressed="false">fr</button>
+    <button onclick="setLang('jp')" aria-pressed="false">jp</button>
+  </nav>
+
+  <!-- Mini reproductor -->
+  <div class="mini-player" role="region" aria-label="reproductor sonoro breve">
+    <button id="playToggle" class="mini-btn" aria-label="play/pause">
+      <svg class="mini-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path id="iconPath" d="M8 5 L19 12 L8 19 Z" fill="currentColor"></path>
+      </svg>
+    </button>
+    <span class="mini-label">motivo sonoro — xcv2</span>
+    <audio id="motif" preload="none">
+      <source src="https://attachments.are.na/38646553/d3816ba77916894a7b94edd622d0b705.wav?1754605242" type="audio/wav">
+    </audio>
+  </div>
+
+  <div class="container">
+    <!-- Título + descripción multiidioma -->
+    <div class="lang lang-es">
+      <h1>xcv2</h1>
+      <div class="meta">mayo 2023 — ciudad de méxico</div>
+      <div class="description">
+        xcv2 [xpan collaborations volume 2] fue una intervención colectiva entre xpan y cinco artistas/diseñadores radicados en ciudad de méxico: <strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>.<br><br>
+        cada uno rediseñó nuestra bocina mdl.1 para generar cinco modelos únicos de la nueva serie mdl.C. estos objetos fueron presentados en un showroom abierto al público, activado por cinco sesiones de escucha curadas por proyectos culturales invitados: <strong>hod, marble stones, suave, ketvoid, minena</strong>.<br><br>
+        cada sesión articuló una red de comunidades distintas: las de cada artista/diseñador, las de cada proyecto cultural, la comunidad extendida de xpan, y nuevas audiencias emergentes. este sistema expandido de encuentros configuró un mapa sonoro–afectivo de 11 nodos simultáneos: una intersección de intersecciones.<br><br>
+        xcv2 operó como infraestructura interdependiente de colaboración, escucha y creación cultural compartida.
+      </div>
+    </div>
+    <div class="lang lang-en" style="display:none;">
+      <h1>xcv2</h1>
+      <div class="meta">may 2023 — mexico city</div>
+      <div class="description">
+        xcv2 [xpan collaborations volume 2] was a collective intervention between xpan and five mexico city–based artists/designers: <strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>.<br><br>
+        each collaborator redesigned our mdl.1 speaker to create five unique models of the new mdl.C series. these objects were presented in a public showroom and activated by five listening sessions curated by invited cultural projects: <strong>hod, marble stones, suave, ketvoid, minena</strong>.<br><br>
+        each session articulated a network of distinct communities: those of each artist/designer, each cultural project, xpan’s extended community, and emerging audiences. this expanded system of encounters mapped an affective–sonic field of 11 simultaneous nodes: an intersection of intersections.<br><br>
+        xcv2 operated as an interdependent infrastructure for collaboration, listening, and shared cultural making.
+      </div>
+    </div>
+    <div class="lang lang-fr" style="display:none;">
+      <h1>xcv2</h1>
+      <div class="meta">mai 2023 — mexico</div>
+      <div class="description">
+        xcv2 [xpan collaborations volume 2] fut une intervention collective entre xpan et cinq artistes/designers basés à mexico : <strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>.<br><br>
+        chacun a repensé notre enceinte mdl.1 afin de créer cinq modèles uniques de la nouvelle série mdl.C. ces objets furent présentés dans un showroom ouvert au public et activés par cinq sessions d’écoute, curatées par des projets culturels invités : <strong>hod, marble stones, suave, ketvoid, minena</strong>.<br><br>
+        chaque session a articulé un réseau de communautés distinctes : celles de chaque artiste/designer, de chaque projet culturel, la communauté étendue de xpan et de nouveaux publics émergents. ce système élargi de rencontres a dessiné une cartographie sonoro–affective de 11 nœuds simultanés : une intersection d’intersections.<br><br>
+        xcv2 a fonctionné comme une infrastructure interdépendante de collaboration, d’écoute et de création culturelle partagée.
+      </div>
+    </div>
+    <div class="lang lang-jp" style="display:none;">
+      <h1>xcv2</h1>
+      <div class="meta">2023年5月 — メキシコシティ</div>
+      <div class="description">
+        xcv2［xpan collaborations volume 2］は、xpan とメキシコシティ拠点の5名のアーティスト／デザイナー（<strong>brian thoreen, c. h. matos, tomás díaz cedeño, panorammma y emilio algo</strong>）による共同介入でした。<br><br>
+        各コラボレーターは自作の mdl.1 スピーカーを再設計し、新シリーズ mdl.C の固有モデルを5点制作。これらのオブジェクトは一般公開のショールームで発表され、招待プロジェクトによる5つのリスニング・セッション（<strong>hod, marble stones, suave, ketvoid, minena</strong>）によって起動されました。<br><br>
+        各セッションは、アーティスト／デザイナー毎のコミュニティ、各文化プロジェクト、xpan の拡張コミュニティ、新たに生まれる観客を結び、相互に異なる共同体のネットワークを編成しました。これにより、同時的に11のノードが結ばれる感情−音響的マップ—交差の交差—が形成されました。<br><br>
+        xcv2 は、協働・傾聴・共有的な文化生成のための相互依存的インフラとして機能しました。
+      </div>
+    </div>
+
+    <!-- Imagen general -->
+    <section class="hero">
+      <img alt="mdtc.xcv2 — imagen general" loading="lazy"
+           data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646413/original_91c11b85c6f202822195303bd73b4adf.jpg?1754604580?bc=0">
+    </section>
+
+    <!-- Sección mdl.C -->
+    <section class="mdlC">
+      <h2>serie mdl.c — colaboraciones</h2>
+      <div class="cards">
+        <!-- Panorammma -->
+        <div class="card">
+          <h3>mdl.c — panorammma</h3>
+          <div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
+          <div class="carousel">
+            <img alt="panorammma 1" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646404/original_f6cff9635fedea1e5aeb5b67f5f57bb4.jpg?1754604560?bc=0">
+            <img alt="panorammma 2" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646403/original_e3e8d485e290065554fd1056ddda14bd.jpg?1754604556?bc=0">
+            <img alt="panorammma 3" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646401/original_25a4eb292121fdedbb9f35bedd1c34c6.jpg?1754604553?bc=0">
+          </div>
+        </div>
+        <!-- C. H. Matos -->
+        <div class="card">
+          <h3>mdl.c — c. h. matos</h3>
+          <div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
+          <div class="carousel">
+            <img alt="c. h. matos 1" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646399/original_3535dfe3c69dc41415d145b8c7ef1589.jpg?1754604546?bc=0">
+            <img alt="c. h. matos 2" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646397/original_f39777de1906936885d806c60cd8a348.jpg?1754604545?bc=0">
+            <img alt="c. h. matos 3" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646395/original_a532380ca32e09f2e14d7cc6bc093b83.jpg?1754604543?bc=0">
+          </div>
+        </div>
+        <!-- Tomás Díaz Cedeño -->
+        <div class="card">
+          <h3>mdl.c — tomás díaz cedeño</h3>
+          <div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
+          <div class="carousel">
+            <img alt="tomás díaz cedeño 1" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646394/original_1566821bd11405ef892852a87c3169a1.jpg?1754604541?bc=0">
+            <img alt="tomás díaz cedeño 2" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646393/original_e37af3d4c6ede0a9224bc562a67f47be.jpg?1754604535?bc=0">
+            <img alt="tomás díaz cedeño 3" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646390/original_144a74c5d2d4ef8bd8e10852e1543fb3.jpg?1754604534?bc=0">
+          </div>
+        </div>
+        <!-- Emilio Algo -->
+        <div class="card">
+          <h3>mdl.c — emilio algo</h3>
+          <div class="tech">bocina pasiva · 65hz–20khz · 4Ω · 96dB · 100W máx</div>
+          <div class="carousel">
+            <img alt="emilio algo 1" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646385/original_6375b846c6ba90eaf558c798c24fc532.jpg?1754604521?bc=0">
+            <img alt="emilio algo 2" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646388/original_1221853b21e1582d7e9a1659379cf12f.jpg?1754604524?bc=0">
+            <img alt="emilio algo 3" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646389/original_840e8f66d41afc7e53b3e2e1bebf2ba0.jpg?1754604527?bc=0">
+          </div>
+        </div>
+        <!-- Brian Thoreen (sub.C) -->
+        <div class="card">
+          <h3>sub.c — brian thoreen</h3>
+          <div class="tech">subwoofer pasivo · 15hz–1000khz · 4Ω · 98dB · 500W máx</div>
+          <div class="carousel">
+            <img alt="brian thoreen 1" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646379/original_be83ad705ea34eea010269708674189b.jpg?1754604502?bc=0">
+            <img alt="brian thoreen 2" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646378/original_55f1c4470b084b1d1ca5067d1e7d8e09.jpg?1754604497?bc=0">
+            <img alt="brian thoreen 3" loading="lazy" data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646383/original_73c892d39158efce51bd7bf86e619977.jpg?1754604513?bc=0">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Texturas -->
+    <section class="textures">
+      <video autoplay loop muted playsinline preload="none" data-src="https://attachments.are.na/38646486/e507a0e31066852b7e4458af6d7a228d.mov?1754605019"></video>
+    </section>
+
+    <!-- Sesiones (recaps) -->
+    <section class="sessions">
+      <!-- Marble Stones -->
+      <div class="session" id="session-marble-stones">
+        <details>
+          <summary>marble stones — recap</summary>
+          <div class="session-media">
+            <video controls playsinline preload="none" data-src="https://attachments.are.na/38646615/63d62eeff328b5706dd13ab8608bfdef.mov?1754605619"></video>
+          </div>
+          <div class="tracklist">
+            <h3>tracklist</h3>
+            <ul>
+              <li>Ohm Chanting with Tibetan Singing Bowls (Deep Mantra Meditation)</li>
+              <li>Sfojg=owfE – Le Berger</li>
+              <li>Looking You in Silence – Suso Saiz</li>
+              <li>Sleep in a Warm Room – Kenji Kihara</li>
+              <li>Fr3sh – Kareem Lofty</li>
+              <li>No. 3 – Aphex Twin</li>
+              <li>Luminous – Haruhisa Tanaka</li>
+              <li>Celest – Doon Kanda</li>
+              <li>En Casa de los Abuelos – Un Reve</li>
+              <li>Held Apart – Arca</li>
+              <li>Las Aves se Reúnen en tu Interior – Un Reve</li>
+              <li>El Destello Oculto en las Hojas – Un Reve</li>
+              <li>Forest of Eternity – Depressive Silence</li>
+              <li>Coeur Saignant – Marsen Jules</li>
+              <li>Oeillet Sauvage – Marsen Jules</li>
+              <li>Healing – Kutmah</li>
+              <li>Making of Cyborg – Kenji Kawai</li>
+              <li>警報 – Omar Alejandro</li>
+              <li>不安 – Omar Alejandro</li>
+              <li>Calibrating Senses – Sofie Birch, Johan Caroe</li>
+              <li>Reticent Reminiscence – Christopher Willits, Ryuichi Sakamoto</li>
+              <li>Memory Act – Rival Consoles</li>
+              <li>Violence – Andy Stott</li>
+              <li>New Romantic – Andy Stott</li>
+              <li>Xen – Arca</li>
+              <li>Async (Arca Remix) – Ryuichi Sakamoto</li>
+              <li>Hana – Asa-Chang & Junray</li>
+              <li>Woosah – Dean Blunt</li>
+              <li>Semtex Dub (Kwake Dubs Remix) – Dean Blunt</li>
+              <li>About Breathing – Healion</li>
+              <li>Gimme Some – Weval</li>
+              <li>Manners – Arca</li>
+              <li>It'll Be Just Fine – Weval</li>
+              <li>Apricots – Bicep</li>
+              <li>Flor de Sakura (Neutro Gris Remix) – Rosalía</li>
+              <li>Iced Out (Slowed) – Riley The Musician</li>
+              <li>Kick in the Hell (HellzavIelerJP Remix) – 春ねむり (Haru Nemuri)</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- Ketvoid -->
+      <div class="session" id="session-ketvoid">
+        <details>
+          <summary>ketvoid — recap</summary>
+          <div class="session-media">
+            <video controls playsinline preload="none" data-src="https://attachments.are.na/38646557/8db11f922666dc3da5a3f76fdffe1ad3.mov?1754605258"></video>
+          </div>
+          <div class="tracklist">
+            <h3>tracklist</h3>
+            <ul>
+              <li>1. Gatekeeper – Flames of Displeasure</li>
+              <li>2. Jocelyn Pook – Masked Ball</li>
+              <li>3. Fatima Al Qadiri – Medieval Femme</li>
+              <li>4. Laurel Halo – WOW</li>
+              <li>5. OXHY – Neli Andreeva Chop</li>
+              <li>6. Bergsonist – Faith</li>
+              <li>7. Primitive Art – Elitism</li>
+              <li>8. Chantal – The Realm</li>
+              <li>9. Elite Gymnastics – So Close to Paradise</li>
+              <li>10. The Future Sound of London – Life Forms</li>
+              <li>11. Alma Matris – Ritmo Quimico (acapella)</li>
+              <li>12. Gatekeeper – Forgotten</li>
+              <li>13. Banzai Netpune – Hanayo</li>
+              <li>14. Chris Korda and the Church of Euthanasia – Buy MORE</li>
+              <li>15. AND3 – Doughnut Dollies</li>
+              <li>16. Ultradyne – Iron Age</li>
+              <li>17. FF – I Do It Because I Couldn't Care Less</li>
+              <li>18. Laurent Garnier – Greed</li>
+              <li>19. Acen – Trip to the Moon Pt. 1</li>
+              <li>20. Logo – Bussines Man</li>
+              <li>21. COil – Love Secret Domain</li>
+              <li>22. Friends of Carlotta – Finger F.O.C</li>
+              <li>23. Juan Atkins – The Mission</li>
+              <li>24. Fatima Al Qadiri – D-Medley</li>
+              <li>25. Araab Muzik – Lost in a Maze</li>
+              <li>26. The Body – Wanderings</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- Hod -->
+      <div class="session" id="session-hod">
+        <details>
+          <summary>hod — recap</summary>
+          <div class="session-media">
+            <video controls playsinline preload="none" data-src="https://attachments.are.na/38646584/1de8a101dd32e591fd536552d1cf3edd.mov?1754605376"></video>
+          </div>
+          <div class="tracklist">
+            <h3>tracklist</h3>
+            <ul>
+              <li>1. Foretold – Death In June</li>
+              <li>2. Ay Çürüdü – Anadol</li>
+              <li>3. Ecdysisyphus – Eartheater</li>
+              <li>4. Szechuan – Fatima Al Qadiri</li>
+              <li>5. Shine Marsh – Samuel Organ, L.Cie</li>
+              <li>6. Torment – Dirty K</li>
+              <li>7. gxthgirlpxrty – ÖTENAZI</li>
+              <li>8. Lali – Paddy Free</li>
+              <li>9. Curse – Last Life</li>
+              <li>10. Radiance II – Basic Channel</li>
+              <li>11. New Age – New Scene</li>
+              <li>12. Torn/Enhanced – FAKETHIAS</li>
+              <li>13. "O"rgasm – Hetero-Version – "O"</li>
+              <li>14. Show Me Love (Fabricated Remix) – t.A.T.u., Sven Martin, Domen Vajevec</li>
+              <li>15. Haunting – Greg Beato</li>
+              <li>16. Transperu – Koudlam</li>
+              <li>17. Nine O' Three – Donato Dozzy</li>
+              <li>18. FMRA – Subjected</li>
+              <li>19. Disorder – AX&amp;P, Adam X, Perc</li>
+              <li>20. A Moon Fell On Me – Joey Anderson</li>
+              <li>21. Voices – Neon</li>
+              <li>22. Energy Flash – Joey Beltram</li>
+              <li>23. People Are Still Having Sex – Latour</li>
+              <li>24. Origin – Luke Slater</li>
+              <li>25. Sigil Life – Eartheater</li>
+              <li>26. Avatar (Remastered) – Dead Can Dance</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- Suave -->
+      <div class="session" id="session-suave">
+        <details>
+          <summary>suave — recap</summary>
+          <div class="session-media">
+            <video controls playsinline preload="none" data-src="https://attachments.are.na/38646596/9877550b296a723debeb79ede20a3bf8.mov?1754605490"></video>
+          </div>
+          <div class="tracklist">
+            <h3>tracklist</h3>
+            <ul>
+              <li>1. Overture – Björk</li>
+              <li>2. Tristan &amp; Isolde: Einleitung – Richard Wagner, Edo de Waart</li>
+              <li>3. Unmade – Thom Yorke</li>
+              <li>4. Highschool Lover – Air</li>
+              <li>5. Les marionnettes – Zbigniew Preisner</li>
+              <li>6. White Flag – Dido</li>
+              <li>7. End Credits – Harry Escott</li>
+              <li>8. I’m With You (Always) – Trent Reznor and Atticus Ross</li>
+              <li>9. Bang Bang (My Baby Shot Me Down) – Nancy Sinatra</li>
+              <li>10. Followed – Daniel Lopatin</li>
+              <li>11. And A Colored Sky Colored Grey – Vincent Gallo</li>
+              <li>12. Hey Joe – Charlotte Gainsbourg</li>
+              <li>13. Phantom Thread II – Jonny Greenwood</li>
+              <li>14. Young And Beautiful (Orchestral Version) – Lana Del Rey</li>
+              <li>15. Radiation – Stuart A. Staples</li>
+              <li>16. Erutpar – Robert Levon Been</li>
+              <li>17. Stillness Of The Mind – Firth</li>
+              <li>18. HALCYON + ON + ON – Orbital</li>
+              <li>19. Dragostea Din Tei – O-Zone</li>
+              <li>20. Walk of Fame – Howard Shore</li>
+              <li>21. Sunshine – Rye Rye, M.I.A.</li>
+              <li>22. In My Dreams – ANOHNI</li>
+              <li>23. Under Your Spell – Desire</li>
+              <li>24. Distance (End Credits) – Keegan DeWitt</li>
+              <li>25. Everytime – Britney Spears</li>
+              <li>26. Big Pink Loser – Kai do u love me?, angelspit</li>
+              <li>27. The Jumps – Thom Yorke</li>
+              <li>28. Suicide Underground – Air</li>
+              <li>29. Sabor a Mí – Eydie Gormé, Los Panchos</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- Minena -->
+      <div class="session" id="session-minena">
+        <details>
+          <summary>minena — recap</summary>
+          <div class="session-media">
+            <video controls playsinline preload="none" data-src="https://attachments.are.na/38646606/902c1eb0960b4528db0471ac035e54b1.mov?1754605546"></video>
+          </div>
+          <div class="tracklist">
+            <h3>tracklist</h3>
+            <ul>
+              <li>1. Forevertime Journeys – naran ratan</li>
+              <li>2. Raindrops, Pt. I – Pearson Sound</li>
+              <li>3. Is it Some Devil That Crawls Inside of You? – Ricky Eat Acid</li>
+              <li>4. wreck – Rei Harakami</li>
+              <li>5. Olson – Boards of Canada</li>
+              <li>6. Incoherencia pt. 1 – Rogelio the Illrd</li>
+              <li>7. Fantasy – 90sFlav</li>
+              <li>8. Her Femininineness – Susumu Yokota</li>
+              <li>9. Clouds – Gigi Masin</li>
+              <li>10. While You Doooo – Teebs</li>
+              <li>11. Ur My Bby – Ricky Eat Acid</li>
+              <li>12. braincells – tomcbumps</li>
+              <li>13. Liquid Sound Waves – Harmonious Thelonious</li>
+              <li>14. Boa – Leftlow</li>
+              <li>15. 〒160-0014 Tokyo '82 – 猫シCorp.</li>
+              <li>16. blurred moon – daniel.mp3</li>
+              <li>17. Bass.int – Daniel Aged</li>
+              <li>18. Rain – Ryuichi Sakamoto, Jaques Morelenbaum, David Nadien</li>
+              <li>19. Dust – You'll Never Get to Heaven</li>
+              <li>20. (forever??????????) – glass beach</li>
+              <li>21. あしもとひかる さかのうえ – Kikiyama</li>
+              <li>22. さむくてあったかい、ふゆ〜雪の世界〜 – Kikiyama</li>
+              <li>23. Frutta E Verdura – Whitearmor, Gud</li>
+              <li>24. ghostie – Seb Wildblood, Buddy Love</li>
+              <li>25. From The Seams – Tristan Arp</li>
+              <li>26. Dance PM – Hiroshi Yoshimura</li>
+              <li>27. Sweet – Mansur Brown</li>
+              <li>28. Trois Gymnopedies (First Movement) – Gary Numan</li>
+              <li>29. Baby Boo – Paulie Leparik</li>
+              <li>30. Dill Big Choo – O$VMV$M</li>
+              <li>31. Out of Limbo – Niobe</li>
+              <li>32. Yesterday, 2095 – desert sand feels warm at night</li>
+              <li>33. Dystopian Mall – Incorporeal Visions Deluxe</li>
+              <li>34. Dill Big Choo (alt) – O$VMV$M</li>
+              <li>35. Centered Shell – yes/and</li>
+              <li>36. Blind Aesthetics – Taylor McFerrin</li>
+              <li>37. Movements (Chapter III) – Leon Vynehall</li>
+              <li>38. Five Hundred Miles – Mamman Sani</li>
+              <li>39. Ryan – Ricky Eat Acid</li>
+              <li>40. Cupidwing – Clams Casino</li>
+              <li>41. Daijoubu? – Kidkanevil</li>
+              <li>42. Survivors – Flying Lotus</li>
+              <li>43. Marilyn Set Me Free – Casino Versus Japan</li>
+              <li>44. Loving on Moon – r mccarthy</li>
+              <li>45. Miano Little Miss 1565 – Casino Versus Japan</li>
+              <li>46. Otter Shadows – Bibio</li>
+              <li>47. ラクエン – Yoko Kanno</li>
+              <li>48. Dance (Ambient Version) – Ryuichi Sakamoto</li>
+              <li>49. Touching Myself (Ryuichi Sakamoto Edit) – CFCF</li>
+              <li>50. 2000004 (ambient) – Jessy Lanza</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- PDF de planos -->
+    <section class="plans">
+      <iframe loading="lazy"
+              data-src="https://attachments.are.na/38646487/fac40e883a4b93a6ae5655a76b8c9473.pdf?1754605022"
+              title="planos xcv2"></iframe>
+    </section>
+
+    <!-- Imagen de cierre -->
+    <section class="closing">
+      <img alt="mdtc.xcv2 — cierre" loading="lazy"
+           data-src="https://d2w9rnfcy7mm78.cloudfront.net/38646406/original_be38a13f89e08d72737ed7f24641fee4.jpg?1754604560?bc=0">
+    </section>
+  </div>
+
+  <!-- Lightbox global -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="visor" style="position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);">
+    <figure id="lbFigure" style="margin:0;max-width:96vw;max-height:96vh;display:flex;align-items:center;justify-content:center;border:var(--b1);background:transparent"></figure>
+  </div>
+
+<script>
+  /* ===== idioma ===== */
+  function setLang(lang){
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('.lang').forEach(el=>{
+      el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.language-selector button').forEach(btn=>{
+      const on = btn.textContent===lang;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', on?'true':'false');
+    });
+    document.documentElement.setAttribute('lang', lang);
+  }
+  setLang(localStorage.getItem('lang') || 'es');
+
+  /* ===== mini player ===== */
+  const audio = document.getElementById('motif');
+  const toggle = document.getElementById('playToggle');
+  const iconPath = document.getElementById('iconPath');
+  let playing = false;
+  function setIcon(){ iconPath.setAttribute('d', playing ? 'M8 5 H11 V19 H8 Z M13 5 H16 V19 H13 Z' : 'M8 5 L19 12 L8 19 Z'); }
+  toggle.addEventListener('click', async ()=>{
+    try{ if(!playing){ await audio.play(); playing=true; } else { audio.pause(); playing=false; } setIcon(); }catch(e){}
+  });
+  audio.volume=0.6; audio.loop=true;
+  document.querySelectorAll('video').forEach(v=>{
+    v.addEventListener('play', ()=>{ audio.volume=0.25; });
+    v.addEventListener('pause', ()=>{ audio.volume=0.6; });
+  });
+
+  /* ===== bg video autoplay robusto ===== */
+  (function(){
+    const v=document.getElementById('bgvid'); if(!v) return;
+    v.muted=true; v.setAttribute('muted',''); v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    function tryPlay(){ const p=v.play?.(); if(p&&p.catch) p.catch(()=>arm()); }
+    function arm(){ const r=()=>{ v.play().finally(()=>['touchstart','pointerdown','click'].forEach(ev=>window.removeEventListener(ev,r,{passive:true}))); };
+      ['touchstart','pointerdown','click'].forEach(ev=>window.addEventListener(ev,r,{once:true,passive:true})); }
+    window.addEventListener('load',tryPlay,{once:true});
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) tryPlay(); });
+  })();
+
+  /* ===== lazy loader universal (img, video[data-src], iframe[data-src]) ===== */
+  const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const el=en.target;
+      if(el.dataset && el.dataset.src){
+        if(el.tagName==='VIDEO'){ el.src=el.dataset.src; el.preload='metadata'; el.load(); }
+        else if(el.tagName==='IFRAME'){ el.src=el.dataset.src; }
+        else{ el.src=el.dataset.src; }
+        el.removeAttribute('data-src');
+      }
+      io.unobserve(el);
+    });
+  },{rootMargin:'400px 0px', threshold:.05});
+
+  document.querySelectorAll('img[data-src], video[data-src], iframe[data-src]').forEach(el=>{
+    if(el.tagName==='VIDEO' && !el.poster) el.poster=BLANK;
+    io.observe(el);
+  });
+
+  /* ===== lightbox (img / video) ===== */
+  const lb=document.getElementById('lightbox');
+  const lbFigure=document.getElementById('lbFigure');
+  function openLB(el){
+    lbFigure.innerHTML='';
+    const isVideo = el.tagName==='VIDEO';
+    const src = el.currentSrc || el.getAttribute('src') || el.dataset.src;
+    if(!src) return;
+    const view = document.createElement(isVideo?'video':'img');
+    if(isVideo){
+      view.controls=true; view.autoplay=true; view.loop=true; view.muted=false; view.playsInline=true; view.src=src;
+    }else{ view.alt=''; view.decoding='async'; view.loading='eager'; view.src=src; }
+    view.style.maxWidth='96vw'; view.style.maxHeight='96vh'; view.style.objectFit='contain';
+    lbFigure.appendChild(view);
+    lb.style.display='flex';
+  }
+  function closeLB(){ lb.style.display='none'; lbFigure.innerHTML=''; }
+  lb.addEventListener('click', e=>{ if(e.target===lb) closeLB(); });
+  window.addEventListener('keydown', e=>{ if(lb.style.display!=='flex') return; if(e.key==='Escape') closeLB(); });
+
+  // activar sobre clicks en medios que no estén dentro de enlaces
+  function wireLightbox(){
+    document.querySelectorAll('img, video').forEach(el=>{
+      if(el.closest('a')) return;
+      el.addEventListener('click', ()=>openLB(el), {passive:true});
+    });
+  }
+  wireLightbox();
+
+  // si aparecen nuevos nodos (lazy), re-wire
+  new MutationObserver(()=>wireLightbox()).observe(document.body,{subtree:true,childList:true});
+</script>
 </body>
 </html>

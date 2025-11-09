@@ -1,537 +1,392 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>comprar_atlas.2</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>comprar_atlas.2 — xpan</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fefefe;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow: hidden;
-      cursor: crosshair;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --b1:1px solid var(--line);
+      --pad-x:clamp(16px,4vw,48px); --header-h:64px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --accent:#1860FF; }
     }
-    header img {
-      width: 50px;
-      height: auto;
-      display: block;
+
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-ui);overflow:hidden;cursor:crosshair}
+    img,video{display:block;max-width:100%;height:auto;background:transparent}
+    a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
+    a:hover{border-bottom-color:currentColor}
+
+    /* ===== header ===== */
+    header{position:fixed;top:12px;left:var(--pad-x);z-index:10}
+    header img{width:50px;height:auto;display:block;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    /* ===== layout ===== */
+    .container{
+      position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:calc(var(--header-h) + 24px) var(--pad-x) 72px; max-width:700px; margin:0 auto; z-index:2; text-align:center;
     }
-    .container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 6rem 1rem 6rem;
-      max-width: 700px;
-      margin: auto;
-      z-index: 2;
+
+    .book-media{width:100%; max-width:420px; margin-bottom:1rem; border:var(--b1); object-fit:cover; background:#000}
+    .buy-button{
+      display:inline-block; margin-bottom:1.25rem; font-size:.95rem; text-transform:lowercase;
+      border:var(--b1); padding:.6rem 1.0rem; background:transparent;
     }
-    .book-image {
-      width: 100%;
-      max-width: 380px;
-      height: auto;
-      margin-bottom: 1rem;
-      filter: brightness(0.9) contrast(3.6) opacity(0.3);
-      z-index: 1;
+    .buy-button:hover{background:var(--fg); color:var(--bg)}
+    .hint{font:400 .85rem/1.2 var(--font-ui); color:var(--fg-dim); margin:-.25rem 0 1.25rem}
+
+    .description{font:400 1rem/1.55 var(--font-ui); white-space:pre-wrap; max-width:640px; margin:0 auto 1rem}
+    @media (max-width:600px){
+      .container{padding:calc(var(--header-h) + 12px) var(--pad-x) 56px}
+      .book-media{max-width:300px}
+      .buy-button{font-size:.88rem; padding:.5rem .9rem}
+      .description{font-size:.92rem; line-height:1.45}
     }
-    .buy-button {
-      display: inline-block;
-      margin-bottom: 2rem;
-      text-decoration: none;
-      font-size: 0.95rem;
-      text-transform: lowercase;
-      border: 1px solid #000;
-      padding: 0.6rem 1.2rem;
-      transition: all 0.3s ease;
-      z-index: 2;
-    }
-    .buy-button:hover {
-      background: #000;
-      color: #fff;
-    }
-    .description {
-      font-size: 1rem;
-      line-height: 1.5;
-      text-align: center;
-      white-space: pre-wrap;
-      padding: 0 1rem 2rem;
-      z-index: 2;
-      max-width: 600px;
-    }
-    .floating-names {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-    .name {
-      position: absolute;
-      font-size: 0.85rem;
-      opacity: 0.45;
-      white-space: nowrap;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 4rem 1rem 5rem;
-      }
-      .book-image {
-        max-width: 260px;
-        margin-bottom: 0.5rem;
-      }
-      .description {
-        font-size: 0.85rem;
-        line-height: 1.4;
-      }
-      .buy-button {
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-      }
-    }
-    svg#dynamic-lines line {
-      stroke: black;
-      stroke-width: 0.3;
-      opacity: 0.25;
-    }
+
+    /* ===== fondo dinámico nombres + líneas ===== */
+    .floating-names{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0}
+    .name{position:absolute; font:.85rem/1 var(--font-ui); opacity:.45; white-space:nowrap; color:var(--fg)}
+    svg#dynamic-lines{position:absolute; inset:0}
+    svg#dynamic-lines line{stroke:currentColor; stroke-width:.3; opacity:.25}
+
+    /* ===== idioma rotatorio (contenedor clickeable) ===== */
+    #language-block{user-select:none}
   </style>
 </head>
 <body>
   <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="./xpan.svg" alt="xpan"/>
+    </a>
   </header>
 
+  <!-- fondo dinámico -->
   <div class="floating-names">
-    <svg id="dynamic-lines" width="100%" height="100%" style="position:absolute; top:0; left:0; z-index:-1;"></svg>
+    <svg id="dynamic-lines" width="100%" height="100%"></svg>
   </div>
 
-  <div class="container" id="language-block">
-    <!-- Contenido multilingüe dinámico se inyectará aquí -->
-  </div>
+  <!-- bloque multilenguaje (rotación por click/hover) -->
+  <div class="container" id="language-block"></div>
 
-  
-<script>
+  <script>
+  /* ===== Translations (preservadas) ===== */
   const translations = [
     {
-      lang: "español",
+      lang:"español",
       content: `
-        <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-          comprar atlas.2
-        </a>
-        <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-          * elige tu zona de envío en el siguiente paso
-        </p>
-        <div class="description">
-          atlas.2
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">comprar atlas.2</a>
+        <p class="hint">* elige tu zona de envío en el siguiente paso</p>
+        <div class="description">atlas.2
 
-          “una cartografía coral de la topología conectiva”
+“una cartografía coral de la topología conectiva”
 
-          publicación impresa de xpan  
-          400 páginas
+publicación impresa de xpan
+400 páginas
 
-          $600.00 mxn pesos + envío
-        </div>
+$600.00 mxn pesos + envío</div>
       `
     },
     {
-      lang: "english",
+      lang:"english",
       content: `
-        <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-          buy atlas.2
-        </a>
-        <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-          * select your shipping zone in the next step
-        </p>
-        <div class="description">
-          atlas.2
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">buy atlas.2</a>
+        <p class="hint">* select your shipping zone in the next step</p>
+        <div class="description">atlas.2
 
-          “a coral cartography of the connective topology”
+“a coral cartography of the connective topology”
 
-          printed publication by xpan  
-          400 pages
+printed publication by xpan
+400 pages
 
-          $600.00 mxn + shipping
-        </div>
+$600.00 mxn + shipping</div>
       `
     },
     {
-      lang: "日本語",
+      lang:"日本語",
       content: `
-        <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-          アトラス.2 を購入
-        </a>
-        <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-          * 次のステップで配送地域を選択してください
-        </p>
-        <div class="description">
-          atlas.2
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">アトラス.2 を購入</a>
+        <p class="hint">* 次のステップで配送地域を選択してください</p>
+        <div class="description">atlas.2
 
-          「接続トポロジーのコーラル地図」
+「接続トポロジーのコーラル地図」
 
-          xpan による印刷出版物  
-          全400ページ
+xpan による印刷出版物
+全400ページ
 
-          600メキシコペソ + 配送料
-        </div>
+600メキシコペソ + 配送料</div>
       `
     },
     {
-  lang: "français",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      acheter atlas.2
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * sélectionnez votre zone d’expédition à l’étape suivante
-    </p>
-    <div class="description">
-      atlas.2
+      lang:"français",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">acheter atlas.2</a>
+        <p class="hint">* sélectionnez votre zone d’expédition à l’étape suivante</p>
+        <div class="description">atlas.2
 
-      “une cartographie chorale de la topologie connective”
+« une cartographie chorale de la topologie connective »
 
-      publication imprimée par xpan  
-      400 pages
+publication imprimée par xpan
+400 pages
 
-      600,00 mxn pesos + frais de port
-    </div>
-  `
-},
-{
-  lang: "deutsch",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      atlas.2 kaufen
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * wählen Sie Ihre Versandregion im nächsten Schritt
-    </p>
-    <div class="description">
-      atlas.2
+600,00 mxn + frais de port</div>
+      `
+    },
+    {
+      lang:"deutsch",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">atlas.2 kaufen</a>
+        <p class="hint">* wählen Sie Ihre Versandregion im nächsten Schritt</p>
+        <div class="description">atlas.2
 
-      “eine chorale Kartographie der verbindenden Topologie”
+„eine chorale Kartographie der verbindenden Topologie“
 
-      gedruckte Publikation von xpan  
-      400 Seiten
+gedruckte Publikation von xpan
+400 Seiten
 
-      600,00 mxn pesos + Versand
-    </div>
-  `
-},
-{
-  lang: "italiano",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      acquista atlas.2
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * seleziona la tua zona di spedizione nel passaggio successivo
-    </p>
-    <div class="description">
-      atlas.2
+600,00 mxn + Versand</div>
+      `
+    },
+    {
+      lang:"italiano",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">acquista atlas.2</a>
+        <p class="hint">* seleziona la tua zona di spedizione nel passaggio successivo</p>
+        <div class="description">atlas.2
 
-      “una cartografia corale della topologia connettiva”
+« una cartografia corale della topologia connettiva »
 
-      pubblicazione stampata da xpan  
-      400 pagine
+pubblicazione stampata da xpan
+400 pagine
 
-      600,00 mxn pesos + spedizione
-    </div>
-  `
-},
-{
-  lang: "português",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      comprar atlas.2
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * selecione sua região de envio na próxima etapa
-    </p>
-    <div class="description">
-      atlas.2
+600,00 mxn + spedizione</div>
+      `
+    },
+    {
+      lang:"português",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">comprar atlas.2</a>
+        <p class="hint">* selecione sua região de envio na próxima etapa</p>
+        <div class="description">atlas.2
 
-      “uma cartografia coral da topologia conectiva”
+“uma cartografia coral da topologia conectiva”
 
-      publicação impressa por xpan  
-      400 páginas
+publicação impressa por xpan
+400 páginas
 
-      R$600,00 mxn + frete
-    </div>
-  `
-},
-{
-  lang: "中文",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      购买 atlas.2
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * 请在下一步选择您的送货地区
-    </p>
-    <div class="description">
-      atlas.2
+600,00 mxn + frete</div>
+      `
+    },
+    {
+      lang:"中文",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">购买 atlas.2</a>
+        <p class="hint">* 请在下一步选择您的送货地区</p>
+        <div class="description">atlas.2
 
-      “连接拓扑的合唱式地图绘制”
+“连接拓扑的合唱式地图绘制”
 
-      xpan 出版的印刷刊物  
-      共400页
+xpan 印刷出版物
+400 页
 
-      600.00 墨西哥比索 + 运费
-    </div>
-  `
-},
-{
-  lang: "한국어",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      atlas.2 구매하기
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * 다음 단계에서 배송 지역을 선택하세요
-    </p>
-    <div class="description">
-      atlas.2
+600.00 MXN + 运费</div>
+      `
+    },
+    {
+      lang:"한국어",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">atlas.2 구매하기</a>
+        <p class="hint">* 다음 단계에서 배송 지역을 선택하세요</p>
+        <div class="description">atlas.2
 
-      “연결 위상의 합창 지도”
+“연결 위상의 합창 지도”
 
-      xpan의 인쇄 출판물  
-      총 400쪽
+xpan 인쇄 간행물
+총 400쪽
 
-      600.00 MXN + 배송비
-    </div>
-  `
-},
-{
-  lang: "العربية",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      شراء atlas.2
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * يرجى اختيار منطقتك للشحن في الخطوة التالية
-    </p>
-    <div class="description" dir="rtl">
-      أطلس.2
+600.00 MXN + 배송비</div>
+      `
+    },
+    {
+      lang:"العربية",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">شراء atlas.2</a>
+        <p class="hint">* يرجى اختيار منطقتك للشحن في الخطوة التالية</p>
+        <div class="description" dir="rtl">atlas.2
 
-      “خريطة كورالية لطوبولوجيا الاتصال”
+« خريطة كورالية لطوبولوجيا الاتصال »
 
-      منشور مطبوع من xpan  
-      ٤٠٠ صفحة
+منشور مطبوع من xpan
+٤٠٠ صفحة
 
-      600.00 بيزو مكسيكي + الشحن
-    </div>
-  `
-},
-{
-  lang: "हिन्दी",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      atlas.2 खरीदें
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * अगले चरण में अपना शिपिंग क्षेत्र चुनें
-    </p>
-    <div class="description">
-      atlas.2
+600.00 بيزو مكسيكي + الشحن</div>
+      `
+    },
+    {
+      lang:"हिन्दी",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">atlas.2 खरीदें</a>
+        <p class="hint">* अगले चरण में अपना शिपिंग क्षेत्र चुनें</p>
+        <div class="description">atlas.2
 
-      “कनेक्टिव टोपोलॉजी की एक कोरल मानचित्रण”
+“कनेक्टिव टोपोलॉजी की एक कोरल मानचित्रण”
 
-      xpan द्वारा मुद्रित प्रकाशन  
-      400 पृष्ठ
+xpan द्वारा मुद्रित प्रकाशन
+400 पृष्ठ
 
-      ₹600.00 mxn + शिपिंग
-    </div>
-  `
-},
-{
-  lang: "русский",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      купить atlas.2
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * выберите ваш регион доставки на следующем этапе
-    </p>
-    <div class="description">
-      atlas.2
+₹600.00 MXN + शिपिंग</div>
+      `
+    },
+    {
+      lang:"русский",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">купить atlas.2</a>
+        <p class="hint">* выберите ваш регион доставки на следующем этапе</p>
+        <div class="description">atlas.2
 
-      “хоровая картография связной топологии”
+« хоровая картография связной топологии »
 
-      печатное издание от xpan  
-      400 страниц
+печатное издание от xpan
+400 страниц
 
-      600.00 мексиканских песо + доставка
-    </div>
-  `
-},
-{
-  lang: "türkçe",
-  content: `
-    <img class="book-image" src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189" alt="atlas.2" />
-    <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" class="buy-button">
-      atlas.2 satın al
-    </a>
-    <p style="font-size: 0.85rem; opacity: 0.6; margin-top: -1rem; margin-bottom: 1.5rem;">
-      * sonraki adımda gönderim bölgenizi seçin
-    </p>
-    <div class="description">
-      atlas.2
+600.00 MXN + доставка</div>
+      `
+    },
+    {
+      lang:"türkçe",
+      content: `
+        <video class="book-media" playsinline muted loop preload="metadata" data-src="https://attachments.are.na/36556912/8e2544481f953ad6982d68c4139a8494.mov?1746762189"></video>
+        <a href="https://buy.stripe.com/6oE5nh92N9EH2hWfYY" target="_blank" rel="noopener" class="buy-button">atlas.2 satın al</a>
+        <p class="hint">* sonraki adımda gönderim bölgenizi seçin</p>
+        <div class="description">atlas.2
 
-      “bağlayıcı topolojinin koro haritası”
+“bağlayıcı topolojinin koro haritası”
 
-      xpan tarafından basılı yayın  
-      400 sayfa
+xpan tarafından basılı yayın
+400 sayfa
 
-      600.00 mxn pesos + kargo
-    </div>
-  `
-}
+600.00 MXN + kargo</div>
+      `
+    }
   ];
 
   const container = document.getElementById("language-block");
   let current = 0;
 
-  function renderLanguage() {
+  function renderLanguage(){
     container.innerHTML = translations[current].content;
+    // lazy para el video del bloque
+    const v = container.querySelector('.book-media');
+    if(v && v.dataset.src){
+      v.src = v.dataset.src; v.removeAttribute('data-src');
+      const play = ()=> v.play().catch(()=>{});
+      v.addEventListener('canplay', play, {once:true}); play();
+    }
   }
 
-  container.addEventListener("click", () => {
-    current = (current + 1) % translations.length;
-    renderLanguage();
-  });
-
-  container.addEventListener("mouseenter", () => {
-    if (window.matchMedia("(hover: hover)").matches) {
-      current = (current + 1) % translations.length;
-      renderLanguage();
-    }
-  });
+  container.addEventListener("click", () => { current = (current + 1) % translations.length; renderLanguage(); });
+  container.addEventListener("mouseenter", () => { if (matchMedia("(hover: hover)").matches){ current = (current + 1) % translations.length; renderLanguage(); } });
 
   renderLanguage();
-</script>
+  </script>
 
-<script>
+  <script>
+  /* ===== fondo — nombres flotantes + líneas dinámicas ===== */
   const rawNames = [
-    "camila kei", "can can press", "chelsea alcérreca", "blackhaine / archie finch",
-    "lllllllllll", "frnflrrn", "hakim mnasri", "hidden garden", "jiji", "kaneda",
-    "krystal paniagua", "h1nase", "kevin linares", "lag switch", "zoo as zoo",
-    "lucia serrano machado", "gio peiro", "gogy", "gustavo martinez",
-    "anna kalinina / polina tarasova / alisa dyundik", "asahi jin", "victor barragan",
-    "corridos ketamina", "friendsindifferentareacodes / nthedude.", "mika ben amar",
-    "kyo jwa", "arno bouchard / 16071.9969", "gimena bustamante domínguez",
-    "ines villoro", "miracle fan", "lalin vva", "lorenza molina", "millennium actress",
-    "dallae", "emiliano danis", "escali l.", "paola castelli bugna", "philipp henri kern",
-    "rafaello zeloncini", "steph barragán", "tsutomu yamagata by zen photo gallery",
-    "maria josé cruz", "cch", "danna rangel", "eli pastore", "marie hazard",
-    "fernanda sánchez yerena", "nicolas ballet", "yang seung-woo by zen photo gallery",
-    "miguel reyes", "pepe islas", "msh", "ttt400", "luis arenas", "tot",
-    "saúl milla de león", "tomas altamirano", "samantha rue llorente villegas",
-    "tommaso posch", "emilíanio valdez", "marta espinosa", "héctor aguilera gavica",
-    "la sala de té (layla fassa y guillermo martínez de velasco)", "adrian rosas",
-    "buried deep / milos mihajlov", "francis kanai"
+    "camila kei","can can press","chelsea alcérreca","blackhaine / archie finch",
+    "lllllllllll","frnflrrn","hakim mnasri","hidden garden","jiji","kaneda",
+    "krystal paniagua","h1nase","kevin linares","lag switch","zoo as zoo",
+    "lucia serrano machado","gio peiro","gogy","gustavo martinez",
+    "anna kalinina / polina tarasova / alisa dyundik","asahi jin","victor barragan",
+    "corridos ketamina","friendsindifferentareacodes / nthedude.","mika ben amar",
+    "kyo jwa","arno bouchard / 16071.9969","gimena bustamante domínguez",
+    "ines villoro","miracle fan","lalin vva","lorenza molina","millennium actress",
+    "dallae","emiliano danis","escali l.","paola castelli bugna","philipp henri kern",
+    "rafaello zeloncini","steph barragán","tsutomu yamagata by zen photo gallery",
+    "maria josé cruz","cch","danna rangel","eli pastore","marie hazard",
+    "nicolas ballet","yang seung-woo by zen photo gallery","miguel reyes","pepe islas",
+    "msh","ttt400","luis arenas","tot","saúl milla de león","tomas altamirano",
+    "samantha rue llorente villegas","tommaso posch","emilíanio valdez","marta espinosa",
+    "héctor aguilera gavica","la sala de té (layla fassa y guillermo martínez de velasco)",
+    "adrian rosas","buried deep / milos mihajlov","francis kanai"
   ];
 
-  const containerNames = document.querySelector(".floating-names");
+  const namesLayer = document.querySelector(".floating-names");
   const canvas = document.getElementById("dynamic-lines");
-  const nodes = [];
-  let nextLineUpdate = Date.now();
-  let nextDelay = 100 + Math.random() * 500;
-  let currentLines = [];
+  const nodes = []; let currentLines = []; let nextTick = performance.now()+300;
 
-  rawNames.forEach(name => {
+  rawNames.forEach(name=>{
     const el = document.createElement("div");
     el.className = "name";
     el.textContent = name;
-    containerNames.appendChild(el);
-
-    const node = {
+    namesLayer.appendChild(el);
+    nodes.push({
       el,
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6
-    };
-
-    nodes.push(node);
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
+      vx:(Math.random()-.5)*0.6,
+      vy:(Math.random()-.5)*0.6
+    });
   });
 
-  function animate() {
-    nodes.forEach(n => {
-      n.x += n.vx;
-      n.y += n.vy;
-      if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
-      if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
-      n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
-    });
-
-    const now = Date.now();
-    if (now >= nextLineUpdate) {
-      generateNewLines();
-      nextDelay = 100 + Math.random() * 500;
-      nextLineUpdate = now + nextDelay;
+  function step(){
+    const t = performance.now();
+    // mover
+    for(const n of nodes){
+      n.x += n.vx; n.y += n.vy;
+      if(n.x<0||n.x>innerWidth) n.vx*=-1;
+      if(n.y<0||n.y>innerHeight) n.vy*=-1;
+      n.el.style.transform = `translate(${n.x}px,${n.y}px)`;
     }
-
-    redrawCurrentLines();
-    requestAnimationFrame(animate);
-  }
-
-  function generateNewLines() {
-    currentLines = [];
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        if (Math.random() < 0.1) {
-          currentLines.push([nodes[i], nodes[j]]);
+    // regenerar líneas
+    if(t >= nextTick){
+      currentLines.length = 0;
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+          if(Math.random()<0.10) currentLines.push([nodes[i],nodes[j]]);
         }
       }
+      nextTick = t + 100 + Math.random()*500;
     }
-  }
-
-  function getNodeCenter(node) {
-    const rect = node.el.getBoundingClientRect();
-    return [node.x + rect.width / 2, node.y + rect.height / 2];
-  }
-
-  function redrawCurrentLines() {
-    canvas.innerHTML = '';
-    currentLines.forEach(([a, b]) => {
-      const [x1, y1] = getNodeCenter(a);
-      const [x2, y2] = getNodeCenter(b);
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", x1);
-      line.setAttribute("y1", y1);
-      line.setAttribute("x2", x2);
-      line.setAttribute("y2", y2);
+    // pintar
+    canvas.innerHTML='';
+    for(const [a,b] of currentLines){
+      const ra = a.el.getBoundingClientRect();
+      const rb = b.el.getBoundingClientRect();
+      const x1 = a.x + ra.width/2, y1 = a.y + ra.height/2;
+      const x2 = b.x + rb.width/2, y2 = b.y + rb.height/2;
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+      line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+      line.setAttribute('stroke','currentColor');
+      line.setAttribute('stroke-width','.3'); line.setAttribute('opacity','.25');
       canvas.appendChild(line);
-    });
+    }
+    requestAnimationFrame(step);
   }
+  requestAnimationFrame(step);
 
-  animate();
-</script>
-
+  addEventListener('resize', ()=>{ /* nada especial; usamos innerWidth/innerHeight en cada frame */ }, {passive:true});
+  </script>
 </body>
 </html>
