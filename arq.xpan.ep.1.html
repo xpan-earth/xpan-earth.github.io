@@ -1,259 +1,273 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan.ep.1 — arquitectura</title>
-  <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-    }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
-    }
-    header img {
-      width: 50px;
-      height: auto;
-    }
-    .language-selector {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 20;
-      font-family: 'Times New Roman', serif;
-      font-size: 0.9rem;
-      text-transform: lowercase;
-    }
-    .language-selector button {
-      background: none;
-      border: none;
-      margin-left: 0.5rem;
-      cursor: pointer;
-      color: #000;
-      opacity: 0.5;
-      transition: opacity 0.2s ease;
-    }
-    .language-selector button.active,
-    .language-selector button:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 7rem auto 4rem;
-      padding: 0 3rem;
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      text-transform: lowercase;
-    }
-    .meta {
-      font-size: 0.85rem;
-      opacity: 0.5;
-      font-style: italic;
-      margin-bottom: 1.5rem;
-    }
-    .description {
-      font-size: 1rem;
-      line-height: 1.6;
-      max-width: 700px;
-      margin-bottom: 2rem;
-    }
-    .glossary-link {
-      text-decoration: underline;
-      cursor: pointer;
-      color: inherit;
-      transition: background 0.2s ease;
-    }
-    .glossary-link:hover {
-      background: #f0f0f0;
-    }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .gallery img {
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      object-fit: cover;
-    }
-    .pdf-embed {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .pdf-embed iframe {
-      width: 100%;
-      height: 500px;
-      border: none;
-      border-radius: 4px;
-    }
-    @media (max-width: 768px) {
-      .container {
-        margin-top: 6rem;
-        padding: 0 1.5rem;
-      }
-      .pdf-embed {
-        grid-template-columns: 1fr;
-      }
-      .pdf-embed iframe {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 4 / 3;
-      }
-    }
-  </style>
-  <script src="/assets/js/media-proxy.js" defer></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>xpan.ep.1 — arquitectura</title>
 
+<style>
+  :root{
+    --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+    --line:#2A2E31; --line-weak:#1A1D20;
+    --accent:#1860FF; --warn:#F9A800;
+    --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    --maxw:1120px; --g:24px; --g2:32px;
+    --pad-x: clamp(16px,4vw,48px); --header-h:64px;
+    --b1:1px solid var(--line); --b0:1px solid var(--line-weak);
+  }
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+      --line:#D9DEE2; --line-weak:#ECEFF2; --accent:#1860FF;
+    }
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+  a:hover{border-color:var(--accent)}
+  img,video{max-width:100%; height:auto; display:block}
+
+  /* Header */
+  header{
+    position:fixed; top:12px; left:var(--pad-x); height:var(--header-h);
+    display:flex; align-items:center; z-index:100;
+  }
+  header a{display:inline-flex; align-items:center}
+  header img{
+    width:48px; height:auto;
+    mix-blend-mode:difference;         /* inversión óptica por fondo */
+    filter: invert(1) saturate(100%);   /* fallback para dark */
+  }
+  @media (prefers-color-scheme:light){
+    header img{ filter:none; }          /* en light se ve negro sobre blanco por difference */
+  }
+
+  /* Selector de idioma */
+  .language-selector{
+    position:fixed; top:12px; right:var(--pad-x); z-index:120;
+    display:flex; gap:8px; align-items:center; text-transform:lowercase;
+  }
+  .language-selector button{
+    -webkit-appearance:none; appearance:none;
+    font:600 .85rem/1 var(--font-ui);
+    color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+    padding:6px 10px; cursor:pointer; letter-spacing:.2px;
+    transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+  /* Layout */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 48px; padding:0 var(--pad-x)}
+
+  h1{font:700 1.35rem/1.25 var(--font-ui); text-transform:lowercase; margin:0 0 6px}
+  .meta{font:400 .9rem/1.5 var(--font-ui); color:var(--fg-dim); margin:0 0 24px}
+  .description{font:400 1rem/1.6 var(--font-ui); max-width:720px}
+  .description a{color:inherit; border-bottom:1px solid var(--fg-dim)}
+  .description a:hover{border-color:var(--fg)}
+
+  /* Galería */
+  .gallery{
+    max-width:var(--maxw); margin:32px auto; padding:0 var(--pad-x);
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--g);
+  }
+  .gallery img{
+    border:var(--b1); border-radius:0; background:#0C0D0F;
+    object-fit:cover; aspect-ratio:4/3;
+  }
+
+  /* PDFs: objeto con borde, sin nota */
+  .pdf-embed{
+    max-width:var(--maxw); margin:16px auto 64px; padding:0 var(--pad-x);
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(360px,1fr)); gap:var(--g2);
+  }
+  .pdf-card{display:flex; flex-direction:column; border:var(--b1); background:transparent}
+  .pdf-card object{width:100%; aspect-ratio:4/3; border:none; background:#0C0D0F}
+  .pdf-actions{
+    display:flex; gap:12px; align-items:center; justify-content:space-between;
+    padding:10px 12px; border-top:var(--b0); font:400 .85rem/1.4 var(--font-ui); color:var(--fg-dim);
+  }
+  .pdf-actions a{color:var(--fg); border:1px solid var(--line); padding:6px 10px; text-decoration:none}
+
+  /* Lightbox overlay */
+  #xpan-lightbox{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.55); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
+  #xpan-lightbox.open{display:flex}
+  #xpan-lightbox .sheet{position:relative; max-width:100vw; max-height:100vh; overflow:hidden; transform:scale(.985); opacity:0; transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}
+  #xpan-lightbox.open .sheet{transform:scale(1); opacity:1}
+  #xpan-lightbox img,#xpan-lightbox video{display:block; width:auto; height:auto; max-width:100vw; max-height:100vh; object-fit:contain; margin:0; background:transparent}
+  html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
+
+  @media (max-width:768px){
+    header img{width:42px}
+    .container{margin:calc(var(--header-h) + 28px) auto 40px}
+    .gallery{gap:16px}
+    .pdf-embed{grid-template-columns:1fr; gap:20px}
+  }
+</style>
+
+<script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
   <header>
-    <a href="https://xpan.earth" target="_blank">
-      <img src="xpan.svg" alt="xpan logo" />
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="xpan.svg" alt="xpan" />
     </a>
   </header>
-  <div class="language-selector">
-    <button onclick="setLang('es')" class="active">es</button>
-    <button onclick="setLang('en')">en</button>
-    <button onclick="setLang('fr')">fr</button>
-    <button onclick="setLang('jp')">jp</button>
+
+  <div class="language-selector" role="tablist" aria-label="selector de idioma">
+    <button type="button" onclick="setLang('es')" class="active" aria-pressed="true" role="tab">es</button>
+    <button type="button" onclick="setLang('en')" aria-pressed="false" role="tab">en</button>
+    <button type="button" onclick="setLang('fr')" aria-pressed="false" role="tab">fr</button>
+    <button type="button" onclick="setLang('jp')" aria-pressed="false" role="tab">jp</button>
   </div>
+
   <div class="container">
     <!-- español -->
     <div class="lang lang-es">
       <h1>xpan.ep.1 [espacio público uno]</h1>
       <div class="meta">octubre 2024 — ciudad de méxico</div>
       <div class="description">
- xpan.ep.1 es un sistema modular ubicado en roma norte, ciudad de méxico. diseñado, desarrollado y construido por xpan, fue la primera iteración del sistema de poros. abrió el 17 de octubre del 2024 como punto de partida para una serie de <a href="mdtc.xpan.ep.1.index.html" style="color:black;"><u><i>activaciones</i></u></a> vinculadas a la topología conectiva.
-
-    <br><br>
-
-    la estructura se compone de 61 bastidores de acero y aluminio, organizados en una retícula que define el esqueleto espacial. una envolvente translúcida de policarbonato perforado genera 436 poros en muros y techo, operando como interfaz activa entre interior y exterior.
-
-    <br><br>
-
-    el diseño de iluminación utiliza el policarbonato como pantalla difusora, modulando la percepción espacial y la intensidad lumínica según la configuración. el sistema responde a distintas densidades, ritmos y formas de ocupación, alojando eventos, encuentros y ensamblajes producidos por la comunidad extendida de xpan.
-        </div>
+        xpan.ep.1 es un sistema modular ubicado en roma norte, ciudad de méxico. diseñado, desarrollado y construido por xpan, fue la primera iteración del sistema de poros. abrió el 17 de octubre del 2024 como punto de partida para una serie de <a href="mdtc.xpan.ep.1.index.html"><i>activaciones</i></a> vinculadas a la topología conectiva.
+        <br><br>
+        la estructura se compone de 61 bastidores de acero y aluminio, organizados en una retícula que define el esqueleto espacial. una envolvente translúcida de policarbonato perforado genera 436 poros en muros y techo, operando como interfaz activa entre interior y exterior.
+        <br><br>
+        el diseño de iluminación utiliza el policarbonato como pantalla difusora, modulando la percepción espacial y la intensidad lumínica según la configuración. el sistema responde a distintas densidades, ritmos y formas de ocupación, alojando eventos, encuentros y ensamblajes producidos por la comunidad extendida de xpan.
+      </div>
     </div>
+
     <!-- english -->
-    <div class="lang lang-en" style="display: none;">
+    <div class="lang lang-en" style="display:none;">
       <h1>xpan.ep.1 [public space one]</h1>
       <div class="meta">october 2024 — mexico city</div>
       <div class="description">
-        xpan.ep.1 is a modular system located in roma norte, mexico city. designed, developed, and built by xpan, it was the first iteration of the porous system. it opened on october 17, 2024, as a starting point for a series of <a href="mdtc.xpan.ep.1.index.html" style="color:black;"><u><i>activations</i></u></a> linked to the connective topology.
-
-<br><br>
-
-the structure is composed of 61 frames made of steel and aluminum, arranged in a grid that defines the spatial skeleton. a translucent envelope of perforated polycarbonate generates 436 pores across walls and ceiling, operating as an active interface between interior and exterior.
-
-<br><br>
-
-the lighting design uses the polycarbonate as a diffusing screen, modulating spatial perception and light intensity according to configuration. the system adapts to varying densities, rhythms, and modes of occupation, hosting events, gatherings, and assemblies produced by xpan's extended community.
+        xpan.ep.1 is a modular system located in roma norte, mexico city. designed, developed, and built by xpan, it was the first iteration of the porous system. it opened on october 17, 2024, as a starting point for a series of <a href="mdtc.xpan.ep.1.index.html"><i>activations</i></a> linked to the connective topology.
+        <br><br>
+        the structure is composed of 61 frames made of steel and aluminum, arranged in a grid that defines the spatial skeleton. a translucent envelope of perforated polycarbonate generates 436 pores across walls and ceiling, operating as an active interface between interior and exterior.
+        <br><br>
+        the lighting design uses the polycarbonate as a diffusing screen, modulating spatial perception and light intensity according to configuration. the system adapts to varying densities, rhythms, and modes of occupation, hosting events, gatherings, and assemblies produced by xpan's extended community.
       </div>
     </div>
+
     <!-- français -->
-    <div class="lang lang-fr" style="display: none;">
+    <div class="lang lang-fr" style="display:none;">
       <h1>xpan.ep.1 [espace public un]</h1>
       <div class="meta">octobre 2024 — mexico</div>
       <div class="description">
-        xpan.ep.1 est un système modulaire situé à roma norte, mexico. conçu, développé et construit par xpan, il constitue la première itération du système de pores. il a ouvert ses portes le 17 octobre 2024 comme point de départ pour une série <a href="mdtc.xpan.ep.1.index.html" style="color:black;"><u><i>d'activations</i></u></a> liées à la topologie connective.
-
-<br><br>
-
-la structure se compose de 61 cadres en acier et aluminium, organisés en une grille définissant le squelette spatial. une enveloppe translucide en polycarbonate perforé génère 436 pores dans les murs et le plafond, agissant comme une interface active entre l’intérieur et l’extérieur.
-
-<br><br>
-
-le dispositif d’éclairage utilise le polycarbonate comme écran diffuseur, modulant la perception spatiale et l’intensité lumineuse selon la configuration. le système répond à diverses densités, rythmes et formes d’occupation, accueillant événements, rencontres et assemblages produits par la communauté étendue de xpan.
+        xpan.ep.1 est un système modulaire situé à roma norte, mexico. conçu, développé et construit par xpan, il constitue la première itération du système de pores. il a ouvert ses portes le 17 octobre 2024 comme point de départ pour une série <a href="mdtc.xpan.ep.1.index.html"><i>d'activations</i></a> liées à la topologie connective.
+        <br><br>
+        la structure se compose de 61 cadres en acier et aluminium, organisés en une grille définissant le squelette spatial. une enveloppe translucide en polycarbonate perforé génère 436 pores dans les murs et le plafond, agissant comme une interface active entre l’intérieur et l’extérieur.
+        <br><br>
+        le dispositif d’éclairage utilise le polycarbonate comme écran diffuseur, modulant la perception spatiale et l’intensité lumineuse selon la configuration. le système répond à diverses densités, rythmes et formes d’occupation, accueillant événements, rencontres et assemblages produits par la communauté étendue de xpan.
       </div>
     </div>
+
     <!-- 日本語 -->
-    <div class="lang lang-jp" style="display: none;">
+    <div class="lang lang-jp" style="display:none;">
       <h1>xpan.ep.1［パブリックスペース１］</h1>
       <div class="meta">2024年10月 — メキシコシティ</div>
       <div class="description">
-        xpan.ep.1は、メキシコシティのローマ・ノルテに位置するモジュール型システムです。xpanによって設計・開発・施工され、ポーラスシステムの最初の実装として2024年10月17日にオープンしました。これはトポロジー・コネクティブに連動した<a href="mdtc.xpan.ep.1.index.html" style="color:black;"><u><i>アクティベーション</i></u></a>の連続の起点として機能します。
-
-<br><br>
-
-構造体はスチールとアルミニウム製のフレーム61本で構成され、空間的骨格を定義するグリッドとして配置されています。半透明のポリカーボネート被膜には壁と天井に合計436個のポアが施され、内外を接続するインターフェースとして機能します。
-
-<br><br>
-
-照明設計ではポリカーボネートを拡散スクリーンとして活用し、構成に応じて空間認識と光強度を調整します。このシステムはさまざまな密度、リズム、使用形態に対応し、xpanの拡張されたコミュニティによるイベントや集合、構築的介入を受け入れます。
+        xpan.ep.1は、メキシコシティのローマ・ノルテに位置するモジュール型システムです。xpanによって設計・開発・施工され、ポーラスシステムの最初の実装として2024年10月17日にオープンしました。これはトポロジー・コネクティブに連動した<a href="mdtc.xpan.ep.1.index.html"><i>アクティベーション</i></a>の連続の起点として機能します。
+        <br><br>
+        構造体はスチールとアルミニウム製のフレーム61本で構成され、空間的骨格を定義するグリッドとして配置されています。半透明のポリカーボネート被膜には壁と天井に合計436個のポアが施され、内外を接続するインターフェースとして機能します。
+        <br><br>
+        照明設計ではポリカーボネートを拡散スクリーンとして活用し、構成に応じて空間認識と光強度を調整します。このシステムはさまざまな密度、リズム、使用形態に対応し、xpanの拡張されたコミュニティによるイベントや集合、構築的介入を受け入れます。
       </div>
     </div>
-</div>
-
-
-    <!-- Galería -->
-
-    <div class="gallery">
-      <!-- Imágenes principales -->
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792475/original_7490285aa05acdab621f22ba6c1e429f.jpg?1747625341" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792469/original_8d03afe9f867abc31de44b6108ad445a.jpg?1747625338" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792466/original_2ae3f0c655beb094434461d91e86d2bf.jpg?1747625336" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792458/original_201d055b783aa4a610e329a23fcc0968.jpg?1747625331" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794123/original_5a43036d33a9ac72aed7a14c1450f68c.jpg?1747633367" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794120/original_61b8534028a7c86a88ee95950a9ef07c.jpg?1747633366" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794119/original_e99bc8ad613c89a09f6dbc0aaee5e628.jpg?1747633364" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794117/original_9b78c0133d9714cf1538ee3a11f536f6.jpg?1747633364" />
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363" />
-    </div>
-    <!-- PDF -->
-
-  <div class="pdf-embed">
-      <iframe src="https://attachments.are.na/36794273/31c710cbdc2ca30c9fb66638d4ea224c.pdf?1747634363"></iframe>
-      <iframe src="https://attachments.are.na/36794272/d62dd6c04e7afd32b9317e3798c2b589.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794271/3f84529d746199ed84c4ccf3f5dcc043.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794269/36aa8995a7e51e49b6ee28669d8b783f.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794270/a20a13bd08470b5e6bb9b8d96c62d68a.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794268/3cc3bdcfd126b910503e64b43e963ee5.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794267/976ea063e02863c0d51f60d1af3c902d.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794265/04709d629c5e29feba815f190a40c651.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794266/c503854d438a9ed3809b6abc6eb15d71.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794264/caa14af2f0df80e0a067bf62b647539d.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794263/6c9ea89fdd12929c4b482143c747222d.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794262/ea4c211b279b3116e03245af883bfc40.pdf?1747634362"></iframe>
-      <iframe src="https://attachments.are.na/36794261/f6b8556bfe618d573690d5d418ad15d5.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794260/1952c52ffb4c6c8dae33986e6a09641f.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794259/684a0928bb0e5062f3fa24f448a2c33c.pdf?1747634361"></iframe>
-      <iframe src="https://attachments.are.na/36794258/20fd12f33e0eb2d4b67f399b4996cd11.pdf?1747634360"></iframe>
-      <iframe src="https://attachments.are.na/36794257/b3bad571ea513bc4dd52af01b3250614.pdf?1747634361"></iframe>
-    </div>
   </div>
+
+  <!-- Galería -->
+  <div class="gallery">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792475/original_7490285aa05acdab621f22ba6c1e429f.jpg?1747625341" alt="xpan.ep.1 — vista 1" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341" alt="xpan.ep.1 — vista 2" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340" alt="xpan.ep.1 — vista 3" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339" alt="xpan.ep.1 — vista 4" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792469/original_8d03afe9f867abc31de44b6108ad445a.jpg?1747625338" alt="xpan.ep.1 — vista 5" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336" alt="xpan.ep.1 — vista 6" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338" alt="xpan.ep.1 — vista 7" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792466/original_2ae3f0c655beb094434461d91e86d2bf.jpg?1747625336" alt="xpan.ep.1 — vista 8" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36792458/original_201d055b783aa4a610e329a23fcc0968.jpg?1747625331" alt="xpan.ep.1 — vista 9" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794123/original_5a43036d33a9ac72aed7a14c1450f68c.jpg?1747633367" alt="xpan.ep.1 — vista 10" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794120/original_61b8534028a7c86a88ee95950a9ef07c.jpg?1747633366" alt="xpan.ep.1 — vista 11" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794119/original_e99bc8ad613c89a09f6dbc0aaee5e628.jpg?1747633364" alt="xpan.ep.1 — vista 12" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794117/original_9b78c0133d9714cf1538ee3a11f536f6.jpg?1747633364" alt="xpan.ep.1 — vista 13" loading="lazy" decoding="async">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363" alt="xpan.ep.1 — vista 14" loading="lazy" decoding="async">
+  </div>
+
+  <!-- PDFs sin nota -->
+  <div class="pdf-embed" id="pdfGrid">
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794273/31c710cbdc2ca30c9fb66638d4ea224c.pdf?1747634363"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794272/d62dd6c04e7afd32b9317e3798c2b589.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794271/3f84529d746199ed84c4ccf3f5dcc043.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794269/36aa8995a7e51e49b6ee28669d8b783f.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794270/a20a13bd08470b5e6bb9b8d96c62d68a.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794268/3cc3bdcfd126b910503e64b43e963ee5.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794267/976ea063e02863c0d51f60d1af3c902d.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794265/04709d629c5e29feba815f190a40c651.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794266/c503854d438a9ed3809b6abc6eb15d71.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794264/caa14af2f0df80e0a067bf62b647539d.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794263/6c9ea89fdd12929c4b482143c747222d.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794262/ea4c211b279b3116e03245af883bfc40.pdf?1747634362"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794261/f6b8556bfe618d573690d5d418ad15d5.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794260/1952c52ffb4c6c8dae33986e6a09641f.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794259/684a0928bb0e5062f3fa24f448a2c33c.pdf?1747634361"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794258/20fd12f33e0eb2d4b67f399b4996cd11.pdf?1747634360"></div>
+    <div class="pdf-card" data-pdf="https://attachments.are.na/36794257/b3bad571ea513bc4dd52af01b3250614.pdf?1747634361"></div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de medios"><div class="sheet"></div></div>
+
   <script>
-    function setLang(lang) {
+    function setLang(lang){
       localStorage.setItem('lang', lang);
-      document.querySelectorAll('.lang').forEach(el => {
+      document.querySelectorAll('.lang').forEach(el=>{
         el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
       });
-      document.querySelectorAll('.language-selector button').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent === lang);
+      document.querySelectorAll('.language-selector button').forEach(btn=>{
+        const active = btn.textContent === lang;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
+      document.documentElement.setAttribute('lang', lang);
     }
-    const savedLang = localStorage.getItem('lang') || (navigator.language.slice(0, 2) || 'es');
-    setLang(savedLang);
+    setLang(localStorage.getItem('lang') || (navigator.language.slice(0,2) || 'es'));
+
+    // Lazy
+    document.querySelectorAll('img').forEach(img=>{
+      img.loading ||= 'lazy';
+      img.decoding ||= 'async';
+    });
+
+    // PDFs con <object> y acciones; sin nota
+    (function mountPDFs(){
+      document.querySelectorAll('.pdf-card').forEach((card,idx)=>{
+        const url = card.getAttribute('data-pdf');
+        const obj = document.createElement('object');
+        obj.type = 'application/pdf';
+        obj.data = url + '#toolbar=1&navpanes=0&statusbar=0&view=FitH';
+        obj.setAttribute('aria-label','plano pdf');
+        card.appendChild(obj);
+
+        const actions = document.createElement('div');
+        actions.className = 'pdf-actions';
+        const label = document.createElement('span');
+        label.textContent = `plano ${idx+1}`;
+        const open = document.createElement('a');
+        open.href = url; open.target = '_blank'; open.rel='noopener';
+        open.textContent = 'abrir';
+        actions.append(label, open);
+        card.appendChild(actions);
+      });
+    })();
+
+    // Lightbox existente
+    (()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;o.srcset&&(l.srcset=o.srcset);o.sizes&&(l.sizes=o.sizes);l.alt=o.alt||"";l.decoding="async";l.loading="eager"}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();
   </script>
-
-<style>#xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.45);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}#xpan-lightbox.open{display:flex}#xpan-lightbox .sheet{position:relative;max-width:100vw;max-height:100vh;overflow:hidden;transform:scale(.985);opacity:0;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}#xpan-lightbox.open .sheet{transform:scale(1);opacity:1}#xpan-lightbox img{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:none}#xpan-lightbox video{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:auto}html.lb-open,body.lb-open{overflow:hidden;touch-action:none}@media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}</style><div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div><script>(()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;o.srcset&&(l.srcset=o.srcset);o.sizes&&(l.sizes=o.sizes);l.alt=o.alt||"";l.decoding="async";l.loading="eager"}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();</script>
-
 </body>
 </html>
