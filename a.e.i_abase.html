@@ -74,7 +74,7 @@
       left:env(safe-area-inset-left);
       z-index:40; display:flex; align-items:center;
       height:var(--header-h);
-      padding:8px 10px; /* mínimo para toque, sin caja visual */
+      padding:8px 10px;
       border:none; border-radius:0; background:transparent; backdrop-filter:none;
     }
     header img[alt="xpan"]{
@@ -179,20 +179,36 @@
     }
     @media (hover:none){ .panel-toggle{ display:block; } }
 
+    /* ===== panel táctico adaptable ===== */
     .tactical{
-      position:absolute; top:12px; right:12px; z-index:50;
+      position:absolute;
+      top:calc(env(safe-area-inset-top) + 12px);
+      right:calc(env(safe-area-inset-right) + 12px);
+      z-index:50;
       display:none;
-      gap:8px; align-items:center;
+      gap:8px 10px;
+      align-items:center;
       background:color-mix(in oklab, var(--bg) 82%, transparent);
-      border:1px solid var(--line); border-radius:10px; padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:8px 10px;
       backdrop-filter:blur(6px) saturate(120%);
       font-size:.85rem; color:var(--fg-dim);
+
+      max-width:min(92vw, 560px);
+      max-height:calc(100svh - var(--header-h) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      overflow:auto;
+      flex-wrap:wrap;
     }
-    .tactical label{ display:flex; align-items:center; gap:8px; white-space:nowrap; }
-    .tactical input[type="range"]{ width:min(42vw, 220px); accent-color:var(--accent); }
+    .tactical label{ display:flex; align-items:center; gap:8px; white-space:nowrap; width:100%; }
+    .tactical input[type="range"]{ width:100%; accent-color:var(--accent); }
     .badge{
       display:inline-block; padding:.15rem .4rem; border:1px solid var(--line); border-radius:6px; font-variant-numeric:tabular-nums;
       background:color-mix(in oklab, var(--bg) 88%, transparent);
+    }
+    .tactical--stack{ display:flex; flex-direction:column; align-items:stretch; }
+    @media (max-aspect-ratio: 3/4){
+      .tactical{ max-width:92vw; }
     }
 
     @media (prefers-reduced-motion:reduce){
@@ -211,8 +227,7 @@
     }
     :fullscreen img, :fullscreen video, :fullscreen canvas { border-radius:0 !important; }
     ::backdrop { background-color: rgba(0,0,0,.96); }
-    /* ============================================= */
-    
+
     /* low-power visuals */
     .aei-embed.lp .radar{ animation-duration:16s; opacity:.12; }
     .aei-embed.lp .hud-grid{ opacity:.6; }
@@ -255,7 +270,6 @@
         <button id="resetBtn" type="button" class="badge">reset</button>
       </div>
 
-      <div class="aei-hint">toca/arrastra para pausar · botón “panel” o G</div>
     </section>
   </main>
 
@@ -337,6 +351,9 @@
     /* ================== AEI motor ================== */
     function renderAEI(stage, linesSVG, urls){
       const embedRoot = document.getElementById('aeiEmbed');
+      const panel = document.getElementById('tacticalPanel');
+      const toggleBtn = document.getElementById('panelToggle');
+
       const blocks=[], MAX_BLOCKS_BASE=Math.min(urls.length,42);
       let idx=0, paused=false, currentPairs=[], nextLineTick=0;
 
@@ -349,7 +366,6 @@
       let speed   = 0.10;
 
       // panel táctico
-      const panel   = document.getElementById('tacticalPanel');
       const statB   = document.getElementById('statBlocks');
       const statF   = document.getElementById('statFPS');
       const rngD    = document.getElementById('densityRng');
@@ -387,18 +403,45 @@
         generateLines(true);
       });
 
-      // ===== visibilidad del panel: tecla G, gesto superior, botón táctil
-      let gestureArmed=false, gestureT=0;
-      const toggleBtn = document.getElementById('panelToggle');
+      // ===== helpers de panel =====
+      function fitPanel(){
+        if(!panel) return;
+        const vh = viewportH();
+
+        // altura máxima segura en móvil vertical
+        const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64;
+        const safeTop = (window.visualViewport?.offsetTop || 0);
+        const safeBottom = 0; // env(safe-area-inset-bottom) ya se resta en CSS
+        panel.style.maxHeight = Math.max(220, vh - headerH - 24 - safeTop - safeBottom) + 'px';
+
+        // si portrait, coloca bajo el botón; si no, esquina superior
+        const portrait = (window.innerHeight / Math.max(1, window.innerWidth)) > 1.1;
+        if(toggleBtn && portrait){
+          const r = toggleBtn.getBoundingClientRect();
+          panel.style.top = (r.bottom + 8) + 'px';
+          panel.style.right = '12px';
+        }else{
+          panel.style.top = 'calc(env(safe-area-inset-top) + 12px)';
+          panel.style.right = 'calc(env(safe-area-inset-right) + 12px)';
+        }
+
+        // apila si hace falta
+        const overflow = panel.scrollHeight > panel.clientHeight + 4;
+        panel.classList.toggle('tactical--stack', portrait || overflow);
+      }
+
       function togglePanel(){
         const visible = panel.style.display === 'flex';
         panel.style.display = visible ? 'none' : 'flex';
         if(toggleBtn) toggleBtn.setAttribute('aria-expanded', String(!visible));
+        if(!visible) requestAnimationFrame(fitPanel);
       }
+
+      // g, gesto superior y botón táctil
       window.addEventListener('keydown', e=>{ if(e.key==='g'||e.key==='G') togglePanel(); });
+      let gestureArmed=false, gestureT=0;
       document.addEventListener('touchstart', e=>{
-        const t=e.touches[0];
-        if(t && t.clientY < 32){ gestureArmed=true; gestureT=performance.now(); }
+        const t=e.touches[0]; if(t && t.clientY < 32){ gestureArmed=true; gestureT=performance.now(); }
       },{passive:true});
       document.addEventListener('touchend', ()=>{
         if(gestureArmed && performance.now()-gestureT < 800) togglePanel();
@@ -591,12 +634,14 @@
       const ro = new ResizeObserver(()=>{
         for(const b of blocks){ clampToStage(b); updateBlockTransform(b); }
         setAdaptiveParams();
+        fitPanel();
       });
       ro.observe(stage);
 
       // primera adaptación + estado inicial del panel
       fitEmbedToViewport();
       panel.style.display='flex';
+      fitPanel();
       setTimeout(()=> panel.style.display='none', 1300);
     }
 
