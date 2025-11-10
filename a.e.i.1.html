@@ -1,174 +1,681 @@
-<!-- Fragmento HTML completo con 25 imágenes con enlaces aleatorios y líneas de conexión -->
-<header>
-    <a href="https://xpan.earth">
-      <img src="./xpan.svg" alt="xpan" />
-    </a>
-  </header>
-  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg"></object>
-  <svg class="lines" id="dynamic-lines"></svg>
-  <div class="container" id="channels-container">
-    <!-- (25 image blocks... mismos que antes) -->
-    <!-- Se insertan aquí automáticamente los bloques existentes -->
-    <a class="image-block" href="https://www.youtube.com/watch?v=BLl_gLkdcgs" target="_blank">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374500/original_c40dbe6632474e515cf44f86f455b2fa.jpg?1746058074?bc=0" alt="image 1">
-    </a>
-    <a class="image-block" href="https://www.youtube.com/watch?v=c4ChS2kCfj4" target="_blank">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374501/original_f8a746286dac79a2c79bae5b5fce20de.jpg?1746058075?bc=0" alt="image 2">
-    </a>
-    <a class="image-block" href="https://www.youtube.com/watch?v=GkSNj5slzCQ&list=RDGMEM6ijAnFTG9nX1G-kbWBUCJA&index=1" target="_blank">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374504/original_355aade945dbebb9b20127e0853dcb82.jpg?1746058083?bc=0" alt="image 3">
-    </a>
-    <a class="image-block" href="https://www.youtube.com/watch?v=I0j-8eFu42Q" target="_blank">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374505/original_79bac71ed2c8bab0d65634955e948192.jpg?1746058084?bc=0" alt="image 4">
-    </a>
-    <a class="image-block" href="https://www.youtube.com/watch?v=rYz_K4zlS7c" target="_blank">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374506/original_7e4ae9cad2702deb29950d00e0ac304c.jpg?1746058086?bc=0" alt="image 5">
-    </a>
-    <a class="image-block" href="https://www.youtube.com/watch?v=qCRTCqgAkfg" target="_blank">
-      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36374507/original_816a18d1d95700d918907e58086fecf1.jpg?1746058088?bc=0" alt="image 6">
-    </a>
-  </div>
-  
-<style>
-    body {
-      margin: 0;
-      background: #fefefe;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow: hidden;
-      cursor: crosshair;
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>a.e.i.1</title>
+
+  <!-- orígenes ya usados en xpan -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+  <style>
+    /* ================== tokens post-tech / defense-ops ================== */
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --line:#2A2E31; --line-weak:#151A1F;
+      --accent:#1860FF; --accent-2:#8CFF4D; --alert:#F9A800; --danger:#FF3666;
+
+      /* layout base */
+      --maxw:1440px;
+      --pad:clamp(12px,4vw,48px);
+      --header-h:clamp(52px, 6svh, 72px);
+
+      /* tamaño de bloque: fluido por viewport */
+      --aei-block:clamp(88px, 12vw, 180px);
+
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --logo-invert:1;
+
+      /* grid base */
+      --grid:rgba(255,255,255,.05);
+      --grid-strong:rgba(255,255,255,.10);
+      --grid-cell:40px;
+      --grid-cell-strong:200px;
+
+      --scanline:rgba(0,0,0,.06);
+      --corner:36px;
     }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
-    }
-    header img {
-      width: 50px;
-      height: auto;
-      display: block;
-    }
-    .background-star {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 100vmin;
-      max-width: 900px;
-      transform: translate(-50%, -50%);
-      opacity: 0.05;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      padding: 2rem;
-      overflow: hidden;
-    }
-    .image-block {
-      width: 160px;
-      height: auto;
-      max-height: 160px;
-      display: block;
-      position: absolute;
-      text-decoration: none;
-      opacity: 0.5;
-      transition: opacity 0.3s ease;
-    }
-    .image-block:hover {
-      opacity: 0.8;
-    }
-    .image-block img {
-      width: 100%;
-      height: auto;
-      max-height: 160px;
-      object-fit: contain;
-      display: block;
-    }
-    svg.lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
-    }
-    svg.lines line {
-      stroke: black;
-      stroke-width: 0.3px;
-      opacity: 0.1;
-      transition: stroke-width 0.3s, opacity 0.3s;
-    }
-    @media (max-width: 600px) {
-      .image-block {
-        position: static;
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1/1;
+    @media (prefers-color-scheme:light){
+      [data-xpan]{
+        --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+        --line:#E6E8EA; --line-weak:#F3F5F7; --logo-invert:0;
+        --grid:rgba(0,0,0,.05); --grid-strong:rgba(0,0,0,.10);
+        --scanline:rgba(0,0,0,.035);
       }
     }
-    </style>
-    
-    <script>
-    function randomizeLines() {
-      const blocks = [...document.querySelectorAll('.image-block')];
-      const svg = document.getElementById('dynamic-lines');
-      svg.innerHTML = '';
-    
-      blocks.forEach((blockA, i) => {
-        const rectA = blockA.getBoundingClientRect();
-        const x1 = rectA.left + rectA.width / 2 + window.scrollX;
-        const y1 = rectA.top + rectA.height / 2 + window.scrollY;
-    
-        blocks.forEach((blockB, j) => {
-          if (i < j && Math.random() > 0.6) {
-            const rectB = blockB.getBoundingClientRect();
-            const x2 = rectB.left + rectB.width / 2 + window.scrollX;
-            const y2 = rectB.top + rectB.height / 2 + window.scrollY;
-    
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', x1);
-            line.setAttribute('y1', y1);
-            line.setAttribute('x2', x2);
-            line.setAttribute('y2', y2);
-            line.style.stroke = Math.random() > 0.5 ? '#000' : '#333';
-            line.style.strokeWidth = `${0.2 + Math.random() * 0.5}px`;
-            line.style.opacity = `${0.1 + Math.random() * 0.3}`;
-            svg.appendChild(line);
+
+    /* container queries por ancho real del lienzo */
+    .aei-embed{ container-type:inline-size; }
+    @container (max-width: 520px){
+      [data-xpan]{ --aei-block:clamp(72px, 22vw, 132px); --grid-cell:48px; --grid-cell-strong:220px; --corner:28px; }
+    }
+    @container (min-width: 1500px){
+      [data-xpan]{ --aei-block:clamp(120px, 10vw, 220px); --grid-cell:48px; --grid-cell-strong:240px; }
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; height:100%; background:var(--bg); color:var(--fg); }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:auto; }
+    body{
+      font-family: Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+      letter-spacing:-.2px; overflow-x:hidden;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+      cursor:crosshair;
+    }
+
+    /* ================== header FLUSH ================== */
+    header{
+      position:fixed;
+      top:env(safe-area-inset-top);
+      left:env(safe-area-inset-left);
+      z-index:40; display:flex; align-items:center;
+      height:var(--header-h);
+      padding:8px 10px;
+      border:none; border-radius:0; background:transparent; backdrop-filter:none;
+    }
+    header img[alt="xpan"]{
+      width:50px; height:auto; filter:invert(var(--logo-invert)) contrast(1) brightness(1);
+    }
+
+    /* ================== layout ================== */
+    main{
+      padding:calc(var(--header-h) + 16px + env(safe-area-inset-top)) var(--pad) calc(var(--pad) + env(safe-area-inset-bottom));
+      margin:0 auto; max-width:var(--maxw);
+    }
+
+    .aei-embed{
+      position:relative; width:100%;
+      height:auto; min-height:100svh;
+      background:var(--bg); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+      isolation:isolate;
+    }
+    .aei-stage{
+      position:relative; width:100%; height:100%;
+      touch-action:none; /* drag táctil preciso */
+    }
+    .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+
+    /* ================== HUD / grid / radar ================== */
+    .hud-grid{
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background:
+        linear-gradient(transparent 49%, var(--scanline) 50%, transparent 51%) 0 0/100% 4px,
+        linear-gradient(to right, var(--grid) 1px, transparent 1px) 0 0/var(--grid-cell) var(--grid-cell),
+        linear-gradient(to bottom, var(--grid) 1px, transparent 1px) 0 0/var(--grid-cell) var(--grid-cell),
+        linear-gradient(to right, var(--grid-strong) 1px, transparent 1px) 0 0/var(--grid-cell-strong) var(--grid-cell-strong),
+        linear-gradient(to bottom, var(--grid-strong) 1px, transparent 1px) 0 0/var(--grid-cell-strong) var(--grid-cell-strong);
+      mask-image: radial-gradient(120% 120% at 50% 50%, black 65%, transparent 100%);
+      opacity:.9;
+    }
+    .hud-frame{
+      position:absolute; inset:12px; pointer-events:none; z-index:2;
+      border:1px solid color-mix(in oklab, var(--fg) 28%, transparent);
+      border-radius:12px;
+    }
+    .hud-corners:before, .hud-corners:after{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:
+        conic-gradient(from 0deg at 0% 0%, color-mix(in oklab, var(--fg) 35%, transparent) 0 25%, transparent 0 100%) top left/var(--corner) var(--corner) no-repeat,
+        conic-gradient(from 90deg at 100% 0%, color-mix(in oklab, var(--fg) 35%, transparent) 0 25%, transparent 0 100%) top right/var(--corner) var(--corner) no-repeat,
+        conic-gradient(from 180deg at 100% 100%, color-mix(in oklab, var(--fg) 35%, transparent) 0 25%, transparent 0 100%) bottom right/var(--corner) var(--corner) no-repeat,
+        conic-gradient(from 270deg at 0% 100%, color-mix(in oklab, var(--fg) 35%, transparent) 0 25%, transparent 0 100%) bottom left/var(--corner) var(--corner) no-repeat;
+      opacity:.65;
+    }
+    .radar{
+      position:absolute; inset:-10% -10%; z-index:1; pointer-events:none; opacity:.22;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 46%, color-mix(in oklab, var(--fg) 16%, transparent) 47% 48%, transparent 49% 100%),
+        conic-gradient(from 0deg, color-mix(in oklab, var(--accent) 24%, transparent) 0 8%, transparent 8% 100%);
+      mix-blend-mode:soft-light;
+      animation:radar-rotate 8s linear infinite;
+    }
+    @keyframes radar-rotate { to { transform:rotate(360deg)} }
+
+    /* ================== bloques ================== */
+    .aei-block{
+      width:var(--aei-block); height:var(--aei-block);
+      position:absolute; opacity:.78; transition:opacity .25s var(--ease), box-shadow .25s var(--ease);
+      cursor:grab; user-select:none; display:flex; justify-content:center; align-items:center;
+      touch-action:none; will-change:transform;
+      border:1px solid var(--line-weak); background:transparent; border-radius:8px;
+      box-shadow:0 0 0 0 rgba(24,96,255,0);
+      outline:1px solid color-mix(in oklab, var(--fg) 8%, transparent);
+    }
+    .aei-block:hover{ opacity:.95; z-index:5; box-shadow:0 0 0 2px color-mix(in oklab, var(--accent) 36%, transparent); }
+    .aei-block:active{ cursor:grabbing; }
+    .aei-block img,.aei-block video{
+      max-width:100%; max-height:100%; object-fit:contain; background:transparent; pointer-events:none;
+    }
+
+    @media (hover:none){
+      .aei-block:hover{ box-shadow:none; }
+    }
+
+    /* ================== líneas ================== */
+    .aei-lines line{
+      stroke:var(--fg); stroke-width:.6; opacity:.0; shape-rendering:crispEdges;
+      vector-effect:non-scaling-stroke;
+    }
+    .aei-lines line.fx{ animation:fadeLine .8s var(--ease) forwards; }
+    @keyframes fadeLine{ 0%{opacity:0} 100%{opacity:.22} }
+
+    .aei-hint{
+      position:absolute; right:1rem; bottom:1rem; font-size:.8rem; opacity:.55;
+      background:color-mix(in oklab, var(--bg) 85%, transparent);
+      border:1px solid var(--line); padding:.35rem .5rem; border-radius:8px;
+      user-select:none; backdrop-filter:blur(4px) saturate(120%);
+    }
+
+    /* ================== panel táctil + táctico ================== */
+    .panel-toggle{
+      position:absolute; top:12px; right:12px; z-index:60;
+      display:none; padding:.35rem .55rem; border:1px solid var(--line); border-radius:8px;
+      background:color-mix(in oklab, var(--bg) 82%, transparent); color:var(--fg-dim);
+      font-size:.85rem; backdrop-filter:blur(6px) saturate(120%); -webkit-tap-highlight-color:transparent;
+    }
+    @media (hover:none){ .panel-toggle{ display:block; } }
+
+    /* ===== panel táctico adaptable ===== */
+    .tactical{
+      position:absolute;
+      top:calc(env(safe-area-inset-top) + 12px);
+      right:calc(env(safe-area-inset-right) + 12px);
+      z-index:50;
+      display:none;
+      gap:8px 10px;
+      align-items:center;
+      background:color-mix(in oklab, var(--bg) 82%, transparent);
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:8px 10px;
+      backdrop-filter:blur(6px) saturate(120%);
+      font-size:.85rem; color:var(--fg-dim);
+
+      max-width:min(92vw, 560px);
+      max-height:calc(100svh - var(--header-h) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      overflow:auto;
+      flex-wrap:wrap;
+    }
+    .tactical label{ display:flex; align-items:center; gap:8px; white-space:nowrap; width:100%; }
+    .tactical input[type="range"]{ width:100%; accent-color:var(--accent); }
+    .badge{
+      display:inline-block; padding:.15rem .4rem; border:1px solid var(--line); border-radius:6px; font-variant-numeric:tabular-nums;
+      background:color-mix(in oklab, var(--bg) 88%, transparent);
+    }
+    .tactical--stack{ display:flex; flex-direction:column; align-items:stretch; }
+    @media (max-aspect-ratio: 3/4){
+      .tactical{ max-width:92vw; }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      .aei-block{ transition:none; }
+      .radar{ animation:none; }
+      .aei-lines line.fx{ animation:none; opacity:.22; }
+    }
+
+    /* ===== normalización global de LIGHTBOXES sin redondeo ===== */
+    .lightbox, .lightbox * ,
+    .media-lightbox, .media-lightbox *,
+    .lb, .lb *, .modal, .modal *,
+    [data-lightbox], [data-lightbox] * {
+      border-radius:0 !important;
+      overflow:visible;
+    }
+    :fullscreen img, :fullscreen video, :fullscreen canvas { border-radius:0 !important; }
+    ::backdrop { background-color: rgba(0,0,0,.96); }
+
+    /* low-power visuals */
+    .aei-embed.lp .radar{ animation-duration:16s; opacity:.12; }
+    .aei-embed.lp .hud-grid{ opacity:.6; }
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header aria-label="xpan header">
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="../xpan.svg" alt="xpan" fetchpriority="high">
+    </a>
+  </header>
+
+  <main>
+    <section class="aei-embed" id="aeiEmbed" aria-label="a.e.i">
+      <!-- capas HUD -->
+      <div class="hud-grid" aria-hidden="true"></div>
+      <div class="radar" aria-hidden="true"></div>
+      <div class="hud-frame hud-corners" aria-hidden="true"></div>
+
+      <!-- escena y conexiones -->
+      <svg class="aei-lines" id="aeiLines" aria-hidden="true"></svg>
+      <div class="aei-stage" id="aeiStage" aria-label="escena a.e.i"></div>
+
+      <!-- botón táctil del panel -->
+      <button id="panelToggle" class="panel-toggle" aria-controls="tacticalPanel" aria-expanded="false" type="button">panel</button>
+
+      <!-- panel táctico -->
+      <div class="tactical" id="tacticalPanel" role="group" aria-label="panel táctico a.e.i">
+        <span class="badge" id="statBlocks">blk:0</span>
+        <span class="badge" id="statFPS">fps:0</span>
+        <label>densidad
+          <input id="densityRng" type="range" min="0" max="100" value="8" step="1" aria-label="densidad de líneas">
+        </label>
+        <label>vel
+          <input id="speedRng" type="range" min="0" max="100" value="10" step="1" aria-label="velocidad de drift">
+        </label>
+        <button id="pauseBtn" type="button" class="badge" aria-pressed="false">pause</button>
+        <button id="resetBtn" type="button" class="badge">reset</button>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    const $$ = (sel, ctx=document)=> Array.from(ctx.querySelectorAll(sel));
+    const BLANK_POSTER = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+    /* ================== viewport exacto ================== */
+    function viewportH(){
+      return (window.visualViewport && window.visualViewport.height) ? Math.round(window.visualViewport.height) : window.innerHeight;
+    }
+    function fitEmbedToViewport(){
+      const embed = document.getElementById('aeiEmbed');
+      if(!embed) return;
+      const top = embed.getBoundingClientRect().top;
+      const safety = 1;
+      const available = Math.max(240, viewportH() - top - safety);
+      embed.style.height = available + 'px';
+      const stage = document.getElementById('aeiStage');
+      stage.style.height = '100%';
+      const lines = document.getElementById('aeiLines');
+      lines.style.width = '100%';
+      lines.style.height = '100%';
+    }
+    addEventListener('load', fitEmbedToViewport);
+    addEventListener('resize', fitEmbedToViewport, {passive:true});
+    addEventListener('orientationchange', fitEmbedToViewport);
+    addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') fitEmbedToViewport(); });
+    if(window.visualViewport){
+      visualViewport.addEventListener('resize', fitEmbedToViewport);
+      visualViewport.addEventListener('scroll', fitEmbedToViewport);
+    }
+
+    /* ================== z-stack para drag ================== */
+    let Z_STACK = 100;
+
+    /* ================== video utils ================== */
+    function wireVideoEl(v,{autoplay=true}={}){
+      v.muted=true; v.loop=true; v.autoplay=!!autoplay; v.playsInline=true; v.preload='none'; v.poster=BLANK_POSTER;
+      v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+      if(autoplay) v.setAttribute('autoplay','');
+    }
+    const ioLoad = new IntersectionObserver((entries,obs)=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        const v=en.target;
+        if(v.dataset.src && !v.src){ v.src=v.dataset.src; v.load(); }
+        obs.unobserve(v);
+      });
+    },{rootMargin:'600px 0px', threshold:.08});
+    function autoPlayOnVisible(video){
+      const tryPlay=()=> video.play().catch(()=>{});
+      const vio=new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{ if(en.isIntersecting){ video.muted=true; video.setAttribute('muted',''); tryPlay(); } else { video.pause(); } });
+      },{threshold:.12});
+      vio.observe(video);
+      const t0=Date.now(); (function tick(){ if(!video.paused || Date.now()-t0>4000) return; tryPlay(); setTimeout(tick,300); })();
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+    }
+    function unlockAllVideos(){
+      document.removeEventListener('click', unlockAllVideos);
+      document.removeEventListener('touchstart', unlockAllVideos);
+      $$('video').forEach(v=>{
+        if(!v.src && v.dataset.src){ v.src=v.dataset.src; v.load(); }
+        v.muted=true; v.setAttribute('muted',''); v.play().catch(()=>{});
+      });
+    }
+    document.addEventListener('click', unlockAllVideos, { once:true });
+    document.addEventListener('touchstart', unlockAllVideos, { once:true, passive:true });
+
+    /* ================== links relativos desde /a.e.i/ ================== */
+    function resolveLink(href){
+      if(!href) return '#';
+      if(/^(?:[a-z]+:)?\/\//i.test(href)) return href;
+      if(href.startsWith('../')) return href;
+      return '../' + href.replace(/^\.?\//,'');
+    }
+
+    /* ================== AEI motor ================== */
+    function renderAEI(stage, linesSVG, urls){
+      const embedRoot = document.getElementById('aeiEmbed');
+      const panel = document.getElementById('tacticalPanel');
+      const toggleBtn = document.getElementById('panelToggle');
+
+      const blocks=[], MAX_BLOCKS_BASE=Math.min(urls.length,42);
+      let idx=0, paused=false, currentPairs=[], nextLineTick=0;
+
+      /* densidad y velocidad adaptativas por superficie */
+      const area = ()=> {
+        const r = stage.getBoundingClientRect();
+        return Math.max(1, r.width * r.height);
+      };
+      let density = 8;   // 0..100
+      let speed   = 0.10;
+
+      // panel táctico
+      const statB   = document.getElementById('statBlocks');
+      const statF   = document.getElementById('statFPS');
+      const rngD    = document.getElementById('densityRng');
+      const rngS    = document.getElementById('speedRng');
+      const pauseBt = document.getElementById('pauseBtn');
+      const resetBt = document.getElementById('resetBtn');
+
+      const setPaused=(v)=>{ paused=!!v; pauseBt.setAttribute('aria-pressed', String(paused)); pauseBt.textContent = paused ? 'resume' : 'pause'; };
+
+      /* inicial adaptativo */
+      const setAdaptiveParams = ()=>{
+        const a = area();
+        const targetD = a < 350000 ? 6 : a < 800000 ? 10 : 14;
+        density = targetD;
+        rngD.value = String(density);
+        const targetS = a < 350000 ? 8 : a < 800000 ? 10 : 12;
+        speed = targetS/100;
+        rngS.value = String(targetS);
+      };
+      setAdaptiveParams();
+
+      rngD.addEventListener('input', e=> density = Number(e.target.value));
+      rngS.addEventListener('input', e=> speed   = Number(e.target.value)/100);
+      pauseBt.addEventListener('click', ()=> setPaused(!paused));
+      resetBt.addEventListener('click', ()=>{
+        const rect=stage.getBoundingClientRect();
+        blocks.forEach(b=>{
+          const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+          b.x=Math.random()*Math.max(10,rect.width-bw);
+          b.y=Math.random()*Math.max(10,rect.height-bh);
+          b.vx=(Math.random()-.5)*speed*2.0;
+          b.vy=(Math.random()-.5)*speed*2.0;
+          updateBlockTransform(b);
+        });
+        generateLines(true);
+      });
+
+      // ===== helpers de panel =====
+      function fitPanel(){
+        if(!panel) return;
+        const vh = viewportH();
+
+        // altura máxima segura en móvil vertical
+        const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64;
+        const safeTop = (window.visualViewport?.offsetTop || 0);
+        const safeBottom = 0; // env(safe-area-inset-bottom) ya se resta en CSS
+        panel.style.maxHeight = Math.max(220, vh - headerH - 24 - safeTop - safeBottom) + 'px';
+
+        // si portrait, coloca bajo el botón; si no, esquina superior
+        const portrait = (window.innerHeight / Math.max(1, window.innerWidth)) > 1.1;
+        if(toggleBtn && portrait){
+          const r = toggleBtn.getBoundingClientRect();
+          panel.style.top = (r.bottom + 8) + 'px';
+          panel.style.right = '12px';
+        }else{
+          panel.style.top = 'calc(env(safe-area-inset-top) + 12px)';
+          panel.style.right = 'calc(env(safe-area-inset-right) + 12px)';
+        }
+
+        // apila si hace falta
+        const overflow = panel.scrollHeight > panel.clientHeight + 4;
+        panel.classList.toggle('tactical--stack', portrait || overflow);
+      }
+
+      function togglePanel(){
+        const visible = panel.style.display === 'flex';
+        panel.style.display = visible ? 'none' : 'flex';
+        if(toggleBtn) toggleBtn.setAttribute('aria-expanded', String(!visible));
+        if(!visible) requestAnimationFrame(fitPanel);
+      }
+
+      // g, gesto superior y botón táctil
+      window.addEventListener('keydown', e=>{ if(e.key==='g'||e.key==='G') togglePanel(); });
+      let gestureArmed=false, gestureT=0;
+      document.addEventListener('touchstart', e=>{
+        const t=e.touches[0]; if(t && t.clientY < 32){ gestureArmed=true; gestureT=performance.now(); }
+      },{passive:true});
+      document.addEventListener('touchend', ()=>{
+        if(gestureArmed && performance.now()-gestureT < 800) togglePanel();
+        gestureArmed=false;
+      });
+      if(toggleBtn) toggleBtn.addEventListener('click', togglePanel);
+
+      // pausa por hover/touch
+      const pauseOn=()=> setPaused(true), resume=()=> setPaused(false);
+      stage.addEventListener('mouseenter',pauseOn);
+      stage.addEventListener('mouseleave',resume);
+      stage.addEventListener('touchstart',pauseOn,{passive:true});
+      stage.addEventListener('touchend',resume);
+
+      // ===== límites dinámicos por DPR y área
+      const dpr = Math.min(3, window.devicePixelRatio || 1);
+      const maxBlocks = Math.max(8, Math.floor(MAX_BLOCKS_BASE / (dpr>2 ? 1.5 : 1)));
+
+      function addNext(){
+        if(idx>=maxBlocks) return;
+        const item = urls[idx++];
+        const mediaUrl = typeof item === 'string' ? item : item.url;
+        const linkHref = typeof item === 'string' ? null : item.link;
+        const newTab   = typeof item === 'string' ? false : !!item.newTab;
+
+        const block = document.createElement(linkHref ? 'a' : 'div');
+        block.className='aei-block';
+        if(linkHref){
+          block.href = resolveLink(linkHref);
+          if(newTab){ block.target = '_blank'; block.rel = 'noopener'; }
+        }
+        if(!block.style.zIndex) block.style.zIndex = '1';
+
+        let el;
+        if(/\.(mp4|mov)(\?|$)/i.test(mediaUrl)){
+          el=document.createElement('video');
+          wireVideoEl(el,{autoplay:true});
+          el.dataset.src=mediaUrl;
+          block.appendChild(el); stage.appendChild(block);
+          ioLoad.observe(el); autoPlayOnVisible(el);
+        }else{
+          el=document.createElement('img');
+          el.loading='lazy'; el.decoding='async'; el.src=mediaUrl;
+          block.appendChild(el); stage.appendChild(block);
+        }
+
+        const rect=stage.getBoundingClientRect();
+        const bw=parseFloat(getComputedStyle(block).width), bh=parseFloat(getComputedStyle(block).height);
+        block.x=Math.random()*Math.max(10,rect.width-bw);
+        block.y=Math.random()*Math.max(10,rect.height-bh);
+        block.vx=(Math.random()-.5)*speed*2.0;
+        block.vy=(Math.random()-.5)*speed*2.0;
+        updateBlockTransform(block);
+        makeDraggable(block);
+        blocks.push(block);
+
+        statB.textContent = 'blk:'+blocks.length;
+        setTimeout(addNext,45);
+      }
+      addNext();
+
+      function updateBlockTransform(b){ b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; }
+      function clampToStage(b){
+        const rect=stage.getBoundingClientRect();
+        const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+        b.x=Math.min(Math.max(0,b.x), Math.max(0,rect.width-bw));
+        b.y=Math.min(Math.max(0,b.y), Math.max(0,rect.height-bh));
+      }
+
+      function makeDraggable(el){
+        let isDown=false, moved=false, lastX=0, lastY=0;
+        const TH=6;
+        el.setAttribute('draggable','false'); el.style.userSelect='none';
+
+        const start=(cx,cy)=>{
+          isDown=true; moved=false; lastX=cx; lastY=cy;
+          el.style.zIndex = String(++Z_STACK);
+        };
+        const move =(cx,cy)=>{
+          if(!isDown) return;
+          const dx=cx-lastX, dy=cy-lastY;
+          if(!moved && (Math.abs(dx)>TH || Math.abs(dy)>TH)) moved=true;
+          el.x+=dx; el.y+=dy; clampToStage(el); updateBlockTransform(el);
+          lastX=cx; lastY=cy; drawLines(true);
+        };
+        const end =()=>{
+          isDown=false;
+          if(moved){ el._suppressClick=true; setTimeout(()=> el._suppressClick=false,0); }
+        };
+
+        // mouse
+        el.addEventListener('mousedown',e=>{ e.preventDefault(); start(e.clientX,e.clientY); });
+        window.addEventListener('mousemove',e=> move(e.clientX,e.clientY));
+        window.addEventListener('mouseup',end);
+
+        // touch
+        el.addEventListener('touchstart',e=>{ const t=e.touches[0]; start(t.clientX,t.clientY); },{passive:true});
+        el.addEventListener('touchmove', e=>{ if(!isDown) return; e.preventDefault(); const t=e.touches[0]; move(t.clientX,t.clientY); },{passive:false});
+        el.addEventListener('touchend',end);
+
+        el.addEventListener('click',e=>{ if(el._suppressClick){ e.preventDefault(); e.stopPropagation(); } });
+        el.addEventListener('dragstart',e=> e.preventDefault());
+      }
+
+      /* ===== conexiones ===== */
+      function generateLines(force=false){
+        if(!force && Math.random()<0.35) return;
+        currentPairs.length=0;
+        const N=blocks.length;
+        if(!N) return;
+        const p = Math.min(0.35, 0.01 + density/300);
+        for(let i=0;i<N;i++){
+          for(let j=i+1;j<N;j++){
+            if(Math.random()<p) currentPairs.push([blocks[i],blocks[j]]);
           }
-        });
+        }
+      }
+      function centerOf(b){
+        const r=b.getBoundingClientRect();
+        return [b.x + r.width/2, b.y + r.height/2];
+      }
+      function drawLines(live=false){
+        const svg=linesSVG;
+        if(!live) svg.innerHTML='';
+        const frag=document.createDocumentFragment();
+        for(const [a,b] of currentPairs){
+          const [x1,y1]=centerOf(a), [x2,y2]=centerOf(b);
+          const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+          l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+          l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+          l.classList.add('fx');
+          frag.appendChild(l);
+        }
+        if(!live){ svg.innerHTML=''; svg.appendChild(frag); }
+        else { svg.appendChild(frag); }
+      }
+
+      // bucle + gobernanza
+      let lastT=performance.now(), fps=0, fpsA=0, lowPower=false;
+      function applyLowPower(on){
+        if(on === lowPower) return;
+        lowPower = on;
+        embedRoot.classList.toggle('lp', lowPower);
+        if(lowPower){
+          density = Math.max(4, Math.floor(density*0.7));
+          speed   = Math.max(0.06, speed*0.8);
+        }
+      }
+      function capBlocks(){
+        const over = blocks.length - maxBlocks;
+        for(let i=0; i<over; i++){
+          const b = blocks.pop();
+          if(b){ b.remove(); }
+        }
+        statB.textContent = 'blk:'+blocks.length;
+      }
+
+      function step(t){
+        const dt = Math.max(1, t-lastT); lastT=t;
+        const rect=stage.getBoundingClientRect();
+
+        if(!paused){
+          for(const b of blocks){
+            b.x+=b.vx * (dt/16);
+            b.y+=b.vy * (dt/16);
+            const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+            if(b.x<0 || b.x>rect.width-bw) b.vx*=-1;
+            if(b.y<0 || b.y>rect.height-bh) b.vy*=-1;
+            clampToStage(b); updateBlockTransform(b);
+          }
+          if(!nextLineTick || t>nextLineTick){
+            generateLines();
+            drawLines();
+            nextLineTick = t + (300 + Math.random()*400);
+          }
+        }
+
+        // FPS aprox y control
+        fps = 1000/dt; fpsA = fpsA*0.9 + fps*0.1;
+        statF.textContent = 'fps:'+Math.max(0, Math.min(240, fpsA)).toFixed(0);
+        capBlocks();
+        if(fpsA < 28){ applyLowPower(true); }
+        else if(fpsA > 45){ applyLowPower(false); }
+
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+
+      // reflow reactivo
+      const ro = new ResizeObserver(()=>{
+        for(const b of blocks){ clampToStage(b); updateBlockTransform(b); }
+        setAdaptiveParams();
+        fitPanel();
       });
+      ro.observe(stage);
+
+      // primera adaptación + estado inicial del panel
+      fitEmbedToViewport();
+      panel.style.display='flex';
+      fitPanel();
+      setTimeout(()=> panel.style.display='none', 1300);
     }
-    
-    function randomizePositions() {
-      const container = document.querySelector('.container');
-      const blocks = [...document.querySelectorAll('.image-block')];
-      const padding = 200;
-    
-      blocks.forEach(block => {
-        const x = Math.random() * (container.offsetWidth - padding);
-        const y = Math.random() * (container.offsetHeight - padding);
-        block.style.left = `${x}px`;
-        block.style.top = `${y}px`;
-      });
-    }
-    
-    window.addEventListener('load', () => {
-      requestAnimationFrame(() => {
-        randomizePositions();
-        const blocks = document.querySelectorAll('.image-block');
-        blocks.forEach(block => {
-          block.addEventListener('mouseenter', randomizeLines);
-          block.addEventListener('click', randomizeLines);
-        });
-        window.addEventListener('scroll', randomizeLines, { passive: true });
-        window.addEventListener('touchstart', randomizeLines, { passive: true });
-        randomizeLines();
-        setInterval(randomizeLines, 5000); // auto redraw every 5s
-        window.addEventListener('resize', randomizeLines);
-      });
-    });
-    </script>
+
+    /* ================== datos de media (conservados) ================== */
+
+
+const aeiMedia = [
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36374500/original_c40dbe6632474e515cf44f86f455b2fa.jpg?1746058074?bc=0", link: "https://www.youtube.com/watch?v=BLl_gLkdcgs", newTab: true },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36374501/original_f8a746286dac79a2c79bae5b5fce20de.jpg?1746058075?bc=0", link: "https://www.youtube.com/watch?v=c4ChS2kCfj4", newTab: true },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36374504/original_355aade945dbebb9b20127e0853dcb82.jpg?1746058083?bc=0", link: "https://www.youtube.com/watch?v=GkSNj5slzCQ&list=RDGMEM6ijAnFTG9nX1G-kbWBUCJA&index=1", newTab: true },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36374505/original_79bac71ed2c8bab0d65634955e948192.jpg?1746058084?bc=0", link: "https://www.youtube.com/watch?v=I0j-8eFu42Q", newTab: true },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36374506/original_7e4ae9cad2702deb29950d00e0ac304c.jpg?1746058086?bc=0", link: "https://www.youtube.com/watch?v=rYz_K4zlS7c", newTab: true },
+  { url: "https://d2w9rnfcy7mm78.cloudfront.net/36374507/original_816a18d1d95700d918907e58086fecf1.jpg?1746058088?bc=0", link: "https://www.youtube.com/watch?v=qCRTCqgAkfg", newTab: true }
+];
+
+
+
+
+
+
+
+    const stage = document.getElementById('aeiStage');
+    const lines = document.getElementById('aeiLines');
+    renderAEI(stage, lines, aeiMedia);
+
+    /* ================== warmup ocioso ================== */
+    (function idleWarmup(){
+      if(!('requestIdleCallback' in window)) return;
+      const warm = () => requestIdleCallback(() => {
+        document.querySelectorAll('video[data-src]').forEach(v => { if(!v.src){ v.src = v.dataset.src; v.load(); } });
+      }, { timeout:1500 });
+      document.addEventListener('DOMContentLoaded', warm, { once:true });
+      window.addEventListener('load', warm, { once:true });
+    })();
+  </script>
+</body>
+</html>
