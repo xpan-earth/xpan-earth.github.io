@@ -216,7 +216,25 @@
       requestAnimationFrame(drawLines);
     });
 
-    overlay.querySelector(".description").addEventListener("click",e=>e.stopPropagation());
+/* patch: tap en la descripción también cierra el overlay (excepto sobre links/controles) */
+(() => {
+  const desc = overlay.querySelector('.description');
+  if (!desc) return;
+
+  desc.addEventListener('click', (e) => {
+    // Si tocaste un enlace, botón o elemento marcado, no cerrar
+    if (e.target.closest('a, button, [data-no-exit]')) {
+      e.stopPropagation();
+      return;
+    }
+    // Cerrar overlay como si hubieras tocado fuera
+    overlay.classList.remove('active');
+    linesContainer.style.opacity = '1';
+    links.forEach(l => l.style.opacity = '1');
+    logo.style.opacity = '1';
+    requestAnimationFrame(drawLines);
+  }, { passive: true });
+})();
 
     function setLang(lang){
       try{localStorage.setItem('lang',lang);}catch{}

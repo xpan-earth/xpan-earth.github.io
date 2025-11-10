@@ -91,6 +91,58 @@
   <!-- lightbox original preservado -->
   <div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div>
 
+  <script>
+/* patch: persistir scroll al abrir/cerrar lightbox en todas las páginas */
+(() => {
+  const lb = document.getElementById('xpan-lightbox');
+  if (!lb) return;
+
+  // Evita restauración automática del navegador
+  if ('scrollRestoration' in history) { try { history.scrollRestoration = 'manual'; } catch(_){} }
+
+  let savedY = 0;
+  let saved = false;
+
+  const save = () => {
+    if (saved) return;
+    savedY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    saved = true;
+  };
+
+  const restore = () => {
+    if (!saved) return;
+    const y = savedY;
+    // Restaurar después de que el DOM termine de quitar clases/estilos del overlay
+    requestAnimationFrame(() => {
+      window.scrollTo(0, y);
+      // Fallback por si hay otro reflow tardío
+      setTimeout(() => window.scrollTo(0, y), 0);
+    });
+    saved = false;
+  };
+
+  // Observa cambios de estado del lightbox (clase .open)
+  new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.type === 'attributes' && m.attributeName === 'class') {
+        const isOpen = lb.classList.contains('open');
+        if (isOpen) save(); else restore();
+      }
+    }
+  }).observe(lb, { attributes: true });
+
+  // Fallback adicional: observa clases en <html>/<body> que tu script usa (lb-open)
+  const observeClasses = (el) => new MutationObserver(() => {
+    const isOpen = document.body.classList.contains('lb-open') || document.documentElement.classList.contains('lb-open');
+    if (isOpen) save(); else restore();
+  }).observe(el, { attributes: true, attributeFilter: ['class'] });
+
+  observeClasses(document.documentElement);
+  observeClasses(document.body);
+})();
+</script>
+
+
   <div class="container">
     <!-- ES -->
     <div class="lang lang-es">

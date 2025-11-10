@@ -155,18 +155,20 @@
       return list;
     }
     function regenerateLines(){ currentLines = [...chooseGroupLines(nodesA), ...chooseGroupLines(nodesB)]; }
+
+    /* patch: sin reflow por cuadro; usar posiciones cacheadas */
     function redrawLines(){
       const frag = document.createDocumentFragment();
-      currentLines.forEach(([a,b])=>{
-        const ra=a.el.getBoundingClientRect(), rb=b.el.getBoundingClientRect();
-        const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-        l.setAttribute('x1', ra.left+ra.width/2); l.setAttribute('y1', ra.top+ra.height/2);
-        l.setAttribute('x2', rb.left+rb.width/2); l.setAttribute('y2', rb.top+rb.height/2);
+      for (const [a,b] of currentLines){
+        const ax = a.x + a.w/2, ay = a.y + a.h/2;
+        const bx = b.x + b.w/2, by = b.y + b.h/2;
+        const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+        l.setAttribute('x1', ax); l.setAttribute('y1', ay);
+        l.setAttribute('x2', bx); l.setAttribute('y2', by);
         l.setAttribute('stroke', (a.group==='A'&&b.group==='A')?colorA:colorB);
         frag.appendChild(l);
-      });
-      while(lineCanvas.firstChild) lineCanvas.removeChild(lineCanvas.firstChild);
-      lineCanvas.appendChild(frag);
+      }
+      lineCanvas.replaceChildren(frag);
     }
 
     function tickNodes(dt){
@@ -184,9 +186,17 @@
     }
 
     let last = performance.now();
+    /* patch: cap de FPS en móvil para bajar calor */
+    const MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const MIN_DELTA = 1000 / (MOBILE ? 30 : 60);
+
+    /* patch: rAF estable con salto de frames en móvil */
     function frame(now){
-      const dt = Math.min(64, now-last); last = now;
+      if(now - last < MIN_DELTA){ requestAnimationFrame(frame); return; }
+      const dt = Math.min(64, now - last); last = now;
+
       tickNodes(dt);
+
       if(now>=nextLineUpdate){
         regenerateLines(); redrawLines();
         lineInterval = 420 + Math.random()*260;
@@ -198,17 +208,24 @@
 
     function setPaused(v){ paused=v; document.documentElement.classList.toggle('paused', v); }
     document.addEventListener('visibilitychange', ()=>setPaused(document.hidden));
+
+    /* patch: actualizar tamaños solo en resize, sin medir por cuadro */
     addEventListener('resize', ()=>{
       const b=bounds(), leftZoneW=b.w*0.44, rightZoneW=b.w*0.44;
+      for(const n of allNodes){
+        n.w = n.el.offsetWidth; n.h = n.el.offsetHeight;
+      }
       for(const n of nodesA){ n.x=Math.min(Math.max(n.x,b.lPad), b.lPad+leftZoneW); n.y=Math.min(Math.max(n.y,b.tPad), b.h-b.bPad-n.h); }
       for(const n of nodesB){ n.x=Math.max(Math.min(n.x,b.w-b.rPad), b.w-rightZoneW-b.rPad); n.y=Math.min(Math.max(n.y,b.tPad), b.h-b.bPad-n.h); }
       regenerateLines(); redrawLines();
     }, {passive:true});
 
-    let pressT=null;
-    addEventListener('pointerdown', ()=>{ pressT=setTimeout(()=>setPaused(true),120); }, {passive:true});
-    addEventListener('pointerup',   ()=>{ clearTimeout(pressT); setPaused(false); }, {passive:true});
-    addEventListener('scroll', ()=>setPaused(true), {passive:true});
+    /* patch: pausa solo si el gesto empieza sobre un título */
+    let pressT = null;
+    addEventListener('pointerdown', (e)=>{ if(!e.target.closest('.floating-title')) return; pressT=setTimeout(()=>setPaused(true),120); }, {passive:true});
+    addEventListener('pointerup',   (e)=>{ if(!e.target.closest('.floating-title')) return; clearTimeout(pressT); setPaused(false); }, {passive:true});
+    /* patch: eliminar pausa por scroll (body overflow:hidden) */
+    // addEventListener('scroll', ()=>setPaused(true), {passive:true});
   </script>
 </body>
 </html>

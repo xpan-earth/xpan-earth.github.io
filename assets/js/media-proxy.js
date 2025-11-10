@@ -388,3 +388,13 @@
     observeNewNodes();
   });
 })();
+
+/* loader aei-panzoom (robusto) */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!document.querySelector('.aei-embed')) return;
+  const here = document.currentScript?.src
+    || document.querySelector('script[src*="media-proxy.js"]')?.src
+    || '/assets/js/media-proxy.js';
+  const url = new URL('./aei-panzoom.mjs', here); // misma carpeta /assets/js/
+  import(url.href).catch(() => {});
+});

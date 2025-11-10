@@ -193,6 +193,58 @@
   <!-- lightbox existente: intacto -->
   <style>#xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.45);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}#xpan-lightbox.open{display:flex}#xpan-lightbox .sheet{position:relative;max-width:100vw;max-height:100vh;overflow:hidden;transform:scale(.985);opacity:0;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}#xpan-lightbox.open .sheet{transform:scale(1);opacity:1}#xpan-lightbox img{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:none}#xpan-lightbox video{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent;pointer-events:auto}html.lb-open,body.lb-open{overflow:hidden;touch-action:none}@media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}</style>
   <div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div>
+
+  <script>
+/* patch: persistir scroll al abrir/cerrar lightbox en todas las páginas */
+(() => {
+  const lb = document.getElementById('xpan-lightbox');
+  if (!lb) return;
+
+  // Evita restauración automática del navegador
+  if ('scrollRestoration' in history) { try { history.scrollRestoration = 'manual'; } catch(_){} }
+
+  let savedY = 0;
+  let saved = false;
+
+  const save = () => {
+    if (saved) return;
+    savedY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    saved = true;
+  };
+
+  const restore = () => {
+    if (!saved) return;
+    const y = savedY;
+    // Restaurar después de que el DOM termine de quitar clases/estilos del overlay
+    requestAnimationFrame(() => {
+      window.scrollTo(0, y);
+      // Fallback por si hay otro reflow tardío
+      setTimeout(() => window.scrollTo(0, y), 0);
+    });
+    saved = false;
+  };
+
+  // Observa cambios de estado del lightbox (clase .open)
+  new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.type === 'attributes' && m.attributeName === 'class') {
+        const isOpen = lb.classList.contains('open');
+        if (isOpen) save(); else restore();
+      }
+    }
+  }).observe(lb, { attributes: true });
+
+  // Fallback adicional: observa clases en <html>/<body> que tu script usa (lb-open)
+  const observeClasses = (el) => new MutationObserver(() => {
+    const isOpen = document.body.classList.contains('lb-open') || document.documentElement.classList.contains('lb-open');
+    if (isOpen) save(); else restore();
+  }).observe(el, { attributes: true, attributeFilter: ['class'] });
+
+  observeClasses(document.documentElement);
+  observeClasses(document.body);
+})();
+</script>
+
   <script>(()=>{const e=document.getElementById("xpan-lightbox"),t=e.querySelector(".sheet");let n=[],i=-1,o=0,a=0;function d(){n=Array.from(document.querySelectorAll("img,video")).filter(r=>!r.closest("#xpan-lightbox")&&!r.closest("a")&&(r.currentSrc||r.src))}function l(r){if(r<0||r>=n.length)return;i=r,t.innerHTML="";const o=n[i],d=o.tagName.toLowerCase()==="video",l=document.createElement(d?"video":"img");if(d){l.src=o.currentSrc||o.src;l.playsInline=!0;l.controls=!0;l.loop=!!o.loop;l.muted=o.muted??!0;!document.hidden&&(l.autoplay=!0);l.addEventListener("click",s=>s.stopPropagation(),{passive:!0});l.addEventListener("dblclick",s=>{s.stopPropagation(),c()});l.addEventListener("touchend",s=>{const e=s.changedTouches[0].clientX;const t=Date.now();Math.abs(e-a)<10&&t-o<300&&(s.stopPropagation(),c());a=e;o=t},{passive:!0})}else{l.src=o.currentSrc||o.src;o.srcset&&(l.srcset=o.srcset);o.sizes&&(l.sizes=o.sizes);l.alt=o.alt||"";l.decoding="async";l.loading="eager"}t.appendChild(l);e.classList.add("open");document.documentElement.classList.add("lb-open");document.body.classList.add("lb-open")}function c(){e.classList.remove("open"),t.innerHTML="",document.documentElement.classList.remove("lb-open"),document.body.classList.remove("lb-open"),i=-1}function s(e){d();const t=n.indexOf(e);t>-1&&l(t)}document.body.addEventListener("click",t=>{const e=t.target;if(!e)return;if(e.closest("a"))return;if(e.tagName==="IMG"||e.tagName==="VIDEO"){t.preventDefault(),t.stopPropagation(),s(e)}},{capture:!0,passive:!1}),e.addEventListener("click",t=>{t.preventDefault(),t.stopPropagation(),c()},{passive:!1}),window.addEventListener("keydown",t=>{if(!e.classList.contains("open"))return;"Escape"===t.key&&c(),("ArrowRight"===t.key||"l"===t.key)&&i<n.length-1&&l(i+1),("ArrowLeft"===t.key||"h"===t.key)&&i>0&&l(i-1)}),e.addEventListener("touchstart",e=>{o=Date.now(),a=e.touches[0].clientX},{passive:!0}),e.addEventListener("touchend",e=>{const t=e.changedTouches[0].clientX-a;Math.abs(t)>50&&(t<0&&i<n.length-1?l(i+1):t>0&&i>0&&l(i-1))},{passive:!0}),["wheel","touchmove","pointermove"].forEach(t=>{e.addEventListener(t,n=>{e.classList.contains("open")&&n.preventDefault()},{passive:!1})});new MutationObserver(()=>d()).observe(document.documentElement,{subtree:!0,childList:!0}),d()})();</script>
 
 </body>

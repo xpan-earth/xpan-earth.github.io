@@ -266,6 +266,16 @@
     @media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}
   </style>
 
+<style>
+/* patch: tap-through guard */
+body.lb-open > *:not(#xpan-lightbox){ pointer-events:none !important; }
+#xpan-lightbox{ pointer-events:auto; }
+#xpan-lightbox .sheet,
+#xpan-lightbox img,
+#xpan-lightbox video{ pointer-events:auto; }
+</style>
+
+
   <script>
   /* ===== idioma ===== */
   (function(){
@@ -330,7 +340,22 @@
     document.body.addEventListener('click',e=>{ const el=e.target; if(!el) return; if(el.closest('a')) return;
       if(el.tagName==='IMG'||el.tagName==='VIDEO'){ e.preventDefault(); e.stopPropagation(); openFrom(el); }
     },{capture:true});
-    lb.addEventListener('click',e=>{ if(e.target===lb) close(); });
+/* patch: cerrar al tocar media/sheet y evitar tap-through */
+const requestClose = (e) => { e.preventDefault(); e.stopPropagation(); close(); };
+
+// tap en fondo cierra
+lb.addEventListener('click', (e) => {
+  if (e.target === lb) requestClose(e);
+}, { capture:true });
+
+// tap en la lámina también cierra
+sheet.addEventListener('click', requestClose, { capture:true });
+
+// tap directo en IMG/VIDEO cierra
+lb.addEventListener('click', (e) => {
+  const t = e.target;
+  if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) requestClose(e);
+}, { capture:true });
     addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return;
       if(e.key==='Escape') return close();
       if((e.key==='ArrowRight'||e.key==='l') && idx<items.length-1) return openAt(idx+1);
