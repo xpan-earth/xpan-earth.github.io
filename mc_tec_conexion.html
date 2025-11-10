@@ -22,11 +22,12 @@
 
     /* ===== base ===== */
     *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{min-height:100%} /* <- antes: height:100% */
     html,body{
       margin:0; background:var(--bg); color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow:hidden;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden; /* <- antes: overflow:hidden */
     }
     a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s var(--ease)}
     a:hover{border-bottom-color:var(--accent)}
@@ -180,6 +181,7 @@
     /* líneas entre imágenes (color via CSS currentColor) */
     const blocks=[...document.querySelectorAll('.image-block')];
     const svg=document.getElementById('lines');
+
     function connectBlocks(){
       svg.innerHTML='';
       const rects=blocks.map(el=> el.getBoundingClientRect());
@@ -194,6 +196,7 @@
         }
       }
     }
+
     window.addEventListener('load', ()=>{
       connectBlocks();
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -203,7 +206,9 @@
         b.style.animationDuration = reduce ? '0s' : `${duration}s`;
       });
     });
+
     window.addEventListener('resize', connectBlocks);
+    document.addEventListener('scroll', ()=> requestAnimationFrame(connectBlocks), {passive:true}); /* <- repinta al hacer scroll */
   </script>
 </body>
 </html>

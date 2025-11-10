@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>a.e.i_msh_11.may.25 [yes no more]</title>
+
+  <!-- conexiones previas -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+  <style>
+    /* ===== tokens post-tech / defense-ops ===== */
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --line:#2A2E31; --line-weak:#151A1F;
+      --accent:#1860FF; --accent-2:#8CFF4D; --alert:#F9A800; --danger:#FF3666;
+      --pad:clamp(16px,4vw,48px); --header-h:64px; --g:16px; --scan:.12;
+      --block:160px; --logo-invert:1; /* dark: blanco */
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{
+        --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+        --line:#E6E8EA; --line-weak:#F3F5F7;
+        --accent:#1860FF; --accent-2:#0EA43A; --alert:#B18408; --danger:#C11F47;
+        --logo-invert:0; /* light: negro */
+      }
+    }
+
+    /* ===== reset mínimo ===== */
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; background:var(--bg); color:var(--fg); }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:100%; object-fit:contain; }
+
+    /* ===== tipografía UI ===== */
+    body{
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", sans-serif;
+      letter-spacing:-.2px; cursor:crosshair; overflow:auto;
+    }
+
+    /* ===== header fijo ===== */
+    header{
+      position:fixed; top:12px; left:12px; z-index:30;
+      display:flex; align-items:center; gap:8px;
+    }
+    header img[alt="xpan"]{
+      width:50px; height:auto; filter:invert(var(--logo-invert)) contrast(1) brightness(1);
+    }
+
+    /* ===== fondo estrella ===== */
+    .background-star{
+      position:fixed; top:50%; left:50%;
+      width:100vmin; max-width:900px; height:auto;
+      transform:translate(-50%,-50%); opacity:.05; z-index:0; pointer-events:none;
+    }
+
+    /* ===== escena ===== */
+    .container{
+      position:relative; width:100vw; min-height:100svh;
+      padding:clamp(12px,2.5vw,24px); padding-top:calc(var(--header-h) + 16px);
+    }
+
+    /* ===== bloques ===== */
+    .image-block{
+      width:var(--block); height:var(--block);
+      position:absolute; left:0; top:0; z-index:1;
+      text-decoration:none; aspect-ratio:1/1;
+      opacity:.56; transition:opacity .24s var(--ease), transform .24s var(--ease);
+      border:1px solid var(--line-weak);
+      background:color-mix(in oklab, var(--bg) 96%, transparent);
+      -webkit-tap-highlight-color:transparent;
+    }
+    .image-block:hover{ opacity:.9; z-index:5; }
+    .image-block img, .image-block video{ width:100%; height:100%; background:transparent; }
+
+    /* aviso audio */
+    #audio-notice{
+      position:fixed; right:.5rem; bottom:.5rem;
+      background:rgba(255,255,255,.10); color:var(--fg);
+      border:1px solid var(--line); padding:.28rem .6rem;
+      font: 600 .72rem/1.2 IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      letter-spacing:-.2px; backdrop-filter:saturate(100%) blur(2px);
+      pointer-events:none; opacity:.8; transition:opacity 1s var(--ease);
+    }
+
+    /* HUD de líneas */
+    svg.lines{ position:fixed; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+    svg.lines line{ stroke:var(--fg); stroke-width:.6px; stroke-opacity:.18; shape-rendering:crispEdges; }
+
+    /* móvil */
+    @media (max-width:600px){
+      .image-block{ position:static; width:100%; height:auto; aspect-ratio:auto; margin:12px 0; opacity:.9; transform:none!important; }
+      svg.lines{ display:none; }
+    }
+
+    /* micro-scanline */
+    .container::after{
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:repeating-linear-gradient(
+        to bottom,
+        rgba(24,96,255,0.04) 0px,
+        rgba(24,96,255,0.04) calc(1px * var(--scan)),
+        transparent calc(1px * var(--scan)),
+        transparent calc(2px * var(--scan))
+      );
+      mix-blend-mode:soft-light;
+    }
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="../xpan.svg" alt="xpan"/>
+    </a>
+  </header>
+
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg" aria-hidden="true"></object>
+  <svg class="lines" id="dynamic-lines" aria-hidden="true"></svg>
+  <div class="container" id="channels-container" aria-label="a.e.i — escena"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    /* ===== preservado y optimizado ===== */
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice'); 
+
+
+    const mediaItems = [
+      {"url":"https://attachments.are.na/36633847/af044458594889f1137f6502fab3ecbd.mov?1747025147","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633848/original_96c5186cc02e25a9d8bef72048867901.jpg?1747025149?bc=0","link":"a../.e.i.index.html","newTab":true},
+      {"url":"https://attachments.are.na/36633855/2322722d9ce61907a871e1c2445ae26b.mov?1747025158","link":"a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633862/original_c070e7874a783908cc14bb28a199b33c.jpg?1747025187?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633866/original_6499e89ec7920677f3b6f4f1e60ec374.jpg?1747025197?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633867/original_707ba507f29048262bd37b2d781debe3.jpg?1747025197?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633868/original_9268159d5502666699ae9f14b8f42d16.jpg?1747025204?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633882/original_0df1d5a8228e2cb91924ed716168a232.jpg?1747025228?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://attachments.are.na/36633898/9d0409de0decc944ae97cbbba69431b4.mov?1747025297","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633902/original_afa5b763c972b4a1137a017c7fe458be.jpg?1747025316?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633909/original_0abd5157256ff8084f5de792e99deb68.jpg?1747025335?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633911/original_a60ec1dd9298fd9aaceb5190f5c06610.jpg?1747025344?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://attachments.are.na/36633923/38e8dac0a48064acac6b73dc8c84071c.mov?1747025391","link":"a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633927/original_320fe032148ed34d66bd270c877bed22.jpg?1747025400?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633930/original_21fada47650ee28aaa9f4d0c579261ce.jpg?1747025409?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633932/original_faf92c3398be397f4ff34fe80e8cf2c4.jpg?1747025417?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633933/original_46ac84c5108f8157b9021fbc586086e3.jpg?1747025420?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633934/original_0c9cedea851445fcae9201f6ea620d81.jpg?1747025422?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633936/original_1df85c1ad186205cbd9aa60b34be7073.jpg?1747025424?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633939/original_7fd044f92cd4a28cd5f555c131e9c869.jpg?1747025434?bc=0","link":"../a.e.i.index.html","newTab":true},
+      {"url":"https://d2w9rnfcy7mm78.cloudfront.net/36633942/original_19a996c092ce8aefe789a52656572202.jpg?1747025442?bc=0","link":"../a.e.i.index.html","newTab":true}
+    ];
+
+    /* ===== HUD líneas ===== */
+    function randomizeLines(){
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width/2 + window.scrollX;
+        const y1 = rectA.top  + rectA.height/2 + window.scrollY;
+        blocks.forEach((blockB, j) => {
+          if(i < j && Math.random() > 0.6){
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width/2 + window.scrollX;
+            const y2 = rectB.top  + rectB.height/2 + window.scrollY;
+            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.style.stroke = 'var(--fg)';
+            line.style.strokeWidth = `${0.4}`;
+            line.style.opacity = `${0.18}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+    window.addEventListener('DOMContentLoaded', ()=>{ requestAnimationFrame(randomizeLines); });
+
+    /* ===== render y lazy ===== */
+    window.addEventListener('load', () => {
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      // IO para lazy de videos ya creados
+      const io = new IntersectionObserver((entries,obs)=>{
+        entries.forEach(en=>{
+          if(!en.isIntersecting) return;
+          const v = en.target;
+          if(v.dataset.src && !v.src){
+            v.src = v.dataset.src;
+            v.load();
+            if(!v.muted){ v.play().catch(()=>{}); }
+          }
+          obs.unobserve(v);
+        });
+      },{ rootMargin:'600px 0px', threshold:.08 });
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true; video.controls = false; video.playsInline = true;
+          video.preload = 'none'; video.poster = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+          video.dataset.src = item.url;
+          video.volume = 0.05;
+          // iOS: un solo video con audio, los demás mute
+          video.muted = isIOS ? index !== selectedAudioIndex : false;
+          video.setAttribute('muted', video.muted ? '' : null);
+          video.addEventListener('canplay', () => video.play().catch(()=>{}));
+          a.appendChild(video);
+          io.observe(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+        const x = Math.random() * (window.innerWidth  - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top  = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        const blocks = document.querySelectorAll('.image-block');
+        blocks.forEach(block => {
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click', randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        setInterval(randomizeLines, 5000);
+        window.addEventListener('resize', randomizeLines);
+      });
+    });
+
+    /* ===== desbloqueo de audio por gesto ===== */
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(video => {
+        video.play().catch(() => {});
+      });
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>

@@ -53,6 +53,7 @@
     header .brand{display:flex; align-items:center; gap:.75rem; font:600 .9rem/1 var(--font-ui); letter-spacing:.02em}
     header img{width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
     @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+    @media (max-width:900px){ header img{ width:36px } }
     .mode{font:600 .75rem/1 var(--font-mono); color:var(--fg-dim)}
 
     /* ===== contenedor general con scroll natural ===== */
@@ -78,7 +79,11 @@
       display:grid; grid-template-columns:minmax(220px, 300px) 1fr;
       gap:0;
     }
-    @media (max-width:900px){ .wrap{ grid-template-columns:1fr } }
+    @media (max-width:900px){
+      .wrap{ grid-template-columns:1fr }
+      /* Ocultar el rail en móvil para que la lista sea lo primero visible */
+      .rail{ display:none }
+    }
 
     .rail{
       position:sticky; top:calc(var(--header-h) + 44px);
@@ -137,7 +142,8 @@
   <!-- header -->
   <header>
     <a class="brand" href="index.html" aria-label="xpan — home">
-      <img src="xpan.svg" alt="xpan"/>    </a>
+      <img src="xpan.svg" alt="xpan"/>
+    </a>
     <div class="mode">marco teórico</div>
   </header>
 
@@ -145,7 +151,7 @@
     <!-- barra -->
     <div class="toolbar">
       <div class="filter">
-        <input id="q" type="search" />
+        <input id="q" type="search" placeholder="buscar…" autocomplete="off" autocapitalize="none" spellcheck="false" />
         <kbd>⌘/</kbd>
       </div>
       <div class="status" id="status">14 entradas</div>
@@ -206,8 +212,7 @@
 
         <div class="entry">
           <strong>tecnologías de conexión</strong>
-          <span>ensayo disponible en:</span><br/>
-          <a href="mc_tec_conexion.html">español</a>
+          <a href="mc_tec_conexion.html">ensayo conceptual</a>
         </div>
 
         <div class="entry">
@@ -259,6 +264,7 @@
     const entries = [...entriesWrap.querySelectorAll('.entry')];
     const statusEl = document.getElementById('status');
     const wires = document.querySelector('svg.wires');
+    const railEl = document.querySelector('.rail');
 
     function norm(t){ return t.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
     function updateStatus(){
@@ -287,7 +293,12 @@
     }
 
     function drawWires(){
-      if(!wires) return;
+      // si no hay rail visible (móvil) no dibujar
+      if(!wires || !railEl || railEl.offsetParent === null || railEl.offsetWidth === 0 || railEl.offsetHeight === 0){
+        if(wires) wires.innerHTML = '';
+        return;
+      }
+
       wires.innerHTML = '';
 
       const railRect = wires.getBoundingClientRect();

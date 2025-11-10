@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>a.e.i_msh_circa_23_24_25.1</title>
+
+  <!-- conexiones previas -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+  <style>
+    /* ===== tokens post-tech / defense-ops ===== */
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --line:#2A2E31; --line-weak:#151A1F;
+      --accent:#1860FF; --accent-2:#8CFF4D; --alert:#F9A800; --danger:#FF3666;
+      --pad:clamp(16px,4vw,48px); --header-h:64px; --g:16px; --scan:.12;
+      --block:160px; --logo-invert:1; /* dark: blanco */
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{
+        --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+        --line:#E6E8EA; --line-weak:#F3F5F7;
+        --accent:#1860FF; --accent-2:#0EA43A; --alert:#B18408; --danger:#C11F47;
+        --logo-invert:0; /* light: negro */
+      }
+    }
+
+    /* ===== reset ===== */
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; background:var(--bg); color:var(--fg); }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:100%; object-fit:contain; }
+
+    /* ===== tipografía UI ===== */
+    body{
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", sans-serif;
+      letter-spacing:-.2px; cursor:crosshair; overflow:auto;
+    }
+
+    /* ===== header ===== */
+    header{
+      position:fixed; top:12px; left:12px; z-index:30;
+      display:flex; align-items:center; gap:8px;
+    }
+    header img[alt="xpan"]{
+      width:50px; height:auto; filter:invert(var(--logo-invert)) contrast(1) brightness(1);
+    }
+
+    /* ===== fondo estrella ===== */
+    .background-star{
+      position:fixed; top:50%; left:50%;
+      width:100vmin; max-width:900px; height:auto;
+      transform:translate(-50%,-50%); opacity:.05; z-index:0; pointer-events:none;
+    }
+
+    /* ===== escena ===== */
+    .container{
+      position:relative; width:100vw; min-height:100svh;
+      padding:clamp(12px,2.5vw,24px); padding-top:calc(var(--header-h) + 16px);
+    }
+
+    /* ===== bloques ===== */
+    .image-block{
+      width:var(--block); height:var(--block);
+      position:absolute; left:0; top:0; z-index:1;
+      text-decoration:none; aspect-ratio:1/1;
+      opacity:.8; transition:opacity .24s var(--ease), transform .24s var(--ease);
+      border:1px solid var(--line-weak);
+      background:color-mix(in oklab, var(--bg) 96%, transparent);
+      -webkit-tap-highlight-color:transparent;
+    }
+    .image-block:hover{ opacity:1; z-index:5; }
+    .image-block img, .image-block video{ width:100%; height:100%; background:transparent; }
+
+    /* aviso audio */
+    #audio-notice{
+      position:fixed; right:.5rem; bottom:.5rem;
+      background:rgba(255,255,255,.10); color:var(--fg);
+      border:1px solid var(--line); padding:.28rem .6rem;
+      font:600 .72rem/1.2 IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      letter-spacing:-.2px; backdrop-filter:saturate(100%) blur(2px);
+      pointer-events:none; opacity:.8; transition:opacity 1s var(--ease);
+    }
+
+    /* HUD de líneas */
+    svg.lines{ position:fixed; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+    svg.lines line{ stroke:var(--fg); stroke-width:.6px; stroke-opacity:.18; shape-rendering:crispEdges; }
+
+    /* móvil */
+    @media (max-width:600px){
+      .image-block{ position:static; width:100%; height:auto; aspect-ratio:auto; margin:12px 0; opacity:.95; transform:none!important; }
+      svg.lines{ display:none; }
+    }
+
+    /* micro-scanline */
+    .container::after{
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:repeating-linear-gradient(
+        to bottom,
+        rgba(24,96,255,0.04) 0px,
+        rgba(24,96,255,0.04) calc(1px * var(--scan)),
+        transparent calc(1px * var(--scan)),
+        transparent calc(2px * var(--scan))
+      );
+      mix-blend-mode:soft-light;
+    }
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="../xpan.svg" alt="xpan"/>
+    </a>
+  </header>
+
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg" aria-hidden="true"></object>
+  <svg class="lines" id="dynamic-lines" aria-hidden="true"></svg>
+  <div class="container" id="channels-container" aria-label="a.e.i — escena"></div>
+  <div id="audio-notice">tocar para activar sonido</div>
+
+  <script>
+    /* ===== preservado y optimizado ===== */
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const container = document.getElementById('channels-container');
+    const audioNotice = document.getElementById('audio-notice');
+
+    const mediaItems = [
+      {"url":"https://attachments.are.na/38270564/f494a1c27acd4862e4066ab50a5b9824.mp4?1753145696","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270560/8623b0b89a6db4ba3b53989beb984f9a.mp4?1753145673","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270546/24edf595af60a7f65e6ba097d5e97acf.mp4?1753145642","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270518/8d6e87fe9c16953c5069c971a55ffd38.mp4?1753145569","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270496/c0d0166ac4b53c2f1abaf70054738163.mp4?1753145506","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270488/a92d9a8237f95a992d7397914c9e7244.mp4?1753145404","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270447/034021b38f0ea66526474d51f88b2b2c.mp4?1753145212","link":"https://www.instagram.com/moisessacalhadid","newTab":false},
+      {"url":"https://attachments.are.na/38270441/d91505b04e912b645b1aea259deceed3.mp4?1753145189","link":"https://www.instagram.com/moisessacalhadid","newTab":false}
+    ];
+
+    /* ===== HUD líneas ===== */
+    function randomizeLines(){
+      const blocks = [...document.querySelectorAll('.image-block')];
+      const svg = document.getElementById('dynamic-lines');
+      svg.innerHTML = '';
+      blocks.forEach((blockA, i) => {
+        const rectA = blockA.getBoundingClientRect();
+        const x1 = rectA.left + rectA.width/2 + window.scrollX;
+        const y1 = rectA.top  + rectA.height/2 + window.scrollY;
+        blocks.forEach((blockB, j) => {
+          if(i < j && Math.random() > 0.6){
+            const rectB = blockB.getBoundingClientRect();
+            const x2 = rectB.left + rectB.width/2 + window.scrollX;
+            const y2 = rectB.top  + rectB.height/2 + window.scrollY;
+            const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.style.stroke = 'var(--fg)';
+            line.style.strokeWidth = '0.6';
+            line.style.opacity = '0.18';
+            svg.appendChild(line);
+          }
+        });
+      });
+    }
+    window.addEventListener('DOMContentLoaded', ()=>{ requestAnimationFrame(randomizeLines); });
+
+    /* ===== render + lazy ===== */
+    window.addEventListener('load', () => {
+      const io = new IntersectionObserver((entries,obs)=>{
+        entries.forEach(en=>{
+          if(!en.isIntersecting) return;
+          const v = en.target;
+          if(v.dataset.src && !v.src){
+            v.src = v.dataset.src; v.load();
+            if(!v.muted){ v.play().catch(()=>{}); }
+          }
+          obs.unobserve(v);
+        });
+      },{ rootMargin:'600px 0px', threshold:.08 });
+
+      let selectedAudioIndex = isIOS ? Math.floor(Math.random() * mediaItems.length) : -1;
+
+      mediaItems.forEach((item, index) => {
+        const a = document.createElement('a');
+        a.className = 'image-block';
+        a.href = item.link;                      // absoluto → se respeta
+        if (item.newTab) a.target = '_blank';
+        a.style.zIndex = 1 + Math.floor(Math.random() * 3);
+
+        if (item.url.match(/\.(mp4|mov)(\?|$)/i)) {
+          const video = document.createElement('video');
+          video.loop = true; video.controls = false; video.playsInline = true;
+          video.preload = 'none';
+          video.poster = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+          video.dataset.src = item.url;
+          video.volume = 0.05;
+          video.muted = isIOS ? index !== selectedAudioIndex : false;
+          if(video.muted) video.setAttribute('muted','');
+          video.addEventListener('canplay', () => video.play().catch(()=>{}));
+          a.appendChild(video);
+          io.observe(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.url;
+          a.appendChild(img);
+        }
+
+        container.appendChild(a);
+        const x = Math.random() * (window.innerWidth  - 200);
+        const y = Math.random() * (window.innerHeight - 200);
+        a.style.left = `${x}px`;
+        a.style.top  = `${y}px`;
+      });
+
+      requestAnimationFrame(() => {
+        randomizeLines();
+        document.querySelectorAll('.image-block').forEach(block=>{
+          block.addEventListener('mouseenter', randomizeLines);
+          block.addEventListener('click',     randomizeLines);
+        });
+        window.addEventListener('scroll', randomizeLines, { passive: true });
+        window.addEventListener('touchstart', randomizeLines, { passive: true });
+        window.addEventListener('resize', randomizeLines);
+        setInterval(randomizeLines, 5000);
+      });
+    });
+
+    /* ===== gesto para audio ===== */
+    document.body.addEventListener('click', () => {
+      document.querySelectorAll('video').forEach(v => v.play().catch(()=>{}));
+      audioNotice.style.opacity = '0';
+    }, { once: true });
+  </script>
+</body>
+</html>

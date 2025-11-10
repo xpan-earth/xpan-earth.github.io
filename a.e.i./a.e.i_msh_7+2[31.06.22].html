@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>a.e.i — xpan</title>
+
+  <!-- conexiones previas existentes -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+
+  <style>
+    /* ===== xpan: tokens post-tech / defense-ops ===== */
+    [data-xpan]{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --line:#2A2E31; --line-weak:#151A1F;
+      --accent:#1860FF; --accent-2:#8CFF4D; --alert:#F9A800; --danger:#FF3666;
+      --pad:clamp(16px,4vw,48px); --header-h:64px; --g:16px;
+      --aei-size:160px; --scan:0.12;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --logo-invert:0; /* claro -> negro */
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{
+        --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+        --line:#E6E8EA; --line-weak:#F3F5F7;
+        --accent:#1860FF; --accent-2:#0EA43A; --alert:#B18408; --danger:#C11F47;
+        --logo-invert:0; /* logo oscuro sobre fondo claro */
+      }
+    }
+    @media (prefers-color-scheme:dark){
+      [data-xpan]{ --logo-invert:1; } /* logo claro sobre fondo oscuro */
+    }
+
+    /* ===== reset mínimo ===== */
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    html,body{ margin:0; background:var(--bg); color:var(--fg); }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ display:block; max-width:100%; height:100%; object-fit:contain; }
+
+    /* ===== tipografías UI ===== */
+    body{
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", sans-serif;
+      letter-spacing:-0.2px;
+      cursor: crosshair;
+      overflow:hidden; /* desktop no scroll */
+    }
+    @media (max-width:600px){
+      body{ overflow:auto; } /* móvil sí scroll */
+    }
+
+    /* ===== header técnico ===== */
+    header{
+      position:fixed; top:12px; left:12px;
+      z-index:30; display:flex; align-items:center; gap:8px;
+      padding:0;
+    }
+    header img[alt="xpan"]{
+      width:50px; height:auto; display:block;
+      filter: invert(var(--logo-invert)) contrast(1) brightness(1);
+    }
+
+    /* ===== fondo AEI (estrella) ===== */
+    .background-star{
+      position:fixed; top:50%; left:50%;
+      width:100vmin; max-width:900px; height:auto;
+      transform:translate(-50%, -50%);
+      opacity:.05; z-index:0; pointer-events:none;
+    }
+
+    /* ===== escena ===== */
+    .container{
+      position:relative; width:100vw; height:100vh;
+      padding:clamp(12px,2.5vw,24px);
+      overflow:hidden; /* mantiene bloques en escena desktop */
+    }
+    @media (max-width:600px){
+      .container{ height:auto; min-height:100svh; overflow:visible; }
+    }
+
+    /* ===== bloques de imagen/video ===== */
+    .image-block{
+      position:absolute; display:block;
+      width:var(--aei-size); height:var(--aei-size);
+      aspect-ratio:1/1;
+      opacity:.56; transition:opacity .24s var(--ease), transform .24s var(--ease);
+      border:1px solid var(--line-weak);
+      background:color-mix(in oklab, var(--bg) 96%, transparent);
+      backdrop-filter:saturate(100%) brightness(100%);
+      -webkit-tap-highlight-color:transparent;
+    }
+    .image-block:hover{ opacity:.9; }
+    .image-block:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+    .image-block img, .image-block video{
+      width:100%; height:100%; object-fit:contain; background:transparent;
+    }
+
+    /* ===== red de líneas HUD ===== */
+    svg.lines{
+      position:fixed; inset:0; width:100vw; height:100vh;
+      z-index:1; pointer-events:none;
+    }
+    svg.lines line{
+      stroke: var(--fg);
+      stroke-opacity:.18;
+      stroke-width:.6px;
+      shape-rendering:crispEdges;
+      transition: stroke-opacity .24s var(--ease);
+    }
+
+    /* ===== móvil: pilado legible ===== */
+    @media (max-width:600px){
+      .image-block{
+        position:static; width:100%; height:auto; aspect-ratio:auto;
+        margin:12px 0; opacity:.9;
+        transform:none !important;
+      }
+      svg.lines{ display:none; }
+    }
+
+    /* ===== micro-scanline opcional ===== */
+    .container::after{
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(24,96,255,0.04) 0px,
+        rgba(24,96,255,0.04) calc(1px * var(--scan)),
+        transparent calc(1px * var(--scan)),
+        transparent calc(2px * var(--scan))
+      );
+      mix-blend-mode:soft-light;
+    }
+
+    .sr-only{ position:absolute; clip:rect(1px,1px,1px,1px); padding:0;border:0;height:1px;width:1px;overflow:hidden;white-space:nowrap; }
+  </style>
+</head>
+<body>
+  <!-- ===== contenido original preservado ===== -->
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="../xpan.svg" alt="xpan"/>
+    </a>
+  </header>
+
+  <object class="background-star" type="image/svg+xml" data="mdtc.4 estrella.svg" aria-hidden="true"></object>
+  <svg class="lines" id="dynamic-lines" role="presentation" aria-hidden="true"></svg>
+
+  <div class="container" id="channels-container" aria-label="a.e.i — escena">
+    <!-- Bloques multimedia (preservados) -->
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Ciudad+de+México" target="_blank" rel="noopener">
+      <video muted loop playsinline preload="none" poster="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+        <source data-src="https://attachments.are.na/36398899/6033e32bcfad68903d88462899a243e6.mp4?1746146205" type="video/mp4">
+      </video>
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Madrid,+España" target="_blank" rel="noopener">
+      <video muted loop playsinline preload="none" poster="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+        <source data-src="https://attachments.are.na/36398853/f73c8c6d53cd8242a043fb0afe6284c7.mp4?1746145895" type="video/mp4">
+      </video>
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Buenos+Aires,+Argentina" target="_blank" rel="noopener">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398851/original_218932628a361968995124998cd0407c.png?1746145829?bc=0" alt="versalles 3">
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Lima,+Perú" target="_blank" rel="noopener">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398850/original_a0872ddcaf43f65db245f15181b23a61.jpg?1746145827?bc=0" alt="versalles 4">
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Santiago,+Chile" target="_blank" rel="noopener">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398849/original_a740fa8c67cf5db0ac3b23387dfcfde2.jpg?1746145827?bc=0" alt="versalles 5">
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Montevideo,+Uruguay" target="_blank" rel="noopener">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398848/original_f69d88283d0f0439f0f80948de175a39.jpg?1746145826?bc=0" alt="versalles 6">
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Caracas,+Venezuela" target="_blank" rel="noopener">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398847/original_079dc39a8c6c770b6dcbf5d7b6bd25c3.jpg?1746145826?bc=0" alt="versalles 7">
+    </a>
+
+    <a class="image-block" href="https://www.google.com/maps/search/Versalles+113,+Quito,+Ecuador" target="_blank" rel="noopener">
+      <img src="https://d2w9rnfcy7mm78.cloudfront.net/36398846/original_48cff1317fa2c62866cfc8bcdd93ce53.jpg?1746145826?bc=0" alt="versalles 8">
+    </a>
+  </div>
+
+  <!-- script existente preservado (ruta raíz del sitio) -->
+  <script src="/assets/js/media-proxy.js" defer></script>
+
+  <script>
+    /* ===== xpan: utilidades ===== */
+    const $$ = (s,ctx=document)=>Array.from(ctx.querySelectorAll(s));
+    const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+    /* ===== posicionamiento aleatorio dentro del contenedor ===== */
+    function randomizePositions(){
+      const container = document.querySelector('.container');
+      const rect = container.getBoundingClientRect();
+      const pad = 200;
+      $$('.image-block').forEach(b=>{
+        const bw = b.offsetWidth || parseFloat(getComputedStyle(b).width);
+        const bh = b.offsetHeight || parseFloat(getComputedStyle(b).height);
+        const x = Math.max(0, Math.random()*(rect.width - Math.max(pad,bw)));
+        const y = Math.max(0, Math.random()*(rect.height - Math.max(pad,bh)));
+        b.style.left = x+'px';
+        b.style.top  = y+'px';
+      });
+    }
+
+    /* ===== red de líneas ortogonales HUD ===== */
+    function drawLines(){
+      const svg = document.getElementById('dynamic-lines');
+      const blocks = $$('.image-block');
+      svg.innerHTML = '';
+      for(let i=0;i<blocks.length;i++){
+        const a = blocks[i].getBoundingClientRect();
+        const x1 = a.left + a.width/2;
+        const y1 = a.top  + a.height/2;
+        for(let j=i+1;j<blocks.length;j++){
+          if(Math.random()>0.88) continue;
+          const b = blocks[j].getBoundingClientRect();
+          const x2 = b.left + b.width/2;
+          const y2 = b.top  + b.height/2;
+
+          const xm = (x1+x2)/2;
+
+          const l1 = document.createElementNS('http://www.w3.org/2000/svg','line');
+          l1.setAttribute('x1',x1); l1.setAttribute('y1',y1);
+          l1.setAttribute('x2',xm); l1.setAttribute('y2',y1);
+          svg.appendChild(l1);
+
+          const l2 = document.createElementNS('http://www.w3.org/2000/svg','line');
+          l2.setAttribute('x1',xm); l2.setAttribute('y1',y1);
+          l2.setAttribute('x2',xm); l2.setAttribute('y2',y2);
+          svg.appendChild(l2);
+
+          if(Math.random()>0.92){
+            const ping = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            ping.setAttribute('cx',x2); ping.setAttribute('cy',y2); ping.setAttribute('r','2');
+            ping.setAttribute('fill','none');
+            ping.setAttribute('stroke','var(--accent)');
+            ping.setAttribute('stroke-opacity','.35');
+            svg.appendChild(ping);
+          }
+        }
+      }
+    }
+
+    /* ===== lazy carga de videos (data-src) ===== */
+    function setupLazyMedia(){
+      const io = new IntersectionObserver((ents,obs)=>{
+        ents.forEach(en=>{
+          if(!en.isIntersecting) return;
+          const v = en.target;
+          const src = v.querySelector('source[data-src]');
+          if(src && !src.dataset.loaded){
+            src.src = src.dataset.src;
+            src.dataset.loaded = '1';
+            v.load();
+          }
+          obs.unobserve(v);
+        });
+      },{rootMargin:'600px 0px', threshold:.05});
+      $$('video').forEach(v=>{
+        v.preload='none'; v.poster=v.poster||BLANK; v.muted=true; v.setAttribute('muted','');
+        v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+        io.observe(v);
+      });
+    }
+
+    /* ===== autoplay en visibilidad ===== */
+    function autoPlayWhenVisible(){
+      const io = new IntersectionObserver((ents)=>{
+        ents.forEach(en=>{
+          const v = en.target;
+          if(en.isIntersecting){ v.play().catch(()=>{}); }
+          else { v.pause(); }
+        });
+      },{threshold:.25});
+      $$('video').forEach(v=> io.observe(v));
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ $$('video').forEach(v=>v.play().catch(()=>{})); }});
+      const unlock=()=>{ $$('video').forEach(v=>v.play().catch(()=>{})); document.removeEventListener('touchstart',unlock); document.removeEventListener('click',unlock); };
+      document.addEventListener('touchstart',unlock,{once:true,passive:true});
+      document.addEventListener('click',unlock,{once:true});
+    }
+
+    /* ===== interacción ===== */
+    function wireInteractions(){
+      const redraw = ()=>{ drawLines(); };
+      $$('.image-block').forEach(b=>{
+        b.addEventListener('mouseenter', redraw, {passive:true});
+        b.addEventListener('click',     redraw, {passive:true});
+        b.addEventListener('touchstart',redraw, {passive:true});
+      });
+      window.addEventListener('resize', ()=>{ randomizePositions(); drawLines(); }, {passive:true});
+      window.addEventListener('scroll', drawLines, {passive:true});
+    }
+
+    /* ===== init ===== */
+    window.addEventListener('load', ()=>{
+      if(window.matchMedia('(max-width:600px)').matches===false){
+        randomizePositions();
+      }
+      setupLazyMedia();
+      autoPlayWhenVisible();
+      drawLines();
+      wireInteractions();
+      setInterval(drawLines, 4800);
+    });
+  </script>
+</body>
+</html>
