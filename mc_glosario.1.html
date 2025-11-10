@@ -1,168 +1,720 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>glosario.1</title>
+  <meta name="color-scheme" content="light dark"/>
+  <title>glosario.1 — multilenguaje</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fefefe;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      padding: 3rem 2rem;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --b1:1px solid var(--line);
+      --pad-x:clamp(16px,4vw,48px); --header-h:64px; --maxw:1200px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --tile-bg:#0E1113; --tile-fg:#E0E3E6;
+    }
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FEFEFE; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+        --line:#D9DEE2; --tile-bg:#0E1113; --tile-fg:#FFFFFF;
+      }
     }
 
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+    img{display:block; max-width:100%; height:auto; background:transparent}
+
+    /* ===== header + idioma ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h); display:flex; align-items:center; justify-content:space-between; z-index:20;
+    }
+    header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    .language-selector{
+      display:flex; gap:8px; text-transform:lowercase;
+    }
+    .language-selector button{
+      appearance:none; background:transparent; border:var(--b1); border-radius:0;
+      padding:.35rem .6rem; cursor:pointer; color:var(--fg-dim);
+      font:600 .9rem/1 var(--font-ui); letter-spacing:.2px;
+      transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+    }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+    /* ===== grid ===== */
+    .wrap{ max-width:var(--maxw); margin:0 auto; padding:calc(var(--header-h) + 24px) var(--pad-x) 80px }
+    .grid{
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.5rem;
     }
 
-    header img {
-      width: 50px;
+    .term-block{
+      background:var(--tile-bg); color:var(--tile-fg);
+      padding:1.2rem; cursor:pointer; position:relative; border:var(--b1);
+      transition:transform .15s linear, border-color .15s linear;
     }
+    .term-block:hover{ transform:translateY(-1px); border-color:var(--accent) }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-top: 5rem; /* previene superposición con logo fijo */
-}
-
-    .term-block {
-      background: #000;
-      color: #fff;
-      padding: 1.2rem;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      position: relative;
+    .term-title{
+      font:600 1rem/1.25 var(--font-ui);
+      text-transform:lowercase; margin:0;
     }
-
-    .term-block:hover {
-      transform: scale(1.02);
+    .term-definition{
+      margin-top:.75rem; font:400 .9rem/1.45 var(--font-ui);
+      display:none; opacity:0; transition:opacity .2s linear;
     }
+    .term-block.active .term-definition{ display:block; opacity:1 }
 
-    .term-title {
-      font-size: 1rem;
-      text-transform: lowercase;
-      margin: 0;
-      font-weight: normal;
-    }
-
-    .term-definition {
-      margin-top: 0.75rem;
-      font-size: 0.85rem;
-      line-height: 1.4;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .term-block.active .term-definition {
-      display: block;
-      opacity: 1;
-    }
+    /* ===== multilenguaje ===== */
+    .lang{display:none}
+    .lang.active{display:block}
   </style>
 </head>
 <body>
   <header>
-   <a href="https://xpan.earth">
-      <img src="./xpan.svg" alt="xpan" />
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan"/>
     </a>
+    <nav class="language-selector" aria-label="selector de idioma">
+      <button type="button" data-lang="es" class="active" aria-pressed="true">es</button>
+      <button type="button" data-lang="en" aria-pressed="false">en</button>
+      <button type="button" data-lang="fr" aria-pressed="false">fr</button>
+      <button type="button" data-lang="jp" aria-pressed="false">jp</button>
+    </nav>
   </header>
 
-  <div class="grid" id="glossary"></div>
+  <main class="wrap">
+    <section class="lang lang-es active">
+      <div class="grid" id="grid-es"></div>
+    </section>
+    <section class="lang lang-en">
+      <div class="grid" id="grid-en"></div>
+    </section>
+    <section class="lang lang-fr">
+      <div class="grid" id="grid-fr"></div>
+    </section>
+    <section class="lang lang-jp">
+      <div class="grid" id="grid-jp"></div>
+    </section>
+  </main>
 
   <script>
-    const terms = [
-      { title: "a.e.i.", content: "archivo expandido irracional. formato digital experimental para presentar contenidos interconectados. cada a.e.i. es una unidad activa del archivo, no lineal ni jerárquica." },
-      { title: "activación", content: "evento o proceso que pone en marcha un espacio, red o archivo. en xpan, las activaciones no inauguran ni clausuran: intensifican." },
-      { title: "anclaje", content: "punto de entrada o soporte físico-conceptual que permite fijar temporalmente un sistema en flujo. no es estático: se activa o desactiva según condiciones." },
-      { title: "archivo conectado", content: "sistema digital que aloja múltiples a.e.i. y los vincula mediante líneas animadas. más que un archivo cerrado, es un campo en mutación." },
-      { title: "arquitectura situacional", content: "diseño espacial adaptativo y contextual. cada estructura emerge de las condiciones específicas del entorno, no de una tipología previa." },
-      { title: "atlas", content: "publicación impresa de xpan. funciona como cartografía coral que documenta y expande la topología conectiva. cada volumen articula nodos y voces globales." },
-      { title: "biombos modulares", content: "sistema de cancelería móvil desarrollado por xpan. reorganiza el flujo espacial sin construir muros fijos. diseñado para activarse, desmontarse y reconfigurarse." },
-      { title: "cimática", content: "visualización de sonido mediante materia (agua, polvo, etc.). en xpan, se explora con bowls vibrantes que traducen audio en geometría efímera." },
-      { title: "conectividad", content: "relación activa entre nodos. no se limita al vínculo técnico o visible: implica resonancia, desplazamiento y mutación." },
-      { title: "curaduría algorítmica", content: "selección y reorganización automatizada de materiales a partir de patrones relacionales. aplicada en sistemas como 'proximidades dinámicas'." },
-      { title: "densidad relacional", content: "grado de conexiones activas en un sistema. no equivale a acumulación: una red puede ser densa con pocos nodos, si estos están intensamente vinculados." },
-      { title: "dispositivo", content: "no es un objeto, sino una configuración operativa. en xpan, cada dispositivo (espacial, sonoro, digital) produce condiciones de relación y pensamiento." },
-      { title: "ep.1 / ep.t", content: "espacios intermitentes de xpan en ciudad de méxico y parís. no son sedes fijas, sino estructuras reactivas que se activan con cada intervención." },
-      { title: "feedback estructural", content: "retroalimentación que modifica el sistema que la recibe. en xpan, no se trata de opinión, sino de transformación operativa a partir de la experiencia." },
-      { title: "formato", content: "más que una plantilla, es un modo de estructurar lo que ocurre. los formatos de xpan (atlas, a.e.i., mdtc) son matrices abiertas, no formularios." },
-      { title: "frecuencia infralingüística", content: "vibración o mensaje que opera por debajo del lenguaje verbal. explorada en 12.e y otros proyectos sonoros como forma de conexión no racional." },
-      { title: "HBT", content: "siglas internas para hospitalidad, uno de los ejes de trabajo de xpan. no se refiere a servicio, sino a la apertura estructural de cada sistema a lo inesperado." },
-      { title: "interfaz orgánica", content: "superficie de contacto no binaria entre usuario y sistema. en xpan, cada interfaz (espacial, digital, sonora) es una membrana, no una pantalla." },
-      { title: "intervención", content: "no es una acción decorativa o temporal, sino un proceso continuo de transformación de coordenadas materiales y simbólicas." },
-      { title: "línea de fuga", content: "término deleuziano adoptado por xpan. vía de escape creativa que no huye del sistema, sino lo desborda desde dentro. motor de todo devenir." },
-      { title: "manifiesto", content: "documento teórico que establece los principios activos de la topología conectiva. no clausura, sino que abre múltiples líneas de desarrollo." },
-      { title: "mdtc", content: "materialización de la topología conectiva. intervenciones físicas y conceptuales que cristalizan, deforman y expanden las ideas de xpan en el espacio." },
-      { title: "mixtape", content: "forma editorial sonora. no es un playlist: es una estructura narrativa fragmentada, donde cada pista funciona como un nodo en tensión." },
-      { title: "nodo", content: "unidad relacional activa dentro de la topología conectiva. no es un punto aislado: su identidad depende de las conexiones que sostiene y transforma." },
-      { title: "plus code", content: "sistema de codificación geográfica alternativo. utilizado por xpan para marcar posiciones sin depender de direcciones postales. ej: V4CW+2W." },
-      { title: "programa de residencias", content: "plataforma de invitación situada. artistas y agentes culturales son convocados a intervenir o activar nodos dentro del ecosistema xpan." },
-      { title: "proximidades dinámicas", content: "mapa animado donde los países se reordenan por relaciones y no por fronteras. redibujar el mundo desde la conectividad, no desde el poder." },
-      { title: "repositorio", content: "archivo digital no lineal. recoge, clasifica y redistribuye materiales producidos en xpan. cada imagen, audio o texto es evidencia de un proceso en curso." },
-      { title: "resonancia", content: "respuesta vibratoria que no replica, sino que transforma. en xpan, la resonancia no es eco sino sintonía expandida." },
-      { title: "ritmo estructural", content: "patrón temporal no lineal que organiza la operación de un sistema. en lugar de calendario, xpan opera desde ritmos situados." },
-      { title: "sistema vivo", content: "forma organizativa de xpan. no es jerárquico ni modular. cambia, muta y se reconfigura según sus condiciones internas y externas." },
-      { title: "topología conectiva", content: "eje filosófico de xpan. herramienta para pensar relaciones, estructuras no fijas, mapas mutantes, sistemas sin centro. toda acción de xpan se deriva de este principio." },
-      { title: "xpan", content: "entidad cultural radical. funciona como sistema abierto que articula arquitectura, sonido, edición, tecnología y pensamiento experimental desde una perspectiva conectiva y post-geográfica." },
+  // ========= fuente única con 4 idiomas (TÍTULO + DEFINICIÓN) =========
+  // Reformulado manualmente para evitar construcciones “no es X, es Y”.
+  // Conserva el sentido de tu texto original, enunciado de forma afirmativa.
+  const DATA = [
+    {
+      title:{es:"a.e.i.", en:"a.e.i.", fr:"a.e.i.", jp:"a.e.i."},
+      content:{
+        es:"archivo expandido irracional. formato digital experimental para presentar contenidos interconectados. cada a.e.i. funciona como unidad activa del archivo, de estructura no lineal y sin jerarquías.",
+        en:"irrational expanded archive. experimental digital format for interlinked content. each a.e.i. acts as an active unit of the archive with a non-linear, non-hierarchical structure.",
+        fr:"archive étendue irrationnelle. format numérique expérimental pour des contenus interconnectés. chaque a.e.i. opère comme unité active de l’archive, à structure non linéaire et sans hiérarchie.",
+        jp:"irrational expanded archive。相互接続されたコンテンツのための実験的デジタル形式。各 a.e.i. は非線形・非階層の構造をもつ能動的ユニットとして働く。"
+      }
+    },
+    {
+      title:{es:"activación", en:"activation", fr:"activation", jp:"アクティベーション"},
+      content:{
+        es:"evento o proceso que pone en marcha un espacio, una red o un archivo. en xpan, las activaciones intensifican procesos y continúan ritmos, fuera de protocolos de apertura o cierre.",
+        en:"an event or process that sets a space, network, or archive in motion. at xpan, activations intensify ongoing processes and rhythms, beyond opening/closing protocols.",
+        fr:"événement ou processus qui met en mouvement un espace, un réseau ou un archive. chez xpan, les activations intensifient les processus et prolongent les rythmes, hors protocoles d’ouverture/fermeture.",
+        jp:"空間・ネットワーク・アーカイブを始動させる出来事／プロセス。xpan におけるアクティベーションは、開始や終了の儀礼を越えて、進行中のリズムを増幅する。"
+      }
+    },
+    {
+      title:{es:"anclaje", en:"anchoring", fr:"ancrage", jp:"アンカー"},
+      content:{
+        es:"punto de entrada o soporte físico-conceptual que fija temporalmente un sistema en flujo. opera de manera variable: se activa o se desactiva según condiciones.",
+        en:"entry point or physical-conceptual support that temporarily fixes a flowing system. it operates variably, activating or resting depending on conditions.",
+        fr:"point d’entrée ou support physico-conceptuel qui stabilise temporairement un système en flux. fonctionnement variable, activé ou mis en repos selon les conditions.",
+        jp:"流動するシステムを一時的に定着させる物理／概念的な支点。条件に応じて可変に作動し、起動と休止を切り替える。"
+      }
+    },
+    {
+      title:{es:"archivo conectado", en:"connected archive", fr:"archive connectée", jp:"接続アーカイブ"},
+      content:{
+        es:"sistema digital que aloja múltiples a.e.i. y los vincula mediante líneas animadas. campo en mutación que organiza relaciones abiertas.",
+        en:"digital system that hosts multiple a.e.i. and links them through animated lines. a mutating field that organizes open relations.",
+        fr:"système numérique hébergeant plusieurs a.e.i., reliés par des lignes animées. un champ en mutation qui organise des relations ouvertes.",
+        jp:"複数の a.e.i. を収容し、アニメーションの線で結ぶデジタル・システム。関係を開いたまま編成する可変の場。"
+      }
+    },
+    {
+      title:{es:"arquitectura situacional", en:"situational architecture", fr:"architecture situationnelle", jp:"状況建築"},
+      content:{
+        es:"diseño espacial adaptativo y contextual. cada estructura emerge de condiciones específicas del entorno, por encima de tipologías prefijadas.",
+        en:"adaptive, contextual spatial design. each structure emerges from site-specific conditions rather than preset typologies.",
+        fr:"conception spatiale adaptative et contextuelle. chaque structure émerge des conditions du lieu, au-delà des typologies préétablies.",
+        jp:"環境の条件から立ち上がる適応的・文脈的な空間設計。既定の類型より現場の特性が優先される。"
+      }
+    },
+    {
+      title:{es:"atlas", en:"atlas", fr:"atlas", jp:"アトラス"},
+      content:{
+        es:"publicación impresa de xpan. cartografía coral que documenta y expande la topología conectiva; cada volumen articula nodos y voces globales.",
+        en:"xpan’s printed publication. a choral cartography that documents and expands connective topology; each volume articulates global nodes and voices.",
+        fr:"publication imprimée de xpan. cartographie chorale qui documente et étend la topologie connective ; chaque volume articule nœuds et voix mondiales.",
+        jp:"xpan の印刷物。接続トポロジーを記録・拡張する合唱的カートグラフィ。各巻が世界のノードと声を編成する。"
+      }
+    },
+    {
+      title:{es:"biombos modulares", en:"modular screens", fr:"paravents modulaires", jp:"モジュラー・スクリーン"},
+      content:{
+        es:"sistema móvil de cancelería desarrollado por xpan. reorganiza el flujo espacial mediante activación, desmontaje y reconfiguración.",
+        en:"mobile partition system developed by xpan. reorganizes spatial flow through activation, disassembly, and reconfiguration.",
+        fr:"système mobile de cloisonnement développé par xpan. réorganise les flux spatiaux par activation, démontage et reconfiguration.",
+        jp:"xpan が開発した可動間仕切りシステム。起動・解体・再構成によって空間の流れを組み替える。"
+      }
+    },
+    {
+      title:{es:"cimática", en:"cymatics", fr:"cymatique", jp:"サイマティクス"},
+      content:{
+        es:"visualización del sonido mediante materia (agua, polvo, etc.). en xpan se explora con bowls vibrantes que traducen audio en geometrías efímeras.",
+        en:"visualizing sound through matter (water, dust, etc.). at xpan it is explored with vibrating bowls that translate audio into ephemeral geometries.",
+        fr:"visualisation du son par la matière (eau, poussière, etc.). chez xpan, exploration via des bols vibrants qui traduisent l’audio en géométries éphémères.",
+        jp:"水や粉末などの物質で音を可視化する手法。xpan では振動するボウルで、音を儚い幾何へ翻訳する。"
+      }
+    },
+    {
+      title:{es:"conectividad", en:"connectivity", fr:"connectivité", jp:"コネクティビティ"},
+      content:{
+        es:"relación activa entre nodos. desborda el vínculo técnico o visible e incorpora resonancia, desplazamiento y mutación.",
+        en:"active relation between nodes. it exceeds technical or visible linkage and includes resonance, displacement, and mutation.",
+        fr:"relation active entre nœuds. elle dépasse le lien technique ou visible et inclut résonance, déplacement et mutation.",
+        jp:"ノード間の能動的関係。技術的・可視的な接続を越え、共鳴・移動・変異を含む。"
+      }
+    },
+    {
+      title:{es:"curaduría algorítmica", en:"algorithmic curation", fr:"curation algorithmique", jp:"アルゴリズミック・キュレーション"},
+      content:{
+        es:"selección y reorganización automatizada de materiales a partir de patrones relacionales; aplicada en sistemas como proximidades dinámicas.",
+        en:"automated selection and reorganization of materials from relational patterns; applied in systems such as dynamic proximities.",
+        fr:"sélection et réorganisation automatisées à partir de motifs relationnels ; appliquée dans des systèmes comme proximités dynamiques.",
+        jp:"関係パターンに基づき素材を自動選択・再編する実践。dynamic proximities などに実装。"
+      }
+    },
+    {
+      title:{es:"densidad relacional", en:"relational density", fr:"densité relationnelle", jp:"関係密度"},
+      content:{
+        es:"grado de conexiones activas en un sistema. se distingue de la acumulación: pocos nodos pueden producir alta densidad cuando el vínculo es intenso.",
+        en:"degree of active connections in a system. distinct from accumulation: few nodes can yield high density when linkage is intense.",
+        fr:"degré de connexions actives dans un système. à distinguer de l’accumulation : peu de nœuds peuvent générer une forte densité si les liens sont intenses.",
+        jp:"システムにおける能動的接続の度合い。単なる蓄積とは異なり、結びつきが濃い少数のノードでも高密度を生む。"
+      }
+    },
+    {
+      title:{es:"dispositivo", en:"apparatus", fr:"dispositif", jp:"ディスポジティフ"},
+      content:{
+        es:"configuración operativa. en xpan, cada dispositivo (espacial, sonoro, digital) produce condiciones de relación y pensamiento.",
+        en:"an operational configuration. at xpan, each apparatus (spatial, sonic, digital) produces conditions for relation and thought.",
+        fr:"configuration opératoire. chez xpan, chaque dispositif (spatial, sonore, numérique) produit des conditions de relation et de pensée.",
+        jp:"運用上の構成。xpan では空間・音響・デジタルの各装置が、関係と思考の条件を生成する。"
+      }
+    },
+    {
+      title:{es:"ep.1 / ep.t", en:"ep.1 / ep.t", fr:"ep.1 / ep.t", jp:"ep.1 / ep.t"},
+      content:{
+        es:"espacios intermitentes de xpan en ciudad de méxico y parís. estructuras reactivas que se activan con cada intervención.",
+        en:"xpan’s intermittent spaces in mexico city and paris. reactive structures activated with each intervention.",
+        fr:"espaces intermittents de xpan à mexico et paris. structures réactives activées à chaque intervention.",
+        jp:"メキシコシティとパリにおける xpan の断続的な空間。各介入とともに作動する反応的構造。"
+      }
+    },
+    {
+      title:{es:"feedback estructural", en:"structural feedback", fr:"rétroaction structurelle", jp:"構造フィードバック"},
+      content:{
+        es:"retroalimentación que transforma el sistema que la recibe. en xpan se orienta a modificación operativa a partir de la experiencia.",
+        en:"feedback that transforms the system receiving it. at xpan it targets operational modification grounded in experience.",
+        fr:"rétroaction qui transforme le système récepteur. chez xpan, elle vise une modification opératoire fondée sur l’expérience.",
+        jp:"受け取り側のシステムを変化させるフィードバック。xpan では経験にもとづく運用的変容を目的とする。"
+      }
+    },
+    {
+      title:{es:"formato", en:"format", fr:"format", jp:"フォーマット"},
+      content:{
+        es:"modo de estructurar lo que ocurre. los formatos de xpan (atlas, a.e.i., mdtc) operan como matrices abiertas, lejos del formulario.",
+        en:"a way of structuring what happens. xpan’s formats (atlas, a.e.i., mdtc) operate as open matrices, far from the form template.",
+        fr:"mode d’organisation de ce qui advient. les formats de xpan (atlas, a.e.i., mdtc) fonctionnent comme des matrices ouvertes, à distance du formulaire.",
+        jp:"事象の構成法。xpan のフォーマット（atlas／a.e.i.／mdtc）は、定型用紙から離れたオープンな行列として作動する。"
+      }
+    },
+    {
+      title:{es:"frecuencia infralingüística", en:"infralinguistic frequency", fr:"fréquence infralinguistique", jp:"言語下周波"},
+      content:{
+        es:"vibración o mensaje que opera por debajo del lenguaje verbal. explorada en 12.e y otros proyectos sonoros como vía de conexión sub-racional.",
+        en:"vibration or message operating below verbal language. explored in 12.e and other sonic projects as a sub-rational connective path.",
+        fr:"vibration ou message opérant sous le langage verbal. explorée à 12.e et dans d’autres projets sonores comme voie de connexion sub-rationnelle.",
+        jp:"言語の下層で作動する振動／メッセージ。12.e ほかの音響プロジェクトで、準理性的な接続経路として探求。"
+      }
+    },
+    {
+      title:{es:"HBT", en:"HBT", fr:"HBT", jp:"HBT"},
+      content:{
+        es:"sigla interna para hospitalidad. apertura estructural de cada sistema a lo inesperado.",
+        en:"internal acronym for hospitality. structural openness of each system to the unexpected.",
+        fr:"sigle interne pour hospitalité. ouverture structurelle de chaque système à l’imprévu.",
+        jp:"hospitality の内部略記。各システムを予期せぬ事象へ開く構造的な態度。"
+      }
+    },
+    {
+      title:{es:"interfaz orgánica", en:"organic interface", fr:"interface organique", jp:"オーガニック・インターフェース"},
+      content:{
+        es:"superficie de contacto de carácter multilateral entre usuario y sistema. en xpan, cada interfaz (espacial, digital, sonora) actúa como membrana activa.",
+        en:"contact surface of multilateral character between user and system. at xpan, each interface (spatial, digital, sonic) acts as an active membrane.",
+        fr:"surface de contact à caractère multilatéral entre usager et système. chez xpan, chaque interface (spatiale, numérique, sonore) agit en membrane active.",
+        jp:"ユーザーとシステムを結ぶ多面的な接触面。xpan では空間・デジタル・音響の各インターフェースが能動的な膜として働く。"
+      }
+    },
+    {
+      title:{es:"intervención", en:"intervention", fr:"intervention", jp:"インターベンション"},
+      content:{
+        es:"proceso continuo de transformación de coordenadas materiales y simbólicas.",
+        en:"continuous process that transforms material and symbolic coordinates.",
+        fr:"processus continu transformant les coordonnées matérielles et symboliques.",
+        jp:"物質的／象徴的座標を連続的に更新するプロセス。"
+      }
+    },
+    {
+      title:{es:"línea de fuga", en:"line of flight", fr:"ligne de fuite", jp:"逃走線"},
+      content:{
+        es:"término deleuziano adoptado por xpan. vía de escape creativa que desborda el sistema desde dentro y propulsa el devenir.",
+        en:"deleuzian term adopted by xpan. creative escape-route that overflows the system from within and propels becoming.",
+        fr:"terme deleuzien adopté par xpan. voie d’échappée créative débordant le système de l’intérieur et propulsant le devenir.",
+        jp:"ドゥルーズ由来の概念。内側からシステムを越流させ、生成を推進する創造的な経路。"
+      }
+    },
+    {
+      title:{es:"manifiesto", en:"manifesto", fr:"manifeste", jp:"マニフェスト"},
+      content:{
+        es:"documento teórico que establece principios activos de la topología conectiva y abre múltiples líneas de desarrollo.",
+        en:"theoretical document that states the active principles of connective topology and opens multiple lines of development.",
+        fr:"document théorique qui énonce les principes actifs de la topologie connective et ouvre de multiples pistes de développement.",
+        jp:"接続トポロジーの作動原理を提示し、多数の展開線を開く理論文書。"
+      }
+    },
+    {
+      title:{es:"mdtc", en:"mdtc", fr:"mdtc", jp:"mdtc"},
+      content:{
+        es:"materialización de la topología conectiva. intervenciones físicas y conceptuales que cristalizan, deforman y expanden ideas de xpan en el espacio.",
+        en:"materialization of the connective topology. physical and conceptual interventions that crystallize, warp, and expand xpan’s ideas in space.",
+        fr:"matérialisation de la topologie connective. interventions physiques et conceptuelles cristallisant, déformant et étendant les idées de xpan dans l’espace.",
+        jp:"接続トポロジーの物質化。アイデアを空間で結晶化・変形・拡張する物理／概念的介入。"
+      }
+    },
+    {
+      title:{es:"mixtape", en:"mixtape", fr:"mixtape", jp:"ミックステープ"},
+      content:{
+        es:"forma editorial sonora. estructura narrativa fragmentada donde cada pista funciona como un nodo en tensión.",
+        en:"sonic editorial form. a fragmented narrative structure where each track operates as a node under tension.",
+        fr:"forme éditoriale sonore. structure narrative fragmentée où chaque piste opère comme un nœud sous tension.",
+        jp:"音の編集形式。各曲が張力をもつノードとして機能する断片的な物語構造。"
+      }
+    },
+    {
+      title:{es:"nodo", en:"node", fr:"nœud", jp:"ノード"},
+      content:{
+        es:"unidad relacional activa dentro de la topología conectiva; su identidad depende de las conexiones que sostiene y transforma.",
+        en:"active relational unit within the connective topology; its identity depends on the connections it sustains and transforms.",
+        fr:"unité relationnelle active au sein de la topologie connective ; son identité dépend des connexions qu’elle soutient et transforme.",
+        jp:"接続トポロジーにおける能動的関係ユニット。個体性は維持／更新する結合に依存する。"
+      }
+    },
+    {
+      title:{es:"plus code", en:"plus code", fr:"plus code", jp:"プラスコード"},
+      content:{
+        es:"sistema alternativo de codificación geográfica usado por xpan para marcar posiciones sin direcciones postales. ej.: V4CW+2W.",
+        en:"alternative geographic coding system used by xpan to mark locations without postal addresses. e.g., V4CW+2W.",
+        fr:"système alternatif de codage géographique utilisé par xpan pour repérer des positions sans adresses postales. ex. : V4CW+2W.",
+        jp:"郵便住所を用いず位置を示す地理コード。例：V4CW+2W。"
+      }
+    },
+    {
+      title:{es:"programa de residencias", en:"residency program", fr:"programme de résidences", jp:"レジデンシー・プログラム"},
+      content:{
+        es:"plataforma de invitación situada. artistas y agentes culturales intervienen o activan nodos dentro del ecosistema xpan.",
+        en:"situated invitation platform. artists and cultural agents intervene or activate nodes within the xpan ecosystem.",
+        fr:"plateforme d’invitation située. artistes et acteurs culturels interviennent ou activent des nœuds dans l’écosystème xpan.",
+        jp:"ローカルに据えた招待の枠組み。アーティスト／文化実践者が xpan の生態系内でノードを介入・起動する。"
+      }
+    },
+    {
+      title:{es:"proximidades dinámicas", en:"dynamic proximities", fr:"proximités dynamiques", jp:"ダイナミック・プロキシミティ"},
+      content:{
+        es:"mapa animado donde los países se reordenan por relaciones en lugar de fronteras; el mundo se redibuja desde la conectividad y desplaza el eje del poder.",
+        en:"animated map where countries reorder through relations rather than borders; the world is redrawn from connectivity, shifting the axis of power.",
+        fr:"carte animée où les pays se réordonnent par relations plutôt que frontières ; le monde se redessine depuis la connectivité en déplaçant l’axe du pouvoir.",
+        jp:"国々を国境ではなく関係で並べ替えるアニメーション地図。接続を起点に世界を描き直し、権力の軸をずらす。"
+      }
+    },
+    {
+      title:{es:"repositorio", en:"repository", fr:"répertoire", jp:"レポジトリ"},
+      content:{
+        es:"archivo digital de estructura no lineal. recoge, clasifica y redistribuye materiales producidos en xpan; cada imagen, audio o texto evidencia un proceso en curso.",
+        en:"digital archive with a non-linear structure. collects, classifies, and redistributes materials produced at xpan; each image, audio, or text evidences an ongoing process.",
+        fr:"archive numérique à structure non linéaire. collecte, classe et redistribue les matériaux produits chez xpan ; chaque image, audio ou texte atteste d’un processus en cours.",
+        jp:"非線形構造のデジタル・アーカイブ。制作物を収集・分類・再配布し、各素材が進行中のプロセスを示す。"
+      }
+    },
+    {
+      title:{es:"resonancia", en:"resonance", fr:"résonance", jp:"レゾナンス"},
+      content:{
+        es:"respuesta vibratoria que transforma. en xpan, la resonancia actúa como sintonía expandida más que como eco.",
+        en:"vibratory response that transforms. at xpan, resonance operates as expanded tuning rather than echo.",
+        fr:"réponse vibratoire transformatrice. chez xpan, la résonance fonctionne comme une syntonie étendue plutôt qu’un écho.",
+        jp:"変化を生む振動的応答。xpan では反響よりも拡張的な同調として働く。"
+      }
+    },
+    {
+      title:{es:"ritmo estructural", en:"structural rhythm", fr:"rythme structurel", jp:"構造リズム"},
+      content:{
+        es:"patrón temporal de estructura no lineal que organiza la operación de un sistema; xpan trabaja desde ritmos situados en lugar de calendario.",
+        en:"non-linear temporal pattern that organizes a system’s operation; xpan works from situated rhythms rather than a calendar.",
+        fr:"patron temporel non linéaire qui organise l’opération d’un système ; xpan agit depuis des rythmes situés plutôt qu’un calendrier.",
+        jp:"システム運用を組織する非線形の時間パターン。xpan はカレンダーより状況的リズムを採用する。"
+      }
+    },
+    {
+      title:{es:"sistema vivo", en:"living system", fr:"système vivant", jp:"生きたシステム"},
+      content:{
+        es:"forma organizativa de xpan con organización a-jerárquica y amodular; cambia, muta y se reconfigura según condiciones internas y externas.",
+        en:"xpan’s organizational form with a-hierarchical, a-modular organization; it changes, mutates, and reconfigures with internal and external conditions.",
+        fr:"forme organisationnelle de xpan, a-hiérarchique et a-modulaire ; elle change, mute et se reconfigure selon les conditions internes et externes.",
+        jp:"非階層・非モジュール的な編成。内外の条件に応じて変化・変異・再構成する。"
+      }
+    },
+    {
+      title:{es:"topología conectiva", en:"connective topology", fr:"topologie connective", jp:"接続トポロジー"},
+      content:{
+        es:"eje filosófico de xpan. herramienta para pensar relaciones, estructuras móviles, mapas mutantes y sistemas sin centro; toda acción de xpan se sostiene en este principio.",
+        en:"xpan’s philosophical axis. a tool to think relations, mobile structures, mutating maps, and centerless systems; all xpan actions rest on this principle.",
+        fr:"axe philosophique de xpan. outil pour penser les relations, structures mobiles, cartes mutantes et systèmes sans centre ; toute action de xpan s’y appuie.",
+        jp:"xpan の哲学軸。関係・可動構造・変容する地図・中心なきシステムを思考する道具。すべての行為が本原理に立脚する。"
+      }
+    },
+    {
+      title:{es:"xpan", en:"xpan", fr:"xpan", jp:"xpan"},
+      content:{
+        es:"entidad cultural radical. sistema abierto que articula arquitectura, sonido, edición, tecnología y pensamiento experimental desde una perspectiva conectiva y post-geográfica.",
+        en:"a radical cultural entity. an open system articulating architecture, sound, publishing, technology, and experimental thought from a connective, post-geographic stance.",
+        fr:"entité culturelle radicale. système ouvert articulant architecture, son, édition, technologie et pensée expérimentale depuis une perspective connective et post-géographique.",
+        jp:"ラディカルな文化エンティティ。接続的・ポスト地理的な視座から、建築／音／出版／テクノロジー／実験思考を編成する開放系。"
+      }
+    },
 
-      // Segunda parte desde entrada 34 a 66
-      { title: "acción reticular", content: "operación que no apunta a un objetivo único sino que activa múltiples trayectorias simultáneamente." },
-      { title: "alineación vectorial", content: "organización estructural donde elementos diversos se orientan hacia una fuerza común sin perder autonomía." },
-      { title: "ambiente operativo", content: "conjunto de condiciones materiales, perceptuales y técnicas que permiten la existencia de un sistema." },
-      { title: "análisis de latencia", content: "estudio del desfase temporal entre estímulo y respuesta, útil para calibrar sistemas." },
-      { title: "anotación activa", content: "marca que transforma lo que toca. cada nota abre una nueva ruta." },
-      { title: "archivo inestable", content: "colección que no busca estabilizar la memoria sino activar el presente." },
-      { title: "campo sensorial", content: "zona expandida de percepción: el cuerpo percibe desde una red vibrante." },
-      { title: "cartografía especulativa", content: "mapa que no representa lo real sino que propone nuevas realidades." },
-      { title: "código comportamental", content: "conjunto de reglas que rigen la interacción entre sistemas, visible o no." },
-      { title: "colisión productiva", content: "encuentro que no busca consenso, sino fricción generativa." },
-      { title: "construcción no-lineal", content: "acumulación divergente de decisiones en lugar de progresión lógica." },
-      { title: "convergencia transdisciplinaria", content: "cruce de saberes sin síntesis, en coexistencia radical." },
-      { title: "cristalización temporal", content: "forma efímera que se suspende momentáneamente." },
-      { title: "deformación estratégica", content: "alteración deliberada para abrir nuevas posibilidades." },
-      { title: "desacople controlado", content: "separación temporal para liberar tensiones del sistema." },
-      { title: "desbordamiento táctico", content: "estrategia que atraviesa los bordes desde los márgenes." },
-      { title: "desfase operativo", content: "diferencia entre intención y ejecución como potencia." },
-      { title: "dimensión inmanente", content: "todo ocurre sin trascendencia externa. todo está ya implicado." },
-      { title: "disolución de autoría", content: "lo colectivo disuelve la firma. importa la relación, no la propiedad." },
-      { title: "doble indexación", content: "un nodo puede pertenecer a múltiples sistemas simultáneamente." },
-      { title: "efecto topológico", content: "transformación que reconfigura sin romper la materia." },
-      { title: "elasticidad estructural", content: "adaptabilidad sin colapso. núcleo del diseño xpan." },
-      { title: "encuentro vectorial", content: "intersección no-fusional entre trayectorias autónomas." },
-      { title: "entrelazamiento conceptual", content: "conceptos que se definen por cruce, no por diccionario." },
-      { title: "error significativo", content: "el error no se corrige: se integra como potencia." },
-      { title: "estado transitorio", content: "fase intermedia productiva entre fases." },
-      { title: "fisura cognitiva", content: "grieta entre percepción y comprensión. fértil para el pensamiento." },
-      { title: "geometría no-euclideana", content: "relaciones espaciales que rompen lógica cartesiana." },
-      { title: "host unit", content: "unidad anfitriona que recibe y transforma." },
-      { title: "inestabilidad calibrada", content: "diseño que incorpora azar, error y mutación como norma." },
-      { title: "intensidad distribuida", content: "fuerza que se dispersa por la red, no se concentra." },
-      { title: "memoria procesual", content: "registro de procesos, no de datos. el archivo como organismo." },
-      { title: "traducción transversal", content: "pasaje de un lenguaje a otro sin equivalencia, solo resonancia." }
-    ];
+    /* ===== Segunda parte 34–66 reformulada ===== */
+    { title:{es:"acción reticular", en:"reticular action", fr:"action réticulaire", jp:"網状アクション"},
+      content:{
+        es:"operación que activa trayectorias múltiples de manera simultánea.",
+        en:"an operation that activates multiple trajectories simultaneously.",
+        fr:"opération qui active simultanément des trajectoires multiples.",
+        jp:"複数の軌跡を同時に駆動する操作。"
+      }
+    },
+    { title:{es:"alineación vectorial", en:"vectorial alignment", fr:"alignement vectoriel", jp:"ベクトル整列"},
+      content:{
+        es:"organización en la que elementos diversos se orientan hacia una fuerza común manteniendo autonomía.",
+        en:"an organization where diverse elements orient toward a common force while maintaining autonomy.",
+        fr:"organisation où des éléments divers s’orientent vers une force commune tout en gardant leur autonomie.",
+        jp:"多様な要素が自律性を保ちつつ共通の力へ向きを揃える編成。"
+      }
+    },
+    { title:{es:"ambiente operativo", en:"operative environment", fr:"environnement opératif", jp:"オペラティブ環境"},
+      content:{
+        es:"conjunto de condiciones materiales, perceptuales y técnicas que permite la existencia de un sistema.",
+        en:"the material, perceptual, and technical conditions that enable a system to exist.",
+        fr:"ensemble de conditions matérielles, perceptuelles et techniques qui permettent l’existence d’un système.",
+        jp:"システムの存立を可能にする物質・知覚・技術条件の集合。"
+      }
+    },
+    { title:{es:"análisis de latencia", en:"latency analysis", fr:"analyse de latence", jp:"レイテンシ解析"},
+      content:{
+        es:"estudio del desfase entre estímulo y respuesta para calibrar sistemas.",
+        en:"study of the delay between stimulus and response to calibrate systems.",
+        fr:"étude du décalage entre stimulus et réponse pour calibrer les systèmes.",
+        jp:"刺激と応答の遅延を測定しシステムを調整する分析。"
+      }
+    },
+    { title:{es:"anotación activa", en:"active annotation", fr:"annotation active", jp:"能動注記"},
+      content:{
+        es:"marca que transforma el soporte y abre nuevas rutas de lectura.",
+        en:"a mark that transforms the substrate and opens new reading routes.",
+        fr:"marque qui transforme le support et ouvre de nouvelles voies de lecture.",
+        jp:"基盤を変化させ、新たな読解経路を開く記述。"
+      }
+    },
+    { title:{es:"archivo inestable", en:"unstable archive", fr:"archive instable", jp:"不安定アーカイブ"},
+      content:{
+        es:"colección diseñada para activar el presente mediante actualización constante.",
+        en:"a collection designed to activate the present through constant updating.",
+        fr:"collection conçue pour activer le présent par une actualisation constante.",
+        jp:"継続的な更新を通じて現在を起動するコレクション。"
+      }
+    },
+    { title:{es:"campo sensorial", en:"sensorial field", fr:"champ sensoriel", jp:"感覚場"},
+      content:{
+        es:"zona expandida de percepción donde el cuerpo opera como red vibrante.",
+        en:"an expanded zone of perception where the body operates as a vibrating network.",
+        fr:"zone élargie de perception où le corps opère comme un réseau vibrant.",
+        jp:"身体が振動するネットワークとして作動する拡張知覚領域。"
+      }
+    },
+    { title:{es:"cartografía especulativa", en:"speculative cartography", fr:"cartographie spéculative", jp:"思弁的地図"},
+      content:{
+        es:"mapa que propone realidades posibles en lugar de representar un estado dado.",
+        en:"a map that proposes possible realities rather than representing a given state.",
+        fr:"carte qui propose des réalités possibles plutôt que de représenter un état donné.",
+        jp:"与件の写しではなく、可能な現実を提示する地図。"
+      }
+    },
+    { title:{es:"código comportamental", en:"behavioral code", fr:"code comportemental", jp:"行動コード"},
+      content:{
+        es:"conjunto de reglas que rige interacciones entre sistemas, visibles o latentes.",
+        en:"set of rules governing interactions among systems, visible or latent.",
+        fr:"ensemble de règles régissant les interactions entre systèmes, visibles ou latentes.",
+        jp:"可視・潜在の相互作用を統べる規則群。"
+      }
+    },
+    { title:{es:"colisión productiva", en:"productive collision", fr:"collision productive", jp:"生産的衝突"},
+      content:{
+        es:"encuentro que opera desde la fricción para generar novedad.",
+        en:"an encounter that operates through friction to generate novelty.",
+        fr:"rencontre qui mobilise la friction pour engendrer de la nouveauté.",
+        jp:"摩擦を媒体に新規性を生む出会い。"
+      }
+    },
+    { title:{es:"construcción no-lineal", en:"nonlinear construction", fr:"construction non linéaire", jp:"非線形構築"},
+      content:{
+        es:"acumulación divergente de decisiones que sustituye la progresión única.",
+        en:"divergent accumulation of decisions that replaces singular progression.",
+        fr:"accumulation divergente de décisions se substituant à la progression unique.",
+        jp:"単一路線に代わる、分岐的な意思決定の集積。"
+      }
+    },
+    { title:{es:"convergencia transdisciplinaria", en:"transdisciplinary convergence", fr:"convergence transdisciplinaire", jp:"越領域コンバージェンス"},
+      content:{
+        es:"cruce de saberes en coexistencia radical, sin síntesis obligatoria.",
+        en:"crossing of knowledges in radical coexistence, without forced synthesis.",
+        fr:"croisement de savoirs en coexistence radicale, sans synthèse imposée.",
+        jp:"強制的統合に拠らない、ラディカルな共存としての越領域的交差。"
+      }
+    },
+    { title:{es:"cristalización temporal", en:"temporal crystallization", fr:"cristallisation temporelle", jp:"時間結晶化"},
+      content:{
+        es:"forma efímera que se suspende durante un intervalo operativo.",
+        en:"ephemeral form held in suspension for an operative interval.",
+        fr:"forme éphémère suspendue durant un intervalle opératif.",
+        jp:"運用上のインターバルに保持される儚い形態。"
+      }
+    },
+    { title:{es:"deformación estratégica", en:"strategic deformation", fr:"déformation stratégique", jp:"戦略的変形"},
+      content:{
+        es:"alteración deliberada para abrir posibilidades y rutas impensadas.",
+        en:"deliberate alteration that opens possibilities and unthought routes.",
+        fr:"altération délibérée ouvrant des possibles et des voies inédites.",
+        jp:"新たな可能性と未踏の経路を開く意図的変形。"
+      }
+    },
+    { title:{es:"desacople controlado", en:"controlled decoupling", fr:"désaccouplement contrôlé", jp:"制御的デカップリング"},
+      content:{
+        es:"separación temporal que libera tensiones y recalibra el sistema.",
+        en:"temporal separation that releases tensions and recalibrates the system.",
+        fr:"séparation temporaire qui libère des tensions et recalibre le système.",
+        jp:"緊張を解放しシステムを再調整する一時的分離。"
+      }
+    },
+    { title:{es:"desbordamiento táctico", en:"tactical overflow", fr:"débordement tactique", jp:"戦術的越流"},
+      content:{
+        es:"estrategia que atraviesa bordes desde los márgenes y expande el campo de acción.",
+        en:"a strategy that traverses edges from the margins and expands the field of action.",
+        fr:"stratégie qui traverse les bords depuis les marges et étend le champ d’action.",
+        jp:"周縁から境界を横断し、行為領域を拡張する戦術。"
+      }
+    },
+    { title:{es:"desfase operativo", en:"operative offset", fr:"décalage opératif", jp:"運用オフセット"},
+      content:{
+        es:"diferencia entre intención y ejecución aprovechada como potencia.",
+        en:"difference between intention and execution harnessed as a driver.",
+        fr:"écart entre intention et exécution exploité comme puissance.",
+        jp:"意図と実行の差を駆動力として活用する。"
+      }
+    },
+    { title:{es:"dimensión inmanente", en:"immanent dimension", fr:"dimension immanente", jp:"内在的次元"},
+      content:{
+        es:"todo ocurre dentro del sistema; las causas y efectos se articulan sin trascendencias externas.",
+        en:"everything occurs within the system; causes and effects articulate without external transcendence.",
+        fr:"tout advient à l’intérieur du système ; causes et effets s’articulent sans transcendance externe.",
+        jp:"出来事は系内で完結し、原因と結果は外部超越に頼らず接続される。"
+      }
+    },
+    { title:{es:"disolución de autoría", en:"dissolution of authorship", fr:"dissolution d’auteur", jp:"作者性の溶解"},
+      content:{
+        es:"lo colectivo desplaza la firma: la relación adquiere centralidad frente a la propiedad.",
+        en:"the collective displaces the signature: relation gains centrality over property.",
+        fr:"le collectif déplace la signature : la relation devient centrale face à la propriété.",
+        jp:"署名より関係が中核となり、所有の優位が後退する。"
+      }
+    },
+    { title:{es:"doble indexación", en:"double indexing", fr:"double indexation", jp:"二重インデックス"},
+      content:{
+        es:"un nodo puede inscribirse en múltiples sistemas al mismo tiempo.",
+        en:"a node can be inscribed in multiple systems simultaneously.",
+        fr:"un nœud peut s’inscrire simultanément dans plusieurs systèmes.",
+        jp:"単一のノードが複数のシステムに同時所属しうる。"
+      }
+    },
+    { title:{es:"efecto topológico", en:"topological effect", fr:"effet topologique", jp:"トポロジカル効果"},
+      content:{
+        es:"transformación que reconfigura las relaciones sin fracturar la materia.",
+        en:"transformation that reconfigures relations without fracturing matter.",
+        fr:"transformation qui reconfigure les relations sans fracturer la matière.",
+        jp:"物質を断たずに関係を組み替える変換。"
+      }
+    },
+    { title:{es:"elasticidad estructural", en:"structural elasticity", fr:"élasticité structurelle", jp:"構造弾性"},
+      content:{
+        es:"capacidad de adaptarse y absorber variaciones sin colapso; núcleo del diseño xpan.",
+        en:"capacity to adapt and absorb variation without collapse; a core of xpan design.",
+        fr:"capacité à s’adapter et absorber la variation sans effondrement ; cœur du design xpan.",
+        jp:"崩壊せず変動を吸収する適応力。xpan デザインの核。"
+      }
+    },
+    { title:{es:"encuentro vectorial", en:"vectorial encounter", fr:"rencontre vectorielle", jp:"ベクトル的出会い"},
+      content:{
+        es:"intersección entre trayectorias autónomas que coexisten sin fusión.",
+        en:"intersection between autonomous trajectories that coexist without fusion.",
+        fr:"intersection entre trajectoires autonomes coexistant sans fusion.",
+        jp:"独立した軌道が融合せず共存する交差。"
+      }
+    },
+    { title:{es:"entrelazamiento conceptual", en:"conceptual entanglement", fr:"enchevêtrement conceptuel", jp:"概念エンタングルメント"},
+      content:{
+        es:"los conceptos se definen por cruces y tensiones antes que por diccionarios.",
+        en:"concepts define themselves through crossings and tensions rather than dictionaries.",
+        fr:"les concepts se définissent par croisements et tensions plutôt que par dictionnaires.",
+        jp:"概念は辞書的規定より交差と張力で輪郭化される。"
+      }
+    },
+    { title:{es:"error significativo", en:"significant error", fr:"erreur signifiante", jp:"有意なエラー"},
+      content:{
+        es:"el error se integra como potencia y reorienta el proceso.",
+        en:"error is integrated as a driver that reorients the process.",
+        fr:"l’erreur s’intègre comme puissance réorientant le processus.",
+        jp:"エラーを力として取り込み、プロセスの向きを変える。"
+      }
+    },
+    { title:{es:"estado transitorio", en:"transitory state", fr:"état transitoire", jp:"遷移状態"},
+      content:{
+        es:"fase intermedia fértil entre configuraciones.",
+        en:"a fertile intermediate phase between configurations.",
+        fr:"phase intermédiaire fertile entre configurations.",
+        jp:"構成と構成の間に生じる生産的な中間相。"
+      }
+    },
+    { title:{es:"fisura cognitiva", en:"cognitive fissure", fr:"fissure cognitive", jp:"認知の亀裂"},
+      content:{
+        es:"hendidura entre percepción y comprensión aprovechada para el pensamiento.",
+        en:"a rift between perception and understanding leveraged for thought.",
+        fr:"fente entre perception et compréhension mobilisée pour la pensée.",
+        jp:"知覚と理解の狭間を思考に転化する。"
+      }
+    },
+    { title:{es:"geometría no-euclideana", en:"non-euclidean geometry", fr:"géométrie non euclidienne", jp:"非ユークリッド幾何"},
+      content:{
+        es:"relaciones espaciales que expanden la lógica cartesiana.",
+        en:"spatial relations expanding beyond cartesian logic.",
+        fr:"relations spatiales qui étendent la logique cartésienne.",
+        jp:"デカルト的論理の外側へ拡張する空間関係。"
+      }
+    },
+    { title:{es:"host unit", en:"host unit", fr:"host unit", jp:"ホスト・ユニット"},
+      content:{
+        es:"unidad anfitriona que recibe, contiene y transforma.",
+        en:"a hosting unit that receives, holds, and transforms.",
+        fr:"unité hôte qui reçoit, contient et transforme.",
+        jp:"受け入れ・包摂・変換を担う受容ユニット。"
+      }
+    },
+    { title:{es:"inestabilidad calibrada", en:"calibrated instability", fr:"instabilité calibrée", jp:"較正不安定"},
+      content:{
+        es:"diseño que incorpora azar, error y mutación como norma operativa.",
+        en:"design that incorporates chance, error, and mutation as an operative norm.",
+        fr:"design qui intègre hasard, erreur et mutation comme norme opérative.",
+        jp:"偶然・誤差・変異を運用規範として組み込む設計。"
+      }
+    },
+    { title:{es:"intensidad distribuida", en:"distributed intensity", fr:"intensité distribuée", jp:"分散強度"},
+      content:{
+        es:"fuerza que circula por la red y evita concentraciones únicas.",
+        en:"force circulating through the network, avoiding singular concentrations.",
+        fr:"force circulant dans le réseau, évitant les concentrations uniques.",
+        jp:"単一点への集中を避け、ネットワークへ循環する力。"
+      }
+    },
+    { title:{es:"memoria procesual", en:"processual memory", fr:"mémoire processuelle", jp:"プロセス記憶"},
+      content:{
+        es:"registro de procesos por encima del dato; el archivo opera como organismo.",
+        en:"record of processes over mere data; the archive operates as an organism.",
+        fr:"enregistrement des processus plutôt que des données ; l’archive opère comme un organisme.",
+        jp:"データよりプロセスを記録し、アーカイブを有機体として扱う。"
+      }
+    },
+    { title:{es:"traducción transversal", en:"transversal translation", fr:"traduction transversale", jp:"横断翻訳"},
+      content:{
+        es:"pasaje entre lenguajes sin equivalencia exacta, guiado por resonancia.",
+        en:"passage across languages without exact equivalence, guided by resonance.",
+        fr:"passage entre langages sans équivalence exacte, guidé par la résonance.",
+        jp:"厳密な同値を前提とせず、共鳴に導かれる言語間の横断。"
+      }
+    }
+  ];
 
-    const glossary = document.getElementById("glossary");
-
-    terms.forEach(term => {
-      const block = document.createElement("div");
-      block.className = "term-block";
-      block.innerHTML = `
-        <h3 class="term-title">${term.title}</h3>
-        <div class="term-definition">${term.content}</div>
+  // ===== render =====
+  function mount(lang, hostId){
+    const host=document.getElementById(hostId);
+    DATA.forEach(item=>{
+      const card=document.createElement('div');
+      card.className='term-block';
+      card.innerHTML=`
+        <h3 class="term-title">${item.title[lang]}</h3>
+        <div class="term-definition">${item.content[lang]}</div>
       `;
-      block.addEventListener("click", () => {
-        block.classList.toggle("active");
-      });
-      glossary.appendChild(block);
+      card.addEventListener('click',()=> card.classList.toggle('active'));
+      host.appendChild(card);
     });
+  }
+  mount('es','grid-es'); mount('en','grid-en'); mount('fr','grid-fr'); mount('jp','grid-jp');
+
+  // ===== selector idioma persistente =====
+  (function(){
+    const buttons=document.querySelectorAll('.language-selector button');
+    function setLang(lang){
+      localStorage.setItem('lang',lang);
+      document.documentElement.setAttribute('lang',lang);
+      document.querySelectorAll('.lang').forEach(n=> n.classList.remove('active'));
+      document.querySelector('.lang-'+lang).classList.add('active');
+      buttons.forEach(b=>{
+        const on=b.dataset.lang===lang;
+        b.classList.toggle('active',on);
+        b.setAttribute('aria-pressed', on?'true':'false');
+      });
+    }
+    setLang(localStorage.getItem('lang') || 'es');
+    buttons.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang)));
+  })();
   </script>
 </body>
 </html>

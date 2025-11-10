@@ -1,166 +1,426 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan — códigos no lingüísticos</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fff;
-      overflow: hidden;
-      font-family: 'Times New Roman', serif;
-      color: #000;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --header-h:64px; --pad-x:clamp(16px,4vw,48px);
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF; --line:#D9DEE2; }
     }
 
-    .symbol {
-      position: absolute;
-      width: 14vw;
-      max-width: 80px;
-      opacity: 0.54;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-      animation: float 9s infinite ease-in-out alternate, glitchSteps 0.5s infinite steps(2);
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+
+    /* ===== header + idioma ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h); z-index:30; display:flex; align-items:center; justify-content:space-between;
+    }
+    header img{width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ filter:none; mix-blend-mode:normal } }
+    .language-selector{display:flex; gap:8px; text-transform:lowercase}
+    .language-selector button{
+      appearance:none; background:transparent; border:1px solid var(--line); border-radius:0;
+      padding:.35rem .6rem; cursor:pointer; color:var(--fg-dim);
+      font:600 .9rem/1 var(--font-ui); letter-spacing:.2px;
+      transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+    }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+    /* ===== stage ===== */
+    .stage{
+      position:fixed; inset:0; overflow:hidden; z-index:10;
     }
 
-    @keyframes float {
-      0%   { transform: translate(0px, 0px) scale(10); }
-      50%  { transform: translate(15px, -25px) scale(6.07); }
-      100% { transform: translate(-10px, 5px) scale(1); }
+    /* ===== símbolos flotantes ===== */
+    .symbol{
+      position:absolute; width:14vw; max-width:80px; opacity:.54; pointer-events:none;
+      mix-blend-mode:multiply;
+      animation:float 10s infinite linear alternate, glitchSteps 1.2s infinite steps(2);
+      will-change:transform,filter;
     }
+    @keyframes float{
+      0%{ transform: translate(0,0) scale(10) }
+      50%{ transform: translate(15px,-25px) scale(6.07) }
+      100%{ transform: translate(-10px,5px) scale(1) }
+    }
+    @keyframes glitchSteps{
+      0%,100%{ filter:none }
+      50%{ filter:hue-rotate(20deg) brightness(1.25) contrast(1.2) }
+    }
+    @media (max-width:768px){ .symbol{ width:20vw } }
+    @media (prefers-reduced-motion:reduce){ .symbol{ animation:none } }
 
-    @keyframes glitchSteps {
-      0% { filter: none; }
-      50% { filter: hue-rotate(30deg) brightness(10.2) contrast(9.3); }
-      100% { filter: none; }
+    /* ===== fragmentos de texto ===== */
+    .layer{ position:absolute; inset:0; pointer-events:none }
+    .text-fragment{
+      position:absolute; font:400 1.05rem/1.6 var(--font-ui); max-width:280px;
+      text-transform:lowercase; color:var(--fg); opacity:0; mix-blend-mode:darken;
+      animation:flashText 7s infinite linear;
     }
+    @keyframes flashText{
+      0%,100%{ opacity:0; transform:scale(1.01) rotate(-1deg) }
+      10%,90%{ opacity:.22 }
+      25%,75%{ opacity:1; transform:scale(1) rotate(0) }
+    }
+    @media (max-width:768px){ .text-fragment{ font-size:.95rem; max-width:65vw } }
+    @media (prefers-reduced-motion:reduce){ .text-fragment{ animation:none; opacity:.9 } }
 
-    .text-fragment {
-      position: absolute;
-      font-size: 1.1rem;
-      max-width: 280px;
-      line-height: 1.6;
-      color: #000;
-      text-transform: lowercase;
-      opacity: 0;
-      mix-blend-mode: darken;
-      animation: flashText 7s infinite ease-in-out;
-    }
-
-    @keyframes flashText {
-      0%, 100% { opacity: 0; transform: scale(100.97) rotate(-1deg); }
-      10%, 90% { opacity: 0.2; }
-      25%, 75% { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-
-    @media (max-width: 768px) {
-      .symbol {
-        width: 20vw;
-      }
-      .text-fragment {
-        font-size: 0.95rem;
-        max-width: 65vw;
-      }
-    }
+    /* ===== util ===== */
+    .lang{ display:none }
+    .lang.active{ display:block }
   </style>
 </head>
 <body>
 
+  <header>
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan"/>
+    </a>
+    <nav class="language-selector" aria-label="selector de idioma">
+      <button type="button" data-lang="es" class="active" aria-pressed="true">es</button>
+      <button type="button" data-lang="en" aria-pressed="false">en</button>
+      <button type="button" data-lang="fr" aria-pressed="false">fr</button>
+      <button type="button" data-lang="jp" aria-pressed="false">jp</button>
+    </nav>
+  </header>
 
+  <!-- capa de símbolos (todos preservados) -->
+  <div class="stage" aria-hidden="true">
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/25374511/original_c40c0c5a732aeccfd402a8f3e03345fa.jpg" style="top:5vh;left:12vw;animation-delay:0s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36399286/original_ce112b1b42ae35c69735a5084505a6ee.jpg" style="top:15vh;left:70vw;animation-delay:1s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/18254722/original_9ffb3a0c411d8fb4e13aaf05bef32676.jpg" style="top:25vh;left:22vw;animation-delay:2s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/29326759/original_9c243ffa064426b4d7b4a46afa5b1794.jpg" style="top:30vh;left:50vw;animation-delay:3s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20875865/original_81fb771235544a85dd8d6526ce10318c.jpg" style="top:60vh;left:5vw;animation-delay:4s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/24664269/original_f3b3935add8f96cd19d9195fff3491c4.jpg" style="top:70vh;left:80vw;animation-delay:5s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20875872/original_ac88051c4a43aab1c55b5594ae1998f0.jpg" style="top:10vh;left:35vw;animation-delay:6s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20811711/original_803dabcbc610d59eaf4a0248af1f7064.png" style="top:80vh;left:20vw;animation-delay:7s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20811804/original_ee7d3d80f248639842bbe4f3ba8dc663.jpg" style="top:20vh;left:60vw;animation-delay:8s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20811955/original_132509c20660732f1cb9e10ad02b1885.jpg" style="top:75vh;left:10vw;animation-delay:9s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/19197493/original_c85f53d910e102e1d054b0a6a23da115.jpg" style="top:15vh;left:85vw;animation-delay:10s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36373914/original_19e64fe7b66cbf1979987548fe1c643d.jpg" style="top:45vh;left:28vw;animation-delay:11s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20875941/original_2e40e3b6378ed71259ac496354966687.jpg" style="top:58vh;left:48vw;animation-delay:12s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/25374570/original_702b0c701141fd913fa8edb10e9d4782.jpg" style="top:22vh;left:18vw;animation-delay:13s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/21506615/original_294c237e517621da683a50e133114cca.jpg" style="top:40vh;left:65vw;animation-delay:14s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36633902/original_afa5b763c972b4a1137a017c7fe458be.jpg" style="top:35vh;left:10vw;animation-delay:15s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/24664312/original_19589aa448f3732a3997d76a07a2c379.jpg" style="top:78vh;left:38vw;animation-delay:16s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/20811626/original_316d1ac205ac16f9efbd8f90296acade.jpg" style="top:25vh;left:55vw;animation-delay:17s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36399427/original_3463c7ff576675945ab6ed7907f86d15.jpg" style="top:72vh;left:25vw;animation-delay:18s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/29941490/original_782661723d82ea3ccda77881fbce11db.jpg" style="top:30vh;left:75vw;animation-delay:19s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/24664425/original_d6fdb2bffd57d8cf835b27d5af4c0a4d.jpg" style="top:68vh;left:32vw;animation-delay:20s"/>
+    <!-- el original era .mov en <img>; se corrige a <video> conservando la url -->
+    <video class="symbol" style="top:38vh;left:42vw;animation-delay:21s" muted loop playsinline preload="none" width="80" height="80">
+      <source src="https://attachments.are.na/36399240/dc217b4d1449d60d223db5bfc2762ea4.mov" type="video/quicktime"/>
+    </video>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36373895/original_561c2e71cb3c7a74a80f73dca5653a5d.jpg" style="top:12vh;left:52vw;animation-delay:22s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36399598/original_e227461efc1aa8dacb4cc5386e862523.jpg" style="top:55vh;left:85vw;animation-delay:23s"/>
+    <img class="symbol" loading="lazy" decoding="async" src="https://d2w9rnfcy7mm78.cloudfront.net/36399968/original_d9bab6f576c878e09865c4a327a42156.jpg" style="top:50vh;left:15vw;animation-delay:24s"/>
+  </div>
 
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/25374511/original_c40c0c5a732aeccfd402a8f3e03345fa.jpg" style="top: 5vh; left: 12vw; animation-delay: 0s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36399286/original_ce112b1b42ae35c69735a5084505a6ee.jpg" style="top: 15vh; left: 70vw; animation-delay: 1s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/18254722/original_9ffb3a0c411d8fb4e13aaf05bef32676.jpg" style="top: 25vh; left: 22vw; animation-delay: 2s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/29326759/original_9c243ffa064426b4d7b4a46afa5b1794.jpg" style="top: 30vh; left: 50vw; animation-delay: 3s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20875865/original_81fb771235544a85dd8d6526ce10318c.jpg" style="top: 60vh; left: 5vw; animation-delay: 4s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/24664269/original_f3b3935add8f96cd19d9195fff3491c4.jpg" style="top: 70vh; left: 80vw; animation-delay: 5s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20875872/original_ac88051c4a43aab1c55b5594ae1998f0.jpg" style="top: 10vh; left: 35vw; animation-delay: 6s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20811711/original_803dabcbc610d59eaf4a0248af1f7064.png" style="top: 80vh; left: 20vw; animation-delay: 7s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20811804/original_ee7d3d80f248639842bbe4f3ba8dc663.jpg" style="top: 20vh; left: 60vw; animation-delay: 8s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20811955/original_132509c20660732f1cb9e10ad02b1885.jpg" style="top: 75vh; left: 10vw; animation-delay: 9s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/19197493/original_c85f53d910e102e1d054b0a6a23da115.jpg" style="top: 15vh; left: 85vw; animation-delay: 10s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36373914/original_19e64fe7b66cbf1979987548fe1c643d.jpg" style="top: 45vh; left: 28vw; animation-delay: 11s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20875941/original_2e40e3b6378ed71259ac496354966687.jpg" style="top: 58vh; left: 48vw; animation-delay: 12s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/25374570/original_702b0c701141fd913fa8edb10e9d4782.jpg" style="top: 22vh; left: 18vw; animation-delay: 13s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/21506615/original_294c237e517621da683a50e133114cca.jpg" style="top: 40vh; left: 65vw; animation-delay: 14s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36633902/original_afa5b763c972b4a1137a017c7fe458be.jpg" style="top: 35vh; left: 10vw; animation-delay: 15s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/24664312/original_19589aa448f3732a3997d76a07a2c379.jpg" style="top: 78vh; left: 38vw; animation-delay: 16s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/20811626/original_316d1ac205ac16f9efbd8f90296acade.jpg" style="top: 25vh; left: 55vw; animation-delay: 17s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36399427/original_3463c7ff576675945ab6ed7907f86d15.jpg" style="top: 72vh; left: 25vw; animation-delay: 18s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/29941490/original_782661723d82ea3ccda77881fbce11db.jpg" style="top: 30vh; left: 75vw; animation-delay: 19s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/24664425/original_d6fdb2bffd57d8cf835b27d5af4c0a4d.jpg" style="top: 68vh; left: 32vw; animation-delay: 20s;" />
-<img class="symbol" src="https://attachments.are.na/36399240/dc217b4d1449d60d223db5bfc2762ea4.mov" style="top: 38vh; left: 42vw; animation-delay: 21s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36373895/original_561c2e71cb3c7a74a80f73dca5653a5d.jpg" style="top: 12vh; left: 52vw; animation-delay: 22s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36399598/original_e227461efc1aa8dacb4cc5386e862523.jpg" style="top: 55vh; left: 85vw; animation-delay: 23s;" />
-<img class="symbol" src="https://d2w9rnfcy7mm78.cloudfront.net/36399968/original_d9bab6f576c878e09865c4a327a42156.jpg" style="top: 50vh; left: 15vw; animation-delay: 24s;" />
+  <!-- capas de texto por idioma -->
+  <div class="layer lang lang-es active" id="layer-es" aria-live="polite"></div>
+  <div class="layer lang lang-en" id="layer-en" aria-live="polite"></div>
+  <div class="layer lang lang-fr" id="layer-fr" aria-live="polite"></div>
+  <div class="layer lang lang-jp" id="layer-jp" aria-live="polite"></div>
 
-<!-- TEXTOS DINÁMICOS EXPANDIDOS -->
-<script>
-  const textos = [
-    "no todo se dice en voz alta",
-    "interfiere antes de nombrar",
-    "estructura sin gramática",
-    "vibración ≠ representación",
-    "el código también distorsiona",
-    "lo ilegible puede ser estructural",
-    "no hay código sin desvío",
-    "el vacío también significa",
-    "cada pulso altera la forma",
-    "escritura sin lengua",
-    "frecuencia como enunciado",
-    "todo eco es un mensaje",
-    "forma no es superficie",
-    "la distorsión también comunica",
-    "significar es desbordar",
-    "la repetición encripta",
-    "sonido antes que palabra",
-    "la trama es anterior al texto",
-    "perder el sentido es parte del código",
-    "saturación como gramática",
-    "la vibración es política",
-    "no hay silencio neutro",
-    "un patrón no es un lenguaje",
-    "el glitch como origen",
-    "reconocer ≠ traducir",
-    "la imagen habla antes de ser vista",
-    "todo gesto codifica",
-    "donde no hay lenguaje, hay estructura",
-    "densidad no es confusión",
-    "un intervalo puede contener un mensaje",
-    "afectar es inscribir",
-    "el cuerpo también codifica",
-    "un trazo puede ser sintaxis",
-    "no leer no significa no entender",
-    "la interrupción es el signo",
-    "fragmentar es construir",
-    "los símbolos también se corrompen",
-    "lo roto también funciona",
-    "lo ilegible también insiste",
-    "hay lectura sin linealidad",
-    "frecuencia es dirección",
-    "todo signo es una interfaz",
-    "el caos también tiene reglas",
-    "lo ambiguo es legible",
-    "toda forma emite",
-    "un error puede ser coherente",
-    "cuando se rompe, aparece",
-    "el ritmo ordena sin control",
-    "lo estático también vibra",
-    "toda saturación es política",
-    "nada es totalmente mudo"
-  ];
+  <script>
+  // ===== idioma persistente =====
+  (function(){
+    const buttons = document.querySelectorAll('.language-selector button');
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+      document.querySelectorAll('.lang').forEach(n=> n.classList.remove('active'));
+      document.querySelectorAll('.lang-'+lang).forEach(n=> n.classList.add('active'));
+      buttons.forEach(b=>{
+        const on = b.dataset.lang === lang;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    setLang(localStorage.getItem('lang') || 'es');
+    buttons.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang)));
+  })();
 
-  textos.forEach((texto, i) => {
-    const div = document.createElement('div');
-    div.className = 'text-fragment';
-    div.textContent = texto;
-    div.style.top = `${Math.floor(Math.random() * 85) + 5}vh`;
-    div.style.left = `${Math.floor(Math.random() * 85) + 5}vw`;
-    div.style.animationDelay = `${Math.random() * 20}s`;
-    div.style.transform = `rotate(${Math.random() * 4 - 2}deg)`;
-    document.body.appendChild(div);
-  });
-</script>
+  // ===== textos multilenguaje (traducción completa, 1:1) =====
+  const TEXTS = {
+    es: [
+      "no todo se dice en voz alta",
+      "interfiere antes de nombrar",
+      "estructura sin gramática",
+      "vibración ≠ representación",
+      "el código también distorsiona",
+      "lo ilegible puede ser estructural",
+      "no hay código sin desvío",
+      "el vacío también significa",
+      "cada pulso altera la forma",
+      "escritura sin lengua",
+      "frecuencia como enunciado",
+      "todo eco es un mensaje",
+      "forma no es superficie",
+      "la distorsión también comunica",
+      "significar es desbordar",
+      "la repetición encripta",
+      "sonido antes que palabra",
+      "la trama es anterior al texto",
+      "perder el sentido es parte del código",
+      "saturación como gramática",
+      "la vibración es política",
+      "no hay silencio neutro",
+      "un patrón no es un lenguaje",
+      "el glitch como origen",
+      "reconocer ≠ traducir",
+      "la imagen habla antes de ser vista",
+      "todo gesto codifica",
+      "donde no hay lenguaje, hay estructura",
+      "densidad no es confusión",
+      "un intervalo puede contener un mensaje",
+      "afectar es inscribir",
+      "el cuerpo también codifica",
+      "un trazo puede ser sintaxis",
+      "no leer no significa no entender",
+      "la interrupción es el signo",
+      "fragmentar es construir",
+      "los símbolos también se corrompen",
+      "lo roto también funciona",
+      "lo ilegible también insiste",
+      "hay lectura sin linealidad",
+      "frecuencia es dirección",
+      "todo signo es una interfaz",
+      "el caos también tiene reglas",
+      "lo ambiguo es legible",
+      "toda forma emite",
+      "un error puede ser coherente",
+      "cuando se rompe, aparece",
+      "el ritmo ordena sin control",
+      "lo estático también vibra",
+      "toda saturación es política",
+      "nada es totalmente mudo"
+    ],
+    en: [
+      "not everything is spoken aloud",
+      "interfere before naming",
+      "structure without grammar",
+      "vibration ≠ representation",
+      "code distorts as well",
+      "the illegible can be structural",
+      "there is no code without deviation",
+      "emptiness also signifies",
+      "each pulse alters form",
+      "writing without tongue",
+      "frequency as statement",
+      "every echo is a message",
+      "form is not surface",
+      "distortion also communicates",
+      "to signify is to overflow",
+      "repetition encrypts",
+      "sound before word",
+      "the weave precedes the text",
+      "losing meaning is part of the code",
+      "saturation as grammar",
+      "vibration is political",
+      "there is no neutral silence",
+      "a pattern is not a language",
+      "glitch as origin",
+      "to recognize ≠ to translate",
+      "the image speaks before it is seen",
+      "every gesture encodes",
+      "where there is no language, there is structure",
+      "density is not confusion",
+      "an interval can hold a message",
+      "to affect is to inscribe",
+      "the body also encodes",
+      "a stroke can be syntax",
+      "not reading does not mean not understanding",
+      "interruption is the sign",
+      "to fragment is to construct",
+      "symbols also corrupt",
+      "the broken also works",
+      "the illegible also insists",
+      "there is reading without linearity",
+      "frequency is direction",
+      "every sign is an interface",
+      "chaos also has rules",
+      "the ambiguous is legible",
+      "every form emits",
+      "an error can be coherent",
+      "when it breaks, it appears",
+      "rhythm orders without control",
+      "the static also vibrates",
+      "every saturation is political",
+      "nothing is entirely mute"
+    ],
+    fr: [
+      "tout ne se dit pas à voix haute",
+      "intervenir avant de nommer",
+      "structure sans grammaire",
+      "vibration ≠ représentation",
+      "le code déforme aussi",
+      "l’illisible peut être structurel",
+      "pas de code sans détour",
+      "le vide signifie aussi",
+      "chaque impulsion altère la forme",
+      "écriture sans langue",
+      "fréquence comme énoncé",
+      "tout écho est un message",
+      "la forme n’est pas la surface",
+      "la distorsion communique aussi",
+      "signifier, c’est déborder",
+      "la répétition chiffre",
+      "le son avant le mot",
+      "la trame précède le texte",
+      "perdre le sens fait partie du code",
+      "saturation comme grammaire",
+      "la vibration est politique",
+      "il n’y a pas de silence neutre",
+      "un motif n’est pas une langue",
+      "le glitch comme origine",
+      "reconnaître ≠ traduire",
+      "l’image parle avant d’être vue",
+      "tout geste code",
+      "là où il n’y a pas de langue, il y a structure",
+      "densité n’est pas confusion",
+      "un intervalle peut contenir un message",
+      "affecter, c’est inscrire",
+      "le corps code aussi",
+      "un trait peut être une syntaxe",
+      "ne pas lire ne veut pas dire ne pas comprendre",
+      "l’interruption est le signe",
+      "fragmenter, c’est construire",
+      "les symboles se corrompent aussi",
+      "le cassé fonctionne aussi",
+      "l’illisible insiste aussi",
+      "il existe une lecture sans linéarité",
+      "la fréquence est direction",
+      "tout signe est une interface",
+      "le chaos a aussi des règles",
+      "l’ambigu est lisible",
+      "toute forme émet",
+      "une erreur peut être cohérente",
+      "quand ça se brise, ça apparaît",
+      "le rythme ordonne sans contrôle",
+      "le statique vibre aussi",
+      "toute saturation est politique",
+      "rien n’est totalement muet"
+    ],
+    jp: [
+      "すべてが声に出されるわけではない",
+      "名づける前に干渉せよ",
+      "文法なき構造",
+      "振動 ≠ 表象",
+      "コードもまた歪める",
+      "判読不能は構造になりうる",
+      "迂回なしにコードはない",
+      "空白も意味する",
+      "あらゆるパルスが形態を変える",
+      "言語なき書記",
+      "周波数は言明である",
+      "すべてのエコーはメッセージだ",
+      "形は表面ではない",
+      "歪みもまた伝達する",
+      "意味するとは溢れること",
+      "反復は暗号化する",
+      "言葉に先立つ音",
+      "テクスチャはテキストに先行する",
+      "意味を失うこともコードの一部",
+      "飽和を文法とする",
+      "振動は政治である",
+      "中立な沈黙はない",
+      "パターンは言語ではない",
+      "グリッチは起源である",
+      "認識すること ≠ 翻訳すること",
+      "見る前に像は語る",
+      "あらゆるジェスチャーは符号化する",
+      "言語がないところに構造がある",
+      "密度は混乱ではない",
+      "間隔にもメッセージは宿る",
+      "影響するとは刻み込むこと",
+      "身体もまた符号化する",
+      "一筆は統語になりうる",
+      "読まないことは理解しないことを意味しない",
+      "中断こそが徴である",
+      "断片化は構築である",
+      "記号もまた劣化する",
+      "壊れたものも機能する",
+      "判読不能も持続する",
+      "線形でない読解がある",
+      "周波数は方向である",
+      "すべての記号はインターフェースだ",
+      "カオスにも規則がある",
+      "曖昧も可読である",
+      "あらゆる形は発信する",
+      "誤りは首尾一貫しうる",
+      "壊れるとき現れる",
+      "リズムは制御なく秩序立てる",
+      "静止もまた振動する",
+      "あらゆる飽和は政治である",
+      "完全に無音なものはない"
+    ]
+  };
 
+  // ===== colocación determinista (misma posición al cambiar idioma) =====
+  (function mountLayers(){
+    const layers = {
+      es: document.getElementById('layer-es'),
+      en: document.getElementById('layer-en'),
+      fr: document.getElementById('layer-fr'),
+      jp: document.getElementById('layer-jp'),
+    };
+
+    function PRNG(seed){ let s=seed>>>0; return ()=>((s=(s*1664525+1013904223)>>>0) / 0xFFFFFFFF); }
+    const rand = PRNG(1337);
+
+    Object.entries(TEXTS).forEach(([lang, list])=>{
+      list.forEach((txt,i)=>{
+        const el = document.createElement('div');
+        el.className = 'text-fragment';
+        el.textContent = txt;
+        const top = 5 + Math.floor(rand()*90);   // 5–95
+        const left = 5 + Math.floor(rand()*90);  // 5–95
+        const delay = (rand()*20).toFixed(2) + 's';
+        const rot = (rand()*4 - 2).toFixed(2) + 'deg';
+        el.style.top = top + 'vh';
+        el.style.left = left + 'vw';
+        el.style.animationDelay = delay;
+        el.style.transform = `rotate(${rot})`;
+        layers[lang].appendChild(el);
+      });
+    });
+  })();
+
+  // ===== auto-play para el único .mov =====
+  (function(){
+    const v = document.querySelector('video.symbol');
+    if(!v) return;
+    function tryPlay(){ v.play().catch(()=>{}); }
+    v.addEventListener('canplay', tryPlay, {once:true});
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tryPlay(); });
+    // iOS desbloqueo táctil
+    const kick=()=>{ tryPlay(); window.removeEventListener('touchstart',kick); window.removeEventListener('click',kick); };
+    window.addEventListener('touchstart',kick,{once:true,passive:true});
+    window.addEventListener('click',kick,{once:true});
+  })();
+  </script>
 </body>
 </html>

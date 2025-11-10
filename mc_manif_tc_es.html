@@ -1,118 +1,177 @@
+<!-- ES — xpan — manifiesto (normalizado post-tech / defense-ops, atlas auto-invert) -->
 <!doctype html>
-<html lang="es">
-
+<html lang="es" data-xpan>
 <head>
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-5D3D9DR9');</script>
-    <link rel="stylesheet" href="./style.css" media="screen"/>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta property="og:title" content="xpan"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:image" content="./xpan.png"/>
-    <meta property="og:url" content="https://xpan.earth/"/>
-    <title>xpan</title>
+  <!-- GTM -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5D3D9DR9');</script>
+
+  <!-- conservar CSS existente sin aplicarlo aquí -->
+  <link rel="stylesheet" href="./style.css" media="not all" data-preserved="true"/>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark"/>
+  <meta property="og:title" content="xpan"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="./xpan.png"/>
+  <meta property="og:url" content="https://xpan.earth/"/>
+  <title>xpan</title>
+
+  <style>
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --b1:1px solid var(--line);
+      --pad-x:clamp(16px,4vw,48px); --header-h:64px; --maxw:900px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2 }
+    }
+
+    *,*::before,*::after{ box-sizing:border-box }
+    html,body{ height:100% }
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      text-rendering:optimizeLegibility;
+    }
+    a{ color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear }
+    a:hover{ border-bottom-color:var(--accent) }
+    img{ max-width:100%; height:auto; display:block }
+
+    /* header con logo auto-contraste */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h); display:flex; align-items:center; z-index:10;
+    }
+    /* logo blanco sobre fondo oscuro */
+    header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    /* atlas visible en ambos modos */
+    img[alt="xpan.manifiesto"]{ filter:invert(1) }
+    @media (prefers-color-scheme:light){ img[alt="xpan.manifiesto"]{ filter:none } }
+
+    main{ padding-top:calc(var(--header-h) + 24px) }
+    article{
+      max-width:var(--maxw); margin:0 auto; padding:24px var(--pad-x) 72px;
+      border-top:var(--b1); padding-top:1.25rem; margin-top:1.25rem;
+      line-height:1.65;
+    }
+    p{ margin:0 0 1rem }
+    ol{ margin:.25rem 0 1.25rem 1.2rem; padding:0 }
+    li{ margin:.2rem 0 .2rem .1rem; line-height:1.55 }
+
+    /* ocultar visualmente el iframe de GTM en noscript */
+    noscript iframe{ height:0; width:0; display:none; visibility:hidden }
+  </style>
 </head>
 
 <body>
-    <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9"></iframe>
-    </noscript>
-    <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
-    </header>
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan — home">
+      <img src="./xpan.svg" alt="xpan">
+    </a>
+  </header>
+
+  <main>
     <article>
-  <p>
-    [<em>xpan</em>]<br>
-    ciudad de méxico, principios de 2025<br>
-    <br>
-    [manifiesto: topología conectiva]<br>
-    ---<br>
-    [introducción]:<br>
-    la topología conectiva es el eje teórico y filosófico de <em>xpan</em>. más que un marco de representación, es una herramienta activa para mapear y articular las relaciones, flujos e interconexiones que sostienen sistemas complejos en un mundo hiperconectado. no es un esquema estático, sino un tejido dinámico donde cada nodo (idea, individuo, espacio o tecnología) es una expresión en transformación continua. <br>
-    <br>
-    su propósito: reconfigurar las conexiones que sostienen el presente y construir un nuevo entramado cultural global.
-  </p>
+      <p>
+        [<em>xpan</em>]<br>
+        ciudad de méxico, principios de 2025<br>
+        <br>
+        [manifiesto: topología conectiva]<br>
+        ---<br>
+        [introducción]:<br>
+        la topología conectiva es el eje teórico y filosófico de <em>xpan</em>. más que un marco de representación, es una herramienta activa para mapear y articular las relaciones, flujos e interconexiones que sostienen sistemas complejos en un mundo hiperconectado. no es un esquema estático, sino un tejido dinámico donde cada nodo (idea, individuo, espacio o tecnología) es una expresión en transformación continua. <br>
+        <br>
+        su propósito: reconfigurar las conexiones que sostienen el presente y construir un nuevo entramado cultural global.
+      </p>
 
-  <p>
-    [principios fundamentales]:<br>
-    ---<br>
-    [conexión como esencia]:<br>
-    las conexiones tangibles e intangibles configuran la realidad. lo simbólico, lo material y lo afectivo convergen en este entramado donde las interacciones generan nuevas posibilidades de existencia.<br>
-    <br>
-    en este marco:<br>
-  </p>
-  <ol>
-    <li>las conexiones no son lineales ni jerárquicas.</li>
-    <li>operan en múltiples direcciones, generando estructuras emergentes en redefinición constante.</li>
-    <li>la topología conectiva traza rutas nuevas, expandiendo lo posible.</li>
-  </ol>
+      <p>
+        [principios fundamentales]:<br>
+        ---<br>
+        [conexión como esencia]:<br>
+        las conexiones tangibles e intangibles configuran la realidad. lo simbólico, lo material y lo afectivo convergen en este entramado donde las interacciones generan nuevas posibilidades de existencia.<br>
+        <br>
+        en este marco:<br>
+      </p>
+      <ol>
+        <li>las conexiones no son lineales ni jerárquicas.</li>
+        <li>operan en múltiples direcciones, generando estructuras emergentes en redefinición constante.</li>
+        <li>la topología conectiva traza rutas nuevas, expandiendo lo posible.</li>
+      </ol>
 
-  <p>
-    ---<br>
-    [devenir continuo]:<br>
-    la topología conectiva es fluida y mutante. sus relaciones evolucionan, se reconfiguran y desbordan los sistemas que las contienen.<br>
-    <br>
-    cada transformación:<br>
-  </p>
-  <ol>
-    <li>no es una ruptura, sino una adaptación expansiva.</li>
-    <li>modifica tanto al sistema como a quienes lo habitan.</li>
-    <li>es una dinámica de intercambio que modela nuevas formas culturales.</li>
-  </ol>
+      <p>
+        ---<br>
+        [devenir continuo]:<br>
+        la topología conectiva es fluida y mutante. sus relaciones evolucionan, se reconfiguran y desbordan los sistemas que las contienen.<br>
+        <br>
+        cada transformación:<br>
+      </p>
+      <ol>
+        <li>no es una ruptura, sino una adaptación expansiva.</li>
+        <li>modifica tanto al sistema como a quienes lo habitan.</li>
+        <li>es una dinámica de intercambio que modela nuevas formas culturales.</li>
+      </ol>
 
-  <p>
-    ---<br>
-    [proximidades dinámicas]:<br>
-    no es un mapa fijo, sino un espacio vectorizado donde convergen conexiones físicas, narrativas, significados y tensiones.<br>
-    <br>
-    su función:<br>
-  </p>
-  <ol>
-    <li>reducir distancias simbólicas y materiales.</li>
-    <li>crear resonancias entre geografías, culturas y conceptos.</li>
-    <li>generar nuevas territorialidades sin depender de estructuras preexistentes.</li>
-  </ol>
+      <p>
+        ---<br>
+        [proximidades dinámicas]:<br>
+        no es un mapa fijo, sino un espacio vectorizado donde convergen conexiones físicas, narrativas, significados y tensiones.<br>
+        <br>
+        su función:<br>
+      </p>
+      <ol>
+        <li>reducir distancias simbólicas y materiales.</li>
+        <li>crear resonancias entre geografías, culturas y conceptos.</li>
+        <li>generar nuevas territorialidades sin depender de estructuras preexistentes.</li>
+      </ol>
 
-  <p>
-    ---<br>
-    [crítica y creación]:<br>
-    la topología conectiva no solo analiza, sino que desmantela y rearticula conexiones.<br>
-    <br>
-    lo hace:<br>
-  </p>
-  <ol>
-    <li>proponiendo modelos de interrelación que expanden futuros sostenibles y éticos.</li>
-    <li>mediante activaciones, intervenciones y proyectos editoriales como dispositivos de transformación.</li>
-    <li>como respuesta activa ante lo establecido, abriendo puntos de fuga hacia lo aún no concebido.</li>
-  </ol>
+      <p>
+        ---<br>
+        [crítica y creación]:<br>
+        la topología conectiva no solo analiza, sino que desmantela y rearticula conexiones.<br>
+        <br>
+        lo hace:<br>
+      </p>
+      <ol>
+        <li>proponiendo modelos de interrelación que expanden futuros sostenibles y éticos.</li>
+        <li>mediante activaciones, intervenciones y proyectos editoriales como dispositivos de transformación.</li>
+        <li>como respuesta activa ante lo establecido, abriendo puntos de fuga hacia lo aún no concebido.</li>
+      </ol>
 
-  <p>
-    ---<br>
-    [herramienta para el devenir]:<br>
-    la topología conectiva no es una teoría fija, sino un sistema vivo para imaginar y materializar nuevas formas de interconexión.<br>
-    <br>
-    su operación:<br>
-  </p>
-  <ol>
-    <li>parte de una comprensión global y no lineal.</li>
-    <li>entreteje lo crítico y lo creativo para redefinir relaciones y reconfigurar el tejido global.</li>
-    <li>se manifiesta en estructuras habitables, recorribles y activables en diversos contextos.</li>
-    <li>abre posibilidades inéditas mediante tecnologías emergentes.</li>
-  </ol>
+      <p>
+        ---<br>
+        [herramienta para el devenir]:<br>
+        la topología conectiva no es una teoría fija, sino un sistema vivo para imaginar y materializar nuevas formas de interconexión.<br>
+        <br>
+        su operación:<br>
+      </p>
+      <ol>
+        <li>parte de una comprensión global y no lineal.</li>
+        <li>entreteje lo crítico y lo creativo para redefinir relaciones y reconfigurar el tejido global.</li>
+        <li>se manifiesta en estructuras habitables, recorribles y activables en diversos contextos.</li>
+        <li>abre posibilidades inéditas mediante tecnologías emergentes.</li>
+      </ol>
 
-  <p>
-    es un movimiento en sí mismo. una manifestación activa de lo que aún no ha sido establecido. una invitación abierta a imaginar, intervenir y construir un nuevo orden de conexiones.
-  </p>
+      <p>
+        es un movimiento en sí mismo. una manifestación activa de lo que aún no ha sido establecido. una invitación abierta a imaginar, intervenir y construir un nuevo orden de conexiones.
+      </p>
 
-  <img src="./xpan-atlas.svg" alt="xpan.manifiesto">
-</article>
-
+      <!-- atlas auto-invert en modo oscuro -->
+      <img src="./xpan-atlas.svg" alt="xpan.manifiesto">
+    </article>
+  </main>
 </body>
-
 </html>

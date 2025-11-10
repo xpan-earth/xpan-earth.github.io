@@ -1,82 +1,143 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <title>xpan — topología individualizada de la percepción</title>
 
-  <!-- conexiones previas / mismas que el sitio -->
+  <!-- conexiones previas / mismas que el sitio (preservadas) -->
   <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
   <link rel="preconnect" href="https://attachments.are.na" crossorigin>
   <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
   <link rel="dns-prefetch" href="https://attachments.are.na">
 
   <style>
+    /* ===== tokens post-tech / defense-ops ===== */
     :root{
-      --bg:#fff; --fg:#0a0a0a; --line:rgba(0,0,0,.12); --radius:14px; --gap:.8rem;
-      --ease:cubic-bezier(.22,.61,.36,1); --aei-block:140px; --muted: .62;
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1F24; --b1:1px solid var(--line);
+      --pad-x:clamp(16px,4vw,48px); --header-h:64px;
+      --radius:12px; --gap:.9rem; --ease:cubic-bezier(.22,.61,.36,1);
+      --aei-block:140px;
+
+      /* inversión de color para líneas/diagramas */
+      --stroke-map:#FFFFFF;  /* dark: blanco sobre negro */
+      --stroke-aux:#FFFFFF;
+      --panel:rgba(12,13,15,.45);
     }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:Times, ui-serif, Georgia, serif}
-    a{color:inherit;text-decoration:none}
-    img,video{display:block;max-width:100%;height:auto}
-    body{overflow-x:hidden}
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+        --line:#DDE3EA; --line-weak:#ECF1F5; --panel:rgba(255,255,255,.86);
+        --stroke-map:#000000;  /* light: negro sobre blanco */
+        --stroke-aux:#000000;
+      }
+    }
 
-    header{position:fixed;top:1rem;left:1rem;right:1rem;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:.8rem}
-    header img{width:50px;height:auto;display:block}
-    .language-selector{display:flex;gap:.5rem;font-size:.9rem;text-transform:lowercase}
-    .language-selector button{background:none;border:1px solid var(--line);border-radius:999px;padding:.25rem .6rem;cursor:pointer;opacity:.7}
-    .language-selector button.active{background:#000;color:#fff;opacity:1}
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s var(--ease)}
+    a:hover{border-bottom-color:var(--accent)}
+    img,video{display:block; max-width:100%; height:auto}
 
-    main{max-width:1440px;margin:96px auto 6rem;padding:0 1.25rem}
-    h1{font-size:clamp(1.15rem,2.2vw,1.6rem);margin:.2rem 0;text-transform:lowercase}
-    h2{font-size:clamp(1rem,2vw,1.25rem);margin:0 0 .4rem;text-transform:lowercase}
-    .meta{opacity:.8;font-style:italic;margin:0 0 1rem}
-    .description{font-size:1rem;line-height:1.6;max-width:980px;margin:.5rem 0 1.2rem}
+    /* ===== header ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h); z-index:30; display:flex; justify-content:space-between; align-items:center; gap:.8rem;
+    }
+    header img{ width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
 
-    .section{margin:1.6rem 0;content-visibility:auto;contain-intrinsic-size:1px 900px}
-    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;padding:1rem}
+    .language-selector{ display:flex; gap:.5rem; font-size:.9rem; text-transform:lowercase }
+    .language-selector button{
+      background:transparent; border:var(--b1); border-radius:999px; padding:.25rem .6rem;
+      cursor:pointer; color:var(--fg-dim); transition:color .15s var(--ease), border-color .15s var(--ease), background-color .15s var(--ease);
+    }
+    .language-selector button:hover{ color:var(--fg) }
+    .language-selector button.active{ background:rgba(24,96,255,.08); color:var(--fg); border-color:var(--accent) }
 
-    /* a.e.i / fondo animado */
-    .aei-embed{position:relative;width:100%;min-height:58vh;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;margin:.8rem 0}
-    .aei-stage{position:relative;width:100%;height:100%;min-height:58vh;touch-action:none}
-    .aei-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-    .aei-block{width:var(--aei-block);height:var(--aei-block);position:absolute;border:1px solid var(--line);border-radius:10px;background:#fff;opacity:.85;cursor:grab;user-select:none;display:flex;align-items:center;justify-content:center;transition:opacity .2s var(--ease)}
-    .aei-block:hover{opacity:1}
-    .aei-badge{position:absolute;inset:auto 8px 8px auto;font-size:.7rem;opacity:.5}
+    /* ===== layout ===== */
+    main{ max-width:1440px; margin:calc(var(--header-h) + 32px) auto 6rem; padding:0 var(--pad-x) }
+    h1{ font:700 clamp(1.15rem,2.2vw,1.6rem)/1.2 "Inter",system-ui; margin:.2rem 0; text-transform:lowercase }
+    h2{ font:600 clamp(1rem,2vw,1.25rem)/1.2 "Inter",system-ui; margin:0 0 .6rem; text-transform:lowercase }
+    .meta{ opacity:.82; font-style:italic; margin:0 0 1rem }
+    .description{ font:400 1rem/1.65 "Inter",system-ui; max-width:980px; margin:.5rem 0 1.2rem }
 
-    /* diagrama sistémico */
-    .diagram-wrap{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-    .diagram-toolbar{display:flex;gap:.5rem;justify-content:flex-end;padding:.5rem;border-bottom:1px solid var(--line)}
-    .btn{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.35rem .7rem;font-size:.9rem;cursor:pointer}
-    .btn.active{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
-    #sysDiagram{display:block;width:100%;height:min(70vh,720px);background:#fff}
+    .section{ margin:1.6rem 0; content-visibility:auto; contain-intrinsic-size:1px 900px }
 
-    /* panel práctica */
-    .practice-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:1rem}
-    @media(max-width:980px){.practice-grid{grid-template-columns:1fr}}
-    .practice-card{border:1px solid var(--line);border-radius:var(--radius);padding:1rem;background:#fff}
-    .practice-card h3{margin:.1rem 0 .6rem;font-size:1rem;text-transform:lowercase}
-    .practice-card .small{font-size:.92rem;opacity:.85}
-    .fields{display:grid;gap:.5rem}
-    textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:10px;padding:.6rem;font-family:inherit;font-size:1rem}
-    .log{white-space:pre-wrap;font-size:.95rem;line-height:1.45;max-height:44vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:.6rem;background:#fff}
+    /* ===== tarjetas / paneles ===== */
+    .card{
+      border:var(--b1); border-radius:var(--radius); overflow:hidden;
+      background:var(--panel); backdrop-filter:blur(6px) saturate(120%); -webkit-backdrop-filter:blur(6px) saturate(120%);
+      padding:1rem;
+    }
 
-    /* utilidades */
-    .sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
-    [hidden]{display:none!important}
+    /* ===== AEI (fondo animado) ===== */
+    .aei-embed{
+      position:relative; width:100%; min-height:58vh; border:var(--b1); border-radius:var(--radius);
+      overflow:hidden; background:var(--panel); margin:.8rem 0;
+    }
+    .aei-stage{ position:relative; width:100%; height:100%; min-height:58vh; touch-action:none }
+    .aei-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none }
+
+    .aei-block{
+      width:var(--aei-block); height:var(--aei-block); position:absolute; border:var(--b1);
+      border-radius:10px; background:transparent; opacity:.9; cursor:grab; user-select:none;
+      display:flex; align-items:center; justify-content:center; transition:opacity .2s var(--ease);
+      backdrop-filter:blur(2px) saturate(120%); -webkit-backdrop-filter:blur(2px) saturate(120%);
+    }
+    .aei-block:hover{ opacity:1 }
+    .aei-badge{ position:absolute; inset:auto 8px 8px auto; font:600 .72rem/1 var(--font-mono); opacity:.66 }
+
+    /* AEI lines: usar color del tema (forzando inline) */
+    .aei-lines line{ stroke:var(--stroke-aux) !important; stroke-width:.6 !important; }
+
+    /* ===== diagrama sistémico ===== */
+    .diagram-wrap{ position:relative; border:var(--b1); border-radius:var(--radius); overflow:hidden; background:var(--panel) }
+    .diagram-toolbar{ display:flex; gap:.5rem; justify-content:flex-end; padding:.5rem; border-bottom:var(--b1) }
+    .btn{
+      background:transparent; border:var(--b1); border-radius:999px; padding:.35rem .7rem;
+      font:600 .9rem/1 "Inter",system-ui; cursor:pointer; color:var(--fg-dim);
+      transition:color .15s var(--ease), border-color .15s var(--ease), background-color .15s var(--ease);
+    }
+    .btn:hover{ color:var(--fg) }
+    .btn.active{ background:rgba(24,96,255,.08); color:var(--fg); border-color:var(--accent) }
+    #sysDiagram, #sysDiagram_en, #sysDiagram_fr, #sysDiagram_jp{ display:block; width:100%; height:min(70vh,720px); background:transparent }
+
+    /* forzar color de nodos/edges a tema (sobre-escribe atributos inline) */
+    #sysDiagram *, #sysDiagram_en *, #sysDiagram_fr *, #sysDiagram_jp *{
+      stroke:var(--stroke-aux) !important; fill:var(--stroke-aux) !important;
+    }
+    #sysDiagram text, #sysDiagram_en text, #sysDiagram_fr text, #sysDiagram_jp text{ fill:var(--fg) !important }
+
+    /* ===== util ===== */
+    .sr-only{ position:absolute!important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap }
+    [hidden]{ display:none!important }
 
     /* perf hints */
-    .aei-block{will-change:transform}
-    #aeiLines{contain:strict}
+    .aei-block{ will-change:transform }
+    #aeiLines{ contain:strict }
 
     @media (prefers-reduced-motion: reduce){
-      .aei-block{transition:none}
+      .aei-block{ transition:none }
+    }
+
+    /* background HUD sutil */
+    .hud-mesh{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(1200px 800px at 70% -10%, rgba(24,96,255,.06), transparent 60%);
     }
   </style>
 
-  <!-- scripts comunes del sitio -->
+  <!-- scripts comunes del sitio (preservado) -->
   <script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
@@ -107,7 +168,7 @@
 
     <section id="intro-es" class="section">
       <div class="card description">
-        la topología individualizada de la percepción establece un campo de investigación, análisis y práctica donde la percepción opera como fuerza estructurante de la realidad. topología nombra la disposición relacional. individualizada marca la intimidad de la relación sujeto–mundo y su cartografía singular. percepción designa el plano operativo donde pensamiento y mundo se co‑constituyen. el análisis se despliega en tres niveles: 1) marco comparativo, 2) modelo gráfico, 3) práctica estructurada.
+        la topología individualizada de la percepción establece un campo de investigación, análisis y práctica donde la percepción opera como fuerza estructurante de la realidad. topología nombra la disposición relacional. individualizada marca la intimidad de la relación sujeto–mundo y su cartografía singular. percepción designa el plano operativo donde pensamiento y mundo se co-constituyen. el análisis se despliega en tres niveles: 1) marco comparativo, 2) modelo gráfico, 3) práctica estructurada.
       </div>
     </section>
 
@@ -127,7 +188,7 @@
       <div class="diagram-wrap">
         <div class="diagram-toolbar">
           <button class="btn" id="btnPauseDiag" aria-pressed="false">pausar</button>
-          <button class="btn" id="btnShuffle" aria-pressed="false">reordenar</button>
+          <button class="btn" id="btnShuffle">reordenar</button>
         </div>
         <svg id="sysDiagram" role="img" aria-label="diagrama sistémico"></svg>
       </div>
@@ -135,23 +196,23 @@
 
     <section id="practica-es" class="section">
       <h2>3. práctica estructurada</h2>
-      <div class="practice-grid">
-        <div class="practice-card">
-          <h3>fases</h3>
-          <p class="small"><strong>observación dirigida</strong> · atención focalizada y registro descriptivo breve.</p>
-          <p class="small"><strong>desajuste inducido</strong> · introducción de estímulos inesperados y registro de respuesta.</p>
-          <p class="small"><strong>recomposición</strong> · síntesis mediante escritura, dibujo y comparación temporal.</p>
+      <div class="practice-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:1rem">
+        <div class="practice-card card">
+          <h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">fases</h3>
+          <p class="small" style="opacity:.88"><strong>observación dirigida</strong> · atención focalizada y registro descriptivo breve.</p>
+          <p class="small" style="opacity:.88"><strong>desajuste inducido</strong> · introducción de estímulos inesperados y registro de respuesta.</p>
+          <p class="small" style="opacity:.88"><strong>recomposición</strong> · síntesis mediante escritura, dibujo y comparación temporal.</p>
         </div>
-        <div class="practice-card">
-          <h3>bitácora local</h3>
-          <div class="fields">
+        <div class="practice-card card">
+          <h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">bitácora local</h3>
+          <div class="fields" style="display:grid;gap:.5rem">
             <label for="logText" class="sr-only">entrada</label>
-            <textarea id="logText" placeholder="escribe una observación de 3–5 líneas"></textarea>
+            <textarea id="logText" placeholder="escribe una observación de 3–5 líneas" style="width:100%;min-height:120px;border:var(--b1);border-radius:10px;padding:.6rem;font:400 1rem/1.5 'Inter',system-ui;background:transparent;color:var(--fg)"></textarea>
             <div style="display:flex;gap:.5rem;align-items:center">
               <button class="btn" id="btnSave">guardar</button>
               <button class="btn" id="btnClear">limpiar</button>
             </div>
-            <div class="log" id="logList" aria-live="polite"></div>
+            <div class="log" id="logList" aria-live="polite" style="white-space:pre-wrap;font:400 .95rem/1.45 'Inter',system-ui;max-height:44vh;overflow:auto;border:var(--b1);border-radius:10px;padding:.6rem;background:transparent"></div>
           </div>
         </div>
       </div>
@@ -163,13 +224,13 @@
     <h1>individualized topology of perception</h1>
     <div class="meta">theoretical framework · xpan</div>
 
-    <section class="section"><div class="card description">the individualized topology of perception defines a field of research, analysis, and practice where perception operates as a structuring force of reality. topology names relational disposition. individualized marks the intimate subject–world relation and its singular cartography. perception designates the operational plane where thought and world co‑constitute. the work unfolds across three levels: 1) comparative framework, 2) systemic model, 3) structured practice.</div></section>
+    <section class="section"><div class="card description">the individualized topology of perception defines a field of research, analysis, and practice where perception operates as a structuring force of reality. topology names relational disposition. individualized marks the intimate subject–world relation and its singular cartography. perception designates the operational plane where thought and world co-constitute. the work unfolds across three levels: 1) comparative framework, 2) systemic model, 3) structured practice.</div></section>
 
-    <section class="section"><h2>1. reference framework</h2><div class="card"><p class="description"><strong>philosophy</strong>: kant (a priori synthesis), husserl (intentionality), deleuze (difference/becoming), whitehead (process/prehensions).</p><p class="description"><strong>science</strong>: predictive neuroscience (inference, prediction error), complex systems (nonlinear dynamics), cognitive psychology (schemas, attention, memory).</p><p class="description"><strong>history</strong>: from idealism to cybernetics and AI as active model‑building.</p><p class="description">deliverable: a comparative atlas mapping mediations between thought and world.</p></div></section>
+    <section class="section"><h2>1. reference framework</h2><div class="card"><p class="description"><strong>philosophy</strong>: kant (a priori synthesis), husserl (intentionality), deleuze (difference/becoming), whitehead (process/prehensions).</p><p class="description"><strong>science</strong>: predictive neuroscience (inference, prediction error), complex systems (nonlinear dynamics), cognitive psychology (schemas, attention, memory).</p><p class="description"><strong>history</strong>: from idealism to cybernetics and AI as active model-building.</p><p class="description">deliverable: a comparative atlas mapping mediations between thought and world.</p></div></section>
 
-    <section class="section"><h2>2. systemic model</h2><div class="card description">metabolic diagram with inputs, processes, outputs, and feedback. the interactive diagram updates in real time.</div><div class="diagram-wrap"><div class="diagram-toolbar"><button class="btn" data-diag-en="pause" id="btnPauseDiag_en">pause</button><button class="btn" id="btnShuffle_en">shuffle</button></div><svg id="sysDiagram_en" role="img" aria-label="systemic diagram"></svg></div></section>
+    <section class="section"><h2>2. systemic model</h2><div class="card description">metabolic diagram with inputs, processes, outputs, and feedback. the interactive diagram updates in real time.</div><div class="diagram-wrap"><div class="diagram-toolbar"><button class="btn" data-diag-en="resume" id="btnPauseDiag_en">pause</button><button class="btn" id="btnShuffle_en">shuffle</button></div><svg id="sysDiagram_en" role="img" aria-label="systemic diagram"></svg></div></section>
 
-    <section class="section"><h2>3. structured practice</h2><div class="practice-grid"><div class="practice-card"><h3>phases</h3><p class="small"><strong>directed observation</strong> · focused attention and brief descriptive logging.</p><p class="small"><strong>induced mismatch</strong> · unexpected stimuli and response logging.</p><p class="small"><strong>recomposition</strong> · synthesis via writing, drawing, temporal comparison.</p></div><div class="practice-card"><h3>local log</h3><div class="fields"><textarea id="logText_en" placeholder="write a 3–5 line observation"></textarea><div style="display:flex;gap:.5rem;align-items:center"><button class="btn" id="btnSave_en">save</button><button class="btn" id="btnClear_en">clear</button></div><div class="log" id="logList_en" aria-live="polite"></div></div></div></div></section>
+    <section class="section"><h2>3. structured practice</h2><div class="practice-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:1rem"><div class="practice-card card"><h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">phases</h3><p class="small" style="opacity:.88"><strong>directed observation</strong> · focused attention and brief descriptive logging.</p><p class="small" style="opacity:.88"><strong>induced mismatch</strong> · unexpected stimuli and response logging.</p><p class="small" style="opacity:.88"><strong>recomposition</strong> · synthesis via writing, drawing, temporal comparison.</p></div><div class="practice-card card"><h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">local log</h3><div class="fields" style="display:grid;gap:.5rem"><textarea id="logText_en" placeholder="write a 3–5 line observation" style="width:100%;min-height:120px;border:var(--b1);border-radius:10px;padding:.6rem;font:400 1rem/1.5 'Inter',system-ui;background:transparent;color:var(--fg)"></textarea><div style="display:flex;gap:.5rem;align-items:center"><button class="btn" id="btnSave_en">save</button><button class="btn" id="btnClear_en">clear</button></div><div class="log" id="logList_en" aria-live="polite" style="white-space:pre-wrap;font:400 .95rem/1.45 'Inter',system-ui;max-height:44vh;overflow:auto;border:var(--b1);border-radius:10px;padding:.6rem;background:transparent"></div></div></div></div></section>
   </section>
 
   <!-- ===== FR ===== -->
@@ -177,13 +238,13 @@
     <h1>topologie individualisée de la perception</h1>
     <div class="meta">cadre théorique · xpan</div>
 
-    <section class="section"><div class="card description">la topologie individualisée de la perception établit un champ de recherche, d'analyse et de pratique où la perception opère comme force structurante du réel. « topologie » désigne la disposition relationnelle. « individualisée » marque l'intimité du rapport sujet–monde et sa cartographie singulière. « perception » nomme le plan opératif où pensée et monde se co‑constituent. trois niveaux : 1) cadre comparatif, 2) modèle systémique, 3) pratique structurée.</div></section>
+    <section class="section"><div class="card description">la topologie individualisée de la perception établit un champ de recherche, d'analyse et de pratique où la perception opère comme force structurante du réel. « topologie » désigne la disposition relationnelle. « individualisée » marque l'intimité du rapport sujet–monde et sa cartographie singulière. « perception » nomme le plan opératif où pensée et monde se co-constituent. trois niveaux : 1) cadre comparatif, 2) modèle systémique, 3) pratique structurée.</div></section>
 
-    <section class="section"><h2>1. cadre de référence</h2><div class="card"><p class="description"><strong>philosophie</strong> : kant (synthèse a priori), husserl (intentionnalité), deleuze (différence/devenir), whitehead (processus/préhensions).</p><p class="description"><strong>science</strong> : neurosciences prédictives (inférence, erreur de prédiction), systèmes complexes (dynamique non linéaire), psychologie cognitive (schémas, attention, mémoire).</p><p class="description"><strong>histoire</strong> : de l'idéalisme à la cybernétique et à l'IA comme construction active de modèles.</p><p class="description">résultat : un atlas comparatif des médiations entre pensée et monde.</p></div></section>
+    <section class="section"><h2>1. cadre de référence</h2><div class="card"><p class="description"><strong>philosophie</strong> : kant (synthèse a priori), husserl (intentionnalité), deleuze (différence/devenir), whitehead (processus/préhensions).</p><p class="description"><strong>science</strong> : neurosciences prédictives (inférence, erreur de prédiction), systèmes complexes (dynamique non linéaire), psychologie cognitive (schémas, attention, mémoire).</p><p class="description"><strong>histoire</strong> : de l'idéalisme à la cybernétique et à l'IA comme construction active de modèles.</p><p class="description">résultat : un atlas comparatif des médiations entre pensée et monde.</p></div></section>
 
     <section class="section"><h2>2. modélisation systémique</h2><div class="card description">diagramme métabolique avec entrées, processus, sorties et rétroaction. le diagramme interactif se met à jour en temps réel.</div><div class="diagram-wrap"><div class="diagram-toolbar"><button class="btn" id="btnPauseDiag_fr">pause</button><button class="btn" id="btnShuffle_fr">réordonner</button></div><svg id="sysDiagram_fr" role="img" aria-label="diagramme systémique"></svg></div></section>
 
-    <section class="section"><h2>3. pratique structurée</h2><div class="practice-grid"><div class="practice-card"><h3>phases</h3><p class="small"><strong>observation dirigée</strong> · attention focalisée et journal descriptif bref.</p><p class="small"><strong>désajustement induit</strong> · stimuli inattendus et enregistrement de la réponse.</p><p class="small"><strong>recomposition</strong> · synthèse par écriture, dessin et comparaison temporelle.</p></div><div class="practice-card"><h3>journal local</h3><div class="fields"><textarea id="logText_fr" placeholder="écris une observation de 3–5 lignes"></textarea><div style="display:flex;gap:.5rem;align-items:center"><button class="btn" id="btnSave_fr">enregistrer</button><button class="btn" id="btnClear_fr">effacer</button></div><div class="log" id="logList_fr" aria-live="polite"></div></div></div></div></section>
+    <section class="section"><h2>3. pratique structurée</h2><div class="practice-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:1rem"><div class="practice-card card"><h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">phases</h3><p class="small" style="opacity:.88"><strong>observation dirigée</strong> · attention focalisée et journal descriptif bref.</p><p class="small" style="opacity:.88"><strong>désajustement induit</strong> · stimuli inattendus et enregistrement de la réponse.</p><p class="small" style="opacity:.88"><strong>recomposition</strong> · synthèse par écriture, dessin et comparaison temporelle.</p></div><div class="practice-card card"><h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">journal local</h3><div class="fields" style="display:grid;gap:.5rem"><textarea id="logText_fr" placeholder="écris une observation de 3–5 lignes" style="width:100%;min-height:120px;border:var(--b1);border-radius:10px;padding:.6rem;font:400 1rem/1.5 'Inter',system-ui;background:transparent;color:var(--fg)"></textarea><div style="display:flex;gap:.5rem;align-items:center"><button class="btn" id="btnSave_fr">enregistrer</button><button class="btn" id="btnClear_fr">effacer</button></div><div class="log" id="logList_fr" aria-live="polite" style="white-space:pre-wrap;font:400 .95rem/1.45 'Inter',system-ui;max-height:44vh;overflow:auto;border:var(--b1);border-radius:10px;padding:.6rem;background:transparent"></div></div></div></div></section>
   </section>
 
   <!-- ===== JP ===== -->
@@ -197,7 +258,7 @@
 
     <section class="section"><h2>2. システムモデル</h2><div class="card description">入力・過程・出力・フィードバックからなる代謝的ダイアグラム。対話的ダイアグラムはリアルタイムで更新される。</div><div class="diagram-wrap"><div class="diagram-toolbar"><button class="btn" id="btnPauseDiag_jp">一時停止</button><button class="btn" id="btnShuffle_jp">再配置</button></div><svg id="sysDiagram_jp" role="img" aria-label="システム図"></svg></div></section>
 
-    <section class="section"><h2>3. 実践構造</h2><div class="practice-grid"><div class="practice-card"><h3>フェーズ</h3><p class="small"><strong>指向観察</strong> · 焦点化された注意と簡潔な記述記録。</p><p class="small"><strong>誘発ずれ</strong> · 予期しない刺激と反応の記録。</p><p class="small"><strong>再構成</strong> · 記述・描画・時間比較による統合。</p></div><div class="practice-card"><h3>ローカル記録</h3><div class="fields"><textarea id="logText_jp" placeholder="3–5行の観察を書いてください"></textarea><div style="display:flex;gap:.5rem;align-items:center"><button class="btn" id="btnSave_jp">保存</button><button class="btn" id="btnClear_jp">消去</button></div><div class="log" id="logList_jp" aria-live="polite"></div></div></div></div></section>
+    <section class="section"><h2>3. 実践構造</h2><div class="practice-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:1rem"><div class="practice-card card"><h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">フェーズ</h3><p class="small" style="opacity:.88"><strong>指向観察</strong> · 焦点化された注意と簡潔な記述記録。</p><p class="small" style="opacity:.88"><strong>誘発ずれ</strong> · 予期しない刺激と反応の記録。</p><p class="small" style="opacity:.88"><strong>再構成</strong> · 記述・描画・時間比較による統合。</p></div><div class="practice-card card"><h3 style="margin:.1rem 0 .6rem;font:600 1rem/1 'Inter',system-ui;text-transform:lowercase">ローカル記録</h3><div class="fields" style="display:grid;gap:.5rem"><textarea id="logText_jp" placeholder="3–5行の観察を書いてください" style="width:100%;min-height:120px;border:var(--b1);border-radius:10px;padding:.6rem;font:400 1rem/1.5 'Inter',system-ui;background:transparent;color:var(--fg)"></textarea><div style="display:flex;gap:.5rem;align-items:center"><button class="btn" id="btnSave_jp">保存</button><button class="btn" id="btnClear_jp">消去</button></div><div class="log" id="logList_jp" aria-live="polite" style="white-space:pre-wrap;font:400 .95rem/1.45 'Inter',system-ui;max-height:44vh;overflow:auto;border:var(--b1);border-radius:10px;padding:.6rem;background:transparent"></div></div></div></div></section>
   </section>
 
   <!-- controles globales -->
@@ -211,22 +272,21 @@
 </main>
 
 <script>
-// ——— i18n ———
+/* ===== i18n ===== */
 function setLang(lang){
-  localStorage.setItem('lang', lang);
-  document.querySelectorAll('.lang').forEach(el=>{
-    el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
-  });
+  localStorage.setItem('lang',lang);
+  document.querySelectorAll('.lang').forEach(el=> el.style.display = el.classList.contains(`lang-${lang}`)?'block':'none');
   document.querySelectorAll('.language-selector button').forEach(btn=>{
-    const on = btn.dataset.lang===lang; btn.classList.toggle('active', on); btn.setAttribute('aria-pressed', String(on));
+    const on = btn.dataset.lang===lang;
+    btn.classList.toggle('active', on); btn.setAttribute('aria-pressed', String(on));
   });
 }
-(document.querySelector('.language-selector')||document).addEventListener('click', e=>{
+(document.querySelector('.language-selector')||document).addEventListener('click',e=>{
   const b=e.target.closest('button[data-lang]'); if(!b) return; setLang(b.dataset.lang);
 });
 setLang(localStorage.getItem('lang')||'es');
 
-// ——— portada a.e.i (bloques + líneas) ———
+/* ===== AEI portada (bloques + líneas) ===== */
 const stage = document.getElementById('aeiStage');
 const linesSVG = document.getElementById('aeiLines');
 let aeiPaused=false, blocks=[], pairs=[];
@@ -234,16 +294,38 @@ function addBlock(){
   const b=document.createElement('div'); b.className='aei-block';
   const rect=stage.getBoundingClientRect();
   b.x=Math.random()*(rect.width-140); b.y=Math.random()*(rect.height-140);
-  b.vx=(Math.random()-.5)*.18; b.vy=(Math.random()-.5)*.18; b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`;
-  stage.appendChild(b); makeDraggable(b); blocks.push(b);
+  b.vx=(Math.random()-.5)*.18; b.vy=(Math.random()-.5)*.18;
+  b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; stage.appendChild(b); makeDraggable(b); blocks.push(b);
 }
 function makePairs(){ pairs=[]; for(let i=0;i<blocks.length;i++){ for(let j=i+1;j<blocks.length;j++){ if(Math.random()<0.075) pairs.push([blocks[i],blocks[j]]); } } }
 function center(b){ const r=b.getBoundingClientRect(); return [b.x+r.width/2, b.y+r.height/2]; }
-function drawLines(){ linesSVG.innerHTML=''; for(const [a,b] of pairs){ const [x1,y1]=center(a), [x2,y2]=center(b); const ln=document.createElementNS('http://www.w3.org/2000/svg','line'); ln.setAttribute('x1',x1); ln.setAttribute('y1',y1); ln.setAttribute('x2',x2); ln.setAttribute('y2',y2); ln.setAttribute('stroke','#000'); ln.setAttribute('stroke-width','.6'); ln.setAttribute('opacity','.18'); linesSVG.appendChild(ln);} }
-function tick(){ if(!aeiPaused){ const rect=stage.getBoundingClientRect(); for(const b of blocks){ b.x+=b.vx; b.y+=b.vy; const bw=140,bh=140; if(b.x<0||b.x>rect.width-bw) b.vx*=-1; if(b.y<0||b.y>rect.height-bh) b.vy*=-1; b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; } if(Math.random()<.08) makePairs(); drawLines(); }
+function drawLines(){
+  linesSVG.innerHTML='';
+  for(const [a,b] of pairs){
+    const [x1,y1]=center(a), [x2,y2]=center(b);
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',x1); ln.setAttribute('y1',y1); ln.setAttribute('x2',x2); ln.setAttribute('y2',y2);
+    ln.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--stroke-aux') || '#fff');
+    ln.setAttribute('stroke-width','.6'); ln.setAttribute('opacity','.18'); linesSVG.appendChild(ln);
+  }
+}
+function tick(){
+  if(!aeiPaused){
+    const rect=stage.getBoundingClientRect(); for(const b of blocks){
+      b.x+=b.vx; b.y+=b.vy; const bw=140,bh=140;
+      if(b.x<0||b.x>rect.width-bw) b.vx*=-1; if(b.y<0||b.y>rect.height-bh) b.vy*=-1;
+      b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`;
+    }
+    if(Math.random()<.08) makePairs(); drawLines();
+  }
   requestAnimationFrame(tick);
 }
-function makeDraggable(el){ let drag=false, lx=0, ly=0; const mv=(x,y)=>{ const dx=x-lx,dy=y-ly; el.x+=dx; el.y+=dy; const rect=stage.getBoundingClientRect(); el.x=Math.max(0,Math.min(rect.width-140,el.x)); el.y=Math.max(0,Math.min(rect.height-140,el.y)); el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`; lx=x; ly=y; drawLines(); };
+function makeDraggable(el){
+  let drag=false, lx=0, ly=0;
+  const mv=(x,y)=>{ const dx=x-lx,dy=y-ly; el.x+=dx; el.y+=dy;
+    const rect=stage.getBoundingClientRect(); el.x=Math.max(0,Math.min(rect.width-140,el.x));
+    el.y=Math.max(0,Math.min(rect.height-140,el.y)); el.style.transform=`translate3d(${el.x}px,${el.y}px,0)`;
+    lx=x; ly=y; drawLines(); };
   el.addEventListener('mousedown',e=>{drag=true; aeiPaused=true; lx=e.clientX; ly=e.clientY;});
   window.addEventListener('mousemove',e=>{ if(drag) mv(e.clientX,e.clientY); });
   window.addEventListener('mouseup',()=>{ drag=false; aeiPaused=false; });
@@ -257,12 +339,17 @@ stage.addEventListener('mouseleave',()=> aeiPaused=false);
 stage.addEventListener('touchstart',()=> aeiPaused=true,{passive:true});
 stage.addEventListener('touchend',()=> aeiPaused=false);
 
-document.getElementById('btnAEIPause').addEventListener('click',e=>{ aeiPaused=!aeiPaused; e.currentTarget.classList.toggle('active', aeiPaused); e.currentTarget.textContent= aeiPaused? 'reanudar portada' : 'pausar portada'; });
+document.getElementById('btnAEIPause').addEventListener('click',e=>{
+  aeiPaused=!aeiPaused; e.currentTarget.classList.toggle('active', aeiPaused);
+  e.currentTarget.textContent= aeiPaused? 'reanudar portada' : 'pausar portada';
+});
 document.getElementById('btnAEIShuffle').addEventListener('click',()=>{ blocks.forEach(b=>{ b.vx=(Math.random()-.5)*.24; b.vy=(Math.random()-.5)*.24; }); makePairs(); });
 
-// ——— diagrama sistémico interactivo (ES) ———
+/* ===== diagrama sistémico (override de color por tema) ===== */
 function SysDiagram(svg){
-  const S=svg, W=()=>S.clientWidth, H=()=>S.clientHeight; let paused=false; const nodes=[
+  const S=svg, W=()=>S.clientWidth, H=()=>S.clientHeight;
+  let paused=false;
+  const nodes=[
     {id:'inputs', label:'inputs', group:0},
     {id:'percepcion', label:'percepción', group:1},
     {id:'prediccion', label:'predicción', group:1},
@@ -270,30 +357,30 @@ function SysDiagram(svg){
     {id:'outputs', label:'outputs', group:2},
     {id:'feedback', label:'retroalimentación', group:3}
   ];
-  const edges=[
-    ['inputs','percepcion'],['percepcion','prediccion'],['prediccion','accion'],['accion','outputs'],['outputs','feedback'],['feedback','inputs']
-  ];
+  const edges=[ ['inputs','percepcion'], ['percepcion','prediccion'], ['prediccion','accion'], ['accion','outputs'], ['outputs','feedback'], ['feedback','inputs'] ];
   const g=document.createElementNS('http://www.w3.org/2000/svg','g'); S.appendChild(g);
-  const E=edges.map(([a,b])=>({a: nodes.find(n=>n.id===a), b: nodes.find(n=>n.id===b), el: document.createElementNS('http://www.w3.org/2000/svg','path')}));
-  const N=nodes.map(n=>({n, dot: document.createElementNS('http://www.w3.org/2000/svg','circle'), lbl: document.createElementNS('http://www.w3.org/2000/svg','text'), x:0,y:0, t:Math.random()*Math.PI*2, r:0 }));
-  N.forEach(o=>{ o.dot.setAttribute('r',10); o.dot.setAttribute('fill','#000'); o.dot.setAttribute('opacity','.85'); o.lbl.setAttribute('font-size','12'); o.lbl.setAttribute('text-anchor','middle'); o.lbl.setAttribute('dominant-baseline','central'); o.lbl.textContent=o.n.label; g.appendChild(o.dot); g.appendChild(o.lbl); });
-  E.forEach(e=>{ e.el.setAttribute('fill','none'); e.el.setAttribute('stroke','#000'); e.el.setAttribute('stroke-width','.8'); e.el.setAttribute('opacity','.22'); g.insertBefore(e.el, g.firstChild); });
+
+  const E=edges.map(([a,b])=>({a:nodes.find(n=>n.id===a), b:nodes.find(n=>n.id===b), el:document.createElementNS('http://www.w3.org/2000/svg','path')}));
+  const N=nodes.map(n=>({n, dot:document.createElementNS('http://www.w3.org/2000/svg','circle'), lbl:document.createElementNS('http://www.w3.org/2000/svg','text'), x:0,y:0,t:Math.random()*Math.PI*2, r:0 }));
+
+  const stroke = getComputedStyle(document.documentElement).getPropertyValue('--stroke-aux') || '#fff';
+
+  N.forEach(o=>{ o.dot.setAttribute('r',10); o.dot.setAttribute('fill',stroke); o.dot.setAttribute('opacity','.85'); o.lbl.setAttribute('font-size','12'); o.lbl.setAttribute('text-anchor','middle'); o.lbl.setAttribute('dominant-baseline','central'); o.lbl.setAttribute('fill', getComputedStyle(document.documentElement).getPropertyValue('--fg') || '#E0E3E6'); o.lbl.textContent=o.n.label; g.appendChild(o.dot); g.appendChild(o.lbl); });
+  E.forEach(e=>{ e.el.setAttribute('fill','none'); e.el.setAttribute('stroke',stroke); e.el.setAttribute('stroke-width','.8'); e.el.setAttribute('opacity','.22'); g.insertBefore(e.el,g.firstChild); });
+
   function layout(){
-    const w=W(), h=H();
-    const cx=w/2, cy=h/2; const R=Math.min(w,h)*0.32; const spokes=nodes.length;
-    N.forEach((o,i)=>{ const base=i/spokes*Math.PI*2; o.t+=0.004*(i%2?1:-1); o.r=R*(.75 + .08*Math.sin(o.t)); o.x=cx + o.r*Math.cos(base); o.y=cy + o.r*Math.sin(base); });
-    E.forEach(e=>{ const a=N.find(k=>k.n===e.a), b=N.find(k=>k.n===e.b); const p=`M ${a.x} ${a.y} Q ${W()/2} ${H()/2} ${b.x} ${b.y}`; e.el.setAttribute('d',p); });
+    const w=W(), h=H(), cx=w/2, cy=h/2, R=Math.min(w,h)*0.32, spokes=nodes.length;
+    N.forEach((o,i)=>{ const base=i/spokes*Math.PI*2; o.t+=0.004*(i%2?1:-1); o.r=R*(.75+.08*Math.sin(o.t)); o.x=cx+o.r*Math.cos(base); o.y=cy+o.r*Math.sin(base); });
+    E.forEach(e=>{ const a=N.find(k=>k.n===e.a), b=N.find(k=>k.n===e.b); e.el.setAttribute('d',`M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`); });
     N.forEach(o=>{ o.dot.setAttribute('cx',o.x); o.dot.setAttribute('cy',o.y); o.lbl.setAttribute('x',o.x); o.lbl.setAttribute('y',o.y-20); });
   }
-  function step(){ if(!paused){ layout(); } requestAnimationFrame(step); }
-  step();
+  (function step(){ if(!paused){ layout(); } requestAnimationFrame(step); })();
   return { pause(p){ paused=p; }, shuffle(){ N.forEach(o=>{ o.t=Math.random()*Math.PI*2; }); } };
 }
 const diagES = SysDiagram(document.getElementById('sysDiagram'));
 document.getElementById('btnPauseDiag').addEventListener('click',e=>{ const on=!e.currentTarget.classList.contains('active'); e.currentTarget.classList.toggle('active', on); e.currentTarget.textContent = on? 'reanudar' : 'pausar'; diagES.pause(on); });
 document.getElementById('btnShuffle').addEventListener('click',()=> diagES.shuffle());
 
-// versiones mínimas del diagrama para otros idiomas
 function attachMiniDiagram(svgId, pauseBtnId, shuffleBtnId){
   const svg=document.getElementById(svgId); if(!svg) return; const D=SysDiagram(svg);
   const p=document.getElementById(pauseBtnId); const s=document.getElementById(shuffleBtnId);
@@ -304,15 +391,16 @@ attachMiniDiagram('sysDiagram_en','btnPauseDiag_en','btnShuffle_en');
 attachMiniDiagram('sysDiagram_fr','btnPauseDiag_fr','btnShuffle_fr');
 attachMiniDiagram('sysDiagram_jp','btnPauseDiag_jp','btnShuffle_jp');
 
-// ——— bitácoras por idioma (localStorage) ———
-function LogKit(prefix){
-  const ta=document.getElementById('logText'+prefix), list=document.getElementById('logList'+prefix);
-  const key='tip_log'+prefix; function render(){ const data=JSON.parse(localStorage.getItem(key)||'[]'); list.textContent = data.map((d,i)=> `${String(i+1).padStart(2,'0')} · ${d}`).join('\n'); }
+/* ===== bitácoras por idioma (localStorage) ===== */
+function LogKit(suffix){
+  const ta=document.getElementById('logText'+suffix), list=document.getElementById('logList'+suffix);
+  const key='tip_log'+suffix;
+  function render(){ const data=JSON.parse(localStorage.getItem(key)||'[]'); list.textContent=data.map((d,i)=>`${String(i+1).padStart(2,'0')} · ${d}`).join('\n'); }
   function save(){ const v=(ta.value||'').trim(); if(!v) return; const data=JSON.parse(localStorage.getItem(key)||'[]'); data.unshift(`${new Date().toISOString().slice(0,16).replace('T',' ')} — ${v}`); localStorage.setItem(key, JSON.stringify(data.slice(0,100))); ta.value=''; render(); }
   function clear(){ localStorage.removeItem(key); render(); }
   return { mount(saveBtn, clearBtn){ saveBtn?.addEventListener('click',save); clearBtn?.addEventListener('click',clear); render(); } };
 }
-LogKit('') .mount(document.getElementById('btnSave'), document.getElementById('btnClear'));
+LogKit('').mount(document.getElementById('btnSave'), document.getElementById('btnClear'));
 LogKit('_en').mount(document.getElementById('btnSave_en'), document.getElementById('btnClear_en'));
 LogKit('_fr').mount(document.getElementById('btnSave_fr'), document.getElementById('btnClear_fr'));
 LogKit('_jp').mount(document.getElementById('btnSave_jp'), document.getElementById('btnClear_jp'));

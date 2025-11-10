@@ -1,89 +1,224 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan — nociones fantasma</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>xpan — nociones fantasma · defense/ops</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      overflow: hidden;
-      font-family: 'Times New Roman', serif;
-      color: #fff;
-      cursor: crosshair;
+    /* ===== tokens post-tech / defense-ops ===== */
+    :root{
+      --bg:#0A0D12; --fg:#E2E6EA; --fg-dim:#A9B2BD;
+      --accent:#13E3FF; /* sony aqua */
+      --accent-2:#8CFF4D; /* radar green */
+      --warn:#FFD95C; --danger:#FF3A66;
+      --line:#12171D; --line-weak:#0D1116;
+      --pad:clamp(14px,3.6vw,44px); --header-h:64px; --maxw:1360px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --b1:1px solid var(--line); --b0:1px solid var(--line-weak);
+    }
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#F5F7FA; --fg:#0A0D12; --fg-dim:#505A66;
+        --accent:#0F56EE; --accent-2:#0EA43A; --warn:#B18408; --danger:#C11F47;
+        --line:#DDE3EA; --line-weak:#EDF1F6;
+      }
     }
 
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg); cursor:crosshair;
+      font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+    img{display:block; max-width:100%; height:auto}
+
+    /* ===== header ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad); right:var(--pad);
+      height:var(--header-h); display:flex; align-items:center; justify-content:space-between; z-index:50;
+      pointer-events:none;
+    }
+    header a{pointer-events:auto}
+    header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media(prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    /* ===== HUD background: grid, scanlines, vignette ===== */
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(1200px 850px at 75% -10%, rgba(19,227,255,.06), transparent 60%),
+        linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+    }
+    .bg-mesh{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        linear-gradient(90deg, var(--line-weak) 1px, transparent 1px) ,
+        linear-gradient(0deg,  var(--line-weak) 1px, transparent 1px);
+      background-size:64px 64px;
+      mask-image: radial-gradient(90% 70% at 70% 10%, rgba(0,0,0,.85), transparent 70%);
+    }
+    .scan{
+      position:fixed; inset:0; z-index:1; pointer-events:none;
+      background:repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px);
+      mix-blend-mode:overlay;
+      animation:scanShift 18s linear infinite;
+    }
+    @keyframes scanShift{
+      0%{ transform:translateY(0) } 100%{ transform:translateY(3px) }
+    }
+    .vignette{
+      position:fixed; inset:0; z-index:2; pointer-events:none;
+      background:radial-gradient(1200px 800px at 70% 10%, transparent 55%, rgba(0,0,0,.30) 80%);
     }
 
-    header img {
-      width: 50px;
-      height: auto;
-      filter: invert(1);
+    /* ===== HUD panels ===== */
+    .hud{
+      position:fixed; right:var(--pad); bottom:var(--pad); z-index:40;
+      display:grid; gap:.6rem; width:min(360px, 42vw);
+      font-family:var(--font-mono); color:var(--fg-dim);
+    }
+    .card{ border:var(--b1); background:rgba(10,12,15,.45); backdrop-filter:blur(6px) saturate(120%); -webkit-backdrop-filter:blur(6px) saturate(120%); }
+    .card .hd{ display:flex; align-items:center; justify-content:space-between; padding:.45rem .6rem; border-bottom:var(--b0); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase }
+    .card .bd{ padding:.6rem .6rem .7rem; font-size:.78rem }
+    .badge{ padding:.08rem .35rem; border:1px solid currentColor; border-radius:2px; font-size:.65rem }
+    .ok{ color:var(--ok, var(--accent-2)) } .warn{ color:var(--warn) } .danger{ color:var(--danger) }
+
+    /* ===== phantom words / images (preservados + reestilizados) ===== */
+    .word{
+      position:absolute; font-size:.9rem; text-transform:lowercase;
+      color:var(--fg); opacity:.06; pointer-events:none;
+      animation:glitchText var(--dur, 6s) infinite ease-in-out alternate;
+      filter:blur(1.2px);
+      text-shadow:0 0 1px rgba(19,227,255,.35);
+    }
+    @keyframes glitchText{
+      0%{ transform:translate(0,0) scale(1) rotate(0deg); opacity:.04; filter:blur(2px) }
+      30%{ opacity:.14; filter:blur(.6px) }
+      50%{ transform:translate(-4px, 2px) scale(1.08) rotate(.6deg); opacity:.22; filter:blur(0) }
+      70%{ opacity:.10; filter:blur(.8px) }
+      100%{ transform:translate(3px,-2px) scale(.96) rotate(-.6deg); opacity:.06; filter:blur(1.6px) }
     }
 
-    .noise {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
-      opacity: 0.04;
-      z-index: 0;
-      pointer-events: none;
+    .image{
+      position:absolute; width:120px; opacity:.05; pointer-events:none;
+      mix-blend-mode:screen; filter:grayscale(1) contrast(1.15) brightness(.9) blur(1.6px);
+      animation:pulseImage var(--imgdur, 8s) infinite ease-in-out;
+      box-shadow:0 0 0 1px rgba(140,255,77,.06), 0 0 24px rgba(140,255,77,.06) inset;
+      border-radius:4px;
+    }
+    @keyframes pulseImage{
+      0%{ transform:scale(1) rotate(0deg); opacity:.03; filter:grayscale(1) blur(2px) }
+      50%{ transform:scale(1.06) rotate(.6deg); opacity:.16; filter:grayscale(.95) blur(.6px) }
+      100%{ transform:scale(1) rotate(-.6deg); opacity:.06; filter:grayscale(1) blur(1.6px) }
     }
 
-    .word {
-      position: absolute;
-      font-size: 0.9rem;
-      text-transform: lowercase;
-      color: #fff;
-      opacity: 0.05;
-      animation: glitchText 6s infinite ease-in-out alternate;
-      pointer-events: none;
+    /* ===== radar ===== */
+    .radar{
+      position:fixed; left:var(--pad); bottom:var(--pad); z-index:30;
+      width:min(420px, 44vw); aspect-ratio:1/1; border:var(--b1);
+      background:radial-gradient(circle at 50% 50%, rgba(140,255,77,.07), transparent 60%),
+                 conic-gradient(from 0deg, rgba(140,255,77,.14), transparent 60%);
+      overflow:hidden;
+    }
+    .radar::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(90deg, rgba(140,255,77,.22) 1px, transparent 1px),
+        linear-gradient(0deg,  rgba(140,255,77,.22) 1px, transparent 1px);
+      background-size:36px 36px;
+      mix-blend-mode:screen;
+      opacity:.25;
+    }
+    .sweep{
+      position:absolute; inset:-20%;
+      background:conic-gradient(from var(--angle,0deg), rgba(140,255,77,.0) 0turn, rgba(140,255,77,.2) .03turn, rgba(140,255,77,.0) .07turn);
+      animation:spin 4.5s linear infinite;
+      filter:blur(6px);
+    }
+    @keyframes spin{ to{ --angle:360deg } }
+    .blip{
+      position:absolute; width:6px; height:6px; border-radius:50%;
+      background:var(--accent-2); box-shadow:0 0 14px var(--accent-2);
+      opacity:.0; animation:ping 2.2s ease-out infinite;
+    }
+    @keyframes ping{
+      0%{ opacity:.0; transform:scale(.6) }
+      30%{ opacity:.95; transform:scale(1) }
+      100%{ opacity:0; transform:scale(1.8) }
     }
 
-    @keyframes glitchText {
-      0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.03; filter: blur(2px); }
-      30% { opacity: 0.12; filter: blur(0.5px); }
-      50% { transform: translate(-3px, 2px) scale(1.1) rotate(1deg); opacity: 0.2; filter: blur(0px); }
-      70% { opacity: 0.08; filter: blur(1px); }
-      100% { transform: translate(3px, -2px) scale(0.95) rotate(-1deg); opacity: 0.05; filter: blur(2px); }
+    /* ===== overlay indicators ===== */
+    .ticker{
+      position:fixed; left:var(--pad); top:calc(var(--header-h) + 16px); z-index:35;
+      display:flex; gap:10px; align-items:center; font-family:var(--font-mono);
+      color:var(--fg-dim); font-size:.8rem;
     }
+    .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent-2); box-shadow:0 0 10px var(--accent-2) }
+    .meter{ height:6px; width:160px; border:var(--b1); position:relative; background:rgba(140,255,77,.1) }
+    .meter i{ position:absolute; top:-1px; left:0; height:8px; width:28%; background:var(--accent-2); box-shadow:0 0 12px var(--accent-2) inset }
 
-    .image {
-      position: absolute;
-      width: 120px;
-      opacity: 0.03;
-      mix-blend-mode: screen;
-      filter: grayscale(1) blur(2px);
-      animation: pulseImage 8s infinite ease-in-out;
-      pointer-events: none;
-    }
-
-    @keyframes pulseImage {
-      0%   { transform: scale(1) rotate(0deg); opacity: 0.02; filter: blur(2px); }
-      50%  { transform: scale(1.05) rotate(1deg); opacity: 0.15; filter: blur(0.5px); }
-      100% { transform: scale(1) rotate(-1deg); opacity: 0.04; filter: blur(2px); }
+    /* prefers-reduced-motion */
+    @media (prefers-reduced-motion:reduce){
+      .scan,.word,.image,.sweep,.blip{ animation:none }
     }
   </style>
 </head>
 <body>
   <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan"/>
+    </a>
   </header>
 
-  <div class="noise"></div>
+  <!-- HUD background -->
+  <div class="bg-grid"></div>
+  <div class="bg-mesh"></div>
+  <div class="scan"></div>
+  <div class="vignette"></div>
 
-  <!-- palabras -->
+  <!-- status ticker -->
+  <div class="ticker">
+    <span class="dot"></span>
+    <span>phantom-feed / status: online</span>
+    <div class="meter" aria-hidden="true"><i id="meterBar"></i></div>
+    <span id="clock">--:--:--</span>
+  </div>
+
+  <!-- radar -->
+  <div class="radar card">
+    <div class="hd"><span>radar · nf.ops</span><span class="badge ok">live</span></div>
+    <div class="bd" style="position:relative; height:calc(100% - 30px);">
+      <div class="sweep"></div>
+      <!-- blips generated by JS -->
+    </div>
+  </div>
+
+  <!-- side HUD -->
+  <div class="hud">
+    <div class="card">
+      <div class="hd">channel · nociones fantasma<span class="badge">ch-07</span></div>
+      <div class="bd">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+          <div>density</div><div id="densityVal" style="text-align:right">auto</div>
+          <div>images</div><div id="imgVal" style="text-align:right">20</div>
+          <div>words</div><div id="wordVal" style="text-align:right">30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ruido original (preservado, pero gobernado por tema) -->
+  <div class="noise" style="position:fixed;inset:0;background:url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;opacity:.035;z-index:0;pointer-events:none;"></div>
+
+  <!-- ===== palabras (PRESERVADAS) ===== -->
   <script>
     const words = [
       'residuo', 'excedente', 'no dicho', 'idea no nacida', 'error operativo', 'bifurcación fallida',
@@ -94,19 +229,7 @@
       'forma abortada', 'retícula desequilibrada', 'eco desplazado', 'intensidad huérfana', 'lógica inconsistente'
     ];
 
-    words.forEach(() => {
-      const el = document.createElement('div');
-      el.className = 'word';
-      el.innerText = words[Math.floor(Math.random() * words.length)];
-      el.style.top = `${Math.random() * 100}vh`;
-      el.style.left = `${Math.random() * 100}vw`;
-      el.style.animationDuration = `${4 + Math.random() * 6}s`;
-      document.body.appendChild(el);
-    });
-  </script>
-
-  <!-- imágenes -->
-  <script>
+    // ===== imágenes (PRESERVADAS) =====
     const images = [
       'https://d2w9rnfcy7mm78.cloudfront.net/21758295/original_b13e65572f009b5bf69c8725ee381aa1.png?1683669966?bc=0',
       'https://d2w9rnfcy7mm78.cloudfront.net/18254621/original_f8cbecea781b5d97f5daecaa9ce10f5e.jpg?1664335643?bc=0',
@@ -130,16 +253,93 @@
       'https://d2w9rnfcy7mm78.cloudfront.net/16177884/original_9d329e3df9e9fe051610274c1b6cbccc.jpg?1650691731?bc=0'
     ];
 
-    images.forEach(url => {
-      const img = document.createElement('img');
-      img.src = url;
-      img.className = 'image';
-      img.style.top = `${Math.random() * 90}vh`;
-      img.style.left = `${Math.random() * 90}vw`;
-      img.style.animationDuration = `${6 + Math.random() * 6}s`;
-      img.style.transform = `rotate(${Math.random() * 360}deg)`;
-      document.body.appendChild(img);
-    });
+    // ===== mount words/images with defense-ops behavior =====
+    const rnd = (min,max)=> Math.random()*(max-min)+min;
+
+    // palabras
+    (function mountWords(){
+      const count = words.length;
+      document.getElementById('wordVal').textContent = String(count);
+      for(let i=0;i<count;i++){
+        const el = document.createElement('div');
+        el.className = 'word';
+        el.textContent = words[Math.floor(Math.random()*words.length)];
+        el.style.top  = rnd(2, 96) + 'vh';
+        el.style.left = rnd(2, 96) + 'vw';
+        el.style.setProperty('--dur', (rnd(4,10))+'s');
+        document.body.appendChild(el);
+      }
+    })();
+
+    // imágenes
+    (function mountImages(){
+      const cap = images.length;
+      document.getElementById('imgVal').textContent = String(cap);
+      images.forEach(url=>{
+        const img = document.createElement('img');
+        img.className = 'image';
+        img.src = url;
+        img.style.top = rnd(4, 92) + 'vh';
+        img.style.left= rnd(4, 92) + 'vw';
+        img.style.setProperty('--imgdur', (rnd(6,12))+'s');
+        img.style.transform = `rotate(${rnd(0,360)}deg)`;
+        document.body.appendChild(img);
+      });
+    })();
+
+    // ===== simple parallax / targeting =====
+    (function crosshairParallax(){
+      const k1 = .02, k2 = -.015;
+      const move = (x,y)=>{
+        document.querySelectorAll('.word').forEach((w,i)=>{
+          const dx = (x/window.innerWidth  - .5) * (i%5? k1: k2) * 120;
+          const dy = (y/window.innerHeight - .5) * (i%5? k2: k1) * 90;
+          w.style.transform = `translate(${dx}px,${dy}px)`;
+        });
+      };
+      window.addEventListener('mousemove', e=> move(e.clientX, e.clientY), {passive:true});
+      window.addEventListener('touchmove', e=>{
+        const t=e.touches[0]; if(t) move(t.clientX, t.clientY);
+      }, {passive:true});
+    })();
+
+    // ===== radar blips =====
+    (function radar(){
+      const host = document.querySelector('.radar .bd');
+      function addBlip(){
+        const b = document.createElement('div');
+        b.className = 'blip';
+        // polar coords inside the radar box
+        const r = Math.random()*45+10; // %
+        const a = Math.random()*360;
+        const x = 50 + r*Math.cos(a*Math.PI/180);
+        const y = 50 + r*Math.sin(a*Math.PI/180);
+        b.style.left = x + '%';
+        b.style.top  = y + '%';
+        host.appendChild(b);
+        setTimeout(()=> b.remove(), 2200);
+      }
+      setInterval(addBlip, 500 + Math.random()*600);
+    })();
+
+    // ===== status ticker clock + meter =====
+    (function ticker(){
+      const clk = document.getElementById('clock');
+      const bar = document.getElementById('meterBar');
+      function tick(){
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2,'0');
+        const mm = String(d.getMinutes()).padStart(2,'0');
+        const ss = String(d.getSeconds()).padStart(2,'0');
+        clk.textContent = `${hh}:${mm}:${ss}`;
+        bar.style.width = (20 + 60*Math.abs(Math.sin(d.getTime()/1000))) + '%';
+        requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+    // ===== density display =====
+    document.getElementById('densityVal').textContent = 'ghost+'; // etiqueta de estilo
   </script>
 </body>
 </html>

@@ -1,151 +1,405 @@
 <!doctype html>
-<html lang="es">
-
+<html lang="es" data-xpan>
 <head>
+  <!-- GTM (preservado) -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-5D3D9DR9');</script>
-  <link rel="stylesheet" href="./style.css" media="screen" />
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta property="og:title" content="xpan" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="./xpan.png" />
-  <meta property="og:url" content="https://xpan.earth/" />
+
+  <!-- Hoja externa preservada pero deshabilitada para mantener 100% inline -->
+  <link rel="stylesheet" href="./style.css" media="not all" data-preserved="true"/>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta property="og:title" content="xpan"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="./xpan.png"/>
+  <meta property="og:url" content="https://xpan.earth/"/>
   <title>xpan</title>
+
   <style>
-    .module-metabolico, .module-rizoma {
-      margin: 3rem 0;
-      position: relative;
-      overflow: hidden;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --b1:1px solid var(--line);
+      --pad-x:clamp(16px,4vw,48px); --header-h:64px; --maxw:900px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
     }
-    .module-metabolico {
-      width: 100%;
-      height: 300px;
-      background: radial-gradient(circle, #000 2px, transparent 2px);
-      background-size: 20px 20px;
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2 }
     }
-    .pulse {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: black;
-      border-radius: 50%;
-      animation: pulse 5s infinite ease-in-out;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0.2;
+
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     }
-    .module-rizoma {
-      width: 100%;
-      height: 4000px;
-      background: rgba(0, 0, 0, 0);
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+    img{max-width:100%; height:auto; display:block; background:transparent}
+
+    /* ===== header + idioma ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h); display:flex; align-items:center; justify-content:space-between; z-index:20;
     }
-    .node {
-      position: absolute;
-      width: .9px;
-      height: .9px;
-      background: black;
-      border-radius: 50%;
-      animation: spread .10s infinite linear;
+    header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    .language-selector{
+      display:flex; gap:8px; text-transform:lowercase;
     }
-    @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-      50% { transform: translate(-50%, -50%) scale(1.6); opacity: 0.05; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+    .language-selector button{
+      appearance:none; background:transparent; border:var(--b1); border-radius:0;
+      padding:.35rem .6rem; cursor:pointer; color:var(--fg-dim);
+      font:600 .9rem/1 var(--font-ui); letter-spacing:.2px;
+      transition:color .15s linear, border-color .15s linear, background-color .15s linear;
     }
-    @keyframes spread {
-      0% { transform: scale(1); opacity: 0.5; }
-      100% { transform: scale(10); opacity: 0; }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+    /* ===== layout ===== */
+    main{ padding-top:calc(var(--header-h) + 24px) }
+    article{ max-width:var(--maxw); margin:0 auto; padding:24px var(--pad-x) 80px }
+    p{ line-height:1.65; margin:0 0 1.2rem }
+    .lang{ display:none }
+    .lang.active{ display:block }
+
+    /* ===== módulos visuales, tematizados ===== */
+    .module-metabolico, .module-rizoma{ margin:3rem 0; position:relative; overflow:hidden; border-top:var(--b1); border-bottom:var(--b1) }
+    .module-metabolico{
+      width:100%; height:300px;
+      background: radial-gradient(circle, var(--fg) 2px, transparent 2px);
+      background-size:20px 20px;
+    }
+    .pulse{
+      position:absolute; width:100px; height:100px; background:var(--fg);
+      border-radius:50%;
+      left:50%; top:50%; transform:translate(-50%,-50%);
+      opacity:.22; animation:pulse 5s linear infinite alternate;
+    }
+    .module-rizoma{ width:100%; height:4000px; background:transparent }
+    .node{
+      position:absolute; width:.9px; height:.9px; background:var(--fg);
+      border-radius:50%; animation:spread .10s linear infinite; opacity:.6;
+    }
+    @keyframes pulse{
+      0%{ transform:translate(-50%,-50%) scale(1); opacity:.28 }
+      100%{ transform:translate(-50%,-50%) scale(1.6); opacity:.06 }
+    }
+    @keyframes spread{
+      0%{ transform:scale(1); opacity:.5 }
+      100%{ transform:scale(10); opacity:0 }
     }
   </style>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const rizoma = document.querySelector(".module-rizoma");
-      for (let i = 0; i < 50; i++) {
-        const node = document.createElement("div");
-        node.className = "node";
-        node.style.left = Math.random() * 100 + "%";
-        node.style.top = Math.random() * 100 + "%";
-        rizoma.appendChild(node);
-      }
-    });
-  </script>
 </head>
 
 <body>
   <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9"></iframe>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9" height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
+
   <header>
-    <a href="https://xpan.earth">
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
       <img src="./xpan.svg" alt="xpan">
     </a>
+    <nav class="language-selector" aria-label="selector de idioma">
+      <button type="button" data-lang="es" class="active" aria-pressed="true">es</button>
+      <button type="button" data-lang="en" aria-pressed="false">en</button>
+      <button type="button" data-lang="fr" aria-pressed="false">fr</button>
+      <button type="button" data-lang="jp" aria-pressed="false">jp</button>
+    </nav>
   </header>
 
-  <article>
-    <p>
-      [estructura metabólica / relevancia conectiva]<br>
-      ---<br>
-      [marco general]:<br>
-      xpan no opera bajo lógicas de productividad acumulativa ni de validación externa. no busca sostener un ritmo lineal de entregas ni competir por presencia. su objetivo no es la visibilidad inmediata, sino la consistencia estructural y la capacidad de transformación a largo plazo.<br><br>
-      la operación interna de xpan se define por dos principios entrelazados.
-    </p>
+  <main>
+    <article>
+      <!-- ===== Español ===== -->
+      <section class="lang lang-es active">
+        <p>
+          [estructura metabólica / relevancia conectiva]<br>
+          ---<br>
+          [marco general]:<br>
+          xpan no opera bajo lógicas de productividad acumulativa ni de validación externa. no busca sostener un ritmo lineal de entregas ni competir por presencia. su objetivo no es la visibilidad inmediata, sino la consistencia estructural y la capacidad de transformación a largo plazo.<br><br>
+          la operación interna de xpan se define por dos principios entrelazados.
+        </p>
 
-    <p>
-      [estructura metabólica]:<br>
-      una estructura metabólica es aquella que se sostiene a través de ciclos de transformación interna: absorbe estímulos, los procesa, los redistribuye en nuevas formas.<br><br>
-      cada entrada (un proyecto, una idea, una pausa, una alianza) se convierte en energía útil solo si puede ser integrada al sistema sin forzarlo ni saturarlo.<br><br>
-      el ritmo de xpan no es el del calendario externo, sino el de sus propias secuencias de digestión, mutación y reactivación.<br><br>
-      <em>nada se produce si no puede ser sostenido. nada se sostiene si no transforma el sistema.</em>
-    </p>
+        <p>
+          [estructura metabólica]:<br>
+          una estructura metabólica es aquella que se sostiene a través de ciclos de transformación interna: absorbe estímulos, los procesa, los redistribuye en nuevas formas.<br><br>
+          cada entrada (un proyecto, una idea, una pausa, una alianza) se convierte en energía útil solo si puede ser integrada al sistema sin forzarlo ni saturarlo.<br><br>
+          el ritmo de xpan no es el del calendario externo, sino el de sus propias secuencias de digestión, mutación y reactivación.<br><br>
+          <em>nada se produce si no puede ser sostenido. nada se sostiene si no transforma el sistema.</em>
+        </p>
 
-    <div class="module-metabolico">
-      <div class="pulse"></div>
-    </div>
+        <div class="module-metabolico">
+          <div class="pulse"></div>
+        </div>
 
-    <p>
-      [relevancia conectiva]:<br>
-      la relevancia no se define por la magnitud de un proyecto, sino por su capacidad de activar transformaciones en otros entornos, cuerpos o sistemas.<br><br>
-      cada intervención debe operar como un nodo catalizador: lo que importa no es su centro, sino lo que desata.<br><br>
-      <em>lo relevante no es lo visible, sino lo que modifica la arquitectura de sentido en los otros.</em>
-    </p>
+        <p>
+          [relevancia conectiva]:<br>
+          la relevancia no se define por la magnitud de un proyecto, sino por su capacidad de activar transformaciones en otros entornos, cuerpos o sistemas.<br><br>
+          cada intervención debe operar como un nodo catalizador: lo que importa no es su centro, sino lo que desata.<br><br>
+          <em>lo relevante no es lo visible, sino lo que modifica la arquitectura de sentido en los otros.</em>
+        </p>
 
-    <p>
-      [condiciones internas]:<br>
-      estas son las condiciones mínimas para que la estructura metabólica funcione y la relevancia conectiva sea posible:<br><br>
-      1. densidad sobre velocidad: si se exige crecimiento, se responde con profundidad, no con aceleración.<br>
-      2. distribución de poder: ninguna persona debe sostener el sistema entero. el control debe ser delegable sin pérdida de sentido.<br>
-      3. validación interna: las decisiones se toman en función de coherencia estructural, no de reacción a estímulos externos.<br>
-      4. espacios de pausa: el sistema debe permitir fases de repliegue, catabolismo, reorganización.<br>
-      5. impacto diferido: se acepta que algunas acciones solo mostrarán su efecto años después.<br>
-      6. límites operativos claros: se detiene cualquier acción que genere desgaste acumulativo sin transformación efectiva.
-    </p>
+        <p>
+          [condiciones internas]:<br>
+          estas son las condiciones mínimas para que la estructura metabólica funcione y la relevancia conectiva sea posible:<br><br>
+          1. densidad sobre velocidad: si se exige crecimiento, se responde con profundidad, no con aceleración.<br>
+          2. distribución de poder: ninguna persona debe sostener el sistema entero. el control debe ser delegable sin pérdida de sentido.<br>
+          3. validación interna: las decisiones se toman en función de coherencia estructural, no de reacción a estímulos externos.<br>
+          4. espacios de pausa: el sistema debe permitir fases de repliegue, catabolismo, reorganización.<br>
+          5. impacto diferido: se acepta que algunas acciones solo mostrarán su efecto años después.<br>
+          6. límites operativos claros: se detiene cualquier acción que genere desgaste acumulativo sin transformación efectiva.
+        </p>
 
-    <p>
-      [condiciones de riesgo]:<br>
-      los siguientes síntomas indican que xpan está operando fuera de su estructura natural:<br><br>
-      – dependencia de validación externa o de resultados inmediatos<br>
-      – saturación del sistema con entradas no procesables<br>
-      – decisiones guiadas por urgencia en lugar de criterio estructural<br>
-      – concentración excesiva del control en un solo cuerpo<br>
-      – pérdida de capacidad de metabolizar pausas o crisis<br><br>
-      cuando estas condiciones aparecen, se prioriza la integridad del sistema sobre cualquier objetivo operativo puntual.
-    </p>
+        <p>
+          [condiciones de riesgo]:<br>
+          los siguientes síntomas indican que xpan está operando fuera de su estructura natural:<br><br>
+          – dependencia de validación externa o de resultados inmediatos<br>
+          – saturación del sistema con entradas no procesables<br>
+          – decisiones guiadas por urgencia en lugar de criterio estructural<br>
+          – concentración excesiva del control en un solo cuerpo<br>
+          – pérdida de capacidad de metabolizar pausas o crisis<br><br>
+          cuando estas condiciones aparecen, se prioriza la integridad del sistema sobre cualquier objetivo operativo puntual.
+        </p>
 
-    <p>
-      [modo de existencia]:<br>
-      xpan no crece: <em>se ramifica</em><br>
-      xpan no entrega: <em>procesa</em><br>
-      xpan no ocupa espacio: <em>lo reconfigura</em><br>
-      xpan no busca audiencia: <em>busca transformación</em>
-    </p>
+        <p>
+          [modo de existencia]:<br>
+          xpan no crece: <em>se ramifica</em><br>
+          xpan no entrega: <em>procesa</em><br>
+          xpan no ocupa espacio: <em>lo reconfigura</em><br>
+          xpan no busca audiencia: <em>busca transformación</em>
+        </p>
 
-    <div class="module-rizoma"></div>
-  </article>
+        <div class="module-rizoma"></div>
+      </section>
+
+      <!-- ===== English ===== -->
+      <section class="lang lang-en">
+        <p>
+          [metabolic structure / connective relevance]<br>
+          ---<br>
+          [general framework]:<br>
+          xpan does not operate under logics of accumulative productivity or external validation. it does not aim to sustain a linear delivery pace nor compete for presence. its objective is not immediate visibility, but structural consistency and the capacity for long-term transformation.<br><br>
+          xpan’s internal operation is defined by two interwoven principles.
+        </p>
+
+        <p>
+          [metabolic structure]:<br>
+          a metabolic structure sustains itself through cycles of internal transformation: it absorbs stimuli, processes them, and redistributes them into new forms.<br><br>
+          each input (a project, an idea, a pause, an alliance) becomes useful energy only if it can be integrated into the system without forcing or saturating it.<br><br>
+          xpan’s tempo is not that of the external calendar, but of its own sequences of digestion, mutation, and reactivation.<br><br>
+          <em>nothing is produced if it cannot be sustained. nothing is sustained if it does not transform the system.</em>
+        </p>
+
+        <div class="module-metabolico">
+          <div class="pulse"></div>
+        </div>
+
+        <p>
+          [connective relevance]:<br>
+          relevance is not defined by the magnitude of a project, but by its capacity to activate transformations in other environments, bodies, or systems.<br><br>
+          each intervention must operate as a catalytic node: what matters is not its center, but what it unleashes.<br><br>
+          <em>what is relevant is not the visible, but what modifies the architecture of meaning in others.</em>
+        </p>
+
+        <p>
+          [internal conditions]:<br>
+          these are the minimum conditions for the metabolic structure to function and connective relevance to be possible:<br><br>
+          1. density over speed: if growth is demanded, the response is depth, not acceleration.<br>
+          2. power distribution: no single person should hold the entire system. control must be delegable without loss of meaning.<br>
+          3. internal validation: decisions are made according to structural coherence, not as reactions to external stimuli.<br>
+          4. spaces for pause: the system must allow phases of withdrawal, catabolism, reorganization.<br>
+          5. deferred impact: it is accepted that some actions will only show effects years later.<br>
+          6. clear operational limits: any action that causes cumulative wear without effective transformation is stopped.
+        </p>
+
+        <p>
+          [risk conditions]:<br>
+          the following symptoms indicate that xpan is operating outside its natural structure:<br><br>
+          – dependence on external validation or immediate results<br>
+          – system saturation with non-processable inputs<br>
+          – decisions guided by urgency instead of structural criteria<br>
+          – excessive concentration of control in a single body<br>
+          – loss of capacity to metabolize pauses or crises<br><br>
+          when these conditions appear, system integrity is prioritized over any punctual operational goal.
+        </p>
+
+        <p>
+          [mode of existence]:<br>
+          xpan does not grow: <em>it branches</em><br>
+          xpan does not deliver: <em>it processes</em><br>
+          xpan does not occupy space: <em>it reconfigures it</em><br>
+          xpan does not seek an audience: <em>it seeks transformation</em>
+        </p>
+
+        <div class="module-rizoma"></div>
+      </section>
+
+      <!-- ===== Français ===== -->
+      <section class="lang lang-fr">
+        <p>
+          [structure métabolique / pertinence connective]<br>
+          ---<br>
+          [cadre général] :<br>
+          xpan n’opère ni selon des logiques de productivité cumulative ni selon la validation externe. il ne cherche pas à maintenir un rythme linéaire de livrables ni à concurrencer par la présence. son objectif n’est pas la visibilité immédiate, mais la consistance structurelle et la capacité de transformation à long terme.<br><br>
+          le fonctionnement interne de xpan se définit par deux principes entremêlés.
+        </p>
+
+        <p>
+          [structure métabolique] :<br>
+          une structure métabolique se soutient par des cycles de transformation interne : elle absorbe des stimuli, les traite et les redistribue sous de nouvelles formes.<br><br>
+          chaque entrée (projet, idée, pause, alliance) ne devient énergie utile que si elle peut être intégrée sans forcer ni saturer le système.<br><br>
+          le rythme de xpan n’est pas celui du calendrier externe, mais celui de ses propres séquences de digestion, mutation et réactivation.<br><br>
+          <em>rien n’est produit s’il ne peut être soutenu. rien ne se soutient s’il ne transforme pas le système.</em>
+        </p>
+
+        <div class="module-metabolico">
+          <div class="pulse"></div>
+        </div>
+
+        <p>
+          [pertinence connective] :<br>
+          la pertinence ne se définit pas par la magnitude d’un projet, mais par sa capacité à activer des transformations dans d’autres milieux, corps ou systèmes.<br><br>
+          chaque intervention doit agir comme un nœud catalyseur : l’important n’est pas son centre, mais ce qu’elle déclenche.<br><br>
+          <em>le pertinent n’est pas le visible, mais ce qui modifie l’architecture de sens chez les autres.</em>
+        </p>
+
+        <p>
+          [conditions internes] :<br>
+          conditions minimales pour que la structure métabolique fonctionne et que la pertinence connective soit possible :<br><br>
+          1. densité plutôt que vitesse : si l’on exige de la croissance, on répond par la profondeur, non par l’accélération.<br>
+          2. distribution du pouvoir : aucune personne ne doit porter l’ensemble du système. le contrôle doit être délégable sans perte de sens.<br>
+          3. validation interne : les décisions se prennent selon la cohérence structurelle, non par réaction à des stimuli externes.<br>
+          4. espaces de pause : le système doit permettre des phases de repli, de catabolisme, de réorganisation.<br>
+          5. impact différé : on accepte que certaines actions ne montrent leurs effets que des années plus tard.<br>
+          6. limites opérationnelles claires : on interrompt toute action générant une usure cumulative sans transformation effective.
+        </p>
+
+        <p>
+          [conditions de risque] :<br>
+          les symptômes suivants indiquent que xpan opère hors de sa structure naturelle :<br><br>
+          – dépendance à la validation externe ou aux résultats immédiats<br>
+          – saturation du système par des entrées non traitables<br>
+          – décisions guidées par l’urgence plutôt que par des critères structurels<br>
+          – concentration excessive du contrôle en un seul corps<br>
+          – perte de la capacité à métaboliser les pauses ou les crises<br><br>
+          lorsque ces conditions apparaissent, on privilégie l’intégrité du système sur tout objectif opérationnel ponctuel.
+        </p>
+
+        <p>
+          [mode d’existence] :<br>
+          xpan ne croît pas : <em>il se ramifie</em><br>
+          xpan ne “livre” pas : <em>il traite</em><br>
+          xpan n’occupe pas l’espace : <em>il le reconfigure</em><br>
+          xpan ne cherche pas un public : <em>il cherche la transformation</em>
+        </p>
+
+        <div class="module-rizoma"></div>
+      </section>
+
+      <!-- ===== 日本語 ===== -->
+      <section class="lang lang-jp">
+        <p>
+          ［代謝構造／接続的レレバンス］<br>
+          ---<br>
+          ［全体枠組み］：<br>
+          xpan は、蓄積的な生産性や外部の承認の論理では作動しない。線形の納品ペースを維持したり、露出で争うことを目的としない。目的は即時の可視性ではなく、構造的一貫性と長期的な変容能力である。<br><br>
+          xpan の内部運用は、絡み合う二つの原理によって定義される。
+        </p>
+
+        <p>
+          ［代謝構造］：<br>
+          代謝構造とは、内部変換のサイクルによって自らを維持する構造を指す。刺激を吸収し、処理し、新たな形へと再配分する。<br><br>
+          各入力（プロジェクト、アイデア、休止、同盟）は、システムを無理に負荷せず飽和させないかぎり、有用なエネルギーに変換される。<br><br>
+          xpan のテンポは外部カレンダーのものではなく、消化・変異・再活性化という独自のシークエンスのものだ。<br><br>
+          <em>支えられないものは生産しない。システムを変えないものは支えない。</em>
+        </p>
+
+        <div class="module-metabolico">
+          <div class="pulse"></div>
+        </div>
+
+        <p>
+          ［接続的レレバンス］：<br>
+          レレバンスはプロジェクトの大きさでは定義されない。他の環境・身体・システムに変化を起動する能力で定義される。<br><br>
+          各介入は触媒的なノードとして作動すべきで、重要なのは中心ではなく、そこから解き放たれるものだ。<br><br>
+          <em>重要なのは「見えること」ではなく、他者の意味のアーキテクチャを変えること。</em>
+        </p>
+
+        <p>
+          ［内部条件］：<br>
+          代謝構造が機能し、接続的レレバンスが可能となるための最小条件：<br><br>
+          1. 速度より密度：成長を求められるなら、加速ではなく深度で応答する。<br>
+          2. 権限の分配：一人が全システムを担うべきではない。統制は意味を損なわず委譲可能であること。<br>
+          3. 内的検証：意思決定は外的刺激への反応ではなく、構造的一貫性に基づく。<br>
+          4. 休止の空間：後退・異化（カタボリズム）・再編の位相を許容する。<br>
+          5. 遅延する影響：効果が数年後にしか現れない行為を受け入れる。<br>
+          6. 明確な運用限界：有効な変換なしに蓄積的摩耗を生む行為は停止する。
+        </p>
+
+        <p>
+          ［リスク条件］：<br>
+          次の兆候は、xpan が本来の構造から外れて作動していることを示す。<br><br>
+          － 外部承認や即時成果への依存<br>
+          － 処理不能な入力によるシステム飽和<br>
+          － 構造基準ではなく緊急性に導かれる意思決定<br>
+          － 統制の単一主体への過度な集中<br>
+          － 休止や危機を代謝する能力の喪失<br><br>
+          これらが現れた場合、個別のオペレーション目標より、システムの整合性を優先する。
+        </p>
+
+        <p>
+          ［存在様式］：<br>
+          xpan は成長しない：<em>分岐する</em><br>
+          xpan は納品しない：<em>処理する</em><br>
+          xpan は空間を占有しない：<em>再構成する</em><br>
+          xpan はオーディエンスを求めない：<em>変容を求める</em>
+        </p>
+
+        <div class="module-rizoma"></div>
+      </section>
+    </article>
+  </main>
+
+  <script>
+    // ===== selector multilenguaje persistente =====
+    (function(){
+      const buttons=document.querySelectorAll('.language-selector button');
+      function setLang(lang){
+        localStorage.setItem('lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+        document.querySelectorAll('.lang').forEach(n=> n.classList.remove('active'));
+        document.querySelectorAll('.lang-'+lang).forEach(n=> n.classList.add('active'));
+        buttons.forEach(b=>{
+          const on=b.dataset.lang===lang;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', on?'true':'false');
+        });
+      }
+      setLang(localStorage.getItem('lang') || 'es');
+      buttons.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang)));
+    })();
+
+    // ===== rizoma (preservado, con tema) =====
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".module-rizoma").forEach(rizoma=>{
+        for (let i = 0; i < 50; i++) {
+          const node = document.createElement("div");
+          node.className = "node";
+          node.style.left = (Math.random()*100) + "%";
+          node.style.top  = (Math.random()*100) + "%";
+          rizoma.appendChild(node);
+        }
+      });
+    });
+  </script>
 </body>
-
 </html>

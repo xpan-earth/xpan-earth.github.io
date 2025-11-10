@@ -1,5 +1,6 @@
+<!-- 1) EN — xpan — essay (full, atlas auto-invert) -->
 <!doctype html>
-<html lang="en">
+<html lang="en" data-xpan>
 
 <head>
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -7,26 +8,69 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-5D3D9DR9');</script>
-    <link rel="stylesheet" href="./style.css" media="screen"/>
+    <link rel="stylesheet" href="./style.css" media="not all" data-preserved="true"/>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark"/>
     <meta property="og:title" content="xpan"/>
     <meta property="og:type" content="website"/>
     <meta property="og:image" content="./xpan.png"/>
     <meta property="og:url" content="https://xpan.earth/"/>
     <title>xpan</title>
+
+    <style>
+      :root{
+        --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+        --line:#2A2E31; --b1:1px solid var(--line);
+        --pad-x:clamp(16px,4vw,48px); --header-h:64px; --maxw:900px;
+        --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+        --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      }
+      @media (prefers-color-scheme:light){
+        :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2 }
+      }
+      *,*::before,*::after{box-sizing:border-box}
+      html,body{height:100%}
+      html,body{
+        margin:0; background:var(--bg); color:var(--fg);
+        font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale
+      }
+      a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+      a:hover{border-bottom-color:var(--accent)}
+      img{max-width:100%; height:auto; display:block}
+
+      header{
+        position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+        height:var(--header-h); display:flex; align-items:center; z-index:10
+      }
+      header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+      @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+      /* atlas visible en ambos modos */
+      img[alt="xpan.atlas"]{ filter:invert(1) }
+      @media (prefers-color-scheme:light){ img[alt="xpan.atlas"]{ filter:none } }
+
+      main{ padding-top:calc(var(--header-h) + 24px) }
+      article{ max-width:var(--maxw); margin:0 auto; padding:24px var(--pad-x) 72px;
+        border-top:var(--b1); padding-top:1.25rem; margin-top:1.25rem }
+      p{ line-height:1.65; margin:0 0 1rem }
+      ol{ margin:.25rem 0 1.25rem 1.2rem; padding:0 }
+      li{ margin:.2rem 0 .2rem .1rem; line-height:1.55 }
+    </style>
 </head>
 
 <body>
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9"></iframe>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5D3D9DR9" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <header>
         <a href="https://xpan.earth">
             <img src="./xpan.svg" alt="xpan">
         </a>
     </header>
-    <article>
+
+    <main>
+      <article>
         <p>
             [<em>xpan</em> is the interval where systems become meaningful. a topology in expansion, where each language is form and each form, critical in action.]<br>
             ---<br>
@@ -92,7 +136,7 @@
             at <em>xpan</em>, creation is not an end, but a means to continually question, discover and evolve within a macrosystem that is always in motion.
         </p>
         <img src="./xpan-atlas.svg" alt="xpan.atlas">
-    </article>
+      </article>
+    </main>
 </body>
-
 </html>

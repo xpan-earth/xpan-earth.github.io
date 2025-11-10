@@ -1,415 +1,403 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan — reproductor</title>
+
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Times New Roman', serif;
-      background: white;
-      color: black;
-      margin: 0;
-      padding: 2rem;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --b1:1px solid var(--line);
+      --pad:clamp(16px,4vw,48px); --header-h:64px; --maxw:1100px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
     }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
-    }
-    .logo-container {
-      position: absolute;
-      left: 1rem;
-    }
-    .sc-link {
-      font-size: 1rem;
-      text-decoration: underline;
-      color: blue;
-    }
-    header img {
-      width: 50px;
-      height: auto;
-    }
-    .xpan-audio-block {
-      border: 1px solid black;
-      padding: 1rem;
-      margin-top: 6rem;
-      margin-bottom: 3rem;
-    }
-    .audio-meta .title {
-      font-size: 1rem;
-      font-weight: bold;
-      text-transform: lowercase;
-      margin-bottom: 0.2rem;
-    }
-    .audio-meta .info {
-      font-size: 0.85rem;
-      opacity: 0.6;
-      margin-bottom: 1rem;
-    }
-    .audio-controls {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .play-button {
-      background: none;
-      border: none;
-      font-size: 1rem;
-      cursor: pointer;
-      text-transform: lowercase;
-      padding: 0.4rem 0.6rem;
-    }
-    .time-display {
-      font-size: 0.85rem;
-      min-width: 60px;
-    }
-    .progress-container {
-      position: relative;
-      flex-grow: 1;
-      height: 2px;
-      background: #ddd;
-      cursor: pointer;
-      touch-action: none;
-    }
-    .progress-fill {
-      height: 2px;
-      background: black;
-      width: 0%;
-    }
-    canvas {
-      width: 100%;
-      height: 100px;
-      display: block;
-      margin-top: 1rem;
-      background: white;
-    }
-    .tooltip {
-      position: absolute;
-      font-size: 0.75rem;
-      background: black;
-      color: white;
-      padding: 0.2rem 0.4rem;
-      border-radius: 3px;
-      transform: translateX(-50%);
-      top: -1.5rem;
-      display: none;
-      pointer-events: none;
-      z-index: 100;
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --accent:#1860FF; }
     }
 
-    @media (prefers-color-scheme: dark) {
-      body { background: black; color: white; }
-      .xpan-audio-block { border-color: white; }
-      .progress-container { background: #666; }
-      .progress-fill { background: white; }
-      canvas { background: black; }
-      .tooltip { background: white; color: black; }
-      .play-button { color: white; }
-      header img { filter: invert(1); }
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+    img{display:block; max-width:100%; height:auto; background:transparent}
+
+    /* ===== header ===== */
+    header{
+      position:fixed; inset:auto var(--pad) auto var(--pad); top:12px; height:var(--header-h);
+      display:flex; align-items:center; z-index:10; justify-content:flex-start;
+    }
+    header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    /* ===== layout ===== */
+    main{ padding:calc(var(--header-h) + 24px) var(--pad) 80px; max-width:var(--maxw); margin:0 auto }
+
+    /* ===== original styles normalizados (preservando clases) ===== */
+    .sc-link{ font-size:1rem; text-decoration:underline; color:var(--accent) }
+
+    .xpan-audio-block{
+      border:var(--b1);
+      padding:1rem;
+      margin-top:1.5rem; /* más compacto que 6rem, pero conservamos separación global via main */
+      margin-bottom:3rem;
+      background:transparent;
+    }
+    .audio-meta .title{
+      font:700 1rem/1.2 var(--font-ui);
+      text-transform:lowercase;
+      margin:0 0 .25rem;
+    }
+    .audio-meta .info{
+      font:400 .85rem/1.4 var(--font-ui);
+      color:var(--fg-dim);
+      margin:0 0 1rem;
     }
 
-    @media (max-width: 600px) {
-      .audio-controls {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .audio-controls{
+      display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+    }
+    .play-button{
+      appearance:none; background:transparent; border:var(--b1);
+      font:600 0.95rem/1 var(--font-ui); cursor:pointer; text-transform:lowercase;
+      padding:.4rem .6rem; color:var(--fg-dim);
+      transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+    }
+    .play-button:hover{ color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06) }
+
+    .time-display{ font:400 .85rem/1 var(--font-mono); min-width:90px; color:var(--fg-dim) }
+
+    .progress-container{
+      position:relative; flex:1 1 260px; height:2px; background:var(--line);
+      cursor:pointer; touch-action:none;
+    }
+    .progress-fill{ height:2px; background:var(--fg); width:0% }
+
+    /* canvas de visualización */
+    canvas{ width:100%; height:100px; display:block; margin-top:1rem; background:transparent; border-top:var(--b1) }
+
+    .tooltip{
+      position:absolute; font:400 .75rem/1 var(--font-mono);
+      background:var(--fg); color:var(--bg);
+      padding:.2rem .4rem; transform:translateX(-50%); top:-1.7rem;
+      display:none; pointer-events:none; z-index:100;
+    }
+
+    /* responsive */
+    @media (max-width:600px){
+      .audio-controls{ flex-direction:column; align-items:stretch }
+      .time-display{ order:3 }
+      .progress-container{ order:2; width:100% }
+    }
+
+    /* reduced motion */
+    @media (prefers-reduced-motion:reduce){
+      .pulse{ animation:none }
     }
   </style>
 </head>
 <body>
   <header>
-    <a href="https://xpan.earth">
-      <img src="./xpan.svg" alt="xpan">
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan"/>
     </a>
   </header>
 
-  <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">fermédable 13.jul.25 9.30pm</div>
-      <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
+  <main>
+    <!-- ===== bloques de audio (contenido preservado) ===== -->
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">fermédable 13.jul.25 9.30pm</div>
+        <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://attachments.are.na/38088028/c5649f5142fe1303301cf52523df0a21.wav?1752463967" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
     </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://attachments.are.na/38088028/c5649f5142fe1303301cf52523df0a21.wav?1752463967" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
-
-  <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">2.- 10.jul.25 1:41pm</div>
-      <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
-    </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://attachments.are.na/38027467/fe86be6130521242948cf62d08148579.wav?1752178313" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
-
-  <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">mdtc.5 [tokio] gata <> xpan [mixtape]</div>
-      <div class="info">materialización de la topología conectiva 5</div>
-    </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://ia600907.us.archive.org/2/items/mixtape-final-mdtc.-5/mixtape%20final%20mdtc.5.wav" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
-
-  <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">kaneda.vision [vision mixtape V.2] 2025</div>
-      <div class="info">xpan.12.e.ls.31</div>
-    </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://ia600905.us.archive.org/24/items/kaneda.vision-vision-mixtape-v-2-2025/kaneda.vision%20%5Bvision_mixtape%20v2%5D%202025.wav" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
-
-  <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">09.jul.24 — 8:48pm</div>
-      <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
-    </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://s3.amazonaws.com/arena_images-temp/uploads%2F01f4983d-12cc-402a-b61f-b444a0eb7ec3%2F09.jul.24+8.48+pm.wav" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
 
     <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">mdtc.4 [méxico] eli pastore / mario alore <> xpan [mixtape]</div>
-      <div class="info">eden garden cinema</div>
+      <div class="audio-meta">
+        <div class="title">2.- 10.jul.25 1:41pm</div>
+        <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://attachments.are.na/38027467/fe86be6130521242948cf62d08148579.wav?1752178313" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
     </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://ia601404.us.archive.org/15/items/mixtape-mdtc.-4/mixtape%20mdtc.4%20.wav" type="audio/wav">
-      </audio>
-    </div>
-    <canvas></canvas>
-  </div>
 
     <div class="xpan-audio-block audio-local">
-    <div class="audio-meta">
-      <div class="title">mdtc.6 [méxico] cculdesacc <> xpan [mixtape]</div>
-      <div class="info">materialización de la topología conectiva 4 [harcha.ep.1]</div>
+      <div class="audio-meta">
+        <div class="title">mdtc.5 [tokio] gata <> xpan [mixtape]</div>
+        <div class="info">materialización de la topología conectiva 5</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://ia600907.us.archive.org/2/items/mixtape-final-mdtc.-5/mixtape%20final%20mdtc.5.wav" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
     </div>
-    <div class="audio-controls">
-      <button class="play-button">play</button>
-      <div class="time-display">0:00 / 0:00</div>
-      <div class="progress-container"><div class="progress-fill"></div></div>
-      <audio crossorigin="anonymous">
-        <source src="https://ia903202.us.archive.org/27/items/mdtc.-6-mixtape-msh/mdtc.6%20mixtape%20msh.wav" type="audio/wav">
-      </audio>
+
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">kaneda.vision [vision mixtape V.2] 2025</div>
+        <div class="info">xpan.12.e.ls.31</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://ia600905.us.archive.org/24/items/kaneda.vision-vision-mixtape-v-2-2025/kaneda.vision%20%5Bvision_mixtape%20v2%5D%202025.wav" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
     </div>
-    <canvas></canvas>
-  </div>
 
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">09.jul.24 — 8:48pm</div>
+        <div class="info">𓆝 𓆟 𓆞 𓆝 𓆟</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://s3.amazonaws.com/arena_images-temp/uploads%2F01f4983d-12cc-402a-b61f-b444a0eb7ec3%2F09.jul.24+8.48+pm.wav" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
+    </div>
 
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">mdtc.4 [méxico] eli pastore / mario alore <> xpan [mixtape]</div>
+        <div class="info">eden garden cinema</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://ia601404.us.archive.org/15/items/mixtape-mdtc.-4/mixtape%20mdtc.4%20.wav" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
+    </div>
 
-  <div style="margin-top: 3rem;">
-    <a class="sc-link" href="https://soundcloud.com/buy-xpan-model1-now" target="_blank">soundcloud</a>
-  </div>
+    <div class="xpan-audio-block audio-local">
+      <div class="audio-meta">
+        <div class="title">mdtc.6 [méxico] cculdesacc <> xpan [mixtape]</div>
+        <div class="info">materialización de la topología conectiva 4 [harcha.ep.1]</div>
+      </div>
+      <div class="audio-controls">
+        <button class="play-button">play</button>
+        <div class="time-display">0:00 / 0:00</div>
+        <div class="progress-container"><div class="progress-fill"></div></div>
+        <audio crossorigin="anonymous">
+          <source src="https://ia903202.us.archive.org/27/items/mdtc.-6-mixtape-msh/mdtc.6%20mixtape%20msh.wav" type="audio/wav"/>
+        </audio>
+      </div>
+      <canvas></canvas>
+    </div>
 
-<script>
-document.querySelectorAll('.audio-local').forEach((block, index, allBlocks) => {
-  const audio = block.querySelector('audio');
-  const button = block.querySelector('.play-button');
-  const fill = block.querySelector('.progress-fill');
-  const canvas = block.querySelector('canvas');
-  const ctx = canvas.getContext('2d');
-  const timeDisplay = block.querySelector('.time-display');
-  const progressContainer = block.querySelector('.progress-container');
+    <div style="margin-top:3rem">
+      <a class="sc-link" href="https://soundcloud.com/buy-xpan-model1-now" target="_blank" rel="noopener">soundcloud</a>
+    </div>
+  </main>
 
-  const tooltip = document.createElement('div');
-  tooltip.className = 'tooltip';
-  progressContainer.appendChild(tooltip);
+  <script>
+  // reproductor post-tech: conserva lógica original, normaliza y mejora accesibilidad/tema
+  (function(){
+    const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let audioContext = null, source, analyser, dataArray, animationId;
+    // Garantiza solo una reproducción a la vez
+    const blocks = Array.from(document.querySelectorAll('.audio-local'));
+    const allAudios = blocks.map(b => b.querySelector('audio'));
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
-
-  const resizeCanvas = () => {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-  };
-
-  const draw = () => {
-    if (!analyser) return;
-    analyser.getByteTimeDomainData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    const sliceWidth = canvas.width / dataArray.length;
-    let x = 0;
-    for (let i = 0; i < dataArray.length; i++) {
-      const v = dataArray[i] / 128.0;
-      const y = (v * canvas.height) / 2;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-      x += sliceWidth;
+    function pauseAll(except){
+      allAudios.forEach(a => { if(a!==except){ try{ a.pause(); }catch{} } });
+      blocks.forEach(b => { const btn=b.querySelector('.play-button'); if(b.querySelector('audio')!==except) btn.textContent='play'; });
     }
-    ctx.strokeStyle = `rgb(${Math.floor(dataArray[0] * 1.5)},0,0)`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    animationId = requestAnimationFrame(draw);
-  };
 
-  const setupVisualizer = () => {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    source = audioContext.createMediaElementSource(audio);
-    analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048;
-    dataArray = new Uint8Array(analyser.fftSize);
-    source.connect(analyser);
-    analyser.connect(audioContext.destination);
-    resizeCanvas();
-    draw();
-  };
+    // Construye cada bloque
+    blocks.forEach((block, index, allBlocks)=>{
+      const audio = block.querySelector('audio');
+      const button = block.querySelector('.play-button');
+      const fill   = block.querySelector('.progress-fill');
+      const canvas = block.querySelector('canvas');
+      const ctx    = canvas.getContext('2d');
+      const timeDisplay = block.querySelector('.time-display');
+      const progressContainer = block.querySelector('.progress-container');
 
-  const playAudio = async () => {
-    try {
-      if (!audioContext) {
-        setupVisualizer();
-      } else if (audioContext.state === 'suspended') {
-        await audioContext.resume();
+      // tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      progressContainer.appendChild(tooltip);
+
+      let audioContext=null, source=null, analyser=null, dataArray=null, animationId=null;
+
+      const fmt=(s)=>{ const m=Math.floor(s/60)|0; const ss=Math.floor(s%60)|0; return `${m}:${ss<10?'0':''}${ss}`; };
+      const durationSafe = ()=> isNaN(audio.duration)? 0 : audio.duration;
+
+      const resizeCanvas = ()=>{
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+      };
+
+      const strokeColor = ()=> {
+        // usa color de texto actual
+        const cs = getComputedStyle(document.documentElement);
+        const col = cs.getPropertyValue('--fg').trim() || '#E0E3E6';
+        return col;
+      };
+
+      const draw = ()=>{
+        if(!analyser) return;
+        analyser.getByteTimeDomainData(dataArray);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.beginPath();
+        const slice = canvas.width / dataArray.length;
+        let x = 0;
+        for(let i=0;i<dataArray.length;i++){
+          const v = dataArray[i] / 128.0;
+          const y = (v * canvas.height) / 2;
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          x += slice;
+        }
+        ctx.strokeStyle = strokeColor();
+        ctx.lineWidth = 1;
+        ctx.stroke();
         animationId = requestAnimationFrame(draw);
-      } else {
+      };
+
+      const setupVisualizer = ()=>{
+        if(REDUCED) return; // respeta preferencias
+        if(!audioContext){
+          audioContext = new (window.AudioContext||window.webkitAudioContext)();
+          source = audioContext.createMediaElementSource(audio);
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 2048;
+          dataArray = new Uint8Array(analyser.fftSize);
+          source.connect(analyser);
+          analyser.connect(audioContext.destination);
+          resizeCanvas();
+        }
         animationId = requestAnimationFrame(draw);
-      }
-      await audio.play();
-      button.innerText = 'pause';
-    } catch (err) {
-      console.warn('Error al reproducir audio:', err);
-    }
-  };
+      };
 
-  const pauseAudio = () => {
-    audio.pause();
-    button.innerText = 'play';
-    cancelAnimationFrame(animationId);
-  };
+      const playAudio = async ()=>{
+        try{
+          pauseAll(audio);
+          if(!REDUCED){ if(!audioContext) setupVisualizer(); else if(audioContext.state==='suspended'){ await audioContext.resume(); } }
+          animationId = !REDUCED ? requestAnimationFrame(draw) : null;
+          await audio.play();
+          button.textContent = 'pause';
+        }catch(err){ console.warn('Error al reproducir audio:', err); }
+      };
 
-  button.addEventListener('click', () => {
-    if (audio.paused) {
-      playAudio();
-    } else {
-      pauseAudio();
-    }
-  });
+      const pauseAudio = ()=>{
+        audio.pause();
+        button.textContent='play';
+        if(animationId) cancelAnimationFrame(animationId);
+      };
 
-  audio.addEventListener('timeupdate', () => {
-    const duration = isNaN(audio.duration) ? 0 : audio.duration;
-    if (duration > 0) {
-      fill.style.width = (audio.currentTime / duration) * 100 + '%';
-      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
-    }
-  });
+      button.addEventListener('click', ()=> audio.paused ? playAudio() : pauseAudio() );
 
-  audio.addEventListener('ended', () => {
-    button.innerText = 'play';
-    fill.style.width = '0%';
-    cancelAnimationFrame(animationId);
+      audio.addEventListener('timeupdate', ()=>{
+        const dur = durationSafe();
+        if(dur>0){
+          fill.style.width = (audio.currentTime/dur)*100 + '%';
+          timeDisplay.textContent = `${fmt(audio.currentTime)} / ${fmt(dur)}`;
+        }
+      });
 
-    // Autoplay siguiente bloque
-    const next = allBlocks[index + 1];
-    if (next) {
-      const nextButton = next.querySelector('.play-button');
-      if (nextButton) nextButton.click();
-    }
-  });
+      audio.addEventListener('loadedmetadata', ()=>{
+        const dur = durationSafe();
+        timeDisplay.textContent = `${fmt(0)} / ${fmt(dur)}`;
+      });
 
-  const seek = (e) => {
-    const rect = progressContainer.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const x = clientX - rect.left;
-    const percent = Math.max(0, Math.min(1, x / rect.width));
-    audio.currentTime = percent * (isNaN(audio.duration) ? 0 : audio.duration);
-  };
+      audio.addEventListener('ended', ()=>{
+        button.textContent='play';
+        fill.style.width='0%';
+        if(animationId) cancelAnimationFrame(animationId);
 
-  const showTooltip = (e) => {
-    const rect = progressContainer.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const x = clientX - rect.left;
-    const percent = Math.max(0, Math.min(1, x / rect.width));
-    const time = percent * (isNaN(audio.duration) ? 0 : audio.duration);
-    tooltip.textContent = formatTime(time);
-    tooltip.style.left = `${x}px`;
-    tooltip.style.display = 'block';
-  };
+        // autoplay siguiente bloque (preservado)
+        const next = allBlocks[index+1];
+        if(next){
+          const nextBtn = next.querySelector('.play-button');
+          if(nextBtn) nextBtn.click();
+        }
+      });
 
-  const hideTooltip = () => {
-    tooltip.style.display = 'none';
-  };
+      // seeking + tooltip
+      const seek = (e)=>{
+        const rect = progressContainer.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const x = clientX - rect.left;
+        const pct = Math.max(0, Math.min(1, x/rect.width));
+        audio.currentTime = pct * durationSafe();
+      };
+      const showTip = (e)=>{
+        const rect = progressContainer.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const x = clientX - rect.left;
+        const pct = Math.max(0, Math.min(1, x/rect.width));
+        const t = pct * durationSafe();
+        tooltip.textContent = fmt(t);
+        tooltip.style.left = `${x}px`;
+        tooltip.style.display = 'block';
+      };
+      const hideTip = ()=> tooltip.style.display='none';
 
-  progressContainer.addEventListener('click', seek);
-  progressContainer.addEventListener('mousemove', showTooltip);
-  progressContainer.addEventListener('mouseleave', hideTooltip);
-  progressContainer.addEventListener('touchstart', (e) => {
-    seek(e);
-    showTooltip(e);
-  });
-  progressContainer.addEventListener('touchmove', showTooltip);
-  progressContainer.addEventListener('touchend', hideTooltip);
+      progressContainer.addEventListener('click', seek);
+      progressContainer.addEventListener('mousemove', showTip);
+      progressContainer.addEventListener('mouseleave', hideTip);
+      progressContainer.addEventListener('touchstart', (e)=>{ seek(e); showTip(e); }, {passive:true});
+      progressContainer.addEventListener('touchmove', showTip, {passive:true});
+      progressContainer.addEventListener('touchend', hideTip);
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+      window.addEventListener('resize', resizeCanvas, {passive:true});
+      resizeCanvas();
 
-  canvas.addEventListener('dblclick', () => {
-    if (!document.fullscreenElement) {
-      canvas.requestFullscreen().catch(err => console.warn(err));
-    } else {
-      document.exitFullscreen();
-    }
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'f') {
-      if (!document.fullscreenElement) {
-        canvas.requestFullscreen().catch(err => console.warn(err));
-      } else {
-        document.exitFullscreen();
-      }
-    }
-  });
-});
-</script>
+      // fullscreen canvas (preservado)
+      canvas.addEventListener('dblclick', ()=>{
+        if(!document.fullscreenElement){ canvas.requestFullscreen().catch(()=>{}); }
+        else{ document.exitFullscreen().catch(()=>{}); }
+      });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key==='f'){
+          if(!document.fullscreenElement){ canvas.requestFullscreen().catch(()=>{}); }
+          else{ document.exitFullscreen().catch(()=>{}); }
+        }
+      });
+    });
+  })();
+  </script>
 </body>
 </html>

@@ -1,64 +1,85 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan — criterios de intervención</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow: hidden;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --b1:1px solid var(--line);
+      --header-h:64px; --pad-x:clamp(16px,4vw,48px);
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2 }
     }
 
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+
+    /* ===== header ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h); display:flex; align-items:center; justify-content:space-between; z-index:10;
+    }
+    header img{width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    /* ===== contenido ===== */
+    .container{
+      position:absolute; inset:0; display:grid; place-items:center; padding:0 var(--pad-x);
+    }
+    .panel{
+      width:min(90vw,820px); text-align:center; border:var(--b1); padding:2.2rem 1.4rem; background:transparent;
+    }
+    .criterio{
+      font:400 1.1rem/1.7 var(--font-ui);
+      text-transform:lowercase;
+      opacity:0;
+      transition:opacity 2s linear; /* lineal y preciso */
+      will-change:opacity;
+    }
+    .visible{ opacity:1 }
+
+    @media (max-width:640px){
+      .panel{ padding:1.6rem 1.1rem }
+      .criterio{ font-size:1rem }
     }
 
-    header img {
-      width: 50px;
-      height: auto;
-    }
-
-    .container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90vw;
-      max-width: 800px;
-      text-align: center;
-    }
-
-    .criterio {
-      font-size: 1.1rem;
-      text-transform: lowercase;
-      opacity: 0;
-      transition: opacity 2s ease-in-out;
-    }
-
-    .visible {
-      opacity: 1;
+    @media (prefers-reduced-motion:reduce){
+      .criterio{ transition:none; opacity:1 }
     }
   </style>
 </head>
 <body>
   <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan"/>
+    </a>
   </header>
 
   <div class="container">
-    <div id="criterio" class="criterio"></div>
+    <div class="panel">
+      <div id="criterio" class="criterio" aria-live="polite"></div>
+    </div>
   </div>
 
   <script>
+    // lista preservada
     const criterios = [
       'no se interviene un espacio, se interviene una relación',
       'la escala no determina la potencia',
@@ -74,20 +95,29 @@
       'el ruido también es un criterio'
     ];
 
-    let index = 0;
     const el = document.getElementById('criterio');
+    let index = 0;
+    const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function showNext() {
-      el.classList.remove('visible');
-      setTimeout(() => {
-        el.innerText = criterios[index];
-        el.classList.add('visible');
+    function showNext(){
+      if(REDUCED){
+        el.textContent = criterios[index];
         index = (index + 1) % criterios.length;
-      }, 2000); // tiempo de fade-out
+        return;
+      }
+      el.classList.remove('visible');                 // fade-out 2s
+      setTimeout(()=>{
+        el.textContent = criterios[index];            // cambio de texto
+        el.classList.add('visible');                  // fade-in 2s
+        index = (index + 1) % criterios.length;
+      }, 2000);
     }
 
-    showNext();
-    setInterval(showNext, 4000); // cada 7s cambia criterio
+    // ciclo de 4s exactos (2s out + 2s in)
+    el.classList.add('visible');
+    el.textContent = criterios[0];
+    index = 1;
+    setInterval(showNext, 3000);
   </script>
 </body>
 </html>

@@ -1,35 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-xpan>
 <head>
-  <meta charset="UTF-8">
-  <title>proximidades dinámicas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>proximidades dinámicas — xpan</title>
+
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #fff;
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
+    :root{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --accent:#1860FF; --accent-2:#8CFF4D;
+      --line:#1A2026; --line-weak:#11161C;
+      --pad:clamp(16px,4vw,48px); --header-h:64px;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      /* colores de trazo por tema */
+      --map-stroke-dark:#FFFFFF;
+      --map-stroke-light:#000000;
     }
-    svg {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-      overflow: visible;
-      stroke: black;
-      fill: none;
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#DDE3EA; --line-weak:#EDF1F6; }
     }
-    path {
-      transform-box: fill-box;
-      transform-origin: center;
+
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg); overflow:hidden;
+      font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* HUD sutil */
+    .bg-mesh{ position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        linear-gradient(90deg, var(--line-weak) 1px, transparent 1px),
+        linear-gradient(0deg,  var(--line-weak) 1px, transparent 1px);
+      background-size:64px 64px;
+      mask-image: radial-gradient(90% 70% at 70% 10%, rgba(0,0,0,.85), transparent 70%);
+    }
+
+    header{ position:fixed; top:12px; left:var(--pad); right:var(--pad); height:var(--header-h); display:flex; align-items:center; z-index:10 }
+    header img{ width:50px; height:auto }
+    @media (prefers-color-scheme:dark){ header img{ filter:invert(1) } }
+
+    .stage{ position:fixed; inset:0; z-index:2; display:grid; place-items:center }
+
+    /* SVG: forzar color por tema, ignorando atributos inline */
+    svg#dynamic-map{ width:100vw; height:100vh; display:block; overflow:visible; will-change:transform }
+    /* por defecto (dark): blanco sobre negro */
+    svg#dynamic-map, svg#dynamic-map *{
+      color: var(--map-stroke-dark) !important;
+      stroke: currentColor !important;
+      fill: none !important;
+      stroke-width: .6px !important;  /* un poco más visible */
+      stroke-miterlimit: 10 !important;
+    }
+    /* en claro: negro sobre blanco */
+    @media (prefers-color-scheme:light){
+      svg#dynamic-map, svg#dynamic-map *{ color: var(--map-stroke-light) !important; }
+    }
+
+    /* animación precisa */
+    svg#dynamic-map path{
+      transform-box:fill-box; transform-origin:center;
+      transition:transform 2.4s var(--ease);
+      will-change:transform;
+    }
+    @media (prefers-reduced-motion:reduce){
+      svg#dynamic-map path{ transition:none }
     }
   </style>
 </head>
 <body>
+  <div class="bg-mesh"></div>
 
-  <!-- SVG embebido (topologia final) -->
+  <header>
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan">
+    </a>
+  </header>
+
+  <main class="stage">
+    <!-- tu SVG (puedes pegar los paths completos cuando quieras) -->
+    <svg id="dynamic-map" viewBox="0 0 936.76 788.38" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+ <!-- SVG embebido (topologia final) -->
   <svg data-name="Capa 1" id="dynamic-map" preserveAspectRatio="xMidYMid meet"
        style="width: 100vw; height: 100vh; overflow: visible;" viewBox="0 0 936.76 788.38"
        xmlns="http://www.w3.org/2000/svg">
@@ -199,31 +253,21 @@
          </g>
        </svg>
   </svg>
+    </svg>
+  </main>
 
   <script>
-  function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-  function animatePaths() {
-    const paths = document.querySelectorAll('svg path');
-    paths.forEach(path => {
-      const dx = randomInRange(-200, 200);
-      const dy = randomInRange(-200, 200);
-      const angle = randomInRange(-60, 60);
-      const scale = randomInRange(0.85, 1.15);
-      const duration = randomInRange(1.5, 4); // duración variable
-
-      path.style.transition = `transform ${duration}s ease-in-out`;
-      path.style.transform = `translate(${dx}px, ${dy}px) rotate(${angle}deg) scale(${scale})`;
-    });
-  }
-
-  window.onload = () => {
-    animatePaths();
-    setInterval(animatePaths, 4000); // animación cada 4s
-  };
-</script>
-
+    const rand=(a,b)=>Math.random()*(b-a)+a;
+    function animatePaths(){
+      document.querySelectorAll('#dynamic-map path').forEach(p=>{
+        const dx=rand(-200,200), dy=rand(-200,200), angle=rand(-60,60), scale=rand(0.85,1.15), dur=rand(1.6,3.6);
+        p.style.transition=`transform ${dur}s var(--ease)`;
+        p.style.transform=`translate(${dx}px,${dy}px) rotate(${angle}deg) scale(${scale})`;
+      });
+    }
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      window.addEventListener('load', ()=>{ animatePaths(); setInterval(animatePaths,4000); }, {once:true});
+    }
+  </script>
 </body>
 </html>

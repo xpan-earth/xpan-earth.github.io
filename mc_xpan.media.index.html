@@ -1,310 +1,218 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan — media index optimizado final</title>
+
+  <!-- perf / conexiones preservadas -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+  <meta http-equiv="Permissions-Policy" content="unoptimized-images=(), oversized-images=()"/>
+
   <style>
-    body { margin:0; background:#fff; font-family:'Times New Roman',serif; color:#000; overflow-x:hidden; }
-    header { position:fixed; top:1rem; left:1rem; z-index:50; display:flex; align-items:center; gap:1rem; }
-    header img { width:50px; height:auto; display:block; }
+    /* ===== tokens post-tech / defense-ops ===== */
+    :root{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#151A1F; --b1:1px solid var(--line);
+      --pad:clamp(16px,4vw,48px); --header-h:64px;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --sheet-w:min(720px,92vw); --sheet-h:clamp(55vh,78vh,88vh);
+      --gap:clamp(12px,2.5vmin,20px); --rad:16px; --shadow:0 8px 32px rgba(0,0,0,.22);
+      --panel-dark:rgba(12,13,15,.55); --panel-light:rgba(255,255,255,.86);
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#DDE3EA; --line-weak:#EDF1F6; }
+    }
 
-    .menu-container { position:relative; z-index:60; }
-    .menu-button {
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s var(--ease)}
+    a:hover{border-bottom-color:var(--accent)}
+    img,video{display:block;width:100%;height:auto;object-fit:contain;background:transparent}
+
+    /* ===== header ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad); right:var(--pad); z-index:50;
+      height:var(--header-h); display:flex; align-items:center; gap:1rem; justify-content:space-between;
+    }
+    header img{ width:50px; height:auto; display:block; filter:invert(1) brightness(1.2) contrast(1.1) }
+    @media (prefers-color-scheme:light){ header img{ filter:none; mix-blend-mode:normal } }
+
+    /* ===== menú ===== */
+    .menu-container{ position:relative; z-index:60 }
+    .menu-button{
       display:flex; flex-direction:column; justify-content:center; align-items:center;
-      width:24px; height:24px;
-      cursor:pointer;
-      background:rgba(255,255,255,0.85);
-      border:1px solid #000;
-      padding:0.3rem;
-      transform-origin:center;
-      transition:transform 0.35s ease, background 0.25s ease;
-      position:relative;
+      width:26px; height:26px; cursor:pointer; background:var(--panel-dark);
+      border:var(--b1); padding:.3rem; transform-origin:center;
+      transition:transform .35s var(--ease), background .25s var(--ease);
     }
-    .menu-button:hover { background:#000; }
-    .menu-button span {
-      display:block;
-      width:2px;
-      height:12px;
-      background:#000;
-      margin:1px 0;
-      transition:background 0.25s ease;
+    @media (prefers-color-scheme:light){ .menu-button{ background:var(--panel-light) } }
+    .menu-button span{ display:block; width:2px; height:12px; background:var(--fg); margin:1px 0; transition:background .25s var(--ease) }
+    .menu-button.active{ transform:rotate(90deg) }
+    .menu-options{
+      position:absolute; top:120%; left:0; display:none; flex-direction:column;
+      border:var(--b1); background:var(--panel-dark); min-width:160px; box-shadow:var(--shadow);
+      animation:fadeDown .28s var(--ease) forwards; backdrop-filter:blur(8px) saturate(120%); -webkit-backdrop-filter:blur(8px) saturate(120%);
     }
-    .menu-button:hover span { background:#fff; }
-    .menu-button.active { transform: rotate(90deg); }
-    .menu-options {
-      position:absolute;
-      top:120%;
-      left:0;
-      display:none;
-      flex-direction:column;
-      border:1px solid #000;
-      background:rgba(255,255,255,0.95);
-      min-width:140px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.1);
-      animation:fadeDown 0.3s ease forwards;
+    @media (prefers-color-scheme:light){ .menu-options{ background:var(--panel-light) } }
+    .menu-options button{
+      font:600 .85rem/1 "Inter",system-ui; padding:.5rem .8rem; border:0; background:transparent; text-align:left; cursor:pointer; color:var(--fg);
+      transition:background .2s var(--ease);
     }
-    .menu-options button {
-      font-family:'Times New Roman',serif;
-      font-size:0.85rem;
-      padding:0.4rem 0.8rem;
-      border:none;
-      background:transparent;
-      text-align:left;
-      cursor:pointer;
-      transition:all 0.25s ease;
+    .menu-options button:hover{ background:rgba(24,96,255,.10) }
+    @keyframes fadeDown{ from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:translateY(0)} }
+
+    /* ===== grid masonry ===== */
+    .grid{ column-count:5; column-gap:.5rem; padding:calc(var(--header-h) + 32px) .5rem 3rem }
+    @media(max-width:1600px){.grid{column-count:6}}
+    @media(max-width:1200px){.grid{column-count:4}}
+    @media(max-width:992px){ .grid{column-count:4} }
+    @media(max-width:600px){ .grid{column-count:3} }
+
+    .media-item{ break-inside:avoid; margin:0 0 .5rem; position:relative; cursor:pointer; opacity:0; transition:opacity .5s var(--ease) }
+    .media-item.visible{ opacity:1 }
+    .caption{
+      position:absolute; inset:auto 0 0 0; font-size:clamp(.62rem,2vw,.85rem);
+      padding:.25rem .4rem; background:rgba(0,0,0,.55); color:#fff; opacity:0; transition:opacity .25s var(--ease); pointer-events:none;
     }
-    .menu-options button:hover { background:#000; color:#fff; }
+    .media-item:hover .caption{ opacity:1 }
 
-    @keyframes fadeDown {
-      from { opacity:0; transform:translateY(-5px); }
-      to { opacity:1; transform:translateY(0); }
+    /* loader flotante */
+    #floating-loader{
+      position:fixed; bottom:1rem; right:1rem; background:rgba(0,0,0,.7); color:#fff;
+      font:600 .7rem/1 "Inter",system-ui; padding:.4rem .6rem; border-radius:6px; opacity:0; transition:opacity .3s var(--ease);
+      pointer-events:none; z-index:200;
     }
+    #floating-loader.visible{ opacity:1 }
 
-    .grid { 
-      column-count: 5;
-      column-gap: 0.5rem;
-      padding: 7rem 0.5rem 3rem;
+    /* hints rendimiento */
+    #media-grid{ contain:content }
+    .media-item{ content-visibility:auto; contain-intrinsic-size:300px 200px; will-change:opacity }
+
+    /* ===== info panel (sheet/modal) ===== */
+    #info-panel[hidden]{ display:none }
+    #info-panel{ position:fixed; inset:0; z-index:999; display:grid; place-items:end center }
+    .info-backdrop{ position:absolute; inset:0; background:var(--panel-dark); backdrop-filter:saturate(140%) blur(10px); -webkit-backdrop-filter:saturate(140%) blur(10px) }
+    @media (prefers-color-scheme:light){ .info-backdrop{ background:var(--panel-light) } }
+    .info-sheet{
+      position:relative; width:100%; max-width:var(--sheet-w); height:var(--sheet-h);
+      margin:env(safe-area-inset-top) auto env(safe-area-inset-bottom);
+      background:rgba(0,0,0,.28); border-radius:var(--rad) var(--rad) 0 0; box-shadow:var(--shadow);
+      display:flex; flex-direction:column; translate:0 8%; opacity:0; transition:translate .28s var(--ease), opacity .2s var(--ease); border:var(--b1);
     }
-    @media(max-width:1600px){.grid{column-count:6;}}
-    @media(max-width:1200px){.grid{column-count:4;}}
-    @media(max-width:992px){.grid{column-count:4;}}
-    @media(max-width:600px){.grid{column-count:3;}}
-
-    .media-item {
-      break-inside: avoid;
-      margin-bottom: 0.5rem;
-      position: relative;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.5s ease;
+    @media (prefers-color-scheme:light){ .info-sheet{ background:rgba(255,255,255,.65) } }
+    @media(min-width:992px){
+      #info-panel{ place-items:center }
+      .info-sheet{ border-radius:var(--rad); height:auto; max-height:min(84vh,980px) }
     }
-    .media-item.visible { opacity:1; }
+    #info-panel.active .info-sheet{ translate:0 0; opacity:1 }
+    .info-header{ display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap)*.85) var(--gap); border-bottom:var(--b1) }
+    #info-title{ margin:0; font:700 clamp(18px,2.4vmin,24px)/1.2 "Inter",system-ui }
+    .info-body{ padding:var(--gap); overflow:auto; overscroll-behavior:contain; font:400 clamp(14px,2.1vmin,17px)/1.55 "Inter",system-ui }
+    .info-body p{ margin:.6em 0 }
+  </style>
 
-    .media-item img, .media-item video { 
-      width:100%; 
-      height:auto; 
-      display:block; 
-      object-fit:contain;
-      background:#f5f5f5;
-    }
-
-        .caption {
-      position:absolute;
-      bottom:0; left:0; right:0;
-      font-size:clamp(0.6rem, 2vw, 0.85rem);
-      padding:0.25rem 0.4rem;
-      background:rgba(0,0,0,0.6);
-      color:#fff;
-      opacity:0;
-      transition:opacity 0.3s;
-    }
-
-    .media-item:hover .caption { opacity:1; }
-
-
-    #floating-loader {
-      position: fixed; bottom: 1rem; right: 1rem;
-      background: rgba(0,0,0,0.7); color: #fff;
-      font-size: 0.7rem; padding: 0.4rem 0.6rem;
-      border-radius: 4px; opacity: 0; transition: opacity 0.3s;
-      pointer-events: none; z-index: 200;
-    }
-    #floating-loader.visible { opacity: 1; }
-
-    #media-grid{contain:content;}
-      .media-item{content-visibility:auto; contain-intrinsic-size:300px 200px; will-change:opacity}
-      .caption{pointer-events:none}
-
-      :root{
-  --sheet-w:min(720px, 92vw);
-  --sheet-h:clamp(55vh, 78vh, 88vh);
-  --gap:clamp(12px, 2.5vmin, 20px);
-  --rad:16px;
-  --shadow:0 8px 32px rgba(0,0,0,.18);
-  --backdrop:rgba(255,255,255,.65);
-}
-
-#info-panel[hidden]{display:none}
-#info-panel{
-  position:fixed; inset:0; z-index:999;
-  display:grid; place-items:end center;  /* bottom-sheet por defecto móvil */
-}
-.info-backdrop{
-  position:absolute; inset:0;
-  background:var(--backdrop);
-  backdrop-filter:saturate(140%) blur(10px);
-}
-@media (prefers-reduced-transparency: reduce){
-  .info-backdrop{ backdrop-filter:none }
-}
-
-.info-sheet{
-  position:relative;
-  width:100%;
-  max-width:var(--sheet-w);
-  height:var(--sheet-h);
-  margin:env(safe-area-inset-top) auto env(safe-area-inset-bottom);
-  background:#00000032; border-radius:var(--rad) var(--rad) 0 0;
-  box-shadow:var(--shadow);
-  display:flex; flex-direction:column;
-  translate:0 8%;
-  opacity:0;
-  transition:translate .28s cubic-bezier(.22,.61,.36,1), opacity .2s;
-}
-
-/* Desktop: modal centrado */
-@media (min-width: 992px){
-  #info-panel{ place-items:center }
-  .info-sheet{
-    border-radius:var(--rad);
-    height:auto; max-height:min(84vh, 980px);
-  }
-}
-
-#info-panel.active .info-sheet{ translate:0 0; opacity:1 }
-#info-panel.active .info-backdrop{ opacity:1 }
-
-.info-header{
-  display:flex; align-items:center; gap:var(--gap);
-  padding:calc(var(--gap) * 0.85) var(--gap);
-  border-bottom:1px solid rgba(0,0,0,.08);
-}
-#info-title{
-  margin:0; line-height:1.2;
-  font-size:clamp(18px, 2.4vmin, 24px);
-  font-weight:600; font-kerning:normal;
-}
-.close-btn{
-  margin-left:auto; border:0; background:transparent; cursor:pointer;
-  font-size:22px; line-height:1; padding:.25rem .4rem; border-radius:10px;
-}
-.close-btn:focus-visible{ outline:2px solid #000; outline-offset:2px }
-
-.info-body{
-  padding:var(--gap);
-  overflow:auto; overscroll-behavior:contain;
-  line-height:1.55;
-  font-size:clamp(14px, 2.1vmin, 17px);
-  white-space:normal; word-break:break-word; hyphens:auto;
-}
-.info-body p{ margin:.5em 0 }
-.info-body pre{ white-space:pre-wrap; word-break:break-word }
-
-
-  /* panel visibility safety */
-#info-panel{ display:none !important; }
-#info-panel.active{ display:grid !important; }
-
-
-
-</style>
-
-  <script 
-  src="../assets/js/video-autoplay-mobile.js" defer></script>
-<script src="/assets/js/media-proxy.js" defer></script>
-<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
-<link rel="preconnect" href="https://attachments.are.na" crossorigin>
-<link rel="preconnect" href="https://images.weserv.nl" crossorigin>
-<meta http-equiv="Permissions-Policy" content="unoptimized-images=(), oversized-images=()">
-
+  <!-- utils existentes -->
+  <script src="../assets/js/video-autoplay-mobile.js" defer></script>
+  <script src="/assets/js/media-proxy.js" defer></script>
 </head>
 <body>
-<header>
-  <a href="https://xpan.earth" target="_blank"><img src="xpan.svg" alt="xpan"></a>
-  <div class="menu-container">
-    <div class="menu-button" id="menu-btn">
-      <span></span><span></span><span></span>
+  <header>
+    <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high" decoding="async"/></a>
+
+    <div class="menu-container">
+      <div class="menu-button" id="menu-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-options"><span></span><span></span><span></span></div>
+      <div class="menu-options" id="menu-options">
+        <button data-sort="shuffle">aleatorio</button>
+      </div>
     </div>
-    <div class="menu-options" id="menu-options">
-      <button data-sort="shuffle">aleatorio</button>
+  </header>
+
+  <main class="grid" id="media-grid"></main>
+  <div id="floating-loader">cargando…</div>
+
+  <aside id="info-panel" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
+    <div class="info-backdrop" data-close></div>
+    <div class="info-sheet" role="document">
+      <header class="info-header"><h2 id="info-title"></h2></header>
+      <div class="info-body" id="info-content"></div>
     </div>
-  </div>
-</header>
+  </aside>
 
-<main class="grid" id="media-grid"></main>
-<div id="floating-loader">Cargando…</div>
+  <!-- ========= LÓGICA ÚNICA NORMALIZADA ========= -->
+  <script>
+  /* Menú */
+  const menuBtn = document.getElementById('menu-btn');
+  const menuOptions = document.getElementById('menu-options');
+  menuBtn.addEventListener('click', ()=>{
+    const open = menuOptions.style.display === 'flex';
+    menuOptions.style.display = open ? 'none' : 'flex';
+    menuBtn.classList.toggle('active', !open);
+    menuBtn.setAttribute('aria-expanded', String(!open));
+  });
+  document.addEventListener('click', e=>{
+    if(!menuOptions.contains(e.target) && !menuBtn.contains(e.target)){
+      menuOptions.style.display='none';
+      menuBtn.classList.remove('active');
+      menuBtn.setAttribute('aria-expanded','false');
+    }
+  });
 
-<aside id="info-panel" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
-  <div class="info-backdrop" data-close></div>
-  <div class="info-sheet" role="document">
-    <header class="info-header">
-      <h2 id="info-title"></h2>
-    </header>
-    <div class="info-body" id="info-content"></div>
-  </div>
-</aside>
+  /* Info panel */
+  const infoPanel   = document.getElementById('info-panel');
+  const infoContent = document.getElementById('info-content');
+  const infoTitle   = document.getElementById('info-title');
 
-
-
-
-
-<script>
-/* ==== Menú ==== */
-const menuBtn = document.getElementById('menu-btn');
-const menuOptions = document.getElementById('menu-options');
-menuBtn.addEventListener('click', ()=>{
-  const isOpen = menuOptions.style.display === 'flex';
-  menuOptions.style.display = isOpen ? 'none' : 'flex';
-  menuBtn.classList.toggle('active', !isOpen);
-});
-document.addEventListener('click', e=>{
-  if(!menuOptions.contains(e.target) && !menuBtn.contains(e.target)){
-    menuOptions.style.display='none';
-    menuBtn.classList.remove('active');
+  function lockScroll(){
+    const y = window.scrollY;
+    document.body.dataset.lockY = y;
+    document.body.style.position='fixed';
+    document.body.style.top = `-${y}px`;
+    document.body.style.left='0'; document.body.style.right='0';
+    document.body.style.width='100%';
   }
-});
+  function unlockScroll(){
+    const y = +(document.body.dataset.lockY||0);
+    document.body.style.position=''; document.body.style.top=''; document.body.style.left=''; document.body.style.right=''; document.body.style.width='';
+    delete document.body.dataset.lockY; window.scrollTo(0,y);
+  }
+  function closePanel(){
+    infoPanel.classList.remove('active');
+    document.removeEventListener('keydown', onKey);
+    setTimeout(()=>{ infoPanel.hidden = true; unlockScroll(); }, 220);
+  }
+  function onKey(e){ if(e.key==='Escape') closePanel(); }
 
-/* ==== Media Grid & Info Panel ==== */
-const mediaGrid = document.getElementById('media-grid');
-const loader = document.getElementById('floating-loader');
+  // ÚNICA API pública para abrir panel
+  window.openInfo = function(p){
+    infoTitle.textContent = p?.title || '';
+    const meta = p?.meta ? `<p><strong>${p.meta}</strong></p>` : '';
+    const desc = p?.description ? `<p>${p.description}</p>` : '';
+    infoContent.innerHTML = `${meta}${desc}`;
+    infoPanel.hidden = false; lockScroll();
+    requestAnimationFrame(()=> infoPanel.classList.add('active'));
+    document.addEventListener('keydown', onKey);
+  };
+  // cerrar por fondo/click externo
+  infoPanel.addEventListener('click', (e)=>{
+    const sheet = infoPanel.querySelector('.info-sheet');
+    if(!sheet.contains(e.target)) closePanel();
+  }, true);
+  infoPanel.querySelector('.info-backdrop')?.addEventListener('click', closePanel);
+  </script>
 
-/* ==== Info Panel (abrir/cerrar) ==== */
-const infoPanel   = document.getElementById('info-panel');
-const infoContent = document.getElementById('info-content');
-const infoTitle   = document.getElementById('info-title');
-
-function lockScroll(){
-  const y = window.scrollY;
-  document.body.dataset.lockY = y;
-  document.body.style.position='fixed';
-  document.body.style.top = `-${y}px`;
-  document.body.style.width='100%';
-}
-function unlockScroll(){
-  const y = +(document.body.dataset.lockY||0);
-  document.body.style.position='';
-  document.body.style.top='';
-  document.body.style.width='';
-  delete document.body.dataset.lockY;
-  window.scrollTo(0,y);
-}
-
-function closePanel(){
-  infoPanel.classList.remove('active');
-  document.removeEventListener('keydown', onKey);
-  setTimeout(()=>{ infoPanel.hidden = true; unlockScroll(); }, 220);
-}
-function onKey(e){ if(e.key==='Escape') closePanel(); }
-
-/* ABRIR: expone función global */
-window.openInfo = function(p){
-  infoTitle.textContent = p?.title || '';
-  const meta = p?.meta ? `<p><strong>${p.meta}</strong></p>` : '';
-  const desc = p?.description ? `<p>${p.description}</p>` : '';
-  infoContent.innerHTML = `${meta}${desc}`;
-  infoPanel.hidden = false;
-  lockScroll();
-  requestAnimationFrame(()=> infoPanel.classList.add('active'));
-  sheet.setAttribute('tabindex','-1');
-  sheet.focus({preventScroll:true});
-  document.addEventListener('keydown', onKey);
-};
-
-
-
-
-
+  <!-- ===== dataset original PRESERVADO ===== -->
+  <script>
+  
 const mediaProjects = [
      {
     "title": "6ch_r",
@@ -1457,409 +1365,80 @@ donde lenguajes históricamente periféricos ocuparon el núcleo simbólico del 
       
     ];
 
+  </script>
 
-let allMedia = [];
-mediaProjects.forEach(p => {
-  p.media.forEach(url => {
-    if(!url.endsWith('.pdf')){ 
-      allMedia.push({url, title:p.title, meta:p.meta, desc:p.description});
-    }
-  });
-});
+  <script>
+  /* Render y shuffle normalizado (sin duplicados) */
+  const mediaGrid = document.getElementById('media-grid');
+  const loader    = document.getElementById('floating-loader');
 
-let used = new Set();
-let currentBatch = 0;
-const batchSize = 25;
+  const allMedia = [];
+  mediaProjects.forEach(p => (p.media||[]).forEach(url => { if(!/\.pdf(\?|$)/i.test(url)) allMedia.push({url, p}); }));
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+  let used=new Set(), currentBatch=0; const batchSize=25;
+
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } }
+
+  function applySort(mode){
+    mediaGrid.innerHTML=''; used.clear();
+    if(mode==='shuffle') shuffle(allMedia);
+    currentBatch=0; loadBatch();
   }
-}
 
-function applySort(mode){
-  mediaGrid.innerHTML = '';
-  used.clear();
-  if(mode === 'shuffle') shuffle(allMedia);
-  currentBatch = 0;
-  loadBatch();
-}
+  const ioItem=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const el=entry.target;
+        const media=el.querySelector('img,video');
+        const src=media.getAttribute('data-src');
+        if(src){ media.src=src; media.removeAttribute('data-src'); if(media.tagName==='VIDEO'){ media.play().catch(()=>{});} }
+        el.classList.add('visible');
+        ioItem.unobserve(el);
+      }
+    });
+  },{rootMargin:'200px'});
 
-function loadBatch(preloadOnly=false){
-  if(!preloadOnly) loader.classList.add('visible');
-  const start = currentBatch*batchSize;
-  const end = start+batchSize;
-  const batch = allMedia.slice(start,end);
-  batch.forEach(m=>{
-    if(used.has(m.url)) return;
-    used.add(m.url);
-    const item = document.createElement('div');
-    item.className='media-item';
-    const ext = m.url.split('.').pop().split('?')[0].toLowerCase();
-    if(['mp4','mov','webm'].includes(ext)){
-      item.innerHTML = `<video muted playsinline preload="none" data-src="${m.url}"></video>
-      <div class="caption">${m.title}</div>`;
-    } else {
-      item.innerHTML = `<img loading="lazy" data-src="${m.url}"/><div class="caption">${m.title}</div>`;
-    }
-    item.onclick=()=>{
-      infoContent.textContent=`${m.title}\n${m.meta}\n\n${m.desc}`;
-      infoPanel.classList.add('active');
-      const vid = item.querySelector('video');
-      if(vid){
-        vid.muted = false;
-        vid.play();
-        currentVideo = vid;
-      } else currentVideo = null;
-    };
-    mediaGrid.appendChild(item);
-    observer.observe(item);
-  });
-  currentBatch++;
-  if(!preloadOnly) loader.classList.remove('visible');
-}
-
-/* Lazy loading */
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const el = entry.target;
-      const media = el.querySelector('img,video');
-      const src = media.getAttribute('data-src');
-      if(src){ media.src = src; media.removeAttribute('data-src'); }
-      el.classList.add('visible');
-      observer.unobserve(el);
-    }
-  });
-},{rootMargin:'200px'});
-
-/* Infinite scroll con preload del siguiente lote */
-window.addEventListener('scroll', ()=>{
-  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 800;
-  if(nearBottom && currentBatch*batchSize < allMedia.length){
-    loadBatch();
-    // Preload anticipado siguiente lote
-    setTimeout(()=>{ if(currentBatch*batchSize < allMedia.length) loadBatch(true); },500);
-  }
-});
-
-/* Inicial */
-applySort('shuffle');
-menuOptions.querySelectorAll('button').forEach(btn=>{
-  btn.addEventListener('click', ()=>applySort(btn.dataset.sort));
-});
-</script>
-<script>
-(() => {
-  const panel = document.getElementById('info-panel');
-  const sheet  = panel.querySelector('.info-sheet');
-  const bodyEl = document.getElementById('info-content');
-  const titleEl= document.getElementById('info-title');
-
-  // abrir con contenido
-  window.openInfo = function(p){
-    titleEl.textContent = p.title || '';
-    // admite strings largos sin cortar
-    const meta = p.meta ? `<p><strong>${p.meta}</strong></p>` : '';
-    const desc = p.description ? `<p>${p.description}</p>` : '';
-    bodyEl.innerHTML = `${meta}${desc}`;
-    lockScroll(true);
-    panel.hidden = false;
-    // forzar reflow antes de activar animación
-    requestAnimationFrame(()=> panel.classList.add('active'));
-    // foco accesible
-    sheet.setAttribute('tabindex','-1');
-    sheet.focus({preventScroll:true});
-    document.addEventListener('keydown', onKey);
-  };
-
-  function closePanel(){
-    panel.classList.remove('active');
-    document.removeEventListener('keydown', onKey);
-    // espera fin de transición
-    setTimeout(()=>{ panel.hidden = true; lockScroll(false); }, 220);
-  }
-  function onKey(e){ if(e.key === 'Escape') closePanel(); }
-
-
-
-  // bloqueo de scroll de documento
-  const scrollState = { top:0, left:0 };
-  function lockScroll(lock){
-    if(lock){
-      scrollState.top = window.scrollY; scrollState.left = window.scrollX;
-      document.documentElement.style.scrollBehavior='auto';
-      document.body.style.position='fixed';
-      document.body.style.top = `-${scrollState.top}px`;
-      document.body.style.left= `0`;
-      document.body.style.right= `0`;
-      document.body.style.width='100%';
+  function makeItem(it){
+    const fig=document.createElement('figure'); fig.className='media-item'; fig.tabIndex=0;
+    const isVideo = /\.(mp4|mov|webm)(\?|$)/i.test(it.url);
+    if(isVideo){
+      const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.loop=true; v.preload='metadata'; v.dataset.src=it.url; fig.appendChild(v);
     }else{
-      document.body.style.position='';
-      document.body.style.top=''; document.body.style.left=''; document.body.style.right=''; document.body.style.width='';
-      window.scrollTo(scrollState.left, scrollState.top);
-      document.documentElement.style.scrollBehavior='';
+      const img=document.createElement('img'); img.decoding='async'; img.loading='lazy'; img.dataset.src=it.url; fig.appendChild(img);
     }
-  }
-})();
-</script>
-<script>(()=>{
-  // usa tu variable global mediaProjects ya definida
-  const WES='https://images.weserv.nl/?url='; const CFG='&q=70&we';
-  const S=[480,960,1600];
-  const toProxy=u=>{
-    if(!/^https?:\/\//.test(u)) return null;
-    const bare=u.replace(/^https?:\/\//,'');
-    return{
-      src:`${WES}${encodeURIComponent(bare)}&w=${S[1]}${CFG}`,
-      srcset:`${WES}${encodeURIComponent(bare)}&w=${S[0]}${CFG} ${S[0]}w,`+
-             `${WES}${encodeURIComponent(bare)}&w=${S[1]}${CFG} ${S[1]}w,`+
-             `${WES}${encodeURIComponent(bare)}&w=${S[2]}${CFG} ${S[2]}w`,
-    };
-  };
-
-
-  // a) aplanar medios
-  const flat=[];
-  for(const p of mediaProjects){ for(const m of p.media) flat.push({p,url:m}); }
-
-  // b) render de un item
-  function renderItem(it){
-    const el=document.createElement('figure');
-    el.className='media-item'; el.tabIndex=0;
-
-    if(/\.(mp4|mov|webm)(\?|$)/i.test(it.url)){
-      const v=document.createElement('video');
-      v.muted=true; v.playsInline=true; v.loop=true; v.preload='metadata';
-      v.dataset.src=it.url; v.className='lazy-media';
-      el.appendChild(v);
-    }else{
-      const img=document.createElement('img');
-      img.decoding='async'; img.loading='lazy';
-      const prox=toProxy(it.url);
-      if(prox){ img.src=prox.src; img.srcset=prox.srcset; img.sizes='(min-width:992px) 20vw, 90vw'; }
-      else{ img.src=it.url; }
-      img.className='lazy-media';
-      el.appendChild(img);
-    }
-
-    const cap=document.createElement('figcaption');
-    cap.className='caption';
-    cap.textContent=`${it.p.title} — ${it.p.meta}`;
-    el.appendChild(cap);
-
-    el.addEventListener('click',()=>window.openInfo(it.p));
-    return el;
+    const cap=document.createElement('figcaption'); cap.className='caption'; cap.textContent=`${it.p.title} — ${it.p.meta}`; fig.appendChild(cap);
+    fig.addEventListener('click', ()=> window.openInfo(it.p));
+    return fig;
   }
 
-  // c) pintura incremental
-  let i=0;
-  const CHUNK=24;
-  function step(deadline){
-    if(i>=flat.length) return;
-    loader?.classList.add('visible');
-    let drawn=0;
+  function loadBatch(preloadOnly=false){
+    if(!preloadOnly) loader.classList.add('visible');
+    const start=currentBatch*batchSize, end=start+batchSize, batch=allMedia.slice(start,end);
     const frag=document.createDocumentFragment();
-    while(deadline.timeRemaining()>8 && i<flat.length && drawn<CHUNK){
-      frag.appendChild(renderItem(flat[i++])); drawn++;
-    }
+    batch.forEach(it=>{
+      if(used.has(it.url)) return; used.add(it.url);
+      const node=makeItem(it); frag.appendChild(node); ioItem.observe(node);
+    });
     mediaGrid.appendChild(frag);
-    if(i<flat.length) requestIdleCallback(step);
-    else setTimeout(()=>loader?.classList.remove('visible'),150);
+    currentBatch++; if(!preloadOnly) loader.classList.remove('visible');
   }
-  requestIdleCallback(step);
 
-  // d) IO para play/pause y revelado
-  const vis=new IntersectionObserver(es=>{
-    for(const e of es){
-      const v=e.target.querySelector('video');
-      if(e.isIntersecting){
-        e.target.classList.add('visible');
-        if(v && !v.src){ v.src=v.dataset.src; v.play().catch(()=>{}); }
-      }else if(v){ v.pause(); v.currentTime=0; }
-    }
-  },{rootMargin:'200px 0px 200px 0px', threshold:0.05});
-
-  const mo=new MutationObserver(muts=>{
-    for(const m of muts){
-      m.addedNodes.forEach(n=>{
-        if(n.nodeType===1 && n.classList.contains('media-item')) vis.observe(n);
-      });
+  // infinite scroll + preload siguiente lote
+  window.addEventListener('scroll', ()=>{
+    const nearBottom = innerHeight + scrollY >= document.body.offsetHeight - 800;
+    if(nearBottom && currentBatch*batchSize < allMedia.length){
+      loadBatch();
+      setTimeout(()=>{ if(currentBatch*batchSize < allMedia.length) loadBatch(true); }, 500);
     }
   });
-  mo.observe(mediaGrid,{childList:true});
-})();
-</script>
 
-<script>
-function reshuffle(){                    // ignoramos 'kind'
-  flat.sort(() => Math.random() - 0.5);
-  mediaGrid.innerHTML = '';
-  i = 0;
-  requestIdleCallback(step);
-}
-
-// click solo acepta "aleatorio"
-document.getElementById('menu-options')?.addEventListener('click', e => {
-  const btn = e.target.closest('button[data-sort="shuffle"]');
-  if (!btn) return;
-  reshuffle();
-});
-
-// arranque en aleatorio al cargar
-window.addEventListener('DOMContentLoaded', reshuffle);
-</script>
-
-
-
-
-
-<!-- === Info Panel: una sola implementación global === -->
-<script>
-window.addEventListener('DOMContentLoaded', () => {
-  const panel   = document.getElementById('info-panel');
-  if (!panel) { console.error('No existe #info-panel en el DOM'); return; }
-  const sheet   = panel.querySelector('.info-sheet');
-  const bodyEl  = document.getElementById('info-content');
-  const titleEl = document.getElementById('info-title');
-
-  function lockScroll(){
-    const y = window.scrollY;
-    document.body.dataset.lockY = y;
-    document.body.style.position='fixed';
-    document.body.style.top = `-${y}px`;
-    document.body.style.left='0';
-    document.body.style.right='0';
-    document.body.style.width='100%';
-  }
-  function unlockScroll(){
-    const y = +(document.body.dataset.lockY || 0);
-    document.body.style.position=''; document.body.style.top='';
-    document.body.style.left=''; document.body.style.right='';
-    document.body.style.width=''; delete document.body.dataset.lockY;
-    window.scrollTo(0, y);
-  }
-  function closePanel(){
-    panel.classList.remove('active');
-    document.removeEventListener('keydown', onKey);
-    setTimeout(()=>{ panel.hidden = true; unlockScroll(); }, 220);
-  }
-  function onKey(e){ if(e.key === 'Escape') closePanel(); }
-
-  // Única API pública
-  window.openInfo = function(p){
-    titleEl.textContent = p?.title || '';
-    const meta = p?.meta ? `<p><strong>${p.meta}</strong></p>` : '';
-    const desc = p?.description ? `<p>${p.description}</p>` : '';
-    bodyEl.innerHTML = `${meta}${desc}`;
-    panel.hidden = false;
-    lockScroll();
-    requestAnimationFrame(()=> panel.classList.add('active'));
-    sheet.setAttribute('tabindex','-1');
-    sheet.focus({preventScroll:true});
-    document.addEventListener('keydown', onKey);
-  };
-});
-</script>
-<script>
-  
-window.addEventListener('DOMContentLoaded', () => {
-  const infoPanel = document.getElementById('info-panel');
-  const infoSheet = infoPanel.querySelector('.info-sheet');
-
-
-  function closePanel(){
-    infoPanel.classList.remove('active');
-    document.removeEventListener('keydown', onKey);
-    setTimeout(()=>{ infoPanel.hidden = true; }, 200);
-  }
-  function onKey(e){ if(e.key === 'Escape') closePanel(); }
-
-  // cierra tocando cualquier área fuera de la hoja
-  infoPanel.addEventListener('click', (e)=>{
-    if (!infoSheet.contains(e.target)) closePanel();
-  }, true);
-
-  // evita que clics dentro de la hoja la cierren
-  infoSheet.addEventListener('click', (e)=> {e.stopPropagation();
-});
-
-function fisherYatesShuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-});
-</script>
-
-<script>
-  const backdrop = infoPanel.querySelector('.info-backdrop');
-  const sheet = infoPanel.querySelector('.info-sheet');
-
-  // cerrar al hacer click en el fondo oscuro
-  backdrop.addEventListener('click', () => {
-    infoPanel.hidden = true;
+  // menú → aleatorio
+  document.getElementById('menu-options')?.addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-sort="shuffle"]'); if(!btn) return; applySort('shuffle');
   });
 
-  // cerrar al hacer click fuera de la hoja
-  infoPanel.addEventListener('click', (e) => {
-    if (!sheet.contains(e.target)) infoPanel.hidden = true;
-  });
-
-  // cerrar con ESC
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') infoPanel.hidden = true;
-  });
-</script>
-<script>
-(() => {
-  const panel = document.getElementById('info-panel');
-  if (!panel || panel.dataset.closeBound) return;   // evita doble enlace
-
-  const sheet    = panel.querySelector('.info-sheet');
-  const backdrop = panel.querySelector('.info-backdrop');
-
-  function close() {
-    panel.classList.remove('active');
-    setTimeout(() => { panel.hidden = true; }, 220);
-  }
-
-  // click en fondo oscuro
-  backdrop?.addEventListener('click', close);
-
-  // click en cualquier parte fuera de la hoja
-  panel.addEventListener('click', (e) => {
-    if (!sheet.contains(e.target)) close();
-  });
-
-  // no cierres al click dentro de la hoja
-  sheet.addEventListener('click', (e) => e.stopPropagation());
-
-  // ESC
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') close();
-  });
-
-  panel.dataset.closeBound = '1';
-})();
-
-</script>
-<script>
-(() => {
-  const menu = document.getElementById('menu-options');
-  if (!menu) return;
-
-  // listener único y seguro
-  menu.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-sort="shuffle"]');
-    if (!btn) return;
-    if (typeof reshuffle === 'function') reshuffle();
-  }, { once: false });
-})();
-</script>
-
+  // arranque
+  applySort('shuffle');
+  </script>
 </body>
 </html>

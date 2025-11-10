@@ -25,11 +25,13 @@
       -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden}
     a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
     a:hover{border-bottom-color:var(--accent)}
-    img,video,iframe{display:block; max-width:100%; height:auto; background:transparent}
+    /* no borde global a todas las imágenes */
+    /* img,video,iframe,object comparten display */
+    img,video,iframe,object{display:block; max-width:100%; height:auto; background:transparent}
 
     /* ===== header + idioma ===== */
     header{position:fixed; top:12px; left:var(--pad-x); z-index:10; height:var(--header-h); display:flex; align-items:center}
-    header img{width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+    header img{width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%); border:none}
     @media (prefers-color-scheme:light){ header img{ filter:none } }
 
     .lang-select{
@@ -56,13 +58,13 @@
     .media{display:flex; flex-direction:column; gap:1rem}
     .gallery{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem}
 
-    /* media chrome */
-    img{border:var(--b1)}
-    video,iframe{border:var(--b1)}
+    /* media chrome: bordes sólo en media/gallery, no en el logo */
+    .gallery img, .media img{border:var(--b1)}
+    video,iframe,object[type="application/pdf"]{border:var(--b1)}
     video{max-height:80vh; background:#000}
     iframe{height:80vh; background:#0C0D0F}
-    /* pdf con <object> */
-    object[type="application/pdf"]{width:100%; height:80vh; border:var(--b1); background:#0C0D0F}
+    object[type="application/pdf"]{width:100%; height:80vh; background:#0C0D0F}
+
     @media (max-width:768px){
       .container{margin:calc(var(--header-h) + 28px) auto 40px}
       .component{padding:0 var(--pad-x)}
@@ -71,11 +73,6 @@
       iframe{height:60vh}
       object[type="application/pdf"]{height:auto; aspect-ratio:4/3}
     }
-
-    /* PDF placeholder button (ligero) */
-    .pdf-ph{display:flex; align-items:center; justify-content:center; gap:.6rem; padding:.9rem 1rem; color:var(--fg);
-      background:transparent; border:var(--b1); cursor:pointer; font:600 .95rem/1 var(--font-ui)}
-    .pdf-ph:hover{border-color:var(--accent)}
   </style>
 
   <!-- util existente preservado -->
@@ -394,7 +391,9 @@
       <img alt="mdl.1 en stool" loading="lazy" decoding="async"
            data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759457/original_092676d62886ca27c30dbcfca9a92bfd.png?1751243832?bc=0"/>
       <video muted loop playsinline preload="none" data-src="https://attachments.are.na/37759561/c66c37e489a52d657a6a70a3e91be586.mp4?1751244494"></video>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759632/f875051f91f7703c7fdb3656a89dccba.pdf?1751244925">abrir plano (pdf)</button>
+      <!-- PDF objeto -->
+      <object type="application/pdf" aria-label="mdl.1 — plano"
+              data="https://attachments.are.na/37759632/f875051f91f7703c7fdb3656a89dccba.pdf?1751244925#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -405,8 +404,10 @@
       <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759662/original_f78ba27ec70089bdefa3950bb8b6aaf7.png?1751244989?bc=0" alt="stools 2"/>
     </div>
     <div class="media">
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759690/87676c8d80c1e2e86b15ee46ef24cc3f.pdf?1751245157">abrir plano 1 (pdf)</button>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759693/80f2ccda9b9e10fe0e12d33a16b4d14a.pdf?1751245187">abrir plano 2 (pdf)</button>
+      <object type="application/pdf" aria-label="stools — plano 1"
+              data="https://attachments.are.na/37759690/87676c8d80c1e2e86b15ee46ef24cc3f.pdf?1751245157#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+      <object type="application/pdf" aria-label="stools — plano 2"
+              data="https://attachments.are.na/37759693/80f2ccda9b9e10fe0e12d33a16b4d14a.pdf?1751245187#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -414,7 +415,8 @@
     <h2>sub.t [subwoofer]</h2>
     <div class="media">
       <video muted loop playsinline preload="none" data-src="https://attachments.are.na/37759700/bcea87da1bdb6db45efef667765959a3.mp4?1751245266"></video>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759717/df93c8e2d34654f12bbf46df541bcd6f.pdf?1751245416">abrir plano (pdf)</button>
+      <object type="application/pdf" aria-label="sub.t — plano"
+              data="https://attachments.are.na/37759717/df93c8e2d34654f12bbf46df541bcd6f.pdf?1751245416#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -427,8 +429,10 @@
         <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759752/original_15321f990bfd63495c7e9bf12ed25678.png?1751245644?bc=0" alt="g2 3"/>
       </div>
       <video muted loop playsinline preload="none" data-src="https://attachments.are.na/37759755/f478e75b0e84d56929fa954c496cc0b0.mp4?1751245656"></video>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759782/cb7dc183f225bf9ef14e70d279485266.pdf?1751245856">abrir plano 1 (pdf)</button>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759754/096c3336e1ac5629d004951005f12930.pdf?1751246413">abrir plano 2 (pdf)</button>
+      <object type="application/pdf" aria-label="g.2 — plano 1"
+              data="https://attachments.are.na/37759782/cb7dc183f225bf9ef14e70d279485266.pdf?1751245856#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+      <object type="application/pdf" aria-label="g.2 — plano 2"
+              data="https://attachments.are.na/37759754/096c3336e1ac5629d004951005f12930.pdf?1751246413#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -436,7 +440,8 @@
     <h2>g.sub [amplificador]</h2>
     <div class="media">
       <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759721/original_611113c84751490aaae1d677fb9bea35.png?1751245479?bc=0" alt="g.sub"/>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759741/af9098fd47a1e2f548fe0b8a6283fddf.pdf?1751245608">abrir plano (pdf)</button>
+      <object type="application/pdf" aria-label="g.sub — plano"
+              data="https://attachments.are.na/37759741/af9098fd47a1e2f548fe0b8a6283fddf.pdf?1751245608#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -447,8 +452,10 @@
       <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759827/original_738e3c799f89a15b4c856de3c9782480.png?1751246255?bc=0" alt="g.8/g.12 2"/>
     </div>
     <div class="media">
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759853/c62e8088256bd68fd4fecdf67c7fc5c4.pdf?1751246413">abrir plano 1 (pdf)</button>
-      <button class="pdf-ph" data-pdf="https://attachments.are.na/37759854/096c3336e1ac5629d004951005f12930.pdf?1751246413">abrir plano 2 (pdf)</button>
+      <object type="application/pdf" aria-label="g.8/g.12 — plano 1"
+              data="https://attachments.are.na/37759853/c62e8088256bd68fd4fecdf67c7fc5c4.pdf?1751246413#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+      <object type="application/pdf" aria-label="g.8/g.12 — plano 2"
+              data="https://attachments.are.na/37759854/096c3336e1ac5629d004951005f12930.pdf?1751246413#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
     </div>
   </div>
 
@@ -467,7 +474,7 @@
     </div>
   </div>
 
-  <!-- ===== idioma + lazy + video control + PDF loader ===== -->
+  <!-- ===== idioma + lazy + video control ===== -->
   <script>
     // idioma
     function setLang(lang){
@@ -497,16 +504,6 @@
       el.appendChild(s); el.dataset.hydrated='1'; el.poster ||= BLANK; el.preload='metadata';
     }
 
-    // fusiona hash con parámetros estándar del visor
-    function tunePdfUrl(u){
-      if(!u) return u;
-      const [base, raw=''] = u.split('#');
-      const sp = new URLSearchParams(raw);
-      const desired = { page:'1', zoom:'page-width', view:'FitH', toolbar:'1', navpanes:'0', statusbar:'0' };
-      for(const k in desired){ if(!sp.has(k)) sp.set(k, desired[k]); }
-      return base + '#' + sp.toString();
-    }
-
     // lazy images + videos
     (function(){
       const io=new IntersectionObserver((entries)=>{
@@ -534,18 +531,6 @@
         }
       },{threshold:.25});
       document.querySelectorAll('video').forEach(v=> ioPlay.observe(v));
-
-      // PDF click-to-load -> ahora <object type="application/pdf"> normalizado
-      document.querySelectorAll('.pdf-ph').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const url=btn.getAttribute('data-pdf'); if(!url) return;
-          const obj=document.createElement('object');
-          obj.type='application/pdf';
-          obj.setAttribute('aria-label','plano pdf');
-          obj.data=tunePdfUrl(url);
-          btn.replaceWith(obj);
-        });
-      });
     })();
 
     // pause videos when tab hidden

@@ -69,18 +69,14 @@
   .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:2rem}
   .gallery img{border:var(--b1); border-radius:0; object-fit:cover; aspect-ratio:4/3}
 
-  /* PDFs: tarjetas */
+  /* PDFs (estilo gdl) */
   .pdf-embed{display:grid; grid-template-columns:1fr; gap:1.5rem; margin-bottom:2rem}
-  .pdf-card{display:flex; flex-direction:column; border:var(--b1); background:transparent}
-  .pdf-card object{width:100%; height:600px; border:none; background:#0C0D0F}
-  .pdf-actions{display:flex; gap:12px; align-items:center; justify-content:space-between; padding:10px 12px; border-top:var(--b0); font:400 .85rem/1.4 var(--font-ui); color:var(--fg-dim)}
-  .pdf-actions a{color:var(--fg); border:1px solid var(--line); padding:6px 10px; text-decoration:none}
-
+  .pdf-embed object{width:100%; height:600px; border:none; background:#0C0D0F}
   @media (max-width:768px){
     .container{margin:calc(var(--header-h) + 28px) auto 40px}
-    .pdf-card object{height:auto; aspect-ratio:4/3}
+    .pdf-embed object{height:auto; aspect-ratio:4/3}
   }
-  @media (prefers-color-scheme:light){ .pdf-card object{ background:#F3F5F7 } }
+  @media (prefers-color-scheme:light){ .pdf-embed object{ background:#F3F5F7 } }
 
   /* Lightbox overlay */
   #xpan-lightbox{position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.55); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%); touch-action:none; overscroll-behavior:contain}
@@ -262,12 +258,12 @@
     <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37741127/original_d4ee291b52ef62e4fa6fb9e7009b3cdb.jpg?1751128078" alt="">
   </div>
 
-  <!-- PDFs en tarjetas -->
-  <div class="pdf-embed" id="pdfGrid">
-    <div class="pdf-card" data-pdf="https://attachments.are.na/37741204/b08b4aaa11613f82dab63add0fb31243.pdf?1751128496"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/37741206/3ddddb271ba39f7c8166b9a09ed892f2.pdf?1751128498"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/37741208/fdf3f5d3046858910bb017541ad48251.pdf?1751128498"></div>
-    <div class="pdf-card" data-pdf="https://attachments.are.na/37741209/b0c0727354a8427909fcd109997f03b8.pdf?1751128501"></div>
+  <!-- PDFs (estilo gdl) -->
+  <div class="pdf-embed">
+    <object type="application/pdf" aria-label="plano 1" data="https://attachments.are.na/37741204/b08b4aaa11613f82dab63add0fb31243.pdf?1751128496#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 2" data="https://attachments.are.na/37741206/3ddddb271ba39f7c8166b9a09ed892f2.pdf?1751128498#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 3" data="https://attachments.are.na/37741208/fdf3f5d3046858910bb017541ad48251.pdf?1751128498#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 4" data="https://attachments.are.na/37741209/b0c0727354a8427909fcd109997f03b8.pdf?1751128501#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
   </div>
 
   <!-- Lightbox -->
@@ -302,7 +298,7 @@
       }
     });
 
-    // PDFs con <object> estilo gdl + fusión de hash y zoom page-width
+    // PDFs con <object> estilo gdl + fusión de hash (si quisieras volver a tarjetas, este bloque deja de ser necesario)
     (function mountPDFs(){
       const PARAMS = { page:'1', zoom:'page-width', view:'FitH', toolbar:'1', navpanes:'0', statusbar:'0' };
       const tune = (u)=>{
@@ -312,6 +308,7 @@
         for(const k in PARAMS){ if(!sp.has(k)) sp.set(k, PARAMS[k]); }
         return base + '#' + sp.toString();
       };
+      /* no hay .pdf-card; no hace nada */
       document.querySelectorAll('.pdf-card').forEach((card,idx)=>{
         const url=card.getAttribute('data-pdf');
         const obj=document.createElement('object');
@@ -319,7 +316,6 @@
         obj.data=tune(url);
         obj.setAttribute('aria-label','plano pdf');
         card.appendChild(obj);
-
         const actions=document.createElement('div'); actions.className='pdf-actions';
         const label=document.createElement('span'); label.textContent=`plano ${idx+1}`;
         const open=document.createElement('a'); open.href=url; open.target='_blank'; open.rel='noopener'; open.textContent='abrir';

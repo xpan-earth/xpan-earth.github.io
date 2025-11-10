@@ -1,176 +1,208 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan — tecnologías de conexión</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow: hidden;
+    /* ===== tokens post-tech / defense-ops ===== */
+    :root{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#151A1F; --b1:1px solid var(--line);
+      --pad:clamp(16px,4vw,48px); --header-h:64px; --maxw:980px;
+      --ease:cubic-bezier(.22,.61,.36,1); --img-w:180px;
+      --stroke-dark:#FFFFFF; /* dark: blanco sobre negro */
+      --stroke-light:#000000; /* light: negro sobre blanco */
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --line:#DDE3EA; --line-weak:#EDF1F6; }
     }
 
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow:hidden;
+    }
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s var(--ease)}
+    a:hover{border-bottom-color:var(--accent)}
+    img{display:block; max-width:100%; height:auto}
+
+    /* ===== header + idioma (normalizado) ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad); z-index:10;
+      height:var(--header-h); display:flex; align-items:center;
+    }
+    header img{ width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%) }
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+
+    .language-selector{
+      position:fixed; top:12px; right:var(--pad); z-index:20;
+      display:flex; gap:8px; text-transform:lowercase;
+    }
+    .language-selector button{
+      appearance:none; background:transparent; border:var(--b1); border-radius:0;
+      padding:.35rem .6rem; cursor:pointer; color:var(--fg-dim);
+      font:600 .9rem/1 "Inter",system-ui; letter-spacing:.2px;
+      transition:color .15s var(--ease), border-color .15s var(--ease), background-color .15s var(--ease);
+    }
+    .language-selector button:hover{ color:var(--fg) }
+    .language-selector button.active{ color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06) }
+
+    /* ===== layout ===== */
+    .main-container{
+      position:relative; z-index:2;
+      max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 56px;
+      padding:0 var(--pad);
+    }
+    h1{ font:700 1.25rem/1.2 "Inter",system-ui; margin:0 0 1rem; text-transform:lowercase }
+    p{ font:400 .98rem/1.65 "Inter",system-ui; margin:0 0 1.25rem }
+
+    /* ===== imágenes flotantes ===== */
+    .image-block{
+      position:absolute; width:var(--img-w); z-index:1; opacity:.1; pointer-events:none;
+      animation-name:pulseOpacity; animation-timing-function:linear; animation-iteration-count:infinite;
+    }
+    .image-block img{ width:100% }
+
+    @keyframes pulseOpacity{
+      0%{opacity:.10} 5%{opacity:.25} 10%{opacity:.45} 15%{opacity:.25} 20%{opacity:.10} 100%{opacity:.10}
     }
 
-    header img {
-      width: 50px;
-      height: auto;
+    /* ===== líneas (tema invertido) ===== */
+    svg#lines{
+      position:fixed; inset:0; width:100vw; height:100vh; z-index:0; pointer-events:none;
     }
+    svg#lines, svg#lines *{ color:var(--stroke-dark); stroke:currentColor; fill:none; stroke-width:1; stroke-opacity:.08 }
+    @media (prefers-color-scheme:light){ svg#lines, svg#lines *{ color:var(--stroke-light) } }
 
-    .main-container {
-      padding: 7rem 2rem 4rem 2rem;
-      max-width: 700px;
-      position: relative;
-      z-index: 2;
-    }
-
-    h1 {
-      font-size: 1.2rem;
-      text-transform: lowercase;
-      margin-bottom: 1.5rem;
-    }
-
-    p {
-      font-size: 0.92rem;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-      text-transform: lowercase;
-    }
-
-    em {
-      font-style: italic;
-    }
-
-    .image-block {
-      position: absolute;
-      width: 180px;
-      height: auto;
-      z-index: 1;
-      opacity: 0.1;
-      pointer-events: none;
-      animation-name: pulseOpacity;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-    }
-
-    .image-block img {
-      width: 100%;
-      display: block;
-    }
-
-    @keyframes pulseOpacity {
-      0%   { opacity: 0.1; }
-      5%   { opacity: 0.25; }
-      10%  { opacity: 0.45; }
-      15%  { opacity: 0.25; }
-      20%  { opacity: 0.1; }
-      100% { opacity: 0.1; }
-    }
-
-    svg#lines {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-    }
+    /* ===== multilenguaje ===== */
+    .lang{ display:none }
+    .lang.active{ display:block }
   </style>
 </head>
 <body>
   <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
+    <a href="https://xpan.earth" aria-label="xpan"><img src="./xpan.svg" alt="xpan" fetchpriority="high" decoding="async"/></a>
   </header>
 
+  <nav class="language-selector" aria-label="selector de idioma" role="tablist">
+    <button type="button" onclick="setLang('es')" class="active" aria-pressed="true" role="tab">es</button>
+    <button type="button" onclick="setLang('en')" aria-pressed="false" role="tab">en</button>
+    <button type="button" onclick="setLang('fr')" aria-pressed="false" role="tab">fr</button>
+    <button type="button" onclick="setLang('jp')" aria-pressed="false" role="tab">jp</button>
+  </nav>
+
+  <!-- líneas entre imágenes -->
   <svg id="lines"></svg>
 
-  <div class="main-container">
-    <h1>tecnologías de conexión</h1>
+  <main class="main-container">
+    <!-- ===== ES ===== -->
+    <section class="lang lang-es active">
+      <h1>tecnologías de conexión</h1>
+      <p>en <em>xpan</em>, las tecnologías de conexión constituyen el plano operativo que habilita existencia, afecto y transmisión. toda conexión implica una forma técnica, también en lo simbólico.</p>
+      <p>más allá del dispositivo, operan como estructuras intermedias entre lo físico, lo sensible y lo lógico: códigos, infraestructuras, arquitecturas de acceso y canales de modulación. cada cable, protocolo, riel y transductor traza una intención relacional en materia.</p>
+      <p>conectar, en <em>xpan</em>, implica tensión creativa. de ahí los artefactos específicos: el archivo funciona como campo en expansión; el sistema de sonido como superficie de vibración; el sitio web como coordenada viva.</p>
+      <p>estas tecnologías se diseñan, desvían o reprograman para abrir condiciones. actúan desde lo mínimo—delay, desfase, eco, deshilvanado de señal—y desde lo estructural—marcos de montaje, mecanismos de suspensión, tipologías móviles. son tecnologías de lo posible.</p>
+      <p>la conectividad formula preguntas de forma: ¿cómo se produce el encuentro?, ¿qué lo habilita?, ¿qué se filtra, amplifica o atenúa? las respuestas son operativas y se encarnan en las tecnologías que sostienen cada activación.</p>
+      <p>cada proyecto de <em>xpan</em> —editorial, sonoro, arquitectónico, digital— incorpora una arqueología tecnológica: un subsuelo que condiciona relaciones, accesos e intensidades, y materializa procesos.</p>
+      <p>las tecnologías de conexión son el motor discreto que hace que algo suceda.</p>
+    </section>
 
-    <p>
-      las tecnologías de conexión no son meramente herramientas auxiliares dentro de un sistema mayor. en el contexto de <em>xpan</em>, son elementos primordiales que moldean la posibilidad misma de existencia, afecto y transmisión. no hay conexión sin una forma de tecnología —ni siquiera en lo simbólico.
-    </p>
+    <!-- ===== EN ===== -->
+    <section class="lang lang-en">
+      <h1>connection technologies</h1>
+      <p>at <em>xpan</em>, connection technologies define the operational plane that enables existence, affect and transmission. every connection entails a technical form, including the symbolic.</p>
+      <p>beyond devices, they act as intermediating structures across the physical, the sensorial and the logical: codes, infrastructures, access architectures and modulation channels. every cable, protocol, rail and transducer inscribes a relational intent in matter.</p>
+      <p>to connect at <em>xpan</em> means to introduce productive tension. hence the specific artifacts: the archive behaves as an expanding field; the sound system as a surface of vibration; the website as a living coordinate.</p>
+      <p>these technologies are designed, diverted or reprogrammed to open conditions. they operate from the minimal—delay, offset, echo, signal fraying—and from the structural—mounting frames, suspension mechanisms, mobile typologies. they are technologies of the possible.</p>
+      <p>connectivity asks questions of form: how is an encounter produced? what enables it? what is filtered, amplified, or attenuated? answers are operational and live within the technologies that sustain each activation.</p>
+      <p>every <em>xpan</em> project—editorial, sonic, architectural, digital—carries a technological archaeology: a substrate that conditions relations, access and intensities, and materializes processes.</p>
+      <p>connection technologies are the discreet engine that makes events occur.</p>
+    </section>
 
-    <p>
-      más que dispositivos técnicos, son estructuras intermedias que operan entre lo físico, lo sensible y lo lógico. son códigos, infraestructuras, arquitecturas de acceso, canales de modulación. cada cable, cada protocolo de red, cada riel móvil, cada transductor son trazos materiales de una intención relacional.
-    </p>
+    <!-- ===== FR ===== -->
+    <section class="lang lang-fr">
+      <h1>technologies de connexion</h1>
+      <p>chez <em>xpan</em>, les technologies de connexion forment le plan opératif qui rend possibles existence, affect et transmission. toute connexion engage une forme technique, y compris sur le plan symbolique.</p>
+      <p>au-delà de l’objet, elles agissent comme structures d’interface entre le physique, le sensible et le logique : codes, infrastructures, architectures d’accès et canaux de modulation. chaque câble, protocole, rail et transducteur inscrit une intention relationnelle dans la matière.</p>
+      <p>se connecter, pour <em>xpan</em>, signifie instaurer une tension productive. d’où des artefacts spécifiques : l’archive comme champ en expansion ; le système sonore comme surface de vibration ; le site web comme coordonnée vivante.</p>
+      <p>ces technologies se conçoivent, se détournent ou se reprogramment pour ouvrir des conditions. elles opèrent du minimal—retard, déphasage, écho, effilochage du signal—au structurel—châssis de montage, mécanismes de suspension, typologies mobiles. des technologies du possible.</p>
+      <p>la connectivité pose des questions de forme : comment se produit une rencontre ? qu’est-ce qui l’active ? que filtre-t-on, que renforce-t-on, que diminue-t-on ? les réponses sont opératives et s’incarnent dans les technologies qui portent chaque activation.</p>
+      <p>chaque projet <em>xpan</em>—éditorial, sonore, architectural, numérique—porte une archéologie technologique : un sous-sol qui conditionne relations, accès et intensités, et matérialise les processus.</p>
+      <p>les technologies de connexion sont le moteur discret qui fait advenir les choses.</p>
+    </section>
 
-    <p>
-      en <em>xpan</em>, conectar no es unir —es tensionar. y para ello se construyen artefactos específicos: un archivo no es una base de datos, sino un campo en expansión; un sistema de sonido no es una salida, sino una superficie de vibración; un sitio web no es una pantalla, sino una coordenada viva.
-    </p>
+    <!-- ===== JP ===== -->
+    <section class="lang lang-jp">
+      <h1>接続テクノロジー</h1>
+      <p><em>xpan</em> において接続テクノロジーは、存在・感応・伝達を成立させる作動平面である。あらゆる接続は技術的なかたちを伴い、象徴的領域にも及ぶ。</p>
+      <p>装置の外側で、それらは物理・感覚・論理を横断する媒介構造として働く。コード、インフラ、アクセスのアーキテクチャ、変調チャネル。ケーブル／プロトコル／レール／トランスデューサーの一本一本が、関係の意図を物質に記す。</p>
+      <p><em>xpan</em> における接続は生成的なテンションの導入を意味する。ゆえに特定のアーティファクトが要る。アーカイブは拡張場として、音響システムは振動面として、ウェブサイトは生きた座標として振る舞う。</p>
+      <p>これらの技術は条件を開くために設計・逸脱・再プログラムされる。最小から—ディレイ、位相ずれ、エコー、信号のほつれ—構造へ—架構、サスペンション、可動タイポロジー—まで作動する。可能性の技術である。</p>
+      <p>接続性は「かたち」の問いを投げかける。出会いはどう生成されるか／何がそれを可能にするか／何を濾過し増幅し減衰させるか。応答は運用的であり、各アクティベーションを支える技術の内部に宿る。</p>
+      <p>あらゆる <em>xpan</em> のプロジェクト—編集・音響・建築・デジタル—は技術的アーケオロジーを帯びる。関係・アクセス・強度を規定し、過程を物質化する下層である。</p>
+      <p>接続テクノロジーは、出来事を生起させる控えめなエンジンである。</p>
+    </section>
+  </main>
 
-    <p>
-      estas tecnologías se diseñan, se desvían o se corrompen para operar desde otro lugar. se articulan desde lo mínimo: un delay, un desfase, un eco, un desfibramiento de la señal. también desde lo estructural: marcos de montaje, mecanismos de suspensión, tipologías móviles. son tecnologías de lo posible.
-    </p>
-
-    <p>
-      conectividad, para <em>xpan</em>, es siempre una pregunta sobre la forma. ¿cómo se produce un encuentro? ¿qué lo permite? ¿qué se filtra, qué se amplifica, qué se apaga? las respuestas no son conceptuales. son operativas. y se encuentran encarnadas en las tecnologías que sostienen cada activación.
-    </p>
-
-    <p>
-      por eso, todo proyecto de <em>xpan</em> —editorial, sonoro, arquitectónico, digital— lleva consigo una arqueología tecnológica. un subsuelo invisible que condiciona las relaciones, los accesos, las intensidades. un entramado que no representa, sino que materializa.
-    </p>
-
-    <p>
-      las tecnologías de conexión, entonces, no son lo que se ve. son lo que hace que algo suceda.
-    </p>
+  <!-- visuales interlineados (preservados) -->
+  <div class="image-block" style="top:22vh; left:68vw;">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/19190880/original_0ecbbbd17b6f75ed0337207b288b6824.jpg?1669675725?bc=0" alt="visual"/>
   </div>
-
-  <!-- visuales interlineados -->
-  <div class="image-block" style="top: 22vh; left: 68vw;">
-    <img src="https://d2w9rnfcy7mm78.cloudfront.net/19190880/original_0ecbbbd17b6f75ed0337207b288b6824.jpg?1669675725?bc=0" alt="visual" />
+  <div class="image-block" style="top:55vh; left:15vw;">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/19616659/original_c1887b6b8c6816df01f07c42e940cced.png?1672374327?bc=0" alt="visual"/>
   </div>
-  <div class="image-block" style="top: 55vh; left: 15vw;">
-    <img src="https://d2w9rnfcy7mm78.cloudfront.net/19616659/original_c1887b6b8c6816df01f07c42e940cced.png?1672374327?bc=0" alt="visual" />
-  </div>
-  <div class="image-block" style="top: 75vh; left: 65vw;">
-    <img src="https://d2w9rnfcy7mm78.cloudfront.net/29326488/original_2839c110e8b107f8aebc03339d11790f.jpg?1720584007?bc=0" alt="visual" />
+  <div class="image-block" style="top:75vh; left:65vw;">
+    <img src="https://d2w9rnfcy7mm78.cloudfront.net/29326488/original_2839c110e8b107f8aebc03339d11790f.jpg?1720584007?bc=0" alt="visual"/>
   </div>
 
   <script>
-    const blocks = document.querySelectorAll('.image-block');
-    const svg = document.getElementById('lines');
+    /* selector normalizado */
+    function setLang(lang){
+      localStorage.setItem('lang', lang);
+      document.querySelectorAll('.lang').forEach(el=>{
+        el.classList.toggle('active', el.classList.contains(`lang-${lang}`));
+      });
+      document.querySelectorAll('.language-selector button').forEach(btn=>{
+        const on = btn.textContent===lang;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      document.documentElement.setAttribute('lang', lang);
+    }
+    setLang(localStorage.getItem('lang') || (navigator.language.slice(0,2) || 'es'));
 
-    function connectBlocks() {
-      svg.innerHTML = '';
-      const rects = [...blocks].map(el => el.getBoundingClientRect());
-      for (let i = 0; i < rects.length; i++) {
-        for (let j = i + 1; j < rects.length; j++) {
-          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', rects[i].left + rects[i].width / 2);
-          line.setAttribute('y1', rects[i].top + rects[i].height / 2);
-          line.setAttribute('x2', rects[j].left + rects[j].width / 2);
-          line.setAttribute('y2', rects[j].top + rects[j].height / 2);
-          line.setAttribute('stroke', '#000');
-          line.setAttribute('stroke-opacity', '0.05');
-          line.setAttribute('stroke-width', '1');
-          svg.appendChild(line);
+    /* líneas entre imágenes (color via CSS currentColor) */
+    const blocks=[...document.querySelectorAll('.image-block')];
+    const svg=document.getElementById('lines');
+    function connectBlocks(){
+      svg.innerHTML='';
+      const rects=blocks.map(el=> el.getBoundingClientRect());
+      for(let i=0;i<rects.length;i++){
+        for(let j=i+1;j<rects.length;j++){
+          const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+          ln.setAttribute('x1', rects[i].left + rects[i].width/2);
+          ln.setAttribute('y1', rects[i].top  + rects[i].height/2);
+          ln.setAttribute('x2', rects[j].left + rects[j].width/2);
+          ln.setAttribute('y2', rects[j].top  + rects[j].height/2);
+          svg.appendChild(ln);
         }
       }
     }
-
-    // conexión + animación aleatoria
-    window.addEventListener('load', () => {
+    window.addEventListener('load', ()=>{
       connectBlocks();
-      blocks.forEach(block => {
-        const delay = Math.random() * 10;
-        const duration = 6 + Math.random() * 6;
-        block.style.animationDelay = `${delay}s`;
-        block.style.animationDuration = `${duration}s`;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      blocks.forEach(b=>{
+        const delay=Math.random()*10, duration=6+Math.random()*6;
+        b.style.animationDelay = reduce ? '0s' : `${delay}s`;
+        b.style.animationDuration = reduce ? '0s' : `${duration}s`;
       });
     });
-
     window.addEventListener('resize', connectBlocks);
   </script>
 </body>

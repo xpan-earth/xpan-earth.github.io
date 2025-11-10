@@ -1,193 +1,367 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>xpan</title>
-  <link rel="stylesheet" href="./style.css" media="screen" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>xpan — articulaciones estructuradas</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fefefe;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow-x: hidden;
-      overflow-y: auto;
+    /* ===== tokens post-tech ===== */
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --maxw:820px; --pad-x:clamp(16px,4vw,48px); --header-h:64px;
+      --b1:1px solid var(--line);
     }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 20;
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+        --line:#D9DEE2; --line-weak:#ECEFF2;
+      }
     }
-    header img {
-      width: 50px;
-      height: auto;
-      display: block;
+
+    /* ===== base ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden; overflow-y:auto;
     }
-    article {
-      position: relative;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 4rem 1.5rem;
-      z-index: 10;
+    a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+    a:hover{border-bottom-color:var(--accent)}
+
+    /* ===== header + idioma ===== */
+    header{
+      position:fixed; top:12px; left:var(--pad-x); z-index:20; height:var(--header-h);
+      display:flex; align-items:center;
     }
-    p {
-      margin-bottom: 2rem;
-      font-size: 1rem;
-      line-height: 1.7;
+    header a{display:inline-flex; align-items:center}
+    header img{
+      width:50px; height:auto; display:block;
+      mix-blend-mode:difference; filter:invert(1) saturate(100%);
     }
-    svg.lines {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
+    @media (prefers-color-scheme:light){
+      header img{ filter:none; mix-blend-mode:normal; }
     }
-    svg.lines line {
-      stroke: black;
-      stroke-width: 0.3px;
-      opacity: 0.1;
-      transition: opacity 1s ease;
+    .language-selector{
+      position:fixed; top:12px; right:var(--pad-x); z-index:30;
+      display:flex; gap:8px; text-transform:lowercase;
     }
-    @media (max-width: 600px) {
-  article {
-    padding-top: 6rem;
-  }
-}
+    .language-selector button{
+      appearance:none; background:transparent; border:var(--b1); border-radius:0;
+      padding:.35rem .6rem; cursor:pointer; color:var(--fg-dim);
+      font:600 .9rem/1 var(--font-ui); letter-spacing:.2px;
+      transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+    }
+    .language-selector button:hover{color:var(--fg)}
+    .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+    /* ===== layout ===== */
+    main{position:relative; z-index:10}
+    article{
+      max-width:var(--maxw); margin:calc(var(--header-h) + 28px) auto 64px; padding:0 var(--pad-x);
+    }
+    .lang{display:none}
+    .lang.active{display:block}
+    p{margin:0 0 1.6rem; font:400 1rem/1.7 var(--font-ui);}
+
+    /* ===== fondo de líneas ===== */
+    svg.lines{
+      position:fixed; inset:0; width:100vw; height:100vh; z-index:0; pointer-events:none;
+    }
+    svg.lines line{
+      stroke:var(--fg); stroke-width:.4px; opacity:.12; transition:opacity .9s linear;
+    }
+
+    @media (max-width:600px){
+      article{ margin:calc(var(--header-h) + 36px) auto 48px; }
+    }
+    @media (prefers-reduced-motion:reduce){
+      svg.lines line{ transition:none }
+    }
   </style>
 </head>
 <body>
   <header>
-    <a href="https://xpan.earth">
-      <img src="./xpan.svg" alt="xpan" />
+    <a href="https://xpan.earth" target="_blank" rel="noopener">
+      <img src="./xpan.svg" alt="xpan"/>
     </a>
   </header>
 
-  <svg class="lines" id="dynamic-lines"></svg>
+  <nav class="language-selector" aria-label="selector de idioma">
+    <button type="button" data-lang="es" class="active" aria-pressed="true">es</button>
+    <button type="button" data-lang="en" aria-pressed="false">en</button>
+    <button type="button" data-lang="fr" aria-pressed="false">fr</button>
+    <button type="button" data-lang="jp" aria-pressed="false">jp</button>
+  </nav>
 
-  <article>
-    <p>
-      [articulaciones estructuradas]<br>
-      ---<br>
-      xpan articula relaciones estructurales entre elementos que normalmente no coexisten.<br>
-      esa articulación produce fricción, que genera formas nuevas y procesos activos.
-    </p>
+  <!-- fondo dinámico -->
+  <svg class="lines" id="dynamic-lines" aria-hidden="true"></svg>
 
-    <p>
-      “conexión” se repite en discursos institucionales, tecnológicos y creativos sin producir estructuras reales.<br>
-      en xpan, conectar no es un gesto estético. es una operación arquitectónica, conceptual y técnica.<br>
-      cada proyecto articula relaciones entre elementos que rara vez conviven en un mismo sistema.<br>
-      la pregunta no es qué se articula, sino qué se produce cuando eso sucede.
-    </p>
+  <main>
+    <article>
+      <!-- ===== español ===== -->
+      <section class="lang lang-es active">
+        <p>
+          [articulaciones estructuradas]<br>
+          ---<br>
+          xpan articula relaciones estructurales entre elementos que normalmente no coexisten.<br>
+          esa articulación produce fricción, que genera formas nuevas y procesos activos.
+        </p>
+        <p>
+          “conexión” se repite en discursos institucionales, tecnológicos y creativos sin producir estructuras reales.<br>
+          en xpan, conectar no es un gesto estético. es una operación arquitectónica, conceptual y técnica.<br>
+          cada proyecto articula relaciones entre elementos que rara vez conviven en un mismo sistema.<br>
+          la pregunta no es qué se articula, sino qué se produce cuando eso sucede.
+        </p>
+        <p>
+          el objetivo de xpan es producir esas articulaciones: uniones entre disciplinas, formatos, contextos y lenguajes que normalmente permanecen aislados.<br>
+          arquitectura, sonido, diseño técnico, crítica cultural.<br>
+          instituciones, espacios independientes, comunidades sin acceso.<br>
+          objetos, sistemas, publicaciones, imágenes, prendas.<br>
+          lenguajes visuales, sonoros, espaciales, lingüísticos y algorítmicos.<br>
+          procesos de largo plazo, estructuras abiertas, tiempos no lineales.
+        </p>
+        <p>
+          estas articulaciones generan fricciones activas que abren nuevas posibilidades, caminos y configuraciones.<br>
+          la forma es consecuencia directa de lo que estas relaciones permiten construir.<br>
+          generalmente no es prevista, pero la fricción sí: las iniciativas de xpan se basan en esa lógica.
+        </p>
+        <p>
+          xpan orienta sus recursos directamente a producir estas condiciones.<br>
+          cada recurso obtenido alimenta su desarrollo práctico, activa proyectos y habilita configuraciones no posibles bajo estructuras convencionales.<br>
+          esto impacta tanto al interior de xpan como en sus bordes.<br>
+          se generan aperturas concretas para quienes participan, y efectos colaterales para los nodos que orbitan alrededor.
+        </p>
+        <p>
+          atlas articula nodos globales y locales sin jerarquías de validación.<br>
+          mdl.1 opera como sistema técnico, espacial y sonoro en simultáneo, generando nuevas formas de uso, circulación y relación.
+        </p>
+        <p>
+          cada sistema producido por xpan alimenta el desarrollo continuo del proceso y sostiene su lógica:<br>
+          construir sistemas generativos por medio de articulaciones estructuradas.
+        </p>
+      </section>
 
-    <p>
-      el objetivo de xpan es producir esas articulaciones: uniones entre disciplinas, formatos, contextos y lenguajes que normalmente permanecen aislados.<br>
-      arquitectura, sonido, diseño técnico, crítica cultural.<br>
-      instituciones, espacios independientes, comunidades sin acceso.<br>
-      objetos, sistemas, publicaciones, imágenes, prendas.<br>
-      lenguajes visuales, sonoros, espaciales, lingüísticos y algorítmicos.<br>
-      procesos de largo plazo, estructuras abiertas, tiempos no lineales.
-    </p>
+      <!-- ===== english ===== -->
+      <section class="lang lang-en">
+        <p>
+          [structured articulations]<br>
+          ---<br>
+          xpan articulates structural relations between elements that normally do not coexist.<br>
+          that articulation produces friction, which generates new forms and active processes.
+        </p>
+        <p>
+          “connection” is repeated across institutional, technological, and creative discourses without producing real structures.<br>
+          at xpan, to connect is not an aesthetic gesture. it is an architectural, conceptual, and technical operation.<br>
+          each project articulates relations between elements that rarely inhabit the same system.<br>
+          the question is not what is articulated, but what is produced when it happens.
+        </p>
+        <p>
+          xpan’s objective is to produce those articulations: joints between disciplines, formats, contexts, and languages that usually remain isolated.<br>
+          architecture, sound, technical design, cultural critique.<br>
+          institutions, independent spaces, communities without access.<br>
+          objects, systems, publications, images, garments.<br>
+          visual, sonic, spatial, linguistic, and algorithmic languages.<br>
+          long-term processes, open structures, non-linear times.
+        </p>
+        <p>
+          these articulations generate active frictions that open new possibilities, paths, and configurations.<br>
+          form is a direct consequence of what these relations enable to be built.<br>
+          it is generally not predicted, but friction is: xpan’s initiatives are based on that logic.
+        </p>
+        <p>
+          xpan directs its resources toward producing these conditions.<br>
+          every resource obtained feeds practical development, activates projects, and enables configurations not possible under conventional structures.<br>
+          this impacts xpan internally and at its edges.<br>
+          concrete openings are created for participants, and side effects for the nodes orbiting around them.
+        </p>
+        <p>
+          atlas articulates global and local nodes without validation hierarchies.<br>
+          mdl.1 operates simultaneously as a technical, spatial, and sonic system, generating new modes of use, circulation, and relation.
+        </p>
+        <p>
+          every system produced by xpan sustains the continuous development of the process and its logic:<br>
+          building generative systems through structured articulations.
+        </p>
+      </section>
 
-    <p>
-      estas articulaciones generan fricciones activas que abren nuevas posibilidades, caminos y configuraciones.<br>
-      la forma es consecuencia directa de lo que estas relaciones permiten construir.<br>
-      generalmente no es prevista, pero la fricción sí: las iniciativas de xpan se basan en esa lógica.
-    </p>
+      <!-- ===== français ===== -->
+      <section class="lang lang-fr">
+        <p>
+          [articulations structurées]<br>
+          ---<br>
+          xpan articule des relations structurelles entre des éléments qui normalement ne coexistent pas.<br>
+          cette articulation produit une friction qui génère des formes nouvelles et des processus actifs.
+        </p>
+        <p>
+          « connexion » se répète dans les discours institutionnels, technologiques et créatifs sans produire de structures réelles.<br>
+          chez xpan, connecter n’est pas un geste esthétique. c’est une opération architecturale, conceptuelle et technique.<br>
+          chaque projet articule des relations entre des éléments qui cohabitent rarement dans un même système.<br>
+          la question n’est pas ce qui s’articule, mais ce qui se produit lorsque cela advient.
+        </p>
+        <p>
+          l’objectif de xpan est de produire ces articulations : des jonctions entre disciplines, formats, contextes et langages qui restent habituellement isolés.<br>
+          architecture, son, design technique, critique culturelle.<br>
+          institutions, espaces indépendants, communautés sans accès.<br>
+          objets, systèmes, publications, images, vêtements.<br>
+          langages visuels, sonores, spatiaux, linguistiques et algorithmiques.<br>
+          processus de longue durée, structures ouvertes, temporalités non linéaires.
+        </p>
+        <p>
+          ces articulations génèrent des frictions actives qui ouvrent de nouvelles possibilités, des trajectoires et des configurations.<br>
+          la forme est une conséquence directe de ce que ces relations permettent de construire.<br>
+          elle n’est généralement pas prévue, mais la friction, oui : les initiatives de xpan reposent sur cette logique.
+        </p>
+        <p>
+          xpan oriente ses ressources vers la production de ces conditions.<br>
+          chaque ressource obtenue alimente le développement pratique, active des projets et rend possibles des configurations irréalisables dans des structures conventionnelles.<br>
+          l’impact concerne autant l’intérieur de xpan que ses bords.<br>
+          des ouvertures concrètes apparaissent pour les participant·e·s, et des effets collatéraux pour les nœuds qui gravitent autour.
+        </p>
+        <p>
+          atlas articule des nœuds globaux et locaux sans hiérarchies de validation.<br>
+          mdl.1 opère simultanément comme système technique, spatial et sonore, générant de nouvelles formes d’usage, de circulation et de relation.
+        </p>
+        <p>
+          chaque système produit par xpan nourrit le développement continu du processus et en soutient la logique :<br>
+          construire des systèmes génératifs à travers des articulations structurées.
+        </p>
+      </section>
 
-    <p>
-      xpan orienta sus recursos directamente a producir estas condiciones.<br>
-      cada recurso obtenido alimenta su desarrollo práctico, activa proyectos y habilita configuraciones no posibles bajo estructuras convencionales.<br>
-      esto impacta tanto al interior de xpan como en sus bordes.<br>
-      se generan aperturas concretas para quienes participan, y efectos colaterales para los nodos que orbitan alrededor.
-    </p>
-
-    <p>
-      atlas articula nodos globales y locales sin jerarquías de validación.<br>
-      mdl.1 opera como sistema técnico, espacial y sonoro en simultáneo, generando nuevas formas de uso, circulación y relación.
-    </p>
-
-    <p>
-      cada sistema producido por xpan alimenta el desarrollo continuo del proceso y sostiene su lógica:<br>
-      construir sistemas generativos por medio de articulaciones estructuradas.
-    </p>
-  </article>
+      <!-- ===== 日本語 ===== -->
+      <section class="lang lang-jp">
+        <p>
+          ［構造化されたアーティキュレーション］<br>
+          ---<br>
+          xpan は、通常は共存しない要素どうしの構造的な関係を組み上げる。<br>
+          そのアーティキュレーションは摩擦を生み、新しい形態と能動的なプロセスを生成する。
+        </p>
+        <p>
+          「接続」は制度的・技術的・クリエイティブな言説で繰り返されるが、実在する構造をほとんど生まない。<br>
+          xpan において接続は美的ジェスチャーではない。建築的・概念的・技術的なオペレーションである。<br>
+          各プロジェクトは、同一システムに共存することの稀な要素間の関係を組み立てる。<br>
+          問いは「何をつなぐか」ではなく、「つながったとき何が生まれるか」である。
+        </p>
+        <p>
+          xpan の目的はそのアーティキュレーションを生産することにある。通常は分離されたままの学際・形式・文脈・言語の結節を作る。<br>
+          建築、音、テクニカルデザイン、文化批評。<br>
+          制度、インディペンデントスペース、アクセスを欠くコミュニティ。<br>
+          オブジェクト、システム、出版物、イメージ、衣服。<br>
+          視覚・聴覚・空間・言語・アルゴリズムの諸言語。<br>
+          長期プロセス、開かれた構造、非線形の時間。
+        </p>
+        <p>
+          これらのアーティキュレーションは能動的な摩擦を生み、新たな可能性、経路、構成を開く。<br>
+          形態は、それらの関係が構築を可能にするものの直接的な帰結である。<br>
+          その形は多くの場合あらかじめ規定されないが、摩擦は設計される。xpan の実践はこのロジックに基づく。
+        </p>
+        <p>
+          xpan は資源をこれらの条件の生成に直接投下する。<br>
+          獲得された資源は実務的な開発を駆動し、プロジェクトを起動し、従来構造では不可能な構成を可能にする。<br>
+          その影響は xpan の内部にも周縁にも及ぶ。<br>
+          参加者には具体的な開口が、周囲を周回するノードには副次的効果が生じる。
+        </p>
+        <p>
+          atlas は検証のヒエラルキーなしに、グローバルとローカルのノードを関係づける。<br>
+          mdl.1 はテクニカル／空間／音響システムとして同時に作動し、使用・流通・関係の新しい形を生成する。
+        </p>
+        <p>
+          xpan が生み出す各システムは、プロセスの継続的な展開とそのロジックを支える。<br>
+          すなわち、構造化されたアーティキュレーションを通じて生成的システムを構築することである。
+        </p>
+      </section>
+    </article>
+  </main>
 
   <script>
-    const svg = document.getElementById('dynamic-lines');
-    let points = [];
-
-    function generatePoints(count = 40) {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      points = [];
-      for (let i = 0; i < count; i++) {
-        points.push({ x: Math.random() * w, y: Math.random() * h });
+    // ===== idioma persistente =====
+    (function(){
+      const buttons = document.querySelectorAll('.language-selector button');
+      function setLang(lang){
+        localStorage.setItem('lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+        document.querySelectorAll('.lang').forEach(n=> n.classList.remove('active'));
+        document.querySelectorAll('.lang-'+lang).forEach(n=> n.classList.add('active'));
+        buttons.forEach(b=>{
+          const on = b.dataset.lang === lang;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
       }
-    }
+      const saved = localStorage.getItem('lang') || 'es';
+      setLang(saved);
+      buttons.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang) ));
+    })();
 
-    function drawLinesAnimated() {
-      const oldLines = svg.querySelectorAll('line');
-      oldLines.forEach(line => {
-        line.style.opacity = '0';
-        setTimeout(() => line.remove(), 1000);
-      });
+    // ===== fondo de líneas — lineal, tema-aware =====
+    (function(){
+      const svg = document.getElementById('dynamic-lines');
+      let points = [];
+      let timer = null;
+      const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      const animations = [];
-      for (let i = 0; i < points.length; i++) {
-        for (let j = i + 1; j < points.length; j++) {
-          if (Math.random() < 0.3) {
-            const p1 = points[i];
-            const p2 = points[j];
-            const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', p1.x);
-            line.setAttribute('y1', p1.y);
-            line.setAttribute('x2', p2.x);
-            line.setAttribute('y2', p2.y);
-            line.setAttribute('stroke-dasharray', length);
-            line.setAttribute('stroke-dashoffset', length);
-            line.style.stroke = 'black';
-            line.style.strokeWidth = '0.3px';
-            line.style.opacity = '0.1';
-            svg.appendChild(line);
+      function generatePoints(count){
+        const w = window.innerWidth, h = window.innerHeight;
+        points = new Array(count).fill(0).map(()=>({ x: Math.random()*w, y: Math.random()*h }));
+      }
 
-            const duration = 800 + Math.random() * 1000;
-            const delay = Math.random() * 500;
-            animations.push({ line, length, duration, delay });
+      function clearOld(){
+        const old = svg.querySelectorAll('line');
+        old.forEach(line => {
+          line.style.opacity = '0';
+          setTimeout(()=> line.remove(), REDUCED ? 0 : 900);
+        });
+      }
+
+      function draw(){
+        clearOld();
+        const anim = [];
+        for(let i=0;i<points.length;i++){
+          for(let j=i+1;j<points.length;j++){
+            if(Math.random()<0.30){
+              const p1 = points[i], p2 = points[j];
+              const len = Math.hypot(p2.x-p1.x, p2.y-p1.y);
+              const el = document.createElementNS('http://www.w3.org/2000/svg','line');
+              el.setAttribute('x1', p1.x); el.setAttribute('y1', p1.y);
+              el.setAttribute('x2', p2.x); el.setAttribute('y2', p2.y);
+              el.setAttribute('stroke-dasharray', len);
+              el.setAttribute('stroke-dashoffset', len);
+              svg.appendChild(el);
+
+              const dur = REDUCED ? 0 : (800 + Math.random()*900);
+              const del = REDUCED ? 0 : (Math.random()*400);
+              anim.push({ el, len, dur, del });
+            }
           }
         }
+        anim.forEach(({el,len,dur,del})=>{
+          el.animate(
+            [{ strokeDashoffset: len }, { strokeDashoffset: 0 }],
+            { duration: dur, delay: del, fill: 'forwards', easing: 'linear' }
+          );
+        });
+        const maxT = anim.length ? Math.max(...anim.map(a=>a.dur+a.del)) : 1200;
+        if(timer) clearTimeout(timer);
+        timer = setTimeout(()=>{
+          generatePoints(40);
+          draw();
+        }, REDUCED ? 2000 : (maxT + 1000));
       }
 
-      animations.forEach(({ line, length, duration, delay }) => {
-        line.animate([
-          { strokeDashoffset: length },
-          { strokeDashoffset: 0 }
-        ], {
-          duration: duration,
-          delay: delay,
-          fill: 'forwards',
-          easing: 'ease-out'
-        });
-      });
-
-      const maxDelay = Math.max(...animations.map(a => a.delay + a.duration));
-      setTimeout(() => {
+      window.addEventListener('resize', ()=>{
         generatePoints(40);
-        drawLinesAnimated();
-      }, maxDelay + 1200);
-    }
+        draw();
+      }, { passive:true });
 
-    window.addEventListener('resize', () => {
       generatePoints(40);
-      drawLinesAnimated();
-    });
-
-    generatePoints(40);
-    drawLinesAnimated();
+      draw();
+    })();
   </script>
 </body>
 </html>

@@ -1,184 +1,327 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="color-scheme" content="light dark"/>
   <title>xpan — marco teórico</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow-x: hidden;
+    /* ===== núcleo post-tech / defense-ops: sobrio y elegante ===== */
+    [data-xpan]{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --line:#23292E; --line-weak:#0F1418;
+      --accent:#e00000; --accent2:#57FF83;
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --pad-x:clamp(16px,4vw,48px); --header-h:64px; --maxw:1100px; --grid:32px; --grid-l:1px;
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --line-weak:#EFF3F6; --accent:#0EA5A5; --accent2:#12B76A; }
     }
 
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    /* reset */
+    *,*::before,*::after{ box-sizing:border-box }
+    html{ height:100% }
+    html,body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:var(--font-ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{ color:inherit; text-decoration:none; border-bottom:1px solid transparent; transition:border-color .12s linear }
+    a:hover{ border-bottom-color:var(--accent) }
+
+    /* ===== fondo: grid técnico estático sin animaciones ===== */
+    .hud{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        linear-gradient(to right, color-mix(in oklab, var(--line) 92%, transparent) 0 var(--grid-l), transparent var(--grid-l)) 0 0/var(--grid) var(--grid),
+        linear-gradient(to bottom, color-mix(in oklab, var(--line) 92%, transparent) 0 var(--grid-l), transparent var(--grid-l)) 0 0/var(--grid) var(--grid),
+        linear-gradient(180deg, color-mix(in oklab, var(--line-weak) 18%, transparent), transparent);
     }
 
-    header img {
-      width: 50px;
-      height: auto;
+    /* ===== header fijo minimal ===== */
+    header{
+      position:sticky; top:0; z-index:30;
+      height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 var(--pad-x);
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, color-mix(in oklab, var(--line-weak) 22%, transparent), transparent);
+      backdrop-filter:saturate(120%) blur(3px);
+      -webkit-backdrop-filter:saturate(120%) blur(3px);
+    }
+    header .brand{display:flex; align-items:center; gap:.75rem; font:600 .9rem/1 var(--font-ui); letter-spacing:.02em}
+    header img{width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme:light){ header img{ mix-blend-mode:normal; filter:none } }
+    .mode{font:600 .75rem/1 var(--font-mono); color:var(--fg-dim)}
+
+    /* ===== contenedor general con scroll natural ===== */
+    main{ position:relative; z-index:10; }
+    .toolbar{
+      display:flex; align-items:center; gap:.8rem;
+      padding:10px var(--pad-x);
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, color-mix(in oklab, var(--line-weak) 18%, transparent), transparent);
+    }
+    .filter{
+      position:relative; flex:1; max-width:720px;
+      display:flex; align-items:center; gap:.6rem;
+      border:1px solid var(--line);
+      padding:.55rem .7rem; background:rgba(12,18,22,.26);
+    }
+    .filter input{ flex:1; background:transparent; border:0; outline:0; color:var(--fg); font:500 .92rem/1 var(--font-ui) }
+    .filter kbd{ font:600 .74rem/1 var(--font-mono); color:var(--fg-dim); border:1px solid var(--line); padding:.1rem .35rem }
+    .status{ font:600 .8rem/1 var(--font-mono); color:var(--fg-dim) }
+
+    /* ===== layout: rail fijo + lista fluida ===== */
+    .wrap{
+      display:grid; grid-template-columns:minmax(220px, 300px) 1fr;
+      gap:0;
+    }
+    @media (max-width:900px){ .wrap{ grid-template-columns:1fr } }
+
+    .rail{
+      position:sticky; top:calc(var(--header-h) + 44px);
+      align-self:start;
+      height:calc(100vh - var(--header-h) - 44px);
+      border-right:1px solid var(--line);
+      background:linear-gradient(180deg, color-mix(in oklab, var(--line-weak) 18%, transparent), transparent);
+    }
+    .rail-inner{ position:relative; height:100% }
+    .rail .spine{ position:absolute; left:calc(50% - .5px); top:0; bottom:0; width:1px; background:var(--line) }
+    .rail .hint{
+      position:absolute; top:10px; left:50%; transform:translateX(-50%);
+      font:700 .72rem/1 var(--font-mono); color:var(--fg-dim); letter-spacing:.08em; text-transform:uppercase;
+    }
+    svg.wires{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none }
+
+    .main-container{
+      padding:22px var(--pad-x) 72px;
+      max-width:var(--maxw);
     }
 
-    .main-container {
-      padding: 7rem 2rem 4rem 2rem;
-      position: relative;
+    /* ===== entradas ===== */
+    .entry{
+      position:relative; margin:0 0 16px 0;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, color-mix(in oklab, var(--line-weak) 15%, transparent), transparent);
+      padding:12px 14px;
+      transition:border-color .12s linear, background-color .12s linear;
     }
+    .entry:hover{ border-color:var(--accent) }
+    .entry strong{ display:block; font:700 1rem/1.2 var(--font-ui); text-transform:lowercase; margin:0 0 .3rem }
+    .entry span{ font:600 .8rem/1.1 var(--font-ui); color:var(--fg-dim) }
+    .entry a{
+      display:inline-block; margin-top:.35rem;
+      font:600 .85rem/1 var(--font-ui);
+      color:var(--fg); border-bottom:1px dotted var(--fg-dim);
+      padding:.06rem .18rem;
+    }
+    .entry a:hover{ border-bottom-color:var(--accent); background:rgba(0,224,198,.06) }
 
-    .entry {
-      margin-bottom: 4rem;
-      max-width: 600px;
-      position: relative;
-      padding-left: 1rem;
-    }
+    /* ===== esquinas técnicas discretas ===== */
+    .corners{ position:fixed; inset:0; pointer-events:none; z-index:2 }
+    .corners::before,.corners::after{ content:""; position:absolute; width:22px; height:22px; border:1px solid var(--accent2) }
+    .corners::before{ left:10px; top:10px; border-right:none; border-bottom:none }
+    .corners::after{ right:10px; bottom:10px; border-left:none; border-top:none }
 
-    .entry::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.4rem;
-      width: 4px;
-      height: 100%;
-      background: #000;
-      opacity: 0.1;
-    }
-
-    .entry strong {
-      font-size: 1.1rem;
-      font-weight: bold;
-      text-transform: lowercase;
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    .entry span {
-      font-size: 0.85rem;
-      opacity: 0.6;
-    }
-
-    .entry a {
-      color: black;
-      text-decoration: underline;
-      font-size: 0.9rem;
-    }
-
-    .entry a:hover {
-      background: #000;
-      color: #fff;
-      transition: 0.2s;
-    }
-
-    @media (min-width: 800px) {
-      .main-container {
-        padding-left: 6rem;
-      }
-    }
+    /* scrollbar sutil */
+    *{ scrollbar-width:thin; scrollbar-color:var(--line) transparent }
   </style>
 </head>
 <body>
+  <!-- fondo técnico sobrio -->
+  <div class="hud" aria-hidden="true"></div>
+  <div class="corners" aria-hidden="true"></div>
 
+  <!-- header -->
   <header>
-    <a href="index.html">
-      <img src="xpan.svg" alt="xpan logo" />
-    </a>
+    <a class="brand" href="index.html" aria-label="xpan — home">
+      <img src="xpan.svg" alt="xpan"/>    </a>
+    <div class="mode">marco teórico</div>
   </header>
 
-<div class="main-container">
+  <main>
+    <!-- barra -->
+    <div class="toolbar">
+      <div class="filter">
+        <input id="q" type="search" />
+        <kbd>⌘/</kbd>
+      </div>
+      <div class="status" id="status">14 entradas</div>
+    </div>
 
- <div class="entry">
-  <strong>articulaciones estructuradas</strong>
-  <a href="mc_articulaciones_estructuradas.html"> coexistencia tensionada</a>
-</div>
+    <!-- layout -->
+    <div class="wrap">
+      <!-- rail fijo y sobrio -->
+      <aside class="rail" aria-hidden="true">
+        <div class="rail-inner">
+          <div class="spine"></div>
+          <div class="hint">bus</div>
+          <svg class="wires"></svg>
+        </div>
+      </aside>
 
-<div class="entry">
-  <strong>fonoteca</strong>
-  <a href="mc_fonoteca.html"> constante construcción</a>
-</div>
+      <!-- índice preservado -->
+      <div class="main-container" id="entries">
+        <div class="entry">
+          <strong>articulaciones estructuradas</strong>
+          <a href="mc_articulaciones_estructuradas.html">coexistencia tensionada</a>
+        </div>
 
-<div class="entry">
-  <strong>estructura metabólica / relevancia conectiva</strong>
-  <a href="mc_estructura_metabolica.html"> manifiesto operativo interno</a>
-</div>
+        <div class="entry">
+          <strong>fonoteca</strong>
+          <a href="mc_fonoteca.html">constante construcción</a>
+        </div>
 
-<div class="entry">
-  <strong>fps.index</strong>
-  <a href="a.e.i.fps.index.html"> herramienta de trazabilidad y memoria activa</a>
-</div>
+        <div class="entry">
+          <strong>estructura metabólica / relevancia conectiva</strong>
+          <a href="mc_estructura_metabolica.html">manifiesto operativo interno</a>
+        </div>
 
-<div class="entry">
-  <strong>economia del espectaculo</strong>
-  <a href="mc_economia_del_espectaculo.html">imagen estructural</a>
-</div>
+        <div class="entry">
+          <strong>fps.index</strong>
+          <a href="a.e.i.fps.index.html">herramienta de trazabilidad y memoria activa</a>
+        </div>
 
-<div class="entry">
-  <strong>condición de cruce</strong>
-  <a href="mc_umbral.html">umbral</a>
-</div>
+        <div class="entry">
+          <strong>economia del espectaculo</strong>
+          <a href="mc_economia_del_espectaculo.html">imagen estructural</a>
+        </div>
 
-<div class="entry">
-  <strong>iconoteca</strong>
-  <a href="mc_xpan.media.index.html">media index</a>
-</div>
+        <div class="entry">
+          <strong>condición de cruce</strong>
+          <a href="mc_umbral.html">umbral</a>
+        </div>
 
-<div class="entry">
-  <strong>glosario.1</strong>
-  <a href="mc_glosario.1.html">glosario expandido de conceptos claves</a>
-</div>
+        <div class="entry">
+          <strong>iconoteca</strong>
+          <a href="mc_xpan.media.index.html">media index</a>
+        </div>
 
-<div class="entry">
-  <strong>tecnologías de conexión</strong>
-  <span>ensayo disponible en:</span><br />
-  <a href="mc_tec_conexion.html">español</a> 
-</div>
+        <div class="entry">
+          <strong>glosario.1</strong>
+          <a href="mc_glosario.1.html">glosario expandido de conceptos claves</a>
+        </div>
 
-<div class="entry">
-  <strong>códigos no lingüísticos</strong>
-  <a href="mc_codigos_no_linguisticos.html">explorar</a>
-</div>
+        <div class="entry">
+          <strong>tecnologías de conexión</strong>
+          <span>ensayo disponible en:</span><br/>
+          <a href="mc_tec_conexion.html">español</a>
+        </div>
 
-<div class="entry">
-  <strong>criterios</strong>
-  <a href="mc_criterios.html">reglas de uso</a> 
-</div>
+        <div class="entry">
+          <strong>códigos no lingüísticos</strong>
+          <a href="mc_codigos_no_linguisticos.html">explorar</a>
+        </div>
 
-<div class="entry">
-  <strong>nociones fantasma</strong>
-  <span>fragmento visual:</span><br />
-  <a href="mc_noc_fantasma.html">n-f/..</a> 
-</div>
+        <div class="entry">
+          <strong>criterios</strong>
+          <a href="mc_criterios.html">reglas de uso</a>
+        </div>
 
-<div class="entry">
-  <strong>proximidades dinámicas</strong>
-  <a href="mc_proximidades_dinamicas.html">latencia</a>
-</div>
+        <div class="entry">
+          <strong>nociones fantasma</strong>
+          <span>fragmento visual:</span><br/>
+          <a href="mc_noc_fantasma.html">n-f/..</a>
+        </div>
 
-<div class="entry">
-  <strong>manifiesto: topología conectiva</strong>
-  <span>disponible en:</span><br />
-  <a href="mc_manif_tc_es.html">español</a> · 
-  <a href="mc_manif_tc_en.html">english</a> · 
-  <a href="mc_manif_tc_fr.html">français</a> · 
-  <a href="mc_manif_tc_jp.html">日本語</a>
-</div>
+        <div class="entry">
+          <strong>proximidades dinámicas</strong>
+          <a href="mc_proximidades_dinamicas.html">latencia</a>
+        </div>
 
-<div class="entry">
-  <strong>xpan_devenir</strong>
-  <span>ensayo disponible en:</span><br />
-  <a href="mc_ess_devenir_es.html">español</a> · 
-  <a href="mc_ess_devenir_en.html">english</a> · 
-  <a href="mc_ess_devenir_fr.html">français</a> · 
-  <a href="mc_ess_devenir_jp.html">日本語</a>
-</div>
+        <div class="entry">
+          <strong>manifiesto: topología conectiva</strong>
+          <span>disponible en:</span><br/>
+          <a href="mc_manif_tc_es.html">español</a> ·
+          <a href="mc_manif_tc_en.html">english</a> ·
+          <a href="mc_manif_tc_fr.html">français</a> ·
+          <a href="mc_manif_tc_jp.html">日本語</a>
+        </div>
 
+        <div class="entry">
+          <strong>xpan_devenir</strong>
+          <span>ensayo disponible en:</span><br/>
+          <a href="mc_ess_devenir_es.html">español</a> ·
+          <a href="mc_ess_devenir_en.html">english</a> ·
+          <a href="mc_ess_devenir_fr.html">français</a> ·
+          <a href="mc_ess_devenir_jp.html">日本語</a>
+        </div>
+      </div>
+    </div>
+  </main>
 
+  <script>
+    // filtro sobrio
+    const q = document.getElementById('q');
+    const entriesWrap = document.getElementById('entries');
+    const entries = [...entriesWrap.querySelectorAll('.entry')];
+    const statusEl = document.getElementById('status');
+    const wires = document.querySelector('svg.wires');
 
-</div>
+    function norm(t){ return t.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
+    function updateStatus(){
+      const visible = entries.filter(e => e.style.display !== 'none').length;
+      statusEl.textContent = visible + ' entradas';
+      drawWires();
+    }
+    function filterList(term){
+      const n = norm(term || '');
+      entries.forEach(e=>{
+        const text = norm(e.textContent);
+        e.style.display = text.includes(n) ? '' : 'none';
+      });
+      updateStatus();
+    }
+    q.addEventListener('input', e => filterList(e.target.value));
+    window.addEventListener('keydown', e=>{
+      if((e.metaKey || e.ctrlKey) && e.key === '/'){ e.preventDefault(); q.focus(); }
+    });
 
+    // cables ortogonales, sin animación
+    function pathOrthogonal(x1,y1,x2,y2,offset=20){
+      const midX = x1 + offset;
+      const midY = y2;
+      return `M ${x1},${y1} L ${midX},${y1} L ${midX},${midY} L ${x2},${midY}`;
+    }
 
+    function drawWires(){
+      if(!wires) return;
+      wires.innerHTML = '';
+
+      const railRect = wires.getBoundingClientRect();
+      const x1 = railRect.width * 0.5;
+
+      const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+      const grad = document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
+      grad.setAttribute('id','g'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','1'); grad.setAttribute('y2','0');
+      const s1 = document.createElementNS('http://www.w3.org/2000/svg','stop'); s1.setAttribute('offset','0%'); s1.setAttribute('stop-color','var(--accent2)');
+      const s2 = document.createElementNS('http://www.w3.org/2000/svg','stop'); s2.setAttribute('offset','100%'); s2.setAttribute('stop-color','var(--accent)');
+      grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad);
+      wires.appendChild(defs);
+
+      const visibles = entries.filter(e => e.style.display !== 'none');
+      visibles.forEach((e) => {
+        const r = e.getBoundingClientRect();
+        const y = r.top + r.height*0.5 - railRect.top;
+        const x2 = railRect.width + 24;
+        const y2 = y;
+
+        const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+        p.setAttribute('d', pathOrthogonal(x1,y,x2,y2,22));
+        p.setAttribute('fill','none');
+        p.setAttribute('stroke','url(#g)');
+        p.setAttribute('stroke-width','1');
+        p.setAttribute('shape-rendering','crispEdges');
+        wires.appendChild(p);
+      });
+    }
+
+    // inicialización y redibujos discretos
+    window.addEventListener('load', ()=>{ filterList(''); drawWires(); });
+    window.addEventListener('resize', ()=> requestAnimationFrame(drawWires));
+    document.addEventListener('scroll', ()=> requestAnimationFrame(drawWires), {passive:true});
+  </script>
 </body>
 </html>
