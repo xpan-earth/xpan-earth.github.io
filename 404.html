@@ -1,22 +1,72 @@
 <!doctype html>
-<html lang="es">
-
+<html lang="es" data-xpan>
 <head>
-    <link rel="stylesheet" href="./style.css" media="screen">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>xpan.earth</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>xpan.earth — 404</title>
+  <style>
+    /* ===== tokens post-tech / minimal ===== */
+    :root{
+      --bg:#0C0D0F; --fg:#E0E3E6; --line:#2A2E31;
+      --header-h:64px; --pad:clamp(12px,3vw,32px);
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#F6F8FA; --fg:#0E1113; --line:#D9DEE2; }
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+    a{ color:inherit; text-decoration:none; }
+
+    body#error{
+      background:var(--bg); color:var(--fg);
+      font-family:"Times New Roman", serif;
+      display:grid;
+      grid-template-rows: var(--header-h) 1fr;
+      min-height:100svh;
+    }
+
+    header{
+      display:flex; align-items:center;
+      padding:0 max(var(--pad), env(safe-area-inset-left)) 0 max(var(--pad), env(safe-area-inset-left));
+      border-bottom:1px solid var(--line);
+      height:var(--header-h);
+      position:sticky; top:0; left:0; right:0;
+      background:transparent;
+      z-index:10;
+    }
+    header a{ display:inline-flex; align-items:center; }
+    header img{ width:46px; height:auto; display:block; filter:invert(1) contrast(1.08); }
+    @media (prefers-color-scheme:light){
+      header img{ filter:none; }
+    }
+
+    article{
+      display:grid; place-items:center;
+      padding:max(var(--pad), env(safe-area-inset-top)) max(var(--pad), env(safe-area-inset-right)) max(var(--pad), env(safe-area-inset-bottom)) max(var(--pad), env(safe-area-inset-left));
+    }
+    article img{
+      width:min(520px,70vw);
+      height:auto; display:block;
+      image-rendering:-webkit-optimize-contrast;
+      filter:invert(1);
+      transition:filter .3s ease;
+    }
+    @media (prefers-color-scheme:light){
+      article img{ filter:none; }
+    }
+  </style>
 </head>
-
 <body id="error">
-    <header>
-        <a href="https://xpan.earth">
-            <img src="./xpan.svg" alt="xpan">
-        </a>
-    </header>
-    <article>
-        <img src="./404.svg" alt="404">
-    </article>
-</body>
+  <header aria-label="xpan">
+    <a href="https://xpan.earth">
+      <img src="./xpan.svg" alt="xpan">
+    </a>
+  </header>
 
+  <article aria-labelledby="t404">
+    <img src="./404.svg" alt="404 — recurso no encontrado" id="t404">
+  </article>
+</body>
 </html>

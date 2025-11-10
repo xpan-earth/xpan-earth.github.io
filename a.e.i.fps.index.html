@@ -1,132 +1,150 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark"/>
   <title>a.e.i.fps.index</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fefefe;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow: hidden;
-      cursor: crosshair;
+    /* ===== tokens post-tech / defense-ops ===== */
+    :root{
+      --bg:#0C0D0F;            /* fondo operativo */
+      --fg:#E0E3E6;            /* texto UI */
+      --fg-dim:#AEB4BA;        /* texto atenuado */
+      --accent-aqua:#ff1f1f;   /* acento solicitado */
+      --accent-radar:#6BFF6B;  /* verde radar */
+      --line:#2A2E31;          /* trazo UI */
+      --grid:#0F1216;          /* retícula */
+      --header-h:64px;
+      --pad:clamp(12px,3vw,32px);
+      --z-lines:0; --z-hud:1; --z-content:2; --z-header:3;
     }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
-    }
-    header img {
-      width: 50px;
-      height: auto;
-      display: block;
-    }
-    .floating-title {
-      position: absolute;
-      font-size: 0.9rem;
-      text-transform: lowercase;
-      white-space: nowrap;
-      pointer-events: auto;
-      transition: color 0.3s ease;
-    }
-    .floating-title:hover {
-      color: #888;
-    }
-    svg.lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-    }
-    svg.lines line {
-      stroke: black;
-      stroke-width: 0.6px;
-      opacity: 0.25;
-      transition: stroke-width 0.3s, opacity 0.3s;
-    }
-    @media (max-width: 600px) {
-      .floating-title {
-        font-size: 0.8rem;
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#F6F8FA; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --grid:#EDEFF2;
       }
     }
-    #fps-description {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 80vw;
-  width: 400px;
-  text-align: center;
-  font-size: 0.8rem;
-  line-height: 1.3rem;
-  color: #000;
-  opacity: 0.15;
-  z-index: 1;
-  pointer-events: none;
-  font-style: italic;
-}
 
-@media (max-width: 600px) {
-  #fps-description {
-    font-size: 0.7rem;
-    line-height: 1.2rem;
-    width: 90vw;
-  }
-}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+    a{ color:inherit; text-decoration:none; }
 
-#fps-description {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 80vw;
-  width: 400px;
-  text-align: center;
-  font-size: 0.8rem;
-  line-height: 1.3rem;
-  color: #000;
-  opacity: 0.55;
-  z-index: 1;
-  font-style: italic;
-  pointer-events: auto; 
-}
+    body{
+      background:var(--bg); color:var(--fg);
+      font-family:"Times New Roman",serif;
+      overflow:hidden;
+      cursor:crosshair;
+    }
 
-@media (max-width: 600px) {
-  #fps-description {
-    font-size: 0.7rem;
-    line-height: 1.2rem;
-    width: 90vw;
-  }
-}
+    /* ===== header flush ===== */
+    header{
+      position:fixed; top:0; left:0; right:0; height:var(--header-h);
+      display:flex; align-items:center; padding-left:var(--pad);
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(to bottom, rgba(12,13,15,.85), rgba(12,13,15,.30) 60%, transparent);
+      backdrop-filter:blur(4px);
+      z-index:var(--z-header);
+    }
+    header a{ display:inline-flex; align-items:center; }
+    header img{ width:46px; height:auto; display:block; filter:invert(1) contrast(1.08); }
 
+    /* ===== HUD radar + retícula ===== */
+    .hud{
+      position:fixed; inset:0; z-index:var(--z-hud); pointer-events:none;
+      background:
+        linear-gradient(transparent 49%, var(--grid) 50%, transparent 51%) 0 0/100% 36px,
+        linear-gradient(90deg, transparent 49%, var(--grid) 50%, transparent 51%) 0 0/36px 100%;
+      opacity:.22;
+    }
+    .hud::after{
+      content:""; position:absolute; inset:-20%;
+      background:conic-gradient(from 0deg, rgba(31,228,255,.10), rgba(31,228,255,0) 35%);
+      animation:sweep 6s linear infinite; opacity:.18;
+    }
+    @keyframes sweep { to { transform:rotate(360deg); } }
+
+    /* ===== plano de líneas ===== */
+    svg.lines{
+      position:fixed; inset:0; width:100vw; height:100vh;
+      z-index:var(--z-lines); pointer-events:none;
+    }
+    svg.lines line{
+      vector-effect:non-scaling-stroke; stroke-width:.75; opacity:.33; transition:opacity .25s ease;
+    }
+
+    /* ===== títulos flotantes ===== */
+    .floating-title{
+      position:absolute; z-index:var(--z-content);
+      font-size:clamp(.78rem,1.2vw,1rem); line-height:1;
+      text-transform:lowercase; white-space:nowrap; pointer-events:auto;
+      padding:4px 6px;
+      background:rgba(12,13,15,.35);
+      border:1px solid var(--line);
+      border-radius:2px;
+      backdrop-filter:blur(2px);
+      transform:translate3d(0,0,0); will-change:transform;
+      transition:color .25s, border-color .25s, background .25s, opacity .25s;
+      user-select:none;
+    }
+    .floating-title:hover{ background:rgba(31,228,255,.10); border-color:rgba(31,228,255,.45); }
+    .floating-title[data-group="A"]{ color:var(--accent-radar); }
+    .floating-title[data-group="B"]{ color:var(--accent-aqua); }
+
+    /* ===== bloque central descriptivo ===== */
+    #fps-description{
+      position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+      z-index:var(--z-content); text-align:center;
+      width:min(400px,80vw);
+      font-size:.8rem; line-height:1.3rem; color:var(--fg);
+      opacity:.55; font-style:italic; pointer-events:auto;
+      padding:.5rem .75rem; border:1px solid var(--line); background:rgba(12,13,15,.25);
+      backdrop-filter:blur(2px);
+    }
+    #fps-description a{ text-decoration:underline; font-weight:bold; }
+
+    @media (max-width:600px){
+      .floating-title{ font-size:.8rem; }
+      #fps-description{ width:90vw; font-size:.7rem; line-height:1.2rem; }
+    }
+
+    .paused .floating-title{ opacity:.85; }
+    @media (prefers-reduced-motion:reduce){
+      .floating-title{ transition:none; }
+      .hud::after{ animation:none; display:none; }
+    }
+
+    @supports (padding:max(0px)){
+      header{ padding-left:max(var(--pad), env(safe-area-inset-left)); padding-right:max(var(--pad), env(safe-area-inset-right)); }
+    }
   </style>
 </head>
 <body>
-  <header>
+  <header aria-label="xpan">
     <a href="https://xpan.earth">
       <img src="./xpan.svg" alt="xpan" />
     </a>
   </header>
-  <svg class="lines" id="dynamic-lines"></svg>
 
+  <!-- HUD -->
+  <div class="hud" aria-hidden="true"></div>
+
+  <!-- líneas -->
+  <svg class="lines" id="dynamic-lines" role="presentation"></svg>
+
+  <!-- descripción conservada -->
   <div id="fps-description">
-<p>
-  <a href="https://instagram.com/xpan.fps" target="_self" style="color: inherit; text-decoration: underline; font-weight: bold;">
-    xpan.fps</a>
-   es un archivo que funciona como herramienta de trazabilidad y memoria activa.<br>
-  mantiene el vínculo operativo con lo que hacemos y sostiene una conversación continua en feedback.
-</p>
-
-</div>
-
+    <p>
+      <a href="https://instagram.com/xpan.fps" target="_self" rel="noopener">xpan.fps</a>
+      es un archivo que funciona como herramienta de trazabilidad y memoria activa.<br>
+      mantiene el vínculo operativo con lo que hacemos y sostiene una conversación continua en feedback.
+    </p>
+  </div>
 
   <script>
+    // apuntar a carpeta a.e.i/ sin mover nada más
+    const BASE_DIR = "./a.e.i./";
+
     const titles = [
       "a.e.i_xpan.fps_select.21.apr_29.apr",
       "a.e.i_xpan.fps_select.sem.12.may.25",
@@ -140,121 +158,171 @@
       "a.e.i_xpan.fps_select.sem.15.sep.25",
       "a.e.i_xpan.fps_select.sem.22.sep.25",
       "a.e.i_xpan.fps_select.sem.09.oct.25",
-      "a.e.i_xpan.fps_select.sem.27.oct.25",
+      "a.e.i_xpan.fps_select.sem.27.oct.25"
     ];
 
     const container = document.body;
     const lineCanvas = document.getElementById('dynamic-lines');
-    const nodesA = [];
-    const nodesB = [];
+    const nodesA = [];   // "_msh_" o "msh"
+    const nodesB = [];   // resto
+    const allNodes = [];
     let paused = false;
-    let nextLineUpdate = Date.now();
-    let nextDelay = 100 + Math.random() * 500;
-    let currentLines = [];
 
-    titles.forEach(title => {
+    const bounds = () => ({
+      w: window.innerWidth,
+      h: window.innerHeight,
+      lPad: 12,
+      rPad: 12,
+      tPad: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64,
+      bPad: 12
+    });
+
+    function makeNode(title){
       const el = document.createElement('a');
       el.className = 'floating-title';
-      el.href = `${title}.html`;
+      // ahora en carpeta a.e.i con codificación segura
+      el.href = BASE_DIR + encodeURIComponent(title) + ".html";
       el.textContent = title;
       el.target = '_self';
+      el.rel = 'noopener';
+      el.setAttribute('role','link');
+      el.setAttribute('aria-label', title);
+
+      const isA = title.includes('_msh_') || title.includes('msh');
+      el.dataset.group = isA ? 'A' : 'B';
       container.appendChild(el);
 
+      const b = bounds();
       const node = {
-        el,
-        x: 0,
-        y: 0,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5
+        el, group:isA?'A':'B',
+        x:0, y:0, vx:0, vy:0, w:0, h:0
       };
 
-      if (title.includes('_msh_') || title.includes('msh')) {
-        node.x = Math.random() * window.innerWidth * 0.4;
-        node.y = Math.random() * window.innerHeight;
-        nodesA.push(node);
-      } else {
-        node.x = Math.random() * window.innerWidth * 0.4 + window.innerWidth * 0.6;
-        node.y = Math.random() * window.innerHeight;
-        nodesB.push(node);
+      const leftZoneW = b.w * 0.44;
+      const rightZoneW = b.w * 0.44;
+      if(isA){
+        node.x = Math.random()*leftZoneW + b.lPad;
+      }else{
+        node.x = Math.random()*rightZoneW + (b.w - rightZoneW - b.rPad);
       }
+      node.y = Math.random()*(b.h - b.tPad - b.bPad) + b.tPad;
 
-      el.addEventListener('mouseenter', () => paused = true);
-      el.addEventListener('mouseleave', () => paused = false);
-      el.addEventListener('touchstart', () => paused = true);
-      el.addEventListener('touchend', () => paused = false);
-    });
+      node.vx = (Math.random()-0.5)*0.55;
+      node.vy = (Math.random()-0.5)*0.55;
 
-    const allNodes = [...nodesA, ...nodesB];
+      el.addEventListener('mouseenter', ()=> setPaused(true));
+      el.addEventListener('mouseleave', ()=> setPaused(false));
+      el.addEventListener('touchstart', ()=> setPaused(true), {passive:true});
+      el.addEventListener('touchend',   ()=> setPaused(false), {passive:true});
 
-    function animate() {
-      if (!paused) {
-        allNodes.forEach(n => {
-          n.x += n.vx;
-          n.y += n.vy;
-
-          if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
-          if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
-
-          n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
-        });
-
-        const now = Date.now();
-        if (now >= nextLineUpdate) {
-          generateNewLines();
-          nextDelay = 100 + Math.random() * 500;
-          nextLineUpdate = now + nextDelay;
-        }
-
-        redrawCurrentLines();
-      }
-      requestAnimationFrame(animate);
-    }
-
-    function generateNewLines() {
-      currentLines = [];
-      [nodesA, nodesB].forEach(group => {
-        for (let i = 0; i < group.length; i++) {
-          for (let j = i + 1; j < group.length; j++) {
-            if (Math.random() < 0.2) {
-              currentLines.push([group[i], group[j]]);
-            }
-          }
-        }
-      });
-    }
-
-    function getNodeCenter(node) {
-      const el = node.el;
       const rect = el.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
-      return [node.x + width / 2, node.y + height / 2];
+      node.w = rect.width; node.h = rect.height;
+
+      (isA?nodesA:nodesB).push(node);
+      allNodes.push(node);
     }
 
-    function redrawCurrentLines() {
-      lineCanvas.innerHTML = '';
-      currentLines.forEach(([nodeA, nodeB]) => {
-        const [x1, y1] = getNodeCenter(nodeA);
-        const [x2, y2] = getNodeCenter(nodeB);
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', x1);
-        line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2);
-        line.setAttribute('y2', y2);
-        lineCanvas.appendChild(line);
-      });
+    titles.forEach(makeNode);
+
+    /* ===== líneas por grupo ===== */
+    let currentLines = [];
+    let nextLineUpdate = performance.now();
+    let lineInterval = 500;
+    const colorA = getComputedStyle(document.documentElement).getPropertyValue('--accent-radar').trim() || '#6BFF6B';
+    const colorB = getComputedStyle(document.documentElement).getPropertyValue('--accent-aqua').trim() || '#1FE4FF';
+
+    function chooseGroupLines(groupNodes){
+      const out = [];
+      for(let i=0;i<groupNodes.length;i++){
+        for(let j=i+1;j<groupNodes.length;j++){
+          if(Math.random()<0.22) out.push([groupNodes[i], groupNodes[j]]);
+        }
+      }
+      return out;
+    }
+    function regenerateLines(){
+      currentLines = [...chooseGroupLines(nodesA), ...chooseGroupLines(nodesB)];
+    }
+    function redrawLines(){
+      const frag = document.createDocumentFragment();
+      for(const [a,b] of currentLines){
+        const ra = a.el.getBoundingClientRect();
+        const rb = b.el.getBoundingClientRect();
+        const x1 = ra.left + ra.width/2, y1 = ra.top + ra.height/2;
+        const x2 = rb.left + rb.width/2, y2 = rb.top + rb.height/2;
+        const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+        l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+        l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+        l.setAttribute('stroke', (a.group==='A' && b.group==='A') ? colorA : colorB);
+        frag.appendChild(l);
+      }
+      while(lineCanvas.firstChild) lineCanvas.removeChild(lineCanvas.firstChild);
+      lineCanvas.appendChild(frag);
     }
 
-    animate();
+    /* ===== animación ===== */
+    function tickNodes(dt){
+      if(paused) return;
+      const b = bounds();
+      for(const n of allNodes){
+        n.x += n.vx * dt * 0.06;
+        n.y += n.vy * dt * 0.06;
 
-    window.addEventListener('resize', () => {
-      [...nodesA, ...nodesB].forEach(n => {
-        n.x = Math.random() * window.innerWidth;
-        n.y = Math.random() * window.innerHeight;
-      });
-    });
+        const minX=b.lPad, maxX=b.w - b.rPad - n.w;
+        const minY=b.tPad, maxY=b.h - b.bPad - n.h;
 
-    window.addEventListener('scroll', () => paused = true, { passive: true });
+        if(n.x < minX){ n.x=minX; n.vx*=-1; }
+        if(n.x > maxX){ n.x=maxX; n.vx*=-1; }
+        if(n.y < minY){ n.y=minY; n.vy*=-1; }
+        if(n.y > maxY){ n.y=maxY; n.vy*=-1; }
+
+        n.el.style.transform = `translate3d(${n.x}px, ${n.y}px, 0)`;
+      }
+    }
+
+    let last = performance.now();
+    function frame(now){
+      const dt = Math.min(64, now - last);
+      last = now;
+
+      tickNodes(dt);
+
+      if(now >= nextLineUpdate){
+        regenerateLines(); redrawLines();
+        lineInterval = 420 + Math.random()*260;
+        nextLineUpdate = now + lineInterval;
+      }
+      requestAnimationFrame(frame);
+    }
+    regenerateLines(); redrawLines(); requestAnimationFrame(frame);
+
+    /* ===== utilidades ===== */
+    function setPaused(v){
+      paused = v;
+      document.documentElement.classList.toggle('paused', v);
+    }
+    document.addEventListener('visibilitychange', ()=> setPaused(document.hidden));
+
+    window.addEventListener('resize', ()=>{
+      const b = bounds();
+      const leftZoneW = b.w * 0.44;
+      const rightZoneW = b.w * 0.44;
+      for(const n of nodesA){
+        n.x = Math.min(Math.max(n.x, b.lPad), b.lPad + leftZoneW);
+        n.y = Math.min(Math.max(n.y, b.tPad), b.h - b.bPad - n.h);
+      }
+      for(const n of nodesB){
+        n.x = Math.max(Math.min(n.x, b.w - b.rPad), b.w - rightZoneW - b.rPad);
+        n.y = Math.min(Math.max(n.y, b.tPad), b.h - b.bPad - n.h);
+      }
+      regenerateLines(); redrawLines();
+    }, {passive:true});
+
+    // gesto global: mantener pulsado para pausar
+    let pressT=null;
+    window.addEventListener('pointerdown', ()=>{ pressT=setTimeout(()=>setPaused(true),120); }, {passive:true});
+    window.addEventListener('pointerup',   ()=>{ clearTimeout(pressT); setPaused(false); }, {passive:true});
+    window.addEventListener('scroll', ()=> setPaused(true), {passive:true});
   </script>
 </body>
 </html>

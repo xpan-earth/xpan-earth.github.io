@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>xpan.ep.2</title>
+
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
+      --line:#2A2E31; --grid:#181B1F;
+      --pad:clamp(14px,3.4vw,48px); --pad-x:clamp(16px,4vw,48px);
+      --header-h:64px; --maxw:1440px; --b1:1px solid var(--line);
+
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A;
+        --line:#D7DDE2; --grid:#EBEEF2;
+      }
+    }
+
+    *,*::before,*::after{ box-sizing:border-box }
+    html,body{ height:100%; margin:0 }
+    body{
+      background:var(--bg); color:var(--fg);
+      font-family:var(--ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none }
+
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+      height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      z-index:40; border-bottom:0; pointer-events:auto;
+    }
+    .stack{ display:flex; align-items:center; gap:12px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:10px;
+      font:600 12px/1 var(--ui); text-transform:lowercase; color:var(--fg-dim);
+      padding:8px 10px; border:1px solid var(--line);
+      background:color-mix(in oklab, var(--bg) 92%, transparent);
+      user-select:none;
+    }
+
+    header img{
+      width:50px; height:auto; display:block;
+      mix-blend-mode:difference; filter:invert(1) saturate(100%);
+      -webkit-user-drag:none; user-select:none;
+    }
+    @media (prefers-color-scheme:light){
+      header img{ mix-blend-mode:normal; filter:none; }
+    }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg, var(--grid) 1px, transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed; inset:0; z-index:1; pointer-events:none;
+      background:
+        linear-gradient(90deg, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
+        linear-gradient(0deg,  transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px));
+      opacity:.18;
+    }
+
+    .aei{ position:fixed; inset:0; z-index:2; pointer-events:none }
+    .aei svg{ width:100%; height:100%; display:block }
+    .gline{ stroke:var(--line); stroke-width:1; shape-rendering:crispEdges }
+    .route{ stroke:var(--fg); stroke-width:1; opacity:.22; fill:none }
+    .node{ fill:var(--fg); opacity:.22 }
+
+    .img{
+      position:absolute; z-index:2; pointer-events:none;
+      width:clamp(96px, 12vw, 220px);
+      filter:grayscale(1) contrast(1.15) brightness(.92);
+      mix-blend-mode:multiply;
+      border:1px solid var(--line);
+      background:#000;
+    }
+
+    main{ padding-top:calc(var(--header-h) + 24px); position:relative; z-index:3 }
+    .section{
+      max-width:var(--maxw); margin:0 auto;
+      padding:24px var(--pad-x) 72px;
+      border-top:var(--b1); padding-top:1.25rem; margin-top:1.25rem;
+    }
+    .plate{
+      display:grid; gap:8px; border:1px solid var(--line);
+      padding:10px 12px; color:var(--fg-dim);
+      font:600 12px/1 var(--ui); text-transform:lowercase;
+      background:color-mix(in oklab, var(--bg) 92%, transparent);
+      user-select:none; max-width:fit-content;
+    }
+
+    *{ animation:none !important; transition:none !important }
+
+    /* ===== imagen central con ruido y flash ===== */
+    .bg-hero{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .bg-hero::before{
+      content:"";
+      background-image:var(--hero, none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      width:80vw; height:80vh;
+      filter:blur(6px) contrast(60) brightness(.1) saturate(.95);
+      opacity:.28;
+      animation:flashFX 6s steps(30,end) infinite !important;
+      will-change:opacity,filter;
+    }
+    .grain{
+      position:fixed; inset:-40%; z-index:0; pointer-events:none;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.02) 0 1px, transparent 1px 4px);
+      mix-blend-mode:overlay;
+      opacity:.15;
+      filter:blur(1px);
+      animation:noiseShift 1.8s steps(6,end) infinite !important;
+    }
+    @keyframes flashFX{
+      0%,10%{opacity:.25;}
+      15%{opacity:.32;}
+      30%{opacity:.27;}
+      50%{opacity:.34;}
+      60%{opacity:.22;}
+      100%{opacity:.28;}
+    }
+    @keyframes noiseShift{
+      0%{transform:translate3d(0,0,0);}
+      25%{transform:translate3d(-1%,1%,0);}
+      50%{transform:translate3d(1%,-1%,0);}
+      75%{transform:translate3d(2%,2%,0);}
+      100%{transform:translate3d(0,0,0);}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener">
+        <img src="xpan.svg" alt="xpan" fetchpriority="high"/>
+      </a>
+      <div class="chip">xpan.ep.2</div>
+    </div>
+    <div class="stack">
+      <div class="chip">atlas.3</div>
+      <div class="chip">ciudad de méxico · febrero 2026</div>
+    </div>
+  </header>
+
+  <!-- imagen central + ruido -->
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- fondo -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+  <div class="aei" aria-hidden="true">
+    <svg id="aei" preserveAspectRatio="none"></svg>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="plate">
+        <span>xpan.ep.2 / atlas.3</span>
+        <span>cdmx / feb 2026</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (q, el=document)=> el.querySelector(q);
+    const svgNS = "http://www.w3.org/2000/svg";
+
+    const images = [
+      "https://d2w9rnfcy7mm78.cloudfront.net/40745995/original_d77cd22950a8a1e2ddd6e6e6283e1dc8.png?1761881049?bc=0", "https://d2w9rnfcy7mm78.cloudfront.net/40988069/original_efc718369e3931294ea6088c6019f030.jpg?1762753696?bc=0", "https://d2w9rnfcy7mm78.cloudfront.net/40988066/original_ce22ee04f1ddee98adf465c56f2c51b6.png?1762753647?bc=0"
+    ];
+
+
+
+    (function heroCycle(){
+      const box = $('.bg-hero');
+      if(!box) return;
+      if(!images.length) return;
+
+      let idx = 0;
+      const setHero = url => box.style.setProperty('--hero', `url("${url}")`);
+      setHero(images[0]);
+      if(images.length > 1){
+        setInterval(()=>{
+          idx = (idx + 1) % images.length;
+          setHero(images[idx]);
+        }, 3600);
+      }
+    })();
+
+    (function buildAEI(){
+      const svg = $('#aei'); const W = innerWidth; const H = innerHeight;
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      const gGrid = document.createElementNS(svgNS,'g');
+      for(let x=0; x<=W; x+=32){
+        const l = document.createElementNS(svgNS,'line');
+        l.setAttribute('x1',x); l.setAttribute('y1',0);
+        l.setAttribute('x2',x); l.setAttribute('y2',H);
+        l.setAttribute('class','gline'); gGrid.appendChild(l);
+      }
+      for(let y=0; y<=H; y+=32){
+        const l = document.createElementNS(svgNS,'line');
+        l.setAttribute('x1',0); l.setAttribute('y1',y);
+        l.setAttribute('x2',W); l.setAttribute('y2',y);
+        l.setAttribute('class','gline'); gGrid.appendChild(l);
+      }
+      svg.appendChild(gGrid);
+
+      const gRoutes = document.createElementNS(svgNS,'g');
+      const routes = [
+        `M ${Math.round(W*.15)} ${Math.round(H*.30)} H ${Math.round(W*.50)} V ${Math.round(H*.60)} H ${Math.round(W*.85)}`,
+        `M ${Math.round(W*.20)} ${Math.round(H*.70)} H ${Math.round(W*.55)} V ${Math.round(H*.40)} H ${Math.round(W*.80)}`
+      ];
+      routes.forEach(d=>{
+        const p = document.createElementNS(svgNS,'path');
+        p.setAttribute('d', d);
+        p.setAttribute('class','route');
+        gRoutes.appendChild(p);
+      });
+      svg.appendChild(gRoutes);
+
+      const gNodes = document.createElementNS(svgNS,'g');
+      const pts = [
+        {x:.15,y:.30},{x:.50,y:.60},{x:.85,y:.60},
+        {x:.20,y:.70},{x:.55,y:.40},{x:.80,y:.40}
+      ];
+      pts.forEach(pt=>{
+        const r = document.createElementNS(svgNS,'rect');
+        r.setAttribute('x', Math.round(W*pt.x)-3);
+        r.setAttribute('y', Math.round(H*pt.y)-3);
+        r.setAttribute('width', 6);
+        r.setAttribute('height',6);
+        r.setAttribute('class','node');
+        gNodes.appendChild(r);
+      });
+      svg.appendChild(gNodes);
+    })();
+
+    addEventListener('resize', ()=> location.reload(), {passive:true});
+  </script>
+</body>
+</html>

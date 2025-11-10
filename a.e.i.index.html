@@ -1,71 +1,61 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-xpan>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark"/>
   <title>a.e.i.index</title>
+
   <style>
-    body {
-      margin: 0;
-      background: #fefefe;
-      font-family: 'Times New Roman', serif;
-      color: #000;
-      overflow: hidden;
-      cursor: crosshair;
+    :root{
+      --bg:#0C0D0F; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+      --accent-aqua:#1FE4FF; --accent-radar:#6BFF6B;
+      --line:#2A2E31; --grid:#0F1216;
+      --header-h:64px; --g:clamp(10px,2.2vw,24px); --pad:clamp(12px,3vw,32px);
+      --z-lines:0; --z-hud:1; --z-titles:2; --z-header:3;
     }
-    header {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 10;
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#F6F8FA; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --grid:#EDEFF2; }
     }
-    header img {
-      width: 50px;
-      height: auto;
-      display: block;
+    *{ box-sizing:border-box; } html,body{ height:100%; margin:0; } a{ color:inherit; text-decoration:none; }
+    body{ background:var(--bg); color:var(--fg); font-family:"Times New Roman",serif; overflow:hidden; cursor:crosshair; }
+    .hud{ position:fixed; inset:0; z-index:var(--z-hud); pointer-events:none;
+      background:
+        linear-gradient(transparent 49%, var(--grid) 50%, transparent 51%) 0 0/100% 36px,
+        linear-gradient(90deg, transparent 49%, var(--grid) 50%, transparent 51%) 0 0/36px 100%;
+      opacity:.22;
     }
-    .floating-title {
-      position: absolute;
-      font-size: 0.9rem;
-      text-transform: lowercase;
-      white-space: nowrap;
-      pointer-events: auto;
-      transition: color 0.3s ease;
+    .hud::after{ content:""; position:absolute; inset:-20%; background:conic-gradient(from 0deg, rgba(31,228,255,.10), rgba(31,228,255,0) 35%); animation:sweep 6s linear infinite; opacity:.18; }
+    @keyframes sweep{ to{ transform:rotate(360deg);} }
+    header{ position:fixed; top:0; left:0; right:0; height:var(--header-h); display:flex; align-items:center; padding-left:var(--pad);
+      border-bottom:1px solid var(--line); background:linear-gradient(to bottom, rgba(12,13,15,.85), rgba(12,13,15,.30) 60%, transparent); backdrop-filter:blur(4px); z-index:var(--z-header);
     }
-    .floating-title:hover {
-      color: #888;
+    header a{ display:inline-flex; align-items:center; } header img{ width:46px; height:auto; display:block; filter:invert(1) contrast(1.1); }
+    svg.lines{ position:fixed; inset:0; z-index:var(--z-lines); pointer-events:none; width:100vw; height:100vh; }
+    svg.lines line{ vector-effect:non-scaling-stroke; stroke-width:.75; opacity:.35; transition:opacity .25s ease; }
+    .floating-title{ position:absolute; z-index:var(--z-titles); font-size:clamp(.78rem,1.2vw,1rem); line-height:1; text-transform:lowercase; white-space:nowrap; pointer-events:auto;
+      padding:4px 6px; background:rgba(12,13,15,.35); border:1px solid var(--line); border-radius:2px; backdrop-filter:blur(2px); transform:translate3d(0,0,0); will-change:transform;
+      transition:color .25s, border-color .25s, background .25s, opacity .25s; user-select:none;
     }
-    svg.lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-    }
-    svg.lines line {
-      stroke: black;
-      stroke-width: 0.6px;
-      opacity: 0.25;
-      transition: stroke-width 0.3s, opacity 0.3s;
-    }
-    @media (max-width: 600px) {
-      .floating-title {
-        font-size: 0.8rem;
-      }
-    }
+    .floating-title:hover{ color:var(--fg); background:rgba(31,228,255,.10); border-color:rgba(31,228,255,.45); }
+    .floating-title[data-group="A"]{ color:var(--accent-radar); } .floating-title[data-group="B"]{ color:var(--accent-aqua); }
+    .paused .floating-title{ opacity:.85; }
+    @media (prefers-reduced-motion:reduce){ .floating-title{ transition:none; } .hud::after{ animation:none; display:none; } }
+    @supports (padding:max(0px)){ header{ padding-left:max(var(--pad), env(safe-area-inset-left)); padding-right:max(var(--pad), env(safe-area-inset-right)); } }
   </style>
 </head>
 <body>
-  <header>
-    <a href="https://xpan.earth">
-      <img src="./xpan.svg" alt="xpan" />
-    </a>
+  <header aria-label="xpan">
+    <a href="https://xpan.earth"><img src="./xpan.svg" alt="xpan" /></a>
   </header>
-  <svg class="lines" id="dynamic-lines"></svg>
+
+  <div class="hud" aria-hidden="true"></div>
+  <svg class="lines" id="dynamic-lines" role="presentation"></svg>
 
   <script>
+    // carpeta contenedora para todos los a.e.i
+    const BASE_DIR = "./a.e.i./";
+
     const titles = [
       "a.e.i.1",
       "a.e.i_msh_7+2[31.06.22]",
@@ -100,122 +90,125 @@
       "a.e.i_msh_circa_23_24_25.1",
       "a.e.i_xpan.fps_select.sem.04.ago.25",
       "a.e.i_xpan.fps_select.sem.18.ago.25",
-      "a.e.i_msh.17.jul-19.ago.25[39^]",
-
+      "a.e.i_msh.17.jul-19.ago.25[39^]"
     ];
 
     const container = document.body;
     const lineCanvas = document.getElementById('dynamic-lines');
-    const nodesA = [];
-    const nodesB = [];
+    const nodesA = [], nodesB = [], allNodes = [];
     let paused = false;
-    let nextLineUpdate = Date.now();
-    let nextDelay = 100 + Math.random() * 500;
-    let currentLines = [];
 
-    titles.forEach(title => {
+    const bounds = () => ({
+      w: innerWidth, h: innerHeight, lPad:12, rPad:12,
+      tPad: (12 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||64)),
+      bPad:12
+    });
+
+    function makeNode(title){
       const el = document.createElement('a');
       el.className = 'floating-title';
-      el.href = `${title}.html`;
+      // apunta a /a.e.i/ + nombre codificado
+      el.href = BASE_DIR + encodeURIComponent(title) + '.html';
       el.textContent = title;
       el.target = '_self';
+      el.rel = 'noopener';
+      el.setAttribute('role','link');
+      el.setAttribute('aria-label', title);
+
+      const isA = title.includes('_msh_') || title.includes('msh');
+      el.dataset.group = isA ? 'A' : 'B';
       container.appendChild(el);
 
-      const node = {
-        el,
-        x: 0,
-        y: 0,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5
-      };
+      const b = bounds();
+      const node = { el, group:isA?'A':'B', x:0, y:0, vx:0, vy:0, w:0, h:0 };
 
-      if (title.includes('_msh_') || title.includes('msh')) {
-        node.x = Math.random() * window.innerWidth * 0.4;
-        node.y = Math.random() * window.innerHeight;
-        nodesA.push(node);
-      } else {
-        node.x = Math.random() * window.innerWidth * 0.4 + window.innerWidth * 0.6;
-        node.y = Math.random() * window.innerHeight;
-        nodesB.push(node);
-      }
+      const leftZoneW = b.w*0.44, rightZoneW = b.w*0.44;
+      node.x = isA ? (Math.random()*leftZoneW + b.lPad)
+                   : (Math.random()*rightZoneW + (b.w - rightZoneW - b.rPad));
+      node.y = Math.random()*(b.h - b.tPad - b.bPad) + b.tPad;
 
-      el.addEventListener('mouseenter', () => paused = true);
-      el.addEventListener('mouseleave', () => paused = false);
-      el.addEventListener('touchstart', () => paused = true);
-      el.addEventListener('touchend', () => paused = false);
-    });
+      node.vx = (Math.random()-0.5)*0.55;
+      node.vy = (Math.random()-0.5)*0.55;
 
-    const allNodes = [...nodesA, ...nodesB];
+      el.addEventListener('mouseenter', ()=>setPaused(true));
+      el.addEventListener('mouseleave', ()=>setPaused(false));
+      el.addEventListener('touchstart', ()=>setPaused(true), {passive:true});
+      el.addEventListener('touchend', ()=>setPaused(false), {passive:true});
 
-    function animate() {
-      if (!paused) {
-        allNodes.forEach(n => {
-          n.x += n.vx;
-          n.y += n.vy;
-
-          if (n.x < 0 || n.x > window.innerWidth) n.vx *= -1;
-          if (n.y < 0 || n.y > window.innerHeight) n.vy *= -1;
-
-          n.el.style.transform = `translate(${n.x}px, ${n.y}px)`;
-        });
-
-        const now = Date.now();
-        if (now >= nextLineUpdate) {
-          generateNewLines();
-          nextDelay = 100 + Math.random() * 500;
-          nextLineUpdate = now + nextDelay;
-        }
-
-        redrawCurrentLines();
-      }
-      requestAnimationFrame(animate);
-    }
-
-    function generateNewLines() {
-      currentLines = [];
-      [nodesA, nodesB].forEach(group => {
-        for (let i = 0; i < group.length; i++) {
-          for (let j = i + 1; j < group.length; j++) {
-            if (Math.random() < 0.2) {
-              currentLines.push([group[i], group[j]]);
-            }
-          }
-        }
-      });
-    }
-
-    function getNodeCenter(node) {
-      const el = node.el;
       const rect = el.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
-      return [node.x + width / 2, node.y + height / 2];
+      node.w = rect.width; node.h = rect.height;
+
+      (isA?nodesA:nodesB).push(node);
+      allNodes.push(node);
     }
 
-    function redrawCurrentLines() {
-      lineCanvas.innerHTML = '';
-      currentLines.forEach(([nodeA, nodeB]) => {
-        const [x1, y1] = getNodeCenter(nodeA);
-        const [x2, y2] = getNodeCenter(nodeB);
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', x1);
-        line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2);
-        line.setAttribute('y2', y2);
-        lineCanvas.appendChild(line);
+    titles.forEach(makeNode);
+
+    let currentLines = [];
+    let nextLineUpdate = performance.now();
+    let lineInterval = 500;
+    const colorA = getComputedStyle(document.documentElement).getPropertyValue('--accent-radar').trim() || '#6BFF6B';
+    const colorB = getComputedStyle(document.documentElement).getPropertyValue('--accent-aqua').trim() || '#1FE4FF';
+
+    function chooseGroupLines(group){
+      const list=[]; for(let i=0;i<group.length;i++){ for(let j=i+1;j<group.length;j++){ if(Math.random()<0.22) list.push([group[i],group[j]]); } }
+      return list;
+    }
+    function regenerateLines(){ currentLines = [...chooseGroupLines(nodesA), ...chooseGroupLines(nodesB)]; }
+    function redrawLines(){
+      const frag = document.createDocumentFragment();
+      currentLines.forEach(([a,b])=>{
+        const ra=a.el.getBoundingClientRect(), rb=b.el.getBoundingClientRect();
+        const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+        l.setAttribute('x1', ra.left+ra.width/2); l.setAttribute('y1', ra.top+ra.height/2);
+        l.setAttribute('x2', rb.left+rb.width/2); l.setAttribute('y2', rb.top+rb.height/2);
+        l.setAttribute('stroke', (a.group==='A'&&b.group==='A')?colorA:colorB);
+        frag.appendChild(l);
       });
+      while(lineCanvas.firstChild) lineCanvas.removeChild(lineCanvas.firstChild);
+      lineCanvas.appendChild(frag);
     }
 
-    animate();
+    function tickNodes(dt){
+      if(paused) return;
+      const b=bounds();
+      for(const n of allNodes){
+        n.x += n.vx*dt*0.06; n.y += n.vy*dt*0.06;
+        const minX=b.lPad, maxX=b.w-b.rPad-n.w, minY=b.tPad, maxY=b.h-b.bPad-n.h;
+        if(n.x<minX){ n.x=minX; n.vx*=-1; }
+        if(n.x>maxX){ n.x=maxX; n.vx*=-1; }
+        if(n.y<minY){ n.y=minY; n.vy*=-1; }
+        if(n.y>maxY){ n.y=maxY; n.vy*=-1; }
+        n.el.style.transform = `translate3d(${n.x}px,${n.y}px,0)`;
+      }
+    }
 
-    window.addEventListener('resize', () => {
-      [...nodesA, ...nodesB].forEach(n => {
-        n.x = Math.random() * window.innerWidth;
-        n.y = Math.random() * window.innerHeight;
-      });
-    });
+    let last = performance.now();
+    function frame(now){
+      const dt = Math.min(64, now-last); last = now;
+      tickNodes(dt);
+      if(now>=nextLineUpdate){
+        regenerateLines(); redrawLines();
+        lineInterval = 420 + Math.random()*260;
+        nextLineUpdate = now + lineInterval;
+      }
+      requestAnimationFrame(frame);
+    }
+    regenerateLines(); redrawLines(); requestAnimationFrame(frame);
 
-    window.addEventListener('scroll', () => paused = true, { passive: true });
+    function setPaused(v){ paused=v; document.documentElement.classList.toggle('paused', v); }
+    document.addEventListener('visibilitychange', ()=>setPaused(document.hidden));
+    addEventListener('resize', ()=>{
+      const b=bounds(), leftZoneW=b.w*0.44, rightZoneW=b.w*0.44;
+      for(const n of nodesA){ n.x=Math.min(Math.max(n.x,b.lPad), b.lPad+leftZoneW); n.y=Math.min(Math.max(n.y,b.tPad), b.h-b.bPad-n.h); }
+      for(const n of nodesB){ n.x=Math.max(Math.min(n.x,b.w-b.rPad), b.w-rightZoneW-b.rPad); n.y=Math.min(Math.max(n.y,b.tPad), b.h-b.bPad-n.h); }
+      regenerateLines(); redrawLines();
+    }, {passive:true});
+
+    let pressT=null;
+    addEventListener('pointerdown', ()=>{ pressT=setTimeout(()=>setPaused(true),120); }, {passive:true});
+    addEventListener('pointerup',   ()=>{ clearTimeout(pressT); setPaused(false); }, {passive:true});
+    addEventListener('scroll', ()=>setPaused(true), {passive:true});
   </script>
 </body>
 </html>
