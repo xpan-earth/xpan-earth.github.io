@@ -34,29 +34,332 @@
     }
     a{ color:inherit; text-decoration:none }
 
-    header{
-      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
-      height:var(--header-h);
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
-      z-index:40; border-bottom:0; pointer-events:auto;
-    }
-    .stack{ display:flex; align-items:center; gap:12px; }
-    .chip{
-      display:inline-flex; align-items:center; gap:10px;
-      font:600 12px/1 var(--ui); text-transform:lowercase; color:var(--fg-dim);
-      padding:8px 10px; border:1px solid var(--line);
-      background:color-mix(in oklab, var(--bg) 92%, transparent);
-      user-select:none;
+    /* ===== capa de acceso seguro ===== */
+    body.locked{
+      overflow:hidden;
     }
 
-    header img{
-      width:50px; height:auto; display:block;
-      mix-blend-mode:difference; filter:invert(1) saturate(100%);
-      -webkit-user-drag:none; user-select:none;
+    #access-shell{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:var(--pad-x);
+      z-index:100;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(24,96,255,.14) 0, transparent 52%),
+        radial-gradient(circle at 90% 100%, rgba(24,96,255,.18) 0, transparent 55%),
+        linear-gradient(135deg, #050608 0, #0B0D0F 40%, #050608 100%);
     }
-    @media (prefers-color-scheme:light){
-      header img{ mix-blend-mode:normal; filter:none; }
+
+    body.unlocked #access-shell{
+      display:none;
     }
+
+    body.locked header,
+    body.locked .bg-hero,
+    body.locked .grain,
+    body.locked .bg-grid,
+    body.locked .crosshair,
+    body.locked main{
+      display:none;
+    }
+
+    .access-panel{
+      position:relative;
+      max-width:420px;
+      width:100%;
+      border:1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(12,13,15,.96), rgba(8,9,11,.98));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.02),
+        0 18px 45px rgba(0,0,0,.75);
+      padding:18px 18px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:hidden;
+    }
+
+    .access-panel::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0 1px, transparent 1px 4px);
+      mix-blend-mode:screen;
+      opacity:.18;
+      pointer-events:none;
+    }
+
+    .access-header{
+      position:relative;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      z-index:1;
+    }
+
+    .access-id{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .access-tagline{
+      font:600 11px/1.2 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.12em;
+      color:var(--fg-dim);
+    }
+
+    .access-title{
+      font:600 13px/1.35 var(--ui);
+      text-transform:none;
+      color:var(--fg);
+    }
+
+    .access-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      font:600 10px/1.1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--fg-dim);
+      background:linear-gradient(135deg, rgba(0,0,0,.4), rgba(33,37,43,.8));
+      white-space:nowrap;
+    }
+
+    .access-badge-dot{
+      width:7px; height:7px;
+      border-radius:999px;
+      background:radial-gradient(circle at 30% 30%, #7DFFB2, #2BD36C);
+      box-shadow:0 0 6px rgba(43,211,108,.85);
+    }
+
+    .access-body{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .access-body p{
+      margin:0;
+      font:400 12px/1.5 var(--ui);
+      color:var(--fg-dim);
+    }
+
+    .access-form{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:4px;
+    }
+
+    .access-row{
+      display:flex;
+      align-items:stretch;
+      gap:8px;
+    }
+
+    .access-input{
+      flex:1;
+      min-width:0;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.85);
+      color:var(--fg);
+      font:500 12px/1.3 var(--mono);
+      padding:8px 9px;
+      border-radius:3px;
+      outline:none;
+    }
+
+    .access-input::placeholder{
+      color:rgba(164,171,178,.7);
+    }
+
+    .access-input:focus-visible{
+      border-color:#1860FF;
+      box-shadow:0 0 0 1px rgba(24,96,255,.45);
+    }
+
+    .access-btn{
+      border:1px solid #1860FF;
+      background:radial-gradient(circle at 0 0, rgba(80,140,255,.9), rgba(24,96,255,1));
+      color:#F8FAFF;
+      font:600 11px/1.1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      padding:0 14px;
+      border-radius:3px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      white-space:nowrap;
+      min-width:92px;
+    }
+
+    .access-btn:disabled{
+      opacity:.6;
+      cursor:wait;
+    }
+
+    .access-meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-top:4px;
+      flex-wrap:wrap;
+    }
+
+    .access-hint{
+      font:400 11px/1.4 var(--ui);
+      color:var(--fg-dim);
+    }
+
+    .access-fingerprint{
+      font:500 10px/1.4 var(--mono);
+      color:rgba(135,141,150,.95);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      white-space:nowrap;
+    }
+
+    .access-log{
+      margin-top:8px;
+      padding:7px 8px;
+      border-radius:3px;
+      border:1px solid rgba(71,77,86,.9);
+      background:radial-gradient(circle at 0 0, rgba(24,96,255,.08), rgba(0,0,0,.75));
+      font:400 11px/1.4 var(--mono);
+      color:#C6CBD3;
+      min-height:30px;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+
+    .access-panel::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg, transparent 0, rgba(24,96,255,.12) 48%, transparent 100%);
+      mix-blend-mode:soft-light;
+      opacity:.0;
+      pointer-events:none;
+      transition:opacity .22s ease-out;
+    }
+
+    .access-form.access-processing ~ .access-log,
+    .access-form.access-processing + .access-meta + .access-log{
+      border-color:rgba(24,96,255,.85);
+      box-shadow:0 0 8px rgba(24,96,255,.45) inset;
+    }
+
+    .access-form.access-processing .access-btn{
+      cursor:wait;
+    }
+
+    .access-form.access-processing .access-btn span::after{
+      content:" …";
+    }
+
+    .access-form.access-error{
+      animation:access-shake .03s ease-out;
+    }
+
+    @keyframes access-shake{
+      0%{ transform:translateX(0); }
+      25%{ transform:translateX(-.04px); }
+      50%{ transform:translateX(.03px); }
+      75%{ transform:translateX(-.02px); }
+      100%{ transform:translateX(0); }
+    }
+
+    /* ===== layout principal ===== */
+
+    /* ===== header siempre en negativo respecto al fondo ===== */
+header{
+  position:fixed;
+  top:12px;
+  left:var(--pad-x);
+  right:var(--pad-x);
+  height:var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  z-index:40;
+  border-bottom:0;
+  pointer-events:auto;
+
+  /* clave para que logo + texto siempre vayan en negativo */
+  mix-blend-mode:difference;
+  color:#fff;
+}
+
+header img{
+  width:50px;
+  height:auto;
+  display:block;
+  filter:invert(1) saturate(140%);
+  -webkit-user-drag:none;
+  user-select:none;
+}
+
+/* chips del header en blanco translúcido, sin fondo opaco */
+.stack{ display:flex; align-items:center; gap:12px; }
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font:600 12px/1 var(--ui);
+  text-transform:lowercase;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.42);
+  color:rgba(255,255,255,.74);
+  background:transparent;
+  user-select:none;
+  cursor:default;
+}
+
+.chip[data-lang-btn]{
+  cursor:pointer;
+}
+
+.chip.lang-active{
+  color:#fff;
+  border-color:#fff;
+  background:transparent;
+}
+
+
+header img{
+  width:50px;
+  height:auto;
+  display:block;
+  mix-blend-mode:difference;
+  filter:invert(1) saturate(100%);
+  -webkit-user-drag:none;
+  user-select:none;
+}
+
 
     .bg-grid{
       position:fixed; inset:0; z-index:0; pointer-events:none;
@@ -72,11 +375,7 @@
       opacity:.18;
     }
 
-    .aei{ position:fixed; inset:0; z-index:2; pointer-events:none }
-    .aei svg{ width:100%; height:100%; display:block }
-    .gline{ stroke:var(--line); stroke-width:1; shape-rendering:crispEdges }
-    .route{ stroke:var(--fg); stroke-width:1; opacity:.22; fill:none }
-    .node{ fill:var(--fg); opacity:.22 }
+
 
     .img{
       position:absolute; z-index:2; pointer-events:none;
@@ -94,14 +393,76 @@
       border-top:var(--b1); padding-top:1.25rem; margin-top:1.25rem;
     }
     .plate{
-      display:grid; gap:8px; border:1px solid var(--line);
-      padding:10px 12px; color:var(--fg-dim);
-      font:600 12px/1 var(--ui); text-transform:lowercase;
+      display:grid; gap:4px; border:1px solid var(--line);
+      padding:8px 10px; color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono); text-transform:lowercase;
       background:color-mix(in oklab, var(--bg) 92%, transparent);
       user-select:none; max-width:fit-content;
+      margin-bottom:18px;
     }
 
-    *{ animation:none !important; transition:none !important }
+    /* contenedor en negativo para todo el bloque de texto */
+.neg-shell{
+  position:relative;
+  z-index:30;
+  mix-blend-mode:difference;
+  color:#FFFFFF;
+}
+
+.neg-shell h2,
+.neg-shell p,
+.neg-shell li{
+  color:inherit;
+}
+
+
+    .description{
+  max-width:800px;
+  font:400 14px/1.6 var(--ui);
+  position:relative;
+  color:#FFFFFF;
+}
+
+.description h2{
+  font:600 12px/1 var(--mono);
+  text-transform:lowercase;
+  letter-spacing:0.08em;
+  margin:0 0 12px;
+  color:rgba(255,255,255,.6);
+}
+
+.description p{
+  margin:0 0 10px;
+  color:rgba(255,255,255,.9);
+}
+
+.description ul,
+.description ol{
+  margin:0 0 12px 1.25rem;
+  padding:0;
+}
+
+.description li{
+  margin:3px 0;
+  color:rgba(255,255,255,.9);
+}
+
+.description strong{
+  font-weight:600;
+  color:#FFFFFF;
+}
+
+
+    .lang-block{ display:none; }
+    .lang-block.active{ display:block; }
+
+    /* respeta animaciones salvo usuarios con reduced motion */
+    @media (prefers-reduced-motion:reduce){
+      *{
+        animation:none !important;
+        transition:none !important;
+      }
+    }
 
     /* ===== imagen central con ruido y flash ===== */
     .bg-hero{
@@ -146,12 +507,303 @@
       100%{transform:translate3d(0,0,0);}
     }
 
-    /* patch: hints de composición */
-    #aei{ will-change: contents; }
+    
     .bg-hero::before, .grain{ will-change: transform, opacity, filter; }
+
+    /* ===== media index ep.2 ===== */
+
+    .section-media .plate{
+      margin-bottom:16px;
+    }
+
+    .media-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:16px;
+    }
+
+    .media-slot{
+      border:1px solid var(--line);
+      background:color-mix(in oklab, var(--bg) 90%, #050608 10%);
+      padding:10px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-height:112px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .media-slot::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        linear-gradient(90deg, rgba(24,96,255,.12), transparent 65%);
+      mix-blend-mode:soft-light;
+      opacity:.06;
+      pointer-events:none;
+    }
+
+    .media-slot-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      position:relative;
+      z-index:1;
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.08em;
+      color:var(--fg-dim);
+    }
+
+    .media-tag{
+      border:1px solid var(--line);
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+    }
+
+    .media-label{
+      flex:1;
+      text-align:right;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .media-hint{
+      position:relative;
+      margin:0;
+      font:400 11px/1.45 var(--ui);
+      color:var(--fg-dim);
+      z-index:1;
+    }
+
+    .media-link{
+      position:relative;
+      margin-top:2px;
+      font:500 12px/1.4 var(--ui);
+      text-decoration:underline;
+      text-decoration-style:dotted;
+      text-underline-offset:2px;
+      word-break:break-all;
+      z-index:1;
+    }
+
+    .media-link[href="#"]{
+      opacity:.45;
+      pointer-events:none;
+    }
+
+    .media-meta{
+      position:relative;
+      margin-top:auto;
+      font:500 10px/1.4 var(--mono);
+      color:var(--fg-dim);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      z-index:1;
+      opacity:.8;
+    }
+
+        /* ===== galería de imágenes ep.2 ===== */
+    .gallery{
+      max-width:var(--maxw);
+      margin:32px auto 40px;
+      padding:0 var(--pad-x);
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+    }
+    .gallery img{
+      display:block;
+      width:100%;
+      height:auto;
+      border:1px solid var(--line);
+      background:#000;
+      object-fit:cover;
+      aspect-ratio:4/3;
+      cursor:pointer;
+    }
+
+    /* ===== planos embebidos (PDF) ===== */
+    .pdf-embed{
+      max-width:var(--maxw);
+      margin:0 auto 72px;
+      padding:0 var(--pad-x);
+      display:grid;
+      grid-template-columns:1fr;
+      gap:24px;
+    }
+    .pdf-embed object{
+      width:100%;
+      height:640px;
+      border:1px solid var(--line);
+      background:#000;
+    }
+    @media (prefers-color-scheme:light){
+      .pdf-embed object{
+        background:#F3F5F7;
+      }
+    }
+    @media (max-width:768px){
+      .pdf-embed object{
+        height:auto;
+        aspect-ratio:4/3;
+      }
+    }
+
+       /* ===== lightbox simple ===== */
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.75);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{
+      display:flex;
+    }
+    #xpan-lightbox .sheet{
+      max-width:96vw;
+      max-height:96vh;
+      border:1px solid var(--line);
+      background:#000;
+      padding:6px;
+      box-shadow:0 18px 45px rgba(0,0,0,.8);
+    }
+    #xpan-lightbox img{
+      display:block;
+      max-width:100%;
+      max-height:calc(96vh - 12px);
+      width:auto;
+      height:auto;
+      object-fit:contain;
+    }
+
+    /* botón cerrar */
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:color-mix(in oklab, var(--bg) 90%, #050608 10%);
+      color:var(--fg-dim);
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:6px 10px;
+      cursor:pointer;
+    }
+
+    /* botones prev / next */
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.78);
+      color:var(--fg-dim);
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{
+      left:18px;
+    }
+    #xpan-lightbox .nav-btn[data-dir="next"]{
+      right:18px;
+    }
+    @media (max-width:640px){
+      #xpan-lightbox .nav-btn{
+        width:32px;
+        height:32px;
+        font-size:14px;
+        left:10px;
+        right:10px;
+      }
+      #xpan-lightbox .nav-btn[data-dir="prev"]{
+        left:10px;
+      }
+      #xpan-lightbox .nav-btn[data-dir="next"]{
+        right:10px;
+      }
+    }
+
+
+
+    @media (max-width:640px){
+      .access-panel{
+        max-width:none;
+      }
+      header{
+        top:10px;
+      }
+    }
   </style>
+    <script src="/assets/js/media-proxy.js" defer></script>
 </head>
-<body>
+<body class="locked">
+  <!-- capa de acceso / password gate -->
+  <div id="access-shell" aria-label="secure access ep.2">
+    <section class="access-panel">
+      <header class="access-header">
+        <div class="access-id">
+          <div class="access-tagline">xpan / restricted brief</div>
+          <div class="access-title">ep.2 / acceso a documento técnico</div>
+        </div>
+        <div class="access-badge" id="access-badge">
+          <span class="access-badge-dot"></span>
+          <span>channel locked</span>
+        </div>
+      </header>
+      <div class="access-body">
+        <p>este documento está diseñado como ficha técnica extendida para ep.2. si recibiste este enlace, también recibiste una clave de acceso única.</p>
+
+        <form id="access-form" class="access-form" autocomplete="off" novalidate>
+          <div class="access-row">
+            <input
+              id="access-input"
+              class="access-input"
+              type="password"
+              inputmode="text"
+              autocomplete="current-password"
+              placeholder="ingresa la clave de acceso"
+              spellcheck="false"
+              autocapitalize="off"
+              aria-label="clave de acceso ep.2"
+              required
+            />
+            <button type="submit" class="access-btn">
+              <span>enter</span>
+            </button>
+          </div>
+          <div class="access-meta">
+            <div class="access-fingerprint">ep.2 // secure channel v1.0</div>
+          </div>
+        </form>
+
+        <div id="access-status" class="access-log" aria-live="polite">
+          [boot] standby / waiting for access key
+        </div>
+      </div>
+    </section>
+  </div>
+
   <header>
     <div class="stack">
       <a href="https://xpan.earth" target="_blank" rel="noopener">
@@ -159,9 +811,11 @@
       </a>
       <div class="chip">xpan.ep.2</div>
     </div>
-    <div class="stack">
-      <div class="chip">atlas.3</div>
-      <div class="chip">ciudad de méxico · febrero 2026</div>
+    <div class="stack" id="lang-switch">
+      <div class="chip lang-active" data-lang-btn="es">es</div>
+      <div class="chip" data-lang-btn="en">en</div>
+      <div class="chip" data-lang-btn="fr">fr</div>
+      <div class="chip" data-lang-btn="jp">jp</div>
     </div>
   </header>
 
@@ -172,131 +826,711 @@
   <!-- fondo -->
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="crosshair" aria-hidden="true"></div>
-  <div class="aei" aria-hidden="true">
-    <svg id="aei" preserveAspectRatio="none"></svg>
-  </div>
+
 
   <main>
+    <!-- sección descriptiva multilenguaje -->
     <section class="section">
       <div class="plate">
-        <span>xpan.ep.2 / atlas.3</span>
-        <span>cdmx / feb 2026</span>
+        <span>xpan.ep.2 / [espacio público dos]</span>
+        <span>instrumento modular de activación</span>
+      </div>
+<div class="neg-shell">
+      <!-- ES -->
+      <div class="description lang-block active" data-lang-block="es">
+        <h2>descripción</h2>
+        <p>el sistema ep.2 es un dispositivo espacial ajustable en su acomodo, geografía, uso y acoplamiento. su estructura continúa la investigación de xpan sobre sistemas espaciales y deriva directamente del sistema de poros, central en proyectos como xpan.ep.1, seevs.12 y espacio.gdl.</p>
+
+        <p>el sistema de poros se compone de una matriz de placas de acero perforadas con aperturas centrales que permiten acoplar dispositivos desarrollados por xpan de forma modular y variable. estos dispositivos incluyen sistemas de sonido, bocinas, micrófonos, amplificadores, herramientas audiovisuales, cámaras, pantallas, sensores, objetos funcionales de diseño y subestructuras auxiliares para soportar otros instrumentos.</p>
+
+        <p>el uso dentro de esos dispositivos como parte del sistema lo convierte directamente en un instrumento que integra sonido, archivo, investigación y arquitectura dentro del mismo cuerpo, siendo pieza, arquitectura y sistema desplegado a nuevos formatos y geografías.</p>
+
+        <p>el ep.2 existe como una iteración avanzada de los sistemas espaciales de xpan, consolida desarrollos previos y abre una nueva capa de investigación espacial. su lenguaje material, basado en paneles de resina translúcida con iluminación integrada y barras estructurales de aluminio, habilita nuevas maneras de habitar, activar y componer en torno al sistema.</p>
+
+        <h2>capacidades del sistema</h2>
+        <p>el objetivo principal es ser un instrumento metabólico, donde cada activación transforma al sistema y amplía sus capacidades por medio del desarrollo de nuevos dispositivos a acoplar, diferentes escalas y acomodos, y el acumulamiento de experiencia material, sonora, espacial y cognitiva.</p>
+
+        <ol>
+          <li><strong>evolución continua</strong><br>
+            cada activación genera tanto nuevos dispositivos como nuevas configuraciones espaciales, pero también nuevas formas de relación con el contexto al ser un sistema que se activa de manera versátil en diferentes geografías. el ep.2 se enriquece de cada uso y construye constantemente un archivo material tangible y utilizable de activaciones.
+          </li>
+          <li><strong>reconfiguración espacial precisa</strong><br>
+            el sistema se ajusta en longitud, escala, densidad y orientación, desde un solo núcleo compacto a secuencias repetidas en espacios de mayor tamaño. de esta manera permite pensar al sistema como un instrumento de composición espacial dentro de un rango amplio.
+          </li>
+          <li><strong>acoplamiento multitecnológico</strong><br>
+            el sistema admite la integración de luz, sonido, cámaras, pantallas, sensores, objetos funcionales y soportes para otros instrumentos. cada nuevo dispositivo es fijado con facilidad a la estructura, y esto lo convierte en un instrumento con una escala prácticamente infinita.
+          </li>
+          <li><strong>movilidad geográfica</strong><br>
+            el sistema se desmonta en elementos y viaja en volumen contenido. se reinstala de la misma manera y esta movilidad permite generar un intercambio constante entre geografías y contextos.
+          </li>
+          <li><strong>lectura contextual y ajuste preciso</strong><br>
+            el ep.2 se utiliza para estudiar y comprender cada espacio donde se activa. las decisiones sobre densidad, opacidad, dirección de la luz y distribución de los elementos surgen de una lectura específica del lugar.
+          </li>
+        </ol>
+
+        <h2>modos de activación</h2>
+        <p>el ep.2 se activa siempre desde la creación y la experimentación. su función principal es producir piezas y procesos.</p>
+
+        <ol>
+          <li><strong>escucha expandida y composición sonora multicanal</strong><br>
+            el sistema funciona como instrumento de performance, instalación y composición sonora gracias al acoplamiento de diferentes instrumentos, así como sistemas de sonido multicanal que permiten la espacialización y trayectoria del sonido de manera escalable alrededor del sistema.
+          </li>
+          <li><strong>instrumento de retrabajo de archivo</strong><br>
+            el sistema se utiliza de manera versátil para generar nuevas lecturas y articulaciones de archivos tanto de xpan como de los contextos específicos donde se activa. registros visuales, textuales o sonoros se reinyectan en el espacio mediante bocinas, pantallas y dispositivos acoplados, permitiendo una nueva relación y comunicación con este material.
+          </li>
+          <li><strong>laboratorio espacial y material</strong><br>
+            banco de pruebas para nuevos dispositivos, materiales, subestructuras y formas de acoplamiento espacial. cada activación puede permitir ensayos y composiciones arquitectónicas/espaciales, desarrollo de nuevos dispositivos y piezas que respondan a contextos y/o necesidades específicas. la estructura se convierte en plataforma de desarrollo continuo para la investigación espacial de xpan.
+          </li>
+        </ol>
+
+        <h2>requisitos técnicos</h2>
+        <p>xpan.ep.2 está diseñado para operar con condiciones técnicas accesibles, básicas y adaptarse a diferentes tipos de espacio.</p>
+
+        <ol>
+          <li><strong>espacio</strong><br>
+            el sistema se ajusta a diferentes volúmenes con facilidad bajo la densidad de módulos incluidos. los módulos se apoyan sobre puntos regulables que permiten nivelar sobre pisos irregulares y distintos materiales. la altura mínima recomendada es de 2.10 m.
+          </li>
+          <li><strong>energía</strong><br>
+            consumo eléctrico bajo; un enchufe doméstico estándar basta para alimentar la iluminación y amplificación para el sistema de sonido. la configuración eléctrica se adapta a rangos de corriente habituales y a diferentes estándares según ciudad.
+          </li>
+          <li><strong>montaje y operación</strong><br>
+            el montaje base puede realizarse con dos personas en un rango aproximado de dos horas. las herramientas necesarias son mínimas y se limitan a llaves, tornillería estándar y elementos básicos de sujeción.
+          </li>
+          <li><strong>entorno y condiciones de uso</strong><br>
+            el sistema está pensado principalmente para interiores o espacios controlados. la propia estructura contribuye a afinar las condiciones acústicas y lumínicas del entorno mediante la orientación de paneles, densidad de módulos y disposición de la luz.
+          </li>
+        </ol>
+
+        <p>estos requisitos permiten que ep.2 se despliegue como pieza, instrumento y dispositivo cultural en múltiples contextos, sin depender de una infraestructura técnica compleja y manteniendo la coherencia con su lógica modular y nómada.</p>
+      </div>
+
+      <!-- EN -->
+      <div class="description lang-block" data-lang-block="en">
+        <h2>description</h2>
+        <p>the ep.2 system is a spatial device adjustable in its arrangement, geography, use, and coupling. its structure continues xpan&rsquo;s investigation into spatial systems and derives directly from the poros system, central in projects such as xpan.ep.1, seevs.12, and espacio.gdl.</p>
+
+        <p>the poros system is composed of a matrix of perforated steel plates with central openings that allow devices developed by xpan to be coupled in a modular and variable way. these devices include sound systems, speakers, microphones, amplifiers, audiovisual tools, cameras, screens, sensors, functional design objects, and auxiliary substructures supporting other instruments.</p>
+
+        <p>the incorporation of these devices as part of the system turns it into an instrument that integrates sound, archive, research, and architecture within the same body, operating at once as piece, architecture, and system deployed into new formats and geographies.</p>
+
+        <p>ep.2 exists as an advanced iteration of xpan&rsquo;s spatial systems, consolidating previous developments and opening a new layer of spatial research. its material language &mdash; based on translucent resin panels with integrated lighting and aluminum structural bars &mdash; enables new ways of inhabiting, activating, and composing around the system.</p>
+
+        <h2>system capabilities</h2>
+        <p>the main objective is to operate as a metabolic instrument, where each activation transforms the system and expands its capacities through the development of new devices to couple, different scales and configurations, and the accumulation of material, sonic, spatial, and cognitive experience.</p>
+
+        <ol>
+          <li><strong>continuous evolution</strong><br>
+            each activation generates new devices and spatial configurations, as well as new forms of relation to context, as the system activates in versatile ways across different geographies. ep.2 grows with each use and continuously constructs a tangible and usable material archive of activations.
+          </li>
+          <li><strong>precise spatial reconfiguration</strong><br>
+            the system adjusts in length, scale, density, and orientation, from a compact single core to repeated sequences in larger spaces. this allows the system to function as an instrument of spatial composition across a wide range.
+          </li>
+          <li><strong>multitechnological coupling</strong><br>
+            the system integrates light, sound, cameras, screens, sensors, functional objects, and supports for other instruments. each new device is easily fixed to the structure, turning it into an instrument with virtually infinite scale.
+          </li>
+          <li><strong>geographical mobility</strong><br>
+            the system can be disassembled into elements and transported in contained volume. reinstalling follows the same logic, enabling constant exchange across geographies and contexts.
+          </li>
+          <li><strong>contextual reading and precise adjustment</strong><br>
+            ep.2 analyzes and adapts to each space where it is activated. decisions regarding density, opacity, light direction, and distribution of elements emerge from a specific reading of the site.
+          </li>
+        </ol>
+
+        <h2>activation modes</h2>
+        <p>ep.2 always operates from creation and experimentation. its primary function is to generate pieces and processes.</p>
+
+        <ol>
+          <li><strong>expanded listening and multichannel sound composition</strong><br>
+            the system works as an instrument for performance, installation, and sound composition through the coupling of various instruments, as well as multichannel sound systems that enable spatialization and sonic trajectories in scalable ways around the system.
+          </li>
+          <li><strong>archive reworking instrument</strong><br>
+            the system is used in a versatile manner to generate new readings and articulations of archives from both xpan and the specific contexts where it activates. visual, textual, or sonic records are re-injected into space through speakers, screens, and coupled devices, creating new relationships and communication with this material.
+          </li>
+          <li><strong>spatial and material laboratory</strong><br>
+            a testing ground for new devices, materials, substructures, and spatial coupling methods. each activation enables architectural/spatial studies, the development of new devices, and pieces that respond to specific contexts or needs. the structure becomes a platform for continuous development of xpan&rsquo;s spatial research.
+          </li>
+        </ol>
+
+        <h2>technical requirements</h2>
+        <p>xpan.ep.2 is designed to operate with accessible technical conditions and adapt to different types of spaces.</p>
+
+        <ol>
+          <li><strong>space</strong><br>
+            the system adapts easily to different volumes through the density of included modules. modules rest on adjustable points that level on irregular floors and varied materials. recommended minimum height: 2.10 m.
+          </li>
+          <li><strong>energy</strong><br>
+            low electrical consumption; a standard domestic outlet is sufficient to power lighting and sound amplification. electrical configuration adapts to common voltage ranges and varying standards depending on city.
+          </li>
+          <li><strong>assembly and operation</strong><br>
+            basic assembly can be carried out by two people in approximately two hours. required tools are minimal: wrenches, standard hardware, and basic fastening elements.
+          </li>
+          <li><strong>environment and usage conditions</strong><br>
+            the system is primarily intended for interiors or controlled spaces. its structure helps refine acoustic and lighting conditions through panel orientation, module density, and light distribution.
+          </li>
+        </ol>
+
+        <p>these requirements allow ep.2 to be deployed as a piece, instrument, and cultural device across multiple contexts while maintaining coherence with its modular and nomadic logic.</p>
+      </div>
+
+      <!-- FR -->
+      <div class="description lang-block" data-lang-block="fr">
+        <h2>description</h2>
+        <p>le système ep.2 est un dispositif spatial ajustable dans son agencement, sa géographie, son usage et son couplage. sa structure prolonge la recherche de xpan sur les systèmes spatiaux et dérive directement du système de poros, central dans des projets tels que xpan.ep.1, seevs.12 et espacio.gdl.</p>
+
+        <p>le système de poros se compose d’une matrice de plaques d’acier perforées avec des ouvertures centrales permettant d’adapter des dispositifs développés par xpan de manière modulaire et variable. ces dispositifs incluent des systèmes sonores, haut-parleurs, microphones, amplificateurs, outils audiovisuels, caméras, écrans, capteurs, objets fonctionnels de design et sous-structures auxiliaires.</p>
+
+        <p>l’usage de ces dispositifs au sein du système le transforme en un instrument intégrant son, archive, recherche et architecture dans un même corps, opérant simultanément comme pièce, architecture et système déployé dans de nouveaux formats et géographies.</p>
+
+        <p>ep.2 constitue une itération avancée des systèmes spatiaux de xpan, consolidant des développements antérieurs et ouvrant une nouvelle couche de recherche spatiale. son langage matériel — panneaux de résine translucide avec éclairage intégré et barres structurelles en aluminium — permet de nouvelles manières d’habiter, d’activer et de composer autour du système.</p>
+
+        <h2>capacités du système</h2>
+        <p>l’objectif principal est d’être un instrument métabolique où chaque activation transforme le système et élargit ses capacités grâce au développement de nouveaux dispositifs, à différentes échelles et configurations, ainsi qu’à l’accumulation d’expérience matérielle, sonore, spatiale et cognitive.</p>
+
+        <ol>
+          <li><strong>évolution continue</strong><br>
+            chaque activation génère de nouveaux dispositifs et configurations spatiales, ainsi que de nouvelles relations au contexte, le système s’activant de manière polyvalente dans différentes géographies. ep.2 se nourrit de chaque usage et construit un archive matérielle tangible et exploitable.
+          </li>
+          <li><strong>reconfiguration spatiale précise</strong><br>
+            le système s’ajuste en longueur, échelle, densité et orientation, allant d’un noyau compact à des séquences répétées dans des espaces plus vastes. il permet ainsi une composition spatiale précise et adaptable.
+          </li>
+          <li><strong>couplage multitechnologique</strong><br>
+            le système permet l’intégration de lumière, son, caméras, écrans, capteurs, objets fonctionnels et supports pour autres instruments. chaque dispositif se fixe facilement, donnant au système une échelle pratiquement infinie.
+          </li>
+          <li><strong>mobilité géographique</strong><br>
+            le système se démonte en éléments transportables et se réinstalle selon la même logique, permettant un échange constant entre géographies et contextes.
+          </li>
+          <li><strong>lecture contextuelle et ajustement précis</strong><br>
+            ep.2 sert à analyser et comprendre chaque espace où il est activé. les décisions concernant densité, opacité, orientation de la lumière et distribution des éléments proviennent d’une lecture spécifique du lieu.
+          </li>
+        </ol>
+
+        <h2>modes d’activation</h2>
+        <p>ep.2 s’active toujours à partir de la création et de l’expérimentation. sa fonction principale est de produire pièces et processus.</p>
+
+        <ol>
+          <li><strong>écoute étendue et composition sonore multicanale</strong><br>
+            le système fonctionne comme instrument de performance, installation et composition sonore grâce au couplage de divers instruments, ainsi qu’à des systèmes multicanaux permettant des trajectoires sonores spatialisées.
+          </li>
+          <li><strong>instrument de retravail d’archive</strong><br>
+            il permet de nouvelles lectures et articulations d’archives de xpan ou des contextes locaux. les registres visuels, textuels ou sonores sont réinjectés dans l’espace via haut-parleurs, écrans et dispositifs couplés.
+          </li>
+          <li><strong>laboratoire spatial et matériel</strong><br>
+            terrain d’essai pour dispositifs, matériaux, sous-structures et formes d’assemblage spatial. chaque activation permet études architecturales/spatiales, développement de nouveaux dispositifs et pièces adaptées à des contextes précis.
+          </li>
+        </ol>
+
+        <h2>exigences techniques</h2>
+        <p>xpan.ep.2 est conçu pour fonctionner dans des conditions techniques accessibles et s’adapter à différents types d’espaces.</p>
+
+        <ol>
+          <li><strong>espace</strong><br>
+            adaptation facile à différents volumes grâce à la densité des modules. points réglables pour niveler sur sols irréguliers. hauteur minimale recommandée : 2,10 m.
+          </li>
+          <li><strong>énergie</strong><br>
+            faible consommation ; une prise domestique suffit pour l’éclairage et l’amplification. compatibilité avec différents standards selon ville.
+          </li>
+          <li><strong>montage et opération</strong><br>
+            montage en environ deux heures par deux personnes, avec outils minimaux : clés, visserie standard, éléments de fixation.
+          </li>
+          <li><strong>environnement et conditions d’usage</strong><br>
+            destiné principalement aux intérieurs ou espaces contrôlés, le système améliore acoustique et lumière via orientation des panneaux, densité des modules et répartition lumineuse.
+          </li>
+        </ol>
+
+        <p>ces exigences permettent à ep.2 de se déployer comme pièce, instrument et dispositif culturel dans divers contextes, en conservant une logique modulaire et nomade.</p>
+      </div>
+
+      <!-- JP -->
+      <div class="description lang-block" data-lang-block="jp">
+        <h2>概要</h2>
+        <p>ep.2 システムは、配置・地理・用途・接続方法に応じて調整可能な空間デバイスである。その構造は、xpan が継続して行う空間システムの研究を発展させたものであり、xpan.ep.1、seevs.12、espacio.gdl などの中心となる「poros システム」から直接派生している。</p>
+
+        <p>poros システムは、中央開口を備えた穿孔鋼板のマトリクスで構成され、xpan によって開発されたデバイスを可変かつモジュール式に接続できる。これには、音響システム、スピーカー、マイク、アンプ、映像機器、カメラ、スクリーン、センサー、機能的なデザインオブジェ、補助的なサブストラクチャーなどが含まれる。</p>
+
+        <p>これらのデバイスをシステム内部で使用することで、音・アーカイブ・リサーチ・建築を同一の身体に統合する「楽器」として機能し、新たな形式や地理へ展開される作品・建築・システムとなる。</p>
+
+        <p>ep.2 は、xpan の空間システムの高度な反復形態として存在し、これまでの開発を統合し、新たな空間研究の層を拓く。樹脂パネル（内蔵照明付き）とアルミ構造バーを中心とした素材言語は、システムを中心に新たな居住・活性・構成方法を可能にする。</p>
+
+        <h2>システムの能力</h2>
+        <p>本システムの主目的は「メタボリックな楽器」として機能することであり、各アクティベーションがシステムを変容させ、新しいデバイス、スケール、構成、そして物質的・音響的・空間的・認知的経験を蓄積しながら能力を拡張する。</p>
+
+        <ol>
+          <li><strong>連続的な進化</strong><br>
+            各アクティベーションは新しいデバイスと空間構成を生み、さらに多様な地理における文脈との新しい関係性を形成する。ep.2 は使用のたびに成長し、活性化の具体的で活用可能なアーカイブを構築する。
+          </li>
+          <li><strong>精密な空間再構成</strong><br>
+            システムは長さ・スケール・密度・方向を調整でき、コンパクトな単一核から大規模空間での反復配置まで対応する。これにより、幅広い範囲で精密な空間構成が可能となる。
+          </li>
+          <li><strong>マルチテクノロジー接続</strong><br>
+            照明・音響・カメラ・スクリーン・センサー・機能オブジェ・他機器の支持構造などを統合できる。各デバイスは容易に接続可能で、システムは事実上無限のスケールを持つ楽器となる。
+          </li>
+          <li><strong>地理的モビリティ</strong><br>
+            システムは分解してコンパクトに輸送でき、同様の手順で再設置できる。この可搬性は、地理や文脈のあいだで継続的な交換を可能にする。
+          </li>
+          <li><strong>文脈読解と精密調整</strong><br>
+            ep.2 は設置空間を読み取り、その特性に応じて密度・不透明度・光の方向・要素の分布を決定する。
+          </li>
+        </ol>
+
+        <h2>活性化モード</h2>
+        <p>ep.2 は常に創造と実験から作動し、その主要な機能は作品とプロセスを生成することである。</p>
+
+        <ol>
+          <li><strong>拡張されたリスニングとマルチチャンネル音響構成</strong><br>
+            多様な機器との接続、マルチチャンネル音響システムとの組み合わせにより、パフォーマンス・インスタレーション・音響作曲のための楽器として機能し、音の軌跡と空間化を柔軟に構成できる。
+          </li>
+          <li><strong>アーカイブ再構成楽器</strong><br>
+            xpan のアーカイブや設置文脈の資料（映像・文章・音響）を再注入し、新しい読みと関係を生成する。スピーカー、スクリーン、接続デバイスを通じて空間に再展開される。
+          </li>
+          <li><strong>空間・素材実験ラボ</strong><br>
+            新しいデバイス、素材、サブストラクチャー、空間接続方法の試験場として機能する。各アクティベーションは空間的研究、装置開発、文脈に応じた作品生成を可能にする。
+          </li>
+        </ol>
+
+        <h2>技術要件</h2>
+        <p>xpan.ep.2 は、基本的でアクセスしやすい技術条件で運用でき、様々な空間に適応するよう設計されている。</p>
+
+        <ol>
+          <li><strong>空間</strong><br>
+            モジュールの密度に応じて多様な体積に適応でき、調整脚により不整地でも水平を確保できる。推奨最低天井高は 2.10 m。
+          </li>
+          <li><strong>電源</strong><br>
+            低消費電力で、家庭用コンセント 1 口で照明と音響アンプを駆動できる。都市ごとの電源規格に対応可能。
+          </li>
+          <li><strong>設置と操作</strong><br>
+            基本設置は 2 名で約 2 時間。必要な工具は最小限で、レンチ、標準ボルト、基本的な固定具のみ。
+          </li>
+          <li><strong>環境と使用条件</strong><br>
+            主に屋内または制御された空間向け。パネル配置、モジュール密度、光分布により音響・光環境の調整も可能となる。
+          </li>
+        </ol>
+
+        <p>これらにより ep.2 は、複雑な技術インフラに依存せず、モジュール性とノマド性を維持しながら、多様な文脈で作品／楽器／文化デバイスとして展開できる。</p>
       </div>
     </section>
+
+        <!-- galería y planos embebidos -->
+    <section class="section section-media">
+      <div class="plate">
+        <span>ep.2 / media</span>
+        <span>galería, planos, archivo visual</span>
+      </div>
+
+      <!-- galería principal + secundaria (todas las fotos) -->
+      <div class="gallery">
+
+        <!-- registros principales -->
+        <img
+          alt="ep.2 — registro principal 01"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736746/original_05d855da10f6a7c07cf8beebab47557b.jpg">
+        <img
+          alt="ep.2 — registro principal 02"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736747/original_2aa59a131afba0b5476aad8ef036ccf2.jpg">
+        <img
+          alt="ep.2 — registro principal 03"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736748/original_f9cef195689ecfff583a7c770545f316.jpg">
+        <img
+          alt="ep.2 — registro principal 04"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736749/original_a6ce92c7f714c80015bf9ebb47b3a0ed.jpg">
+        <img
+          alt="ep.2 — registro principal 05"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736750/original_bbf8738c2e71ea38b2024829fdcad976.jpg">
+        <img
+          alt="ep.2 — registro principal 06"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736751/original_a162acea9471403bb83929bc07ed86c1.jpg">
+        <img
+          alt="ep.2 — registro principal 07"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736752/original_1087ac316f15cc56e5e56d5b661b6f39.jpg">
+
+        <!-- galería secundaria -->
+        <img
+          alt="ep.2 — secundaria 01"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736724/original_7746037b08006c69613b205b90298a24.jpg">
+        <img
+          alt="ep.2 — secundaria 02"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736725/original_60b6bca078e35c61e963725d17746d09.jpg">
+        <img
+          alt="ep.2 — secundaria 03"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736726/original_1844be37f516b6251fcffaf6ae904281.jpg">
+        <img
+          alt="ep.2 — secundaria 04"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736727/original_8a15b55d812c70a82734de7f6419be6b.jpg">
+        <img
+          alt="ep.2 — secundaria 05"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736728/original_ce21e2b7586baf13995d8700e3cdf26f.jpg">
+        <img
+          alt="ep.2 — secundaria 06"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736729/original_391ef5cb18feaf26850fd9618710d0b7.jpg">
+        <img
+          alt="ep.2 — secundaria 07"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736730/original_a0774eb86356dadc2fd187bbd90d78c5.jpg">
+        <img
+          alt="ep.2 — secundaria 08"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736731/original_6b6e7eb2e6df066c82bc0324c5513426.jpg">
+        <img
+          alt="ep.2 — secundaria 09"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736732/original_58db6d04cbb3c257667fac1686937b6e.jpg">
+        <img
+          alt="ep.2 — secundaria 10"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736733/original_868337c237c6bf58d4f1a33fbbfc3926.jpg">
+        <img
+          alt="ep.2 — secundaria 11"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736734/original_22589589c9e4f3ca48c11c970cd8c679.jpg">
+        <img
+          alt="ep.2 — secundaria 12"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736735/original_7fdca8bc546795812c983633777290d6.jpg">
+        <img
+          alt="ep.2 — secundaria 13"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736736/original_4ce7ee906b18c5abe95e73ec33c94b26.jpg">
+        <img
+          alt="ep.2 — secundaria 14"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736737/original_88098481326328cc00ad90ae4db773af.jpg">
+        <img
+          alt="ep.2 — secundaria 15"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736738/original_5047bd9aec3a1d50079bd8540dcc5daf.jpg">
+        <img
+          alt="ep.2 — secundaria 16"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736739/original_331b008145d842de8036d9d1c890431d.jpg">
+        <img
+          alt="ep.2 — secundaria 17"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736740/original_693f05d4e8f0d0ac91c4fe6aca7850a6.jpg">
+        <img
+          alt="ep.2 — secundaria 18"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736741/original_d25438e2999d6d518a0b415f0df51e88.jpg">
+        <img
+          alt="ep.2 — secundaria 19"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736742/original_f97045ed71478d23b15d27f27450eaed.jpg">
+      </div>
+
+      <!-- planos técnicos embebidos -->
+      <div class="pdf-embed">
+        <object
+          type="application/pdf"
+          aria-label="ep.2 — plano 01"
+          data="https://attachments.are.na/41736756/1b59980d457c7b4e9a03ce1fe857af33.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
+        </object>
+
+        <object
+          type="application/pdf"
+          aria-label="ep.2 — plano 02"
+          data="https://attachments.are.na/41736757/a71669119166f458f7e782800d75ad93.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
+        </object>
+
+        <object
+          type="application/pdf"
+          aria-label="ep.2 — plano 03"
+          data="https://attachments.are.na/41736758/1214c0ebf452c86412936ac7f5d02860.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
+        </object>
+
+        <object
+          type="application/pdf"
+          aria-label="ep.2 — plano 04"
+          data="https://attachments.are.na/41736759/7413b6ad0ddbfe27ca99e4576e4d31e6.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
+        </object>
+
+        <object
+          type="application/pdf"
+          aria-label="ep.2 — plano 05"
+          data="https://attachments.are.na/41736760/92126b645c2a45640a2c746002cd9f93.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
+        </object>
+      </div>
+    </section>
+
   </main>
 
-  <script>
-    const $ = (q, el=document)=> el.querySelector(q);
+    <!-- lightbox para galería -->
+    <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de imágenes ep.2">
+      <button type="button" class="nav-btn" data-dir="prev" aria-label="imagen anterior">‹</button>
 
-    const images = [
-      "https://d2w9rnfcy7mm78.cloudfront.net/40745995/original_d77cd22950a8a1e2ddd6e6e6283e1dc8.png?1761881049?bc=0",
-      "https://d2w9rnfcy7mm78.cloudfront.net/40988069/original_efc718369e3931294ea6088c6019f030.jpg?1762753696?bc=0",
-      "https://d2w9rnfcy7mm78.cloudfront.net/40988066/original_ce22ee04f1ddee98adf465c56f2c51b6.png?1762753647?bc=0"
-    ];
+      <div class="sheet">
+        <!-- la imagen se inyecta por JS -->
+      </div>
 
-    /* patch: hero con pausa en background y cleanup */
-    (function heroCycle(){
-      const box = document.querySelector('.bg-hero');
-      if(!box || !images || !images.length) return;
+      <button type="button" class="nav-btn" data-dir="next" aria-label="imagen siguiente">›</button>
+      <button type="button" data-lb-close>close</button>
+    </div>
 
-      let idx = 0, t = null, running = true;
-      const setHero = (url) => box.style.setProperty('--hero', `url("${url}")`);
-      const tick = () => {
-        if (!running) return;
-        idx = (idx + 1) % images.length;
-        setHero(images[idx]);
-        t = setTimeout(tick, 3600);
-      };
 
-      setHero(images[0]);
-      if (images.length > 1) t = setTimeout(tick, 3600);
 
-      document.addEventListener('visibilitychange', () => {
-        running = !document.hidden;
-        if (running) { clearTimeout(t); t = setTimeout(tick, 3600); }
-        else { clearTimeout(t); }
+    <script>
+    // ===== acceso con hash (SHA-256) =====
+    (function accessControl(){
+      const form   = document.getElementById('access-form');
+      const input  = document.getElementById('access-input');
+      const status = document.getElementById('access-status');
+      const badge  = document.getElementById('access-badge');
+      const STORAGE_KEY = 'xpan_ep2_access_v1';
+
+      // hash SHA-256 de la clave "ep2_access_2025"
+      // si quieres cambiar la clave:
+      // 1. en la consola del navegador:
+      //    crypto.subtle.digest("SHA-256", new TextEncoder().encode("NUEVA_CLAVE")).then(b => {
+      //      console.log(Array.from(new Uint8Array(b)).map(v => v.toString(16).padStart(2,"0")).join(""));
+      //    });
+      // 2. sustituye el valor de EXPECTED_HASH por el resultado
+      const EXPECTED_HASH = "510ba94db236b157f579d37d940b403e3aabe86c70d2d9d69f58599b2cc3299c";
+
+
+      function setUnlockedUI(){
+        document.body.classList.remove('locked');
+        document.body.classList.add('unlocked');
+        status.textContent = '[access] channel open / ep.2 brief unlocked';
+        if (badge){
+          badge.querySelector('span:nth-child(2)').textContent = 'channel open';
+        }
+      }
+
+      async function hashString(str){
+        const enc  = new TextEncoder();
+        const data = enc.encode(str);
+        const buf  = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(buf)).map(v => v.toString(16).padStart(2,'0')).join('');
+      }
+
+      // intenta restaurar acceso desde storage
+      try{
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved && saved === EXPECTED_HASH){
+          setUnlockedUI();
+        }else{
+          document.body.classList.add('locked');
+          status.textContent = '[boot] standby / waiting for access key';
+        }
+      }catch(e){
+        document.body.classList.add('locked');
+      }
+
+      if (!form) return;
+
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const val = (input.value || '').trim();
+        if (!val){
+          form.classList.add('access-error');
+          status.textContent = '[error] clave vacía / intenta de nuevo';
+          setTimeout(() => form.classList.remove('access-error'), 260);
+          return;
+        }
+
+        form.classList.add('access-processing');
+        status.textContent = '[hash] verificando clave de acceso…';
+
+        try{
+          const digest = await hashString(val);
+          if (digest === EXPECTED_HASH){
+            try{
+              localStorage.setItem(STORAGE_KEY, digest);
+            }catch(e){}
+            setUnlockedUI();
+          }else{
+            form.classList.add('access-error');
+            status.textContent = '[denied] clave incorrecta / acceso bloqueado';
+            setTimeout(() => form.classList.remove('access-error'), 260);
+          }
+        }catch(e){
+          status.textContent = '[error] no se pudo verificar la clave en este navegador';
+        }finally{
+          form.classList.remove('access-processing');
+          input.value = '';
+        }
       });
-      addEventListener('pagehide', () => { clearTimeout(t); });
     })();
 
-    /* patch: constructor AEI debounced, sin recargar la página */
-    (function aeiBuilder(){
-      const svg = document.getElementById('aei');
-      if(!svg) return;
-      const svgNS = "http://www.w3.org/2000/svg";
+    // ===== selector de idioma =====
+    (function langSwitch(){
+      const switcher = document.getElementById('lang-switch');
+      if (!switcher) return;
 
-      function rebuildAEI(){
-        const W = innerWidth, H = innerHeight;
-        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      const buttons = switcher.querySelectorAll('[data-lang-btn]');
+      const blocks  = document.querySelectorAll('[data-lang-block]');
 
-        // limpia actual
-        while (svg.firstChild) svg.removeChild(svg.firstChild);
-
-        // Grid
-        const gGrid = document.createElementNS(svgNS,'g');
-        for(let x=0; x<=W; x+=32){
-          const l = document.createElementNS(svgNS,'line');
-          l.setAttribute('x1',x); l.setAttribute('y1',0);
-          l.setAttribute('x2',x); l.setAttribute('y2',H);
-          l.setAttribute('class','gline'); gGrid.appendChild(l);
-        }
-        for(let y=0; y<=H; y+=32){
-          const l = document.createElementNS(svgNS,'line');
-          l.setAttribute('x1',0); l.setAttribute('y1',y);
-          l.setAttribute('x2',W); l.setAttribute('y2',y);
-          l.setAttribute('class','gline'); gGrid.appendChild(l);
-        }
-        svg.appendChild(gGrid);
-
-        // Routes
-        const gRoutes = document.createElementNS(svgNS,'g');
-        const routes = [
-          `M ${Math.round(W*.15)} ${Math.round(H*.30)} H ${Math.round(W*.50)} V ${Math.round(H*.60)} H ${Math.round(W*.85)}`,
-          `M ${Math.round(W*.20)} ${Math.round(H*.70)} H ${Math.round(W*.55)} V ${Math.round(H*.40)} H ${Math.round(W*.80)}`
-        ];
-        routes.forEach(d=>{
-          const p = document.createElementNS(svgNS,'path');
-          p.setAttribute('d', d);
-          p.setAttribute('class','route');
-          gRoutes.appendChild(p);
+      function setLang(code){
+        buttons.forEach(btn => {
+          const active = btn.getAttribute('data-lang-btn') === code;
+          btn.classList.toggle('lang-active', active);
         });
-        svg.appendChild(gRoutes);
-
-        // Nodes
-        const gNodes = document.createElementNS(svgNS,'g');
-        const pts = [
-          {x:.15,y:.30},{x:.50,y:.60},{x:.85,y:.60},
-          {x:.20,y:.70},{x:.55,y:.40},{x:.80,y:.40}
-        ];
-        pts.forEach(pt=>{
-          const r = document.createElementNS(svgNS,'rect');
-          r.setAttribute('x', Math.round(W*pt.x)-3);
-          r.setAttribute('y', Math.round(H*pt.y)-3);
-          r.setAttribute('width', 6);
-          r.setAttribute('height',6);
-          r.setAttribute('class','node');
-          gNodes.appendChild(r);
+        blocks.forEach(block => {
+          const match = block.getAttribute('data-lang-block') === code;
+          block.classList.toggle('active', match);
         });
-        svg.appendChild(gNodes);
+        document.documentElement.setAttribute('lang', code === 'jp' ? 'ja' : code);
       }
 
-      // build inicial tras primer frame
-      requestAnimationFrame(rebuildAEI);
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const code = btn.getAttribute('data-lang-btn');
+          setLang(code);
+        });
+      });
 
-      // rebuild debounced en cambios de viewport
-      let raf = null, timer = null;
-      function scheduleRebuild(){
-        if (raf) cancelAnimationFrame(raf);
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(()=>{ raf = requestAnimationFrame(rebuildAEI); }, 120);
-      }
-      addEventListener('resize', scheduleRebuild, { passive:true });
-      if (window.visualViewport){
-        visualViewport.addEventListener('resize', scheduleRebuild);
-      }
+      // idioma inicial
+      setLang('es');
     })();
 
-    /* eliminado: location.reload() en resize */
+    
+        // ===== solo fondo hero dinámico (sin aei lines) =====
+    (function heroOnly(){
+      const hero = document.querySelector('.bg-hero');
+      if (!hero) return;
+
+      const mainImg = 'https://d2w9rnfcy7mm78.cloudfront.net/41736723/original_6fbf27a4810eee0d2a8db0b5fabb0afd.jpg';
+      hero.style.setProperty('--hero', `url("${mainImg}")`);
+    })();
+
   </script>
+          <script>
+      // lazy load de imágenes de galería
+      (function(){
+        const imgs = document.querySelectorAll('.gallery img');
+        if (!imgs.length) return;
+
+        imgs.forEach(img => {
+          if (!img.getAttribute('loading')) img.loading = 'lazy';
+          if (!img.getAttribute('decoding')) img.decoding = 'async';
+        });
+
+        if (!('IntersectionObserver' in window)){
+          imgs.forEach(img => {
+            if (img.dataset.src && !img.src){
+              img.src = img.dataset.src;
+            }
+          });
+          return;
+        }
+
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const img = entry.target;
+            if (img.dataset.src){
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+            }
+            obs.unobserve(img);
+          });
+        }, { rootMargin:'300px 0px' });
+
+        imgs.forEach(img => obs.observe(img));
+      })();
+
+      // lightbox con navegación por teclas y swipe
+      (function(){
+        const lb    = document.getElementById('xpan-lightbox');
+        if (!lb) return;
+
+        const sheet   = lb.querySelector('.sheet');
+        const btnClose= lb.querySelector('[data-lb-close]');
+        const btnPrev = lb.querySelector('.nav-btn[data-dir="prev"]');
+        const btnNext = lb.querySelector('.nav-btn[data-dir="next"]');
+        const imgs    = Array.from(document.querySelectorAll('.gallery img'));
+
+        if (!imgs.length) return;
+
+        let currentIndex = -1;
+        let touchStartX  = null;
+
+        function render(){
+          if (currentIndex < 0 || currentIndex >= imgs.length) return;
+          const el  = imgs[currentIndex];
+          const src = el.currentSrc || el.src || el.dataset.src;
+          const alt = el.alt || '';
+
+          sheet.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = alt;
+          sheet.appendChild(img);
+        }
+
+        function openLightbox(index){
+          if (index < 0 || index >= imgs.length) return;
+          currentIndex = index;
+          render();
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(){
+          lb.classList.remove('open');
+          sheet.innerHTML = '';
+          document.body.style.overflow = '';
+          currentIndex = -1;
+        }
+
+        function next(){
+          if (!imgs.length) return;
+          if (currentIndex === -1) currentIndex = 0;
+          currentIndex = (currentIndex + 1 + imgs.length) % imgs.length;
+          render();
+        }
+
+        function prev(){
+          if (!imgs.length) return;
+          if (currentIndex === -1) currentIndex = 0;
+          currentIndex = (currentIndex - 1 + imgs.length) % imgs.length;
+          render();
+        }
+
+        // click en thumbnails abre lightbox en ese índice
+        imgs.forEach((el, idx) => {
+          el.addEventListener('click', () => openLightbox(idx));
+        });
+
+        // botones de navegación
+        if (btnNext) btnNext.addEventListener('click', next);
+        if (btnPrev) btnPrev.addEventListener('click', prev);
+        if (btnClose) btnClose.addEventListener('click', closeLightbox);
+
+        // cerrar al hacer click en el fondo
+        lb.addEventListener('click', (ev) => {
+          if (ev.target === lb){
+            closeLightbox();
+          }
+        });
+
+        // teclado: esc, flecha izq/der
+        window.addEventListener('keydown', (ev) => {
+          if (!lb.classList.contains('open')) return;
+
+          if (ev.key === 'Escape'){
+            closeLightbox();
+          }else if (ev.key === 'ArrowRight'){
+            next();
+          }else if (ev.key === 'ArrowLeft'){
+            prev();
+          }
+        });
+
+        // swipe horizontal en móvil
+        lb.addEventListener('touchstart', (ev) => {
+          if (!lb.classList.contains('open')) return;
+          if (!ev.changedTouches || !ev.changedTouches.length) return;
+          touchStartX = ev.changedTouches[0].clientX;
+        }, { passive:true });
+
+        lb.addEventListener('touchend', (ev) => {
+          if (touchStartX == null) return;
+          if (!ev.changedTouches || !ev.changedTouches.length) return;
+
+          const endX = ev.changedTouches[0].clientX;
+          const dx   = endX - touchStartX;
+          const threshold = 40; // px
+
+          if (Math.abs(dx) > threshold){
+            if (dx < 0){
+              // swipe izquierda -> siguiente
+              next();
+            }else{
+              // swipe derecha -> anterior
+              prev();
+            }
+          }
+
+          touchStartX = null;
+        }, { passive:true });
+      })();
+    </script>
+
+
 </body>
 </html>
