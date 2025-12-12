@@ -18,12 +18,32 @@
       --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
       --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
     }
-    @media (prefers-color-scheme:light){
-      :root{
-        --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A;
-        --line:#D7DDE2; --grid:#EBEEF2;
-      }
-    }
+@media (prefers-color-scheme:light){
+  :root{
+    --bg:#FFFFFF; 
+    --fg:#0B0D0F; 
+    --fg-dim:#4A525A;
+    --line:#D7DDE2; 
+    --grid:#EBEEF2;
+  }
+
+  /* texto y header en modo normal, sin negativo */
+  header{
+    mix-blend-mode:normal;
+    color:var(--fg);
+  }
+
+  header img{
+    mix-blend-mode:normal;
+    filter:none;
+  }
+
+  .neg-shell{
+    mix-blend-mode:normal;
+    color:var(--fg);
+  }
+}
+
 
     *,*::before,*::after{ box-sizing:border-box }
     html,body{ height:100%; margin:0 }
@@ -141,10 +161,10 @@
     .access-badge-dot{
       width:7px; height:7px;
       border-radius:999px;
-      background:radial-gradient(circle at 30% 30%, #7DFFB2, #2BD36C);
-      box-shadow:0 0 6px rgba(43,211,108,.85);
+      background:radial-gradient(circle at 30% 30%, #817dff, #2b31d3);
+      box-shadow:0 0 6px rgba(43, 57, 211, 0.85);
     }
-
+ 
     .access-body{
       position:relative;
       z-index:1;
@@ -189,7 +209,7 @@
     }
 
     .access-input:focus-visible{
-      border-color:#1860FF;
+      border-color:#1820ff;
       box-shadow:0 0 0 1px rgba(24,96,255,.45);
     }
 
@@ -406,7 +426,7 @@ header img{
   position:relative;
   z-index:30;
   mix-blend-mode:difference;
-  color:#FFFFFF;
+  color:var(--fg);
 }
 
 .neg-shell h2,
@@ -416,11 +436,12 @@ header img{
 }
 
 
-    .description{
+
+   .description{
   max-width:800px;
   font:400 14px/1.6 var(--ui);
   position:relative;
-  color:#FFFFFF;
+  color:var(--fg);
 }
 
 .description h2{
@@ -428,12 +449,12 @@ header img{
   text-transform:lowercase;
   letter-spacing:0.08em;
   margin:0 0 12px;
-  color:rgba(255,255,255,.6);
+  color:var(--fg-dim);
 }
 
 .description p{
   margin:0 0 10px;
-  color:rgba(255,255,255,.9);
+  color:var(--fg);
 }
 
 .description ul,
@@ -444,13 +465,14 @@ header img{
 
 .description li{
   margin:3px 0;
-  color:rgba(255,255,255,.9);
+  color:var(--fg);
 }
 
 .description strong{
   font-weight:600;
-  color:#FFFFFF;
+  color:var(--fg);
 }
+
 
 
     .lang-block{ display:none; }
@@ -1133,14 +1155,15 @@ header img{
           alt="ep.2 — registro principal 04"
           data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736749/original_a6ce92c7f714c80015bf9ebb47b3a0ed.jpg">
         <img
+          alt="ep.2 — registro principal 07"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736752/original_1087ac316f15cc56e5e56d5b661b6f39.jpg">
+        <img 
           alt="ep.2 — registro principal 05"
           data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736750/original_bbf8738c2e71ea38b2024829fdcad976.jpg">
         <img
           alt="ep.2 — registro principal 06"
           data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736751/original_a162acea9471403bb83929bc07ed86c1.jpg">
-        <img
-          alt="ep.2 — registro principal 07"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736752/original_1087ac316f15cc56e5e56d5b661b6f39.jpg">
+
 
         <!-- galería secundaria -->
         <img
@@ -1234,6 +1257,111 @@ header img{
           data="https://attachments.are.na/41736760/92126b645c2a45640a2c746002cd9f93.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
         </object>
       </div>
+
+            </div> <!-- .pdf-embed -->
+
+      <!-- sistema de poros aplicado en proyectos previos -->
+      <div class="plate">
+        <span>sistema de poros / aplicaciones previas</span>
+        <span>c&c.s.e.e.v.s.12 / espacio.gdl / xpan.ep.1</span>
+      </div>
+
+      <div class="gallery gallery-poros-prev">
+        <!-- c&c.s.e.e.v.s.12 -->
+        <img
+          alt="sistema de poros — c&c.s.e.e.v.s.12 — 01"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067327/original_2d945dcb2f2e4785a459cdd870c0f826.jpg?1762984942?bc=0">
+        <img
+          alt="sistema de poros — c&c.s.e.e.v.s.12 — 02"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067318/original_97a2fd7f1ec77dddfdb5920a3997e164.jpg?1762984924?bc=0">
+        <img
+          alt="sistema de poros — c&c.s.e.e.v.s.12 — 03"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067313/original_50093b09d120e9d9081f6317b5c230dd.jpg?1762984915?bc=0">
+        <img
+          alt="sistema de poros — c&c.s.e.e.v.s.12 — 04"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067293/original_484d059516d28bfb721e804ed1f69732.jpg?1762984883?bc=0">
+        <img
+          alt="sistema de poros — c&c.s.e.e.v.s.12 — 05"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067315/original_f0dd3fc69706824cda9c2e0eec47fb2d.jpg?1762984918?bc=0">
+
+        <!-- espacio.gdl -->
+        <img
+          alt="sistema de poros — espacio.gdl — 01"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732511/original_7ccd99e5ea4bc9bf2cb8cd8850d3833e.jpg?1751080334?bc=0">
+        <img
+          alt="sistema de poros — espacio.gdl — 02"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732505/original_f5aa5f18eb1a06fe1cddae66dbebcb9e.jpg?1751080320?bc=0">
+        <img
+          alt="sistema de poros — espacio.gdl — 03"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732497/original_4cd18fc3ebd161d2b5daab598f8761d0.jpg?1751080316?bc=0">
+        <img
+          alt="sistema de poros — espacio.gdl — 04"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732506/original_11a6284cd70e4a16b896291e1472f492.jpg?1751080319?bc=0">
+        <img
+          alt="sistema de poros — espacio.gdl — 05"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732479/original_1b11c5ecd3cb8bd055e1a1ed41a3a3d5.jpg?1751080237?bc=0">
+
+        <!-- xpan.ep.1 -->
+        <img
+          alt="sistema de poros — xpan.ep.1 — 01"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792457/original_295a9c4e13123d8dd00799089cfb85ba.jpg?1747625330?bc=0">
+        <img
+          alt="sistema de poros — xpan.ep.1 — 02"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794115/original_f257566a80a28f3015afb3f16e949c2b.jpg?1747633361?bc=0">
+        <img
+          alt="sistema de poros — xpan.ep.1 — 03"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339?bc=0">
+        <img
+          alt="sistema de poros — xpan.ep.1 — 04"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341?bc=0">
+        <img
+          alt="sistema de poros — xpan.ep.1 — 05"
+          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794113/original_bdc9522862d81b4ea5c2a7d9fb8a1fd6.jpg?1747633360?bc=0">
+      </div>
+
+      <!-- ejemplos de dispositivos desarrollados para sistema de poros -->
+      <div class="plate">
+        <span>dispositivos desarrollados para sistema de poros</span>
+        <span>ejemplos de módulos, soportes y elementos acoplados</span>
+      </div>
+
+      <div class="gallery gallery-poros-devices">
+        <img alt="dispositivos poros — 01" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759628/original_ffc8982abf70549c120c03491e82cb40.jpg">
+        <img alt="dispositivos poros — 02" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759629/original_7a088b42bd127a6f9fa211c79b8bfe4a.jpg">
+        <img alt="dispositivos poros — 03" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759630/original_6564b80afd1bda4c4533873ab523cc5a.jpg">
+        <img alt="dispositivos poros — 04" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759631/original_704ee64f006d1c5b2bbe4f3ae9a8b665.jpg">
+        <img alt="dispositivos poros — 05" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759632/original_86c9f22010628794a6ea555be04a3662.jpg">
+        <img alt="dispositivos poros — 06" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759633/original_198285de1845c16e833b2c48c5569741.jpg">
+        <img alt="dispositivos poros — 07" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759634/original_8503c29deeddded8cfd453254024e095.jpg">
+        <img alt="dispositivos poros — 08" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759635/original_8bf32cd066c085fe24e2310ba3a9b96d.jpg">
+        <img alt="dispositivos poros — 09" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759636/original_076b160f7c3c92e9b1592ff30123c49d.jpg">
+        <img alt="dispositivos poros — 10" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759637/original_d50a5d6a6d1ec4a291313d2a27478ca0.jpg">
+        <img alt="dispositivos poros — 11" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759638/original_53cb001bf8cee5a3bc11d8b361949a9e.jpg">
+        <img alt="dispositivos poros — 12" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759639/original_84912db10e39bc49460fb55604694545.jpg">
+        <img alt="dispositivos poros — 13" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759641/original_25df48eee426e0a25cb0fea8180eb699.jpg">
+        <img alt="dispositivos poros — 14" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759642/original_e7c5b54cf53398cfafbcc986da46cf4f.jpg">
+        <img alt="dispositivos poros — 15" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759643/original_da3a5f17e77671c82efced83f6abaf7c.jpg">
+        <img alt="dispositivos poros — 16" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759644/original_bc6c14e20f3c2ae8fbff2b082f6422fe.jpg">
+        <img alt="dispositivos poros — 17" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759645/original_596234bace1dad379253fa714e6a2a0e.jpg">
+        <img alt="dispositivos poros — 18" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759646/original_65c07e72c97deb096436b365d939f759.jpg">
+        <img alt="dispositivos poros — 19" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759647/original_de3cd83d3e0bb4e96c9b5facb06dfb97.jpg">
+        <img alt="dispositivos poros — 20" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759648/original_af0af8c6487624634c5875d79c685754.jpg">
+        <img alt="dispositivos poros — 21" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759649/original_afae33f9b8567598681e0376675d47bd.jpg">
+        <img alt="dispositivos poros — 22" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759650/original_de7ac42a35cf74ee869eb14af9c6e761.jpg">
+        <img alt="dispositivos poros — 23" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759651/original_80cf9ab8792ae935d525ce01e7c9e92f.jpg">
+        <img alt="dispositivos poros — 24" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759652/original_66fc126f25acb2c66ccdda97c8ab90ce.jpg">
+        <img alt="dispositivos poros — 25" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759653/original_8dff86c7b97117a8fac629674b46b829.jpg">
+        <img alt="dispositivos poros — 26" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759654/original_7bebf4c372270a2662239d14145f3210.jpg">
+        <img alt="dispositivos poros — 27" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759655/original_0826fee2816a1e814520b0a30e27fb7b.jpg">
+        <img alt="dispositivos poros — 28" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759656/original_2f032c8674e6a931db2a29ae54695528.jpg">
+        <img alt="dispositivos poros — 29" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759657/original_ee31e253a397ae898620e0cd205d778a.jpg">
+        <img alt="dispositivos poros — 30" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759658/original_32eefc64968bac41a35e241c02e60f5c.jpg">
+        <img alt="dispositivos poros — 31" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759659/original_7f4aa8608ab1fe1034b60daa005aa558.jpg">
+        <img alt="dispositivos poros — 32" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759660/original_cb4dfcbf7a40a61851a9bfd9277ab378.jpg">
+        <img alt="dispositivos poros — 33" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759661/original_01558da2432efba42576d88ddd621f63.jpg">
+        <img alt="dispositivos poros — 34" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759662/original_ab4b1a65bf805de1a0ec36efd8f1d5fd.jpg">
+      </div>
+
     </section>
 
   </main>
@@ -1261,14 +1389,14 @@ header img{
       const badge  = document.getElementById('access-badge');
       const STORAGE_KEY = 'xpan_ep2_access_v1';
 
-      // hash SHA-256 de la clave "ep2_access_2025"
+      // hash SHA-256 de la clave "xpan.2026"
       // si quieres cambiar la clave:
       // 1. en la consola del navegador:
       //    crypto.subtle.digest("SHA-256", new TextEncoder().encode("NUEVA_CLAVE")).then(b => {
       //      console.log(Array.from(new Uint8Array(b)).map(v => v.toString(16).padStart(2,"0")).join(""));
       //    });
       // 2. sustituye el valor de EXPECTED_HASH por el resultado
-      const EXPECTED_HASH = "510ba94db236b157f579d37d940b403e3aabe86c70d2d9d69f58599b2cc3299c";
+      const EXPECTED_HASH = "d65a3d52e600eb5ab6a39c523076fc452652290455e4bdd20eb29d234c314292";
 
 
       function setUnlockedUI(){
@@ -1373,7 +1501,7 @@ header img{
       const hero = document.querySelector('.bg-hero');
       if (!hero) return;
 
-      const mainImg = 'https://d2w9rnfcy7mm78.cloudfront.net/41736723/original_6fbf27a4810eee0d2a8db0b5fabb0afd.jpg';
+      const mainImg = 'https://d2w9rnfcy7mm78.cloudfront.net/41759254/original_e813de0fef1c86f350f4fab767bdccaa.png?1765512921?bc=0';
       hero.style.setProperty('--hero', `url("${mainImg}")`);
     })();
 
