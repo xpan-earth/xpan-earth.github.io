@@ -25,7 +25,7 @@
     *,*::before,*::after{box-sizing:border-box}
     html,body{
       margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-ui);
-      display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;
+      display:flex;align-items:center;justify-content:center;overflow:auto;text-align:center;
       -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
     }
 
@@ -36,13 +36,21 @@
 
     /* layout sin scroll: todo cabe */
     main{
-      width:100%;max-width:760px;height:100%;
+       width:100%;max-width:760px;max-height:100svh;overflow-y:auto;
       padding:clamp(8px,2vw,24px);
       display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(8px,2vh,20px);
     }
     h1{margin:0;text-transform:lowercase;font:700 clamp(1.1rem,2vw,1.6rem)/1.25 var(--font-ui)}
-    h1 em{font-style:italic}
-    p{margin:0;color:var(--fg-dim);font:400 clamp(.9rem,1.6vw,1rem)/1.5 var(--font-ui)}
+    h1 em{font-style:italic}p{
+  margin:0;
+  color:var(--fg-dim);
+  font:400 clamp(.9rem,1.6vw,1rem)/1.5 var(--font-ui);
+
+  /* FIX: el texto puede crecer sin romper el layout */
+  max-height:32svh;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
 
     /* portada: sin marco, lista para abrir visor */
     .portada{
@@ -89,6 +97,40 @@
     }
     html.lb-open,body.lb-open{overflow:hidden;touch-action:none}
   </style>
+
+  <style>
+  /* lang switch */
+  .langbar{
+    position:fixed; top:16px; right:16px; z-index:12;
+    display:flex; gap:6px; align-items:center;
+    padding:6px 8px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.25);
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+  }
+  @media (prefers-color-scheme:light){
+    .langbar{ background:rgba(255,255,255,.55); }
+  }
+  .langbtn{
+    appearance:none;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--fg-dim);
+    padding:6px 8px;
+    font:600 .78rem/1 var(--font-ui);
+    text-transform:lowercase;
+    cursor:pointer;
+  }
+  .langbtn[aria-pressed="true"]{
+    border-color:var(--accent);
+    color:var(--fg);
+  }
+
+  /* hide/show language blocks */
+  [data-i18n][hidden]{ display:none !important; }
+</style>
+
   <!-- 12.e.html — BACKGROUND SVG ANIMATION (inline, black bg) -->
 <style>
   :root{
@@ -226,6 +268,12 @@
   </svg>
 </div>
 
+<nav class="langbar" aria-label="Language selector">
+  <button class="langbtn" type="button" data-setlang="es" aria-pressed="true">es</button>
+  <button class="langbtn" type="button" data-setlang="en" aria-pressed="false">en</button>
+  <button class="langbtn" type="button" data-setlang="fr" aria-pressed="false">fr</button>
+  <button class="langbtn" type="button" data-setlang="jp" aria-pressed="false">jp</button>
+</nav>
 
 
 
@@ -243,25 +291,123 @@
   </header>
 
   <main>
-    <h1>
-      <a href="https://xpan.earth/arq.xpan.12e.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">
-        <em>xpan.12.e</em>
-      </a> presenta<br>
-      <em>ls.59</em> [sesión de escucha n.º 59]
-    </h1>
+<h1>
+  <!-- ES -->
+  <span data-i18n data-lang="es">
+    <a href="https://xpan.earth/arq.xpan.12e.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">
+      <em>xpan.12.e</em>
+    </a> presenta<br>
+    <em>ls.60</em> [sesión de escucha n.º 60]
+  </span>
 
-    <p>
-      [album]  f<br>
-      [artista] msh<br>
-      [año] 2025<br>
-      [fecha] 12.01.65 / 18:00 hrs<br>
-      [ubicación] <em>proyectos públicos</em>
-    </p>
+  <!-- EN -->
+  <span data-i18n data-lang="en" hidden>
+    <a href="https://xpan.earth/arq.xpan.12e.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">
+      <em>xpan.12.e</em>
+    </a> presents<br>
+    <em>ls.60</em> [listening session no. 60]
+  </span>
+
+  <!-- FR -->
+  <span data-i18n data-lang="fr" hidden>
+    <a href="https://xpan.earth/arq.xpan.12e.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">
+      <em>xpan.12.e</em>
+    </a> présente<br>
+    <em>ls.60</em> [session d’écoute n° 60]
+  </span>
+
+  <!-- JP (con fonética obligatoria) -->
+  <span data-i18n data-lang="jp" hidden>
+    <a href="https://xpan.earth/arq.xpan.12e.html" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">
+      <em>xpan.12.e</em>
+    </a> が発表<br>
+    <em>ls.60</em>［リスニング・セッション 第60回］
+  </span>
+</h1>
+
+<p>
+  <!-- ES -->
+  <span data-i18n data-lang="es">
+    [album] f<br>
+    [artista] msh<br>
+    [año] 2025<br>
+    [fecha] 19.01.25 / 18:00 hrs<br>
+    [ubicación] <em>proyectos públicos</em>
+  </span>
+
+  <!-- EN -->
+  <span data-i18n data-lang="en" hidden>
+    [album] f<br>
+    [artist] msh<br>
+    [year] 2025<br>
+    [date] 19.01.25 / 18:00<br>
+    [location] <em>proyectos públicos</em>
+  </span>
+
+  <!-- FR -->
+  <span data-i18n data-lang="fr" hidden>
+    [album] f<br>
+    [artiste] msh<br>
+    [année] 2025<br>
+    [date] 19.01.25 / 18:00<br>
+    [lieu] <em>proyectos públicos</em>
+  </span>
+
+  <!-- JP (con fonética obligatoria) -->
+  <span data-i18n data-lang="jp" hidden>
+    ［アルバム ］f<br>
+    ［アーティスト ］msh<br>
+    ［年］2025<br>
+    ［日時］19.01.25 / 18:00<br>
+    ［場所 ］<em>proyectos públicos</em>
+  </span>
+</p>
+
 
     <!-- portada -->
     <img class="portada" id="portada"
          alt="ls.52 — bajos y ruidos — slava parshin"
          src="https://d2w9rnfcy7mm78.cloudfront.net/41886593/original_9ca9c25b72614420c7ae9cdfb72fda09.jpg?1766051175?bc=0"/>
+
+         <p>
+  <!-- ES -->
+  <span data-i18n data-lang="es">
+  f es un nuevo álbum dentro de una serie de composiciones electroacústicas desarrolladas desde 2019 [a, b, c, d, e… f].<br>
+  el proyecto explora la materialidad del sonido a través de procesos de captación, generación, procesamiento, manipulación y espacialización.<br>
+  este conjunto reúne 10 piezas compuestas específicamente para un sistema de 12 canales independientes, concebidas desde su origen para una escucha multicanal.<br>
+  [msh.f] será presentado en formato 12 canales el 19 de enero de 2026, durante la sesión número 60 de xpan.12.e (ls.60).<br>
+  cuarto de escucha multicanal con 12 canales de sonido independientes en distribución esférica.
+</span>
+
+<!-- en -->
+<span data-i18n data-lang="en" hidden>
+  f is a new album within a series of electroacoustic compositions developed since 2019 [a, b, c, d, e… f].<br>
+  the project explores the materiality of sound through processes of capture, generation, processing, manipulation, and spatialization.<br>
+  this set brings together 10 pieces composed specifically for a system of 12 independent channels, conceived from the outset for multichannel listening.<br>
+  [msh.f] will be presented in a 12-channel format on january 19, 2026, during xpan.12.e session number 60 (ls.60).<br>
+  multichannel listening room with 12 independent sound channels in spherical distribution.
+</span>
+
+<!-- fr -->
+<span data-i18n data-lang="fr" hidden>
+  f est un nouvel album au sein d’une série de compositions électroacoustiques développées depuis 2019 [a, b, c, d, e… f].<br>
+  le projet explore la matérialité du son à travers des processus de captation, génération, traitement, manipulation et spatialisation.<br>
+  cet ensemble réunit 10 pièces composées spécifiquement pour un système de 12 canaux indépendants, conçu dès l’origine pour une écoute multicanale.<br>
+  [msh.f] sera présenté en format 12 canaux le 19 janvier 2026, lors de la session numéro 60 de xpan.12.e (ls.60).<br>
+  salle d’écoute multicanale avec 12 canaux sonores indépendants en distribution sphérique.
+</span>
+
+<!-- jp -->
+<span data-i18n data-lang="jp" hidden>
+  fは、2019年から展開している電気音響作品シリーズの一作として制作されたアルバムです［a, b, c, d, e… f］。<br>
+  本作は、収音、生成、処理、操作、空間化というプロセスを通じて音の物質性を探ります。<br>
+  全10曲は、12の独立したチャンネルによるマルチチャンネル再生を前提として作曲されています。<br>
+  [msh.f]は、2026年1月19日、xpan.12.e 第60回セッション（ls.60）にて、12チャンネル形式で発表されます。<br>
+  12の独立した音チャンネルを球状に配置したマルチチャンネル試聴空間。
+</span>
+
+</p>
+
 
     <!-- registro -->
     <form action="https://scr ipt.google.com/macros/s/AKfycbxVBYDPBPqY9OO2om-CseZdYgThhWoHowZUpgAp1iKj8tlg1BSZNNxcwKDJYHdTOh_S/exec" method="post" novalidate>
@@ -448,5 +594,60 @@
   requestAnimationFrame(tick);
 })();
 </script>
+
+<script>
+(() => {
+  const KEY = 'xpan_lang';
+  const nodes = Array.from(document.querySelectorAll('[data-i18n][data-lang]'));
+  const btns  = Array.from(document.querySelectorAll('.langbtn[data-setlang]'));
+
+  if (!nodes.length || !btns.length) return;
+
+  const supported = new Set(btns.map(b => b.getAttribute('data-setlang')));
+
+  function setLang(lang){
+    if (!supported.has(lang)) lang = 'es';
+
+    // toggle nodes
+    nodes.forEach(n => {
+      const on = n.getAttribute('data-lang') === lang;
+      n.hidden = !on;
+    });
+
+    // toggle buttons
+    btns.forEach(b => {
+      const on = b.getAttribute('data-setlang') === lang;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+
+    // set <html lang="">
+    document.documentElement.setAttribute('lang', lang === 'jp' ? 'ja' : lang);
+
+    try { localStorage.setItem(KEY, lang); } catch(e) {}
+  }
+
+  // init (localStorage -> navigator -> es)
+  let init = 'es';
+  try {
+    const saved = localStorage.getItem(KEY);
+    if (saved && supported.has(saved)) init = saved;
+  } catch(e) {}
+
+  if (init === 'es') {
+    const nav = (navigator.language || '').toLowerCase();
+    if (nav.startsWith('fr')) init = 'fr';
+    else if (nav.startsWith('ja')) init = 'jp';
+    else if (nav.startsWith('en')) init = 'en';
+  }
+
+  setLang(init);
+
+  // events
+  btns.forEach(b => {
+    b.addEventListener('click', () => setLang(b.getAttribute('data-setlang')));
+  });
+})();
+</script>
+
 </body>
 </html>
