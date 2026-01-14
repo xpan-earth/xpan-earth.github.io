@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <title>mdl.1 — catálogo</title>
+
+  <style>
+    :root{
+      --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+      --line:#2A2E31; --line-weak:#1A1D20; --b1:1px solid var(--line);
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --maxw:1100px; --pad-x:clamp(16px,4vw,48px); --header-h:64px; --g:18px;
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --line-weak:#ECEFF2; }
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0; background:var(--bg); color:var(--fg); font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden}
+    a{color:inherit; text-decoration:none}
+    img,video{display:block; max-width:100%; height:auto; background:transparent}
+
+    header{position:fixed; top:12px; left:var(--pad-x); z-index:10; height:var(--header-h); display:flex; align-items:center}
+    header img{width:50px; height:auto; mix-blend-mode:difference; filter:invert(1) saturate(100%); border:none}
+    @media (prefers-color-scheme:light){ header img{ filter:none } }
+
+    .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 64px; padding:0 var(--pad-x)}
+    h1{font:700 1.25rem/1.2 var(--font-ui); margin:0 0 .25rem; text-transform:lowercase}
+    .meta{font:500 .85rem/1.55 var(--font-mono); color:var(--fg-dim); margin:0 0 1.25rem; text-transform:lowercase}
+
+    .grid{border-top:var(--b1)}
+    .head, .row{
+      display:grid;
+      grid-template-columns: 1.2fr .9fr 1.1fr;
+      gap:var(--g);
+      align-items:start;
+      padding:14px 0;
+      border-bottom:var(--b1);
+    }
+    .head{padding-top:18px; padding-bottom:10px}
+    .h{font:600 .8rem/1.2 var(--font-mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.2px}
+    .obj{font:700 1rem/1.25 var(--font-ui); text-transform:lowercase}
+    .price{display:flex; flex-direction:column; gap:6px; font:600 .9rem/1.15 var(--font-mono)}
+    .price .p{color:var(--fg)}
+    .price .mxn{color:var(--accent)}
+
+    .media{min-height:1px}
+    .thumb{display:block; border:var(--b1); background:rgba(24,96,255,.04)}
+    .thumb img, .thumb video{width:100%; aspect-ratio: 16 / 10; object-fit:contain; background:transparent}
+    .thumb:hover{border-color:var(--accent)}
+
+    @media (max-width:860px){
+      .head, .row{grid-template-columns:1fr; gap:10px}
+      .h:nth-child(2), .h:nth-child(3){display:none}
+      .row{padding:18px 0}
+      .price{flex-direction:row; flex-wrap:wrap; gap:10px}
+      .thumb img, .thumb video{aspect-ratio: 16 / 9}
+    }
+  
+    /* fullscreen gallery (catalog) */
+    .gallery-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.94);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .24s ease;
+    }
+    .gallery-overlay.active{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .gallery-overlay img{
+      max-width:min(92vw,1200px);
+      max-height:92vh;
+      object-fit:contain;
+      border:1px solid var(--line);
+      box-shadow:0 0 0 1px rgba(0,0,0,.2);
+    }
+    body.gallery-open{
+      overflow:hidden;
+      touch-action:none;
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <a href="https://xpan.earth" aria-label="xpan">
+      <img src="xpan.svg" alt="xpan"/>
+    </a>
+  </header>
+
+  <main class="container">
+    <h1>mdl.1 — catálogo</h1>
+    <p class="meta">precios base en mxn · conversión referencial eur/jpy ( ene 2026)</p>
+
+    <section class="grid" aria-label="catálogo mdl.1">
+      <div class="head">
+        <div class="h">objeto</div>
+        <div class="h">precio</div>
+        <div class="h">foto</div>
+      </div>
+
+      <div class="row">
+  <div class="obj">mdl.1</div>
+  <div class="price">
+  <div class="p mxn">$20,000 MXN</div>
+  <div class="p">€955.47</div>
+  <div class="p">¥178,780</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/42632923/original_97f0eaec6a6f8f1a8e30fa416908074d.png?1768357915?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/42632923/original_97f0eaec6a6f8f1a8e30fa416908074d.png?1768357915?bc=0" alt="mdl.1"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">stools (chico)</div>
+  <div class="price">
+  <div class="p mxn">$6,000 MXN</div>
+  <div class="p">€286.64</div>
+  <div class="p">¥53,634</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988?bc=0" alt="stools (alto)"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">stools (alto)</div>
+  <div class="price">
+  <div class="p mxn">$6,000 MXN</div>
+  <div class="p">€286.64</div>
+  <div class="p">¥53,634</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759662/original_f78ba27ec70089bdefa3950bb8b6aaf7.png?1751244989?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759662/original_f78ba27ec70089bdefa3950bb8b6aaf7.png?1751244989?bc=0" alt="stools (chico)"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">sub.t</div>
+  <div class="price">
+  <div class="p mxn">$36,000 MXN</div>
+  <div class="p">€1,719.85</div>
+  <div class="p">¥321,804</div>
+</div>
+  <div class="media"><a class="thumb" href="https://attachments.are.na/37759700/bcea87da1bdb6db45efef667765959a3.mp4?1751245266" target="_blank" rel="noopener">
+  <video class="thumb-video" muted loop playsinline preload="none" data-src="https://attachments.are.na/37759700/bcea87da1bdb6db45efef667765959a3.mp4?1751245266"></video>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">g.sub</div>
+  <div class="price">
+  <div class="p mxn">$13,000 MXN</div>
+  <div class="p">€621.06</div>
+  <div class="p">¥116,207</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759721/original_611113c84751490aaae1d677fb9bea35.png?1751245479?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759721/original_611113c84751490aaae1d677fb9bea35.png?1751245479?bc=0" alt="g.sub"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">g.2 (2 canales)</div>
+  <div class="price">
+  <div class="p mxn">$10,000 MXN</div>
+  <div class="p">€477.74</div>
+  <div class="p">¥89,390</div>
+</div>
+  <div class="media"><a class="thumb" href="https://attachments.are.na/37759755/f478e75b0e84d56929fa954c496cc0b0.mp4?1751245656" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://attachments.are.na/37759755/f478e75b0e84d56929fa954c496cc0b0.mp4?1751245656" alt="g.2 (2 canales)"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">g.4 (4 canales)</div>
+  <div class="price">
+  <div class="p mxn">$14,000 MXN</div>
+  <div class="p">€668.83</div>
+  <div class="p">¥125,146</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759751/original_a3e222d24a299e8d973fbc3fb90022e0.png?1751245644?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759751/original_a3e222d24a299e8d973fbc3fb90022e0.png?1751245644?bc=0" alt="g.4 (4 canales)"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">g.6 (6 canales)</div>
+  <div class="price">
+  <div class="p mxn">$16,000 MXN</div>
+  <div class="p">€764.38</div>
+  <div class="p">¥143,024</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" alt="g.6 (6 canales)"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">g.8 (8 canales)</div>
+  <div class="price">
+  <div class="p mxn">$18,000 MXN</div>
+  <div class="p">€859.93</div>
+  <div class="p">¥160,902</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254?bc=0" alt="g.8 (8 canales)"/>
+</a></div>
+</div>
+<div class="row">
+  <div class="obj">g.12 (12 canales)</div>
+  <div class="price">
+  <div class="p mxn">$22,000 MXN</div>
+  <div class="p">€1,051.02</div>
+  <div class="p">¥196,658</div>
+</div>
+  <div class="media"><a class="thumb" href="https://d2w9rnfcy7mm78.cloudfront.net/37759827/original_738e3c799f89a15b4c856de3c9782480.png?1751246255?bc=0" target="_blank" rel="noopener">
+  <img loading="lazy" decoding="async" data-src="https://d2w9rnfcy7mm78.cloudfront.net/37759827/original_738e3c799f89a15b4c856de3c9782480.png?1751246255?bc=0" alt="g.12 (12 canales)"/>
+</a></div>
+</div>
+    </section>
+
+    <p class="meta" style="margin-top:16px">
+      conversión eur usando referencia ecb: 1 eur = 20.932 mxn · conversión jpy usando tabla mxn→jpy (≈8.939 jpy por mxn).
+    </p>
+  </main>
+
+  <div id="gallery-overlay" class="gallery-overlay" aria-hidden="true">
+    <img id="gallery-image" src="" alt=""/>
+  </div>
+
+  <script>
+    const BLANK='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+    function loadImg(el){
+      const src=el.getAttribute('data-src');
+      if(src){ el.src=src; el.removeAttribute('data-src'); }
+    }
+    function loadVideo(el){
+      if(el.dataset.hydrated) return;
+      const src=el.getAttribute('data-src'); if(!src) return;
+      const s=document.createElement('source'); s.src=src; s.type='video/mp4';
+      el.appendChild(s); el.dataset.hydrated='1'; el.poster ||= BLANK; el.preload='metadata';
+    }
+    (function(){
+      const io=new IntersectionObserver((entries)=>{
+        for(const en of entries){
+          if(!en.isIntersecting) continue;
+          const el=en.target;
+          if(el.tagName==='IMG'){ loadImg(el); io.unobserve(el); }
+          else if(el.tagName==='VIDEO'){ loadVideo(el); try{ el.play().catch(()=>{}); }catch(e){} }
+        }
+      },{
+        root:null, rootMargin:'600px 0px', threshold:0
+      });
+      document.querySelectorAll('img[data-src], video[data-src]').forEach(el=>io.observe(el));
+    })();
+  </script>
+
+  <script>
+    (function(){
+      const overlay = document.getElementById('gallery-overlay');
+      const imgEl = document.getElementById('gallery-image');
+      if(!overlay || !imgEl) return;
+
+      const links = Array.from(document.querySelectorAll('a.thumb[href]'));
+      if(!links.length) return;
+
+      const sources = links.map(a => a.getAttribute('href'));
+      let idx = 0;
+
+      function openAt(i){
+        idx = (i + sources.length) % sources.length;
+        imgEl.src = sources[idx];
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden','false');
+        document.body.classList.add('gallery-open');
+      }
+
+      function close(){
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden','true');
+        document.body.classList.remove('gallery-open');
+        // clear src after transition to avoid flash
+        window.setTimeout(()=>{ imgEl.src = ''; }, 200);
+      }
+
+      function next(){ openAt(idx + 1); }
+      function prev(){ openAt(idx - 1); }
+
+      // attach click handlers
+      links.forEach((a,i)=>{
+        a.addEventListener('click', (e)=>{
+          e.preventDefault();
+          openAt(i);
+        });
+      });
+
+      // close on overlay click (outside image)
+      overlay.addEventListener('click', (e)=>{
+        if(e.target === overlay) close();
+      });
+
+      // basic keyboard controls
+      document.addEventListener('keydown', (e)=>{
+        if(!overlay.classList.contains('active')) return;
+        if(e.key === 'Escape') close();
+        if(e.key === 'ArrowRight') next();
+        if(e.key === 'ArrowLeft') prev();
+      });
+
+      // simple swipe (mobile)
+      let x0 = null;
+      overlay.addEventListener('touchstart', (e)=>{
+        if(!overlay.classList.contains('active')) return;
+        x0 = e.touches && e.touches[0] ? e.touches[0].clientX : null;
+      }, {passive:true});
+
+      overlay.addEventListener('touchend', (e)=>{
+        if(!overlay.classList.contains('active')) return;
+        if(x0 === null) return;
+        const x1 = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : null;
+        if(x1 === null) return;
+        const dx = x1 - x0;
+        x0 = null;
+        if(Math.abs(dx) < 40) return;
+        if(dx < 0) next(); else prev();
+      }, {passive:true});
+    })();
+  </script>
+
+</body>
+</html>
