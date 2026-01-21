@@ -1,0 +1,1250 @@
+<!doctype html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <link rel="preconnect" href="https://scontent-dfw5-1.cdninstagram.com" crossorigin>
+  <link rel="preconnect" href="https://www.youtube.com" crossorigin>
+
+  <title>c&c_xpan.s.e.e.v.s_12 — f [sesiones de escucha]</title>
+
+  <style>
+    /* xpan / post-tech tokens */
+    [data-xpan]{
+      --bg:#000;
+      --fg:#E7EAED;
+      --fg2:#B7BEC6;
+      --line:#23282D;
+      --line2:#2E353C;
+      --accent:#1860FF;
+
+      --hud:#ffffff;
+      --hud2:#e4e4e4;
+
+      --maxw:1120px;
+      --pad:clamp(14px,2.2vw,28px);
+      --r:0px;
+
+      --ui: "Arial Narrow","MS Gothic","Segoe UI","Helvetica Neue","Consolas",system-ui,sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    @media (prefers-color-scheme:light){
+      [data-xpan]{
+        --bg:#fff;
+        --fg:#0D1114;
+        --fg2:#46505A;
+        --line:#D7DEE6;
+        --line2:#C8D0DA;
+      }
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+
+    /* background: grid + scanline (subtil) */
+    .bg{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.9;
+    }
+
+    .lines{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      opacity:.85;
+      mix-blend-mode:screen;
+      filter: blur(0px);
+    }
+    @media (prefers-reduced-motion:reduce){
+      .lines{opacity:.25}
+    }
+    .grid{
+      position:absolute; inset:-2px;
+      background:
+        linear-gradient(to right, color-mix(in oklab, var(--line) 70%, transparent) 1px, transparent 1px),
+        linear-gradient(to bottom, color-mix(in oklab, var(--line) 70%, transparent) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(70% 55% at 50% 30%, #000 60%, transparent 100%);
+      opacity:.55;
+    }
+    .scan{
+      position:absolute; left:-10%; right:-10%;
+      top:-25%;
+      height:34%;
+      background: linear-gradient(to bottom, transparent 0%, color-mix(in oklab, var(--hud) 16%, transparent) 55%, transparent 100%);
+      filter: blur(0.2px);
+      opacity:.55;
+      animation: scan 6.5s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes scan{
+      0%{ transform:translateY(-10%) }
+      100%{ transform:translateY(320%) }
+    }
+    @media (prefers-reduced-motion:reduce){
+      .scan{animation:none; opacity:.25}
+    }
+
+    /* header */
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background: color-mix(in oklab, var(--bg) 86%, transparent);
+      backdrop-filter: blur(10px) saturate(120%);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
+      border-bottom:1px solid var(--line);
+    }
+    .hwrap{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:10px var(--pad);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 140px;
+    }
+    .brand img{width:44px;height:auto; display:block}
+    .brand .sep{width:1px;height:22px;background:var(--line); display:block}
+    .brand img.cuc{width:44px;height:44px; object-fit:cover; border:1px solid var(--line); background:var(--bg)}
+    @media (prefers-color-scheme:dark){ .brand img:not(.cuc){filter:invert(1) brightness(1)} }
+
+    .hudbar{
+      display:flex; align-items:center; gap:10px;
+      font:600 12px/1 var(--mono);
+      color: color-mix(in oklab, var(--fg2) 80%, var(--hud) 20%);
+      text-transform:lowercase;
+      white-space:nowrap;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:0;
+      background: color-mix(in oklab, var(--hud) 65%, transparent);
+      box-shadow:none;
+    }
+
+    /* layout */
+    main{
+      position:relative;
+      z-index:10;
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding: clamp(18px, 2.8vw, 40px) var(--pad) 80px;
+      display:grid;
+      gap:26px;
+    }
+
+    /* hero */
+    .hero{
+      border:1px solid var(--line);
+      border-radius:0;
+      overflow:hidden;
+      background: color-mix(in oklab, var(--bg) 92%, var(--line) 8%);
+      box-shadow:none;
+    }
+    .heroTop{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:0;
+      min-height: 380px;
+    }
+    @media (max-width:900px){
+      .heroTop{grid-template-columns:1fr; min-height:auto}
+    }
+    .heroMedia{
+      position:relative;
+      border-right:1px solid var(--line);
+      background: #000;
+    }
+    @media (max-width:900px){ .heroMedia{border-right:none;border-bottom:1px solid var(--line)} }
+    .heroMedia img{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      opacity:.92;
+      cursor:zoom-in;
+    }
+    .heroOverlay{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(70% 70% at 50% 35%, transparent 0%, rgba(0,0,0,.25) 60%, rgba(0,0,0,.65) 100%),
+        linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.55) 100%);
+      pointer-events:none;
+    }
+    .heroPanel{
+      padding:18px 18px 20px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .kicker{
+      font:600 12px/1.15 var(--mono);
+      color: color-mix(in oklab, var(--fg2) 85%, var(--hud2) 15%);
+      text-transform:lowercase;
+      letter-spacing:.02em;
+    }
+    h1{
+      margin:6px 0 8px;
+      font:700 clamp(20px, 2.3vw, 28px)/1.15 var(--ui);
+      text-transform:lowercase;
+    }
+    .meta{
+      font:500 12px/1.55 var(--mono);
+      color:var(--fg2);
+      text-transform:lowercase;
+      border-top:1px solid var(--line);
+      padding-top:12px;
+      display:grid;
+      gap:6px;
+    }
+    .meta b{
+      font-weight:700;
+      color: color-mix(in oklab, var(--fg) 90%, var(--hud) 10%);
+    }
+
+    .tagline{
+      margin:0;
+      color:var(--fg2);
+      font:500 14px/1.55 var(--ui);
+      text-transform:lowercase;
+    }
+
+    /* slots */
+    .slots{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+    }
+    @media (max-width:980px){ .slots{grid-template-columns:1fr} }
+    .slot{
+      border:1px solid var(--line);
+      border-radius:0;
+      padding:14px;
+      background: color-mix(in oklab, var(--bg) 94%, var(--line) 6%);
+      position:relative;
+      overflow:hidden;
+    }
+    .slot:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        linear-gradient(135deg, color-mix(in oklab, var(--hud) 18%, transparent) 0%, transparent 40%),
+        linear-gradient(315deg, color-mix(in oklab, var(--accent) 10%, transparent) 0%, transparent 55%);
+      opacity:.25;
+      pointer-events:none;
+    }
+    .slotHdr{
+      position:relative;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      margin-bottom:10px;
+    }
+    .slotTime{
+      font:800 18px/1 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.01em;
+    }
+    .slotCap{
+      font:600 12px/1 var(--mono);
+      color:var(--fg2);
+      text-transform:lowercase;
+      text-align:right;
+    }
+    .slotCap .hud{
+      color: color-mix(in oklab, var(--hud) 65%, var(--fg2) 35%);
+    }
+
+    form{
+      position:relative;
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    label{
+      display:block;
+      font:700 11px/1.15 var(--mono);
+      color:var(--fg2);
+      text-transform:lowercase;
+      margin-bottom:6px;
+    }
+    input{
+      width:100%;
+      padding:10px 10px;
+      border-radius:0;
+      border:1px solid var(--line2);
+      background: transparent;
+      color:var(--fg);
+      font:500 14px/1.2 var(--ui);
+      outline:none;
+    }
+    input:focus{
+      border-color: color-mix(in oklab, var(--accent) 55%, var(--line2) 45%);
+      box-shadow:none;
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:520px){ .row2{grid-template-columns:1fr} }
+
+    button{
+      appearance:none;
+      border-radius:0;
+      border:1px solid color-mix(in oklab, var(--accent) 80%, var(--line2) 20%);
+      background: transparent;
+      color:var(--fg);
+      padding:11px 12px;
+      cursor:pointer;
+      font:800 12px/1 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.02em;
+      transition: transform .12s linear, background-color .12s linear;
+    }
+    button:hover{
+      background: color-mix(in oklab, var(--accent) 12%, transparent);
+      transform: translateY(-1px);
+    }
+    button[disabled]{opacity:.65; cursor:default; transform:none}
+
+    .note{
+      margin:10px 0 0;
+      font:500 12px/1.55 var(--ui);
+      color:var(--fg2);
+      text-transform:lowercase;
+      position:relative;
+    }
+
+    /* sections */
+    .section{
+      border:1px solid var(--line);
+      border-radius:0;
+      padding:18px;
+      background: color-mix(in oklab, var(--bg) 94%, var(--line) 6%);
+    }
+    .section h2{
+      margin:0 0 12px;
+      font:900 12px/1.1 var(--mono);
+      letter-spacing:.08em;
+      text-transform:lowercase;
+      color: color-mix(in oklab, var(--fg) 75%, var(--hud) 25%);
+    }
+    .copy{
+      display:grid;
+      gap:10px;
+      color:var(--fg2);
+      font:500 14px/1.7 var(--ui);
+      text-transform:lowercase;
+    }
+    .copy b{color:var(--fg); font-weight:800}
+
+    /* gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:10px;
+    }
+    @media (max-width:980px){ .gallery{grid-template-columns: repeat(6, 1fr)} }
+    @media (max-width:560px){ .gallery{grid-template-columns: repeat(2, 1fr)} }
+
+    .gitem{
+      grid-column: span 3;
+      border:1px solid var(--line);
+      border-radius:0;
+      overflow:hidden;
+      background: #000;
+      position:relative;
+    }
+    @media (max-width:980px){ .gitem{grid-column: span 3} }
+    @media (max-width:560px){ .gitem{grid-column: span 1} }
+
+    .gitem img{
+      width:100%;
+      height:100%;
+      aspect-ratio: 4/3;
+      object-fit:cover;
+      display:block;
+      opacity:.92;
+      cursor:zoom-in;
+      transform: scale(1.01);
+    }
+    .gitem:after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.35) 100%);
+      pointer-events:none;
+      opacity:.35;
+    }
+
+    /* pdfs */
+    details{
+      border:1px solid var(--line);
+      border-radius:0;
+      overflow:hidden;
+      background: color-mix(in oklab, var(--bg) 94%, var(--line) 6%);
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 14px;
+      font:900 12px/1 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.08em;
+      color: color-mix(in oklab, var(--fg) 75%, var(--hud) 25%);
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid var(--line);
+    }
+    summary::-webkit-details-marker{display:none}
+    .pdfGrid{
+      padding:12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .pdfGrid object{
+      width:100%;
+      height:620px;
+      border:none;
+      background: color-mix(in oklab, var(--bg) 92%, var(--line) 8%);
+      border-radius:0;
+    }
+    @media (max-width:768px){
+      .pdfGrid object{height:auto; aspect-ratio: 4/3}
+    }
+
+    /* lightbox (flush / no-upscale) */
+    #xpan-lightbox{
+      position:fixed; inset:0; z-index:9999;
+      display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,55);
+      backdrop-filter:blur(8px) saturate(120%);
+      -webkit-backdrop-filter:blur(8px) saturate(120%);
+      touch-action:none; overscroll-behavior:contain;
+    }
+    @media (prefers-color-scheme:light){ #xpan-lightbox{background:rgba(255,255,255,55)} }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{
+      position:relative;
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:0; margin:0; border:none; background:transparent;
+      transform:scale(.985); opacity:0;
+      transition:transform .15s linear, opacity .15s linear;
+    }
+    #xpan-lightbox.open .sheet{transform:scale(1); opacity:1}
+    #xpan-lightbox img,#xpan-lightbox video{
+      display:block; width:auto; height:auto;
+      object-fit:contain; background:transparent; margin:0;
+      max-width:90vw; max-height:90vh;
+    }
+    html.lb-open,body.lb-open{overflow:hidden; touch-action:none}
+
+    /* footer */
+    footer{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding: 0 var(--pad) 48px;
+      color:var(--fg2);
+      font:600 11px/1.6 var(--mono);
+      text-transform:lowercase;
+      position:relative;
+      z-index:10;
+    }
+    footer a{color:var(--fg); text-decoration:none; border-bottom:1px solid color-mix(in oklab, var(--fg) 40%, transparent)}
+    footer a:hover{border-bottom-color:var(--accent)}
+  </style>
+</head>
+
+<body>
+  <div class="bg" aria-hidden="true">
+    <canvas class="lines" id="bgLines"></canvas>
+    <div class="grid"></div>
+    <div class="scan"></div>
+  </div>
+
+  <header>
+    <div class="hwrap">
+      <div class="brand">
+        <a href="https://xpan.earth" aria-label="xpan">
+          <img src="./xpan.svg" alt="xpan"/>
+        </a>
+        <span class="sep" aria-hidden="true"></span>
+        <a href="https://www.youtube.com/@cucuruchoandcompany" target="_blank" rel="noopener" aria-label="cucurucho and company">
+          <img class="cuc" src="https://d2w9rnfcy7mm78.cloudfront.net/42866513/original_cdfb845afd43e59240c987880e2a6f72.jpg?1769027952?bc=0" alt="cucurucho"/>
+        </a>
+      </div>
+
+      <div class="hudbar">
+        <span class="dot" aria-hidden="true"></span>
+        <span>c&c_xpan.s.e.e.v.s_12</span>
+        <span> / </span>
+        <span>f — msh</span>
+        <span> / </span>
+        <span>08.02.26</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="heroTop">
+        <div class="heroMedia">
+          <!-- imagen principal (proxy) -->
+          <img id="heroImg"
+               alt="c&c_xpan.s.e.e.v.s_12 — f"
+               src="https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F41067330%2Foriginal_67db70d60ba470bfef646f1c3eb6e1ac.jpg&w=2200&q=70&we"
+               decoding="async" loading="eager"/>
+          <div class="heroOverlay"></div>
+        </div>
+
+        <div class="heroPanel">
+          <div>
+            <div class="kicker">última activación en configuración radial / transición a túnel operativo</div>
+            <h1>sesiones de escucha multicanal: <em>f</em> — msh</h1>
+
+            <p class="tagline">
+              serie de sesiones de escucha multicanal utilizando el sistema multicanal embebido dentro de <em>c&c_xpan.s.e.e.v.s_12</em>.
+            </p>
+
+            <div class="meta">
+              <div><b>fecha</b> domingo 08 de febrero de 2026</div>
+              <div><b>duración</b> 48 min por sesión</div>
+              <div><b>capacidad</b> 7 personas por slot</div>
+              <div><b>formato</b> escucha multicanal / 12 canales independientes</div>
+              <div><b>sede</b> laboratorio cucurucho and company — río tigris 27, cuauhtémoc, cdmx</div>
+            </div>
+          </div>
+
+          <div class="meta" style="border-top:none;padding-top:0">
+            <div><b>registro</b> selecciona un horario y envía tus datos</div>
+            <div style="color:color-mix(in oklab, var(--fg2) 80%, var(--hud) 20%)">
+              el registro confirma cupo por orden de llegada. lista de espera automática cuando el slot alcanza 7.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLOTS -->
+    <section class="slots" aria-label="registro por horario">
+
+      <!-- IMPORTANTE:
+           pega tu URL real del Google Apps Script Web App en ACTION_URL (JS)
+           o reemplaza en cada form action="" -->
+      <div class="slot">
+        <div class="slotHdr">
+          <div>
+            <div class="slotTime">17:00</div>
+            <div class="slotCap"><span class="hud">7</span> personas / 48 min</div>
+          </div>
+        </div>
+
+        <form class="regForm" data-slot="17:00" method="post" novalidate>
+          <input type="hidden" name="slot" value="17:00"/>
+          <div>
+            <label>nombre completo</label>
+            <input name="nombre" type="text" maxlength="256" autocomplete="name" required>
+          </div>
+          <div class="row2">
+            <div>
+              <label>correo</label>
+              <input name="correo" type="email" maxlength="254" autocomplete="email" required>
+            </div>
+            <div>
+              <label>teléfono (opcional)</label>
+              <input name="telefono" type="tel" maxlength="32" autocomplete="tel">
+            </div>
+          </div>
+          <button type="submit">registrarme / 17:00</button>
+          <p class="note" data-note></p>
+        </form>
+      </div>
+
+      <div class="slot">
+        <div class="slotHdr">
+          <div>
+            <div class="slotTime">18:00</div>
+            <div class="slotCap"><span class="hud">7</span> personas / 48 min</div>
+          </div>
+        </div>
+
+        <form class="regForm" data-slot="18:00" method="post" novalidate>
+          <input type="hidden" name="slot" value="18:00"/>
+          <div>
+            <label>nombre completo</label>
+            <input name="nombre" type="text" maxlength="256" autocomplete="name" required>
+          </div>
+          <div class="row2">
+            <div>
+              <label>correo</label>
+              <input name="correo" type="email" maxlength="254" autocomplete="email" required>
+            </div>
+            <div>
+              <label>teléfono (opcional)</label>
+              <input name="telefono" type="tel" maxlength="32" autocomplete="tel">
+            </div>
+          </div>
+          <button type="submit">registrarme / 18:00</button>
+          <p class="note" data-note></p>
+        </form>
+      </div>
+
+      <div class="slot">
+        <div class="slotHdr">
+          <div>
+            <div class="slotTime">19:00</div>
+            <div class="slotCap"><span class="hud">7</span> personas / 48 min</div>
+          </div>
+        </div>
+
+        <form class="regForm" data-slot="19:00" method="post" novalidate>
+          <input type="hidden" name="slot" value="19:00"/>
+          <div>
+            <label>nombre completo</label>
+            <input name="nombre" type="text" maxlength="256" autocomplete="name" required>
+          </div>
+          <div class="row2">
+            <div>
+              <label>correo</label>
+              <input name="correo" type="email" maxlength="254" autocomplete="email" required>
+            </div>
+            <div>
+              <label>teléfono (opcional)</label>
+              <input name="telefono" type="tel" maxlength="32" autocomplete="tel">
+            </div>
+          </div>
+          <button type="submit">registrarme / 19:00</button>
+          <p class="note" data-note></p>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- PRESS RELEASE -->
+    <section class="text-block">
+
+  <p>
+    cucurucho and company y xpan presentan una última activación pública del sistema
+    <strong>c&amp;c_xpan.s.e.e.v.s_12</strong> en su configuración radial actual, a través de una serie
+    de sesiones de escucha multicanal dedicadas al álbum <em>f</em> de msh.
+  </p>
+
+  <p>
+    esta activación funciona como cierre operativo de una etapa del sistema antes de su
+    reorganización espacial hacia un nuevo formato: los brazos se redistribuirán como muros
+    paralelos formando un túnel, incorporando nuevos dispositivos del sistema de poros para
+    habilitar su siguiente fase como estudio y espacio colaborativo de producción.
+  </p>
+
+</section>
+
+<section class="text-block">
+
+  <h3>el sistema: c&amp;c_xpan.s.e.e.v.s_12</h3>
+
+  <p>
+    <strong>c&amp;c_xpan.s.e.e.v.s_12</strong> es un sistema escultórico–estructural comisionado por
+    cucurucho and company y diseñado y construido por xpan para su laboratorio experimental.
+    la pieza se compone de doce brazos de acero dispuestos radialmente alrededor de un núcleo
+    central, formando un círculo de 3 m de diámetro y una altura aproximada de 2.10 m.
+  </p>
+
+  <p>
+    cada brazo integra poros estructurales —perforaciones calibradas y uniones soldadas de
+    precisión— que permiten acoplar dispositivos al sistema: vegetación, sistemas de sonido,
+    cámaras, sensores, pantallas, luminarias y otros elementos funcionales.
+  </p>
+
+  <p>
+    en reposo, el sistema opera como escultura estructural. en activación, opera como
+    plataforma lumínica y sonora para sesiones, trabajo colectivo y exhibición.
+  </p>
+
+</section>
+
+<section class="text-block">
+
+  <h3>la activación: sesiones multicanal</h3>
+
+  <p>
+    durante el domingo 08 de febrero, el sistema se activa como infraestructura de escucha
+    multicanal para presentar <em>f</em>, un álbum concebido desde su origen para un sistema de
+    12 canales independientes.
+  </p>
+
+  <p>
+    <em>f</em> forma parte de una serie de composiciones electroacústicas desarrolladas desde
+    2019 (a, b, c, d, e… f). el proyecto explora la materialidad del sonido mediante procesos
+    de captación, generación, procesamiento, manipulación y espacialización. este conjunto
+    reúne 10 piezas compuestas específicamente para una escucha multicanal de 12 canales.
+  </p>
+
+</section>
+
+<section class="text-block">
+
+  <h3>obra en exhibición</h3>
+
+  <p>
+    durante las sesiones, se presenta una pieza/obra de moisés sacal hadid en diálogo directo
+    con el sistema s.e.e.v.s_12 y su condición de escultura–infraestructura.
+  </p>
+
+</section>
+
+<section class="text-block credits">
+
+  <h3>créditos</h3>
+
+  <p>
+    comisión: cucurucho and company<br>
+    diseño y construcción: xpan<br>
+    música: msh — <em>f</em><br>
+    obra en exhibición: moisés sacal hadid
+  </p>
+
+</section>
+
+
+    <!-- GALLERY: todas las imágenes del sistema -->
+    <section class="section">
+      <h2>galería del sistema</h2>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <!-- PDFS: planos / layout del sistema (desde la página original) -->
+    <details>
+      <summary>pdfs / planos del sistema</summary>
+      <div class="pdfGrid" id="pdfGrid"></div>
+    </details>
+
+  </main>
+
+  <footer>
+    <div>más información: <a href="https://xpan.earth/arq.xpan.s.e.e.v.s.12.html" target="_blank" rel="noopener">xpan.earth/arq.xpan.s.e.e.v.s.12</a> / <a href="https://www.youtube.com/@cucuruchoandcompany" target="_blank" rel="noopener">cucurucho and company</a></div>
+    <div>contacto: <a href="mailto:yes@xpan.earth">yes@xpan.earth</a></div>
+  </footer>
+
+  <!-- lightbox -->
+  <div id="xpan-lightbox" role="dialog" aria-modal="true"><div class="sheet"></div></div>
+
+  <script>
+
+    
+    /* =========================
+       BACKGROUND / FIELD-LINES (dense, thin, defense-ops)
+       ========================= */
+    (()=>{
+      const c = document.getElementById("bgLines");
+      if(!c) return;
+
+      const ctx = c.getContext("2d", { alpha:true });
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      const isLight = matchMedia("(prefers-color-scheme: light)");
+
+      let w=0,h=0,dpr=1;
+      const S = { a:[], t0: performance.now(), raf:0, hash:new Map(), tick:0 };
+
+      function cssVar(name){
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      }
+
+      function resize(){
+        dpr = Math.max(1, Math.min(2, devicePixelRatio || 1));
+        w = c.clientWidth; h = c.clientHeight;
+        c.width = Math.floor(w*dpr);
+        c.height = Math.floor(h*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        seed();
+      }
+
+      function rand(a,b){ return a + Math.random()*(b-a); }
+
+      function seed(){
+        const area = w*h;
+        const count = reduce.matches ? 120 : Math.round(Math.max(220, Math.min(380, area/5200)));
+        S.a = new Array(count).fill(0).map(()=>({
+          x: rand(0,w), y: rand(0,h),
+          px: 0, py: 0,
+          vx: rand(-.2,.2), vy: rand(-.2,.2),
+          sp: rand(0.65, 1.35),
+          ph: rand(0,Math.PI*2),
+          j: rand(0.15, 0.55)
+        }));
+        for(const p of S.a){ p.px=p.x; p.py=p.y; }
+      }
+
+      // compact deterministic "field" (no polygons). returns angle + strength.
+      function field(x,y,t){
+        const nx = (x/w - 0.5), ny = (y/h - 0.5);
+        const a =
+          Math.sin((nx*3.7 + ny*1.9)*3.1416 + t*0.00055) +
+          Math.cos((nx*2.3 - ny*3.1)*3.1416 - t*0.00042) +
+          Math.sin((nx*5.2 + t*0.00031))*0.65 +
+          Math.cos((ny*4.6 - t*0.00037))*0.55;
+        const b =
+          Math.sin((nx*7.3 - ny*6.1)*1.618 + t*0.00029) * 0.45;
+        const ang = (a+b) * 1.35;
+        const str = 0.55 + 0.45*Math.sin((nx*nx+ny*ny)*6.0 - t*0.00033);
+        return { ang, str };
+      }
+
+      // spatial hash for dense connections (fast)
+      const CELL = 92;
+      function key(cx,cy){ return (cx<<16) ^ cy; }
+      function buildHash(){
+        S.hash.clear();
+        for(let i=0;i<S.a.length;i++){
+          const p=S.a[i];
+          const cx = (p.x/CELL)|0, cy=(p.y/CELL)|0;
+          const k=key(cx,cy);
+          let arr=S.hash.get(k);
+          if(!arr){ arr=[]; S.hash.set(k,arr); }
+          arr.push(i);
+        }
+      }
+
+      function fade(){
+        ctx.globalCompositeOperation="source-over";
+        const a = isLight.matches ? 0.07 : 0.10;
+        ctx.fillStyle = isLight.matches ? `rgba(255,255,255,${a})` : `rgba(0,0,0,${a})`;
+        ctx.fillRect(0,0,w,h);
+      }
+
+      function draw(now){
+        if(reduce.matches){
+          ctx.clearRect(0,0,w,h);
+          return;
+        }
+
+        const hud  = cssVar("--hud")  || "rgba(200,255,230,.55)";
+        const hud2 = cssVar("--hud2") || "rgba(120,255,200,.35)";
+        const acc  = cssVar("--accent") || "#2bffb9";
+
+        // persistence + trail
+        fade();
+        ctx.globalCompositeOperation="lighter";
+        ctx.lineCap="butt";
+        ctx.lineJoin="miter";
+
+        const t = now - S.t0;
+        const speedBase = 0.62;
+        const drift = 0.38;
+
+        // update + draw micro-trails
+        for(let i=0;i<S.a.length;i++){
+          const p=S.a[i];
+          p.px = p.x; p.py = p.y;
+
+          const f = field(p.x,p.y,t + p.ph*1000);
+          const ang = f.ang;
+          const str = f.str;
+
+          // velocity steers into field + jitter
+          const tx = Math.cos(ang), ty = Math.sin(ang);
+          p.vx = p.vx*(1-drift) + tx*(drift*str);
+          p.vy = p.vy*(1-drift) + ty*(drift*str);
+
+          // gentle "mechanical" jitter
+          const jx = Math.sin(t*0.0013 + p.ph*3.0) * p.j;
+          const jy = Math.cos(t*0.0011 + p.ph*2.4) * p.j;
+
+          p.x += (p.vx*speedBase + jx) * p.sp;
+          p.y += (p.vy*speedBase + jy) * p.sp;
+
+          // wrap
+          if(p.x < -10) p.x = w+10;
+          if(p.x > w+10) p.x = -10;
+          if(p.y < -10) p.y = h+10;
+          if(p.y > h+10) p.y = -10;
+
+          // ultra-thin line trails
+          ctx.strokeStyle = (i%3===0) ? hud : hud2;
+          ctx.globalAlpha = (i%7===0) ? 0.55 : 0.32;
+          ctx.lineWidth = (i%11===0) ? 0.75 : 0.5;
+
+          ctx.beginPath();
+          ctx.moveTo(p.px, p.py);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+        }
+
+        // dense interconnect "routing" (local, constantly shifting)
+        buildHash();
+        const maxR = Math.min(190, Math.max(110, Math.min(w,h)*0.22));
+        const maxR2 = maxR*maxR;
+
+        ctx.globalAlpha = 0.36;
+        ctx.lineWidth = 0.45;
+        ctx.strokeStyle = hud2;
+
+        // sample subset each frame for saturation without killing fps
+        const step = (S.tick++ % 2) ? 2 : 3;
+        for(let i=0;i<S.a.length;i+=step){
+          const p=S.a[i];
+          const cx=(p.x/CELL)|0, cy=(p.y/CELL)|0;
+
+          // collect candidates from 3x3 cells
+          const cand=[];
+          for(let oy=-1;oy<=1;oy++){
+            for(let ox=-1;ox<=1;ox++){
+              const arr=S.hash.get(key(cx+ox,cy+oy));
+              if(arr) cand.push(...arr);
+            }
+          }
+
+          // pick up to 3 closest within range
+          let picked=0;
+          for(let pass=0; pass<2 && picked<3; pass++){
+            let best=-1, bestd=1e18;
+            for(let k=0;k<cand.length;k++){
+              const j=cand[k];
+              if(j===i) continue;
+              const q=S.a[j];
+              const dx=q.x-p.x, dy=q.y-p.y;
+              const d2=dx*dx+dy*dy;
+              if(d2>maxR2) continue;
+              // second pass biases slightly further links for density
+              const score = pass ? (d2*0.92) : d2;
+              if(score<bestd){ bestd=score; best=j; }
+            }
+            if(best<0) continue;
+            const q=S.a[best];
+            const dx=q.x-p.x, dy=q.y-p.y;
+            const d=Math.sqrt(dx*dx+dy*dy);
+            const a = Math.max(0.06, 0.40*(1 - d/maxR));
+
+            // draw "wire" + micro-ticks (aggressive technical texture)
+            ctx.globalAlpha = a;
+            ctx.beginPath();
+            ctx.moveTo(p.x,p.y);
+            ctx.lineTo(q.x,q.y);
+            ctx.stroke();
+
+            // intersection-like tick at midpoint
+            if((i+best+S.tick)%5===0){
+              const mx=(p.x+q.x)*0.5, my=(p.y+q.y)*0.5;
+              const nx = -dy/(d||1), ny = dx/(d||1);
+              const L = 3.0 + 3.0*Math.sin((t*0.002)+(i*0.11));
+              ctx.globalAlpha = Math.min(0.55, a*1.4);
+              ctx.strokeStyle = acc;
+              ctx.lineWidth = 0.55;
+              ctx.beginPath();
+              ctx.moveTo(mx-nx*L, my-ny*L);
+              ctx.lineTo(mx+nx*L, my+ny*L);
+              ctx.stroke();
+
+              ctx.strokeStyle = hud2;
+              ctx.lineWidth = 0.45;
+
+              // tiny glow dot
+              ctx.globalAlpha = Math.min(0.45, a*1.2);
+              ctx.fillStyle = acc;
+              ctx.beginPath();
+              ctx.arc(mx,my,1.05,0,Math.PI*2);
+              ctx.fill();
+            }
+
+            picked++;
+          }
+        }
+
+        // periodic sweep pulse (radar feel)
+        const sweep = (t*0.00022) % 1;
+        const x = sweep*w;
+        ctx.globalAlpha = isLight.matches ? 0.10 : 0.14;
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = acc;
+        ctx.beginPath();
+        ctx.moveTo(x,0);
+        ctx.lineTo(x,h);
+        ctx.stroke();
+
+        // hard edge vignette to keep it "inside"
+        ctx.globalCompositeOperation="source-over";
+        ctx.globalAlpha = isLight.matches ? 0.14 : 0.26;
+        const g = ctx.createLinearGradient(0,0,w,0);
+        g.addColorStop(0, isLight.matches ? "rgba(255,255,255,.55)" : "rgba(0,0,0,.75)");
+        g.addColorStop(0.12, "rgba(0,0,0,0)");
+        g.addColorStop(0.88, "rgba(0,0,0,0)");
+        g.addColorStop(1, isLight.matches ? "rgba(255,255,255,.55)" : "rgba(0,0,0,.75)");
+        ctx.fillStyle=g;
+        ctx.fillRect(0,0,w,h);
+
+        S.raf = requestAnimationFrame(draw);
+      }
+
+      const ro = new ResizeObserver(()=>{ resize(); });
+      ro.observe(c);
+      resize();
+      S.raf = requestAnimationFrame(draw);
+
+      // safety: pause when tab hidden
+      document.addEventListener("visibilitychange", ()=>{
+        if(document.hidden){
+          cancelAnimationFrame(S.raf);
+        }else{
+          S.t0 = performance.now();
+          S.raf = requestAnimationFrame(draw);
+        }
+      }, { passive:true });
+    })();
+;
+
+    /* =========================
+       CONFIG
+       ========================= */
+
+    // 1) pega aquí tu google apps script web app:
+    // ejemplo (como 12.e): https://script.google.com/macros/s/XXXXXXXX/exec
+    const ACTION_URL = "https://script.google.com/macros/s/AKfycbwBv7dYphkL103GHQt7N_LwVs6gqrX-9Cq9qmqhUMlVS-YwOzdaVICpN3yayTlEHT4beA/exec";
+
+    // 2) imágenes: extraídas de arq.xpan.s.e.e.v.s.12.html (26)
+    const SYSTEM_IMAGES = [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067330/original_67db70d60ba470bfef646f1c3eb6e1ac.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067315/original_f0dd3fc69706824cda9c2e0eec47fb2d.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067322/original_262ee193a60bd23e8de238f6e8cad4bc.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067325/original_41281b323961fdb7eacedc650de3da30.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067287/original_37685c9212ad65045d92c0ecf7c26832.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067293/original_484d059516d28bfb721e804ed1f69732.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067294/original_f2a69c6a5540c4c2f254dd8e7314c9f0.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067295/original_6ead1144bf13db194d09ebc91fc80e59.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067296/original_a61474f5eaf6836488d71caa6dc5bb3d.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067301/original_738a7d203ed1a59deb3ec4b4918c13b5.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067302/original_a4cfd1f052ca524ceabef6eb83bf6468.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067305/original_c3bf587d6c9627383af1ea4fd90cc8c9.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067310/original_3ad506abfe4ea51c0fab398fd6b1eb2e.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067313/original_50093b09d120e9d9081f6317b5c230dd.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067317/original_a2eedca6090c38de7774a5f00d5e6936.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067329/original_5dd7a26a232f24ce6df18fee2c5588d6.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067331/original_79e40bca3d378def426a6c9acd004ba0.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067337/original_e1d7068ea35ee96ecd962d4f3ddc80c2.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067338/original_5b8fee3716783278964f4c0235e85985.jpg",
+      "https://d2w9rnfcy7mm78.cloudfront.net/41067340/original_805993c594f07dd328c03bec2a88c618.jpg"
+    ];
+
+    // 3) pdfs: embeds desde la página del sistema (14)
+    const SYSTEM_PDFS = [
+      "https://attachments.are.na/41067266/ed509100e54f7499006b6417d151aa0d.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067249/988357ae252f9f5fed2e22b94b6238ef.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067250/a5853ba50f0cdfdf1e184524266978c9.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067252/5a0e05111b73bd481ca18da69eec578e.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067253/62f281b6c123a31cdcb5536eccdf35cd.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067254/c3b1dcab4cc70587542a966007f6d47c.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067255/ef559563c35e20fdf3813ab0e445ec69.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067256/b1560e51be0ee5343ea46fbd9dff608f.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067257/1a56d1ce504983fbe1e2b32a93f8ec81.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0",
+      "https://attachments.are.na/41067258/5c9c10b718355cdf38596159439019f7.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"
+    ];
+
+    /* =========================
+       GALLERY RENDER (lazy)
+       ========================= */
+    (()=>{
+      const host = document.getElementById("gallery");
+      if(!host) return;
+
+      for(const src of SYSTEM_IMAGES){
+        const fig = document.createElement("div");
+        fig.className = "gitem";
+        const img = document.createElement("img");
+        img.alt = "c&c_xpan.s.e.e.v.s_12";
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.dataset.src = src;
+        fig.appendChild(img);
+        host.appendChild(fig);
+      }
+
+      // lazy load
+      const io = new IntersectionObserver((entries)=>{
+        for(const e of entries){
+          if(!e.isIntersecting) continue;
+          const img = e.target;
+          const src = img.dataset.src;
+          if(src){
+            img.src = src;
+            delete img.dataset.src;
+          }
+          io.unobserve(img);
+        }
+      },{rootMargin:"600px 0px", threshold:0.01});
+
+      host.querySelectorAll("img[data-src]").forEach(img=>io.observe(img));
+    })();
+
+    /* =========================
+       PDF RENDER
+       ========================= */
+    (()=>{
+      const host = document.getElementById("pdfGrid");
+      if(!host) return;
+      for(const url of SYSTEM_PDFS){
+        const obj = document.createElement("object");
+        obj.type = "application/pdf";
+        obj.data = url;
+        obj.setAttribute("aria-label", "pdf");
+        host.appendChild(obj);
+      }
+    })();
+
+    /* =========================
+       REGISTRATION (POST)
+       ========================= */
+    (()=>{
+      const forms = document.querySelectorAll(".regForm");
+      if(!forms.length) return;
+
+      for(const f of forms){
+        const note = f.querySelector("[data-note]");
+        const btn = f.querySelector("button[type='submit']");
+        const slot = f.dataset.slot || "";
+
+        // set action dynamically
+        if(ACTION_URL && ACTION_URL.startsWith("http")) f.action = ACTION_URL;
+
+        f.addEventListener("submit", async (ev)=>{
+          ev.preventDefault();
+
+          if(!ACTION_URL || !ACTION_URL.startsWith("http")){
+            if(note) note.textContent = "pega la url del web app en action_url para activar registro.";
+            return;
+          }
+
+          // basic validation
+          const nombre = f.querySelector("input[name='nombre']")?.value?.trim();
+          const correo = f.querySelector("input[name='correo']")?.value?.trim();
+          if(!nombre || !correo){
+            if(note) note.textContent = "completa nombre y correo.";
+            return;
+          }
+
+          try{
+            btn.disabled = true;
+            btn.textContent = "enviando…";
+            if(note) note.textContent = "procesando registro…";
+
+            const fd = new FormData(f);
+            fd.set("slot", slot);
+
+            const res = await fetch(ACTION_URL, { method:"POST", body: fd });
+            // si tu web app responde json:
+            let payload = null;
+            const ct = res.headers.get("content-type") || "";
+            if(ct.includes("application/json")){
+              payload = await res.json();
+            }else{
+              // fallback
+              await res.text();
+              payload = { ok: res.ok };
+            }
+
+            if(payload && payload.status === "waitlist"){
+              if(note) note.textContent = "slot lleno. registro enviado a lista de espera.";
+            }else if(payload && (payload.ok || payload.status === "ok")){
+              if(note) note.textContent = "registro confirmado. revisa tu correo para detalles.";
+              f.reset();
+              f.querySelector("input[name='slot']")?.setAttribute("value", slot);
+            }else{
+              if(note) note.textContent = "registro enviado. confirmación pendiente.";
+            }
+
+          }catch(err){
+            if(note) note.textContent = "error de red. intenta de nuevo.";
+          }finally{
+            btn.disabled = false;
+            btn.textContent = `registrarme / ${slot}`;
+          }
+        });
+      }
+    })();
+
+    /* =========================
+       LIGHTBOX (flush / no-upscale)
+       ========================= */
+    (()=>{
+      const lb=document.getElementById('xpan-lightbox');
+      const sheet=lb.querySelector('.sheet');
+
+      function openMedia(node){
+        sheet.innerHTML='';
+        const isV=node.tagName.toLowerCase()==='video';
+        const el=document.createElement(isV?'video':'img');
+
+        if(isV){
+          el.src=node.currentSrc||node.src;
+          el.playsInline=true; el.controls=true;
+          el.loop=!!node.loop;
+          el.muted=node.muted ?? true;
+          el.autoplay=true;
+        }else{
+          el.src=node.currentSrc||node.src;
+          el.decoding='async';
+          el.loading='eager';
+          el.alt='';
+        }
+
+        el.addEventListener(isV?'loadedmetadata':'load', ()=>{
+          const nw=isV?el.videoWidth:el.naturalWidth;
+          const nh=isV?el.videoHeight:el.naturalHeight;
+          const vw=window.innerWidth*0.9, vh=window.innerHeight*0.9;
+          const scale=Math.min(vw/nw, vh/nh, 1);
+          el.style.width=(nw*scale)+'px';
+          el.style.height=(nh*scale)+'px';
+        },{once:true});
+
+        sheet.appendChild(el);
+        lb.classList.add('open');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+
+      function closeLB(){
+        lb.classList.remove('open');
+        sheet.innerHTML='';
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+      }
+
+      document.body.addEventListener('click',e=>{
+        const t=e.target;
+        if(!t) return;
+        if(t.closest('a')) return;
+        if(t.tagName==='IMG' || t.tagName==='VIDEO'){
+          e.preventDefault(); e.stopPropagation();
+          openMedia(t);
+        }
+      },{capture:true});
+
+      lb.addEventListener('click',e=>{ if(e.target===lb) closeLB(); });
+      addEventListener('keydown',e=>{ if(e.key==='Escape' && lb.classList.contains('open')) closeLB(); });
+      addEventListener('resize',()=>{
+        const m=sheet.firstElementChild; if(!m) return;
+        const isV=m.tagName.toLowerCase()==='video';
+        const nw=isV?m.videoWidth:m.naturalWidth, nh=isV?m.videoHeight:m.naturalHeight;
+        if(!nw||!nh) return;
+        const vw=innerWidth*0.9, vh=innerHeight*0.9;
+        const scale=Math.min(vw/nw, vh/nh, 1);
+        m.style.width=(nw*scale)+'px';
+        m.style.height=(nh*scale)+'px';
+      });
+    })();
+  </script>
+</body>
+</html>
