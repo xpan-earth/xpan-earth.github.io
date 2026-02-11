@@ -296,6 +296,8 @@
       border-color: color-mix(in oklab, var(--accent) 55%, var(--line2) 45%);
       box-shadow:none;
     }
+    input[disabled]{opacity:.55; cursor:not-allowed}
+
     .row2{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -515,7 +517,7 @@
 
         <div class="heroPanel">
           <div>
-            <div class="kicker">última activación en configuración radial / transición a túnel operativo</div>
+            <div class="kicker">última activación en configuración radial / transición a túnel operativo · archivo</div>
             <h1>sesiones de escucha multicanal: <em>f</em> — msh</h1>
 
             <p class="tagline">
@@ -532,9 +534,9 @@
           </div>
 
           <div class="meta" style="border-top:none;padding-top:0">
-            <div><b>registro</b> selecciona un horario y envía tus datos</div>
+            <div><b>archivo</b> registro cerrado</div>
             <div style="color:color-mix(in oklab, var(--fg2) 80%, var(--hud) 20%)">
-              el registro confirma cupo por orden de llegada. lista de espera automática cuando el slot alcanza 7.
+              esta página queda como archivo de la activación. el registro está inhabilitado.
             </div>
           </div>
         </div>
@@ -542,7 +544,7 @@
     </section>
 
     <!-- SLOTS -->
-    <section class="slots" aria-label="registro por horario">
+    <section class="slots" aria-label="archivo por horario">
 
       <!-- IMPORTANTE:
            pega tu URL real del Google Apps Script Web App en ACTION_URL (JS)
@@ -1011,7 +1013,11 @@
        CONFIG
        ========================= */
 
-    // 1) pega aquí tu google apps script web app:
+    // modo archivo: inhabilita registro sin romper el layout
+    const ARCHIVE_MODE = true;
+
+
+    // 1) url de google apps script web app (histórico; registro inhabilitado en modo archivo):
     // ejemplo (como 12.e): https://script.google.com/macros/s/XXXXXXXX/exec
     const ACTION_URL = "https://script.google.com/macros/s/AKfycbwBv7dYphkL103GHQt7N_LwVs6gqrX-9Cq9qmqhUMlVS-YwOzdaVICpN3yayTlEHT4beA/exec";
 
@@ -1110,6 +1116,28 @@
     (()=>{
       const forms = document.querySelectorAll(".regForm");
       if(!forms.length) return;
+
+      // archivo: desactiva UI y evita cualquier submit
+      if(typeof ARCHIVE_MODE !== "undefined" && ARCHIVE_MODE){
+        for(const f of forms){
+          const note = f.querySelector("[data-note]");
+          const btn  = f.querySelector("button[type='submit']");
+          const slot = f.dataset.slot || (f.querySelector("input[name='slot']")?.value || "");
+
+          // bloquea inputs
+          f.querySelectorAll("input,button").forEach(el=>{
+            el.setAttribute("disabled","disabled");
+            el.setAttribute("aria-disabled","true");
+            el.tabIndex = -1;
+          });
+
+          if(btn) btn.textContent = `cerrado / ${slot}`;
+          if(note) note.textContent = "archivo. registro cerrado.";
+          f.addEventListener("submit",(ev)=>{ ev.preventDefault(); },{ passive:false });
+        }
+        return;
+      }
+
 
       for(const f of forms){
         const note = f.querySelector("[data-note]");
