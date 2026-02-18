@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<title>xpan — sistemas (index)</title>
+
+<style>
+  :root{
+    /* UI stays monochrome; media stays full color */
+    --bg:#070809;
+    --fg:#ECEFF2;
+    --fg-dim:rgba(236,239,242,.70);
+    --line:rgba(236,239,242,.18);
+    --line2:rgba(236,239,242,.10);
+    --panel:rgba(236,239,242,.04);
+    --panel2:rgba(236,239,242,.06);
+
+    --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+
+    --pad:clamp(12px,3.2vw,44px);
+    --gap:clamp(10px,1.2vw,16px);
+    --tap:44px;
+
+    --ease:cubic-bezier(.16,1,.3,1);
+    --d1:180ms;
+    --d2:360ms;
+
+    --shadow: 0 14px 38px rgba(0,0,0,.46);
+  }
+
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#ffffff;
+      --fg:#0A0C0E;
+      --fg-dim:rgba(10,12,14,.62);
+      --line:rgba(10,12,14,.18);
+      --line2:rgba(10,12,14,.10);
+      --panel:rgba(10,12,14,.035);
+      --panel2:rgba(10,12,14,.055);
+      --shadow: 0 14px 38px rgba(0,0,0,.14);
+    }
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  /* ====== Background (technical, restrained) ====== */
+  .bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(1200px 700px at 52% -18%, color-mix(in srgb, var(--fg) 12%, transparent), transparent 64%),
+      repeating-linear-gradient(to right, var(--line2) 0 1px, transparent 1px 96px),
+      repeating-linear-gradient(to bottom, var(--line2) 0 1px, transparent 1px 96px);
+    opacity:.95;
+    mask-image:radial-gradient(900px 560px at 55% 8%, #000 58%, transparent 100%);
+  }
+
+  .grain{
+    position:fixed; inset:-2px; z-index:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 2px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+    opacity:.18;
+  }
+  @media (prefers-color-scheme:light){
+    .grain{mix-blend-mode:multiply; opacity:.09}
+  }
+
+  /* ====== Top bar ====== */
+  header{
+    position:sticky; top:0; z-index:40;
+    padding:calc(10px + env(safe-area-inset-top)) var(--pad) 10px;
+    border-bottom:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter:saturate(120%) blur(12px);
+    -webkit-backdrop-filter:saturate(120%) blur(12px);
+  }
+
+  .bar{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    gap:var(--gap);
+    align-items:center;
+  }
+
+  .brand{
+    display:flex; align-items:center; gap:12px;
+    min-width:0;
+  }
+  .brand a{display:inline-flex; align-items:center; text-decoration:none}
+  .brand img{
+    width:40px; height:auto; display:block;
+    filter:invert(1);
+  }
+  @media (prefers-color-scheme:light){ .brand img{filter:none} }
+
+  .brand .t{
+    display:flex; flex-direction:column; line-height:1.1;
+    min-width:0;
+  }
+  .brand .t strong{
+    font:900 12px/1.1 var(--font-mono);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .brand .t span{
+    margin-top:4px;
+    font:650 10px/1.1 var(--font-mono);
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  .controls{
+    display:flex; align-items:center; justify-content:flex-end;
+    gap:10px; flex-wrap:wrap;
+  }
+
+  .field, .seg, .btn{
+    border:1px solid var(--line);
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    color:var(--fg);
+    border-radius:0;
+  }
+
+  .field{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px;
+    min-height:var(--tap);
+  }
+  .field label{
+    font:800 10px/1 var(--font-mono);
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    user-select:none;
+  }
+  .field input{
+    width:min(340px, 48vw);
+    border:0; outline:0;
+    background:transparent;
+    color:var(--fg);
+    font:650 12px/1 var(--font-mono);
+  }
+  .field input::placeholder{color:color-mix(in srgb, var(--fg) 42%, transparent)}
+
+  .seg{
+    display:flex; align-items:center; gap:0;
+    overflow:hidden;
+  }
+  .seg button{
+    border:0;
+    padding:10px 12px;
+    min-height:var(--tap);
+    background:transparent;
+    font:900 10px/1 var(--font-mono);
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    cursor:pointer;
+    color:var(--fg-dim);
+    transition:background var(--d1) linear, color var(--d1) linear;
+  }
+  .seg button[aria-pressed="true"]{
+    background:var(--panel2);
+    color:var(--fg);
+  }
+
+  .btn{
+    min-height:var(--tap);
+    padding:10px 12px;
+    font:900 10px/1 var(--font-mono);
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:transform var(--d1) var(--ease), background var(--d1) linear, border-color var(--d1) linear;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn[aria-pressed="true"]{
+    background:var(--panel2);
+    border-color:color-mix(in srgb, var(--fg) 32%, transparent);
+  }
+
+  /* ====== Layout ====== */
+  main{
+    position:relative; z-index:1;
+    max-width:1560px;
+    margin:0 auto;
+    padding:14px var(--pad) 96px;
+  }
+
+  .hud{
+    border:1px solid var(--line2);
+    background:var(--panel);
+    box-shadow:var(--shadow);
+    padding:14px;
+    margin:0 0 14px;
+  }
+  .hud-top{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+    flex-wrap:wrap;
+  }
+  .hud h1{
+    margin:0;
+    font:900 13px/1.15 var(--font-mono);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .hud .meta{
+    margin-top:10px;
+    display:flex; flex-wrap:wrap; gap:10px;
+    color:var(--fg-dim);
+    font:650 11px/1.35 var(--font-mono);
+  }
+  .hud .meta strong{color:var(--fg); font-weight:900}
+  .pip{opacity:.55}
+  .density{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:10px;
+  }
+  .spark{
+    display:flex; align-items:flex-end; gap:2px;
+    height:26px;
+    border:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    padding:6px;
+    overflow:hidden;
+  }
+  .bar1{
+    width:100%;
+    flex:1 1 0;
+    background:color-mix(in srgb, var(--fg) 18%, transparent);
+    transform-origin:bottom;
+    transition:transform var(--d2) var(--ease);
+  }
+  .spark:hover .bar1{transform:scaleY(1.04)}
+  .spark-tip{
+    display:flex; justify-content:space-between; gap:10px;
+    font:650 10px/1.2 var(--font-mono);
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+  }
+
+  /* ====== Views ====== */
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ====== Mosaic grid ====== */
+  .mosaic{
+    display:grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap:var(--gap);
+    grid-auto-flow:dense;
+  }
+  @media (max-width:1200px){ .mosaic{grid-template-columns:repeat(8,minmax(0,1fr))} }
+  @media (max-width:860px){ .mosaic{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  @media (max-width:520px){ .mosaic{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+  .tile{
+    border:1px solid var(--line2);
+    background:var(--panel);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    border-radius:0;
+    position:relative;
+    isolation:isolate;
+    transform:translateZ(0);
+    cursor:pointer;
+    min-height:140px;
+    transition:transform var(--d2) var(--ease), border-color var(--d2) linear, background var(--d2) linear;
+    will-change:transform;
+  }
+  .tile:hover{
+    transform:translateY(-2px);
+    border-color:color-mix(in srgb, var(--fg) 26%, transparent);
+    background:var(--panel2);
+  }
+
+  /* sizes */
+  .s-2x1{grid-column:span 2; grid-row:span 1}
+  .s-2x2{grid-column:span 2; grid-row:span 2}
+  .s-3x2{grid-column:span 3; grid-row:span 2}
+  .s-4x2{grid-column:span 4; grid-row:span 2}
+  .s-4x3{grid-column:span 4; grid-row:span 3}
+  .s-6x3{grid-column:span 6; grid-row:span 3}
+
+  @media (max-width:860px){
+    .s-3x2,.s-4x2,.s-4x3,.s-6x3{grid-column:span 4}
+    .s-6x3{grid-row:span 3}
+    .s-4x3{grid-row:span 2}
+  }
+  @media (max-width:520px){
+    .s-2x2,.s-3x2,.s-4x2,.s-4x3,.s-6x3{grid-column:span 2}
+    .s-6x3{grid-row:span 2}
+    .s-4x3{grid-row:span 2}
+  }
+
+  .media{
+    position:absolute; inset:0;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+  }
+  .media::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--bg) 78%, transparent)),
+      radial-gradient(700px 260px at 60% 10%, color-mix(in srgb, var(--fg) 6%, transparent), transparent 60%);
+    pointer-events:none;
+    opacity:.95;
+    z-index:2;
+  }
+  .media img,.media video{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    transform:scale(1.01);
+    transition:transform var(--d2) var(--ease), filter var(--d2) linear;
+    z-index:1;
+    position:relative;
+  }
+  .tile:hover .media img,
+  .tile:hover .media video{transform:scale(1.04)}
+
+  /* HUD overlay */
+  .overlay{
+    position:absolute; inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    gap:8px;
+    padding:12px;
+    z-index:3;
+  }
+  .overlay .t{
+    margin:0;
+    font:900 12px/1.25 var(--font-ui);
+    letter-spacing:.01em;
+    text-transform:lowercase;
+    max-width:100%;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .overlay .m{
+    margin:0;
+    font:650 10px/1.35 var(--font-mono);
+    letter-spacing:.02em;
+    color:var(--fg-dim);
+    max-width:100%;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .overlay .k{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    font:800 10px/1 var(--font-mono);
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+  }
+
+  /* ====== Timeline (reduced, clean) ====== */
+  .timeline{display:flex; flex-direction:column; gap:var(--gap)}
+  .year{
+    border:1px solid var(--line2);
+    background:var(--panel);
+    box-shadow:var(--shadow);
+  }
+  .yhead{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px;
+    border-bottom:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 90%, transparent);
+  }
+  .yhead strong{
+    font:900 12px/1 var(--font-mono);
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .yhead span{
+    font:700 10px/1 var(--font-mono);
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+  }
+  .strip{
+    display:flex; gap:10px;
+    overflow:auto;
+    padding:12px;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+  }
+  .thumb{
+    flex:0 0 260px;
+    border:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    scroll-snap-align:start;
+    cursor:pointer;
+    transition:transform var(--d1) var(--ease), background var(--d1) linear, border-color var(--d1) linear;
+  }
+  .thumb:hover{transform:translateY(-2px); background:var(--panel2); border-color:color-mix(in srgb, var(--fg) 26%, transparent)}
+  .tmedia{aspect-ratio:4/3; overflow:hidden; background:transparent}
+  .thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+  .tinfo{padding:10px;border-top:1px solid var(--line2)}
+  .tinfo strong{display:block;font:850 11px/1.25 var(--font-ui);text-transform:lowercase;margin:0 0 6px}
+  .tinfo span{display:block;font:650 10px/1.35 var(--font-mono);color:var(--fg-dim)}
+
+  /* ====== Viewer (lightweight by default) ====== */
+  .viewer{
+    position:fixed; inset:0; z-index:999;
+    display:none;
+    background:color-mix(in srgb, var(--bg) 62%, transparent);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+  }
+  .viewer.open{display:block}
+  .panel{
+    position:absolute;
+    inset:12px;
+    border:1px solid var(--line);
+    background:var(--bg);
+    box-shadow:var(--shadow);
+    display:flex; flex-direction:column;
+  }
+  .vtop{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 12px;
+    border-bottom:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+  }
+  .vleft{min-width:0; display:flex; flex-direction:column; gap:4px}
+  .vleft strong{
+    font:900 12px/1.2 var(--font-ui);
+    text-transform:lowercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .vleft span{
+    font:700 10px/1.2 var(--font-mono);
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .vright{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+  .vright a, .vright button{
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--fg);
+    text-decoration:none;
+    padding:10px 12px;
+    min-height:var(--tap);
+    font:900 10px/1 var(--font-mono);
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    cursor:pointer;
+    border-radius:0;
+    transition:background var(--d1) linear, transform var(--d1) var(--ease);
+  }
+  .vright a:hover, .vright button:hover{background:var(--panel2); transform:translateY(-1px)}
+  .vright a:active, .vright button:active{transform:translateY(0)}
+
+  .preview{
+    flex:1 1 auto;
+    display:grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap:0;
+    min-height:0;
+  }
+  .pmedia{
+    border-right:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    min-height:0;
+    display:flex;
+  }
+  .pmedia img, .pmedia video{
+    width:100%; height:100%;
+    object-fit:contain;
+    background:transparent;
+    display:block;
+  }
+  .pinfo{
+    padding:12px;
+    min-height:0;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .pinfo .blk{
+    border:1px solid var(--line2);
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    padding:10px;
+  }
+  .pinfo .lbl{
+    font:800 10px/1 var(--font-mono);
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+    margin:0 0 8px;
+  }
+  .pinfo .txt{
+    margin:0;
+    font:650 11px/1.45 var(--font-mono);
+    color:var(--fg);
+  }
+  .pinfo .txt span{color:var(--fg-dim)}
+  .pinfo .hint{
+    margin-top:auto;
+    font:650 10px/1.35 var(--font-mono);
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:var(--fg-dim);
+  }
+
+  @media (max-width:980px){
+    .preview{grid-template-columns:1fr}
+    .pmedia{border-right:0; border-bottom:1px solid var(--line2)}
+  }
+
+  /* ====== Accessibility / motion ====== */
+  :focus-visible{
+    outline:2px solid color-mix(in srgb, var(--fg) 42%, transparent);
+    outline-offset:2px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+    .tile:hover{transform:none !important}
+    .tile:hover .media img, .tile:hover .media video{transform:none !important}
+    .spark:hover .bar1{transform:none !important}
+    .vright a:hover, .vright button:hover{transform:none !important}
+  }
+
+  @media (max-width:760px){
+    .bar{grid-template-columns:1fr}
+    .controls{justify-content:flex-start}
+    .field input{width:min(620px, 72vw)}
+    .panel{inset:10px}
+  }
+</style>
+</head>
+
+<body>
+<div class="bg"></div>
+<div class="grain"></div>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <a href="https://xpan.earth" rel="noopener">
+        <img alt="xpan logo" loading="eager" src="xpan.svg"/>
+      </a>
+      <div class="t">
+        <strong>sistemas</strong>
+        <span>index visual / operativo</span>
+      </div>
+    </div>
+
+    <div class="controls" role="toolbar" aria-label="Controles">
+      <div class="field" title="filtrar por título o metadata">
+        <label for="q">search</label>
+        <input id="q" placeholder="type…" autocomplete="off" spellcheck="false"/>
+      </div>
+
+      <div class="seg" aria-label="Vistas">
+        <button id="btnMosaic" aria-pressed="true" type="button">mosaic</button>
+        <button id="btnTimeline" aria-pressed="false" type="button">timeline</button>
+      </div>
+
+      <button class="btn" id="btnSort" type="button" aria-pressed="false" title="orden">sort:recent</button>
+      <button class="btn" id="btnSource" type="button" title="abrir archivo maestro">source</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hud" aria-label="Resumen">
+    <div class="hud-top">
+      <div>
+        <h1>catálogo de sistemas</h1>
+        <div class="meta">
+          <span><strong id="kAll">—</strong> sistemas</span><span class="pip">·</span>
+          <span><strong id="kYears">—</strong> años</span><span class="pip">·</span>
+          <span>interacción: click/tap abrir · esc cerrar · shift+k search</span>
+        </div>
+      </div>
+
+      <div class="meta" style="justify-content:flex-end">
+        <span>estado: <strong id="kState">ready</strong></span><span class="pip">·</span>
+        <span>visible: <strong id="kVisible">—</strong></span>
+      </div>
+    </div>
+
+    <div class="density">
+      <div class="spark" id="spark" aria-label="Densidad por año"></div>
+      <div class="spark-tip">
+        <span id="sparkL">—</span>
+        <span id="sparkR">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="views">
+    <section id="viewMosaic" class="view active">
+      <div class="mosaic" id="mosaic"></div>
+    </section>
+
+    <section id="viewTimeline" class="view">
+      <div class="timeline" id="timeline"></div>
+    </section>
+  </section>
+</main>
+
+<!-- viewer -->
+<div class="viewer" id="viewer" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-label="Sistema">
+    <div class="vtop">
+      <div class="vleft">
+        <strong id="vTitle">—</strong>
+        <span id="vMeta">—</span>
+      </div>
+      <div class="vright">
+        <a id="vLink" href="#" target="_blank" rel="noopener">open tab</a>
+        <button id="vClose" type="button">close</button>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="pmedia" id="pmedia"></div>
+      <div class="pinfo">
+        <div class="blk">
+          <p class="lbl">metadata</p>
+          <p class="txt" id="pmeta">—</p>
+        </div>
+        <div class="blk">
+          <p class="lbl">path</p>
+          <p class="txt"><span id="plink">—</span></p>
+        </div>
+        <div class="hint">la vista completa vive en cada entrada individual</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SOURCE = "xpan.sistemas.index.html";
+
+const $ = (s, el=document)=>el.querySelector(s);
+const $$ = (s, el=document)=>[...el.querySelectorAll(s)];
+
+const state = {
+  all: [],
+  filtered: [],
+  view: "mosaic",
+  sort: "recent", // recent | alpha
+};
+
+const elQ = $("#q");
+const elMosaic = $("#mosaic");
+const elTimeline = $("#timeline");
+
+const kAll = $("#kAll");
+const kYears = $("#kYears");
+const kVisible = $("#kVisible");
+const kState = $("#kState");
+
+const btnMosaic = $("#btnMosaic");
+const btnTimeline = $("#btnTimeline");
+const btnSort = $("#btnSort");
+const btnSource = $("#btnSource");
+
+const spark = $("#spark");
+const sparkL = $("#sparkL");
+const sparkR = $("#sparkR");
+
+const viewer = $("#viewer");
+const vTitle = $("#vTitle");
+const vMeta = $("#vMeta");
+const vLink = $("#vLink");
+const vClose = $("#vClose");
+const pmedia = $("#pmedia");
+const pmeta = $("#pmeta");
+const plink = $("#plink");
+
+function norm(s){ return (s||"").toLowerCase().trim(); }
+function yearFromMeta(meta){
+  const m = (meta||"").match(/20\\d{2}/);
+  return m ? parseInt(m[0],10) : 0;
+}
+function hash32(str){
+  let h = 2166136261;
+  for (let i=0;i<str.length;i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0);
+}
+function sizeClassFor(title, year){
+  const h = hash32((title||"") + "|" + (year||0));
+  const r = h % 100;
+  if (r < 18) return "s-6x3";
+  if (r < 34) return "s-4x3";
+  if (r < 52) return "s-4x2";
+  if (r < 70) return "s-3x2";
+  if (r < 86) return "s-2x2";
+  return "s-2x1";
+}
+
+function pickMedia(entryEl){
+  const track = $(".carousel-track", entryEl);
+  if (!track) return {thumb:null};
+
+  const nodes = [...track.children];
+  for (const n of nodes){
+    if (!n) continue;
+
+    if (n.tagName === "IMG"){
+      const src = n.getAttribute("data-src") || n.getAttribute("src");
+      if (src) return {thumb:{type:"img", src}};
+    }
+
+    if (n.classList && n.classList.contains("carousel-video")){
+      const vid = $("video", n);
+      if (vid){
+        const direct = vid.getAttribute("data-src") || vid.getAttribute("src");
+        const source = $("source", vid);
+        const fromSource = source ? (source.getAttribute("data-src") || source.getAttribute("src")) : null;
+        const src = direct || fromSource;
+        if (src) return {thumb:{type:"video", src}};
+      }
+    }
+
+    const vid2 = n.tagName === "VIDEO" ? n : $("video", n);
+    if (vid2){
+      const direct = vid2.getAttribute("data-src") || vid2.getAttribute("src");
+      const source = $("source", vid2);
+      const fromSource = source ? (source.getAttribute("data-src") || source.getAttribute("src")) : null;
+      const src = direct || fromSource;
+      if (src) return {thumb:{type:"video", src}};
+    }
+  }
+  return {thumb:null};
+}
+
+function escapeHTML(s){
+  return (s||"").replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+/* ===== Viewer ===== */
+function openProject(item){
+  if (!item || !item.link) return;
+  viewer.classList.add("open");
+  viewer.setAttribute("aria-hidden","false");
+
+  vTitle.textContent = item.title || "—";
+  vMeta.textContent = item.meta || "—";
+  vLink.href = item.link || "#";
+  pmeta.textContent = item.meta || "—";
+  plink.textContent = item.link || "—";
+
+  // preview media (lightweight, no iframe)
+  pmedia.innerHTML = "";
+  if (item.thumb){
+    if (item.thumb.type === "img"){
+      const img = document.createElement("img");
+      img.alt = "";
+      img.loading = "lazy";
+      img.src = item.thumb.src;
+      pmedia.appendChild(img);
+    } else {
+      const v = document.createElement("video");
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.preload = "metadata";
+      v.src = item.thumb.src;
+      pmedia.appendChild(v);
+
+      const canHover = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+      if (canHover) v.play().catch(()=>{});
+    }
+  }
+
+  vClose.focus({preventScroll:true});
+}
+function closeProject(){
+  viewer.classList.remove("open");
+  viewer.setAttribute("aria-hidden","true");
+  pmedia.innerHTML = "";
+}
+vClose.addEventListener("click", closeProject);
+viewer.addEventListener("click", (e)=>{ if (e.target === viewer) closeProject(); });
+
+window.addEventListener("keydown", (e)=>{
+  if (e.key === "Escape") closeProject();
+  if (e.shiftKey && (e.key === "K" || e.key === "k")){
+    e.preventDefault();
+    elQ.focus({preventScroll:true});
+  }
+});
+
+/* ===== Views ===== */
+function setView(which){
+  state.view = which;
+  btnMosaic.setAttribute("aria-pressed", which==="mosaic");
+  btnTimeline.setAttribute("aria-pressed", which==="timeline");
+
+  $("#viewMosaic").classList.toggle("active", which==="mosaic");
+  $("#viewTimeline").classList.toggle("active", which==="timeline");
+
+  render();
+}
+btnMosaic.addEventListener("click", ()=>setView("mosaic"));
+btnTimeline.addEventListener("click", ()=>setView("timeline"));
+
+btnSort.addEventListener("click", ()=>{
+  state.sort = (state.sort === "recent") ? "alpha" : "recent";
+  btnSort.setAttribute("aria-pressed", state.sort === "alpha");
+  btnSort.textContent = state.sort === "alpha" ? "sort:a→z" : "sort:recent";
+  applyFilter();
+});
+
+btnSource.addEventListener("click", ()=>{ window.location.href = SOURCE; });
+
+/* ===== Filter / sort ===== */
+function applyFilter(){
+  const q = norm(elQ.value);
+  let items = state.all;
+
+  if (q){
+    items = items.filter(it=>{
+      const hay = norm(it.title)+" "+norm(it.meta);
+      return hay.includes(q);
+    });
+  }
+
+  if (state.sort === "recent"){
+    items = [...items].sort((a,b)=>{
+      if ((b.year||0) !== (a.year||0)) return (b.year||0)-(a.year||0);
+      return (a.title||"").localeCompare(b.title||"");
+    });
+  } else {
+    items = [...items].sort((a,b)=>(a.title||"").localeCompare(b.title||""));
+  }
+
+  state.filtered = items;
+  kVisible.textContent = String(state.filtered.length);
+  render();
+}
+elQ.addEventListener("input", applyFilter);
+
+/* ===== Render ===== */
+function render(){
+  if (state.view === "mosaic") renderMosaic();
+  if (state.view === "timeline") renderTimeline();
+}
+
+function tileMediaHTML(media){
+  if (!media) return `<div class="media"></div>`;
+  if (media.type === "img"){
+    return `<div class="media"><img class="js-lazy-img" data-src="${media.src}" alt="" loading="lazy"/></div>`;
+  }
+  return `<div class="media"><video class="js-lazy-video" muted loop playsinline preload="metadata" data-src="${media.src}"></video></div>`;
+}
+
+function renderMosaic(){
+  elMosaic.innerHTML = "";
+  const frag = document.createDocumentFragment();
+
+  state.filtered.forEach((it)=>{
+    const div = document.createElement("article");
+    div.className = "tile " + sizeClassFor(it.title, it.year);
+    div.innerHTML = `
+      ${tileMediaHTML(it.thumb)}
+      <div class="overlay">
+        <p class="t">${escapeHTML(it.title)}</p>
+        <p class="m">${escapeHTML(it.meta)}</p>
+        <div class="k"><span>${it.year ? it.year : "—"}</span><span>open</span></div>
+      </div>
+    `;
+
+    div.addEventListener("click", ()=>openProject(it));
+    div.addEventListener("dblclick", ()=>openProject(it));
+
+    const canHover = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+    if (canHover){
+      div.addEventListener("mouseenter", ()=>{
+        const v = $("video", div);
+        if (v && v.dataset && v.dataset.srcLoaded === "1") v.play().catch(()=>{});
+      });
+      div.addEventListener("mouseleave", ()=>{
+        const v = $("video", div);
+        if (v){ v.pause(); v.currentTime = 0; }
+      });
+    }
+
+    frag.appendChild(div);
+  });
+
+  elMosaic.appendChild(frag);
+  lazyMount();
+}
+
+function renderTimeline(){
+  elTimeline.innerHTML = "";
+  const groups = new Map();
+  state.filtered.forEach(it=>{
+    const y = it.year || 0;
+    if (!groups.has(y)) groups.set(y, []);
+    groups.get(y).push(it);
+  });
+
+  const years = [...groups.keys()].sort((a,b)=>b-a);
+  const frag = document.createDocumentFragment();
+
+  years.forEach(y=>{
+    const items = groups.get(y) || [];
+    const sec = document.createElement("section");
+    sec.className = "year";
+    sec.innerHTML = `
+      <div class="yhead">
+        <strong>${y ? y : "sin fecha"}</strong>
+        <span>${items.length} sistemas</span>
+      </div>
+      <div class="strip"></div>
+    `;
+    const strip = $(".strip", sec);
+
+    items.forEach(it=>{
+      const t = document.createElement("div");
+      t.className = "thumb";
+      const m = it.thumb;
+      t.innerHTML = `
+        <div class="tmedia">
+          ${!m ? "" : (m.type === "img"
+            ? `<img class="js-lazy-img" data-src="${m.src}" alt="" loading="lazy"/>`
+            : `<video class="js-lazy-video" muted loop playsinline preload="metadata" data-src="${m.src}"></video>`
+          )}
+        </div>
+        <div class="tinfo">
+          <strong>${escapeHTML(it.title)}</strong>
+          <span>${escapeHTML(it.meta)}</span>
+        </div>
+      `;
+      t.addEventListener("click", ()=>openProject(it));
+
+      const canHover = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+      if (canHover){
+        t.addEventListener("mouseenter", ()=>{
+          const v = $("video", t);
+          if (v && v.dataset && v.dataset.srcLoaded === "1") v.play().catch(()=>{});
+        });
+        t.addEventListener("mouseleave", ()=>{
+          const v = $("video", t);
+          if (v){ v.pause(); v.currentTime = 0; }
+        });
+      }
+
+      strip.appendChild(t);
+    });
+
+    frag.appendChild(sec);
+  });
+
+  elTimeline.appendChild(frag);
+  lazyMount();
+}
+
+/* ===== Lazy loading (images + videos) ===== */
+let io;
+function lazyMount(){
+  if (io) io.disconnect();
+
+  io = new IntersectionObserver((entries)=>{
+    entries.forEach(ent=>{
+      if (!ent.isIntersecting) return;
+      const el = ent.target;
+
+      if (el.tagName === "IMG"){
+        const src = el.getAttribute("data-src");
+        if (src && !el.src) el.src = src;
+        io.unobserve(el);
+        return;
+      }
+
+      if (el.tagName === "VIDEO"){
+        const src = el.getAttribute("data-src");
+        if (src && !el.src){
+          el.src = src;
+          el.dataset.srcLoaded = "1";
+        }
+        io.unobserve(el);
+        return;
+      }
+    });
+  }, {rootMargin:"900px 0px", threshold:0.01});
+
+  $$(".js-lazy-img").forEach(img=>io.observe(img));
+  $$(".js-lazy-video").forEach(v=>io.observe(v));
+}
+
+/* ===== Density sparkline ===== */
+function buildSpark(){
+  const yearCounts = new Map();
+  state.all.forEach(it=>{
+    const y = it.year || 0;
+    if (!y) return;
+    yearCounts.set(y, (yearCounts.get(y)||0) + 1);
+  });
+
+  const years = [...yearCounts.keys()].sort((a,b)=>a-b);
+  const minY = years[0] || 0;
+  const maxY = years[years.length-1] || 0;
+  const maxC = Math.max(1, ...years.map(y=>yearCounts.get(y)));
+
+  spark.innerHTML = "";
+  years.forEach(y=>{
+    const c = yearCounts.get(y);
+    const el = document.createElement("div");
+    el.className = "bar1";
+    const h = 6 + Math.round((c / maxC) * 14); // 6..20
+    el.style.transform = `scaleY(${h/20})`;
+    el.title = `${y} · ${c}`;
+    spark.appendChild(el);
+  });
+
+  sparkL.textContent = minY ? `${minY}→${maxY}` : "—";
+  sparkR.textContent = years.length ? `${years.length} years covered` : "—";
+
+  kYears.textContent = String(years.length);
+}
+
+/* ===== Fetch + parse master ===== */
+fetch(SOURCE, {cache:"no-cache"})
+.then(r=>r.text())
+.then(html=>{
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const entries = $$(".entry", doc);
+
+  state.all = entries.map((e)=>{
+    const title = $("strong", e)?.textContent?.trim() || "";
+    const meta = $("span", e)?.textContent?.trim() || "";
+    const link = $("a", e)?.getAttribute("href") || "";
+    const {thumb} = pickMedia(e);
+    const year = yearFromMeta(meta);
+    return { title, meta, link, thumb, year };
+  });
+
+  // KPIs
+  kAll.textContent = String(state.all.length);
+  kVisible.textContent = String(state.all.length);
+
+  buildSpark();
+
+  // default sort
+  applyFilter();
+  setView("mosaic");
+})
+.catch(err=>{
+  kState.textContent = "error";
+  kVisible.textContent = "—";
+  console.error(err);
+});
+</script>
+
+</body>
+</html>
