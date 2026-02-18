@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="light dark"/>
+<title>xpan.ep.1 — arquitectura + activaciones</title>
+
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="dns-prefetch" href="https://attachments.are.na">
+
+<style>
+/* ===== tokens post-tech ===== */
+:root{
+  --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
+  --line:#2A2E31; --line-weak:#1A1D20;
+  --maxw:1440px; --pad-x:clamp(16px,4vw,48px); --g:16px; --header-h:64px;
+  --b1:1px solid var(--line);
+  --aei-block:140px;
+}
+@media (prefers-color-scheme:light){
+  :root{
+    --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --accent:#1860FF;
+    --line:#D9DEE2; --line-weak:#ECEFF2;
+  }
+}
+
+/* ===== base ===== */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
+a:hover{border-bottom-color:var(--accent)}
+img,video{display:block;max-width:100%;height:auto;background:transparent}
+body{overflow-x:hidden}
+
+/* ===== header fijo + logo inversión óptica ===== */
+header{
+  position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x);
+  z-index:30; display:flex; justify-content:space-between; gap:.8rem; align-items:center; height:var(--header-h)
+}
+header img{width:50px;height:auto;display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%)}
+@media (prefers-color-scheme:light){ header img{ filter:none } }
+
+/* selector de idioma */
+.language-selector{margin-left:.5rem;display:flex;gap:8px;font-size:.9rem;text-transform:lowercase}
+.language-selector button{
+  appearance:none; background:transparent; border:var(--b1); border-radius:0; padding:.35rem .6rem; cursor:pointer;
+  color:var(--fg-dim); transition:color .15s linear, border-color .15s linear, background-color .15s linear; letter-spacing:.2px
+}
+.language-selector button:hover{color:var(--fg)}
+.language-selector button.active{background:rgba(24,96,255,.06); color:var(--fg); border-color:var(--accent)}
+
+/* ===== main ===== */
+main{max-width:var(--maxw);margin:calc(var(--header-h) + 40px) auto 5rem;padding:0 var(--pad-x)}
+h1{font:700 1.35rem/1.25 system-ui;margin:.2rem 0;text-transform:lowercase}
+.meta{color:var(--fg-dim);font-style:normal;margin:0 0 1rem}
+.description{font:400 1rem/1.65 system-ui;max-width:980px;margin:.5rem 0 1rem}
+
+/* controles de vista */
+.controls{display:flex;gap:.6rem;justify-content:flex-end;margin:.2rem 0 1rem}
+.btn{appearance:none;background:transparent;color:var(--fg-dim);border:var(--b1);border-radius:0;padding:.45rem .8rem;cursor:pointer;transition:color .15s linear, border-color .15s linear, background .15s linear}
+.btn:hover{color:var(--fg)}
+.btn.active{background:rgba(24,96,255,.06);color:var(--fg);border-color:var(--accent)}
+
+/* secciones */
+.section{margin:24px 0;content-visibility:auto;contain-intrinsic-size:1px 800px}
+
+/* ===== AEI embebido ===== */
+.aei-embed{position:relative;width:100%;min-height:60vh;border:var(--b1);border-radius:0;overflow:hidden;background:transparent}
+.aei-stage{position:relative;width:100%;height:100%;min-height:60vh;touch-action:none}
+.aei-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+.aei-block{
+  width:var(--aei-block);height:var(--aei-block);position:absolute;background:transparent;border:var(--b1);border-radius:0;overflow:hidden;
+  opacity:.95;cursor:grab;user-select:none;transition:opacity .15s linear;will-change:transform
+}
+.aei-block:active{cursor:grabbing}
+.aei-block:hover{opacity:1}
+
+.aei-grid4{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);width:100%;height:100%}
+.aei-grid4>*{width:100%;height:100%;object-fit:cover;background:transparent}
+
+.aei-caption{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;border-top:var(--b1);font-size:10px;line-height:1.2;background:rgba(0,0,0,.08)}
+@media (prefers-color-scheme:light){ .aei-caption{background:rgba(0,0,0,.04)} }
+.aei-caption strong{font-weight:600}
+.aei-caption .meta{opacity:.75}
+
+/* ===== listado ===== */
+.listado{border:var(--b1);border-radius:0;overflow:hidden;background:transparent}
+details.proj{border-top:var(--b1)}
+details.proj summary{padding:.8rem 1rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:.8rem}
+details.proj summary::-webkit-details-marker{display:none}
+.p-title{font:700 1rem system-ui;text-transform:lowercase;color:var(--fg)}
+.p-meta{font-size:.9rem;color:var(--fg-dim)}
+.p-media{padding:.6rem 1rem 1rem;display:grid;gap:.5rem;grid-template-columns:repeat(4,minmax(0,1fr))}
+.p-media img,.p-media video{width:100%;aspect-ratio:1/1;object-fit:cover;background:transparent;border:var(--b1)}
+@media (max-width:900px){.p-media{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.p-link{margin-top:.3rem;font-size:.78rem;color:var(--fg-dim);display:block;text-align:left;padding:0 1rem 1rem}
+.p-link a{color:var(--accent);border-bottom:1px solid transparent}
+.p-link a:hover{border-bottom-color:var(--accent)}
+
+/* util/perf */
+.p-link.aei-link{padding:0;margin:.15rem 0 0 0;text-align:left;font-size:.68rem;color:var(--fg-dim)}
+#aeiLines{contain:strict}
+
+/* ===== arquitectura: estilos originales ===== */
+:root{
+    --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA;
+    --line:#2A2E31; --line-weak:#1A1D20;
+    --accent:#1860FF;
+    --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    --maxw:1120px; --g:24px; --g2:32px;
+    --pad-x: clamp(16px,4vw,48px); --header-h:64px;
+    --b1:1px solid var(--line); --b0:1px solid var(--line-weak);
+  }
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#FFFFFF; --fg:#0E1113; --fg-dim:#4A5158;
+      --line:#D9DEE2; --line-weak:#ECEFF2; --accent:#1860FF;
+    }
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s linear}
+  a:hover{border-color:var(--accent)}
+  img,video{max-width:100%; height:auto; display:block; background:transparent}
+
+  /* Header */
+  header{
+    position:fixed; top:12px; left:var(--pad-x); height:var(--header-h);
+    display:flex; align-items:center; z-index:100;
+  }
+  header a{display:inline-flex; align-items:center}
+  header img{
+    width:48px; height:auto;
+    mix-blend-mode:difference;
+    filter: invert(1) saturate(100%);
+  }
+  @media (prefers-color-scheme:light){
+    header img{ filter:none; }
+  }
+
+  /* Selector de idioma */
+  .language-selector{
+    position:fixed; top:12px; right:var(--pad-x); z-index:120;
+    display:flex; gap:8px; align-items:center; text-transform:lowercase;
+  }
+  .language-selector button{
+    appearance:none;
+    font:600 .85rem/1 var(--font-ui);
+    color:var(--fg-dim); background:transparent; border:1px solid var(--line);
+    padding:6px 10px; cursor:pointer; letter-spacing:.2px;
+    transition:color .15s linear, border-color .15s linear, background-color .15s linear;
+  }
+  .language-selector button:hover{color:var(--fg)}
+  .language-selector button.active{color:var(--fg); border-color:var(--accent); background:rgba(24,96,255,.06)}
+
+  /* Layout */
+  .container{max-width:var(--maxw); margin:calc(var(--header-h) + 40px) auto 48px; padding:0 var(--pad-x)}
+  h1{font:700 1.35rem/1.25 var(--font-ui); text-transform:lowercase; margin:0 0 6px}
+  .meta{font:400 .9rem/1.5 var(--font-ui); color:var(--fg-dim); margin:0 0 24px}
+  .description{font:400 1rem/1.6 var(--font-ui); max-width:720px}
+  .description a{color:inherit; border-bottom:1px solid var(--fg-dim)}
+  .description a:hover{border-color: var(--fg);}
+
+  /* Galería */
+  .gallery{
+    max-width:var(--maxw); margin:32px auto; padding:0 var(--pad-x);
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:var(--g);
+  }
+  .gallery img{
+    border:var(--b1); border-radius:0; background:transparent;
+    object-fit:cover; aspect-ratio:4/3;
+  }
+
+  /* PDFs: estilo gdl (lista de <object>) */
+  .pdf-embed{
+    max-width:var(--maxw); margin:16px auto 64px; padding:0 var(--pad-x);
+    display:grid; grid-template-columns:1fr; gap:var(--g2);
+  }
+  .pdf-embed object{width:100%; height:600px; border:none; background:#0C0D0F}
+  @media (max-width:768px){
+    header img{width:42px}
+    .container{margin:calc(var(--header-h) + 28px) auto 40px}
+    .gallery{gap:16px}
+    .pdf-embed object{height:auto; aspect-ratio:4/3}
+  }
+  @media (prefers-color-scheme:light){
+    .pdf-embed object{ background:#F3F5F7 }
+  }
+
+  /* Lightbox (añadido) */
+  #xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,10,10,.45);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);touch-action:none;overscroll-behavior:contain}
+  #xpan-lightbox.open{display:flex}
+  #xpan-lightbox .sheet{position:relative;max-width:100vw;max-height:100vh;overflow:hidden;transform:scale(.985);opacity:0;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease}
+  #xpan-lightbox.open .sheet{transform:scale(1);opacity:1}
+  #xpan-lightbox img,#xpan-lightbox video{display:block;width:auto;height:auto;max-width:100vw;max-height:100vh;object-fit:contain;margin:0;background:transparent}
+  html.lb-open,body.lb-open{overflow:hidden;touch-action:none}
+  @media (prefers-color-scheme:light){#xpan-lightbox{background:rgba(255,255,255,.55)}}
+
+/* ===== integración ===== */
+
+/* separadores / anchors */
+.anchor{position:relative; top:-110px; height:0; width:0;}
+.divider{border:0;border-top:var(--b1);margin:24px 0;opacity:1}
+.section-title{font:700 .95rem/1.2 var(--font-mono, ui-monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-dim);margin:0 0 12px}
+
+</style>
+
+
+<script src="../assets/js/video-autoplay-mobile.js" defer></script>
+<script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+
+<header>
+  <a href="https://xpan.earth" target="_blank" rel="noopener" aria-label="xpan">
+    <img src="xpan.svg" alt="xpan" fetchpriority="high" decoding="async">
+  </a>
+  <nav class="language-selector" role="navigation" aria-label="selector de idioma">
+    <button data-lang="es" class="active" aria-pressed="true">es</button>
+    <button data-lang="en" aria-pressed="false">en</button>
+    <button data-lang="fr" aria-pressed="false">fr</button>
+    <button data-lang="jp" aria-pressed="false">jp</button>
+  </nav>
+</header>
+
+<!-- preservación: selector de idioma original (legacy) -->
+<template id="legacy-language-selector-arq">
+<div class="language-selector" role="tablist" aria-label="selector de idioma">
+    <button type="button" onclick="setLang('es')" class="active" aria-pressed="true" role="tab">es</button>
+    <button type="button" onclick="setLang('en')" aria-pressed="false" role="tab">en</button>
+    <button type="button" onclick="setLang('fr')" aria-pressed="false" role="tab">fr</button>
+    <button type="button" onclick="setLang('jp')" aria-pressed="false" role="tab">jp</button>
+  </div>
+</template>
+
+<main>
+  <span id="architecture" class="anchor"></span>
+  <div class="section-title">arquitectura</div>
+  <section class="section architecture">
+<div class="container">
+    <!-- español -->
+    <div class="lang lang-es">
+      <h1>xpan.ep.1 [espacio público uno]</h1>
+      <div class="meta">octubre 2024 — ciudad de méxico</div>
+      <div class="description">
+        xpan.ep.1 es un sistema modular ubicado en roma norte, ciudad de méxico. diseñado, desarrollado y construido por xpan, fue la primera iteración del sistema de poros. abrió el 17 de octubre del 2024 como punto de partida para una serie de <a href="#activations" data-original-href="mdtc.xpan.ep.1.index.html"><i>activaciones</i></a> vinculadas a la topología conectiva.
+        <br><br>
+        la estructura se compone de 61 bastidores de acero y aluminio, organizados en una retícula que define el esqueleto espacial. una envolvente translúcida de policarbonato perforado genera 436 poros en muros y techo, operando como interfaz activa entre interior y exterior.
+        <br><br>
+        el diseño de iluminación utiliza el policarbonato como pantalla difusora, modulando la percepción espacial y la intensidad lumínica según la configuración. el sistema responde a distintas densidades, ritmos y formas de ocupación, alojando eventos, encuentros y ensamblajes producidos por la comunidad extendida de xpan.
+      </div>
+    </div>
+
+    <!-- english -->
+    <div class="lang lang-en" style="display:none;">
+      <h1>xpan.ep.1 [public space one]</h1>
+      <div class="meta">october 2024 — mexico city</div>
+      <div class="description">
+        xpan.ep.1 is a modular system located in roma norte, mexico city. designed, developed, and built by xpan, it was the first iteration of the porous system. it opened on october 17, 2024, as a starting point for a series of <a href="#activations" data-original-href="mdtc.xpan.ep.1.index.html"><i>activations</i></a> linked to the connective topology.
+        <br><br>
+        the structure is composed of 61 frames made of steel and aluminum, arranged in a grid that defines the spatial skeleton. a translucent envelope of perforated polycarbonate generates 436 pores across walls and ceiling, operating as an active interface between interior and exterior.
+        <br><br>
+        the lighting design uses the polycarbonate as a diffusing screen, modulating spatial perception and light intensity according to configuration. the system adapts to varying densities, rhythms, and modes of occupation, hosting events, gatherings, and assemblies produced by xpan's extended community.
+      </div>
+    </div>
+
+    <!-- français -->
+    <div class="lang lang-fr" style="display:none;">
+      <h1>xpan.ep.1 [espace public un]</h1>
+      <div class="meta">octobre 2024 — mexico</div>
+      <div class="description">
+        xpan.ep.1 est un système modulaire situé à roma norte, mexico. conçu, développé et construit par xpan, il constitue la première itération du système de pores. il a ouvert ses portes le 17 octobre 2024 comme point de départ pour une série <a href="#activations" data-original-href="mdtc.xpan.ep.1.index.html"><i>d'activations</i></a> liées à la topologie connective.
+        <br><br>
+        la structure se compose de 61 cadres en acier et aluminium, organisés en une grille définissant le squelette spatial. une enveloppe translucide en polycarbonate perforé génère 436 pores dans les murs et le plafond, agissant comme une interface active entre l’intérieur et l’extérieur.
+        <br><br>
+        le dispositif d’éclairage utilise le polycarbonate comme écran diffuseur, modulant la perception spatiale et l’intensité lumineuse selon la configuration. le système répond à diverses densités, rythmes et formes d’occupation, accueillant événements, rencontres et assemblages produits par la communauté étendue de xpan.
+      </div>
+    </div>
+
+    <!-- 日本語 -->
+    <div class="lang lang-jp" style="display:none;">
+      <h1>xpan.ep.1［パブリックスペース１］</h1>
+      <div class="meta">2024年10月 — メキシコシティ</div>
+      <div class="description">
+        xpan.ep.1は、メキシコシティのローマ・ノルテに位置するモジュール型システムです。xpanによって設計・開発・施工され、ポーラスシステムの最初の実装として2024年10月17日にオープンしました。これはトポロジー・コネクティブに連動した<a href="#activations" data-original-href="mdtc.xpan.ep.1.index.html"><i>アクティベーション</i></a>の連続の起点として機能します。
+        <br><br>
+        構造体はスチールとアルミニウム製のフレーム61本で構成され、空間的骨格を定義するグリッドとして配置されています。半透明のポリカーボネート被膜には壁と天井に合計436個のポアが施され、内外を接続するインターフェースとして機能します。
+        <br><br>
+        照明設計ではポリカーボネートを拡散スクリーンとして活用し、構成に応じて空間認識と光強度を調整します。このシステムはさまざまな密度、リズム、使用形態に対応し、xpanの拡張されたコミュニティによるイベントや集合、構築的介入を受け入れます。
+      </div>
+    </div>
+  </div>
+
+  <!-- Galería -->
+  <div class="gallery">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 1" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792475/original_7490285aa05acdab621f22ba6c1e429f.jpg?1747625341">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 2" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 3" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 4" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 5" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792469/original_8d03afe9f867abc31de44b6108ad445a.jpg?1747625338">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 6" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 7" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 8" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792466/original_2ae3f0c655beb094434461d91e86d2bf.jpg?1747625336">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 9" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792458/original_201d055b783aa4a610e329a23fcc0968.jpg?1747625331">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 10" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794123/original_5a43036d33a9ac72aed7a14c1450f68c.jpg?1747633367">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 11" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794120/original_61b8534028a7c86a88ee95950a9ef07c.jpg?1747633366">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 12" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794119/original_e99bc8ad613c89a09f6dbc0aaee5e628.jpg?1747633364">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 13" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794117/original_9b78c0133d9714cf1538ee3a11f536f6.jpg?1747633364">
+    <img loading="lazy" decoding="async" alt="xpan.ep.1 — vista 14" data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363">
+  </div>
+
+  <!-- PDFs (estilo gdl) -->
+  <div class="pdf-embed">
+    <object type="application/pdf" aria-label="plano 1" data="https://attachments.are.na/36794273/31c710cbdc2ca30c9fb66638d4ea224c.pdf?1747634363#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 2" data="https://attachments.are.na/36794272/d62dd6c04e7afd32b9317e3798c2b589.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 3" data="https://attachments.are.na/36794271/3f84529d746199ed84c4ccf3f5dcc043.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 4" data="https://attachments.are.na/36794269/36aa8995a7e51e49b6ee28669d8b783f.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 5" data="https://attachments.are.na/36794270/a20a13bd08470b5e6bb9b8d96c62d68a.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 6" data="https://attachments.are.na/36794268/3cc3bdcfd126b910503e64b43e963ee5.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 7" data="https://attachments.are.na/36794267/976ea063e02863c0d51f60d1af3c902d.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 8" data="https://attachments.are.na/36794265/04709d629c5e29feba815f190a40c651.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 9" data="https://attachments.are.na/36794266/c503854d438a9ed3809b6abc6eb15d71.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 10" data="https://attachments.are.na/36794264/caa14af2f0df80e0a067bf62b647539d.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 11" data="https://attachments.are.na/36794263/6c9ea89fdd12929c4b482143c747222d.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 12" data="https://attachments.are.na/36794262/ea4c211b279b3116e03245af883bfc40.pdf?1747634362#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 13" data="https://attachments.are.na/36794261/f6b8556bfe618d573690d5d418ad15d5.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 14" data="https://attachments.are.na/36794260/1952c52ffb4c6c8dae33986e6a09641f.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 15" data="https://attachments.are.na/36794259/684a0928bb0e5062f3fa24f448a2c33c.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 16" data="https://attachments.are.na/36794258/20fd12f33e0eb2d4b67f399b4996cd11.pdf?1747634360#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+    <object type="application/pdf" aria-label="plano 17" data="https://attachments.are.na/36794257/b3bad571ea513bc4dd52af01b3250614.pdf?1747634361#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+  </div>
+  </section>
+
+  <hr class="divider">
+
+  <span id="activations" class="anchor"></span>
+  <div class="section-title">activaciones</div>
+  <section class="section activations">
+<section class="lang lang-es">
+  <h1>mdtc.xpan.ep.1 — index</h1>
+  <div class="meta">2024–2025 — ciudad de méxico — espacio público uno</div>
+  <div class="description">xpan.ep.1 [espacio público uno] fue un proyecto <a href="#architecture" data-original-href="arq.xpan.ep.1.html"><u><i>desarrollado por xpan</i></u></a> entre octubre de 2024 y febrero de 2025. su estructura, basada en una retícula de poros, configuró un sistema modular y adaptable capaz de albergar múltiples usos y escalas. durante este periodo operó como espacio público activo, abierto a distintas comunidades, con el objetivo de articular nuevas posibilidades dentro de la topología conectiva. en cinco meses se realizaron más de 18 activaciones públicas. por su ubicación —en una de las zonas con mayor tránsito peatonal de la ciudad de méxico— se estima que entre 4.5 y 5 millones de personas pudieron haber transitado frente o a través de la instalación durante su operación. xpan.ep.1 materializó redes permanentes y experimentaciones culturales que expandieron las conexiones entre prácticas, contextos y comunidades diversas.</div>
+</section>
+
+<section class="lang lang-en" style="display:none;">
+  <h1>mdtc.xpan.ep.1 — index</h1>
+  <div class="meta">2024–2025 — mexico city — espacio público uno</div>
+  <div class="description">xpan.ep.1 [espacio público uno] was a project <a href="#architecture" data-original-href="arq.xpan.ep.1.html"><u><i>developed by xpan</i></u></a> between october 2024 and february 2025. its structure, based on a porous grid, formed a modular and adaptable system capable of hosting multiple uses and scales. during this period, it operated as an active public space, open to different communities, with the aim of articulating new possibilities within the connective topology. over five months, more than 18 public activations took place. due to its location—in one of the areas with the highest pedestrian traffic in mexico city—it is estimated that between 4.5 and 5 million people may have passed in front of or through the installation during its operation. xpan.ep.1 materialized permanent networks and cultural experimentations that expanded connections between diverse practices, contexts, and communities.</div>
+</section>
+
+<section class="lang lang-fr" style="display:none;">
+  <h1>mdtc.xpan.ep.1 — index</h1>
+  <div class="meta">2024–2025 — mexico — espace public un</div>
+  <div class="description">xpan.ep.1 [espacio público uno] a été un projet <a href="#architecture" data-original-href="arq.xpan.ep.1.html"><u><i>développé par xpan</i></u></a> entre octobre 2024 et février 2025. sa structure, basée sur une grille poreuse, a constitué un système modulaire et adaptable capable d'accueillir de multiples usages et échelles. pendant cette période, il a fonctionné comme un espace public actif, ouvert à différentes communautés, avec pour objectif d'articuler de nouvelles possibilités au sein de la topologie connective. en cinq mois, plus de 18 activations publiques ont eu lieu. en raison de son emplacement—dans l'une des zones à plus forte circulation piétonne de mexico—on estime que 4,5 à 5 millions de personnes ont pu passer devant ou à travers l'installation durant son fonctionnement. xpan.ep.1 a matérialisé des réseaux permanents et des expérimentations culturelles qui ont élargi les connexions entre pratiques, contextes et communautés diverses.</div>
+</section>
+
+<section class="lang lang-jp" style="display:none;">
+  <h1>mdtc.xpan.ep.1 — index</h1>
+  <div class="meta">2024–2025 — メキシコシティ — 公共空間一</div>
+  <div class="description">xpan.ep.1［espacio público uno］は、2024年10月から2025年2月にかけて<a href="#architecture" data-original-href="arq.xpan.ep.1.html"><u><i>xpanが開発した</i></u></a>プロジェクトです。多孔グリッド構造を基盤とし、複数の用途やスケールに対応可能なモジュール式で適応性の高いシステムを構成しました。この期間、公共スペースとして積極的に運営され、異なるコミュニティに開かれ、接続的トポロジー内で新たな可能性を構築することを目的としました。5か月間で18回以上の公開アクティベーションが実施されました。メキシコシティで最も歩行者通行量の多い地域の一つに位置するため、稼働期間中に450万～500万人がこのインスタレーションの前や内部を通過したと推定されます。xpan.ep.1は、多様な実践・文脈・コミュニティ間のつながりを拡張する永続的なネットワークと文化的実験を具現化しました。</div>
+</section>
+
+  <div class="controls" role="tablist" aria-label="selector de vista">
+    <button class="btn" id="btn-aei" aria-selected="true">vista a.e.i.</button>
+    <button class="btn" id="btn-list" aria-selected="false">vista listado</button>
+  </div>
+
+  <section class="section" id="exp_aei" aria-label="a.e.i embebido">
+    <div class="aei-embed" id="aeiEmbed">
+      <svg class="aei-lines" id="aeiLines" width="100%" height="100%"></svg>
+      <div class="aei-stage" id="aeiStage" aria-label="escena a.e.i"></div>
+    </div>
+  </section>
+
+  <section class="section" id="listado_wrap" style="display:none;">
+    <div class="listado" id="listado"></div>
+  </section>
+  </section>
+</main>
+
+<!-- Lightbox (arquitectura) -->
+<div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de medios"><div class="sheet"></div></div>
+
+<script>
+
+/* i18n unificado */
+function setLang(lang){
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang').forEach(el=>{
+    el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.language-selector button').forEach(btn=>{
+    const key = btn.dataset.lang || (btn.textContent || '').trim();
+    const on = key === lang;
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-pressed', String(on));
+  });
+  document.documentElement.setAttribute('lang', lang);
+}
+document.addEventListener('click', (e)=>{
+  const b = e.target.closest('.language-selector button');
+  if(!b) return;
+  const lang = b.dataset.lang || (b.textContent || '').trim();
+  if(!lang) return;
+  setLang(lang);
+});
+
+setLang(localStorage.getItem('lang') || 'es');
+</script>
+
+<script>
+/* patch: persistir scroll al abrir/cerrar lightbox en todas las páginas */
+(() => {
+  const lb = document.getElementById('xpan-lightbox');
+  if (!lb) return;
+
+  // Evita restauración automática del navegador
+  if ('scrollRestoration' in history) { try { history.scrollRestoration = 'manual'; } catch(_){} }
+
+  let savedY = 0;
+  let saved = false;
+
+  const save = () => {
+    if (saved) return;
+    savedY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    saved = true;
+  };
+
+  const restore = () => {
+    if (!saved) return;
+    const y = savedY;
+    // Restaurar después de que el DOM termine de quitar clases/estilos del overlay
+    requestAnimationFrame(() => {
+      window.scrollTo(0, y);
+      // Fallback por si hay otro reflow tardío
+      setTimeout(() => window.scrollTo(0, y), 0);
+    });
+    saved = false;
+  };
+
+  // Observa cambios de estado del lightbox (clase .open)
+  new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.type === 'attributes' && m.attributeName === 'class') {
+        const isOpen = lb.classList.contains('open');
+        if (isOpen) save(); else restore();
+      }
+    }
+  }).observe(lb, { attributes: true });
+
+  // Fallback adicional: observa clases en <html>/<body> que tu script usa (lb-open)
+  const observeClasses = (el) => new MutationObserver(() => {
+    const isOpen = document.body.classList.contains('lb-open') || document.documentElement.classList.contains('lb-open');
+    if (isOpen) save(); else restore();
+  }).observe(el, { attributes: true, attributeFilter: ['class'] });
+
+  observeClasses(document.documentElement);
+  observeClasses(document.body);
+})();
+</script>
+
+<script>
+// Lazy imgs
+    document.querySelectorAll('.gallery img').forEach(img=>{
+      img.loading ||= 'lazy'; img.decoding ||= 'async';
+      if(img.dataset.src){
+        const obs=new IntersectionObserver(es=>{
+          es.forEach(en=>{
+            if(!en.isIntersecting) return;
+            img.src=img.dataset.src; img.removeAttribute('data-src'); obs.unobserve(img);
+          });
+        },{rootMargin:'400px 0px'});
+        obs.observe(img);
+      }
+    });
+
+    // Lightbox (hidratación + navegación)
+    (()=>{
+      const lb = document.getElementById("xpan-lightbox");
+      const sheet = lb.querySelector(".sheet");
+      let items=[], idx=-1, t0=0, x0=0;
+
+      function hydrate(el){
+        if(!el) return;
+        const tag = el.tagName.toLowerCase();
+        const ds = el.getAttribute('data-src');
+        if(tag==='img' && ds && !el.currentSrc && !el.src){ el.src = ds; }
+        if(tag==='video' && ds && !el.currentSrc && !el.src){ el.src = ds; el.load(); }
+      }
+      function collect(){
+        items = Array.from(document.querySelectorAll("img,video"))
+          .filter(el => !el.closest("#xpan-lightbox") && !el.closest("a"));
+      }
+      function openAt(i){
+        if(i<0 || i>=items.length) return;
+        idx = i;
+        const srcEl = items[idx];
+        hydrate(srcEl);
+        sheet.innerHTML = "";
+        const isV = srcEl.tagName.toLowerCase()==="video";
+        const el = document.createElement(isV?"video":"img");
+        if(isV){
+          el.src = srcEl.currentSrc || srcEl.src;
+          el.playsInline = true; el.controls = true;
+          el.loop = !!srcEl.loop; el.muted = srcEl.muted ?? true; el.autoplay = true;
+        }else{
+          el.src = srcEl.currentSrc || srcEl.src;
+          el.decoding = "async"; el.loading = "eager"; el.alt = srcEl.alt || "";
+        }
+        sheet.appendChild(el);
+        lb.classList.add("open");
+        document.documentElement.classList.add("lb-open");
+        document.body.classList.add("lb-open");
+      }
+      function close(){
+        lb.classList.remove("open");
+        sheet.innerHTML = "";
+        document.documentElement.classList.remove("lb-open");
+        document.body.classList.remove("lb-open");
+        idx = -1;
+      }
+      function openFrom(el){
+        collect(); hydrate(el);
+        const i = items.indexOf(el);
+        if(i>-1) openAt(i);
+      }
+
+      document.body.addEventListener("click",(ev)=>{
+        const el = ev.target;
+        if(!el) return;
+        if(el.closest("a")) return;
+        if(el.closest("#aeiStage") || el.closest("#listado_wrap") || el.closest(".aei-stage") || el.closest(".aei-block")) return;
+        const tag = el.tagName;
+        if(tag==="IMG" || tag==="VIDEO"){
+          ev.preventDefault(); ev.stopPropagation();
+          openFrom(el);
+        }
+      },{capture:true, passive:false});
+
+      lb.addEventListener("click",(ev)=>{ if(ev.target===lb) close(); });
+      window.addEventListener("keydown",(ev)=>{
+        if(!lb.classList.contains("open")) return;
+        if(ev.key==="Escape") return close();
+        if((ev.key==="ArrowRight"||ev.key==="l") && idx<items.length-1) return openAt(idx+1);
+        if((ev.key==="ArrowLeft" ||ev.key==="h") && idx>0) return openAt(idx-1);
+      });
+
+      lb.addEventListener("touchstart",(e)=>{ t0=Date.now(); x0=e.touches[0].clientX; },{passive:true});
+      lb.addEventListener("touchend",(e)=>{
+        const dx=e.changedTouches[0].clientX-x0, dt=Date.now()-t0;
+        if(Math.abs(dx)>50 && dt<600){
+          if(dx<0 && idx<items.length-1) openAt(idx+1);
+          else if(dx>0 && idx>0) openAt(idx-1);
+        } else { close(); }
+      },{passive:true});
+    })();
+  
+</script>
+
+<script>
+/* datos (conservados) */
+/* datos */
+const projects = [
+  {
+    id:'p00',
+    title:'atlas.1 — inauguración de xpan.ep.1',
+    date:'17 de octubre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/atlas.1_inauguracion_de_xpan.ep.1.html',
+    media:[
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749139/original_e83b96234eefa7ffe35f41eac701d9d0.jpg?1755036234?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749146/original_24951cffb3b1a188562edefc0c66ea3b.jpg?1755036235?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749145/original_19b3b5ba81600bf95c0cff3fa3bd6e61.jpg?1755036237?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749145/original_19b3b5ba81600bf95c0cff3fa3bd6e61.jpg?1755036237?bc=0'}
+    ]
+  },
+  
+  {
+    id:'p02',
+    title:'sacrifice redemption — chelsea alcerreca (parte.1)',
+    date:'29 de diciembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/sacrifice_redemption_chelsea_alcerreca_parte.1.html',
+    media:[
+        {type:'video', src:'https://attachments.are.na/38829058/9b9fec9e8011fd3043f5e2a65373de82.mp4?1755366626'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770347/original_5ee14a62a44b50f2613a4d6d6bf85e44.jpg?1755114198?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770343/original_e6fe3c33fbd5a885d5fe0822cf3ceeac.jpg?1755114197?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770368/original_15fc61f4b943ae14f603b9eaa46ff0c2.jpg?1755114203?bc=0'}
+    ]
+  },
+  {
+    id:'p03',
+    title:'niños en guerra',
+    date:'15 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/ninos_en_guerra.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38749499/d184f2d34ce2f4b30f75320e93dfb4d3.mp4?1755037130'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749510/original_32bd31c207a6fe9aee6f991cb721e988.jpg?1755037146?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749515/original_dbd317dbfa758825f1c3bcb0984c5fc2.jpg?1755037147?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749517/original_50fb3eadf39a495ff16201e9ae1b9864.jpg?1755037147?bc=0'}
+    ]
+  },
+  {
+    id:'p04',
+    title:'maison des orphelins',
+    date:'6 de diciembre del 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/maison_des_orphelins.html',
+    media:[
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749966/original_16a25681d656eea6531e4b23e34a51ce.png?1755038352?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750013/original_c81a97da9e83fb0068047b7fe542278c.jpg?1755038449?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750015/original_fdf5151a5837e7b775ba6b6596920329.jpg?1755038450?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750017/original_8ff84139a50881bf58b5e9eee062dc1b.jpg?1755038450?bc=0'}
+    ]
+  },
+  {
+    id:'p05',
+    title:'misha',
+    date:'22 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/misha.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38750188/1e42bb258556a52b6877e596e5e906db.mp4?1755039396'}
+    ]
+  },
+  {
+    id:'p06',
+    title:'empire libre — showcase lounge',
+    date:'02 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/empire_libre_showcase_lounge.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38750425/3d8cc16093f20b3cb085f239f8a95003.mp4?1755040135'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750470/original_91836b15d6ea6f8128078d7e13562270.png?1755040229?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750469/original_2e882a54aec67ec4eb3661c492e440c6.png?1755040229?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750462/original_4fcc01fd1bb03a2b2ba4e4fae3badfd1.png?1755040227?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750461/original_f54bfc11dbec7082fa3264b2db5ffcbc.png?1755040227?bc=0'}
+    ]
+  },
+  {
+    id:'p07',
+    title:'eden blood supply',
+    date:'17 de diciembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/eden_blood_supply.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38748969/2c8b22530334939ac5e12164156be1e7.mov?1755035769'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38748990/original_58099ccd2ed6d7e2b1afcd1702f4db7d.jpg?1755035825?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38748991/original_6ae1b9fef4f13e2873fd03f6a12d0b34.jpg?1755035825?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38748998/original_7528278cde3a106dc2cbbb18ba709321.jpg?1755035826?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749001/original_d56c6b3348478552a716421f00ba07d1.jpg?1755035828?bc=0'}
+    ]
+  },
+  {
+    id:'p08',
+    title:'universal space jam',
+    date:'31 de octubre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/universal_space_jam.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38749225/ab4a568ebeb93d2d8c2bed4bab95a011.mp4?1755036485'},
+      {type:'video', src:'https://attachments.are.na/38749228/859edd924313d38472a167d8477a54c1.mov?1755036490'},
+      {type:'video', src:'https://attachments.are.na/38749233/a9636c13df5a90b7f3aa32186194ee99.mov?1755036513'}
+    ]
+  },
+  {
+    id:'p09',
+    title:'resurrected',
+    date:'18 de diciembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/resurrected.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38749811/be19410241542b9cb9c9ace486fffd1f.mp4?1755037812'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749815/original_5f42fc8eeaade53505908e67595c00cf.jpg?1755037828?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749821/original_7536378c1b11998f3a8814f6143e87d7.jpg?1755037829?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749828/original_f01cf4eab4bfd825b23d2a0fb89dde30.jpg?1755037832?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38749830/original_f9becc85533b816ac5aff4292f431801.jpg?1755037832?bc=0'}
+    ]
+  },
+  {
+    id:'p10',
+    title:'louis f cota & d56i3e7',
+    date:'16 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/louis_f_cota_d56i3e7.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38750117/607ecb8a6c1d9b3818518017cc8b7259.mp4?1755038884'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750118/original_b15629f1f32667b3827e99ccabe22755.jpg?1755038889?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750120/original_9e0ed24bdbf688555721ea3e48d0ac63.gif?1755038890?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750122/original_be4f9568873e6a66e956ab472dd51f0a.gif?1755038891?bc=0'}
+    ]
+  },
+  {
+    id:'p11',
+    title:'otvaal <> cculdesacc <> xpan — harcha showcase [ mdtc.6 ]',
+    date:'25 de abril del 2025',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/otvaal_cculdesacc_xpan_harcha_showcase_mdtc.6.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38750211/3627cb038c3789ddab9b17ed70b0ac3c.mov?1755039558'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750217/original_73468d1faece7152e4543b988abbf579.jpg?1755039571?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750218/original_dae065249ce4638712c322b4ed9bbae4.jpg?1755039572?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750220/original_3168fe415a83c8662fdfc77218e72020.jpg?1755039572?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750219/original_03e4b4f63439f1f829be52e9451c88a5.jpg?1755039572?bc=0'}
+    ]
+  },
+  {
+    id:'p12',
+    title:'paglieri — presentación de álbum “ruido”',
+    date:'04 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/paglieri_presentacion_de_album_ruido.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38771863/247e41ac93dd72c52b682082364c45af.mp4?1755116824'},
+      {type:'video', src:'https://attachments.are.na/38771858/503f4b6f1a4331a643c3e52ffdb1842f.avi?1755116814'},
+      {type:'video', src:'https://attachments.are.na/38771844/c5dce88593fef988c389f2813468d8c3.avi?1755116799'},
+      {type:'video', src:'https://attachments.are.na/38771790/45277b77130158a216ff780b4476ba6c.avi?1755116764'},
+      {type:'video', src:'https://attachments.are.na/38771784/472a6d8e0b873887b7b4a741c5349b79.avi?1755116760'}
+    ]
+  },
+  {
+    id:'p13',
+    title:'ía — performance',
+    date:'04 de febrero de 2025',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/ia_performance.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38772161/6ecbf91dbe418731d41a5e2e7a673330.mp4?1755117291'}
+    ]
+  },
+  {
+    id:'p14',
+    title:'profesor trumane — taller de dibujo sobre mesa microfoneada y amplificada',
+    date:'09 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/profesor_trumane_taller_dibujo_mesa_microfoneada_amplificada.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38772609/6cde1e346b5aa2f2dd7f802d9ad51a94.mov?1755118469'},
+      {type:'video', src:'https://attachments.are.na/38772610/b8c811f92108574f94cf683f8d3b8d00.mov?1755118470'},
+      {type:'video', src:'https://attachments.are.na/38772611/1a0e7c967427b6e982f4c80c13859cf2.mov?1755118470'},
+      {type:'video', src:'https://attachments.are.na/38772612/c09de58342f64375de25ee96ded04ea1.mov?1755118470'}
+    ]
+  },
+   {
+    id:'p15',
+    title:'performance “trazo”',
+    date:'17 de febrero de 2025',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/performance_trazo.html',
+    media:[
+      {type:'video', src:'https://attachments.are.na/38772720/7d21f211394470f3e99177a43d6b8223.mp4?1755118707'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38772726/original_252434c9fb706c8b2cb121b7c7a41965.jpg?1755118716?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38772730/original_fd7631b35caadefb41b2851c86475ccf.jpg?1755118721?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38772740/original_79014017f9a1c25a8f48e097fca79f26.jpg?1755118724?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38772741/original_01920f5ea8ad47a7df808342b1aa89d0.jpg?1755118726?bc=0'}
+    ]
+  },
+  {
+    id:'p16',
+    title:'od beauty — lanzamiento de marca',
+    date:'29 de noviembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/od_beauty_lanzamiento_de_marca.html',
+    media:[
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750797/original_11922d6f290bcae8e4be62a8600ec78d.jpg?1755042062?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750762/original_9a693dd7b5ad4809139ab83c38c7576e.png?1755041842?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750758/original_19f2dab6751c277d2822ad84f9ca0a80.png?1755041840?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38750759/original_1fde67d5edbaf164262aa30111c8a714.png?1755041841?bc=0'}
+    ]
+  },
+   {
+    id:'p17',
+    title:'mugler showcase',
+    date:'20 de diciembre de 2024',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/mugler_showcase.html',
+    media:[
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38771267/original_5716a5aaf10eed93c4a3e108c17cecee.jpg?1755115915?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38771268/original_79d5636faeecdbc689981e38bdf3494c.jpg?1755115915?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38771263/original_d9b6710dddd116f36c8c9758d0f821ca.jpg?1755115913?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38771296/original_059df7a5bdeb7946d51d28a05735f238.jpg?1755115960?bc=0'}
+    ]
+  },
+  {
+    id:'p18',
+    title:'atlas.2',
+    date:'15 de mayo de 2025',
+    location:'ciudad de méxico',
+    link:'mdtc_xpan.ep.1_activaciones/atlas.2.html',
+    media:[
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770855/original_2bcba2002b57efaf2454a2d6720b8712.jpg?1755115078?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770856/original_c26cf80c79b2d54450abb66457bd59b9.jpg?1755115081?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770857/original_693c7c76ac35448639d0d8f242ea68c7.jpg?1755115078?bc=0'},
+      {type:'image', src:'https://d2w9rnfcy7mm78.cloudfront.net/38770859/original_3c1121168346fbf0c409f34418a6aeb9.jpg?1755115078?bc=0'}
+    ]
+  }
+  ];
+
+
+/* red y video controls */
+const BLANK_POSTER='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+const MAX_CONCURRENT=8; let activeLoads=0; const loadQueue=[];
+
+function wireVideoEl(v){
+  v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true; v.disableRemotePlayback = true;
+  v.setAttribute('muted',''); v.setAttribute('autoplay',''); v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+  v.controls = false; v.preload = 'metadata'; if(!v.poster) v.poster = BLANK_POSTER;
+}
+function scheduleVideoLoad(v,url){ loadQueue.push({v,url}); pumpLoads(); }
+function pumpLoads(){
+  while(activeLoads<MAX_CONCURRENT && loadQueue.length){
+    const {v,url}=loadQueue.shift(); activeLoads++;
+    v.src=url; v.preload='metadata';
+    const done=()=>{activeLoads--; pumpLoads();};
+    v.addEventListener('loadedmetadata',done,{once:true});
+    v.addEventListener('error',done,{once:true});
+    try{ v.load(); }catch(_){ done(); }
+  }
+}
+function autoplayWhenVisible(v){
+  const tryPlay=()=>v.play().catch(()=>{});
+  const vio=new IntersectionObserver(ents=>{
+    ents.forEach(en=>{
+      if(en.isIntersecting){
+        if(!v.src){
+          const url = v.dataset && v.dataset.src ? v.dataset.src : v.src;
+          if(url) scheduleVideoLoad(v, url);
+        }
+        tryPlay();
+      } else { v.pause(); }
+    });
+  },{threshold:.10});
+  vio.observe(v);
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') tryPlay(); });
+}
+
+/* imágenes eager críticas */
+function eagerImg(src){
+  const img=document.createElement('img');
+  img.alt=''; img.decoding='async'; img.loading='eager'; img.fetchPriority='high'; img.src=src; return img;
+}
+
+/* a.e.i */
+const stage=document.getElementById('aeiStage');
+const linesSVG=document.getElementById('aeiLines');
+
+function renderAEI(){
+  stage.innerHTML=''; linesSVG.innerHTML='';
+  stage.style.contain = 'content';
+  const blocks=[]; let pairs=[]; let lastPairUpdate=0;
+
+  projects.forEach(p=>{
+    const block=document.createElement('div'); block.className='aei-block'; block.id=p.id;
+    const grid=document.createElement('div'); grid.className='aei-grid4'; block.appendChild(grid);
+
+    const mediaAll = (p.media||[]).filter(m=>m&&m.src);
+    const m4 = mediaAll.slice(0,4);
+    while(m4.length<4 && mediaAll.length>0) m4.push(mediaAll[m4.length % mediaAll.length]);
+
+    m4.forEach(m=>{
+      if(m.type==='video'){
+        const v=document.createElement('video'); wireVideoEl(v);
+        if(m.poster) v.poster=m.poster;
+        grid.appendChild(v);
+        scheduleVideoLoad(v, m.src);
+        autoplayWhenVisible(v);
+      } else {
+        grid.appendChild(eagerImg(m.src));
+      }
+    });
+
+    const cap=document.createElement('div'); cap.className='aei-caption';
+    cap.innerHTML = `<strong>${p.title||''}</strong>`+
+      `<div class="meta">${p.date||''}${p.location?` — ${p.location}`:''}</div>`+
+      `${p.link ? `<div class="p-link aei-link"><a href="${p.link}">ver proyecto</a></div>` : ''}`;
+
+    block.appendChild(cap);
+    stage.appendChild(block);
+
+    // posición y movimiento
+    const r=stage.getBoundingClientRect();
+    const cs=getComputedStyle(block);
+    const bw=parseFloat(cs.width)||parseFloat(getComputedStyle(stage).getPropertyValue('--aei-block'))||220;
+    const bh=parseFloat(cs.height)||bw;
+    block.x=Math.random()*Math.max(10,r.width-bw); block.y=Math.random()*Math.max(10,r.height-bh);
+    block.vx=(Math.random()-.5)*0.35; block.vy=(Math.random()-.5)*0.35;
+    updateBlock(block); makeDraggable(block); blocks.push(block);
+  });
+
+  function updateBlock(b){ b.style.transform=`translate3d(${b.x}px,${b.y}px,0)`; }
+  function clamp(b){ const r=stage.getBoundingClientRect();
+    const cs=getComputedStyle(b);
+    const bw=parseFloat(cs.width)||parseFloat(getComputedStyle(stage).getPropertyValue('--aei-block'))||220;
+    const bh=parseFloat(cs.height)||bw;
+    b.x=Math.min(Math.max(0,b.x), Math.max(0,r.width-bw)); b.y=Math.min(Math.max(0,b.y), Math.max(0,r.height-bh)); }
+  function makeDraggable(el){
+    let drag=false,lx=0,ly=0;
+    const mv=(cx,cy)=>{ const dx=cx-lx, dy=cy-ly; el.x+=dx; el.y+=dy; clamp(el); updateBlock(el); lx=cx; ly=cy; drawLines(); };
+    el.addEventListener('mousedown',e=>{e.preventDefault(); drag=true; lx=e.clientX; ly=e.clientY;});
+    window.addEventListener('mousemove',e=>{ if(drag) mv(e.clientX,e.clientY); });
+    window.addEventListener('mouseup',()=>{ drag=false; });
+    el.addEventListener('touchstart',e=>{ const t=e.touches[0]; drag=true; lx=t.clientX; ly=t.clientY; },{passive:true});
+    el.addEventListener('touchmove',e=>{ if(!drag) return; e.preventDefault(); const t=e.touches[0]; mv(t.clientX,t.clientY); },{passive:false});
+    el.addEventListener('touchend',()=>{ drag = false; },{passive:true});
+  }
+
+  function centers(){ return [...stage.querySelectorAll('.aei-block')].map(b=>{ const r=b.getBoundingClientRect(); return {b, x:b.x + r.width/2, y:b.y + r.height/2}; }); }
+  function redrawPairs(){ const cs=centers(); const out=[]; for(let i=0;i<cs.length;i++){ for(let j=i+1;j<cs.length;j++){ if(Math.random()<0.08) out.push([cs[i],cs[j]]); } } return out; }
+  function drawLines(){
+    linesSVG.innerHTML='';
+    pairs.forEach(([a,b])=>{
+      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',a.x); line.setAttribute('y1',a.y);
+      line.setAttribute('x2',b.x); line.setAttribute('y2',b.y);
+      line.setAttribute('stroke','currentColor'); line.setAttribute('stroke-width','.6'); line.setAttribute('opacity','.18');
+      linesSVG.appendChild(line);
+    });
+  }
+
+  function step(){
+    const r=stage.getBoundingClientRect();
+    [...stage.querySelectorAll('.aei-block')].forEach(b=>{
+      b.x+=b.vx; b.y+=b.vy;
+      const bw=parseFloat(getComputedStyle(b).width), bh=parseFloat(getComputedStyle(b).height);
+      if(b.x<0||b.x>r.width-bw) b.vx*=-1;
+      if(b.y<0||b.y>r.height-bh) b.vy*=-1;
+      clamp(b); updateBlock(b);
+    });
+    if(performance.now()-lastPairUpdate>500){ pairs=redrawPairs(); lastPairUpdate=performance.now(); }
+    drawLines(); requestAnimationFrame(step);
+  }
+  step();
+
+  window.addEventListener('resize',()=>{ [...stage.querySelectorAll('.aei-block')].forEach(b=>{ clamp(b); updateBlock(b); }); drawLines(); },{passive:true});
+}
+
+function renderList(container){
+  container.innerHTML = projects.map(p=>{
+    const media=(p.media||[]).filter(m=>m&&m.src).slice(0,4).map(m=> m.type==='video'
+      ? `<video muted playsinline preload="metadata" data-src="${m.src}" poster="${m.poster||BLANK_POSTER}"></video>`
+      : `<img src="${m.src}" alt="">`
+    ).join('');
+    return `<details class="proj">
+      <summary><span class="p-title">${p.title||''}</span><span class="p-meta">${p.date||''}${p.location?` — ${p.location}`:''}</span></summary>
+      <div class="p-media">${media}</div>
+      ${p.link ? `<div class="p-link"><a href="${p.link}">ver proyecto</a></div>` : ''}
+    </details>`;
+  }).join('');
+  container.querySelectorAll('video').forEach(v=>{ wireVideoEl(v); autoplayWhenVisible(v); });
+}
+
+/* autoplay + selector vista */
+function hardAutoplayAll(){ document.querySelectorAll('#aeiStage video, #listado_wrap video').forEach(v=>{ v.play().catch(()=>{}); }); }
+
+const btnAEI=document.getElementById('btn-aei');
+const btnList=document.getElementById('btn-list');
+const aeiWrap=document.getElementById('exp_aei');
+const listWrap=document.getElementById('listado_wrap');
+
+function setView(view){
+  const isAEI = view==='aei';
+  aeiWrap.style.display = isAEI ? 'block' : 'none';
+  listWrap.style.display = isAEI ? 'none' : 'block';
+  btnAEI.classList.toggle('active', isAEI);
+  btnList.classList.toggle('active', !isAEI);
+  btnAEI.setAttribute('aria-selected', String(isAEI));
+  btnList.setAttribute('aria-selected', String(!isAEI));
+  localStorage.setItem('mdtc_view', view);
+  hardAutoplayAll();
+  if(view==='aei') scheduleAEIRender();
+}
+
+let _aeiRenderRAF = 0;
+function scheduleAEIRender(){
+  // fuerza layout: evita NaN cuando content-visibility está activo
+  if(_aeiRenderRAF) cancelAnimationFrame(_aeiRenderRAF);
+  const exp = document.getElementById('exp_aei');
+  if(exp){
+    exp.style.contentVisibility = 'visible';
+    exp.style.containIntrinsicSize = 'auto';
+  }
+  _aeiRenderRAF = requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    try{ renderAEI(); }catch(e){ console.error('aei render error', e); }
+  }));
+}
+
+btnAEI.addEventListener('click', ()=> setView('aei'));
+btnList.addEventListener('click', ()=> setView('list'));
+
+function boot(){
+  renderList(document.getElementById('listado'));
+  const saved = localStorage.getItem('mdtc_view') || 'aei';
+  setView(saved);
+  // render a.e.i. solo cuando la escena está visible y con layout listo
+  if(saved==='aei') scheduleAEIRender();
+
+  // gestos para desbloqueo
+  ['pointerdown','touchstart','scroll','visibilitychange','keydown','wheel','mousemove'].forEach(ev=>{
+    window.addEventListener(ev, hardAutoplayAll, { passive:true });
+  });
+  window.addEventListener('focus', hardAutoplayAll);
+  window.addEventListener('pageshow', hardAutoplayAll);
+
+  // reintentos escalonados
+  [300,900,2000,3500,6000,10000,15000].forEach(t=>setTimeout(hardAutoplayAll, t));
+
+  new MutationObserver(()=>hardAutoplayAll()).observe(document.body,{subtree:true,childList:true});
+}
+document.addEventListener('DOMContentLoaded', boot);
+
+</script>
+
+</body>
+</html>
