@@ -6,21 +6,21 @@
   <title>xpan — marco teórico / equilibrio estratégico / marzo 2026</title>
   <style>
     :root{
-      --bg:#06110f;
-      --bg-2:#091816;
-      --panel:#0b1e1b;
-      --panel-2:#0e2521;
-      --panel-3:#102f2a;
-      --ink:#d9fff5;
-      --muted:#384341;
-      --line:rgba(6, 78, 58, 0.18);
+      --bg:#0b0b0b;
+      --bg-2:#101010;
+      --panel:#141414;
+      --panel-2:#3d3d3d;
+      --panel-3:#3a3a3a;
+      --ink:#cfcfcf;
+      --muted:#6e6e6e;
+      --line:rgba(97, 97, 97, 0.18);
       --line-strong:rgba(21, 58, 48, 0.48);
       --glow:rgba(219, 255, 245, 0.14);
-      --glow-2:rgba(63, 104, 92, 0.28);
-      --accent:#ff1717;
-      --accent-2:#00412d;
-      --danger:#ff5a5a;
-      --shadow:0 0 0 1px rgba(230, 255, 248, 0.08), 0 14px 60px rgba(0,0,0,.34);
+      --glow-2:rgba(143, 143, 143, 0.28);
+      --accent:#ff0606;
+      --accent-2:#4d4d4d;
+      --danger:#ff0606;
+      --shadow:0 0 0 1px rgba(253, 255, 255, 0.08), 0 14px 60px rgba(0,0,0,.34);
       --max:1860px;
       --radius:20px;
       --radius-sm:12px;
@@ -39,12 +39,11 @@
       color:var(--ink);
       font-family:var(--sans);
       background:
-        radial-gradient(circle at 15% 10%, rgba(218, 254, 244, 0.1), transparent 0 24%),
-        radial-gradient(circle at 85% 15%, rgba(221, 221, 221, 0.08), transparent 0 22%),
-        linear-gradient(rgba(245, 245, 245, 0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(245, 255, 252, 0.045) 1px, transparent 1px),
-        linear-gradient(180deg, #04100e 0%, #071513 44%, #05100f 100%);
-      background-size: auto, auto, 30px 30px, 30px 30px, auto;
+radial-gradient(circle at 15% 10%, rgba(255,255,255,0.05), transparent 0 24%),
+radial-gradient(circle at 85% 15%, rgba(255,0,0,0.05), transparent 0 22%),
+linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+linear-gradient(180deg, #1c1c1c 0%, #101010 44%, #181818 100%);background-size: auto, auto, 30px 30px, 30px 30px, auto;
       line-height:1.62;
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
@@ -67,7 +66,7 @@
       position:fixed;
       inset:-20% -10%;
       pointer-events:none;
-      background:conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(107,255,214,.05) 18deg, transparent 28deg, transparent 360deg);
+      background:conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,.035) 18deg, transparent 28deg, transparent 360deg);
       animation:sweep 18s linear infinite;
       transform-origin:center;
       opacity:.3;
@@ -76,8 +75,7 @@
     @keyframes sweep{to{transform:rotate(360deg)}}
 
     a{color:inherit;text-decoration:none}
-    ::selection{background:rgba(107,255,214,.20);color:#fff}
-
+::selection{background:rgba(255,0,0,.25);color:#fff}
     .topbar{
       position:sticky;
       top:0;
@@ -102,11 +100,11 @@
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.12em;
-      text-transform:uppercase;
+      text-transform:none;
       color:var(--muted);
       white-space:nowrap;
       overflow:hidden;
-      text-overflow:ellipsis;
+      text-overflow:ellinopsis;
     }
     .topcell strong{color:var(--ink); font-weight:600;}
     .topcell.brand{
@@ -146,7 +144,7 @@
     .terminal{
       border:1px solid var(--line);
       border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(14,37,33,.86), rgba(9,23,20,.92));
+      background:linear-gradient(180deg, rgba(22,22,22,.92), rgba(14,14,14,.96));
       box-shadow:var(--shadow);
       position:relative;
       overflow:hidden;
@@ -210,8 +208,8 @@
     .toc a.active{
       border-color:var(--line-strong);
       color:var(--ink);
-      background:rgba(107,255,214,.06);
-      box-shadow:inset 0 0 0 1px rgba(107,255,214,.05), 0 0 0 1px rgba(107,255,214,.03);
+      background:rgba(255,255,255,.04);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03), 0 0 0 1px rgba(107,255,214,.03);
     }
     .toc .n{color:var(--accent); opacity:.85}
 
@@ -293,9 +291,9 @@
       position:relative;
       overflow:hidden;
       background:
-        linear-gradient(180deg, rgba(107,255,214,.06), rgba(107,255,214,.02)),
-        linear-gradient(rgba(107,255,214,.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(107,255,214,.06) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(107,255,214,.02)),
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px),
         radial-gradient(circle at 50% 50%, rgba(107,255,214,.08), transparent 58%);
       background-size:auto, 18px 18px, 18px 18px, auto;
     }
@@ -313,7 +311,7 @@
       left:0; right:0; top:0;
       height:2px;
       background:linear-gradient(90deg, transparent, var(--accent), transparent);
-      box-shadow:0 0 18px rgba(107,255,214,.6);
+      box-shadow:0 0 18px rgba(255,0,0,.4);
       animation:scanY 4.4s linear infinite;
     }
     @keyframes scanX{to{transform:translateX(100%)}}
@@ -345,7 +343,7 @@
     h4{
       margin:0;
       line-height:1.1;
-      text-transform:uppercase;
+      text-transform:none;
       letter-spacing:.03em;
     }
     h2{font-size:clamp(22px,2.6vw,34px)}
@@ -382,7 +380,7 @@
       text-transform:uppercase;
       color:var(--accent);
       margin-bottom:10px;
-      background:rgba(107,255,214,.05);
+      background:rgba(255,255,255,.03);
     }
     ul,
     ol{
@@ -476,7 +474,7 @@
       font-family:var(--mono);
       font-size:11px;
       letter-spacing:.12em;
-      text-transform:uppercase;
+      text-transform:none;
       box-shadow:var(--shadow);
     }
 
@@ -512,8 +510,58 @@
       .section p, li{font-size:14px}
       .hud-grid{grid-template-columns:1fr}
     }
+
+    #lockscreen{
+  position:fixed;
+  inset:0;
+  background:#0b0b0b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.lockbox{
+  border:1px solid rgba(255,255,255,.1);
+  padding:30px;
+  border-radius:14px;
+  background:#141414;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:260px;
+}
+
+.lock-title{
+  font-family:monospace;
+  font-size:12px;
+  letter-spacing:.1em;
+  color:#aaa;
+}
+
+.lockbox input{
+  background:#0d0d0d;
+  border:1px solid #333;
+  padding:10px;
+  color:#fff;
+}
+
+.lockbox button{
+  background:#969696;
+  border:none;
+  padding:10px;
+  color:white;
+  cursor:pointer;
+}
   </style>
 </head>
+<div id="lockscreen">
+  <div class="lockbox">
+    <div class="lock-title">acceso restringido</div>
+    <input type="password" id="passwordInput" placeholder="contraseña">
+    <button onclick="checkPassword()">entrar</button>
+  </div>
+</div>
 <body>
   <header class="topbar">
     <div class="topcell brand"><span><strong>xpan</strong> / marco teórico / equilibrio estratégico</span><span class="pulse"></span></div>
@@ -550,7 +598,7 @@
         <div class="hero-grid">
           <div class="hero-title">
             <div class="eyebrow">xpan / theoretical framework / strategic equilibrium / archive / operational consolidation</div>
-            <h1>marco teórico — equilibrio estratégico, archivo y consolidación operativa</h1>
+            <h1>equilibrio estratégico mediante teoria del juego</h1>
             <div class="sub">xpan en marzo de 2026</div>
             <div class="hero-box">
               <div class="label">lectura base</div>
@@ -1116,5 +1164,17 @@ layout reorganized for clarity, hierarchy, navigation and sustained reading.</pr
       });
     }
   </script>
+  <script>
+function checkPassword(){
+  const password = "postpostdesfacedeescala";   
+  const input = document.getElementById("passwordInput").value;
+
+  if(input === password){
+    document.getElementById("lockscreen").style.display = "none";
+  } else {
+    alert("contraseña incorrecta");
+  }
+}
+</script>
 </body>
 </html>
