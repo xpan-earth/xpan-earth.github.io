@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xpan — marco teórico / equilibrio estratégico / marzo 2026</title>
+  <style>
+    :root{
+      --bg:#06110f;
+      --bg-2:#091816;
+      --panel:#0b1e1b;
+      --panel-2:#0e2521;
+      --panel-3:#102f2a;
+      --ink:#d9fff5;
+      --muted:#384341;
+      --line:rgba(6, 78, 58, 0.18);
+      --line-strong:rgba(21, 58, 48, 0.48);
+      --glow:rgba(219, 255, 245, 0.14);
+      --glow-2:rgba(63, 104, 92, 0.28);
+      --accent:#ff1717;
+      --accent-2:#00412d;
+      --danger:#ff5a5a;
+      --shadow:0 0 0 1px rgba(230, 255, 248, 0.08), 0 14px 60px rgba(0,0,0,.34);
+      --max:1860px;
+      --radius:20px;
+      --radius-sm:12px;
+      --header-h:66px;
+      --left-w:310px;
+      --right-w:250px;
+      --content-w:minmax(0,1fr);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Arial, Helvetica, sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:var(--sans);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(218, 254, 244, 0.1), transparent 0 24%),
+        radial-gradient(circle at 85% 15%, rgba(221, 221, 221, 0.08), transparent 0 22%),
+        linear-gradient(rgba(245, 245, 245, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 255, 252, 0.045) 1px, transparent 1px),
+        linear-gradient(180deg, #04100e 0%, #071513 44%, #05100f 100%);
+      background-size: auto, auto, 30px 30px, 30px 30px, auto;
+      line-height:1.62;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        repeating-linear-gradient(180deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px),
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 22%, transparent 78%, rgba(255,255,255,.03));
+      mix-blend-mode:screen;
+      opacity:.34;
+      z-index:1;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:-20% -10%;
+      pointer-events:none;
+      background:conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(107,255,214,.05) 18deg, transparent 28deg, transparent 360deg);
+      animation:sweep 18s linear infinite;
+      transform-origin:center;
+      opacity:.3;
+      z-index:0;
+    }
+    @keyframes sweep{to{transform:rotate(360deg)}}
+
+    a{color:inherit;text-decoration:none}
+    ::selection{background:rgba(107,255,214,.20);color:#fff}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:60;
+      height:var(--header-h);
+      display:grid;
+      grid-template-columns:1.3fr repeat(4, minmax(120px, .6fr));
+      gap:10px;
+      align-items:center;
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background:rgba(4,13,11,.86);
+      backdrop-filter:blur(14px);
+    }
+    .topcell{
+      min-width:0;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.01);
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .topcell strong{color:var(--ink); font-weight:600;}
+    .topcell.brand{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+    }
+    .pulse{
+      width:8px;height:8px;border-radius:50%;background:var(--accent);
+      box-shadow:0 0 0 0 rgba(107,255,214,.6);
+      animation:pulse 2.1s infinite;
+      flex:0 0 auto;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(107,255,214,.5)}
+      70%{box-shadow:0 0 0 10px rgba(107,255,214,0)}
+      100%{box-shadow:0 0 0 0 rgba(107,255,214,0)}
+    }
+
+    .shell{
+      position:relative;
+      z-index:2;
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns:var(--left-w) var(--content-w) var(--right-w);
+      gap:18px;
+      align-items:start;
+    }
+
+    .rail,
+    .meta,
+    .section,
+    .hero,
+    .terminal{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(14,37,33,.86), rgba(9,23,20,.92));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .rail::before,
+    .meta::before,
+    .section::before,
+    .hero::before,
+    .terminal::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(107,255,214,.025), transparent 16%, transparent 84%, rgba(107,255,214,.02));
+      pointer-events:none;
+    }
+
+    .rail{
+      position:sticky;
+      top:calc(var(--header-h) + 18px);
+      padding:16px;
+    }
+    .rail-head,
+    .meta-head,
+    .terminal-head,
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding-bottom:12px;
+      margin-bottom:12px;
+      border-bottom:1px solid var(--line);
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .toc{
+      display:grid;
+      gap:8px;
+      max-height:calc(100vh - 180px);
+      overflow:auto;
+      padding-right:4px;
+    }
+    .toc a{
+      display:grid;
+      grid-template-columns:44px 1fr;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border:1px solid transparent;
+      border-radius:12px;
+      font-size:12px;
+      line-height:1.35;
+      color:var(--muted);
+      transition:.18s ease;
+      font-family:var(--mono);
+    }
+    .toc a:hover,
+    .toc a.active{
+      border-color:var(--line-strong);
+      color:var(--ink);
+      background:rgba(107,255,214,.06);
+      box-shadow:inset 0 0 0 1px rgba(107,255,214,.05), 0 0 0 1px rgba(107,255,214,.03);
+    }
+    .toc .n{color:var(--accent); opacity:.85}
+
+    .content{
+      min-width:0;
+      display:grid;
+      gap:18px;
+    }
+
+    .hero{
+      padding:22px;
+      display:grid;
+      gap:18px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.25fr .85fr;
+      gap:18px;
+    }
+    .eyebrow,
+    .micro,
+    .section-tag{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    h1{
+      margin:0;
+      font-size:clamp(34px, 5vw, 76px);
+      line-height:.95;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      font-weight:700;
+      text-shadow:0 0 22px rgba(107,255,214,.08);
+    }
+    .hero-title{display:grid; gap:16px; align-content:start;}
+    .hero-title .sub{
+      font-size:18px;
+      color:var(--accent-2);
+      max-width:72ch;
+    }
+    .hero-box,
+    .hud-box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:rgba(255,255,255,.02);
+    }
+    .hud-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    .hud-stat{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+    }
+    .hud-stat .k{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .hud-stat .v{
+      font-size:13px;
+      line-height:1.5;
+      color:var(--ink);
+    }
+    .scanline{
+      height:180px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      position:relative;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(107,255,214,.06), rgba(107,255,214,.02)),
+        linear-gradient(rgba(107,255,214,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(107,255,214,.06) 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, rgba(107,255,214,.08), transparent 58%);
+      background-size:auto, 18px 18px, 18px 18px, auto;
+    }
+    .scanline::before{
+      content:"";
+      position:absolute;
+      inset:-10% -20%;
+      background:linear-gradient(90deg, transparent, rgba(107,255,214,.12), transparent);
+      transform:translateX(-100%);
+      animation:scanX 7s linear infinite;
+    }
+    .scanline::after{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0;
+      height:2px;
+      background:linear-gradient(90deg, transparent, var(--accent), transparent);
+      box-shadow:0 0 18px rgba(107,255,214,.6);
+      animation:scanY 4.4s linear infinite;
+    }
+    @keyframes scanX{to{transform:translateX(100%)}}
+    @keyframes scanY{0%{transform:translateY(0)}100%{transform:translateY(176px)}}
+
+    .terminal{
+      padding:18px 18px 8px;
+    }
+    .terminal pre{
+      margin:0;
+      white-space:pre-wrap;
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.72;
+      color:var(--accent-2);
+    }
+
+    .section{
+      padding:18px 20px 22px;
+      scroll-margin-top:92px;
+    }
+    .section-head{margin-bottom:18px; padding-bottom:14px}
+    .section-title{
+      display:grid;
+      gap:8px;
+    }
+    h2,
+    h3,
+    h4{
+      margin:0;
+      line-height:1.1;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+    }
+    h2{font-size:clamp(22px,2.6vw,34px)}
+    h3{font-size:clamp(16px,2vw,22px); color:var(--accent-2)}
+    h4{font-size:13px; letter-spacing:.14em; font-family:var(--mono); color:var(--accent); margin-top:10px}
+
+    .section p{
+      margin:0 0 14px;
+      max-width:78ch;
+      color:#d8f8f0;
+      font-size:15px;
+    }
+    .section p:last-child{margin-bottom:0}
+    .section strong{color:#ecfff9}
+    .flow{display:grid; gap:12px}
+    .split{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start}
+    .stack{display:grid; gap:14px}
+    .card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:rgba(255,255,255,.02);
+    }
+    .label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:7px 10px;
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--accent);
+      margin-bottom:10px;
+      background:rgba(107,255,214,.05);
+    }
+    ul,
+    ol{
+      margin:0;
+      padding-left:18px;
+    }
+    li{
+      margin:0 0 8px;
+      max-width:75ch;
+    }
+    .tight li{margin-bottom:6px}
+    .numlist{padding-left:20px}
+    .numlist li::marker{color:var(--accent)}
+    .plainlist{list-style:none; padding-left:0; display:grid; gap:8px;}
+    .plainlist li{
+      position:relative;
+      padding-left:18px;
+      margin:0;
+    }
+    .plainlist li::before{
+      content:"›";
+      position:absolute;
+      left:0;
+      top:0;
+      color:var(--accent);
+      font-family:var(--mono);
+    }
+
+    .meta{
+      position:sticky;
+      top:calc(var(--header-h) + 18px);
+      padding:16px;
+      display:grid;
+      gap:14px;
+    }
+    .meta-box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px;
+      background:rgba(255,255,255,.02);
+    }
+    .meta-box .title{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .meta-box .body{
+      font-size:13px;
+      line-height:1.58;
+      color:var(--ink);
+    }
+    .progress{
+      height:8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      background:rgba(255,255,255,.03);
+    }
+    .progress > span{
+      display:block;
+      width:0;
+      height:100%;
+      background:linear-gradient(90deg, rgba(107,255,214,.2), rgba(107,255,214,.9));
+      box-shadow:0 0 16px rgba(107,255,214,.4);
+      transition:width .2s ease;
+    }
+    .footer-note{
+      padding:20px 0 36px;
+      text-align:center;
+      color:var(--muted);
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .mobile-toggle{
+      display:none;
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:80;
+      border:1px solid var(--line-strong);
+      color:var(--ink);
+      background:rgba(7,21,19,.92);
+      border-radius:999px;
+      padding:12px 16px;
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      box-shadow:var(--shadow);
+    }
+
+    @media (max-width: 1380px){
+      .shell{grid-template-columns:280px minmax(0,1fr)}
+      .meta{grid-column:1 / -1; position:relative; top:auto; display:grid; grid-template-columns:repeat(4, minmax(0,1fr));}
+    }
+    @media (max-width: 1080px){
+      .topbar{grid-template-columns:1fr 1fr; height:auto}
+      .shell{grid-template-columns:1fr}
+      .rail,
+      .meta{position:relative; top:auto}
+      .rail{display:none}
+      .meta{grid-template-columns:repeat(2, minmax(0,1fr))}
+      .hero-grid,
+      .split{grid-template-columns:1fr}
+      .mobile-toggle{display:inline-flex}
+      body.menu-open .rail{
+        display:block;
+        position:fixed;
+        left:14px; right:14px; top:86px; bottom:14px;
+        z-index:90;
+        overflow:auto;
+        background:rgba(7,21,19,.97);
+      }
+    }
+    @media (max-width: 720px){
+      .topbar{grid-template-columns:1fr; padding:10px}
+      .shell{padding:10px}
+      .hero, .section, .rail, .meta, .terminal{padding:14px}
+      .meta{grid-template-columns:1fr}
+      h1{font-size:30px}
+      .section p, li{font-size:14px}
+      .hud-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topcell brand"><span><strong>xpan</strong> / marco teórico / equilibrio estratégico</span><span class="pulse"></span></div>
+
+  </header>
+
+  <button class="mobile-toggle" type="button" aria-label="abrir índice">índice</button>
+
+  <div class="shell">
+    <aside class="rail" id="toc-rail">
+      <div class="rail-head"><span>índice operativo</span><span>15 nodos</span></div>
+      <nav class="toc">
+        <a href="#s0"><span class="n">00</span><span>lectura base</span></a>
+        <a href="#s1"><span class="n">01</span><span>punto actual</span></a>
+        <a href="#s2"><span class="n">02</span><span>por qué la teoría de juegos sirve para leer este momento</span></a>
+        <a href="#s3"><span class="n">03</span><span>evolución de xpan leída como proceso estratégico</span></a>
+        <a href="#s4"><span class="n">04</span><span>equilibrio estratégico: qué significa para xpan</span></a>
+        <a href="#s5"><span class="n">05</span><span>la posición real de xpan en marzo de 2026</span></a>
+        <a href="#s6"><span class="n">06</span><span>el juego actual de xpan</span></a>
+        <a href="#s7"><span class="n">07</span><span>prioridad estratégica 1: estructuración del archivo digital</span></a>
+        <a href="#s8"><span class="n">08</span><span>prioridad estratégica 2: estructuración del archivo material a través de ep.2</span></a>
+        <a href="#s9"><span class="n">09</span><span>relación entre ambas prioridades</span></a>
+        <a href="#s10"><span class="n">10</span><span>evolución de xpan dentro de esta estrategia</span></a>
+        <a href="#s11"><span class="n">11</span><span>cómo se mueve xpan dentro del equilibrio estratégico actual</span></a>
+        <a href="#s12"><span class="n">12</span><span>qué decisiones exige este momento</span></a>
+        <a href="#s13"><span class="n">13</span><span>lectura operativa para el equipo y colaboradores</span></a>
+        <a href="#s14"><span class="n">14</span><span>formulación final del punto actual</span></a>
+        <a href="#s15"><span class="n">15</span><span>cierre conceptual</span></a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="s0">
+        <div class="hero-grid">
+          <div class="hero-title">
+            <div class="eyebrow">xpan / theoretical framework / strategic equilibrium / archive / operational consolidation</div>
+            <h1>marco teórico — equilibrio estratégico, archivo y consolidación operativa</h1>
+            <div class="sub">xpan en marzo de 2026</div>
+            <div class="hero-box">
+              <div class="label">lectura base</div>
+              <p>Este texto fija una lectura interna del punto actual de xpan y traduce ese punto en una estructura estratégica clara. Su función es darle al equipo y a los colaboradores un marco común para entender tres cosas con precisión:</p>
+              <ol class="numlist">
+                <li>qué fase atraviesa xpan hoy</li>
+                <li>cómo puede leerse esa fase desde la teoría de juegos</li>
+                <li>cuáles son las dos prioridades centrales que organizan su movimiento actual: la estructuración del archivo digital y la estructuración del archivo material a través de ep.2</li>
+              </ol>
+              <p style="margin-top:14px">Este documento parte de toda la evolución que hemos trabajado alrededor de xpan: su paso desde una condición más abierta, expansiva y de desfase de escala hacia una condición actual más consolidada, precisa y operativa; el desarrollo de sistemas propios espaciales, sonoros, editoriales y digitales; la formación de un archivo ya masivo; la consolidación de una infraestructura real; y la necesidad actual de convertir toda esa producción en estructura legible, utilizable y acumulativa.</p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="scanline" aria-hidden="true"></div>
+            <div class="hud-grid">
+              <div class="hud-stat"><div class="k">fase</div><div class="v">post desfase de escala</div></div>
+              <div class="hud-stat"><div class="k">centro</div><div class="v">archivo / estructura / sistema principal</div></div>
+              <div class="hud-stat"><div class="k">prioridad 01</div><div class="v">estructuración del archivo digital</div></div>
+              <div class="hud-stat"><div class="k">prioridad 02</div><div class="v">estructuración del archivo material vía ep.2</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="s1">
+        <div class="section-head"><span>01</span><span>punto actual</span></div>
+        <div class="flow">
+          <p>xpan en marzo de 2026 es un estudio en estado post desfase de escala. Diseña, construye, activa y documenta sistemas espaciales, sonoros, editoriales y digitales con continuidad, precisión técnica, autonomía y control operativo.</p>
+          <p>Ese punto actual surge después de varios años de producción sostenida. Esa producción ya generó:</p>
+          <ul class="plainlist">
+            <li>una familia de sistemas propios</li>
+            <li>una sintaxis material y técnica reconocible</li>
+            <li>una red amplia de activaciones, colaboraciones y contextos</li>
+            <li>una traza editorial y documental consistente</li>
+            <li>una infraestructura física en uso</li>
+            <li>una capacidad real de fabricación, instalación, activación y archivo</li>
+            <li>una masa crítica de materiales, prototipos, dispositivos, piezas, medios, documentos y aprendizajes</li>
+          </ul>
+          <p>La consecuencia principal de esa acumulación es clara: xpan ya no opera desde una fase de aparición. Opera desde una fase de consolidación estructural.</p>
+          <p>La pregunta central ya cambió. La pregunta anterior era cómo producir más realidad. La pregunta actual es cómo organizar, fijar, activar y expandir estratégicamente toda la realidad ya producida.</p>
+        </div>
+      </section>
+
+      <section class="section" id="s2">
+        <div class="section-head"><span>02</span><span>por qué la teoría de juegos sirve para leer este momento</span></div>
+        <div class="flow">
+          <p>La teoría de juegos estudia sistemas donde varios actores toman decisiones interdependientes. Cada actor se mueve considerando que su resultado depende también de cómo se mueven los demás.</p>
+          <p>Esa lectura sirve para xpan porque xpan nunca ha operado en aislamiento. Siempre ha existido dentro de un campo compuesto por:</p>
+          <ul class="plainlist">
+            <li>instituciones</li>
+            <li>clientes</li>
+            <li>curadores</li>
+            <li>colaboradores</li>
+            <li>audiencias</li>
+            <li>agentes culturales</li>
+            <li>espacios</li>
+            <li>redes internacionales</li>
+            <li>economías de producción</li>
+            <li>sistemas de validación</li>
+            <li>tiempos de atención y visibilidad</li>
+            <li>condiciones materiales de activación</li>
+          </ul>
+          <p>Dentro de ese campo, cada movimiento de xpan afecta el comportamiento de otros actores, y cada movimiento de esos actores afecta la posición, la escala y el margen de acción de xpan.</p>
+          <p>La teoría de juegos no funciona aquí como doctrina. Funciona como herramienta de lectura estratégica. Permite entender cómo cambia la posición de xpan dentro del campo, qué tipo de equilibrio se está formando alrededor suyo y cómo usar esa condición a favor de su consolidación.</p>
+        </div>
+      </section>
+
+      <section class="section" id="s3">
+        <div class="section-head"><span>03</span><span>evolución de xpan leída como proceso estratégico</span></div>
+        <div class="stack">
+          <div class="card">
+            <div class="label">fase 1 — aparición y apertura expansiva</div>
+            <p>En esta primera etapa, xpan construyó presencia, lenguaje, relaciones y campo de prueba. El valor central de esta fase fue la expansión.</p>
+            <p>Se produjeron:</p>
+            <ul class="plainlist">
+              <li>activaciones constantes</li>
+              <li>pruebas materiales</li>
+              <li>formatos híbridos</li>
+              <li>colaboraciones amplias</li>
+              <li>experimentación espacial</li>
+              <li>investigación sonora</li>
+              <li>publicaciones</li>
+              <li>comunidad</li>
+              <li>archivo inicial</li>
+              <li>primeras formas del sistema de poros</li>
+              <li>primeras formas de una sintaxis propia</li>
+            </ul>
+            <p style="margin-top:14px">En términos estratégicos, esta fase sirvió para entrar en el tablero y hacer visible una capacidad singular.</p>
+          </div>
+          <div class="card">
+            <div class="label">fase 2 — acumulación y desfase de escala</div>
+            <p>Con el crecimiento de las activaciones, las colaboraciones, la red y la demanda, xpan entró en una fase de gran amplitud operativa. Aquí aparecieron con fuerza los beneficios y tensiones del desfase de escala.</p>
+            <p>Esta fase produjo:</p>
+            <ul class="plainlist">
+              <li>crecimiento acelerado del archivo</li>
+              <li>multiplicación de contextos y frentes abiertos</li>
+              <li>expansión de red</li>
+              <li>aumento de carga operativa</li>
+              <li>nuevas oportunidades</li>
+              <li>mayor complejidad organizativa</li>
+              <li>una acumulación masiva de materiales, sistemas, medios y relaciones</li>
+            </ul>
+            <p style="margin-top:14px">Este punto fue decisivo porque empujó a xpan hasta un límite de escala. Ese límite hizo visible algo central: la cantidad de producción ya era suficiente para exigir una nueva forma de estructura.</p>
+          </div>
+          <div class="card">
+            <div class="label">fase 3 — post desfase de escala</div>
+            <p>La etapa actual comienza cuando xpan deja de organizarse desde la expansión abierta y comienza a organizarse desde la consolidación de estructura.</p>
+            <p>Este cambio redefine prioridades, lenguaje y criterios de movimiento. El centro ahora pasa por:</p>
+            <ul class="plainlist">
+              <li>digestión</li>
+              <li>estabilización</li>
+              <li>jerarquización</li>
+              <li>archivo</li>
+              <li>sistema</li>
+              <li>continuidad</li>
+              <li>activación selectiva</li>
+              <li>uso intensivo de infraestructura propia</li>
+              <li>conversión del pasado en capacidad operativa presente</li>
+              <li>conversión del presente en archivo utilizable futuro</li>
+            </ul>
+            <p style="margin-top:14px">Este es el punto exacto donde la teoría de juegos se vuelve especialmente útil: xpan ya tiene suficiente realidad acumulada para empezar a mover el campo desde una posición más estable y más consciente.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="s4">
+        <div class="section-head"><span>04</span><span>equilibrio estratégico: qué significa para xpan</span></div>
+        <div class="flow">
+          <p>En teoría de juegos, un equilibrio estratégico aparece cuando la presencia de un actor ya está incorporada al cálculo de los demás. El entorno se reorganiza considerando que ese actor existe, opera, entrega y seguirá estando ahí.</p>
+          <p>Aplicado a xpan, esto significa que su existencia y capacidad ya forman parte del paisaje operativo de una parte del campo. Varios actores ya entienden que xpan puede:</p>
+          <ul class="plainlist">
+            <li>construir sistemas propios</li>
+            <li>activar contextos distintos</li>
+            <li>producir archivo y lenguaje</li>
+            <li>sostener una identidad material y conceptual clara</li>
+            <li>operar entre escalas y geografías</li>
+            <li>convertir investigación en dispositivos y dispositivos en activación</li>
+            <li>acumular experiencia con continuidad</li>
+          </ul>
+          <p>Ese reconocimiento cambia el juego. El movimiento de xpan deja de depender solamente de validación externa inmediata y comienza a depender cada vez más de cómo ordena y usa su propia capacidad acumulada.</p>
+          <p>Ese es el equilibrio actual: un equilibrio emergente en consolidación, donde xpan ya tiene peso propio y ahora necesita fijar las condiciones de su siguiente escala.</p>
+        </div>
+      </section>
+
+      <section class="section" id="s5">
+        <div class="section-head"><span>05</span><span>la posición real de xpan en marzo de 2026</span></div>
+        <div class="flow">
+          <p>La posición actual de xpan puede describirse así:</p>
+          <h3>xpan es una infraestructura autoral operativa.</h3>
+          <p>Esta definición importa porque aclara su lugar dentro del campo. xpan ya concentra de manera integrada:</p>
+          <ul class="plainlist">
+            <li>sistemas espaciales</li>
+            <li>sistemas sonoros</li>
+            <li>sistemas editoriales</li>
+            <li>sistemas digitales</li>
+            <li>archivo histórico</li>
+            <li>investigación activa</li>
+            <li>producción material</li>
+            <li>activación cultural</li>
+            <li>documentación</li>
+            <li>un lenguaje estructural propio</li>
+          </ul>
+          <p>La combinación de estas capas le da una densidad poco común. Esa densidad es el recurso estratégico principal de xpan.</p>
+          <p>Su reto actual consiste en volver esa densidad plenamente legible, disponible, articulada y movilizable.</p>
+        </div>
+      </section>
+
+      <section class="section" id="s6">
+        <div class="section-head"><span>06</span><span>el juego actual de xpan</span></div>
+        <div class="stack">
+          <p>El juego actual de xpan tiene cinco dimensiones simultáneas.</p>
+          <div class="card"><h4>a. juego de legibilidad</h4><p>El campo necesita entender con claridad qué es xpan hoy. La acumulación ya existe. La tarea actual consiste en estructurarla y presentarla como sistema.</p></div>
+          <div class="card"><h4>b. juego de archivo</h4><p>El valor histórico y operativo de xpan ya es muy alto. Su poder estratégico aumenta cuando ese archivo puede consultarse, comprenderse, activarse, presentarse y reutilizarse con precisión.</p></div>
+          <div class="card"><h4>c. juego de infraestructura</h4><p>xpan ya cuenta con sistemas materiales reales. Esos sistemas concentran años de trabajo y aprendizaje. Su reorganización y activación determinan la siguiente etapa de producción.</p></div>
+          <div class="card"><h4>d. juego de selección</h4><p>El momento actual exige elegir con mayor precisión qué se activa, qué se conserva, qué se transforma, qué se escala y qué se desecha.</p></div>
+          <div class="card"><h4>e. juego de acumulación</h4><p>Cada nuevo movimiento debe fortalecer estructura. El criterio actual pasa por el valor acumulativo de cada decisión.</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="s7">
+        <div class="section-head"><span>07</span><span>prioridad estratégica 1: estructuración del archivo digital</span></div>
+        <div class="flow">
+          <p>La primera prioridad central en marzo de 2026 es la estructuración completa del archivo digital de xpan.</p>
+          <p>Esta prioridad contiene el grueso del trabajo de estabilización. Su objetivo es convertir el enorme volumen de producción ya generada en un sistema digital digerido, respaldado, estructurado, mapeado, comprendido y listo para uso inmediato.</p>
+
+          <div class="card">
+            <div class="label">qué incluye</div>
+            <p>Incluye absolutamente todo el portafolio, archivo, trayectoria, sistemas y activaciones de xpan:</p>
+            <ul class="plainlist">
+              <li>proyectos espaciales</li>
+              <li>proyectos sonoros</li>
+              <li>publicaciones</li>
+              <li>activaciones</li>
+              <li>prototipos</li>
+              <li>dispositivos</li>
+              <li>renders</li>
+              <li>planos</li>
+              <li>fotografías</li>
+              <li>videos</li>
+              <li>gifs</li>
+              <li>animaciones</li>
+              <li>textos</li>
+              <li>descripciones</li>
+              <li>fichas técnicas</li>
+              <li>documentación procesual</li>
+              <li>materiales de comunicación</li>
+              <li>catálogos</li>
+              <li>documentos de producción</li>
+              <li>memorias de montaje</li>
+              <li>aprendizajes técnicos</li>
+              <li>errores y soluciones</li>
+              <li>versiones de sistemas</li>
+              <li>genealogías de proyectos</li>
+              <li>conexiones entre piezas y etapas</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="label">por qué es central</div>
+            <p>El archivo digital estructurado cumple varias funciones estratégicas al mismo tiempo.</p>
+            <ol class="numlist tight">
+              <li><strong>vuelve legible la trayectoria</strong><br>La trayectoria de xpan ya es extensa. El archivo ordenado la vuelve comprensible como sistema y no como acumulación dispersa.</li>
+              <li><strong>concentra valor</strong><br>Toda activación pasada contiene valor operativo, conceptual, técnico, formal y estratégico. La estructuración del archivo permite recuperar ese valor.</li>
+              <li><strong>acelera uso futuro</strong><br>Un archivo digerido acelera propuestas, presentaciones, publicaciones, web, presentaciones a clientes, dossiers, exposiciones, convocatorias, publicaciones internas y toma de decisiones.</li>
+              <li><strong>fija memoria operativa</strong><br>La experiencia ya obtenida deja de depender de recuerdos parciales y pasa a existir como memoria compartida del estudio.</li>
+              <li><strong>aumenta poder estratégico</strong><br>Cuando el archivo está estructurado, xpan puede mostrar escala con precisión, defender valor con evidencia y activar su propia historia como instrumento de negociación, posicionamiento y continuidad.</li>
+            </ol>
+          </div>
+
+          <div class="card">
+            <div class="label">qué significa estructurarlo de verdad</div>
+            <p>Estructurarlo de verdad implica trabajar el archivo digital como una infraestructura, no como un repositorio.</p>
+            <p>Eso exige al menos estas capas:</p>
+            <div class="stack">
+              <div><h4>capa 1 — respaldo y resguardo</h4><p>Todo el archivo debe estar resguardado con claridad, redundancia y criterios estables.</p></div>
+              <div><h4>capa 2 — clasificación</h4><p>Cada pieza debe tener una ubicación, un tipo, una versión, un contexto y una relación clara con otros materiales.</p></div>
+              <div><h4>capa 3 — mapeo</h4><p>El archivo debe mostrar cómo se relacionan entre sí los sistemas, activaciones, iteraciones y etapas.</p></div>
+              <div><h4>capa 4 — digestión</h4><p>Cada proyecto debe existir en una forma comprensible y utilizable: resumen, ficha, selección de medios, estado, relevancia, aprendizajes, relaciones con otros proyectos.</p></div>
+              <div><h4>capa 5 — disponibilidad estratégica</h4><p>El archivo debe poder convertirse rápidamente en:</p>
+                <ul class="plainlist">
+                  <li>portafolio</li>
+                  <li>sitio</li>
+                  <li>dossier</li>
+                  <li>expediente</li>
+                  <li>caso de estudio</li>
+                  <li>material editorial</li>
+                  <li>documento interno</li>
+                  <li>base de investigación</li>
+                  <li>material de venta</li>
+                  <li>soporte curatorial</li>
+                  <li>traza histórica</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <p>qué produce esta prioridad</p>
+          <p>La estructuración del archivo digital produce el suelo estratégico de la siguiente etapa de xpan. Le da al estudio una base clara para operar con mayor velocidad, precisión y acumulación.</p>
+        </div>
+      </section>
+
+      <section class="section" id="s8">
+        <div class="section-head"><span>08</span><span>prioridad estratégica 2: estructuración del archivo material a través de ep.2</span></div>
+        <div class="flow">
+          <p>La segunda prioridad central en marzo de 2026 es la estructuración del archivo material, y su eje principal es ep.2.</p>
+          <p>ep.2 es la nueva cuarta y más reciente iteración del sistema de poros. Es el sistema instrumento e infraestructura más reciente de xpan para activación constante en la etapa post desfase de escala.</p>
+          <p>Su papel actual es decisivo porque conecta archivo, investigación, activación y producción futura en una sola plataforma.</p>
+
+          <div class="card">
+            <div class="label">qué representa ep.2</div>
+            <p>ep.2 representa varias cosas al mismo tiempo:</p>
+            <ul class="plainlist">
+              <li>el estado más avanzado del sistema de poros hasta ahora</li>
+              <li>una síntesis de experiencia material acumulada</li>
+              <li>una infraestructura principal de activación actual</li>
+              <li>una herramienta para mantener a xpan activo mientras se estabiliza el archivo digital</li>
+              <li>una plataforma para producir nueva documentación y nueva investigación</li>
+              <li>un instrumento de reorganización del archivo material existente</li>
+              <li>una base para desarrollar nuevos dispositivos</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="label">por qué ep.2 ocupa el centro</div>
+            <p>ep.2 ocupa el centro porque permite que xpan siga activo desde su propia infraestructura mientras ordena todo lo ya producido.</p>
+            <p>Eso tiene un valor estratégico enorme. Le da continuidad al estudio. Mantiene vivo el archivo. Sigue produciendo realidad. Genera nuevas capas documentales. Permite usar experiencia acumulada en contextos presentes. Sostiene el movimiento sin dispersión.</p>
+          </div>
+
+          <div class="card">
+            <div class="label">archivo material: qué implica esta prioridad</div>
+            <p>La estructuración del archivo material involucra todo lo que existe físicamente en la bodega, el estudio y los resguardos de xpan:</p>
+            <ul class="plainlist">
+              <li>componentes sueltos</li>
+              <li>módulos</li>
+              <li>piezas estructurales</li>
+              <li>poros</li>
+              <li>barras</li>
+              <li>placas</li>
+              <li>luminarias</li>
+              <li>cableados</li>
+              <li>hardware</li>
+              <li>prototipos</li>
+              <li>sistemas parciales</li>
+              <li>objetos terminados</li>
+              <li>restos útiles</li>
+              <li>dispositivos incompletos</li>
+              <li>materiales de pruebas</li>
+              <li>herramientas de activación</li>
+              <li>soportes</li>
+              <li>accesorios</li>
+              <li>piezas descontinuadas</li>
+              <li>piezas adaptables</li>
+              <li>sistemas finales en resguardo</li>
+            </ul>
+            <p style="margin-top:14px">El trabajo actual sobre el archivo material exige una lectura clara y activa de todo ese universo.</p>
+          </div>
+
+          <div class="card">
+            <div class="label">cómo se lee estratégicamente el archivo material</div>
+            <p>Cada componente material debe pasar por una decisión precisa dentro de una lógica de sistema. Esa decisión puede tomar varias formas:</p>
+            <ul class="plainlist">
+              <li>conservar</li>
+              <li>clasificar</li>
+              <li>integrar</li>
+              <li>adaptar</li>
+              <li>reconstruir</li>
+              <li>reasignar</li>
+              <li>prototipar</li>
+              <li>combinar</li>
+              <li>documentar</li>
+              <li>descartar</li>
+            </ul>
+            <p style="margin-top:14px">La clave está en que esas decisiones se tomen en función del sistema principal actual: ep.2.</p>
+          </div>
+
+          <div class="card">
+            <div class="label">ep.2 como imán estructurador</div>
+            <p>ep.2 funciona como un imán organizador del archivo material. Permite preguntarse frente a cada elemento:</p>
+            <ul class="plainlist">
+              <li>qué valor operativo tiene hoy</li>
+              <li>qué capacidad puede recuperar</li>
+              <li>qué parte del sistema actual puede fortalecer</li>
+              <li>qué investigación activa puede detonar</li>
+              <li>qué nuevo dispositivo puede originar</li>
+              <li>qué ajuste material exige</li>
+              <li>qué forma de documentación merece</li>
+              <li>qué lugar ocupa dentro del máximo sistema actual de xpan</li>
+            </ul>
+            <p style="margin-top:14px">Esto transforma la bodega y el estudio en un campo activo de reorganización estratégica.</p>
+          </div>
+
+          <div class="card">
+            <div class="label">qué produce cada activación de ep.2</div>
+            <p>Cada activación de ep.2 produce valor en varias capas:</p>
+            <ol class="numlist tight">
+              <li><strong>mantiene activo a xpan</strong><br>Sostiene presencia, producción y continuidad.</li>
+              <li><strong>mantiene activo el archivo</strong><br>El archivo deja de ser material inmóvil y vuelve a entrar en circulación.</li>
+              <li><strong>genera nueva documentación</strong><br>Cada activación suma registros, ajustes, aprendizajes, imágenes, planos, relatos técnicos y memoria operativa.</li>
+              <li><strong>desarrolla nuevos dispositivos</strong><br>Cada activación abre nuevas necesidades y oportunidades de adaptación técnica y formal.</li>
+              <li><strong>concentra experiencia</strong><br>ep.2 se vuelve un laboratorio vivo donde la experiencia acumulada se traduce en sistemas más refinados.</li>
+              <li><strong>ordena el inventario material</strong><br>La activación obliga a decidir qué entra, qué sirve, qué se transforma y qué se depura.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="s9">
+        <div class="section-head"><span>09</span><span>relación entre ambas prioridades</span></div>
+        <div class="flow">
+          <p>Las dos prioridades son inseparables.</p>
+          <div class="card"><h4>el archivo digital fija comprensión</h4><p>Ordena el pasado, vuelve legible la trayectoria y da estructura al conocimiento acumulado.</p></div>
+          <div class="card"><h4>el archivo material vía ep.2 fija continuidad activa</h4><p>Convierte la acumulación física en sistema actual y futuro.</p></div>
+          <p>Juntas producen la plataforma estratégica de la siguiente escala de xpan.</p>
+          <p>Puede plantearse así:</p>
+          <ul class="plainlist">
+            <li>el archivo digital organiza lo que xpan ya hizo y sabe</li>
+            <li>el archivo material organiza con qué xpan sigue operando y construyendo</li>
+            <li>ep.2 conecta ambas capas porque activa materialmente la experiencia y la vuelve nuevamente documentable</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="s10">
+        <div class="section-head"><span>10</span><span>evolución de xpan dentro de esta estrategia</span></div>
+        <div class="flow">
+          <p>La evolución actual de xpan dentro de esta lectura estratégica puede entenderse en cuatro movimientos simultáneos.</p>
+          <div class="card"><h4>movimiento 1 — de expansión a digestión</h4><p>El centro pasa de producir más frentes a comprender y estructurar mejor lo ya producido.</p></div>
+          <div class="card"><h4>movimiento 2 — de acumulación a sistema</h4><p>La cantidad de experiencias, piezas y activaciones pasa a organizarse como una arquitectura coherente.</p></div>
+          <div class="card"><h4>movimiento 3 — de archivo pasivo a archivo activo</h4><p>El archivo deja de funcionar solo como memoria y empieza a operar como infraestructura de decisión, activación y desarrollo.</p></div>
+          <div class="card"><h4>movimiento 4 — de repertorio a instrumento principal</h4><p>Toda la experiencia material y técnica acumulada converge cada vez más en ep.2 como sistema principal actual.</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="s11">
+        <div class="section-head"><span>11</span><span>cómo se mueve xpan dentro del equilibrio estratégico actual</span></div>
+        <div class="flow">
+          <p>Dentro del equilibrio estratégico actual, xpan se mueve bajo una lógica distinta a la de etapas anteriores.</p>
+          <div class="card"><h4>a. fija centro</h4><p>El centro actual está en la estructura, el archivo y el sistema principal.</p></div>
+          <div class="card"><h4>b. jerarquiza recursos</h4><p>Tiempo, energía, materiales, documentación, equipo e infraestructura se ordenan según su capacidad de fortalecer el sistema.</p></div>
+          <div class="card"><h4>c. convierte trayectoria en herramienta</h4><p>El pasado se vuelve activo y usable.</p></div>
+          <div class="card"><h4>d. concentra investigación</h4><p>Cada activación se vuelve una investigación profunda con efectos técnicos y estratégicos.</p></div>
+          <div class="card"><h4>e. usa la activación como método de consolidación</h4><p>La activación ya no solo produce presencia; produce estructura.</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="s12">
+        <div class="section-head"><span>12</span><span>qué decisiones exige este momento</span></div>
+        <div class="stack">
+          <p>Este momento exige decisiones continuas y claras en varios niveles.</p>
+          <div class="card">
+            <div class="label">sobre el archivo digital</div>
+            <ul class="plainlist">
+              <li>qué falta respaldar</li>
+              <li>qué falta clasificar</li>
+              <li>qué proyectos requieren digestión profunda</li>
+              <li>qué formatos de consulta necesita el equipo</li>
+              <li>qué materiales requieren edición final</li>
+              <li>qué jerarquías internas ordenan la totalidad del archivo</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="label">sobre el archivo material</div>
+            <ul class="plainlist">
+              <li>qué componentes conservan valor alto</li>
+              <li>qué prototipos pueden integrarse al sistema actual</li>
+              <li>qué sistemas finales sirven como base para nuevas adaptaciones</li>
+              <li>qué piezas deben transformarse</li>
+              <li>qué elementos ocupan espacio sin valor operativo suficiente</li>
+              <li>qué dispositivos conviene reconstruir específicamente para ep.2</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="label">sobre activación</div>
+            <ul class="plainlist">
+              <li>qué contextos permiten usar ep.2 con mayor intensidad y aprendizaje</li>
+              <li>qué activaciones producen documentación valiosa</li>
+              <li>qué usos expanden la capacidad del sistema</li>
+              <li>qué configuraciones permiten desarrollar nuevos dispositivos</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="label">sobre estructura general</div>
+            <ul class="plainlist">
+              <li>cómo se traduce el archivo ordenado en portafolio, web, comunicación y estrategia</li>
+              <li>cómo se vuelve compartible el conocimiento interno</li>
+              <li>cómo se convierte el archivo en plataforma de crecimiento</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="s13">
+        <div class="section-head"><span>13</span><span>lectura operativa para el equipo y colaboradores</span></div>
+        <div class="flow">
+          <p>Para el equipo y los colaboradores, este punto de xpan exige una comprensión común:</p>
+          <ol class="numlist tight">
+            <li><strong>xpan atraviesa una fase de consolidación estructural</strong><br>La producción anterior ya generó masa crítica suficiente. El foco actual es organización, activación y acumulación de mayor precisión.</li>
+            <li><strong>el archivo es infraestructura</strong><br>Archivo digital y archivo material tienen valor central. Ambos sostienen la siguiente escala.</li>
+            <li><strong>ep.2 es la plataforma principal actual</strong><br>Su uso concentra la experiencia previa y organiza la producción presente.</li>
+            <li><strong>cada activación es una herramienta de investigación y consolidación</strong><br>Cada activación debe pensarse como generadora de estructura, aprendizaje, documentación y sistema.</li>
+            <li><strong>cada decisión material y digital tiene valor estratégico</strong><br>Ordenar, clasificar, reconstruir, seleccionar y documentar forman parte del trabajo central de xpan hoy.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="s14">
+        <div class="section-head"><span>14</span><span>formulación final del punto actual</span></div>
+        <div class="flow">
+          <p>xpan en marzo de 2026 se encuentra en una fase de equilibrio estratégico emergente ya suficientemente consolidado para operar desde su propia realidad acumulada. Su tarea central es convertir toda esa realidad en estructura legible, activa y utilizable.</p>
+          <p>Las dos prioridades que organizan este momento son claras:</p>
+          <div class="card"><h4>prioridad 1</h4><p>estructurar el archivo digital total de xpan: portafolio, trayectoria, sistemas, activaciones, documentación y conocimiento acumulado, completamente digeridos, respaldados, mapeados y listos para uso inmediato.</p></div>
+          <div class="card"><h4>prioridad 2</h4><p>estructurar el archivo material total de xpan a través de ep.2, la cuarta iteración del sistema de poros y el sistema principal actual de activación, integrando componentes, prototipos, piezas y sistemas previos en una infraestructura viva capaz de seguir produciendo investigación, activación y archivo.</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="s15">
+        <div class="section-head"><span>15</span><span>cierre conceptual</span></div>
+        <div class="flow">
+          <p>La teoría de juegos ayuda a entender que xpan ya ocupa un lugar estable dentro de un campo más amplio y que su movimiento actual tiene que ver con fijar condiciones, concentrar valor y usar su propia acumulación a favor.</p>
+          <p>La evolución reciente de xpan ya produjo suficiente densidad para que el archivo y la infraestructura ocupen el centro de la estrategia.</p>
+          <div class="card">
+            <p>El archivo digital concentra comprensión.</p>
+            <p>El archivo material concentra capacidad.</p>
+            <p>ep.2 concentra activación.</p>
+            <p>La articulación entre estas tres capas concentra el siguiente ciclo de xpan.</p>
+          </div>
+          <p>La forma más precisa de nombrar este punto es esta:</p>
+          <h3>xpan atraviesa una fase de consolidación estructural donde la organización total de su archivo digital y la activación organizadora de su archivo material a través de ep.2 constituyen la base operativa de su siguiente escala.</h3>
+        </div>
+      </section>
+
+      <section class="terminal" aria-label="terminal note">
+        <div class="terminal-head"><span>output integrity</span><span>content lock</span></div>
+        <pre>[xpan.march.2026 / strategic equilibrium / archive / operational consolidation]
+interface deployed under post-tech / defense-ops logic.
+body content preserved as complete long-form text.
+layout reorganized for clarity, hierarchy, navigation and sustained reading.</pre>
+      </section>
+
+      <div class="footer-note">xpan / marzo 2026 / post-tech dossier interface / full text deployment</div>
+    </main>
+
+    <aside class="meta">
+      <div class="meta-head"><span>estado de lectura</span><span id="readout">00%</span></div>
+      <div class="meta-box">
+        <div class="title">documento</div>
+        <div class="body">marco teórico — equilibrio estratégico, archivo y consolidación operativa</div>
+      </div>
+      <div class="meta-box">
+        <div class="title">núcleo operativo</div>
+        <div class="body">archivo digital / archivo material / ep.2</div>
+      </div>
+      <div class="meta-box">
+        <div class="title">progreso</div>
+        <div class="progress"><span id="progressBar"></span></div>
+      </div>
+      <div class="meta-box">
+        <div class="title">modo de navegación</div>
+        <div class="body">índice fijo / lectura continua / secciones ancladas</div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const sections = [...document.querySelectorAll('.section, .hero')];
+    const links = [...document.querySelectorAll('.toc a')];
+    const readout = document.getElementById('readout');
+    const progressBar = document.getElementById('progressBar');
+    const mobileToggle = document.querySelector('.mobile-toggle');
+
+    const setActive = () => {
+      let currentId = sections[0]?.id;
+      const y = window.scrollY + 120;
+      sections.forEach(section => {
+        if (section.offsetTop <= y) currentId = section.id;
+      });
+      links.forEach(link => {
+        const active = link.getAttribute('href') === '#' + currentId;
+        link.classList.toggle('active', active);
+      });
+
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+      const value = pct.toFixed(0).padStart(2, '0') + '%';
+      readout.textContent = value;
+      progressBar.style.width = pct + '%';
+    };
+
+    window.addEventListener('scroll', setActive, {passive:true});
+    window.addEventListener('resize', setActive);
+    setActive();
+
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        document.body.classList.remove('menu-open');
+      });
+    });
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        document.body.classList.toggle('menu-open');
+      });
+    }
+  </script>
+</body>
+</html>
