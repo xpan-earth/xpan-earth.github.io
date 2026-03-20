@@ -1,0 +1,2527 @@
+<!doctype html>
+<html lang="es" data-xpan>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>xpan — sistemas</title>
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<style>
+:root{
+  --bg:#050607;
+  --bg-2:#0a0c0f;
+  --panel:#0c1014;
+  --panel-2:#0f1419;
+  --panel-3:#121922;
+  --fg:#edf2f7;
+  --fg-dim:rgba(237,242,247,.62);
+  --fg-soft:rgba(237,242,247,.42);
+  --line:rgba(237,242,247,.11);
+  --line-2:rgba(237,242,247,.07);
+  --line-3:rgba(237,242,247,.16);
+  --accent:#97b7ff;
+  --shadow:none;
+  --radius:0px;
+  --pad:clamp(14px,2.4vw,30px);
+  --gap:clamp(10px,1.2vw,14px);
+  --tap:40px;
+  --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1)
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden
+}
+body.viewer-open{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+img,video{display:block;max-width:100%;height:auto;background:transparent}
+.bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 360px at 50% -4%, rgba(151,183,255,.08), transparent 72%),
+    repeating-linear-gradient(to right, var(--line-2) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px 80px);
+  opacity:.92;
+  mask-image:linear-gradient(to bottom, #000, rgba(0,0,0,.82))
+}
+.grain{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px)
+}
+header{
+  position:sticky;top:0;z-index:40;
+  padding:calc(10px + env(safe-area-inset-top)) var(--pad) 10px;
+  border-bottom:1px solid var(--line-2);
+  background:rgba(5,6,7,.86);
+  backdrop-filter:blur(12px) saturate(125%);
+  -webkit-backdrop-filter:blur(12px) saturate(125%)
+}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand a{display:inline-flex;align-items:center;flex:0 0 auto}
+.brand img{width:40px;height:auto;filter:invert(1)}
+.brand-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.brand-copy strong{
+  font:800 12px/1.1 var(--mono);
+  letter-spacing:.08em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.brand-copy span{
+  font:600 10px/1.2 var(--mono);
+  letter-spacing:.04em;
+  color:var(--fg-dim);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.controls{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px}
+.control,.seg,.lang,.chip,.action-btn,.search{
+  border:1px solid var(--line);
+  background:rgba(12,16,20,.72);
+  color:var(--fg);
+  border-radius:var(--radius)
+}
+.search{display:flex;align-items:center;gap:8px;padding:0 12px;min-height:var(--tap);min-width:min(42vw,320px)}
+.search svg{width:14px;height:14px;flex:0 0 auto;opacity:.72}
+.search input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);
+  font:600 12px/1.2 var(--mono)
+}
+.search input::placeholder{color:var(--fg-soft)}
+.seg,.lang{display:inline-grid;grid-auto-flow:column}
+.seg button,.lang button,.control,.action-btn{
+  min-height:var(--tap);padding:0 12px;border:0;background:transparent;cursor:pointer;color:var(--fg);
+  font:700 10px/1 var(--mono);letter-spacing:.06em
+}
+.seg button+button,.lang button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"],.lang button[aria-pressed="true"],.chip.active{background:var(--panel-3)}
+main{position:relative;z-index:1;padding:18px var(--pad) 52px}
+.hero{display:grid;gap:12px;margin-bottom:14px}
+.hero-panel{
+  border:1px solid var(--line-2);
+  background:linear-gradient(180deg, rgba(12,16,20,.94), rgba(9,12,15,.94));
+  padding:18px
+}
+.hero-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.hero-copy{max-width:980px}
+.eyebrow{
+  margin:0 0 10px;
+  font:700 10px/1 var(--mono);
+  letter-spacing:.1em;
+  color:var(--fg-dim)
+}
+.hero-copy h1{
+  margin:0 0 8px;
+  font:900 clamp(28px,5vw,54px)/.94 var(--sans);
+  letter-spacing:-.045em;
+  text-transform:none
+}
+.hero-copy .sub{
+  margin:0;max-width:980px;
+  font:600 clamp(12px,1.3vw,14px)/1.5 var(--mono);
+  color:var(--fg-dim)
+}
+.hero-copy .intro{
+  margin:14px 0 0;max-width:920px;
+  font:550 13px/1.6 var(--mono);color:var(--fg)
+}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(92px,1fr));gap:10px;min-width:min(100%,440px)}
+.kpi{
+  border:1px solid var(--line-2);
+  background:rgba(5,6,7,.45);
+  padding:12px
+}
+.kpi .label{margin:0 0 8px;font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--fg-dim)}
+.kpi .value{margin:0;font:900 24px/1 var(--sans);letter-spacing:-.03em}
+.toolbar{display:grid;gap:10px;margin-bottom:16px}
+.toolbar-row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  min-height:32px;padding:0 10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  font:700 10px/1 var(--mono);letter-spacing:.05em
+}
+.chip b{font-weight:800;opacity:.7}
+.meta-bar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  color:var(--fg-dim);font:600 10px/1.2 var(--mono);letter-spacing:.05em
+}
+.view{display:none}
+.view.active{display:block}
+.matrix{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));
+  gap:var(--gap);
+  align-items:start
+}
+.card{
+  border:1px solid var(--line-2);
+  background:linear-gradient(180deg, rgba(12,16,20,.94), rgba(9,12,15,.96));
+  display:flex;flex-direction:column;
+  transition:border-color 160ms linear,transform 180ms var(--ease),background 160ms linear;
+  content-visibility:auto;
+  contain-intrinsic-size:540px
+}
+.card:hover{transform:translateY(-2px);border-color:var(--line-3);background:linear-gradient(180deg, rgba(14,19,24,.96), rgba(9,12,15,.98))}
+.card-head{padding:12px;border-bottom:1px solid var(--line-2);display:grid;gap:8px}
+.card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.indexno{font:700 10px/1 var(--mono);letter-spacing:.08em;color:var(--fg-dim);flex:0 0 auto}
+.card h3{margin:0;font:900 16px/1.15 var(--sans);letter-spacing:-.018em;text-transform:none}
+.card .meta{margin:0;font:550 10px/1.55 var(--mono);color:var(--fg-dim);letter-spacing:.03em}
+.tagline{display:flex;flex-wrap:wrap;gap:6px}
+.tagline span{
+  border:1px solid var(--line);
+  padding:4px 6px;
+  background:rgba(5,6,7,.34);
+  font:700 9px/1 var(--mono);letter-spacing:.04em
+}
+.preview-strip{position:relative;border-bottom:1px solid var(--line-2);background:rgba(5,6,7,.3)}
+.media-rail{
+  display:flex;gap:8px;overflow:auto;padding:10px;
+  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin
+}
+.media-rail::-webkit-scrollbar{height:8px}
+.media-rail::-webkit-scrollbar-thumb{background:var(--line)}
+.thumb{
+  position:relative;flex:0 0 132px;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--line-2);
+  scroll-snap-align:start;background:rgba(5,6,7,.5);padding:0;cursor:pointer
+}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover}
+.thumb::after{
+  content:"";position:absolute;inset:auto 0 0 0;height:26%;
+  background:linear-gradient(to top, rgba(5,6,7,.62), transparent);pointer-events:none
+}
+.card-foot{padding:12px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.foot-meta{
+  font:700 10px/1.2 var(--mono);letter-spacing:.05em;color:var(--fg-dim);
+  display:flex;gap:10px;flex-wrap:wrap
+}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{display:inline-flex;align-items:center;text-decoration:none}
+.timeline{display:flex;flex-direction:column;gap:12px}
+.year-block{
+  border:1px solid var(--line-2);background:linear-gradient(180deg, rgba(12,16,20,.94), rgba(9,12,15,.96));
+  content-visibility:auto;contain-intrinsic-size:320px
+}
+.year-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--line-2)}
+.year-head strong{font:800 12px/1 var(--mono);letter-spacing:.08em}
+.year-head span{font:600 10px/1.2 var(--mono);letter-spacing:.04em;color:var(--fg-dim)}
+.year-row{display:flex;gap:10px;overflow:auto;padding:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.mini{
+  flex:0 0 min(82vw,320px);border:1px solid var(--line-2);background:rgba(5,6,7,.35);
+  cursor:pointer;scroll-snap-align:start;transition:transform 180ms var(--ease),border-color 160ms linear
+}
+.mini:hover{transform:translateY(-2px);border-color:var(--line-3)}
+.mini-media{aspect-ratio:4/3;border-bottom:1px solid var(--line-2)}
+.mini-media img,.mini-media video{width:100%;height:100%;object-fit:cover}
+.mini-info{padding:10px}
+.mini-info strong{display:block;margin:0 0 6px;font:800 11px/1.25 var(--sans);text-transform:none}
+.mini-info span{display:block;font:550 10px/1.45 var(--mono);color:var(--fg-dim)}
+.empty{padding:24px;border:1px solid var(--line-2);background:var(--panel);font:600 12px/1.5 var(--mono);color:var(--fg-dim)}
+.viewer{
+  position:fixed;inset:0;z-index:120;display:none;
+  background:rgba(5,6,7,.78);backdrop-filter:blur(14px) saturate(120%);
+  -webkit-backdrop-filter:blur(14px) saturate(120%)
+}
+.viewer.open{display:block}
+.viewer-panel{
+  position:absolute;inset:12px;border:1px solid var(--line);
+  background:var(--bg);display:grid;grid-template-rows:auto 1fr
+}
+.viewer-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px;border-bottom:1px solid var(--line-2)}
+.viewer-head{min-width:0;display:flex;flex-direction:column;gap:6px}
+.viewer-head h2{margin:0;font:900 14px/1.2 var(--sans);text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.viewer-head p{margin:0;font:600 10px/1.4 var(--mono);letter-spacing:.04em;color:var(--fg-dim)}
+.viewer-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.viewer-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,420px);min-height:0}
+.viewer-stage{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;border-right:1px solid var(--line-2)}
+.stage-main{min-height:0;display:flex;align-items:center;justify-content:center;background:rgba(5,6,7,.72)}
+.stage-main img,.stage-main video{max-width:100%;max-height:100%;width:auto;height:auto;display:block;object-fit:contain}
+.stage-rail{display:flex;gap:8px;padding:10px;overflow:auto;border-top:1px solid var(--line-2);background:rgba(5,6,7,.58)}
+.rail-item{
+  flex:0 0 96px;aspect-ratio:4/3;border:1px solid var(--line-2);background:transparent;cursor:pointer;overflow:hidden;position:relative;padding:0
+}
+.rail-item.active{border-color:var(--line-3);background:var(--panel-2)}
+.rail-item img,.rail-item video{width:100%;height:100%;object-fit:cover;display:block}
+.viewer-side{padding:12px;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.blk{border:1px solid var(--line-2);background:rgba(9,12,15,.74);padding:10px}
+.blk .lbl{margin:0 0 8px;font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--fg-dim)}
+.blk .txt{margin:0;font:550 11px/1.55 var(--mono)}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.tag-wrap span{border:1px solid var(--line);background:rgba(5,6,7,.34);padding:6px 8px;font:700 10px/1 var(--mono);letter-spacing:.04em}
+.hint{font:550 10px/1.5 var(--mono);color:var(--fg-dim)}
+@media (max-width:980px){
+  .viewer-body{grid-template-columns:1fr}
+  .viewer-stage{border-right:0;border-bottom:1px solid var(--line-2)}
+}
+@media (max-width:920px){
+  .bar{grid-template-columns:1fr}
+  .controls{justify-content:flex-start}
+  .search{min-width:100%}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
+}
+@media (max-width:640px){
+  .thumb{flex-basis:116px}
+  .card-foot{align-items:flex-start}
+  .viewer-panel{inset:8px}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<header>
+  <div class="bar">
+    <div class="brand">
+      <a href="index.html" aria-label="xpan home"><img src="xpan.svg" alt="xpan"></a>
+      <div class="brand-copy"><strong id="brandTitle"></strong><span id="brandSub"></span></div>
+    </div>
+    <div class="controls">
+      <label class="search" aria-label="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="q" type="search" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="seg" role="group" aria-label="view"><button id="btnMatrix" type="button" aria-pressed="true"></button><button id="btnChronology" type="button" aria-pressed="false"></button></div>
+      <button id="btnSort" class="control" type="button"></button>
+      <div class="lang" role="group" aria-label="language"><button type="button" data-lang="es" aria-pressed="true">es</button><button type="button" data-lang="en" aria-pressed="false">en</button><button type="button" data-lang="fr" aria-pressed="false">fr</button><button type="button" data-lang="jp" aria-pressed="false">jp</button></div>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-panel">
+      <div class="hero-top">
+        <div class="hero-copy">
+          <p class="eyebrow" id="eyebrow"></p>
+          <h1 id="heroTitle"></h1>
+          <p class="sub" id="heroSub"></p>
+          <p class="intro" id="heroIntro"></p>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><p class="label" id="labSystems"></p><p class="value" id="kAll">0</p></div>
+          <div class="kpi"><p class="label" id="labYears"></p><p class="value" id="kYears">0</p></div>
+          <div class="kpi"><p class="label" id="labVisible"></p><p class="value" id="kVisible">0</p></div>
+          <div class="kpi"><p class="label" id="labFilters"></p><p class="value" id="kFilters">0</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="toolbar">
+    <div class="toolbar-row">
+      <div class="filters" id="filters"></div>
+      <div class="meta-bar">
+        <span id="metaResults"></span>
+        <span>·</span>
+        <span id="metaActiveFilters"></span>
+      </div>
+    </div>
+  </section>
+  <section class="view active" id="viewMatrix"><div class="matrix" id="matrix"></div></section>
+  <section class="view" id="viewChronology"><div class="timeline" id="timeline"></div></section>
+</main>
+<div class="viewer" id="viewer" aria-hidden="true">
+  <div class="viewer-panel">
+    <div class="viewer-top"><div class="viewer-head"><h2 id="vTitle">—</h2><p id="vMeta">—</p></div><div class="viewer-actions"><a class="action-btn" id="vLink" href="#" target="_self"></a><button class="action-btn" id="vClose" type="button"></button></div></div>
+    <div class="viewer-body">
+      <div class="viewer-stage"><div class="stage-main" id="stageMain"></div><div class="stage-rail" id="stageRail"></div></div>
+      <div class="viewer-side">
+        <div class="blk"><p class="lbl" id="lblMeta"></p><p class="txt" id="sideMeta">—</p></div>
+        <div class="blk"><p class="lbl" id="lblTags"></p><div class="tag-wrap" id="sideTags"></div></div>
+        <div class="blk"><p class="lbl" id="lblOrigin"></p><p class="txt" id="sideOrigin">—</p></div>
+        <div class="blk"><p class="lbl" id="lblRoute"></p><p class="txt" id="sideRoute">—</p></div>
+        <div class="blk"><p class="lbl" id="lblAliases"></p><p class="txt" id="sideAliases">—</p></div>
+        <div class="blk"><p class="lbl" id="lblMedia"></p><p class="txt" id="sideMedia">—</p></div>
+        <div class="hint" id="sideHint"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/* =========================
+   xpan — sistemas
+   refactor estructural
+   contenido, data y comportamiento intactos
+   ========================= */
+
+/* ---------- LANGS ---------- */
+const LANGS = {
+  "es": {
+    "title_page": "xpan — sistemas",
+    "brand": "xpan — sistemas",
+    "brand_sub": "archivo unificado de sistemas",
+    "eyebrow": "archivo unificado de sistemas",
+    "hero": "sistemas",
+    "sub": "estructura única para revisar, filtrar y abrir todos los sistemas desarrollados por xpan.",
+    "intro": "cada entrada conserva su ruta individual, su secuencia de media y su lectura transversal por tags. la página funciona como una base estable para seguir creciendo sin cambiar de formato.",
+    "systems": "sistemas",
+    "years": "años",
+    "visible": "visibles",
+    "filters": "filtros",
+    "search": "buscar por título, año, tag, ruta o alias",
+    "all": "todos",
+    "matrix": "matriz",
+    "chronology": "cronología",
+    "curated": "curado",
+    "recent": "reciente",
+    "alpha": "alfabético",
+    "results": "resultados",
+    "active_filters": "filtros activos",
+    "open": "abrir",
+    "project": "ver sistema",
+    "close": "cerrar",
+    "metadata": "datos",
+    "tags": "tags",
+    "origin": "origen",
+    "route": "ruta",
+    "media": "media",
+    "aliases": "alias",
+    "none": "—",
+    "hint": "la vista extendida permanece en cada sistema individual",
+    "preview": "preview",
+    "clear": "limpiar",
+    "count": "registros",
+    "source_arch": "arquitectura",
+    "source_mdtc": "mdtc"
+  },
+  "en": {
+    "title_page": "xpan — systems",
+    "brand": "xpan — systems",
+    "brand_sub": "unified systems archive",
+    "eyebrow": "unified systems archive",
+    "hero": "systems",
+    "sub": "single structure to review, filter, and open every system developed by xpan.",
+    "intro": "each entry keeps its individual route, media sequence, and cross-reading through tags. the page works as a stable base that can keep growing without changing format.",
+    "systems": "systems",
+    "years": "years",
+    "visible": "visible",
+    "filters": "filters",
+    "search": "search by title, year, tag, route, or alias",
+    "all": "all",
+    "matrix": "matrix",
+    "chronology": "chronology",
+    "curated": "curated",
+    "recent": "recent",
+    "alpha": "alphabetical",
+    "results": "results",
+    "active_filters": "active filters",
+    "open": "open",
+    "project": "open system",
+    "close": "close",
+    "metadata": "data",
+    "tags": "tags",
+    "origin": "origin",
+    "route": "path",
+    "media": "media",
+    "aliases": "aliases",
+    "none": "—",
+    "hint": "the expanded view remains inside each individual system",
+    "preview": "preview",
+    "clear": "clear",
+    "count": "records",
+    "source_arch": "architecture",
+    "source_mdtc": "mdtc"
+  },
+  "fr": {
+    "title_page": "xpan — systèmes",
+    "brand": "xpan — systèmes",
+    "brand_sub": "archive unifiée des systèmes",
+    "eyebrow": "archive unifiée des systèmes",
+    "hero": "systèmes",
+    "sub": "structure unique pour consulter, filtrer et ouvrir tous les systèmes développés par xpan.",
+    "intro": "chaque entrée conserve sa route individuelle, sa séquence média et sa lecture transversale par tags. la page agit comme une base stable capable de croître sans changer de format.",
+    "systems": "systèmes",
+    "years": "années",
+    "visible": "visibles",
+    "filters": "filtres",
+    "search": "rechercher par titre, année, tag, route ou alias",
+    "all": "tous",
+    "matrix": "matrice",
+    "chronology": "chronologie",
+    "curated": "curé",
+    "recent": "récent",
+    "alpha": "alphabétique",
+    "results": "résultats",
+    "active_filters": "filtres actifs",
+    "open": "ouvrir",
+    "project": "voir le système",
+    "close": "fermer",
+    "metadata": "données",
+    "tags": "tags",
+    "origin": "origine",
+    "route": "chemin",
+    "media": "média",
+    "aliases": "alias",
+    "none": "—",
+    "hint": "la vue étendue reste dans chaque système individuel",
+    "preview": "preview",
+    "clear": "effacer",
+    "count": "entrées",
+    "source_arch": "architecture",
+    "source_mdtc": "mdtc"
+  },
+  "jp": {
+    "title_page": "xpan — systems",
+    "brand": "xpan — systems",
+    "brand_sub": "統合システムアーカイブ",
+    "eyebrow": "統合システムアーカイブ",
+    "hero": "systems",
+    "sub": "xpan が開発した全システムを確認・抽出・展開するための単一構造。",
+    "intro": "各エントリーは個別ルート、メディア列、タグによる横断的な読みを保持します。このページは、形式を崩さず拡張し続けるための安定した基盤です。",
+    "systems": "systems",
+    "years": "years",
+    "visible": "visible",
+    "filters": "filters",
+    "search": "タイトル、年、タグ、ルート、別名で検索",
+    "all": "all",
+    "matrix": "matrix",
+    "chronology": "chronology",
+    "curated": "curated",
+    "recent": "recent",
+    "alpha": "alphabetical",
+    "results": "results",
+    "active_filters": "active filters",
+    "open": "open",
+    "project": "open system",
+    "close": "close",
+    "metadata": "data",
+    "tags": "tags",
+    "origin": "origin",
+    "route": "path",
+    "media": "media",
+    "aliases": "aliases",
+    "none": "—",
+    "hint": "詳細表示は各システム個別ページに残ります",
+    "preview": "preview",
+    "clear": "clear",
+    "count": "records",
+    "source_arch": "arquitectura",
+    "source_mdtc": "mdtc"
+  }
+};
+
+/* ---------- TAG ORDER ---------- */
+const TAG_ORDER = [
+  "espacial",
+  "sonoro",
+  "objetual",
+  "editorial",
+  "infraestructura",
+  "activación",
+  "arquitectura",
+  "dispositivo",
+  "colaboración",
+  "investigación",
+  "programa",
+  "escucha",
+  "multicanal",
+  "archivo",
+  "modular",
+  "temporal",
+  "expositivo",
+  "portátil",
+  "publicación",
+  "vestible"
+];
+
+/* ---------- DATA ---------- */
+const DATA = [
+  {
+    "title": "s.e.e.v.s_12, [sistema escultórico estructural vórtice sináptico]",
+    "meta": "noviembre 2025 — sistema escultórico estructural",
+    "href": "arq.xpan.s.e.e.v.s.12.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/41067330/original_67db70d60ba470bfef646f1c3eb6e1ac.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/41067315/original_f0dd3fc69706824cda9c2e0eec47fb2d.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/41067322/original_262ee193a60bd23e8de238f6e8cad4bc.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/41067325/original_41281b323961fdb7eacedc650de3da30.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/41067321/original_32d70f2e1bd95853e74e25197a77b719.jpg"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "arquitectura",
+      "infraestructura",
+      "investigación"
+    ],
+    "year": 2025,
+    "order": 1
+  },
+  {
+    "title": "xpan.ep.1, [espacio público uno]",
+    "meta": "octubre 2024 — desarrollo de espacio / sistema",
+    "href": "mdtc.xpan.ep.1.html",
+    "origin": [
+      "arquitectura",
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/36792462/original_17009a3d11bbca70f5eb4211b33a34ac.jpg?1747625333"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/36792454/original_38d1abf821f07b04a621ebdf338cb22f.jpg?1747625329"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38770343/original_e6fe3c33fbd5a885d5fe0822cf3ceeac.jpg?1755114197&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38749966/original_16a25681d656eea6531e4b23e34a51ce.png?1755038352&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38749835/original_ef258da023259ec83b0bec62aa1a6404.jpg?1755037834&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38749003/original_5f0cdbe94b421cf952e291d1d22d6822.jpg?1755035829&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38802102/original_92de9e58cc35238c344d7fac2834ce0c.jpg?1755226697&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38802103/original_912d1e6eee104518baa55f54ef780b29.jpg?1755226699&bc=0"
+      }
+    ],
+    "aliases": [
+      "xpan.ep.1 — activaciones"
+    ],
+    "metaAlt": [
+      "2024–2025 — ciudad de méxico — espacio público uno"
+    ],
+    "tags": [
+      "espacial",
+      "arquitectura",
+      "infraestructura",
+      "activación",
+      "programa"
+    ],
+    "year": 2024,
+    "order": 2
+  },
+  {
+    "title": "xpan.12.e, [sistema de escucha]",
+    "meta": "noviembre 2022 — desarrollo de espacio / sistema",
+    "href": "arq.xpan.12e.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37203325/original_fa334242a9d140e372360705f5b380b3.png?1749077614&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37203297/original_5f02650e8c7d23a106c7b43d11d86312.jpg?1749077475&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37203303/original_bdc78dae1b6daf6557a4f4afa5d1b1c6.jpg?1749077521&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37203304/original_1d12bfafc283053e7a0ce02460a2812f.jpg?1749077520&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37203317/original_7f4214fa8049a41f5cc0ea4cd46b70a7.jpg?1749077599&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37203320/original_e914cf8a3cf2fe2997c6a1c764dbaea9.jpg?1749077599&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "sonoro",
+      "infraestructura",
+      "escucha",
+      "multicanal"
+    ],
+    "year": 2022,
+    "order": 3
+  },
+  {
+    "title": "xpan.ep.t, [espacio público temporal paris 2025]",
+    "meta": "enero 2025 — desarrollo de espacio / sistema",
+    "href": "mdtc.xpan.ep.t.paris.25.html",
+    "origin": [
+      "arquitectura",
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37741132/original_4a0c9f2806107c41ce3a71c3cbcfca5e.jpg?1751128080"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37741131/original_67d99dcdd748cf1d9ccdf5f26b58267f.jpg?1751128080"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37741130/original_42b90db4bbf0a4f454335f2cfd596c52.jpg?1751128079"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37741129/original_00512a002d9a4de3b859313d5be27d40.jpg?1751128079"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37741128/original_fab5f5b61012ad4691ad99ca673d09df.jpg?1751128079"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37741127/original_d4ee291b52ef62e4fa6fb9e7009b3cdb.jpg?1751128078"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/38509087/9706fe192bc1f6edd1cd4d2ea40eabae.mp4?1754087252"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/38509465/d5b51ac73a9e1ecf83b53da394e1386c.mp4?1754088478"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/38509513/d12d6aa0ee2cb73c7a8df57123930e52.mp4?1754088675"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38509996/original_c031ab58eb7d09a293c64c7cc1ed4cfb.jpg?1754091906&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38509993/original_58b816db1949e82fd8c140878bfb7ef7.jpg?1754091903&bc=0"
+      }
+    ],
+    "aliases": [
+      "xpan.ep.t [paris.25]"
+    ],
+    "metaAlt": [
+      "enero 2025 — espacio público temporal"
+    ],
+    "tags": [
+      "espacial",
+      "arquitectura",
+      "infraestructura",
+      "temporal",
+      "activación"
+    ],
+    "year": 2025,
+    "order": 4
+  },
+  {
+    "title": "espacio.gdl",
+    "meta": "junio 2025 — desarrollo de espacio / sistema",
+    "href": "arq.xpan.espacio.gdl.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732475/original_bdce083f058ef01aba42c7ff9008d869.jpg?1751080233&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732476/original_6fefc576bb41163bc2732cdef709c7d0.jpg?1751080235&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732477/original_215ba7dbf81197d08f7e525b8cbf8334.jpg?1751080236&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732478/original_9f891339662385746399f7fd311dc9aa.jpg?1751080236&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732479/original_1b11c5ecd3cb8bd055e1a1ed41a3a3d5.jpg?1751080237&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732481/original_2e1bca9d0a2f4b62d8761a9235cd6e64.jpg?1751080237&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732482/original_23e971b19176780b722dac82fc598559.jpg?1751080239&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732483/original_75ed82473eb97aa319d4c2cd4869eb23.jpg?1751080239&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732484/original_05ebd40cbd55b3c3b6279e4a1079352e.jpg?1751080239&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732485/original_5f0e0f0781842ccc038af7a287277b7d.jpg?1751080240&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732486/original_ddfe7acab2aad1d2e4d69076833c3275.jpg?1751080241&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37732487/original_61c3f0bb03a5b6dcd24ba4c12f6e43bf.jpg?1751080240&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "arquitectura",
+      "infraestructura"
+    ],
+    "year": 2025,
+    "order": 5
+  },
+  {
+    "title": "xpan.studio.2025, [espacio operativo desmontable para desarrollo y archivo]",
+    "meta": "febrero 2025 — intervención arquitectónica",
+    "href": "arq.xpan.studio.2025.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38343252/original_548f5e7b418d08e99159978de9b26803.jpg?1753386354"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38343244/original_76c0eaf8b5410f81087df4493f74e266.jpg?1753386326"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38343280/original_93991fb482ad24cfcb0a4e3296fa7c87.jpg?1753386423"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38343290/original_74a8612a387f7f576a3fb20b0b1cd694.jpg?1753386435"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38343268/original_3ee88feb43b4f38792b83eefebfd484b.jpg?1753386395"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38343261/original_4f2c2b3e3d03d1ba2a39dc81754fac7b.jpg?1753386383"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "arquitectura",
+      "infraestructura",
+      "archivo",
+      "modular"
+    ],
+    "year": 2025,
+    "order": 6
+  },
+  {
+    "title": "mdtc.4, [eden garden cinema]",
+    "meta": "abril 2025 — desarrollo espacial / sistema",
+    "href": "arq.xpan.mdtc4.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38029530/original_b2473108c7785c385e659428680d3887.jpg?1752184871&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38029522/original_fc49d4c595fec3f3769bf235fa116d2d.png?1752184840&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38029311/original_9cffb18cbf52c14e9a010d3040181b8b.jpg?1752184200&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38029306/original_63036ac71993e962e9701801d37e9a9b.jpg?1752184196&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38029298/original_6383db92fd1058962f1855501f3dc537.jpg?1752184179&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38029070/original_e7b6d2edeaec7c33f7e398a967b4ff0c.jpg?1752183429&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "sonoro",
+      "activación",
+      "infraestructura",
+      "investigación"
+    ],
+    "year": 2025,
+    "order": 7
+  },
+  {
+    "title": "hex_666, [hexagrama suspendido + acción sonora]",
+    "meta": "febrero 2024 — desarrollo de estructura / sistema",
+    "href": "arq.xpan.hex_666.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37811435/original_bd7257485429b69abb87a583c2e32157.jpg?1751423384&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37811571/original_ff571f67a64507f2ac9fae970b873eaf.png?1751424089&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37811579/original_18952181e6d7b1cf2b68e4cf680b95cf.png?1751424119&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37811585/original_6981566671b9cc078a6e3c760e216931.png?1751424135&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37811438/original_7eddca9e7b6bdce01ff653f8d5b692a9.jpg?1751423387&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37811433/original_e7b9854b000d8b733cc2b93d06f8624d.jpg?1751423383&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "sonoro",
+      "objetual",
+      "infraestructura",
+      "activación"
+    ],
+    "year": 2024,
+    "order": 8
+  },
+  {
+    "title": "desidia, [sistema espacial + núcleo expositivo]",
+    "meta": "junio 2024 — instalación temporal",
+    "href": "arq.xpan.desidia.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38342310/original_a75dd959bf469d671762851ee29e7c36.jpg?1753383379"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38342328/original_54601161d04cb5b7d9afaa9bd8d65735.jpg?1753383410"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38342333/original_aaa648fa0b29b7c68a01a102939c1aa8.jpg?1753383415"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38342503/original_18ff7088fd08edb133c35190808f9f3d.jpg?1753383797"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38342391/original_45d6b17edb799e919dee0ac570e12c0b.jpg?1753383534"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38342449/original_998b2f92c1960d3bcbf4ffd43e8e9ddb.jpg?1753383664"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "espacial",
+      "arquitectura",
+      "expositivo",
+      "infraestructura"
+    ],
+    "year": 2024,
+    "order": 9
+  },
+  {
+    "title": "estructuras auxiliares",
+    "meta": "2025 — infraestructuras de soporte / objetos técnicos",
+    "href": "arq.xpan.estructuras_auxiliares.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38321954/original_f88196aeba4e24d62bf79f59e9902793.jpg?1753310332&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38321975/original_ca9ed2c5be048adde61148d20705f471.jpg?1753310393&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38322106/original_f1165ffc37fb6441594d2e76ab10f946.jpg?1753310906&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38322125/original_bf2a4f88d8275dd2bbfb0cc876bcc525.jpg?1753310997&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38322005/original_d1922b0cc7368718d4ac4b5db7161dbf.jpg?1753310548&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38322027/original_cd1188f0db5876d677fdbd237170307b.jpg?1753310686&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "objetual",
+      "infraestructura",
+      "dispositivo",
+      "modular"
+    ],
+    "year": 2025,
+    "order": 10
+  },
+  {
+    "title": "xpan.mdl.1, [sistema completo]",
+    "meta": "junio 2022 — desarrollo de objeto / sistema",
+    "href": "arq.xpan.mdl.1.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37759661/original_52c5039a29342ab10965084f16f5e693.png?1751244988&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37759699/original_7b1e3cacccc1d4647d09ca56a2ca2148.png?1751245262&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37759750/original_0f935bb4252eeab9b8653126361ef1d8.png?1751245644&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37759828/original_2031167f70cde23f83791d6684e21ce5.png?1751246254&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/37759952/original_735a6a1f4ef4b46359786019e25b6cf0.jpg?1751246963&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "sonoro",
+      "objetual",
+      "dispositivo",
+      "infraestructura",
+      "investigación"
+    ],
+    "year": 2022,
+    "order": 11
+  },
+  {
+    "title": "6ch_r, [sistema hexafónico suspendido]",
+    "meta": "marzo 2023 — infraestructura sonora / objeto espacial",
+    "href": "arq.xpan.6ch_r.html",
+    "origin": [
+      "arquitectura"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38298553/original_53681747704e2f19671e0e3ed2281bc4.jpg?1753226668&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38298556/original_5ef33fb52b046d779f348045e73dfd32.jpg?1753226674&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38298558/original_d3153f50d3deb911faf72db9dab68703.jpg?1753226679&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38298559/original_16b3c9024b1bbb0f0dc808614d7e8d9d.jpg?1753226679&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38298562/original_c029e7456903553649dae97a66c1430c.jpg?1753226683&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38298710/original_d89172cf805e5967bcd2c0b9194e7f77.jpg?1753227311&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "sonoro",
+      "espacial",
+      "dispositivo",
+      "multicanal",
+      "infraestructura"
+    ],
+    "year": 2023,
+    "order": 12
+  },
+  {
+    "title": "x.6_A/V.f, [xpan 6 mdl.1 audiovisual forum]",
+    "meta": "febrero 2024 — infraestructura sonora /  espacial portátil",
+    "href": "mdtc.xpan.x.6_A_V.f.html",
+    "origin": [
+      "arquitectura",
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38376758/original_b95df38401a25ab8a462d5652cdb4a0d.jpg?1753559880&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38376755/original_685195aeb3338c340d3349b92a5fa461.jpg?1753559880&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38376756/original_7ac5d3f9b4449265567d979c16a07b7f.jpg?1753559880&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38376759/original_cc76a4fda0aec0ee2fb0cd2afa4a9c16.jpg?1753559880&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38376760/original_8a242c12d83ba80ae8b3bb70b9784075.jpg?1753559879&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38376761/original_178634838e5edd277fe7d4a7867e7e9d.jpg?1753559880&bc=0"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39074172/f8975aab234148d36c843e1fa2d7fba1.mov?1756267562"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39071034/26519fce69fd547f4dd74b5df863b0da.mp4?1756253586"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39071365/c2ff479bcc498a3035903f7491d979cf.mov?1756254811"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39074077/12bfc2c447f4bfdd648e2ba20ab71616.mp4?1756267006"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39074071/e5aed89893983db42b200d8d34237a5e.mp4?1756266986"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39074075/0e5d5f9a69e1304692f345afdad9ed3b.mp4?1756267002"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39074079/b79770c00d538aa4b47e8e9e6bab095f.mp4?1756267018"
+      }
+    ],
+    "aliases": [
+      "x.6_a/v.f — 2024"
+    ],
+    "metaAlt": [
+      "01–23 febrero 2024 — ciudad de méxico — wig"
+    ],
+    "tags": [
+      "sonoro",
+      "espacial",
+      "infraestructura",
+      "portátil",
+      "dispositivo",
+      "multicanal"
+    ],
+    "year": 2024,
+    "order": 13
+  },
+  {
+    "title": "i8oppa, [sistema octofónico oscilatorio para piezas acusmáticas]",
+    "meta": "mayo 2022 — sistema multicanal / programa público",
+    "href": "mdtc.xpan.s+lm.i8oppa.html",
+    "origin": [
+      "arquitectura",
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/29326755/original_11325111c50a485c9de8c751d37ad92f.jpg?1720584114&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/29326536/original_a46238245902835495a860f571e6e180.jpg?1720584023&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/29326501/original_ec330e6a971a01a41cfc931ead73e830.jpg?1720584012&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/29326471/original_d9b54614dbabd5e7c2ad6280e6bcabd7.jpg?1720584001&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38004639/original_9cc73333fe86b20408ef650aeaa265f7.jpg?1752108315&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38004647/original_1bf4460132ff1902b378bcf8c60ec83f.jpg?1752108343&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39368984/original_70460051c73b1137ec5db2592ae4f619.png"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39368923/original_9a32d6b60a2d787dca189e3bd45d72c7.png"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39366247/original_815e307198935830a0775de54a1ec0c9.jpg?1757271289&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39366340/original_f1bce4f69a364ac624fe2d2a6161e016.jpg?1757271440&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39366561/original_5a42478317662201a018d3d775c0cb39.jpg?1757272023&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39366700/original_e2e97243743f873f3f4a7ab7671767db.jpg?1757272530&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39366711/original_ac573d21feff3a59aeb061b6f5a93e95.jpg?1757272560&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39366771/original_2f9e49b6e775a9145228160b68452df1.jpg?1757272715&bc=0"
+      }
+    ],
+    "aliases": [
+      "sound + — listening material"
+    ],
+    "metaAlt": [
+      "abril 2022 — ciudad de méxico — material art fair"
+    ],
+    "tags": [
+      "sonoro",
+      "dispositivo",
+      "multicanal",
+      "escucha",
+      "programa"
+    ],
+    "year": 2022,
+    "order": 14
+  },
+  {
+    "title": "xcv2",
+    "meta": "mayo 2023 — xpan collaborations volume 2",
+    "href": "mdtc.xcv2.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646413/original_91c11b85c6f202822195303bd73b4adf.jpg?1754604580&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646406/original_be38a13f89e08d72737ed7f24641fee4.jpg?1754604560&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646379/original_be83ad705ea34eea010269708674189b.jpg?1754604502&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646394/original_1566821bd11405ef892852a87c3169a1.jpg?1754604541&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "sonoro",
+      "colaboración",
+      "dispositivo",
+      "activación",
+      "investigación"
+    ],
+    "year": 2023,
+    "order": 15
+  },
+  {
+    "title": "mdl.c — xpan × c. h. matos",
+    "meta": "2024 — san francisco, california — colección permanente del sfmoma",
+    "href": "mdtc.mdl.c_matos_sfmoma.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38671201/original_1a7de3de9e18b0c19cb156cc78d99334.jpg?1754696653&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646397/original_f39777de1906936885d806c60cd8a348.jpg?1754604545&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646399/original_3535dfe3c69dc41415d145b8c7ef1589.jpg?1754604546&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38646395/original_a532380ca32e09f2e14d7cc6bc093b83.jpg?1754604543&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "sonoro",
+      "objetual",
+      "dispositivo",
+      "colaboración"
+    ],
+    "year": 2024,
+    "order": 16
+  },
+  {
+    "title": "xcv1 — xpan collaborations volume 1",
+    "meta": "noviembre 2022 — nueva york — studio guapo",
+    "href": "mdtc.xcv1.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38871435/original_bcbc21e62b94ce76eaa12ffdae0c24fa.png?1755561982&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38871424/original_8d6647fbcd5b0d51980c98be4e46726b.png?1755561965&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38871410/original_69ca867f7351743a5b193aef80c35baf.jpg?1755561937&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38871408/original_e07a8e3499a2029fa07ed80876862954.png?1755561936&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38871376/original_47da7623f1b367a56c005951ea5e966a.jpg?1755561894&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "colaboración",
+      "sonoro",
+      "objetual",
+      "investigación"
+    ],
+    "year": 2022,
+    "order": 17
+  },
+  {
+    "title": "mdtc.pjt.mdl.1",
+    "meta": "junio 2022 — primera activación / dispositivo sonoro-espacial",
+    "href": "mdtc.pjt.mdl.1.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38445895/original_588c05160e05cdbd5239607c1502e12c.jpg?1753837433"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38445898/original_8a69dfb94945dc2510b3115ad9a88606.png?1753837495"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38445912/original_086c3d9df86785f120614b590e0dea5a.png?1753837549"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38445950/original_dad9943a5e22ded6666a2cd3b5464dcf.jpg?1753837732"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38445944/original_9eb335036391b0d032ce1783cc8e7b20.jpg?1753837681"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "sonoro",
+      "espacial",
+      "dispositivo",
+      "activación",
+      "investigación"
+    ],
+    "year": 2022,
+    "order": 18
+  },
+  {
+    "title": "hipersensoria",
+    "meta": "febrero 2022 — activación sonora / arquitectura expandida",
+    "href": "mdtc.hipersensoria.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38591113/original_ecce8636e9853759a0bc34c6a16a1072.jpg?1754420552&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38591111/original_bee60b4992cd39abc04bfb0bfd640634.jpg?1754420552&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38591095/original_d1882f5ac3cb0ea4ad6e14a29cea0730.jpg?1754420550&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38590868/original_64736cffb0780a6e5a803ec77ae65649.png?1754419947&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "espacial",
+      "programa"
+    ],
+    "year": 2022,
+    "order": 19
+  },
+  {
+    "title": "12.e — hv9a",
+    "meta": "octubre 2023 — noveno aniversario de halcyon veil en 12.e",
+    "href": "mdtc.12.e_hv9a.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38642667/original_f0f5156c3a28308e922666b74d946756.jpg?1754595186&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38642610/original_ec833f2f15439c144d20b3f8555a9741.jpg?1754595001&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38642591/original_d3b6199cd1e3d6e7ec03671162d421b3.jpg?1754594949&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38642630/original_f28a46a6c28f2e6c8a277f44c7c3e516.jpg?1754595054&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "programa",
+      "colaboración"
+    ],
+    "year": 2023,
+    "order": 20
+  },
+  {
+    "title": "s+js23 — infra",
+    "meta": "2023 — ciudad de méxico — proyectos públicos",
+    "href": "mdtc.s+js23.infra.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38723627/original_5532ab4e33003ea9b91de115267f16ad.jpg?1754951822&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38723628/original_2197eb76cbdc1ed6027b3f28d820d982.jpg?1754951822&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38723635/original_81f51ec7ebf8414a9a1decbf5b4c11fa.jpg?1754951827&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38723642/original_132003c16e147a71dc20698f065bc500.jpg?1754951833&bc=0"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/38723876/8edce6633f5f43ebfe6c1583381e9fe0.mp4?1754953041"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/38723815/4ec7809024ffe39984bb63e36587c098.mov?1754952685"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "infraestructura",
+      "espacial",
+      "colaboración"
+    ],
+    "year": 2023,
+    "order": 21
+  },
+  {
+    "title": "mdtc.5 — méxico ↔ japón · ruido como puente cultural",
+    "meta": "03.23.25 — tokyo — GATA <> xpan",
+    "href": "mdtc.5.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/38848465/e0be84095072e57de8dacfcdb8ac292f.mov?1755478539"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38848599/original_8cec0a806f430bdf6582e221a805de59.jpg?1755478855&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38848603/original_6e3a6b646334c1d14af5ae12347cd9ca.jpg?1755478856&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38848609/original_abe03b27bed0ded8c0fcc8ecb8c62193.jpg?1755478860&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38848585/original_b6c6b29814f3e868558b52d1e4dbf222.jpg?1755478853&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/38848595/original_bfa0202e6bb354136be0081d6bbd89bb.jpg?1755478855&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "colaboración",
+      "programa"
+    ],
+    "year": 2025,
+    "order": 22
+  },
+  {
+    "title": "scs+22 — showcase sound + 2022",
+    "meta": "03–06 noviembre 2022 — ciudad de méxico — sound +",
+    "href": "mdtc.scs+22.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39028005/9be55de52cb12f4ebe8e65b5e8d15180.mp4?1756152662"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39028398/original_6b57e2acd9d2c5e7ed8e8105ffde63b9.png?1756153435&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39032211/original_e364181e9f153349cddce80eb3376351.jpg?1756162809&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39032221/original_6312bf755f9a6fadfa87d2a6adff066a.jpg?1756162814&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39031545/original_cccfee93fb99405a30def5a03551bd17.jpg?1756161457&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39028959/original_aea5fadc8c9d1dca1e665f6946cf2a53.jpg?1756155020&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39028705/original_3c631cf9fdd547a6e0a745e624b2044e.jpg?1756154388&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39032136/original_053ef3c76a907fbcf184a5801f25fab1.jpg?1756162661&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "programa",
+      "colaboración"
+    ],
+    "year": 2022,
+    "order": 23
+  },
+  {
+    "title": "sound + anahuacalli",
+    "meta": "11–14 noviembre 2021 — museo anahuacalli, ciudad de méxico",
+    "href": "mdtc.sound+anahuacalli.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39134517/original_0da3f71b1ae8ba8c28a88436879ee8c2.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135114/original_1acddcd6719f260a1feab1241bf59fd6.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135548/original_ba57dba27389876add0a2c4de0ffb1de.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135054/original_b75593db6ccc4de9c9c888b7228662bf.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135604/original_6937018c8d3a365401bb559dbe95b1d4.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135198/original_12fd6f419686ce6e7f00f16c9dec177d.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135631/original_1b998d576c4e38142a1a611e6288a18b.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39135171/original_0d2a258c29f706be7c44d997dcdcc628.jpg"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "programa"
+    ],
+    "year": 2021,
+    "order": 24
+  },
+  {
+    "title": "sound + sensemayá",
+    "meta": "febrero 2022 — ciudad de méxico — c.b.a.",
+    "href": "mdtc.sound+sensemaya.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39228980/original_9478cc5d728c3c2370a2d172f9751d15.jpg?1756789235&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39228987/original_37777569d0b65f7540dc6f65dc04c1e3.jpg?1756789255&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39228984/original_edb5cbcd96bb57bf3f40cf0b969b1f70.jpg?1756789249&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39228983/original_eecc7c09356e26dc83bc0a364a6ce22c.jpg?1756789246&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39228982/original_70e5aa44571b0cda266bae8e154d2bae.jpg?1756789241&bc=0"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39228981/original_23d43b22cc936eb96077ddf38e2f7fb0.jpg?1756789238&bc=0"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "programa"
+    ],
+    "year": 2022,
+    "order": 25
+  },
+  {
+    "title": "mdtc — ls.33.3",
+    "meta": "16 julio 2025 — ciudad de méxico",
+    "href": "mdtc.ls.33.3.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39370286/original_0197b8691209348030b904d40392fe40.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39370290/original_6a17100297c1cc7e3ee7de3eb0cddc77.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39370288/original_32cfcd0a9cc81a7d6f5f59d15f833f71.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39370289/original_b767df71691afc11a3bfe785dab346a7.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39370285/original_171301f384c9d53442043f6e8a48402b.jpg"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "escucha",
+      "programa"
+    ],
+    "year": 2025,
+    "order": 26
+  },
+  {
+    "title": "mdtc — [S.G.R.C.]",
+    "meta": "agosto 2024 — ciudad de méxico",
+    "href": "mdtc.sgrc.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F38834812%2Foriginal_f0b5779eba8f7f940f765da437315d38.png%3F1755403706%26bc%3D0&w=480&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F38834832%2Foriginal_0719162c81f403059b5f53606c6a91c8.png%3F1755403708%26bc%3D0&w=480&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F38834808%2Foriginal_49a411e8714cff67821c721d87ec37b0.png%3F1755403705%26bc%3D0&w=480&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F38834851%2Foriginal_50e79282281074d4d6036d62821efb67.png%3F1755403713%26bc%3D0&w=480&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F38834840%2Foriginal_39160a5ac6198b51c411eafc64aae5ab.png%3F1755403711%26bc%3D0&w=480&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F38834821%2Foriginal_2a6f1233900a0a505915398bb4264dcb.png%3F1755403707%26bc%3D0&w=480&q=70&we"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "investigación"
+    ],
+    "year": 2024,
+    "order": 27
+  },
+  {
+    "title": "mdtc — sound + fluxus",
+    "meta": "enero 2022 — ciudad de méxico",
+    "href": "mdtc.sound+fluxus.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F39251298%2Foriginal_f92731b482c8264aa4b58bb80f46e656.jpg&w=2200&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F39251296%2Foriginal_dc11566d69db74de255a70e283dc2cde.jpg&w=2200&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F39251295%2Foriginal_b955c90326c79939966255aff6625f69.jpg&w=2200&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F39251291%2Foriginal_3dfcbd0944c741d05a7fcd47ba8365d9.jpg&w=2200&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F39251289%2Foriginal_3b33a27cef16acc23549044f7a538fb6.jpg&w=2200&q=70&we"
+      },
+      {
+        "type": "img",
+        "src": "https://images.weserv.nl/?url=d2w9rnfcy7mm78.cloudfront.net%2F39251644%2Foriginal_3dce7fafe0bb9d114260507ab0ba6804.jpg&w=2200&q=70&we"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "sonoro",
+      "programa"
+    ],
+    "year": 2022,
+    "order": 28
+  },
+  {
+    "title": "lo intangible sobre lo inmutable",
+    "meta": "4–7 febrero 2025 — ciudad de méxico",
+    "href": "mdtc.lo-intangible.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393206/original_86a1f5c37739bc9eeb66dca818d5c895.jpg?w=1600&q=75&fit=contain"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393161/original_6949ae141d6f8bdf3cc4f8592df8cf75.jpg?w=1600&q=75&fit=contain"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393117/original_7146285e966b3657f610dedd50faccc7.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393082/original_cb3f16dbf3f4d42f74739dd9fcead6fb.jpg?w=1600&q=75&fit=contain"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393075/original_5f10ceb032ba93532304806d5adc268d.jpg?w=1600&q=75&fit=contain"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39393177/original_14f6fcf0bde54c6d259852dcb2188d3f.jpg?w=1600&q=75&fit=contain"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "activación",
+      "investigación",
+      "expositivo"
+    ],
+    "year": 2025,
+    "order": 29
+  },
+  {
+    "title": "xpan.c.0.0",
+    "meta": "2023 — ciudad de méxico — xpan",
+    "href": "mdtc.xpan.c.0.0.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39190046/4ddb74e2dce50421501ccef0b9600237.mp4?1756668673"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39165048/original_1163da918fd3f908ab10bb432c519dcf.jpg"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39165053/original_a763e2768ad1544f3c84aa3e01cc2bc8.jpg"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39190024/5c3143bd562b3992c6609306382c12aa.mp4"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39190010/beb83f9ed860c7fe1b6823e55586d1f6.mp4"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39165356/7dbb65f9a2030b57f94f6adccdf9799b.mp4"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/39190025/325cd7bff9e4a879b65e11f5f496560b.mp4"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "objetual",
+      "vestible",
+      "colaboración"
+    ],
+    "year": 2023,
+    "order": 30
+  },
+  {
+    "title": "xpan.atlas",
+    "meta": "publicación periodica impresa",
+    "href": "atlas.html",
+    "origin": [
+      "mdtc"
+    ],
+    "media": [
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39582747/original_9a1b9f53a6019e76f9e1b717bb4f3665.jpg"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/41008058/ae6697093a35d2d8cf5e040e762033f8.mov?1762811319"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/41008060/cf0ff6e69790faa753371ec2a9875c19.mov?1762811321"
+      },
+      {
+        "type": "img",
+        "src": "https://d2w9rnfcy7mm78.cloudfront.net/39582550/original_5590f227370fd12faf054cc1aa1c043b.jpg"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/41008061/b1b8db45f7c76b2df65f0a5cef4e1c0c.mov?1762811326"
+      },
+      {
+        "type": "video",
+        "src": "https://attachments.are.na/41008062/54c119196d64b3aeed4aa747d80e2ab0.mov?1762811328"
+      }
+    ],
+    "aliases": [],
+    "metaAlt": [],
+    "tags": [
+      "editorial",
+      "publicación",
+      "archivo",
+      "colaboración",
+      "investigación"
+    ],
+    "year": 2025,
+    "order": 31
+  }
+];
+
+/* ---------- DOM ---------- */
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+const DOM = {
+  brandTitle: $('#brandTitle'),
+  brandSub: $('#brandSub'),
+  q: $('#q'),
+  btnMatrix: $('#btnMatrix'),
+  btnChronology: $('#btnChronology'),
+  btnSort: $('#btnSort'),
+  langButtons: $$('.lang button'),
+  eyebrow: $('#eyebrow'),
+  heroTitle: $('#heroTitle'),
+  heroSub: $('#heroSub'),
+  heroIntro: $('#heroIntro'),
+  labSystems: $('#labSystems'),
+  kAll: $('#kAll'),
+  labYears: $('#labYears'),
+  kYears: $('#kYears'),
+  labVisible: $('#labVisible'),
+  kVisible: $('#kVisible'),
+  labFilters: $('#labFilters'),
+  kFilters: $('#kFilters'),
+  filters: $('#filters'),
+  metaResults: $('#metaResults'),
+  metaActiveFilters: $('#metaActiveFilters'),
+  viewMatrix: $('#viewMatrix'),
+  viewChronology: $('#viewChronology'),
+  matrix: $('#matrix'),
+  timeline: $('#timeline'),
+  viewer: $('#viewer'),
+  vTitle: $('#vTitle'),
+  vMeta: $('#vMeta'),
+  vLink: $('#vLink'),
+  vClose: $('#vClose'),
+  stageMain: $('#stageMain'),
+  stageRail: $('#stageRail'),
+  lblMeta: $('#lblMeta'),
+  sideMeta: $('#sideMeta'),
+  lblTags: $('#lblTags'),
+  sideTags: $('#sideTags'),
+  lblOrigin: $('#lblOrigin'),
+  sideOrigin: $('#sideOrigin'),
+  lblRoute: $('#lblRoute'),
+  sideRoute: $('#sideRoute'),
+  lblAliases: $('#lblAliases'),
+  sideAliases: $('#sideAliases'),
+  lblMedia: $('#lblMedia'),
+  sideMedia: $('#sideMedia'),
+  sideHint: $('#sideHint')
+};
+
+/* ---------- STATE ---------- */
+const state = {
+  lang: 'es',
+  view: 'matrix',
+  sort: 'curated',
+  query: '',
+  tags: new Set(),
+  filtered: [...DATA]
+};
+
+/* ---------- HELPERS ---------- */
+const norm = (value) => (value || '')
+  .toString()
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[̀-ͯ]/g, '')
+  .trim();
+
+const t = (key) => LANGS[state.lang][key] || LANGS.es[key] || key;
+
+const byTagOrder = (a, b) => {
+  const ai = TAG_ORDER.indexOf(a);
+  const bi = TAG_ORDER.indexOf(b);
+  return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi) || a.localeCompare(b);
+};
+
+function yearsSpan() {
+  const years = [...new Set(DATA.map((entry) => entry.year).filter(Boolean))].sort((a, b) => a - b);
+  if (!years.length) return '0';
+  return years.length === 1 ? String(years[0]) : `${years[0]}–${years.at(-1)}`;
+}
+
+function primaryOrigin(entry) {
+  return entry.origin
+    .map((origin) => (origin === 'arquitectura' ? t('source_arch') : t('source_mdtc')))
+    .join(' + ');
+}
+
+function allTags() {
+  const tags = new Set();
+  DATA.forEach((entry) => entry.tags.forEach((tag) => tags.add(tag)));
+  return [...tags].sort(byTagOrder);
+}
+
+function searchText(entry) {
+  return norm([
+    entry.title,
+    entry.meta,
+    entry.href,
+    ...(entry.tags || []),
+    ...(entry.aliases || []),
+    ...(entry.metaAlt || [])
+  ].join(' '));
+}
+
+function sortEntries(list) {
+  const items = [...list];
+
+  if (state.sort === 'recent') {
+    items.sort((a, b) => (b.year - a.year) || a.order - b.order);
+  } else if (state.sort === 'alpha') {
+    items.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+  } else {
+    items.sort((a, b) => a.order - b.order);
+  }
+
+  return items;
+}
+
+function findEntry(href) {
+  return DATA.find((entry) => entry.href === href);
+}
+
+function groupByYear(items) {
+  const groups = new Map();
+
+  sortEntries(items).forEach((item) => {
+    const year = item.year || 0;
+    if (!groups.has(year)) groups.set(year, []);
+    groups.get(year).push(item);
+  });
+
+  return [...groups.entries()].sort((a, b) => b[0] - a[0]);
+}
+
+/* ---------- MEDIA ---------- */
+function lazyMedia(root = document) {
+  const items = $$('[data-src]', root);
+
+  const io = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+
+      const el = entry.target;
+      const src = el.getAttribute('data-src');
+
+      if (src) {
+        el.src = src;
+        el.removeAttribute('data-src');
+
+        const video = el.closest('video');
+        if (video) video.load();
+      }
+
+      observer.unobserve(el);
+    });
+  }, { rootMargin: '240px 0px' });
+
+  items.forEach((item) => io.observe(item));
+}
+
+function setupVideoAutoplay(root = document) {
+  const videos = $$('video[data-auto]', root);
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const video = entry.target;
+      if (entry.isIntersecting) video.play().catch(() => {});
+      else video.pause();
+    });
+  }, { threshold: 0.45 });
+
+  videos.forEach((video) => io.observe(video));
+}
+
+function mediaEl(mediaItem, cls = '') {
+  if (!mediaItem) return '';
+
+  if (mediaItem.type === 'video') {
+    return `
+      <video class="${cls}" muted loop playsinline preload="none" data-auto>
+        <source data-src="${mediaItem.src}">
+      </video>
+    `;
+  }
+
+  return `<img class="${cls}" alt="" data-src="${mediaItem.src}">`;
+}
+
+function mountStageMedia(mediaItem) {
+  if (!mediaItem) return '';
+
+  if (mediaItem.type === 'video') {
+    return `
+      <video controls playsinline preload="metadata">
+        <source src="${mediaItem.src}">
+      </video>
+    `;
+  }
+
+  return `<img alt="" src="${mediaItem.src}">`;
+}
+
+/* ---------- FILTERS ---------- */
+function applyFilters() {
+  const q = norm(state.query);
+
+  state.filtered = DATA.filter((entry) => {
+    const tagOk = state.tags.size === 0 || [...state.tags].every((tag) => entry.tags.includes(tag));
+    const queryOk = !q || searchText(entry).includes(q);
+    return tagOk && queryOk;
+  });
+
+  render();
+}
+
+function renderFilters() {
+  const tags = allTags();
+  const chips = [
+    `<button class="chip ${state.tags.size === 0 ? 'active' : ''}" type="button" data-tag="__all">${t('all')}</button>`
+  ];
+
+  tags.forEach((tag) => {
+    const count = DATA.filter((entry) => entry.tags.includes(tag)).length;
+    chips.push(`
+      <button class="chip ${state.tags.has(tag) ? 'active' : ''}" type="button" data-tag="${tag}">
+        <span>${tag}</span>
+        <b>${count}</b>
+      </button>
+    `);
+  });
+
+  DOM.filters.innerHTML = chips.join('');
+}
+
+/* ---------- CARDS ---------- */
+function card(entry, index) {
+  return `
+    <article class="card">
+      <div class="card-head">
+        <div class="card-top">
+          <span class="indexno">${String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>${entry.title}</h3>
+            <p class="meta">${entry.meta}</p>
+          </div>
+        </div>
+        <div class="tagline">
+          ${entry.tags.map((tag) => `<span>${tag}</span>`).join('')}
+        </div>
+      </div>
+      <div class="preview-strip">
+        <div class="media-rail">
+          ${entry.media.map((item, mediaIndex) => `
+            <button class="thumb" type="button" data-open="${entry.href}" data-index="${mediaIndex}" aria-label="${t('preview')}">
+              ${mediaEl(item)}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="card-foot">
+        <div class="foot-meta">
+          <span>${primaryOrigin(entry)}</span>
+          <span>${entry.year || '—'}</span>
+          <span>${entry.media.length} ${t('count')}</span>
+        </div>
+        <div class="actions">
+          <button class="action-btn" type="button" data-open="${entry.href}" data-index="0">${t('open')}</button>
+          <a class="action-btn" href="${entry.href}" target="_self">${t('project')}</a>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/* ---------- RENDER ---------- */
+function renderMatrix() {
+  const items = sortEntries(state.filtered);
+
+  if (!items.length) {
+    DOM.matrix.innerHTML = `<div class="empty">${t('results')}: 0</div>`;
+    return;
+  }
+
+  DOM.matrix.innerHTML = items.map((entry, index) => card(entry, index)).join('');
+  lazyMedia(DOM.matrix);
+  setupVideoAutoplay(DOM.matrix);
+}
+
+function renderTimeline() {
+  const groups = groupByYear(state.filtered);
+
+  if (!groups.length) {
+    DOM.timeline.innerHTML = `<div class="empty">${t('results')}: 0</div>`;
+    return;
+  }
+
+  DOM.timeline.innerHTML = groups.map(([year, items]) => `
+    <section class="year-block">
+      <div class="year-head">
+        <strong>${year || '—'}</strong>
+        <span>${items.length} ${t('systems')}</span>
+      </div>
+      <div class="year-row">
+        ${items.map((item) => `
+          <article class="mini" data-open="${item.href}" data-index="0">
+            <div class="mini-media">${item.media[0] ? mediaEl(item.media[0], 'thumb') : ''}</div>
+            <div class="mini-info">
+              <strong>${item.title}</strong>
+              <span>${item.meta}</span>
+            </div>
+          </article>
+        `).join('')}
+      </div>
+    </section>
+  `).join('');
+
+  lazyMedia(DOM.timeline);
+  setupVideoAutoplay(DOM.timeline);
+}
+
+function updateStats() {
+  DOM.kAll.textContent = DATA.length;
+  DOM.kYears.textContent = yearsSpan();
+  DOM.kVisible.textContent = state.filtered.length;
+  DOM.kFilters.textContent = state.tags.size;
+  DOM.metaResults.textContent = `${t('results')}: ${state.filtered.length}`;
+  DOM.metaActiveFilters.textContent = `${t('active_filters')}: ${state.tags.size ? [...state.tags].join(', ') : t('none')}`;
+}
+
+function renderCopy() {
+  document.title = t('title_page');
+  DOM.brandTitle.textContent = t('brand');
+  DOM.brandSub.textContent = t('brand_sub');
+  DOM.eyebrow.textContent = t('eyebrow');
+  DOM.heroTitle.textContent = t('hero');
+  DOM.heroSub.textContent = t('sub');
+  DOM.heroIntro.textContent = t('intro');
+  DOM.labSystems.textContent = t('systems');
+  DOM.labYears.textContent = t('years');
+  DOM.labVisible.textContent = t('visible');
+  DOM.labFilters.textContent = t('filters');
+  DOM.q.placeholder = t('search');
+  DOM.btnMatrix.textContent = t('matrix');
+  DOM.btnChronology.textContent = t('chronology');
+  DOM.btnSort.textContent = t(state.sort);
+  DOM.vLink.textContent = t('project');
+  DOM.vClose.textContent = t('close');
+  DOM.lblMeta.textContent = t('metadata');
+  DOM.lblTags.textContent = t('tags');
+  DOM.lblOrigin.textContent = t('origin');
+  DOM.lblRoute.textContent = t('route');
+  DOM.lblAliases.textContent = t('aliases');
+  DOM.lblMedia.textContent = t('media');
+  DOM.sideHint.textContent = t('hint');
+}
+
+function renderViewState() {
+  DOM.btnMatrix.setAttribute('aria-pressed', String(state.view === 'matrix'));
+  DOM.btnChronology.setAttribute('aria-pressed', String(state.view === 'chronology'));
+  DOM.viewMatrix.classList.toggle('active', state.view === 'matrix');
+  DOM.viewChronology.classList.toggle('active', state.view === 'chronology');
+  DOM.langButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.lang === state.lang));
+  });
+}
+
+function render() {
+  renderCopy();
+  renderFilters();
+  updateStats();
+  renderViewState();
+
+  if (state.view === 'matrix') renderMatrix();
+  else renderTimeline();
+}
+
+/* ---------- VIEWER ---------- */
+function openViewer(href, index = 0) {
+  const entry = findEntry(href);
+  if (!entry) return;
+
+  const media = entry.media;
+  const start = Math.max(0, Math.min(index, media.length - 1));
+
+  DOM.vTitle.textContent = entry.title;
+  DOM.vMeta.textContent = entry.meta;
+  DOM.vLink.href = entry.href;
+  DOM.sideMeta.textContent = [entry.meta].concat(entry.metaAlt || []).join(' · ');
+  DOM.sideOrigin.textContent = primaryOrigin(entry);
+  DOM.sideRoute.textContent = entry.href;
+  DOM.sideAliases.textContent = entry.aliases && entry.aliases.length ? entry.aliases.join(' · ') : t('none');
+  DOM.sideMedia.textContent = `${entry.media.length} ${t('count')}`;
+  DOM.sideTags.innerHTML = entry.tags.map((tag) => `<span>${tag}</span>`).join('');
+
+  function paint(stageIndex) {
+    DOM.stageMain.innerHTML = mountStageMedia(media[stageIndex]);
+    DOM.stageRail.innerHTML = media.map((item, railIndex) => `
+      <button class="rail-item ${railIndex === stageIndex ? 'active' : ''}" type="button" data-stage="${railIndex}">
+        ${item.type === 'video'
+          ? `<video muted playsinline preload="none"><source data-src="${item.src}"></video>`
+          : `<img alt="" data-src="${item.src}">`
+        }
+      </button>
+    `).join('');
+
+    lazyMedia(DOM.stageRail);
+  }
+
+  paint(start);
+
+  DOM.stageRail.onclick = (event) => {
+    const button = event.target.closest('[data-stage]');
+    if (!button) return;
+    paint(Number(button.dataset.stage));
+  };
+
+  DOM.viewer.classList.add('open');
+  DOM.viewer.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('viewer-open');
+}
+
+function closeViewer() {
+  DOM.viewer.classList.remove('open');
+  DOM.viewer.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('viewer-open');
+  DOM.stageMain.innerHTML = '';
+  DOM.stageRail.innerHTML = '';
+}
+
+/* ---------- EVENTS ---------- */
+function onDocumentClick(event) {
+  const openButton = event.target.closest('[data-open]');
+  if (openButton) {
+    event.preventDefault();
+    openViewer(openButton.dataset.open, Number(openButton.dataset.index || 0));
+    return;
+  }
+
+  const chip = event.target.closest('.chip');
+  if (chip) {
+    const tag = chip.dataset.tag;
+
+    if (tag === '__all') state.tags.clear();
+    else if (state.tags.has(tag)) state.tags.delete(tag);
+    else state.tags.add(tag);
+
+    applyFilters();
+    return;
+  }
+
+  const langButton = event.target.closest('.lang button');
+  if (langButton) {
+    state.lang = langButton.dataset.lang;
+    render();
+  }
+}
+
+function bindEvents() {
+  document.addEventListener('click', onDocumentClick);
+
+  DOM.q.addEventListener('input', (event) => {
+    state.query = event.target.value;
+    applyFilters();
+  });
+
+  DOM.btnMatrix.addEventListener('click', () => {
+    state.view = 'matrix';
+    render();
+  });
+
+  DOM.btnChronology.addEventListener('click', () => {
+    state.view = 'chronology';
+    render();
+  });
+
+  DOM.btnSort.addEventListener('click', () => {
+    state.sort = state.sort === 'curated'
+      ? 'recent'
+      : state.sort === 'recent'
+        ? 'alpha'
+        : 'curated';
+
+    render();
+  });
+
+  DOM.vClose.addEventListener('click', closeViewer);
+
+  DOM.viewer.addEventListener('click', (event) => {
+    if (event.target.id === 'viewer') closeViewer();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeViewer();
+  });
+}
+
+/* ---------- INIT ---------- */
+bindEvents();
+render();
+</script>
+</body>
+</html>
