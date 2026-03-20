@@ -26,12 +26,16 @@
     a{color:var(--fg);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s linear}
     a:hover{border-bottom-color:var(--accent)}
 
+    html{visibility:hidden;}
     /* ===== logo ===== */
-    .logo{
-      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-      width:100px;height:auto;z-index:5;cursor:pointer;
-      transition:opacity .2s linear;animation:fadeIn .9s linear;
-    }
+.logo{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  width:66px;
+  height:auto;
+  z-index:5;
+  cursor:pointer;
+}
     .logo img{
       width:100%;height:auto;display:block;
       filter:invert(1) brightness(100%);transition:filter .3s linear;
@@ -44,7 +48,9 @@
     .link{
       position:absolute;transform:translate(-50%,-50%);
       font:500 .9rem/1 var(--font-ui);text-transform:lowercase;
-      color:var(--fg);z-index:3;transition:opacity .15s linear;
+      color:var(--fg);z-index:3;
+      transition:opacity .15s linear;
+      white-space:nowrap;
     }
     .link:hover{opacity:.7}
 
@@ -54,10 +60,12 @@
       pointer-events:none;transition:opacity .15s linear;
     }
     svg.lines line{
-      stroke:var(--fg);stroke-opacity:.35;stroke-width:1;
+      stroke:var(--fg);stroke-opacity:.03;stroke-width:3;
+      vector-effect:non-scaling-stroke;
       stroke-dasharray:1000;stroke-dashoffset:1000;
-      animation:draw 1.2s linear forwards;
+      animation:draw 6.6s linear forwards;
     }
+    svg.lines line.spoke{stroke-opacity:.1}
     @keyframes draw{to{stroke-dashoffset:0}}
     @keyframes fadeIn{from{opacity:0;transform:translate(-50%,-50%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 
@@ -116,9 +124,9 @@
   <!-- enlaces -->
   <a href="12.e.html" class="link" style="top:10%; left:50%;">12.e</a>
   <a href="atlas.html" class="link" style="top:25%; left:80%;">atlas</a>
-  <a href="arquitectura.index.html" class="link" style="top:75%; left:80%;">sistemas espaciales</a>
+  <a href="sistemas.html" class="link" style="top:75%; left:80%;">sistemas</a>
   <a href="marco_teorico.index.html" class="link" style="top:90%; left:50%;">marco teórico</a>
-  <a href="mdtc.index.html" class="link" style="top:75%; left:20%;">mdtc</a>
+  <a href="a.e.i.index.html" class="link" style="top:75%; left:20%;">a.e.i.</a>
   <a href="ep.2.html" class="link" style="top:25%; left:20%;">ep.2</a>
 
   <svg class="lines" aria-hidden="true"></svg>
@@ -193,80 +201,141 @@
 
 
   <script>
-    const linesContainer=document.querySelector("svg.lines");
-    const logo=document.getElementById("logo");
-    const overlay=document.getElementById("overlay");
-    const langButtons=document.querySelectorAll(".language-selector button");
-    const links=document.querySelectorAll(".link");
-    const descriptions=document.querySelectorAll(".description .lang");
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const STAR_VIEWBOX = { width: 595.28, height: 841.89 };
+    const STAR_LINES = [
+      [[85.76,138.22],[537.94,566.09]],
+      [[85.76,138.22],[380.41,684.49]],
+      [[178.51,310.18],[537.94,566.09]],
+      [[485.87,140.17],[33.65,567.77]],
+      [[485.87,140.17],[194.31,683.52]],
+      [[394.45,310.55],[33.65,567.77]],
+      [[286.77,328.43],[194.31,683.52]],
+      [[286.77,328.43],[380.41,684.49]]
+    ];
+    const STAR_NODES = {
+      top: [285.815,139.195],
+      upperRight: [537.94,566.09],
+      lowerRight: [380.41,684.49],
+      lowerLeft: [194.31,683.52],
+      upperLeft: [33.65,567.77],
+      topRight: [485.87,140.17],
+      topLeft: [85.76,138.22],
+      center: [285.795,411.355]
+    };
 
-    function drawLines(){
-      if(!linesContainer)return;
-      linesContainer.innerHTML="";
-      const c={x:innerWidth/2,y:innerHeight/2};
-      links.forEach(link=>{
-        const r=link.getBoundingClientRect();
-        const x=r.left+r.width/2,y=r.top+r.height/2;
-        const ln=document.createElementNS("http://www.w3.org/2000/svg","line");
-        ln.setAttribute("x1",c.x);ln.setAttribute("y1",c.y);
-        ln.setAttribute("x2",x);ln.setAttribute("y2",y);
+    const linesContainer = document.querySelector("svg.lines");
+    const logo = document.getElementById("logo");
+    const overlay = document.getElementById("overlay");
+    const langButtons = document.querySelectorAll(".language-selector button");
+    const links = [...document.querySelectorAll(".link")];
+    const descriptions = document.querySelectorAll(".description .lang");
+
+    const linkMap = [
+      { el: document.querySelector('a[href="12.e.html"]'), point: STAR_NODES.upperRight },
+      { el: document.querySelector('a[href="atlas.html"]'), point: STAR_NODES.upperLeft },
+      { el: document.querySelector('a[href="sistemas.html"]'), point: STAR_NODES.topRight },
+      { el: document.querySelector('a[href="marco_teorico.index.html"]'), point: STAR_NODES.lowerLeft },
+      { el: document.querySelector('a[href="a.e.i.index.html"]'), point: STAR_NODES.lowerRight },
+      { el: document.querySelector('a[href="ep.2.html"]'), point: STAR_NODES.topLeft }
+    ].filter(item => item.el);
+
+    function computeFit(){
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const padX = Math.max(28, vw * 0.08);
+      const padY = Math.max(28, vh * 0.08);
+      const availW = vw - padX * 2;
+      const availH = vh - padY * 2;
+      const scale = Math.min(availW / STAR_VIEWBOX.width, availH / STAR_VIEWBOX.height);
+      const drawW = STAR_VIEWBOX.width * scale;
+      const drawH = STAR_VIEWBOX.height * scale;
+      const offsetX = (vw - drawW) / 2;
+      const offsetY = (vh - drawH) / 2;
+      return { scale, offsetX, offsetY };
+    }
+
+    function toViewport(point, fit){
+      return {
+        x: fit.offsetX + point[0] * fit.scale,
+        y: fit.offsetY + point[1] * fit.scale
+      };
+    }
+
+    function placeGeometry(){
+      const fit = computeFit();
+      const center = toViewport(STAR_NODES.center, fit);
+      logo.style.left = `${center.x}px`;
+      logo.style.top = `${center.y}px`;
+
+      linkMap.forEach(({ el, point }) => {
+        const p = toViewport(point, fit);
+        el.style.left = `${p.x}px`;
+        el.style.top = `${p.y}px`;
+      });
+
+      drawLines(fit, center);
+      document.documentElement.style.visibility = "visible";
+    }
+
+    function drawLines(fit, center){
+      if(!linesContainer) return;
+      linesContainer.innerHTML = "";
+      STAR_LINES.forEach(([a, b]) => {
+        const p1 = toViewport(a, fit);
+        const p2 = toViewport(b, fit);
+        const ln = document.createElementNS(SVG_NS, "line");
+        ln.setAttribute("x1", p1.x);
+        ln.setAttribute("y1", p1.y);
+        ln.setAttribute("x2", p2.x);
+        ln.setAttribute("y2", p2.y);
         linesContainer.appendChild(ln);
       });
-    }
 
-    window.addEventListener("load",()=>{requestAnimationFrame(drawLines);setTimeout(drawLines,60)});
-    window.addEventListener("resize",()=>requestAnimationFrame(drawLines));
-
-    logo.addEventListener("click",e=>{
-      e.stopPropagation();
-      overlay.classList.add("active");
-      linesContainer.style.opacity="0";
-      links.forEach(l=>l.style.opacity="0");
-      logo.style.opacity=".45";
-    });
-
-    overlay.addEventListener("click",()=>{
-      overlay.classList.remove("active");
-      linesContainer.style.opacity="1";
-      links.forEach(l=>l.style.opacity="1");
-      logo.style.opacity="1";
-      requestAnimationFrame(drawLines);
-    });
-
-/* patch: tap en la descripción también cierra el overlay (excepto sobre links/controles) */
-(() => {
-  const desc = overlay.querySelector('.description');
-  if (!desc) return;
-
-  desc.addEventListener('click', (e) => {
-    // Si tocaste un enlace, botón o elemento marcado, no cerrar
-    if (e.target.closest('a, button, [data-no-exit]')) {
-      e.stopPropagation();
-      return;
-    }
-    // Cerrar overlay como si hubieras tocado fuera
-    overlay.classList.remove('active');
-    linesContainer.style.opacity = '1';
-    links.forEach(l => l.style.opacity = '1');
-    logo.style.opacity = '1';
-    requestAnimationFrame(drawLines);
-  }, { passive: true });
-})();
-
-    function setLang(lang){
-      try{localStorage.setItem('lang',lang);}catch{}
-      descriptions.forEach(d=>d.classList.remove("active"));
-      const n=document.querySelector(".lang-"+lang);
-      if(n)n.classList.add("active");
-      langButtons.forEach(b=>{
-        const on=b.dataset.lang===lang;
-        b.classList.toggle("active",on);
-        b.setAttribute("aria-pressed",on?"true":"false");
+      linkMap.forEach(({ point }) => {
+        const p = toViewport(point, fit);
+        const spoke = document.createElementNS(SVG_NS, "line");
+        spoke.setAttribute("x1", center.x);
+        spoke.setAttribute("y1", center.y);
+        spoke.setAttribute("x2", p.x);
+        spoke.setAttribute("y2", p.y);
+        spoke.setAttribute("class", "spoke");
+        linesContainer.appendChild(spoke);
       });
     }
-    const initLang=localStorage.getItem('lang')||(navigator.language||'es').slice(0,2)||'es';
-    setLang(initLang);
-    langButtons.forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();setLang(btn.dataset.lang)}));
+
+    function setLanguage(lang){
+      langButtons.forEach(btn=>{
+        const active = btn.dataset.lang===lang;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      descriptions.forEach(desc=>{
+        desc.classList.toggle("active", desc.classList.contains(`lang-${lang}`));
+      });
+    }
+
+window.addEventListener("load", ()=>{
+  placeGeometry();
+});
+    window.addEventListener("resize", ()=>requestAnimationFrame(placeGeometry));
+
+    logo.addEventListener("click", e=>{
+      e.stopPropagation();
+      overlay.classList.toggle("active");
+    });
+
+    overlay.addEventListener("click", e=>{
+      if(!e.target.closest(".description") && !e.target.closest(".language-selector")){
+        overlay.classList.remove("active");
+      }
+    });
+
+    document.addEventListener("keydown", e=>{
+      if(e.key === "Escape") overlay.classList.remove("active");
+    });
+
+    langButtons.forEach(btn=>btn.addEventListener("click",()=>setLanguage(btn.dataset.lang)));
   </script>
 </body>
 </html>

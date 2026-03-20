@@ -9,235 +9,135 @@
 <link rel="preconnect" href="https://attachments.are.na" crossorigin>
 <style>
 :root{
-  --bg:#050607;
-  --bg-2:#0a0c0f;
-  --panel:#0c1014;
-  --panel-2:#0f1419;
-  --panel-3:#121922;
-  --fg:#edf2f7;
-  --fg-dim:rgba(237,242,247,.62);
-  --fg-soft:rgba(237,242,247,.42);
-  --line:rgba(237,242,247,.11);
-  --line-2:rgba(237,242,247,.07);
-  --line-3:rgba(237,242,247,.16);
-  --accent:#97b7ff;
-  --shadow:none;
+  --bg:#060708;
+  --bg-2:#0a0d11;
+  --panel:#0d1116;
+  --panel-2:#10161d;
+  --panel-3:#151d26;
+  --fg:#eef2f6;
+  --fg-dim:rgba(238,242,246,.68);
+  --fg-soft:rgba(238,242,246,.42);
+  --line:rgba(238,242,246,.12);
+  --line-2:rgba(238,242,246,.08);
+  --line-3:rgba(238,242,246,.18);
+  --accent:#95b7ff;
   --radius:0px;
   --pad:clamp(14px,2.4vw,30px);
-  --gap:clamp(10px,1.2vw,14px);
+  --gap:clamp(10px,1.1vw,14px);
   --tap:40px;
   --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
   --sans:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --ease:cubic-bezier(.16,1,.3,1)
+  --ease:cubic-bezier(.16,1,.3,1);
+  --card-media-h:clamp(180px,26vw,248px);
+}
+@media (prefers-color-scheme: light) {
+  :root{
+    --bg:#ffffff;
+    --bg-2:#f4f7fa;
+    --panel:#ffffff;
+    --panel-2:#f7f9fc;
+    --panel-3:#e9eef4;
+    --fg:#0d1115;
+    --fg-dim:rgba(13,17,21,.66);
+    --fg-soft:rgba(13,17,21,.42);
+    --line:rgba(13,17,21,.12);
+    --line-2:rgba(13,17,21,.07);
+    --line-3:rgba(13,17,21,.18);
+    --accent:#3b5bfd;
+  }
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family:var(--sans);
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overflow-x:hidden
-}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 body.viewer-open{overflow:hidden}
 a{color:inherit;text-decoration:none}
 button,input{font:inherit}
 img,video{display:block;max-width:100%;height:auto;background:transparent}
-.bg{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(900px 360px at 50% -4%, rgba(151,183,255,.08), transparent 72%),
-    repeating-linear-gradient(to right, var(--line-2) 0 1px, transparent 1px 80px),
-    repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px 80px);
-  opacity:.92;
-  mask-image:linear-gradient(to bottom, #000, rgba(0,0,0,.82))
-}
-.grain{
-  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.04;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px)
-}
-header{
-  position:sticky;top:0;z-index:40;
-  padding:calc(10px + env(safe-area-inset-top)) var(--pad) 10px;
-  border-bottom:1px solid var(--line-2);
-  background:rgba(5,6,7,.86);
-  backdrop-filter:blur(12px) saturate(125%);
-  -webkit-backdrop-filter:blur(12px) saturate(125%)
-}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(900px 360px at 50% -4%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 72%),repeating-linear-gradient(to right, var(--line-2) 0 1px, transparent 1px 88px),repeating-linear-gradient(to bottom, var(--line-2) 0 1px, transparent 1px 88px);opacity:.88}
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background:repeating-linear-gradient(0deg, color-mix(in srgb, var(--fg) 5%, transparent) 0 1px, transparent 1px 3px),repeating-linear-gradient(90deg, color-mix(in srgb, var(--fg) 4%, transparent) 0 1px, transparent 1px 4px)}
+header{position:sticky;top:0;z-index:40;padding:calc(10px + env(safe-area-inset-top)) var(--pad) 10px;border-bottom:1px solid var(--line-2);background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(14px) saturate(125%);-webkit-backdrop-filter:blur(14px) saturate(125%)}
 .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
 .brand a{display:inline-flex;align-items:center;flex:0 0 auto}
-.brand img{width:40px;height:auto;filter:invert(1)}
+.brand img{width:40px;height:auto;filter:none}
+@media (prefers-color-scheme: dark){.brand img{filter:invert(1)}}
 .brand-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
-.brand-copy strong{
-  font:800 12px/1.1 var(--mono);
-  letter-spacing:.08em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-}
-.brand-copy span{
-  font:600 10px/1.2 var(--mono);
-  letter-spacing:.04em;
-  color:var(--fg-dim);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
-}
+.brand-copy strong{font:800 12px/1.1 var(--mono);letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-copy span{font:600 10px/1.2 var(--mono);letter-spacing:.04em;color:var(--fg-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .controls{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px}
-.control,.seg,.lang,.chip,.action-btn,.search{
-  border:1px solid var(--line);
-  background:rgba(12,16,20,.72);
-  color:var(--fg);
-  border-radius:var(--radius)
-}
-.search{display:flex;align-items:center;gap:8px;padding:0 12px;min-height:var(--tap);min-width:min(42vw,320px)}
+.control,.seg,.lang,.chip,.action-btn,.search{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:var(--radius)}
+.search{display:flex;align-items:center;gap:8px;padding:0 12px;min-height:var(--tap);min-width:min(42vw,340px)}
 .search svg{width:14px;height:14px;flex:0 0 auto;opacity:.72}
-.search input{
-  flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);
-  font:600 12px/1.2 var(--mono)
-}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--fg);font:600 12px/1.2 var(--mono)}
 .search input::placeholder{color:var(--fg-soft)}
 .seg,.lang{display:inline-grid;grid-auto-flow:column}
-.seg button,.lang button,.control,.action-btn{
-  min-height:var(--tap);padding:0 12px;border:0;background:transparent;cursor:pointer;color:var(--fg);
-  font:700 10px/1 var(--mono);letter-spacing:.06em
-}
+.seg button,.lang button,.control,.action-btn{min-height:var(--tap);padding:0 12px;border:0;background:transparent;cursor:pointer;color:var(--fg);font:700 10px/1 var(--mono);letter-spacing:.06em}
 .seg button+button,.lang button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"],.lang button[aria-pressed="true"],.chip.active{background:var(--panel-3)}
 main{position:relative;z-index:1;padding:18px var(--pad) 52px}
 .hero{display:grid;gap:12px;margin-bottom:14px}
-.hero-panel{
-  border:1px solid var(--line-2);
-  background:linear-gradient(180deg, rgba(12,16,20,.94), rgba(9,12,15,.94));
-  padding:18px
-}
+.hero-panel{border:1px solid var(--line-2);background:linear-gradient(180deg, var(--panel), var(--bg-2));padding:18px}
 .hero-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.hero-copy{max-width:980px}
-.eyebrow{
-  margin:0 0 10px;
-  font:700 10px/1 var(--mono);
-  letter-spacing:.1em;
-  color:var(--fg-dim)
-}
-.hero-copy h1{
-  margin:0 0 8px;
-  font:900 clamp(28px,5vw,54px)/.94 var(--sans);
-  letter-spacing:-.045em;
-  text-transform:none
-}
-.hero-copy .sub{
-  margin:0;max-width:980px;
-  font:600 clamp(12px,1.3vw,14px)/1.5 var(--mono);
-  color:var(--fg-dim)
-}
-.hero-copy .intro{
-  margin:14px 0 0;max-width:920px;
-  font:550 13px/1.6 var(--mono);color:var(--fg)
-}
+.hero-copy{max-width:960px}
+.eyebrow{margin:0 0 10px;font:700 10px/1 var(--mono);letter-spacing:.1em;color:var(--fg-dim)}
+.hero-copy h1{margin:0 0 8px;font:900 clamp(28px,5vw,54px)/.94 var(--sans);letter-spacing:-.045em;text-transform:none}
+.hero-copy .sub{margin:0;max-width:920px;font:600 clamp(12px,1.3vw,14px)/1.5 var(--mono);color:var(--fg-dim)}
+.hero-copy .intro{margin:14px 0 0;max-width:920px;font:550 13px/1.6 var(--mono);color:var(--fg)}
+.hero-copy .add-hint{margin:12px 0 0;font:550 11px/1.6 var(--mono);color:var(--fg-soft)}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(92px,1fr));gap:10px;min-width:min(100%,440px)}
-.kpi{
-  border:1px solid var(--line-2);
-  background:rgba(5,6,7,.45);
-  padding:12px
-}
+.kpi{border:1px solid var(--line-2);background:var(--panel-2);padding:12px}
 .kpi .label{margin:0 0 8px;font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--fg-dim)}
 .kpi .value{margin:0;font:900 24px/1 var(--sans);letter-spacing:-.03em}
 .toolbar{display:grid;gap:10px;margin-bottom:16px}
 .toolbar-row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .filters{display:flex;flex-wrap:wrap;gap:8px}
-.chip{
-  min-height:32px;padding:0 10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
-  font:700 10px/1 var(--mono);letter-spacing:.05em
-}
+.chip{min-height:32px;padding:0 10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font:700 10px/1 var(--mono);letter-spacing:.05em}
 .chip b{font-weight:800;opacity:.7}
-.meta-bar{
-  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-  color:var(--fg-dim);font:600 10px/1.2 var(--mono);letter-spacing:.05em
-}
+.meta-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--fg-dim);font:600 10px/1.2 var(--mono);letter-spacing:.05em}
 .view{display:none}
 .view.active{display:block}
-.matrix{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));
-  gap:var(--gap);
-  align-items:start
-}
-.card{
-  border:1px solid var(--line-2);
-  background:linear-gradient(180deg, rgba(12,16,20,.94), rgba(9,12,15,.96));
-  display:flex;flex-direction:column;
-  transition:border-color 160ms linear,transform 180ms var(--ease),background 160ms linear;
-  content-visibility:auto;
-  contain-intrinsic-size:540px
-}
-.card:hover{transform:translateY(-2px);border-color:var(--line-3);background:linear-gradient(180deg, rgba(14,19,24,.96), rgba(9,12,15,.98))}
-.card-head{padding:12px;border-bottom:1px solid var(--line-2);display:grid;gap:8px}
-.card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.indexno{font:700 10px/1 var(--mono);letter-spacing:.08em;color:var(--fg-dim);flex:0 0 auto}
-.card h3{margin:0;font:900 16px/1.15 var(--sans);letter-spacing:-.018em;text-transform:none}
-.card .meta{margin:0;font:550 10px/1.55 var(--mono);color:var(--fg-dim);letter-spacing:.03em}
+.matrix{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:var(--gap);align-items:start}
+.card{border:1px solid var(--line-2);background:linear-gradient(180deg, var(--panel), var(--bg-2));display:flex;flex-direction:column;transition:border-color 160ms linear,transform 180ms var(--ease),background 160ms linear;content-visibility:auto;contain-intrinsic-size:520px;min-width:0}
+.card:hover{transform:translateY(-2px);border-color:var(--line-3);background:linear-gradient(180deg, var(--panel-2), var(--bg))}
+.card-head{padding:14px 14px 12px;border-bottom:1px solid var(--line-2);display:grid;gap:10px}
+.card-top{display:grid;gap:8px;align-items:flex-start}
+.card h3{margin:0;font:900 16px/1.16 var(--sans);letter-spacing:-.018em;text-transform:none}
+.card .meta{margin:0;font:550 10px/1.58 var(--mono);color:var(--fg-dim);letter-spacing:.03em}
 .tagline{display:flex;flex-wrap:wrap;gap:6px}
-.tagline span{
-  border:1px solid var(--line);
-  padding:4px 6px;
-  background:rgba(5,6,7,.34);
-  font:700 9px/1 var(--mono);letter-spacing:.04em
-}
-.preview-strip{position:relative;border-bottom:1px solid var(--line-2);background:rgba(5,6,7,.3)}
-.media-rail{
-  display:flex;gap:8px;overflow:auto;padding:10px;
-  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin
-}
+.tagline span,.micro span{border:1px solid var(--line);padding:4px 6px;background:var(--panel-2);font:700 9px/1 var(--mono);letter-spacing:.04em}
+.preview-strip{position:relative;border-bottom:1px solid var(--line-2);background:var(--bg-2)}
+.media-rail{display:flex;gap:8px;overflow:auto;padding:10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin;min-height:var(--card-media-h)}
 .media-rail::-webkit-scrollbar{height:8px}
 .media-rail::-webkit-scrollbar-thumb{background:var(--line)}
-.thumb{
-  position:relative;flex:0 0 132px;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--line-2);
-  scroll-snap-align:start;background:rgba(5,6,7,.5);padding:0;cursor:pointer
-}
-.thumb img,.thumb video{width:100%;height:100%;object-fit:cover}
-.thumb::after{
-  content:"";position:absolute;inset:auto 0 0 0;height:26%;
-  background:linear-gradient(to top, rgba(5,6,7,.62), transparent);pointer-events:none
-}
-.card-foot{padding:12px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
-.foot-meta{
-  font:700 10px/1.2 var(--mono);letter-spacing:.05em;color:var(--fg-dim);
-  display:flex;gap:10px;flex-wrap:wrap
-}
+.thumb{position:relative;flex:0 0 168px;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--line-2);scroll-snap-align:start;background:var(--panel);padding:0;cursor:pointer}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.timeline-asset{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.more{display:grid;place-items:center;background:linear-gradient(180deg,var(--panel-2),var(--bg-2));color:var(--fg-dim);font:700 10px/1.4 var(--mono);letter-spacing:.06em;text-align:center;padding:10px}
+.thumb::after{content:"";position:absolute;inset:auto 0 0 0;height:26%;background:linear-gradient(to top, color-mix(in srgb, var(--bg) 42%, transparent), transparent);pointer-events:none}
+.thumb.more::after{display:none}
+.card-foot{padding:12px 14px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.foot-meta{font:700 10px/1.2 var(--mono);letter-spacing:.05em;color:var(--fg-dim);display:flex;gap:10px;flex-wrap:wrap}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .action-btn{display:inline-flex;align-items:center;text-decoration:none}
 .timeline{display:flex;flex-direction:column;gap:12px}
-.year-block{
-  border:1px solid var(--line-2);background:linear-gradient(180deg, rgba(12,16,20,.94), rgba(9,12,15,.96));
-  content-visibility:auto;contain-intrinsic-size:320px
-}
-.year-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--line-2)}
+.year-block{border:1px solid var(--line-2);background:linear-gradient(180deg, var(--panel), var(--bg-2));content-visibility:auto;contain-intrinsic-size:280px}
+.year-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line-2)}
 .year-head strong{font:800 12px/1 var(--mono);letter-spacing:.08em}
 .year-head span{font:600 10px/1.2 var(--mono);letter-spacing:.04em;color:var(--fg-dim)}
-.year-row{display:flex;gap:10px;overflow:auto;padding:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.mini{
-  flex:0 0 min(82vw,320px);border:1px solid var(--line-2);background:rgba(5,6,7,.35);
-  cursor:pointer;scroll-snap-align:start;transition:transform 180ms var(--ease),border-color 160ms linear
-}
+.year-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,260px));justify-content:start;gap:10px;padding:12px}
+.mini{width:260px;max-width:100%;border:1px solid var(--line-2);background:var(--panel);cursor:pointer;transition:transform 180ms var(--ease),border-color 160ms linear;min-width:0}
 .mini:hover{transform:translateY(-2px);border-color:var(--line-3)}
-.mini-media{aspect-ratio:4/3;border-bottom:1px solid var(--line-2)}
-.mini-media img,.mini-media video{width:100%;height:100%;object-fit:cover}
-.mini-info{padding:10px}
-.mini-info strong{display:block;margin:0 0 6px;font:800 11px/1.25 var(--sans);text-transform:none}
+.mini-media{aspect-ratio:4/3;border-bottom:1px solid var(--line-2);background:var(--bg-2)}
+.mini-media > img,.mini-media > video{width:100%;height:100%;object-fit:cover;display:block}
+.mini-info{padding:10px;display:grid;gap:6px}
+.mini-info strong{display:block;margin:0;font:800 11px/1.3 var(--sans);text-transform:none}
 .mini-info span{display:block;font:550 10px/1.45 var(--mono);color:var(--fg-dim)}
+.mini-info .micro{display:flex;flex-wrap:wrap;gap:6px}
 .empty{padding:24px;border:1px solid var(--line-2);background:var(--panel);font:600 12px/1.5 var(--mono);color:var(--fg-dim)}
-.viewer{
-  position:fixed;inset:0;z-index:120;display:none;
-  background:rgba(5,6,7,.78);backdrop-filter:blur(14px) saturate(120%);
-  -webkit-backdrop-filter:blur(14px) saturate(120%)
-}
+.viewer{position:fixed;inset:0;z-index:120;display:none;background:color-mix(in srgb, var(--bg) 80%, transparent);backdrop-filter:blur(14px) saturate(120%);-webkit-backdrop-filter:blur(14px) saturate(120%)}
 .viewer.open{display:block}
-.viewer-panel{
-  position:absolute;inset:12px;border:1px solid var(--line);
-  background:var(--bg);display:grid;grid-template-rows:auto 1fr
-}
+.viewer-panel{position:absolute;inset:12px;border:1px solid var(--line);background:var(--bg);display:grid;grid-template-rows:auto 1fr}
 .viewer-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px;border-bottom:1px solid var(--line-2)}
 .viewer-head{min-width:0;display:flex;flex-direction:column;gap:6px}
 .viewer-head h2{margin:0;font:900 14px/1.2 var(--sans);text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -245,16 +145,15 @@ main{position:relative;z-index:1;padding:18px var(--pad) 52px}
 .viewer-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
 .viewer-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,420px);min-height:0}
 .viewer-stage{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;border-right:1px solid var(--line-2)}
-.stage-main{min-height:0;display:flex;align-items:center;justify-content:center;background:rgba(5,6,7,.72)}
-.stage-main img,.stage-main video{max-width:100%;max-height:100%;width:auto;height:auto;display:block;object-fit:contain}
-.stage-rail{display:flex;gap:8px;padding:10px;overflow:auto;border-top:1px solid var(--line-2);background:rgba(5,6,7,.58)}
-.rail-item{
-  flex:0 0 96px;aspect-ratio:4/3;border:1px solid var(--line-2);background:transparent;cursor:pointer;overflow:hidden;position:relative;padding:0
-}
+.stage-main{min-height:0;display:flex;align-items:center;justify-content:center;background:var(--bg-2);padding:10px}
+.stage-main img,.stage-main video{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:var(--bg-2)}
+.stage-main video{width:100%;height:100%;object-fit:contain}
+.stage-rail{display:flex;gap:8px;padding:10px;overflow:auto;border-top:1px solid var(--line-2);background:var(--panel)}
+.rail-item{flex:0 0 96px;aspect-ratio:4/3;border:1px solid var(--line-2);background:transparent;cursor:pointer;overflow:hidden;position:relative;padding:0}
 .rail-item.active{border-color:var(--line-3);background:var(--panel-2)}
 .rail-item img,.rail-item video{width:100%;height:100%;object-fit:cover;display:block}
 .viewer-side{padding:12px;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:10px}
-.blk{border:1px solid var(--line-2);background:rgba(9,12,15,.74);padding:10px}
+.blk{border:1px solid var(--line-2);background:var(--panel-2);padding:10px}
 .blk .lbl{margin:0 0 8px;font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--fg-dim)}
 .blk .txt{margin:0;font:550 11px/1.55 var(--mono)}
 .tag-wrap{display:flex;flex-wrap:wrap;gap:8px}
@@ -270,11 +169,32 @@ main{position:relative;z-index:1;padding:18px var(--pad) 52px}
   .search{min-width:100%}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
 }
-@media (max-width:640px){
-  .thumb{flex-basis:116px}
+@media (max-width:700px){
+  .matrix{grid-template-columns:1fr}
+  .thumb{flex-basis:min(66vw,240px)}
+  .media-rail{min-height:unset}
   .card-foot{align-items:flex-start}
   .viewer-panel{inset:8px}
+  .year-grid{grid-template-columns:1fr}
+  .mini{width:100%}
 }
+@media (max-width:520px){
+  main{padding-inline:12px}
+  header{padding-inline:12px}
+  .hero-panel{padding:14px}
+  .card-head{padding:12px}
+  .card-foot{padding:10px 12px 12px}
+  .thumb{flex-basis:72vw}
+}
+
+video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  background:#000;
+}
+
 </style>
 </head>
 <body>
@@ -306,6 +226,7 @@ main{position:relative;z-index:1;padding:18px var(--pad) 52px}
           <h1 id="heroTitle"></h1>
           <p class="sub" id="heroSub"></p>
           <p class="intro" id="heroIntro"></p>
+          <p class="add-hint" id="heroAddHint"></p>
         </div>
         <div class="kpis">
           <div class="kpi"><p class="label" id="labSystems"></p><p class="value" id="kAll">0</p></div>
@@ -347,169 +268,179 @@ main{position:relative;z-index:1;padding:18px var(--pad) 52px}
   </div>
 </div>
 <script>
-/* =========================
-   xpan — sistemas
-   refactor estructural
-   contenido, data y comportamiento intactos
-   ========================= */
+const STORAGE_KEY = 'xpan-sistemas-v3';
 
-/* ---------- LANGS ---------- */
 const LANGS = {
-  "es": {
-    "title_page": "xpan — sistemas",
-    "brand": "xpan — sistemas",
-    "brand_sub": "archivo unificado de sistemas",
-    "eyebrow": "archivo unificado de sistemas",
-    "hero": "sistemas",
-    "sub": "estructura única para revisar, filtrar y abrir todos los sistemas desarrollados por xpan.",
-    "intro": "cada entrada conserva su ruta individual, su secuencia de media y su lectura transversal por tags. la página funciona como una base estable para seguir creciendo sin cambiar de formato.",
-    "systems": "sistemas",
-    "years": "años",
-    "visible": "visibles",
-    "filters": "filtros",
-    "search": "buscar por título, año, tag, ruta o alias",
-    "all": "todos",
-    "matrix": "matriz",
-    "chronology": "cronología",
-    "curated": "curado",
-    "recent": "reciente",
-    "alpha": "alfabético",
-    "results": "resultados",
-    "active_filters": "filtros activos",
-    "open": "abrir",
-    "project": "ver sistema",
-    "close": "cerrar",
-    "metadata": "datos",
-    "tags": "tags",
-    "origin": "origen",
-    "route": "ruta",
-    "media": "media",
-    "aliases": "alias",
-    "none": "—",
-    "hint": "la vista extendida permanece en cada sistema individual",
-    "preview": "preview",
-    "clear": "limpiar",
-    "count": "registros",
-    "source_arch": "arquitectura",
-    "source_mdtc": "mdtc"
+  es: {
+    title_page: 'xpan — sistemas',
+    brand: 'xpan — sistemas',
+    brand_sub: 'archivo operativo',
+    eyebrow: 'archivo operativo de sistemas',
+    hero: 'sistemas',
+    sub: 'archivo central de los sistemas desarrollados por xpan.',
+    intro: 'esta página reúne los sistemas espaciales, sonoros, objetuales, editoriales y técnicos desarrollados por xpan. cada entrada concentra una vista sintética del sistema, su fecha, sus tags, una selección de media y su ruta directa al archivo o página correspondiente. la matriz permite una lectura transversal por afinidades; la cronología ordena los sistemas por fecha para leer su desarrollo en el tiempo; los filtros y la búsqueda permiten localizar relaciones, formatos, funciones y etapas específicas.',
+    add_hint: 'usa matriz, cronología, filtros y búsqueda para recorrer el archivo según sistema, fecha o relación.',
+    systems: 'sistemas',
+    years: 'años',
+    visible: 'visibles',
+    filters: 'filtros',
+    search: 'buscar por título, fecha, tag, ruta o alias',
+    all: 'todos',
+    matrix: 'matriz',
+    chronology: 'cronología',
+    curated: 'curado',
+    recent: 'reciente',
+    alpha: 'alfabético',
+    results: 'resultados',
+    active_filters: 'filtros activos',
+    open: 'abrir',
+    project: 'ir al sistema',
+    close: 'cerrar',
+    metadata: 'información',
+    tags: 'tags',
+    origin: 'origen',
+    route: 'ruta',
+    media: 'media',
+    aliases: 'alias',
+    none: '—',
+    hint: 'cada sistema mantiene su página o archivo propio para la documentación completa, las galerías, los planos y el desarrollo extendido.',
+    preview: 'preview',
+    clear: 'limpiar',
+    count: 'registros',
+    source_arch: 'arquitectura',
+    source_mdtc: 'mdtc',
+    more_media: 'más media',
+    month_unknown: 'sin mes',
+    active_query: 'búsqueda'
   },
-  "en": {
-    "title_page": "xpan — systems",
-    "brand": "xpan — systems",
-    "brand_sub": "unified systems archive",
-    "eyebrow": "unified systems archive",
-    "hero": "systems",
-    "sub": "single structure to review, filter, and open every system developed by xpan.",
-    "intro": "each entry keeps its individual route, media sequence, and cross-reading through tags. the page works as a stable base that can keep growing without changing format.",
-    "systems": "systems",
-    "years": "years",
-    "visible": "visible",
-    "filters": "filters",
-    "search": "search by title, year, tag, route, or alias",
-    "all": "all",
-    "matrix": "matrix",
-    "chronology": "chronology",
-    "curated": "curated",
-    "recent": "recent",
-    "alpha": "alphabetical",
-    "results": "results",
-    "active_filters": "active filters",
-    "open": "open",
-    "project": "open system",
-    "close": "close",
-    "metadata": "data",
-    "tags": "tags",
-    "origin": "origin",
-    "route": "path",
-    "media": "media",
-    "aliases": "aliases",
-    "none": "—",
-    "hint": "the expanded view remains inside each individual system",
-    "preview": "preview",
-    "clear": "clear",
-    "count": "records",
-    "source_arch": "architecture",
-    "source_mdtc": "mdtc"
+  en: {
+    title_page: 'xpan — systems',
+    brand: 'xpan — systems',
+    brand_sub: 'operational archive',
+    eyebrow: 'operational systems archive',
+    hero: 'systems',
+    sub: 'central archive of the systems developed by xpan.',
+    intro: 'this page gathers the spatial, sonic, object-based, editorial, and technical systems developed by xpan. each entry concentrates a synthetic view of the system, its date, its tags, a media selection, and its direct route to the corresponding archive or page. the matrix enables a transversal reading through affinities; the chronology orders systems by date to read their development over time; filters and search help locate specific relations, formats, functions, and stages.',
+    add_hint: 'use matrix, chronology, filters, and search to move through the archive by system, date, or relation.',
+    systems: 'systems',
+    years: 'years',
+    visible: 'visible',
+    filters: 'filters',
+    search: 'search by title, date, tag, path, or alias',
+    all: 'all',
+    matrix: 'matrix',
+    chronology: 'chronology',
+    curated: 'curated',
+    recent: 'recent',
+    alpha: 'alphabetical',
+    results: 'results',
+    active_filters: 'active filters',
+    open: 'open',
+    project: 'open system',
+    close: 'close',
+    metadata: 'information',
+    tags: 'tags',
+    origin: 'origin',
+    route: 'path',
+    media: 'media',
+    aliases: 'aliases',
+    none: '—',
+    hint: 'each system keeps its own page or archive for full documentation, galleries, drawings, and extended development.',
+    preview: 'preview',
+    clear: 'clear',
+    count: 'records',
+    source_arch: 'architecture',
+    source_mdtc: 'mdtc',
+    more_media: 'more media',
+    month_unknown: 'unknown month',
+    active_query: 'search'
   },
-  "fr": {
-    "title_page": "xpan — systèmes",
-    "brand": "xpan — systèmes",
-    "brand_sub": "archive unifiée des systèmes",
-    "eyebrow": "archive unifiée des systèmes",
-    "hero": "systèmes",
-    "sub": "structure unique pour consulter, filtrer et ouvrir tous les systèmes développés par xpan.",
-    "intro": "chaque entrée conserve sa route individuelle, sa séquence média et sa lecture transversale par tags. la page agit comme une base stable capable de croître sans changer de format.",
-    "systems": "systèmes",
-    "years": "années",
-    "visible": "visibles",
-    "filters": "filtres",
-    "search": "rechercher par titre, année, tag, route ou alias",
-    "all": "tous",
-    "matrix": "matrice",
-    "chronology": "chronologie",
-    "curated": "curé",
-    "recent": "récent",
-    "alpha": "alphabétique",
-    "results": "résultats",
-    "active_filters": "filtres actifs",
-    "open": "ouvrir",
-    "project": "voir le système",
-    "close": "fermer",
-    "metadata": "données",
-    "tags": "tags",
-    "origin": "origine",
-    "route": "chemin",
-    "media": "média",
-    "aliases": "alias",
-    "none": "—",
-    "hint": "la vue étendue reste dans chaque système individuel",
-    "preview": "preview",
-    "clear": "effacer",
-    "count": "entrées",
-    "source_arch": "architecture",
-    "source_mdtc": "mdtc"
+  fr: {
+    title_page: 'xpan — systèmes',
+    brand: 'xpan — systèmes',
+    brand_sub: 'archive opérationnelle',
+    eyebrow: 'archive opérationnelle des systèmes',
+    hero: 'systèmes',
+    sub: 'archive centrale des systèmes développés par xpan.',
+    intro: 'cette page réunit les systèmes spatiaux, sonores, objectuels, éditoriaux et techniques développés par xpan. chaque entrée concentre une vue synthétique du système, sa date, ses tags, une sélection de médias et sa route directe vers l’archive ou la page correspondante. la matrice permet une lecture transversale par affinités ; la chronologie ordonne les systèmes par date pour lire leur développement dans le temps ; les filtres et la recherche permettent de localiser des relations, formats, fonctions et phases spécifiques.',
+    add_hint: 'utilisez la matrice, la chronologie, les filtres et la recherche pour parcourir l’archive par système, date ou relation.',
+    systems: 'systèmes',
+    years: 'années',
+    visible: 'visibles',
+    filters: 'filtres',
+    search: 'rechercher par titre, date, tag, chemin ou alias',
+    all: 'tous',
+    matrix: 'matrice',
+    chronology: 'chronologie',
+    curated: 'curé',
+    recent: 'récent',
+    alpha: 'alphabétique',
+    results: 'résultats',
+    active_filters: 'filtres actifs',
+    open: 'ouvrir',
+    project: 'ouvrir le système',
+    close: 'fermer',
+    metadata: 'information',
+    tags: 'tags',
+    origin: 'origine',
+    route: 'chemin',
+    media: 'média',
+    aliases: 'alias',
+    none: '—',
+    hint: 'chaque système conserve sa propre page ou archive pour la documentation complète, les galeries, les plans et le développement étendu.',
+    preview: 'aperçu',
+    clear: 'effacer',
+    count: 'entrées',
+    source_arch: 'architecture',
+    source_mdtc: 'mdtc',
+    more_media: 'plus de médias',
+    month_unknown: 'mois inconnu',
+    active_query: 'recherche'
   },
-  "jp": {
-    "title_page": "xpan — systems",
-    "brand": "xpan — systems",
-    "brand_sub": "統合システムアーカイブ",
-    "eyebrow": "統合システムアーカイブ",
-    "hero": "systems",
-    "sub": "xpan が開発した全システムを確認・抽出・展開するための単一構造。",
-    "intro": "各エントリーは個別ルート、メディア列、タグによる横断的な読みを保持します。このページは、形式を崩さず拡張し続けるための安定した基盤です。",
-    "systems": "systems",
-    "years": "years",
-    "visible": "visible",
-    "filters": "filters",
-    "search": "タイトル、年、タグ、ルート、別名で検索",
-    "all": "all",
-    "matrix": "matrix",
-    "chronology": "chronology",
-    "curated": "curated",
-    "recent": "recent",
-    "alpha": "alphabetical",
-    "results": "results",
-    "active_filters": "active filters",
-    "open": "open",
-    "project": "open system",
-    "close": "close",
-    "metadata": "data",
-    "tags": "tags",
-    "origin": "origin",
-    "route": "path",
-    "media": "media",
-    "aliases": "aliases",
-    "none": "—",
-    "hint": "詳細表示は各システム個別ページに残ります",
-    "preview": "preview",
-    "clear": "clear",
-    "count": "records",
-    "source_arch": "arquitectura",
-    "source_mdtc": "mdtc"
+  jp: {
+    title_page: 'xpan — システム',
+    brand: 'xpan — システム',
+    brand_sub: '運用アーカイブ',
+    eyebrow: 'システム運用アーカイブ',
+    hero: 'システム',
+    sub: 'xpan が開発してきたシステムの中核アーカイブ。',
+    intro: 'このページは、xpan が開発してきた空間、音響、オブジェクト、出版、技術システムを集約しています。各項目には、システムの要約、日付、タグ、選択されたメディア、そして対応するページまたはアーカイブへの直接リンクが含まれます。マトリクスは関係性や近接性による横断的な読みを可能にし、クロノロジーは日付順に並べることで展開の流れを追える構成です。フィルターと検索によって、関係、形式、機能、段階ごとに対象を絞り込めます。',
+    add_hint: 'マトリクス、クロノロジー、フィルター、検索を使って、システム、日付、関係ごとにアーカイブを辿ってください。',
+    systems: 'システム',
+    years: '年',
+    visible: '表示中',
+    filters: 'フィルター',
+    search: 'タイトル、日付、タグ、ルート、別名で検索',
+    all: 'すべて',
+    matrix: 'マトリクス',
+    chronology: 'クロノロジー',
+    curated: 'キュレーション順',
+    recent: '新しい順',
+    alpha: 'アルファベット順',
+    results: '結果',
+    active_filters: '有効なフィルター',
+    open: '開く',
+    project: 'システムを開く',
+    close: '閉じる',
+    metadata: '情報',
+    tags: 'タグ',
+    origin: '起点',
+    route: 'ルート',
+    media: 'メディア',
+    aliases: '別名',
+    none: '—',
+    hint: '各システムには、完全な記録、ギャラリー、図面、拡張された内容のための個別ページまたはアーカイブがあります。',
+    preview: 'プレビュー',
+    clear: 'クリア',
+    count: '件',
+    source_arch: '建築',
+    source_mdtc: 'mdtc',
+    more_media: 'さらに表示',
+    month_unknown: '月不明',
+    active_query: '検索'
   }
 };
 
-/* ---------- TAG ORDER ---------- */
 const TAG_ORDER = [
   "espacial",
   "sonoro",
@@ -533,7 +464,6 @@ const TAG_ORDER = [
   "vestible"
 ];
 
-/* ---------- DATA ---------- */
 const DATA = [
   {
     "title": "s.e.e.v.s_12, [sistema escultórico estructural vórtice sináptico]",
@@ -1569,7 +1499,7 @@ const DATA = [
   },
   {
     "title": "mdtc.5 — méxico ↔ japón · ruido como puente cultural",
-    "meta": "03.23.25 — tokyo — GATA <> xpan",
+    "meta": "marzo 2025 — tokyo — GATA <> xpan",
     "href": "mdtc.5.html",
     "origin": [
       "mdtc"
@@ -2019,337 +1949,313 @@ const DATA = [
   }
 ];
 
-/* ---------- DOM ---------- */
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 const DOM = {
-  brandTitle: $('#brandTitle'),
-  brandSub: $('#brandSub'),
-  q: $('#q'),
-  btnMatrix: $('#btnMatrix'),
-  btnChronology: $('#btnChronology'),
-  btnSort: $('#btnSort'),
-  langButtons: $$('.lang button'),
-  eyebrow: $('#eyebrow'),
-  heroTitle: $('#heroTitle'),
-  heroSub: $('#heroSub'),
-  heroIntro: $('#heroIntro'),
-  labSystems: $('#labSystems'),
-  kAll: $('#kAll'),
-  labYears: $('#labYears'),
-  kYears: $('#kYears'),
-  labVisible: $('#labVisible'),
-  kVisible: $('#kVisible'),
-  labFilters: $('#labFilters'),
-  kFilters: $('#kFilters'),
-  filters: $('#filters'),
-  metaResults: $('#metaResults'),
-  metaActiveFilters: $('#metaActiveFilters'),
-  viewMatrix: $('#viewMatrix'),
-  viewChronology: $('#viewChronology'),
-  matrix: $('#matrix'),
-  timeline: $('#timeline'),
-  viewer: $('#viewer'),
-  vTitle: $('#vTitle'),
-  vMeta: $('#vMeta'),
-  vLink: $('#vLink'),
-  vClose: $('#vClose'),
-  stageMain: $('#stageMain'),
-  stageRail: $('#stageRail'),
-  lblMeta: $('#lblMeta'),
-  sideMeta: $('#sideMeta'),
-  lblTags: $('#lblTags'),
-  sideTags: $('#sideTags'),
-  lblOrigin: $('#lblOrigin'),
-  sideOrigin: $('#sideOrigin'),
-  lblRoute: $('#lblRoute'),
-  sideRoute: $('#sideRoute'),
-  lblAliases: $('#lblAliases'),
-  sideAliases: $('#sideAliases'),
-  lblMedia: $('#lblMedia'),
-  sideMedia: $('#sideMedia'),
-  sideHint: $('#sideHint')
+  brandTitle: $('#brandTitle'), brandSub: $('#brandSub'), q: $('#q'), btnMatrix: $('#btnMatrix'), btnChronology: $('#btnChronology'), btnSort: $('#btnSort'),
+  langButtons: $$('.lang button'), eyebrow: $('#eyebrow'), heroTitle: $('#heroTitle'), heroSub: $('#heroSub'), heroIntro: $('#heroIntro'), heroAddHint: $('#heroAddHint'),
+  labSystems: $('#labSystems'), kAll: $('#kAll'), labYears: $('#labYears'), kYears: $('#kYears'), labVisible: $('#labVisible'), kVisible: $('#kVisible'), labFilters: $('#labFilters'), kFilters: $('#kFilters'),
+  filters: $('#filters'), metaResults: $('#metaResults'), metaActiveFilters: $('#metaActiveFilters'), viewMatrix: $('#viewMatrix'), viewChronology: $('#viewChronology'), matrix: $('#matrix'), timeline: $('#timeline'),
+  viewer: $('#viewer'), vTitle: $('#vTitle'), vMeta: $('#vMeta'), vLink: $('#vLink'), vClose: $('#vClose'), stageMain: $('#stageMain'), stageRail: $('#stageRail'),
+  lblMeta: $('#lblMeta'), sideMeta: $('#sideMeta'), lblTags: $('#lblTags'), sideTags: $('#sideTags'), lblOrigin: $('#lblOrigin'), sideOrigin: $('#sideOrigin'), lblRoute: $('#lblRoute'), sideRoute: $('#sideRoute'),
+  lblAliases: $('#lblAliases'), sideAliases: $('#sideAliases'), lblMedia: $('#lblMedia'), sideMedia: $('#sideMedia'), sideHint: $('#sideHint')
 };
 
-/* ---------- STATE ---------- */
+const saved = (() => {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+})();
+
 const state = {
-  lang: 'es',
-  view: 'matrix',
-  sort: 'curated',
+  lang: saved.lang || 'es',
+  view: saved.view || 'matrix',
+  sort: saved.sort || 'curated',
   query: '',
-  tags: new Set(),
-  filtered: [...DATA]
+  tags: new Set(saved.tags || []),
+  filtered: [],
+  previewLimit: window.matchMedia('(max-width: 700px)').matches ? 4 : 6
 };
 
-/* ---------- HELPERS ---------- */
-const norm = (value) => (value || '')
-  .toString()
-  .toLowerCase()
-  .normalize('NFD')
-  .replace(/[̀-ͯ]/g, '')
-  .trim();
+const MONTHS = {
+  enero:1, january:1, janvier:1,
+  febrero:2, february:2, fevrier:2, février:2,
+  marzo:3, march:3, mars:3,
+  abril:4, april:4, avril:4,
+  mayo:5, may:5, mai:5,
+  junio:6, june:6, juin:6,
+  julio:7, july:7, juillet:7,
+  agosto:8, august:8, aout:8, août:8,
+  septiembre:9, setiembre:9, september:9, septembre:9,
+  octubre:10, october:10, octobre:10,
+  noviembre:11, november:11, novembre:11,
+  diciembre:12, december:12, decembre:12, décembre:12
+};
 
-const t = (key) => LANGS[state.lang][key] || LANGS.es[key] || key;
-
+const norm = (value) => (value || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+const t = (key) => LANGS[state.lang]?.[key] || LANGS.es[key] || key;
 const byTagOrder = (a, b) => {
   const ai = TAG_ORDER.indexOf(a);
   const bi = TAG_ORDER.indexOf(b);
-  return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi) || a.localeCompare(b);
+  return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi) || a.localeCompare(b, 'es', { sensitivity:'base' });
 };
 
+function inferDate(entry) {
+  const pool = [entry.meta, ...(entry.metaAlt || []), entry.title].filter(Boolean).join(' · ');
+  const raw = norm(pool);
+
+  const fullIso = raw.match(/(20\d{2})[\/-](\d{1,2})(?:[\/-](\d{1,2}))?/);
+  if (fullIso) {
+    const year = Number(fullIso[1]);
+    const month = Math.max(1, Math.min(12, Number(fullIso[2] || 1)));
+    const day = Math.max(1, Math.min(31, Number(fullIso[3] || 1)));
+    return { year, month, day, stamp: `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}` };
+  }
+
+  const monthNames = Object.keys(MONTHS).sort((a, b) => b.length - a.length).join('|');
+  const monthBeforeYear = raw.match(new RegExp(`(?:^|[^\\p{L}])(${monthNames})(?:[^0-9]{0,24})(20\\d{2})`, 'u'));
+  if (monthBeforeYear) {
+    const month = MONTHS[monthBeforeYear[1]] || 1;
+    const year = Number(monthBeforeYear[2]);
+    const dayLeadPattern = new RegExp(`(?:^|[^0-9])(\\d{1,2})(?:\\s*[–-]\\s*\\d{1,2})?\\s+${monthBeforeYear[1]}`, 'u');
+    const dayLead = raw.match(dayLeadPattern);
+    const day = dayLead ? Math.max(1, Math.min(31, Number(dayLead[1]))) : 1;
+    return { year, month, day, stamp: `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}` };
+  }
+
+  const yearBeforeMonth = raw.match(new RegExp(`(20\\d{2})(?:[^0-9]{0,24})(${monthNames})`, 'u'));
+  if (yearBeforeMonth) {
+    const year = Number(yearBeforeMonth[1]);
+    const month = MONTHS[yearBeforeMonth[2]] || 1;
+    return { year, month, day: 1, stamp: `${year}-${String(month).padStart(2,'0')}-01` };
+  }
+
+  const yearRangeWithMonth = raw.match(new RegExp(`(20\\d{2})\\s*[–-]\\s*(20\\d{2})(?:[^0-9]{0,24})(${monthNames})`, 'u'));
+  if (yearRangeWithMonth) {
+    const year = Number(yearRangeWithMonth[1]);
+    const month = MONTHS[yearRangeWithMonth[3]] || 1;
+    return { year, month, day: 1, stamp: `${year}-${String(month).padStart(2,'0')}-01` };
+  }
+
+  const yr = raw.match(/(20\d{2})/);
+  const year = entry.year || (yr ? Number(yr[1]) : 0) || 0;
+  return { year, month: 1, day: 1, stamp: `${year || 0}-01-01`, approximate: true };
+}
+
+const ENTRIES = DATA.map((entry, index) => {
+  const date = inferDate(entry);
+  return {
+    ...entry,
+    order: Number.isFinite(entry.order) ? entry.order : index + 1,
+    year: entry.year || date.year || 0,
+    date,
+    _search: norm([entry.title, entry.meta, entry.href, ...(entry.tags || []), ...(entry.aliases || []), ...(entry.metaAlt || [])].join(' '))
+  };
+});
+
+function persistState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang: state.lang, view: state.view, sort: state.sort, tags: [...state.tags] }));
+}
+
 function yearsSpan() {
-  const years = [...new Set(DATA.map((entry) => entry.year).filter(Boolean))].sort((a, b) => a - b);
+  const years = [...new Set(ENTRIES.map((entry) => entry.year).filter(Boolean))].sort((a, b) => a - b);
   if (!years.length) return '0';
   return years.length === 1 ? String(years[0]) : `${years[0]}–${years.at(-1)}`;
 }
 
 function primaryOrigin(entry) {
-  return entry.origin
-    .map((origin) => (origin === 'arquitectura' ? t('source_arch') : t('source_mdtc')))
-    .join(' + ');
+  return (entry.origin || []).map((origin) => origin === 'arquitectura' ? t('source_arch') : origin === 'mdtc' ? t('source_mdtc') : origin).join(' + ') || t('none');
 }
 
 function allTags() {
   const tags = new Set();
-  DATA.forEach((entry) => entry.tags.forEach((tag) => tags.add(tag)));
+  ENTRIES.forEach((entry) => (entry.tags || []).forEach((tag) => tags.add(tag)));
   return [...tags].sort(byTagOrder);
-}
-
-function searchText(entry) {
-  return norm([
-    entry.title,
-    entry.meta,
-    entry.href,
-    ...(entry.tags || []),
-    ...(entry.aliases || []),
-    ...(entry.metaAlt || [])
-  ].join(' '));
 }
 
 function sortEntries(list) {
   const items = [...list];
-
-  if (state.sort === 'recent') {
-    items.sort((a, b) => (b.year - a.year) || a.order - b.order);
-  } else if (state.sort === 'alpha') {
-    items.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
-  } else {
-    items.sort((a, b) => a.order - b.order);
-  }
-
+  if (state.sort === 'recent') items.sort((a, b) => b.date.stamp.localeCompare(a.date.stamp) || a.order - b.order);
+  else if (state.sort === 'alpha') items.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity:'base' }));
+  else items.sort((a, b) => a.order - b.order);
   return items;
-}
-
-function findEntry(href) {
-  return DATA.find((entry) => entry.href === href);
 }
 
 function groupByYear(items) {
   const groups = new Map();
-
-  sortEntries(items).forEach((item) => {
-    const year = item.year || 0;
+  [...items].sort((a, b) => b.date.stamp.localeCompare(a.date.stamp) || a.order - b.order).forEach((item) => {
+    const year = item.date.year || item.year || 0;
     if (!groups.has(year)) groups.set(year, []);
     groups.get(year).push(item);
   });
-
   return [...groups.entries()].sort((a, b) => b[0] - a[0]);
 }
 
-/* ---------- MEDIA ---------- */
-function lazyMedia(root = document) {
-  const items = $$('[data-src]', root);
-
-  const io = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-
-      const el = entry.target;
-      const src = el.getAttribute('data-src');
-
-      if (src) {
-        el.src = src;
-        el.removeAttribute('data-src');
-
-        const video = el.closest('video');
-        if (video) video.load();
-      }
-
-      observer.unobserve(el);
-    });
-  }, { rootMargin: '240px 0px' });
-
-  items.forEach((item) => io.observe(item));
+function monthLabel(entry) {
+  if (!entry?.date?.year) return t('none');
+  const parsed = entry.meta.split('—')[0].trim();
+  if (entry?.date?.approximate && /^\d{4}$/.test(parsed)) return String(entry.date.year);
+  if (entry?.date?.month && !/^\d{4}$/.test(parsed)) return parsed;
+  return String(entry.date.year);
 }
 
+
+const lazyObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const src = el.getAttribute('data-src');
+    if (!src) {
+      observer.unobserve(el);
+      return;
+    }
+
+    if (el.tagName === 'VIDEO') {
+      el.src = src;
+      el.removeAttribute('data-src');
+      el.load();
+
+      const tryPlay = () => el.play().catch(() => {});
+      if (el.readyState >= 2) tryPlay();
+      else {
+        el.addEventListener('loadeddata', tryPlay, { once: true });
+        el.addEventListener('canplay', tryPlay, { once: true });
+      }
+    } else if (el.tagName === 'IMG') {
+      el.src = src;
+      el.removeAttribute('data-src');
+    }
+
+    observer.unobserve(el);
+  });
+}, { rootMargin: '500px 0px' });
+
+function lazyMedia(root = document) {
+  $$('video[data-src], img[data-src]', root).forEach((item) => lazyObserver.observe(item));
+}
+
+const autoplayObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    const video = entry.target;
+    if (entry.isIntersecting) video.play().catch(() => {});
+    else video.pause();
+  });
+}, { threshold: 0.15 });
+
 function setupVideoAutoplay(root = document) {
-  const videos = $$('video[data-auto]', root);
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      const video = entry.target;
-      if (entry.isIntersecting) video.play().catch(() => {});
-      else video.pause();
-    });
-  }, { threshold: 0.45 });
-
-  videos.forEach((video) => io.observe(video));
+  $$('video[data-auto]', root).forEach((video) => {
+    video.muted = true;
+    video.loop = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('loop', '');
+    video.setAttribute('autoplay', '');
+    video.setAttribute('playsinline', '');
+    autoplayObserver.observe(video);
+  });
 }
 
 function mediaEl(mediaItem, cls = '') {
   if (!mediaItem) return '';
-
   if (mediaItem.type === 'video') {
-    return `
-      <video class="${cls}" muted loop playsinline preload="none" data-auto>
-        <source data-src="${mediaItem.src}">
-      </video>
-    `;
+    return `<video class="${cls}" data-auto data-src="${mediaItem.src}" muted loop playsinline autoplay preload="metadata"></video>`;
   }
-
-  return `<img class="${cls}" alt="" data-src="${mediaItem.src}">`;
+  return `<img class="${cls}" alt="" loading="lazy" decoding="async" data-src="${mediaItem.src}">`;
 }
 
 function mountStageMedia(mediaItem) {
   if (!mediaItem) return '';
-
   if (mediaItem.type === 'video') {
-    return `
-      <video controls playsinline preload="metadata">
-        <source src="${mediaItem.src}">
-      </video>
-    `;
+    return `<video controls playsinline preload="metadata"><source src="${mediaItem.src}"></video>`;
   }
-
-  return `<img alt="" src="${mediaItem.src}">`;
+  return `<img alt="" src="${mediaItem.src}" loading="eager" decoding="async">`;
 }
 
-/* ---------- FILTERS ---------- */
 function applyFilters() {
   const q = norm(state.query);
-
-  state.filtered = DATA.filter((entry) => {
-    const tagOk = state.tags.size === 0 || [...state.tags].every((tag) => entry.tags.includes(tag));
-    const queryOk = !q || searchText(entry).includes(q);
+  state.filtered = ENTRIES.filter((entry) => {
+    const tagOk = state.tags.size === 0 || [...state.tags].every((tag) => (entry.tags || []).includes(tag));
+    const queryOk = !q || entry._search.includes(q);
     return tagOk && queryOk;
   });
-
   render();
 }
 
 function renderFilters() {
-  const tags = allTags();
-  const chips = [
-    `<button class="chip ${state.tags.size === 0 ? 'active' : ''}" type="button" data-tag="__all">${t('all')}</button>`
-  ];
-
-  tags.forEach((tag) => {
-    const count = DATA.filter((entry) => entry.tags.includes(tag)).length;
-    chips.push(`
-      <button class="chip ${state.tags.has(tag) ? 'active' : ''}" type="button" data-tag="${tag}">
-        <span>${tag}</span>
-        <b>${count}</b>
-      </button>
-    `);
+  const chips = [`<button class="chip ${state.tags.size === 0 ? 'active' : ''}" type="button" data-tag="__all">${t('all')}</button>`];
+  allTags().forEach((tag) => {
+    const count = ENTRIES.filter((entry) => (entry.tags || []).includes(tag)).length;
+    chips.push(`<button class="chip ${state.tags.has(tag) ? 'active' : ''}" type="button" data-tag="${tag}"><span>${tag}</span><b>${count}</b></button>`);
   });
-
   DOM.filters.innerHTML = chips.join('');
 }
 
-/* ---------- CARDS ---------- */
-function card(entry, index) {
+function previewMedia(entry) {
+  const total = entry.media?.length || 0;
+  const subset = (entry.media || []).slice(0, state.previewLimit);
+  const items = subset.map((item, mediaIndex) => `<button class="thumb" type="button" data-open="${entry.href}" data-index="${mediaIndex}" aria-label="${t('preview')}">${mediaEl(item)}</button>`);
+  if (total > state.previewLimit) items.push(`<button class="thumb more" type="button" data-open="${entry.href}" data-index="${state.previewLimit}">+${total - state.previewLimit}<br>${t('more_media')}</button>`);
+  return items.join('');
+}
+
+function card(entry) {
   return `
     <article class="card">
       <div class="card-head">
         <div class="card-top">
-          <span class="indexno">${String(index + 1).padStart(2, '0')}</span>
           <div>
             <h3>${entry.title}</h3>
             <p class="meta">${entry.meta}</p>
           </div>
         </div>
-        <div class="tagline">
-          ${entry.tags.map((tag) => `<span>${tag}</span>`).join('')}
-        </div>
+        <div class="tagline">${(entry.tags || []).map((tag) => `<span>${tag}</span>`).join('')}</div>
       </div>
-      <div class="preview-strip">
-        <div class="media-rail">
-          ${entry.media.map((item, mediaIndex) => `
-            <button class="thumb" type="button" data-open="${entry.href}" data-index="${mediaIndex}" aria-label="${t('preview')}">
-              ${mediaEl(item)}
-            </button>
-          `).join('')}
-        </div>
-      </div>
+      <div class="preview-strip"><div class="media-rail">${previewMedia(entry)}</div></div>
       <div class="card-foot">
-        <div class="foot-meta">
-          <span>${primaryOrigin(entry)}</span>
-          <span>${entry.year || '—'}</span>
-          <span>${entry.media.length} ${t('count')}</span>
-        </div>
-        <div class="actions">
-          <button class="action-btn" type="button" data-open="${entry.href}" data-index="0">${t('open')}</button>
-          <a class="action-btn" href="${entry.href}" target="_self">${t('project')}</a>
-        </div>
+        <div class="foot-meta"><span>${primaryOrigin(entry)}</span><span>${entry.year || '—'}</span><span>${entry.media.length} ${t('count')}</span></div>
+        <div class="actions"><button class="action-btn" type="button" data-open="${entry.href}" data-index="0">${t('open')}</button><a class="action-btn" href="${entry.href}" target="_self">${t('project')}</a></div>
       </div>
-    </article>
-  `;
+    </article>`;
 }
 
-/* ---------- RENDER ---------- */
 function renderMatrix() {
   const items = sortEntries(state.filtered);
-
-  if (!items.length) {
-    DOM.matrix.innerHTML = `<div class="empty">${t('results')}: 0</div>`;
-    return;
-  }
-
-  DOM.matrix.innerHTML = items.map((entry, index) => card(entry, index)).join('');
+  DOM.matrix.innerHTML = items.length ? items.map(card).join('') : `<div class="empty">${t('results')}: 0</div>`;
   lazyMedia(DOM.matrix);
   setupVideoAutoplay(DOM.matrix);
 }
 
 function renderTimeline() {
   const groups = groupByYear(state.filtered);
-
-  if (!groups.length) {
-    DOM.timeline.innerHTML = `<div class="empty">${t('results')}: 0</div>`;
-    return;
-  }
-
-  DOM.timeline.innerHTML = groups.map(([year, items]) => `
+  DOM.timeline.innerHTML = groups.length ? groups.map(([year, items]) => `
     <section class="year-block">
-      <div class="year-head">
-        <strong>${year || '—'}</strong>
-        <span>${items.length} ${t('systems')}</span>
-      </div>
-      <div class="year-row">
+      <div class="year-head"><strong>${year || '—'}</strong><span>${items.length} ${t('systems')}</span></div>
+      <div class="year-grid">
         ${items.map((item) => `
           <article class="mini" data-open="${item.href}" data-index="0">
-            <div class="mini-media">${item.media[0] ? mediaEl(item.media[0], 'thumb') : ''}</div>
+            <div class="mini-media">${item.media[0] ? mediaEl(item.media[0], 'timeline-asset') : ''}</div>
             <div class="mini-info">
               <strong>${item.title}</strong>
               <span>${item.meta}</span>
+              <div class="micro"><span>${monthLabel(item)}</span><span>${primaryOrigin(item)}</span></div>
             </div>
-          </article>
-        `).join('')}
+          </article>`).join('')}
       </div>
-    </section>
-  `).join('');
-
+    </section>`).join('') : `<div class="empty">${t('results')}: 0</div>`;
   lazyMedia(DOM.timeline);
   setupVideoAutoplay(DOM.timeline);
 }
 
 function updateStats() {
-  DOM.kAll.textContent = DATA.length;
+  DOM.kAll.textContent = ENTRIES.length;
   DOM.kYears.textContent = yearsSpan();
   DOM.kVisible.textContent = state.filtered.length;
   DOM.kFilters.textContent = state.tags.size;
+  const active = [];
+  if (state.query.trim()) active.push(`${t('active_query')}: ${state.query.trim()}`);
+  if (state.tags.size) active.push(...state.tags);
   DOM.metaResults.textContent = `${t('results')}: ${state.filtered.length}`;
-  DOM.metaActiveFilters.textContent = `${t('active_filters')}: ${state.tags.size ? [...state.tags].join(', ') : t('none')}`;
+  DOM.metaActiveFilters.textContent = `${t('active_filters')}: ${active.length ? active.join(', ') : t('none')}`;
 }
 
 function renderCopy() {
@@ -2360,6 +2266,7 @@ function renderCopy() {
   DOM.heroTitle.textContent = t('hero');
   DOM.heroSub.textContent = t('sub');
   DOM.heroIntro.textContent = t('intro');
+  DOM.heroAddHint.textContent = t('add_hint');
   DOM.labSystems.textContent = t('systems');
   DOM.labYears.textContent = t('years');
   DOM.labVisible.textContent = t('visible');
@@ -2384,27 +2291,15 @@ function renderViewState() {
   DOM.btnChronology.setAttribute('aria-pressed', String(state.view === 'chronology'));
   DOM.viewMatrix.classList.toggle('active', state.view === 'matrix');
   DOM.viewChronology.classList.toggle('active', state.view === 'chronology');
-  DOM.langButtons.forEach((button) => {
-    button.setAttribute('aria-pressed', String(button.dataset.lang === state.lang));
-  });
+  DOM.langButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.lang === state.lang)));
 }
 
-function render() {
-  renderCopy();
-  renderFilters();
-  updateStats();
-  renderViewState();
+function findEntry(href) { return ENTRIES.find((entry) => entry.href === href); }
 
-  if (state.view === 'matrix') renderMatrix();
-  else renderTimeline();
-}
-
-/* ---------- VIEWER ---------- */
 function openViewer(href, index = 0) {
   const entry = findEntry(href);
   if (!entry) return;
-
-  const media = entry.media;
+  const media = entry.media || [];
   const start = Math.max(0, Math.min(index, media.length - 1));
 
   DOM.vTitle.textContent = entry.title;
@@ -2413,26 +2308,21 @@ function openViewer(href, index = 0) {
   DOM.sideMeta.textContent = [entry.meta].concat(entry.metaAlt || []).join(' · ');
   DOM.sideOrigin.textContent = primaryOrigin(entry);
   DOM.sideRoute.textContent = entry.href;
-  DOM.sideAliases.textContent = entry.aliases && entry.aliases.length ? entry.aliases.join(' · ') : t('none');
+  DOM.sideAliases.textContent = entry.aliases?.length ? entry.aliases.join(' · ') : t('none');
   DOM.sideMedia.textContent = `${entry.media.length} ${t('count')}`;
-  DOM.sideTags.innerHTML = entry.tags.map((tag) => `<span>${tag}</span>`).join('');
+  DOM.sideTags.innerHTML = (entry.tags || []).map((tag) => `<span>${tag}</span>`).join('');
 
   function paint(stageIndex) {
     DOM.stageMain.innerHTML = mountStageMedia(media[stageIndex]);
     DOM.stageRail.innerHTML = media.map((item, railIndex) => `
       <button class="rail-item ${railIndex === stageIndex ? 'active' : ''}" type="button" data-stage="${railIndex}">
-        ${item.type === 'video'
-          ? `<video muted playsinline preload="none"><source data-src="${item.src}"></video>`
-          : `<img alt="" data-src="${item.src}">`
-        }
-      </button>
-    `).join('');
-
+        ${item.type === 'video' ? `<video data-src="${item.src}" muted loop playsinline autoplay preload="metadata"></video>` : `<img alt="" loading="lazy" decoding="async" data-src="${item.src}">`}
+      </button>`).join('');
     lazyMedia(DOM.stageRail);
+    setupVideoAutoplay(DOM.stageRail);
   }
 
   paint(start);
-
   DOM.stageRail.onclick = (event) => {
     const button = event.target.closest('[data-stage]');
     if (!button) return;
@@ -2452,7 +2342,15 @@ function closeViewer() {
   DOM.stageRail.innerHTML = '';
 }
 
-/* ---------- EVENTS ---------- */
+function render() {
+  renderCopy();
+  renderFilters();
+  updateStats();
+  renderViewState();
+  if (state.view === 'matrix') renderMatrix(); else renderTimeline();
+  persistState();
+}
+
 function onDocumentClick(event) {
   const openButton = event.target.closest('[data-open]');
   if (openButton) {
@@ -2460,19 +2358,15 @@ function onDocumentClick(event) {
     openViewer(openButton.dataset.open, Number(openButton.dataset.index || 0));
     return;
   }
-
   const chip = event.target.closest('.chip');
   if (chip) {
     const tag = chip.dataset.tag;
-
     if (tag === '__all') state.tags.clear();
     else if (state.tags.has(tag)) state.tags.delete(tag);
     else state.tags.add(tag);
-
     applyFilters();
     return;
   }
-
   const langButton = event.target.closest('.lang button');
   if (langButton) {
     state.lang = langButton.dataset.lang;
@@ -2482,45 +2376,24 @@ function onDocumentClick(event) {
 
 function bindEvents() {
   document.addEventListener('click', onDocumentClick);
-
-  DOM.q.addEventListener('input', (event) => {
-    state.query = event.target.value;
-    applyFilters();
-  });
-
-  DOM.btnMatrix.addEventListener('click', () => {
-    state.view = 'matrix';
-    render();
-  });
-
-  DOM.btnChronology.addEventListener('click', () => {
-    state.view = 'chronology';
-    render();
-  });
-
+  DOM.q.addEventListener('input', (event) => { state.query = event.target.value; applyFilters(); });
+  DOM.btnMatrix.addEventListener('click', () => { state.view = 'matrix'; render(); });
+  DOM.btnChronology.addEventListener('click', () => { state.view = 'chronology'; render(); });
   DOM.btnSort.addEventListener('click', () => {
-    state.sort = state.sort === 'curated'
-      ? 'recent'
-      : state.sort === 'recent'
-        ? 'alpha'
-        : 'curated';
-
+    state.sort = state.sort === 'curated' ? 'recent' : state.sort === 'recent' ? 'alpha' : 'curated';
     render();
   });
-
   DOM.vClose.addEventListener('click', closeViewer);
-
-  DOM.viewer.addEventListener('click', (event) => {
-    if (event.target.id === 'viewer') closeViewer();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeViewer();
+  DOM.viewer.addEventListener('click', (event) => { if (event.target.id === 'viewer') closeViewer(); });
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeViewer(); });
+  window.addEventListener('resize', () => {
+    const next = window.matchMedia('(max-width: 700px)').matches ? 4 : 6;
+    if (next !== state.previewLimit) { state.previewLimit = next; render(); }
   });
 }
 
-/* ---------- INIT ---------- */
 bindEvents();
+state.filtered = [...ENTRIES];
 render();
 </script>
 </body>
