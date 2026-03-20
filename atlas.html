@@ -106,7 +106,19 @@
       .side-col,.artists{position:relative;top:auto;max-height:none}
       .row4{grid-template-columns:repeat(2,1fr)}
     }
-  </style>
+  
+    .grid,.row4,.grid5,.cols,.center,.embed,.artists,.side-col,figure.tile{contain:layout paint style}
+    .tile{overflow:hidden}
+    .tile img,.tile video{aspect-ratio:4/3}
+    .hero-video video,.center .wide{contain:layout paint}
+    .embed{min-height:40vh}
+    .embed iframe{display:block;content-visibility:auto;contain-intrinsic-size:1px 900px}
+    @media (max-width:768px){
+      .section{contain-intrinsic-size:1px 640px}
+      .tile img,.tile video{aspect-ratio:4/3}
+      .artists{overflow:visible}
+    }
+</style>
 </head>
 <body>
   <header>
@@ -124,7 +136,7 @@
     <section class="intro section">
       <div class="lang es active">
         <h1>atlas</h1>
-        <div class="meta">atlas.1 octubre 2024 · atlas.2 mayo 2025</div>
+        <div class="meta">atlas.1 octubre 2024 · atlas.2 mayo 2025 · atlas.3 febrero 2026</div>
         <p>atlas es una publicación periódica de xpan que conecta prácticas culturales a través de un sistema editorial independiente.</p>
         <p>funciona como un nodo dentro de la topología conectiva, articulando lenguajes, métodos y formas de intervención sin filtros externos ni estructuras comerciales.</p>
         <p>su curaduría responde a una relación de confianza con cada colaborador y a la capacidad de cada pieza de activar conexiones dentro del ecosistema general.</p>
@@ -132,12 +144,13 @@
         <div class="jump">
           <a class="btn" href="#atlas1">atlas.1</a>
           <a class="btn" href="#atlas2">atlas.2</a>
+          <a class="btn" href="#atlas3">atlas.3</a>
           <a class="insta" href="https://www.instagram.com/xpan.atlas/" target="_blank" rel="noopener">@xpan.atlas</a>
         </div>
       </div>
       <div class="lang en">
         <h1>atlas</h1>
-        <div class="meta">atlas.1 october 2024 · atlas.2 may 2025</div>
+        <div class="meta">atlas.1 october 2024 · atlas.2 may 2025 · atlas.3 february 2026</div>
         <p>atlas is a periodical publication by xpan that connects cultural practices through an independent editorial system.</p>
         <p>it functions as a node within the connective topology, articulating languages, methods, and forms of intervention without external filters or commercial structures.</p>
         <p>its curation responds to a relationship of trust with each collaborator and to the capacity of each piece to activate connections within the overall ecosystem.</p>
@@ -145,12 +158,13 @@
         <div class="jump">
           <a class="btn" href="#atlas1">atlas.1</a>
           <a class="btn" href="#atlas2">atlas.2</a>
+          <a class="btn" href="#atlas3">atlas.3</a>
           <a class="insta" href="https://www.instagram.com/xpan.atlas/" target="_blank" rel="noopener">@xpan.atlas</a>
         </div>
       </div>
       <div class="lang fr">
         <h1>atlas</h1>
-        <div class="meta">atlas.1 octobre 2024 · atlas.2 mai 2025</div>
+        <div class="meta">atlas.1 octobre 2024 · atlas.2 mai 2025 · atlas.3 février 2026</div>
         <p>atlas est une publication périodique de xpan qui relie les pratiques culturelles grâce à un système éditorial indépendant.</p>
         <p>elle fonctionne comme un nœud au sein de la topologie connective, articulant langages, méthodes et formes d'intervention sans filtres externes ni structures commerciales.</p>
         <p>sa sélection répond à une relation de confiance avec chaque collaborateur et à la capacité de chaque article à activer des connexions au sein de l'écosystème global.</p>
@@ -158,12 +172,13 @@
         <div class="jump">
           <a class="btn" href="#atlas1">atlas.1</a>
           <a class="btn" href="#atlas2">atlas.2</a>
+          <a class="btn" href="#atlas3">atlas.3</a>
           <a class="insta" href="https://www.instagram.com/xpan.atlas/" target="_blank" rel="noopener">@xpan.atlas</a>
         </div>
       </div>
       <div class="lang jp">
         <h1>atlas</h1>
-        <div class="meta">atlas.1 2024年10月 · atlas.2 2025年5月</div>
+        <div class="meta">atlas.1 2024年10月 · atlas.2 2025年5月 · atlas.3 2026年2月</div>
         <p>atlas は xpan が発行する定期刊行物であり、独立した編集システムを通じて文化的実践をつなげています。</p>
         <p>それは接続的トポロジーの中のノードとして機能し、外部のフィルターや商業的な構造に縛られずに、言語・方法・介入のかたちを組み合わせていきます。</p>
         <p>そのキュレーションは、各協力者との信頼関係、そして各作品が全体のエコシステムの中でつながりを活性化する力に基づいています。</p>
@@ -171,6 +186,7 @@
         <div class="jump">
           <a class="btn" href="#atlas1">atlas.1</a>
           <a class="btn" href="#atlas2">atlas.2</a>
+          <a class="btn" href="#atlas3">atlas.3</a>
           <a class="insta" href="https://www.instagram.com/xpan.atlas/" target="_blank" rel="noopener">@xpan.atlas</a>
         </div>
       </div>
@@ -244,13 +260,29 @@
 
     <!-- atlas.3 -->
     <section class="section" id="atlas3">
-      <div class="head"><h2>atlas.3</h2><div class="muted">[febrero 2026] · 19.4196, -99.1626</div></div>
+      <div class="head"><h2>atlas.3</h2><div class="muted buy">[05.02.26] · <a href="https://xpan.earth/comprar_atlas.3.html" target="_blank" rel="noopener">adquirir</a></div></div>
+      <div class="cols">
+        <div class="side-col" id="a3-videos"></div>
+        <aside class="artists">
+          <h3>54 colaboradorxs · 18 países</h3>
+          <ul id="a3-art"></ul>
+        </aside>
+      </div>
+      <div class="center" style="margin-top:1rem">
+        <video class="wide" autoplay muted loop playsinline data-src="https://attachments.are.na/44599851/656f1d842a9f120a6b02de90be1e5669.mp4?1774046280"></video>
+      </div>
+      <div class="section center"><video class="wide" autoplay muted loop playsinline data-src="https://attachments.are.na/44599257/c6e9b04264d0a4c2b4c32fbc727a19e4.mp4?1774044179"></video></div>
+      <div class="section"><div class="row4" id="a3-row4"></div></div>
+      <div class="section"><div class="grid cols-4" id="a3-vids4"></div></div>
+      <div class="section"><div class="grid cols-5 contain" id="a3-row5"></div></div>
+      <div class="section"><div class="grid cols-4" id="a3-final-videos"></div></div>
+      <div class="section"><div class="grid cols-3 contain" id="a3-grid20"></div></div>
     </section>
 
     <!-- Proximidades dinámicas -->
     <section class="section">
       <div class="head"><h2>proximidades dinámicas</h2><div class="muted">embed</div></div>
-      <div class="embed"><iframe src="mc_proximidades_dinamicas.html" title="proximidades dinámicas"></iframe></div>
+      <div class="embed"><iframe data-src="mc_proximidades_dinamicas.html" title="proximidades dinámicas" loading="lazy"></iframe></div>
     </section>
   </main>
 
@@ -280,110 +312,325 @@ body.lb-open > *:not(#xpan-lightbox){ pointer-events:none !important; }
   /* ===== idioma ===== */
   (function(){
     const btns=[...document.querySelectorAll('.language-selector button')];
-    const blocks=[...document.querySelectorAll('.lang')];
-    function setLang(code){
-      btns.forEach(b=>{ const on=b.dataset.lang===code; b.classList.toggle('active',on); b.setAttribute('aria-pressed',on); });
-      blocks.forEach(b=> b.classList.toggle('active', b.classList.contains(code)));
+    const groups={ es:[], en:[], fr:[], jp:[] };
+    document.querySelectorAll('.lang').forEach(el=>{
+      for(const code of Object.keys(groups)){ if(el.classList.contains(code)) groups[code].push(el); }
+    });
+    function setLang(raw){
+      const code = groups[raw] ? raw : 'es';
+      btns.forEach(b=>{
+        const on=b.dataset.lang===code;
+        b.classList.toggle('active',on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+      Object.entries(groups).forEach(([k,list])=>{
+        const on=k===code;
+        list.forEach(el=> el.classList.toggle('active', on));
+      });
       try{ localStorage.setItem('xpan.lang', code); }catch{}
       document.documentElement.setAttribute('lang', code);
     }
-    btns.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang) ));
-    setLang(localStorage.getItem('xpan.lang') || (navigator.language||'es').slice(0,2));
+    btns.forEach(b=> b.addEventListener('click', ()=> setLang(b.dataset.lang), {passive:true}));
+    const stored = (()=>{ try{return localStorage.getItem('xpan.lang')}catch{return null} })();
+    const nav = (navigator.language||'es').slice(0,2);
+    setLang(groups[stored] ? stored : (groups[nav] ? nav : 'es'));
   })();
 
   /* ===== util ===== */
-  const fixUrl = u => typeof u==='string' ? u.replace(/\?(\d+)\?bc=0$/, '?$1&bc=0') : u;
+  const XPAN = (() => {
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const idle = window.requestIdleCallback ? (cb,timeout=700)=>requestIdleCallback(cb,{timeout}) : cb=>setTimeout(cb,16);
+    const raf = cb => requestAnimationFrame(cb);
+    const fixUrl = u => typeof u==='string' ? u.replace(/\?(\d+)\?bc=0$/, '?$1&bc=0') : u;
+    const byId = id => document.getElementById(id);
+    const frag = () => document.createDocumentFragment();
 
-  /* ===== lazy ===== */
-  (function lazy(){
-    const io=new IntersectionObserver((es,obs)=>{
-      es.forEach(en=>{
-        if(!en.isIntersecting) return;
-        const el=en.target;
-        if(el.tagName==='IMG' && el.dataset.src){ el.src=fixUrl(el.dataset.src); el.removeAttribute('data-src'); }
-        if(el.tagName==='VIDEO' && el.dataset.src){ el.src=fixUrl(el.dataset.src); el.load(); el.removeAttribute('data-src'); }
-        if(el.tagName==='SOURCE' && el.dataset.src){ el.src=fixUrl(el.dataset.src); el.removeAttribute('data-src'); el.parentElement?.load?.(); }
+    const mediaState = new WeakMap();
+
+    const lazyMediaObserver = new IntersectionObserver((entries,obs)=>{
+      for(const entry of entries){
+        if(!entry.isIntersecting) continue;
+        const el = entry.target;
+        activateMedia(el);
         obs.unobserve(el);
-      });
-    },{rootMargin:'600px 0px',threshold:0});
-    document.querySelectorAll('img[data-src],video[data-src],source[data-src]').forEach(el=> io.observe(el));
-  })();
+      }
+    },{rootMargin:'900px 0px',threshold:0.01});
 
-  /* ===== hero videos ===== */
-  (function(){
-    const vids=document.querySelectorAll('.hero-video video');
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const io=new IntersectionObserver((es)=>{
-      es.forEach(async en=>{
-        const v=en.target;
-        if(en.isIntersecting){ try{ await v.play(); }catch{} } else { try{ v.pause(); }catch{} }
+    const playbackObserver = new IntersectionObserver((entries)=>{
+      for(const entry of entries){
+        const v = entry.target;
+        if(!v || v.tagName !== 'VIDEO') continue;
+        const state = mediaState.get(v) || {};
+        if(entry.isIntersecting){
+          if(!state.activated) activateMedia(v);
+          if(!reduceMotion && !v.paused){
+            continue;
+          }
+          if(!reduceMotion && v.dataset.autoplayReady === '1'){
+            v.play().catch(()=>{});
+          }
+        }else{
+          if(!v.paused) v.pause();
+        }
+      }
+    },{rootMargin:'250px 0px',threshold:0.2});
+
+    const iframeObserver = new IntersectionObserver((entries,obs)=>{
+      for(const entry of entries){
+        if(!entry.isIntersecting) continue;
+        const iframe = entry.target;
+        if(iframe.dataset.src && !iframe.src) iframe.src = iframe.dataset.src;
+        obs.unobserve(iframe);
+      }
+    },{rootMargin:'1200px 0px',threshold:0.01});
+
+    function registerMedia(el){
+      if(!el) return el;
+      if(el.tagName === 'IMG' || el.tagName === 'VIDEO' || el.tagName === 'SOURCE') lazyMediaObserver.observe(el);
+      if(el.tagName === 'VIDEO'){
+        playbackObserver.observe(el);
+      }
+      return el;
+    }
+
+    function activateMedia(el){
+      if(!el) return;
+      const current = mediaState.get(el) || {};
+      if(current.activated) return;
+      if(el.tagName === 'IMG' && el.dataset.src){
+        el.src = fixUrl(el.dataset.src);
+        el.removeAttribute('data-src');
+        mediaState.set(el,{activated:true});
+        return;
+      }
+      if(el.tagName === 'SOURCE' && el.dataset.src){
+        el.src = fixUrl(el.dataset.src);
+        el.removeAttribute('data-src');
+        el.parentElement?.load?.();
+        mediaState.set(el,{activated:true});
+        return;
+      }
+      if(el.tagName === 'VIDEO'){
+        if(el.dataset.src){
+          el.src = fixUrl(el.dataset.src);
+          el.removeAttribute('data-src');
+          el.load();
+        }
+        el.dataset.autoplayReady = '1';
+        mediaState.set(el,{activated:true});
+      }
+    }
+
+    function observeIframe(iframe){
+      if(iframe) iframeObserver.observe(iframe);
+    }
+
+    function makeTile(url, opts={}){
+      const fig=document.createElement('figure');
+      fig.className='tile';
+      const isVid=/\.(mp4|mov)(\?|$)/i.test(url);
+      const el=isVid?document.createElement('video'):document.createElement('img');
+      if(isVid){
+        el.setAttribute('playsinline','');
+        el.setAttribute('muted','');
+        el.loop = opts.loop !== false;
+        el.muted = opts.muted !== false;
+        el.playsInline = true;
+        el.preload = opts.preload || 'none';
+        el.dataset.src = url;
+      }else{
+        el.loading='lazy';
+        el.decoding='async';
+        el.dataset.src=url;
+        if(opts.alt) el.alt = opts.alt;
+      }
+      fig.appendChild(el);
+      registerMedia(el);
+      return fig;
+    }
+
+    function appendBatch(target, nodes){
+      const f = frag();
+      nodes.forEach(node => f.appendChild(node));
+      target.appendChild(f);
+    }
+
+    function renderList(target, items){
+      const f = frag();
+      items.forEach(t=>{
+        const li=document.createElement('li');
+        li.textContent=t;
+        f.appendChild(li);
       });
-    },{threshold:.35});
-    vids.forEach(v=>{ if(!reduce) io.observe(v); });
-    window.addEventListener('pointerdown',()=>{ vids.forEach(v=>{ v.muted=false; v.volume=1; v.play().catch(()=>{}); }); },{once:true});
+      target.appendChild(f);
+    }
+
+    function progressiveRender(target, urls, opts={}){
+      if(!target || !urls || !urls.length) return Promise.resolve();
+      const batchSize = opts.batchSize || 8;
+      const factory = opts.factory || ((u)=>makeTile(u, opts.tileOpts || {}));
+      let i=0;
+      return new Promise(resolve=>{
+        function step(){
+          const end=Math.min(i+batchSize, urls.length);
+          const nodes=[];
+          for(; i<end; i++) nodes.push(factory(urls[i], i));
+          appendBatch(target, nodes);
+          if(i<urls.length){
+            (opts.useIdle ? idle : raf)(step, 1000);
+          }else{
+            resolve();
+          }
+        }
+        step();
+      });
+    }
+
+    function progressiveList(target, items, opts={}){
+      if(!target || !items || !items.length) return Promise.resolve();
+      const batchSize = opts.batchSize || 40;
+      let i=0;
+      return new Promise(resolve=>{
+        function step(){
+          const end=Math.min(i+batchSize, items.length);
+          renderList(target, items.slice(i,end));
+          i=end;
+          if(i<items.length){
+            (opts.useIdle ? idle : raf)(step, 1000);
+          }else{
+            resolve();
+          }
+        }
+        step();
+      });
+    }
+
+    function sectionPlanner(sectionId, jobs, options={}){
+      const section = byId(sectionId);
+      if(!section) return;
+      let mounted = false;
+      const run = async () => {
+        if(mounted) return;
+        mounted = true;
+        for(const job of jobs){
+          await job();
+        }
+      };
+      if(options.immediate){
+        idle(run, 1);
+        return;
+      }
+      const io = new IntersectionObserver(entries=>{
+        if(entries.some(e=>e.isIntersecting)){
+          io.disconnect();
+          idle(run, 300);
+        }
+      },{rootMargin: options.rootMargin || '1200px 0px', threshold:0.01});
+      io.observe(section);
+    }
+
+    return {
+      reduceMotion, idle, raf, byId, fixUrl, registerMedia, activateMedia, observeIframe,
+      makeTile, progressiveRender, progressiveList, sectionPlanner
+    };
   })();
 
   /* ===== lightbox ===== */
   (function(){
-    const lb=document.getElementById('xpan-lightbox'); const sheet=lb.querySelector('.sheet');
+    const lb=XPAN.byId('xpan-lightbox');
+    const sheet=lb.querySelector('.sheet');
     let items=[], idx=-1, t0=0, x0=0;
-    function collect(){ items=[...document.querySelectorAll('img,video')].filter(el=>!el.closest('#xpan-lightbox')&&!el.closest('a')&&(el.currentSrc||el.src)); }
-    function openAt(i){
-      if(i<0||i>=items.length) return; idx=i; sheet.innerHTML='';
-      const srcEl=items[idx], isV=srcEl.tagName.toLowerCase()==='video'; const el=document.createElement(isV?'video':'img');
-      if(isV){ el.src=srcEl.currentSrc||srcEl.src; el.playsInline=true; el.controls=true; el.loop=!!srcEl.loop; el.muted=false; el.autoplay=true; }
-      else { el.src=srcEl.currentSrc||srcEl.src; el.decoding='async'; el.loading='eager'; el.alt=''; }
-      sheet.appendChild(el); lb.classList.add('open'); document.documentElement.classList.add('lb-open'); document.body.classList.add('lb-open');
+
+    function collect(fromEl){
+      const scope = fromEl?.closest('section, main') || document.querySelector('main');
+      const local = [...scope.querySelectorAll('img,video')].filter(el => !el.closest('#xpan-lightbox') && !el.closest('a') && (el.currentSrc || el.src || el.dataset.src));
+      if(local.length){ items = local; return; }
+      items = [...document.querySelectorAll('main img, main video')].filter(el => !el.closest('#xpan-lightbox') && !el.closest('a') && (el.currentSrc || el.src || el.dataset.src));
     }
-    function close(){ lb.classList.remove('open'); sheet.innerHTML=''; document.documentElement.classList.remove('lb-open'); document.body.classList.remove('lb-open'); idx=-1; }
-    function openFrom(el){ collect(); const i=items.indexOf(el); if(i>-1) openAt(i); }
-    document.body.addEventListener('click',e=>{ const el=e.target; if(!el) return; if(el.closest('a')) return;
-      if(el.tagName==='IMG'||el.tagName==='VIDEO'){ e.preventDefault(); e.stopPropagation(); openFrom(el); }
+
+    function mediaSrc(el){
+      return el.currentSrc || el.src || (el.dataset.src ? XPAN.fixUrl(el.dataset.src) : '');
+    }
+
+    function openAt(i){
+      if(i<0 || i>=items.length) return;
+      idx=i;
+      sheet.innerHTML='';
+      const srcEl=items[idx];
+      const isV=srcEl.tagName.toLowerCase()==='video';
+      const el=document.createElement(isV?'video':'img');
+      if(isV){
+        el.src=mediaSrc(srcEl);
+        el.playsInline=true;
+        el.controls=true;
+        el.loop=!!srcEl.loop;
+        el.muted=false;
+        el.autoplay=true;
+        el.preload='metadata';
+      }else{
+        el.src=mediaSrc(srcEl);
+        el.decoding='async';
+        el.loading='eager';
+        el.alt=srcEl.alt || '';
+      }
+      sheet.appendChild(el);
+      lb.classList.add('open');
+      document.documentElement.classList.add('lb-open');
+      document.body.classList.add('lb-open');
+    }
+
+    function close(){
+      lb.classList.remove('open');
+      sheet.innerHTML='';
+      document.documentElement.classList.remove('lb-open');
+      document.body.classList.remove('lb-open');
+      idx=-1;
+    }
+
+    function openFrom(el){
+      collect(el);
+      const i=items.indexOf(el);
+      if(i>-1) openAt(i);
+    }
+
+    document.body.addEventListener('click',e=>{
+      const el=e.target;
+      if(!el || el.closest('a') || lb.classList.contains('open') && el.closest('#xpan-lightbox')) return;
+      if(el.tagName==='IMG' || el.tagName==='VIDEO'){
+        e.preventDefault();
+        e.stopPropagation();
+        openFrom(el);
+      }
     },{capture:true});
-/* patch: cerrar al tocar media/sheet y evitar tap-through */
-const requestClose = (e) => { e.preventDefault(); e.stopPropagation(); close(); };
 
-// tap en fondo cierra
-lb.addEventListener('click', (e) => {
-  if (e.target === lb) requestClose(e);
-}, { capture:true });
+    const requestClose = (e) => { e.preventDefault(); e.stopPropagation(); close(); };
+    lb.addEventListener('click', (e) => { if (e.target === lb) requestClose(e); }, { capture:true });
+    sheet.addEventListener('click', requestClose, { capture:true });
+    lb.addEventListener('click', (e) => {
+      const t = e.target;
+      if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) requestClose(e);
+    }, { capture:true });
 
-// tap en la lámina también cierra
-sheet.addEventListener('click', requestClose, { capture:true });
-
-// tap directo en IMG/VIDEO cierra
-lb.addEventListener('click', (e) => {
-  const t = e.target;
-  if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) requestClose(e);
-}, { capture:true });
-    addEventListener('keydown',e=>{ if(!lb.classList.contains('open')) return;
+    addEventListener('keydown',e=>{
+      if(!lb.classList.contains('open')) return;
       if(e.key==='Escape') return close();
       if((e.key==='ArrowRight'||e.key==='l') && idx<items.length-1) return openAt(idx+1);
       if((e.key==='ArrowLeft'||e.key==='h') && idx>0) return openAt(idx-1);
     });
-    lb.addEventListener('touchstart',e=>{ t0=Date.now(); x0=e.touches[0].clientX; },{passive:true});
-    lb.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-x0, dt=Date.now()-t0;
-      if(Math.abs(dx)>50 && dt<600){ if(dx<0 && idx<items.length-1) openAt(idx+1); else if(dx>0 && idx>0) openAt(idx-1); } else { close(); }
+    lb.addEventListener('touchstart',e=>{ t0=Date.now(); x0=e.touches[0].clientX; },{passive:true });
+    lb.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-x0, dt=Date.now()-t0;
+      if(Math.abs(dx)>50 && dt<600){
+        if(dx<0 && idx<items.length-1) openAt(idx+1);
+        else if(dx>0 && idx>0) openAt(idx-1);
+      }else{
+        close();
+      }
     },{passive:true});
-    new MutationObserver(()=>collect()).observe(document.documentElement,{subtree:true,childList:true});
-    collect();
   })();
 
-  /* ===== helpers de render ===== */
-  function tileFactory(url){
-    const fig=document.createElement('figure'); fig.className='tile';
-    const isVid=/\.(mp4|mov)(\?|$)/i.test(url);
-    const el=isVid?document.createElement('video'):document.createElement('img');
-    if(isVid){ el.setAttribute('playsinline',''); el.setAttribute('muted',''); el.loop=true; el.muted=true; el.preload='metadata'; el.dataset.src=url; }
-    else { el.loading='lazy'; el.decoding='async'; el.dataset.src=url; }
-    fig.appendChild(el);
-    return fig;
-  }
-  function fillGrid(elId, urls){ const el=document.getElementById(elId); urls.forEach(u=> el.appendChild(tileFactory(u)) ); }
-  function fillRow4(elId, urls){ const el=document.getElementById(elId); urls.forEach(u=>{ const f=tileFactory(u); f.querySelector('video')?.setAttribute('muted',''); el.appendChild(f); }); }
-  function fillList(elId, items){ const ul=document.getElementById(elId); items.forEach(t=>{const li=document.createElement('li'); li.textContent=t; ul.appendChild(li)}); }
-
   /* ===== Datos (completos) ===== */
+
   const lastShoot=[
     "https://d2w9rnfcy7mm78.cloudfront.net/39582746/original_dbf63727df2c99c9a0ff3462cdd13ba0.jpg",
     "https://d2w9rnfcy7mm78.cloudfront.net/39582747/original_9a1b9f53a6019e76f9e1b717bb4f3665.jpg",
@@ -733,35 +980,388 @@ zoo as zoo`.split('\n');
     "https://d2w9rnfcy7mm78.cloudfront.net/39582105/original_1c31f333f6240dc5d0826036fda456a6.jpg"
   ];
 
+const a3Videos=[
+  "https://attachments.are.na/44599269/fa64180d54789b1783765b4db5db4e65.mp4",
+  "https://attachments.are.na/44599272/df56ce2f27e66ada7431642541ce8a14.mp4",
+  "https://attachments.are.na/44599276/ccec81eef8a8714c150eb318ae503678.mp4",
+  "https://attachments.are.na/44599277/05c01c3b5b662e7c3de9a12f897b49ae.mp4",
+  "https://attachments.are.na/44599278/ac52a89827f46a52ebd756ba6bb73db8.mp4"
+];
+
+  const a3Artists=[
+  "eanovna",
+  "jack wedge",
+  "O11668",
+  "pln",
+  "cculdesacc",
+  "jake eterno",
+  "terashima night shot",
+  "linda zhengova",
+  "tcp",
+  "aleksandra fixl",
+  "david miranda",
+  "sara suabebe",
+  "daryan knoblauch",
+  "eco",
+  "goma xantana",
+  "halcyon veil",
+  "anything that makes light",
+  "sangretang",
+  "proyectos públicos",
+  "lau mota",
+  "culifer roning",
+  "clement mogensen",
+  "qeto chantadze / kaitheblackangel",
+  "vitali akimov",
+  "julián jakob kneer",
+  "kanz",
+  "alicia nieto",
+  "npn",
+  "cucurucho",
+  "kaneda",
+  "emi",
+  "miguel",
+  "msh",
+  "gus",
+  "gime",
+  "amon silex",
+  "adolfo vega",
+  "carolina fusilier",
+  "jaeduk seo",
+  "panama studio",
+  "formant studio",
+  "hermanos koumori",
+  "susana villalvazo",
+  "venus dormida",
+  "ex_soup",
+  "cindy cantú",
+  "mercedes tuda",
+  "rrrratas",
+  "aaron varon",
+  "valeria lailson",
+  "luisianaluisiana",
+  "vania rizo",
+  "alisa",
+  "luis arenas"
+];
+
+  const a3Row4=[
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599238/original_d48db5fdad69619aa21e16c8fd8c251f.jpg"
+];
+
+  const a3Grid20=[
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599242/original_5d3c7fae10bd3dade60066fc3e513f97.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599243/original_bfc426794ccf24f9c52fefc3fa12d968.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599245/original_314ddcdff88d0706df82892d070f6be9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599246/original_02f6eee51d08cd95b7055ec42e0bd4b4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599247/original_e980aea2bbca2351a9fca840f55ea0c3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599248/original_38bd7f7bcca082ffa6650f7de669c0b1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599249/original_02622ea1ec4f52bda0bfbffb368b3471.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599250/original_0edd9c9c0687451580d3c6b460301486.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599251/original_8b53ce4e2a230126c9e8d5141603ae94.jpg"
+];
+
+  const a3Vids4=[
+  "https://attachments.are.na/44599258/dbf6ced12e624d3e30fe45335f1cd7d4.mp4",
+  "https://attachments.are.na/44599261/0a22063b263066c52e20ecdb4e59f4d5.mp4",
+  "https://attachments.are.na/44599263/22a0b855ce3101a80db9398fae56a411.mp4",
+  "https://attachments.are.na/44599265/fa18fdf812a80596551f165f2e5fd851.mp4"
+];
+
+  const a3Row5=[
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598898/original_0243800b703f8aad6f4393231aea4f97.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598899/original_2bd033ebdc39c4ddd626c28f0e7d9bff.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598900/original_7735fb9fccd573ed0333a0c850421100.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598901/original_d1375adc6be01218810d1577b842f3ea.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598902/original_4c9f843c283ca2b363afafcd378fb8e1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598903/original_15754548a584d143bacf8bd8333e4d20.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598904/original_259658e19edd3d8251315901492943ac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598905/original_776df64c2539a8c747192f91c6df6882.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598906/original_e444ccbd94990e131477f7da48cc4b91.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598907/original_b6b47d891391bc6da59719c5455e69cb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598908/original_d981b4a8c06a15d18df235789f00015d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598909/original_2e942681420424bb396274fd59bab403.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598910/original_a9684d985cbb13d874f9091cbc5f89c9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598911/original_5bbce1c786d09191a04fd0acbd694bca.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598912/original_d176de39301be94a6c03b3070483f5e0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598913/original_b10a795fb14aff7bf9b686749bc1d53b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598914/original_731bfac23564b148dde63293138a4509.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598917/original_fd5048f67349602e77ac6ebf19068c11.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598919/original_6a368248b5d4b1a2a27995416c0c8156.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598921/original_8e69414e5e101580b5d4999871308540.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598922/original_4de13c22a8508d6902c39ee2d6cd5747.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598924/original_b4c9226df1dae45f020379a2deec52a1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598925/original_e0a6544c63e95f8f8863285376074d1e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598926/original_2c6651ced04264ce95ac244cd565d254.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598927/original_fd9915570559502cf2a9b50080b63c13.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598929/original_099ddaeddb6e0a0bc66059a6cc49918c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598930/original_7b4d35364ed866e6d81aa82b86734ed3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598931/original_f4c3b38e4741197cb96a815bb981b09a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598932/original_408d345ec2a67199c59d44d075b2234f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598933/original_c392a6b0b84a6aab8937e010eb1a412e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598935/original_8a546468659dc3511c7d88f5af112140.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598937/original_b0f8c8ab614abbb9cefb6c6bfbaac62b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598939/original_d446810bacab7afb5cb1deccb5d65a94.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598940/original_b3b5de4eda6cb4b8d1a1ab89d7bcbefd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598941/original_daa054de829230dd2370aa147059ddd4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598942/original_3f06e401d0761935269a0eb4d4602760.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598943/original_1514e7a3f08b27cd1e43061617958ac5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598944/original_b98ac0ae851f3547e0f09f40855fd72f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598945/original_5598d950e56143873149dee88c163a64.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598946/original_91fb12c45236c938af5166f685a76eb6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598947/original_32784c1017897a29ecbc8cd2a520eb4d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598948/original_1979275d858c2733dee4d56755829fcf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598949/original_a7d564ea4ca2b5a9140161c5f7e9a8dc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598951/original_053c60e8ce1e418e9a67663918c3ec13.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598952/original_bd61b9872f26901bf269c0acfcccff62.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44598953/original_869cbe372b39579cf34545cb096bddf5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599042/original_8493d78bb230433d4039525101c57dac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599049/original_282f171432c464ffd438ab887c0126fc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599050/original_ed95cba2c9bab253ea9204323029b2c3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599051/original_7ddd08b36352946ff1e14a6478439f85.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599052/original_d729198dae0dddacc093fee1ed2c295e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599054/original_fc0f863e78aaa97377b385dc0c1cd0ca.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599055/original_722cbd7b9ebcdb2ff68daee99bf4c98c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599057/original_d8ac78ce7c1e5da683a4a8f0cec2c6a5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599060/original_9777d07190d273e9d6ba14f1ee26a30a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599065/original_210031642d14e130696421281903a489.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599068/original_9171f53df288df202e2d96815007f32e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599070/original_9e61794c0dad6790035cbfba592d843d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599074/original_f858b72e7b8eb90b342af0072a8e3ce9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599075/original_3278fbd6a6ce33e2a78e7cbb92fee3dc.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599076/original_9531b8387bbde432d4ea327dfabd3811.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599077/original_c9e317f4523a3bbfa351a3c574416e58.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599078/original_bdba7f58efe3d15e197f4fc04c367373.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599079/original_fdede2b69c85b5a0df75b7e40be78917.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599080/original_8baf0b91ea93bf60aeb72e573d920058.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599081/original_bc8a460ad0a56e80b8b2342f7dc27d12.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599082/original_b5fd65200a7fe5581ec520e8d9c7867a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599083/original_fc76a83ae505fbe7cbb37b5ed0b21fb3.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599085/original_0f25fed1a3a0a9aae84a332c6a511425.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599087/original_7ab48423f8fd6f0ba3137339a88edbe4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599088/original_af4e5406358f6d87d9f6749c65b8874e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599089/original_771650a3a9d849144d901020314807ae.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599096/original_639fc5b1061190a6a45af708f77b05e6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599097/original_6877ddf08804a7371aea766510bfbbfb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599098/original_756e87086f1669473f4f30c66b647ece.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599100/original_ea7d85bd7c066de45393efd277d69a5a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599101/original_c493b9459b9478094867947b44085679.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599102/original_5be2157bfe5751d1cc2e235df4596fa7.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599103/original_16f66df9d188bf45d88fe2cafc387feb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599104/original_cc3b8d95cded01d86acd9ad2e66bea2b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599105/original_8c1128f4fb65432c77d4fd2eb4df1490.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599119/original_234e0d384da79bd1c14988616453c8e0.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599122/original_6e59a3d39630be5f76619701dadd36ac.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599134/original_4f2839703d199ce268614628c00b78b4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599151/original_fac4e8f76aabd3c548998d7fe70c212b.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599152/original_efda9fa6a77827c0c56706db81172909.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599153/original_84810edc9d9886a340c796a881819108.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599164/original_c16edbf4dbe12d5f5fca131e1a0cc831.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599165/original_36736d959c49f8ade181deb9ccd0a05e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599167/original_2ce4caebfc2f470ddd31f0c3987b7fdf.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599168/original_652d69d2a7d1641a38570b1c2be84182.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599169/original_89c70b252070e64ed24273d1f8eba158.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599170/original_870a1b7bde1e4b125faf7fff8ffb73e4.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599171/original_07ddeaae1cdaa4be900bef4b6c40724e.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599172/original_968ff5dab9ac1cf80fafbaaf4d33ceb5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599173/original_3fdde6f05d5030d899a45a6345ef2f4f.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599174/original_c0453ea32bfa04ae967e4257c28c3e14.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599175/original_cd1098e9816eef392d84004a49b4cb57.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599177/original_fcbdb18f00657f0dc177a2bed8638a18.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599178/original_89c54fa8d449ab008b6043c57c199191.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599179/original_b5524924d9ee675601d8322a60ac4370.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599180/original_543dd9bd31fda42744085992fecf02de.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599181/original_bb6c3bc2d2202e413775e7a700075cdb.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599182/original_d2d0467069bc0c4ab214cd958b7407d9.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599184/original_65ad850c0589ade834061c62f02d5f2c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599185/original_65397c7e337c3946ef07de81399dc6cd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599186/original_48b449224df9b2038e5741b256dfe311.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599187/original_1d699f04876e7b0614673dcb28271cdd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599188/original_c1259a01b0c584ec0a3232dc347e41d1.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599189/original_6305a376a5c521da2f9683924147c85c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599191/original_ee9c76720dfd4dc9b886720a62ddbe6a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599192/original_8f76bb83de15bda94e9ae2bf5c43a9c8.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599193/original_a9a098f4fb90a6cc443609a3701238d6.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599194/original_346f65004a4468aabf6609406322c50a.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599195/original_eb2c62420042f2ad3a84396779eaa83d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599196/original_bcd473b86239bbfa5654721998602745.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599197/original_05d1d6250a5ac979804639bc8b4ae5fd.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599198/original_ec65eeda5f9ac468c2c2fafe6ec7899c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599199/original_18ebcff0b02a02fa46b7f901e30da38c.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599200/original_4f4db31d1cc6a12dbb5176fe04180dee.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599201/original_20609db8b6d84b731bba4e92f554d992.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599202/original_1900e081b7a6188b28ac4d06a4dd1fe5.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599203/original_e0ccb022469722a708058c9ec8e45354.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599204/original_021384fae1f6abe823308c54d5d62784.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599205/original_54283a0a32654da34d024fedea49b97d.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599206/original_4e6aec449e00012e105664bb47bcc162.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599207/original_2e1582a17a98540944697d333e08f0ad.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599208/original_6d87fc83c3e597d7c64dec6078f64445.jpg",
+  "https://d2w9rnfcy7mm78.cloudfront.net/44599209/original_abeb46df7a129f0bcc8e4f765345db70.jpg"
+];
+
+  const a3FinalVideos=[
+  "https://attachments.are.na/44598714/b0ae4dbc4f0c7757fc79f9baf26f925b.mp4",
+  "https://attachments.are.na/44598716/2e1415774c165ba9de4dede29010a5f4.mp4",
+  "https://attachments.are.na/44598724/b6d7c4e8451473e974a4269735c9d06e.mp4",
+  "https://attachments.are.na/44598725/3a644ef601a9f248bcbed1a02adf2c8a.mp4",
+  "https://attachments.are.na/44598728/11fc3c5bf20bc1c97ead9a726471572d.mp4",
+  "https://attachments.are.na/44598731/4f5e791ffb2d375d40ccaab8d987d139.mp4",
+  "https://attachments.are.na/44598733/24ff49462500fa603b8274475dfad084.mp4",
+  "https://attachments.are.na/44598735/96229a1e0d9048a54d3257c7b2fad3ce.mp4",
+  "https://attachments.are.na/44598736/17ce5c60bc037a27a21a9cf7e966be73.mp4",
+  "https://attachments.are.na/44598737/d41f6548400181778e002a8324c9fbc4.mp4",
+  "https://attachments.are.na/44598739/21f8e78ca537c90a4dd9672d00237f21.mp4",
+  "https://attachments.are.na/44598743/29f491fa0c7099e1d74074e63042f7e3.mp4",
+  "https://attachments.are.na/44598748/17c357dd32979a4c90de500ed643830b.mp4",
+  "https://attachments.are.na/44598764/535e922a38a92157722f0fa5d1eca149.mp4",
+  "https://attachments.are.na/44598765/fff00fef995f0792d2bd2be4c17e6b37.mp4",
+  "https://attachments.are.na/44598767/245d93d22b079ce97eb0a72799bacd54.mp4",
+  "https://attachments.are.na/44598768/39fc53b1f3f35be63b018c2f04974cf7.mp4",
+  "https://attachments.are.na/44598770/43b3a4091d8fabe280c93f48c745932c.mp4",
+  "https://attachments.are.na/44598771/143aa67850e914d1bbf8524ee478c461.mp4",
+  "https://attachments.are.na/44598772/a2c31e701cedf7c252d1e78e951acaef.mp4",
+  "https://attachments.are.na/44598773/c9b269d04c5a8dd26f631476701aa120.mp4",
+  "https://attachments.are.na/44598775/6d1bc1678c9bbf29e02feec608b47e0e.mp4",
+  "https://attachments.are.na/44598777/c1c9f16b20e85ba77432819426faaa74.mp4",
+  "https://attachments.are.na/44598779/639411b3ac89b004a5972ab69b9e541c.mp4",
+  "https://attachments.are.na/44598781/684a8aabc9e1e958f12c2d9a648e6e32.mp4",
+  "https://attachments.are.na/44598782/d00af44ad2f7f8f693954a026ca5a318.mp4",
+  "https://attachments.are.na/44598785/67056b5949933d88358d024dd0553954.mp4",
+  "https://attachments.are.na/44598786/d943e7762b25273720550a8db1f937cc.mp4",
+  "https://attachments.are.na/44598790/c2f687030cbfde6472ece6365a4e168a.mp4",
+  "https://attachments.are.na/44598791/f82fba35c0d1a3c90b32e3a0c0f5a84f.mp4",
+  "https://attachments.are.na/44598792/b5fe99289050d30a322454607af62459.mp4",
+  "https://attachments.are.na/44598794/84aeade7f1b485850cdf41f8e7c40198.mp4",
+  "https://attachments.are.na/44598796/5da6505193434c306b1525d27acaa4ff.mp4",
+  "https://attachments.are.na/44598797/49cf780ec06ec4b31279eaf831604eb7.mp4",
+  "https://attachments.are.na/44598799/463bab0e3c3b43d81c5be60cab94f0f4.mp4",
+  "https://attachments.are.na/44598800/d804fcbba4c51c1473bbd979bf20aab7.mp4",
+  "https://attachments.are.na/44598801/be0ec625f80ec6a048332cc8593aa35a.mp4",
+  "https://attachments.are.na/44598803/9eabc1a85cc9fb2684a90d1a814b9251.mp4",
+  "https://attachments.are.na/44598804/0011f2e38a5afc4fcc618fe0afd3b9aa.mp4",
+  "https://attachments.are.na/44598806/67b427412e6fb45fd9cc244771f36181.mp4",
+  "https://attachments.are.na/44598807/2ec77f3ffb7aa4fe705adbb2294f3e67.mp4",
+  "https://attachments.are.na/44598808/2c15f2e75564d5b2c0eb4ec72cc25b86.mp4",
+  "https://attachments.are.na/44598809/119d7992d8c7adcd6825dd33e0d7ffa2.mp4",
+  "https://attachments.are.na/44598813/1e16cef7efa6dac20ee80fbeb7330409.mp4",
+  "https://attachments.are.na/44598814/fc775583903c5613540a964deaa5e89e.mp4",
+  "https://attachments.are.na/44598815/93045295f3dcca37a30d0898b8c53986.mp4",
+  "https://attachments.are.na/44598819/031e352995be46c7539485eeecb5562f.mp4",
+  "https://attachments.are.na/44598820/1b9f4a7ac28111cb5723b002f7cb0473.mp4",
+  "https://attachments.are.na/44598826/795b11dfabe1a46e55e5b9cb05157dee.mp4",
+  "https://attachments.are.na/44598830/37e42713434a713316164ffe59e6e841.mp4",
+  "https://attachments.are.na/44598833/4fc613e5703e9baa8f8b97e1c77fc476.mp4",
+  "https://attachments.are.na/44598834/73daa232b46ff78c56ae71eb8adac48e.mp4",
+  "https://attachments.are.na/44598836/bc2adebc35284779632a157ab16e9c1a.mp4",
+  "https://attachments.are.na/44598837/10f5eeecc4c863a778314ee58e0bf8ee.mp4",
+  "https://attachments.are.na/44598839/ad2e471630b5f9c71759506d788863fb.mp4",
+  "https://attachments.are.na/44598840/ce500c81bd8c7b6899ec49a294602e28.mp4",
+  "https://attachments.are.na/44598842/79a045506195c8d311f0743a9896c865.mp4",
+  "https://attachments.are.na/44598843/f69de1bbf0d614dc97f939a2056cf676.mp4",
+  "https://attachments.are.na/44598846/1b3dcf4112aac8a5f8a98aeeed83206b.mp4",
+  "https://attachments.are.na/44598848/285a6da5640cf39a333255b9513eab27.mp4",
+  "https://attachments.are.na/44598851/d7f0f2dd5ee523cfffbc2e1fef9c9630.mp4",
+  "https://attachments.are.na/44598852/d83195cd5f4b40eec030852fd97ad092.mp4",
+  "https://attachments.are.na/44598855/25c47b1684ea7311def1356d6822f7db.mp4",
+  "https://attachments.are.na/44598857/4569840cbf34a8816251da8bb36e26ce.mp4",
+  "https://attachments.are.na/44598858/48df89daf3c78f53c393d0c24939c039.mp4",
+  "https://attachments.are.na/44598859/e888dc99b1bbac2408b1937d4de0188c.mp4",
+  "https://attachments.are.na/44598860/3ae90ed539c630344585c53d00c0f6f6.mp4",
+  "https://attachments.are.na/44598861/28c5f76cf553db2e0ea552fa6c4f1360.mp4",
+  "https://attachments.are.na/44598864/d51f1d8686ca1a99b5a5628dc5c5c430.mp4",
+  "https://attachments.are.na/44598866/e2eeba0385feddbd998a838357fad114.mp4",
+  "https://attachments.are.na/44598867/cc514f0e4923082618e5a29381a99d0d.mp4",
+  "https://attachments.are.na/44598868/d58dc86b1879216d5c5be5b2e2b88f44.mp4",
+  "https://attachments.are.na/44598869/ac43a2eeadfbe5adc77d9ca8e322e3b5.mp4",
+  "https://attachments.are.na/44598870/f59a2672e9e5898bfa857bfc5dd684d5.mp4",
+  "https://attachments.are.na/44598871/ecdc659c2b2dfda1beff4938c8b855e3.mp4",
+  "https://attachments.are.na/44598872/7ab756a938488e770400f05ca921b8fd.mp4",
+  "https://attachments.are.na/44598874/e4e009fe4e15814e92490f8a997ae5f3.mp4",
+  "https://attachments.are.na/44598875/256bb0761c91a24f3b0de328fac2e10d.mp4",
+  "https://attachments.are.na/44598876/dc011b12dcf42e69fbd1ea958c6704b5.mp4",
+  "https://attachments.are.na/44598877/a79cd919a25506cc1ebb2de0f6b25315.mp4",
+  "https://attachments.are.na/44598878/af6783b8780f87eff7719e4ba6509f29.mp4",
+  "https://attachments.are.na/44598879/7a929b127b298b10f56777acfd377715.mp4",
+  "https://attachments.are.na/44598880/e4e1486ad652d4764dcdd326f55ab8d8.mp4",
+  "https://attachments.are.na/44598881/1633325db90f9c2e3de2c1d5a4255769.mp4",
+  "https://attachments.are.na/44598883/5315dedca6f000fba371dcc20775c8f9.mp4",
+  "https://attachments.are.na/44598884/79147d34c42729e73415279c16fd900c.mp4",
+  "https://attachments.are.na/44598885/b908f4b60595c88aa23fe2a1beddc7af.mp4",
+  "https://attachments.are.na/44598887/ba1eab7d55775c6fbbfca98de4277929.mp4",
+  "https://attachments.are.na/44598888/8b60c4e8e7ee0745eb9a28d881365445.mp4"
+];
+
+
+
   /* ===== Render ===== */
-  fillGrid('grid-last', lastShoot);
+  (function(){
+    const iframe = document.querySelector('.embed iframe[data-src]');
+    XPAN.observeIframe(iframe);
 
-  a1Videos.forEach(u=>{
-    const v=document.createElement('video');
-    v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.preload='metadata'; v.dataset.src=u;
-    const f=document.createElement('figure'); f.className='tile'; f.appendChild(v);
-    document.getElementById('a1-videos').appendChild(f);
-  });
-  fillList('a1-art', a1Artists);
-  a1Merch.forEach(u=> document.getElementById('a1-merch').appendChild(tileFactory(u)) );
-  fillGrid('a1-grid', a1Grid);
-  fillRow4('a1-row4a', a1Row4a);
-  fillRow4('a1-row4b', a1Row4b);
-  fillGrid('a1-yucli-top', a1YucliTop);
-  fillGrid('a1-yucli-bot', a1YucliBot);
-  fillGrid('a1-mapas', a1Mapas);
+    XPAN.sectionPlanner('ultimo-shoot', [
+      ()=>XPAN.progressiveRender(XPAN.byId('grid-last'), lastShoot, { batchSize:10, useIdle:false, tileOpts:{ preload:'none' } })
+    ], { immediate:true });
 
-  a2Videos.forEach(u=>{
-    const v=document.createElement('video');
-    v.autoplay=true; v.loop=true; v.muted=true; v.playsInline=true; v.preload='metadata'; v.dataset.src=u;
-    const f=document.createElement('figure'); f.className='tile'; f.appendChild(v);
-    document.getElementById('a2-videos').appendChild(f);
-  });
-  fillList('a2-art', a2Artists);
-  fillRow4('a2-row4', a2Row4);
-  fillGrid('a2-grid20', a2Grid20);
-  fillGrid('a2-vids4', a2Vids4);
-  fillGrid('a2-row5', a2Row5);
-  </script>
+    XPAN.sectionPlanner('atlas1', [
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-videos'), a1Videos, {
+        batchSize:3,
+        useIdle:false,
+        factory:(u)=>XPAN.makeTile(u,{ preload:'none' })
+      }),
+      ()=>XPAN.progressiveList(XPAN.byId('a1-art'), a1Artists, { batchSize:48, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-merch'), a1Merch, { batchSize:2, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-grid'), a1Grid, { batchSize:9, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-row4a'), a1Row4a, { batchSize:4, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-row4b'), a1Row4b, { batchSize:4, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-yucli-top'), a1YucliTop, { batchSize:4, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-yucli-bot'), a1YucliBot, { batchSize:3, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a1-mapas'), a1Mapas, { batchSize:8, useIdle:true })
+    ], { rootMargin:'1500px 0px' });
+
+    XPAN.sectionPlanner('atlas2', [
+      ()=>XPAN.progressiveRender(XPAN.byId('a2-videos'), a2Videos, {
+        batchSize:3,
+        useIdle:false,
+        factory:(u)=>XPAN.makeTile(u,{ preload:'none' })
+      }),
+      ()=>XPAN.progressiveList(XPAN.byId('a2-art'), a2Artists, { batchSize:48, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a2-row4'), a2Row4, { batchSize:4, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a2-grid20'), a2Grid20, { batchSize:8, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a2-vids4'), a2Vids4, { batchSize:8, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a2-row5'), a2Row5, { batchSize:5, useIdle:false })
+    ], { rootMargin:'1500px 0px' });
+
+    XPAN.sectionPlanner('atlas3', [
+      ()=>XPAN.progressiveRender(XPAN.byId('a3-videos'), a3Videos, {
+        batchSize:3,
+        useIdle:false,
+        factory:(u)=>XPAN.makeTile(u,{ preload:'none' })
+      }),
+      ()=>XPAN.progressiveList(XPAN.byId('a3-art'), a3Artists, { batchSize:48, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a3-row4'), a3Row4, { batchSize:4, useIdle:false }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a3-vids4'), a3Vids4, { batchSize:8, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a3-row5'), a3Row5, { batchSize:8, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a3-final-videos'), a3FinalVideos, { batchSize:8, useIdle:true }),
+      ()=>XPAN.progressiveRender(XPAN.byId('a3-grid20'), a3Grid20, { batchSize:8, useIdle:true })
+    ], { rootMargin:'1500px 0px' });
+
+    document.querySelectorAll('img[data-src],video[data-src],source[data-src]').forEach(XPAN.registerMedia);
+
+    const reduce = XPAN.reduceMotion;
+    const heroObserver = new IntersectionObserver((entries)=>{
+      for(const entry of entries){
+        const v = entry.target;
+        if(entry.isIntersecting){
+          XPAN.activateMedia(v);
+          if(!reduce) v.play().catch(()=>{});
+        }else if(!v.paused){
+          v.pause();
+        }
+      }
+    },{threshold:0.35});
+    document.querySelectorAll('.hero-video video').forEach(v=> heroObserver.observe(v));
+  })();
+</script>
 </body>
 </html>
