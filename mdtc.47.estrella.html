@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="mdtc.47 — xpan.estrella" />
+  <meta name="format-detection" content="telephone=no, email=no, address=no" />
+  <title>mdtc.47 — xpan</title>
+
+  <!-- perf -->
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin />
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin />
+  <link rel="preconnect" href="https://www.are.na" crossorigin />
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net" />
+  <link rel="dns-prefetch" href="https://attachments.are.na" />
+  <link rel="dns-prefetch" href="https://www.are.na" />
+
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#E0E3E6;
+      --fg-dim:#AEB4BA;
+      --line:#2A2E31;
+      --line-weak:#1A1D20;
+      --accent:#1860FF;
+      --surface:#0B0D10;
+      --surface-2:#111418;
+      --surface-3:rgba(255,255,255,.04);
+      --shadow:0 0 0 1px rgba(255,255,255,.02);
+      --maxw:1600px;
+      --textw:920px;
+      --header-h:64px;
+      --pad-x:clamp(16px,4vw,48px);
+      --pad-y:clamp(12px,2vw,24px);
+      --gap-1:.25rem;
+      --gap-2:.5rem;
+      --gap-3:.75rem;
+      --gap-4:1rem;
+      --gap-5:1.5rem;
+      --gap-6:2rem;
+      --radius:0;
+      --b1:1px solid var(--line);
+      --b0:1px solid var(--line-weak);
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"SFMono-Regular","IBM Plex Mono","Menlo","Consolas","Monaco",monospace;
+      --hero-h:min(84vh,980px);
+      --fast:120ms linear;
+      --mid:180ms linear;
+      --slow:260ms linear;
+      --tile-min-main:280px;
+      --tile-min-dense:180px;
+      --tile-min-archive:160px;
+      --focus:0 0 0 1px var(--accent) inset;
+      --safe-bottom:max(16px, env(safe-area-inset-bottom));
+      --safe-top:max(12px, env(safe-area-inset-top));
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#fff;
+        --fg:#0E1113;
+        --fg-dim:#4A5158;
+        --line:#D9DEE2;
+        --line-weak:#ECEFF2;
+        --surface:#F7F8FA;
+        --surface-2:#F0F2F5;
+        --surface-3:rgba(0,0,0,.03);
+        --shadow:0 0 0 1px rgba(0,0,0,.03);
+      }
+    }
+
+    *{box-sizing:border-box}
+    *::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:var(--font-ui);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    body{overflow-x:hidden}
+    img,video,svg,canvas,iframe{display:block;max-width:100%}
+    img{height:auto}
+    button,input,select,textarea{font:inherit}
+    a{color:inherit;text-decoration:none}
+    ::selection{background:rgba(24,96,255,.22)}
+    :focus-visible{outline:none;box-shadow:var(--focus)}
+
+    .page-shell{
+      position:relative;
+      min-height:100vh;
+      isolation:isolate;
+    }
+
+    .global-bg-star{
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      opacity:.06;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+
+    .global-bg-star svg{
+      width:min(90vw,1200px);
+      height:auto;
+      color:var(--fg);
+      transform:translateY(-2vh);
+    }
+
+    header{
+      position:fixed;
+      top:var(--safe-top);
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      z-index:120;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+
+    .brand,
+    .lang-switch,
+    .top-tools{
+      pointer-events:auto;
+    }
+
+    .brand{
+      display:inline-flex;
+      align-items:center;
+      gap:.75rem;
+      min-height:40px;
+    }
+
+    .brand img{
+      width:50px;
+      height:auto;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+    }
+
+    @media (prefers-color-scheme: light){
+      .brand img{
+        mix-blend-mode:normal;
+        filter:none;
+      }
+    }
+
+    .lang-switch{
+      display:flex;
+      gap:.4rem;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .lang-switch button,
+    .top-tools button,
+    .section-nav a,
+    .block-fallback-link{
+      appearance:none;
+      margin:0;
+      padding:.42rem .7rem;
+      border:var(--b1);
+      background:rgba(0,0,0,.08);
+      color:var(--fg-dim);
+      cursor:pointer;
+      transition:color var(--fast),border-color var(--fast),background-color var(--fast),opacity var(--fast);
+      text-transform:lowercase;
+      letter-spacing:.01em;
+      line-height:1;
+      min-height:34px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:saturate(120%);
+      -webkit-backdrop-filter:saturate(120%);
+    }
+
+    @media (prefers-color-scheme: light){
+      .lang-switch button,
+      .top-tools button,
+      .section-nav a,
+      .block-fallback-link{
+        background:rgba(255,255,255,.75);
+      }
+    }
+
+    .lang-switch button:hover,
+    .lang-switch button.active,
+    .top-tools button:hover,
+    .section-nav a:hover,
+    .section-nav a.active{
+      color:var(--fg);
+      border-color:var(--accent);
+      background:rgba(24,96,255,.06);
+    }
+
+    .top-tools{
+      position:fixed;
+      right:var(--pad-x);
+      bottom:var(--safe-bottom);
+      z-index:110;
+      display:flex;
+      gap:.4rem;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      pointer-events:none;
+    }
+
+    .top-tools > *{
+      pointer-events:auto;
+    }
+
+    main{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:
+        calc(var(--header-h) + 28px + env(safe-area-inset-top))
+        var(--pad-x)
+        calc(72px + env(safe-area-inset-bottom));
+    }
+
+    .section{
+      margin:0 0 var(--gap-6);
+      content-visibility:auto;
+      contain-intrinsic-size:1px 1100px;
+    }
+
+    .section-header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:1rem;
+      margin:0 0 .8rem;
+      border-top:var(--b1);
+      padding-top:.7rem;
+    }
+
+    .section-header h2{
+      margin:0;
+      font:700 .98rem/1.1 var(--font-ui);
+      text-transform:lowercase;
+      letter-spacing:.01em;
+    }
+
+    .section-kicker{
+      color:var(--fg-dim);
+      font:.82rem/1.2 var(--font-mono);
+      text-transform:lowercase;
+      white-space:nowrap;
+    }
+
+    .hero{
+      min-height:var(--hero-h);
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);
+      gap:var(--gap-6);
+      align-items:center;
+      margin-bottom:var(--gap-6);
+      border-top:var(--b1);
+      padding-top:1rem;
+    }
+
+    .hero-star-wrap{
+      position:relative;
+      min-height:min(74vh,820px);
+      display:grid;
+      place-items:center;
+      border:var(--b1);
+      background:
+        linear-gradient(to bottom, transparent, var(--surface-3)),
+        radial-gradient(circle at 50% 50%, rgba(24,96,255,.04), transparent 58%);
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .hero-star-wrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(to right, transparent 0 49.8%, var(--line-weak) 49.8% 50.2%, transparent 50.2% 100%),
+        linear-gradient(to bottom, transparent 0 49.8%, var(--line-weak) 49.8% 50.2%, transparent 50.2% 100%);
+      opacity:.42;
+      mix-blend-mode:normal;
+    }
+
+    .hero-star{
+      position:relative;
+      width:min(78%,760px);
+      height:auto;
+      color:var(--fg);
+      z-index:1;
+    }
+
+    .hero-star svg{
+      width:100%;
+      height:auto;
+    }
+
+    .hero-copy{
+      display:grid;
+      gap:1rem;
+      align-content:start;
+      min-width:0;
+    }
+
+    .title{
+      margin:0;
+      font:700 clamp(1.22rem,2.2vw,1.8rem)/1.1 var(--font-ui);
+      text-transform:lowercase;
+      letter-spacing:.005em;
+    }
+
+    .meta{
+      margin:0;
+      color:var(--fg-dim);
+      font:.92rem/1.45 var(--font-ui);
+      text-transform:lowercase;
+    }
+
+    .lead{
+      max-width:var(--textw);
+    }
+
+    .lang-block{
+      display:none;
+    }
+
+    .lang-block.active{
+      display:block;
+    }
+
+    .copy p{
+      margin:.9rem 0 0;
+      max-width:var(--textw);
+      font:400 .98rem/1.68 var(--font-ui);
+      letter-spacing:.002em;
+    }
+
+    .copy p:first-child{
+      margin-top:0;
+    }
+
+    .section-nav{
+      display:flex;
+      gap:.45rem;
+      flex-wrap:wrap;
+      margin-top:.3rem;
+    }
+
+    .hero-meta-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.45rem;
+      margin-top:.35rem;
+      font:.8rem/1.3 var(--font-mono);
+      color:var(--fg-dim);
+    }
+
+    .hero-meta-grid div{
+      border-top:var(--b1);
+      padding-top:.45rem;
+    }
+
+    .media-section{
+      display:grid;
+      gap:.8rem;
+    }
+
+    .media-intro{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(220px,320px);
+      gap:1rem;
+      align-items:start;
+    }
+
+    .media-intro-copy{
+      max-width:900px;
+      color:var(--fg-dim);
+      font:.92rem/1.58 var(--font-ui);
+    }
+
+    .media-count{
+      border:var(--b1);
+      padding:.8rem .85rem;
+      font:.82rem/1.45 var(--font-mono);
+      color:var(--fg-dim);
+      background:var(--surface-3);
+    }
+
+    .grid{
+      display:grid;
+      gap:var(--gap-1);
+    }
+
+    .grid-set-1{
+      grid-template-columns:repeat(12,minmax(0,1fr));
+      align-items:stretch;
+    }
+
+    .grid-set-2{
+      grid-template-columns:repeat(auto-fit,minmax(var(--tile-min-main),1fr));
+    }
+
+    .grid-set-3{
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    }
+
+    .grid-set-4{
+      grid-template-columns:repeat(auto-fit,minmax(var(--tile-min-dense),1fr));
+    }
+
+    .grid-set-5{
+      grid-template-columns:repeat(auto-fit,minmax(var(--tile-min-archive),1fr));
+    }
+
+    .tile{
+      position:relative;
+      border:var(--b1);
+      background:var(--surface);
+      overflow:hidden;
+      min-width:0;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+
+    .tile:focus-visible{
+      box-shadow:var(--focus);
+    }
+
+    .tile.hero-span-8{grid-column:span 8}
+    .tile.hero-span-4{grid-column:span 4}
+    .tile.hero-span-6{grid-column:span 6}
+    .tile.hero-span-12{grid-column:span 12}
+
+    .tile-inner{
+      position:relative;
+      width:100%;
+      height:100%;
+      background:linear-gradient(to bottom, transparent, rgba(0,0,0,.04));
+      aspect-ratio:4/3;
+    }
+
+    .tile[data-shape="portrait"] .tile-inner{aspect-ratio:3/4}
+    .tile[data-shape="square"] .tile-inner{aspect-ratio:1/1}
+    .tile[data-shape="cinema"] .tile-inner{aspect-ratio:16/9}
+    .tile[data-shape="tall"] .tile-inner{aspect-ratio:9/16}
+
+    .tile img,
+    .tile video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      background:#000;
+    }
+
+    .tile[data-fit="contain"] img,
+    .tile[data-fit="contain"] video{
+      object-fit:contain;
+      background:var(--surface);
+    }
+
+    .tile-status,
+    .tile-index,
+    .tile-kind,
+    .tile-audio{
+      position:absolute;
+      z-index:3;
+      font:.72rem/1 var(--font-mono);
+      color:#fff;
+      background:rgba(0,0,0,.52);
+      border:1px solid rgba(255,255,255,.16);
+      padding:.26rem .4rem;
+      pointer-events:none;
+      letter-spacing:.01em;
+    }
+
+    .tile-index{
+      left:.45rem;
+      top:.45rem;
+    }
+
+    .tile-kind{
+      right:.45rem;
+      top:.45rem;
+      text-transform:lowercase;
+    }
+
+    .tile-audio{
+      right:.45rem;
+      bottom:.45rem;
+      display:none;
+    }
+
+    .tile[data-audio="true"] .tile-audio{
+      display:inline-flex;
+    }
+
+    .tile-fallback{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      padding:1rem;
+      color:var(--fg-dim);
+      font:.88rem/1.45 var(--font-ui);
+      text-align:center;
+      background:linear-gradient(to bottom,var(--surface),var(--surface-2));
+    }
+
+    .tile-fallback-inner{
+      max-width:320px;
+      display:grid;
+      gap:.8rem;
+      place-items:center;
+    }
+
+    .tile-fallback-code{
+      font:.76rem/1.4 var(--font-mono);
+      color:var(--fg-dim);
+      word-break:break-all;
+      opacity:.85;
+    }
+
+    .tile-placeholder{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      color:var(--fg-dim);
+      font:.76rem/1 var(--font-mono);
+      letter-spacing:.02em;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
+      animation:shimmer 2.1s linear infinite;
+    }
+
+    @keyframes shimmer{
+      0%{background-position:-200% 0}
+      100%{background-position:200% 0}
+    }
+
+    .tile.loaded .tile-placeholder{
+      display:none;
+    }
+
+    .archive-toolbar{
+      display:flex;
+      gap:.5rem;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin:.1rem 0 .35rem;
+    }
+
+    .archive-note{
+      color:var(--fg-dim);
+      font:.82rem/1.45 var(--font-ui);
+      max-width:880px;
+    }
+
+    .archive-actions{
+      display:flex;
+      gap:.45rem;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .archive-actions button{
+      appearance:none;
+      border:var(--b1);
+      background:transparent;
+      color:var(--fg-dim);
+      padding:.42rem .7rem;
+      cursor:pointer;
+      text-transform:lowercase;
+    }
+
+    .archive-actions button:hover,
+    .archive-actions button.active{
+      color:var(--fg);
+      border-color:var(--accent);
+      background:rgba(24,96,255,.06);
+    }
+
+    .footer-note{
+      margin-top:3rem;
+      border-top:var(--b1);
+      padding-top:.8rem;
+      color:var(--fg-dim);
+      font:.82rem/1.5 var(--font-mono);
+      text-transform:lowercase;
+    }
+
+    /* lightbox */
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.72);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+      overscroll-behavior:contain;
+      touch-action:none;
+    }
+
+    #xpan-lightbox.open{
+      display:flex;
+    }
+
+    #xpan-lightbox .lb-shell{
+      width:min(96vw,1800px);
+      height:min(94vh,1200px);
+      display:grid;
+      grid-template-columns:minmax(0,1fr);
+      grid-template-rows:auto minmax(0,1fr) auto;
+      gap:.55rem;
+      pointer-events:none;
+    }
+
+    .lb-top,
+    .lb-bottom{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      color:#fff;
+      font:.78rem/1.2 var(--font-mono);
+      pointer-events:auto;
+    }
+
+    .lb-controls{
+      display:flex;
+      gap:.4rem;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .lb-controls button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.36);
+      color:#fff;
+      cursor:pointer;
+      min-width:36px;
+      min-height:36px;
+      display:grid;
+      place-items:center;
+      padding:0 .8rem;
+    }
+
+    .lb-stage{
+      min-width:0;
+      min-height:0;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      pointer-events:auto;
+    }
+
+    .lb-stage img,
+    .lb-stage video{
+      max-width:100%;
+      max-height:100%;
+      width:auto;
+      height:auto;
+      object-fit:contain;
+      background:transparent;
+    }
+
+    .lb-caption{
+      opacity:.82;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.65rem;
+      align-items:center;
+    }
+
+    html.lb-open,
+    body.lb-open{
+      overflow:hidden;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    /* responsive */
+    @media (max-width:1100px){
+      .hero{
+        grid-template-columns:1fr;
+      }
+      .hero-copy{
+        order:2;
+      }
+      .hero-star-wrap{
+        order:1;
+        min-height:min(70vh,680px);
+      }
+      .media-intro{
+        grid-template-columns:1fr;
+      }
+      .tile.hero-span-8,
+      .tile.hero-span-4,
+      .tile.hero-span-6,
+      .tile.hero-span-12{
+        grid-column:span 12;
+      }
+    }
+
+    @media (max-width:780px){
+      header{
+        align-items:flex-start;
+      }
+      .brand img{
+        width:46px;
+      }
+      .top-tools{
+        left:var(--pad-x);
+        right:var(--pad-x);
+        justify-content:space-between;
+      }
+      .hero{
+        min-height:auto;
+        gap:1.2rem;
+      }
+      .hero-star-wrap{
+        min-height:min(58vh,520px);
+      }
+      .hero-meta-grid{
+        grid-template-columns:1fr;
+      }
+      .section-header{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .grid-set-2{
+        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      }
+      .grid-set-3{
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      }
+      .grid-set-4{
+        grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      }
+      .grid-set-5{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      .copy p{
+        font-size:.95rem;
+        line-height:1.62;
+      }
+      .lb-top,.lb-bottom{
+        font-size:.74rem;
+      }
+    }
+
+    @media (max-width:520px){
+      .lang-switch{
+        gap:.3rem;
+      }
+      .lang-switch button,
+      .top-tools button,
+      .section-nav a,
+      .block-fallback-link{
+        padding:.42rem .56rem;
+        min-height:32px;
+        font-size:.82rem;
+      }
+      .grid-set-5{
+        grid-template-columns:1fr 1fr;
+      }
+      .tile-index,
+      .tile-kind,
+      .tile-audio{
+        font-size:.68rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      .tile-placeholder{animation:none}
+      *{
+        transition:none !important;
+      }
+    }
+  </style>
+  <!-- Site helpers -->
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="global-bg-star" aria-hidden="true">
+      <div id="bgStarMount"></div>
+    </div>
+
+    <header>
+      <a class="brand" href="/" aria-label="xpan home">
+        <img src="xpan.svg" alt="xpan logo" />
+      </a>
+
+      <div class="lang-switch" role="tablist" aria-label="selector de idioma">
+        <button type="button" data-lang="es" class="active" aria-selected="true">es</button>
+        <button type="button" data-lang="en" aria-selected="false">en</button>
+        <button type="button" data-lang="fr" aria-selected="false">fr</button>
+        <button type="button" data-lang="jp" aria-selected="false">jp</button>
+      </div>
+    </header>
+
+    <div class="top-tools">
+      <button type="button" id="scrollTopBtn" aria-label="volver arriba">top</button>
+      <button type="button" id="toggleAutoplayBtn" aria-label="alternar autoplay">autoplay on</button>
+    </div>
+
+    <main>
+      <section class="hero section" id="top">
+        <div class="hero-star-wrap">
+          <div class="hero-star" id="heroStarMount" aria-hidden="true"></div>
+        </div>
+
+        <div class="hero-copy">
+          <div>
+            <h1 class="title">mdtc.47</h1>
+            <p class="meta" id="metaLine">febrero 2026 — ciudad de méxico</p>
+          </div>
+
+          <div class="section-nav" aria-label="navegación interna">
+            <a href="#intro">descripción</a>
+            <a href="#set-1">sección 1</a>
+            <a href="#set-2">sección 2</a>
+            <a href="#set-3">sección 3</a>
+            <a href="#set-4">sección 4</a>
+            <a href="#set-5">sección 5</a>
+          </div>
+
+          <div class="hero-meta-grid" aria-hidden="true">
+            <div>proyecto: xpan.estrella</div>
+            <div>C. Gral. Prim 47, Juárez, Cuauhtémoc, 06600 Ciudad de México</div>
+            <div>19.430333, -99.153683</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="intro">
+        <div class="section-header">
+          <h2>descripción</h2>
+          <div class="section-kicker">statement / contexto</div>
+        </div>
+
+        <div class="copy">
+          <div class="lang-block lang-es active" data-lang="es">
+
+<p><strong>mdtc.47</strong><br>
+febrero 2026 — ciudad de méxico</p>
+
+<p>mdtc.47 fue la presentación pública de una nueva iteración de la xpan.estrella, haciendo visible un macrosistema que llevaba tiempo formándose dentro de xpan.</p>
+
+<p>la estrella apareció de manera involuntaria y como coincidencia, repitiéndose en sombras, retículas, procesos arquitectónicos, reflejos de luz, acomodos espaciales y relaciones geométricas, volviendo a salir con insistencia en distintos lugares. con el tiempo, prestando atención a ese patrón, empezó a tomar peso como eje de orden, proporción y simetría dentro de los sistemas de xpan, como eje estructural en software, arquitectura, sonido, dispositivos y diagramas operativos, volviéndose una herramienta para organizar direcciones y estructuras dentro de xpan. una figura capaz de dar coherencia a distintas cosas, cuidando su individualidad y pudiendo escalar en diferentes planos.</p>
+
+<p>su primera materialización directa ocurrió en abril del 2025 en el antiguo hotel reforma (mdtc.4), con una estrella de seis metros de altura construida con reflectores led de alta potencia. esa aparición dejó en claro que la estrella tiene la capacidad de sostener diferentes sistemas por sí sola, incluso un espacio entero. su presencia abrió un campo neutro, contemplativo y profundo, en una atmósfera abierta y frontal.</p>
+
+<p>mdtc.47 continúa este proceso empujándolo a una nueva escala pública. la activación presentó una estrella de cuatro metros de altura instalada en la esquina de general prim y abraham gonzález, colonia juárez, ciudad de méxico. en esta nueva iteración la estrella aparece como una señal directa dentro del flujo urbano, de manera aún más frontal.</p>
+
+<p>dentro de xpan la estrella condensa una postura clara: construir sistemas propios y sostenerlos en el tiempo mientras se opera con legibilidad propia, funcionando de la misma manera como un emblema.</p>
+
+<p>mdtc.47 marcó también con claridad una posición frente al contexto cultural que atraviesa la ciudad y sus disciplinas cercanas — arte contemporáneo, música, arquitectura, cine, moda, literatura y otras escenas conectadas. la estrella apareció como una afirmación directa de independencia estructural: una señal de que xpan opera desde sus propios sistemas, su propia continuidad y su propia capacidad de sostener forma, sentido y presencia.</p>
+
+<p>la activación ocurrió durante la supuesta “semana del arte”, en la que la ciudad se llenó de circuitos intensificados, y en medio de esa concentración la estrella permaneció como una señal fija que recordaba que xpan trabaja desde infraestructura propia, autonomía y continuidad construida en el tiempo.</p>
+
+</div>
+          </div>
+
+          <div class="lang-block lang-en" data-lang="en">
+
+<p><strong>mdtc.47</strong><br>
+february 2026 — mexico city</p>
+
+<p>mdtc.47 was the public presentation of a new iteration of the xpan.estrella, making visible a macrosystem that had been forming within xpan over time.</p>
+
+<p>the star appeared unintentionally and as a coincidence, repeating itself in shadows, grids, architectural processes, light reflections, spatial arrangements and geometric relations, emerging persistently across different contexts. over time, by paying attention to this pattern, it began to take weight as an axis of order, proportion and symmetry within xpan’s systems, acting as a structural axis in software, architecture, sound, devices and operational diagrams, becoming a tool to organize directions and structures within xpan. a figure capable of giving coherence to different elements while preserving their individuality and scaling across different planes.</p>
+
+<p>its first direct materialization occurred in april 2025 at the former hotel reforma (mdtc.4), with a six-meter-tall star constructed using high-power led reflectors. this appearance made it clear that the star has the capacity to sustain different systems on its own, even an entire space. its presence opened a neutral, contemplative and deep field, within an open and frontal atmosphere.</p>
+
+<p>mdtc.47 continues this process, pushing it into a new public scale. the activation presented a four-meter-tall star installed at the corner of general prim and abraham gonzález, colonia juárez, mexico city. in this new iteration, the star appears as a direct signal within the urban flow, in an even more frontal way.</p>
+
+<p>within xpan, the star condenses a clear position: to build its own systems and sustain them over time while operating with its own legibility, functioning in the same way as an emblem.</p>
+
+<p>mdtc.47 also marked a clear position in relation to the cultural context that runs through the city and its surrounding disciplines — contemporary art, music, architecture, film, fashion, literature and other connected scenes. the star appeared as a direct affirmation of structural independence: a signal that xpan operates from its own systems, its own continuity and its own capacity to sustain form, meaning and presence.</p>
+
+<p>the activation took place during the so-called “art week”, when the city became filled with intensified circuits, and within that concentration the star remained as a fixed signal, reminding that xpan operates from its own infrastructure, autonomy and continuity built over time.</p>
+
+</div>
+          </div>
+
+          <div class="lang-block lang-fr" data-lang="fr">
+
+<p><strong>mdtc.47</strong><br>
+février 2026 — mexico</p>
+
+<p>mdtc.47 a été la présentation publique d’une nouvelle itération de la xpan.estrella, rendant visible un macrosystème qui se formait depuis un certain temps au sein de xpan.</p>
+
+<p>l’étoile est apparue de manière involontaire et comme une coïncidence, se répétant dans les ombres, les grilles, les processus architecturaux, les reflets de lumière, les agencements spatiaux et les relations géométriques, réapparaissant avec insistance dans différents contextes. avec le temps, en prêtant attention à ce motif, elle a commencé à prendre du poids comme axe d’ordre, de proportion et de symétrie au sein des systèmes de xpan, comme axe structurel dans le software, l’architecture, le son, les dispositifs et les diagrammes opérationnels, devenant un outil pour organiser les directions et les structures au sein de xpan. une figure capable de donner cohérence à différents éléments tout en préservant leur individualité et en pouvant évoluer à différentes échelles.</p>
+
+<p>sa première matérialisation directe a eu lieu en avril 2025 dans l’ancien hotel reforma (mdtc.4), avec une étoile de six mètres de hauteur construite à partir de projecteurs led de haute puissance. cette apparition a clairement montré que l’étoile possède la capacité de soutenir différents systèmes par elle-même, même un espace entier. sa présence a ouvert un champ neutre, contemplatif et profond, dans une atmosphère ouverte et frontale.</p>
+
+<p>mdtc.47 poursuit ce processus en le poussant vers une nouvelle échelle publique. l’activation a présenté une étoile de quatre mètres de hauteur installée à l’angle de general prim et abraham gonzález, colonia juárez, mexico. dans cette nouvelle itération, l’étoile apparaît comme un signal direct dans le flux urbain, de manière encore plus frontale.</p>
+
+<p>au sein de xpan, l’étoile condense une position claire : construire ses propres systèmes et les maintenir dans le temps tout en opérant avec sa propre lisibilité, fonctionnant de la même manière qu’un emblème.</p>
+
+<p>mdtc.47 a également marqué clairement une position face au contexte culturel qui traverse la ville et ses disciplines proches — art contemporain, musique, architecture, cinéma, mode, littérature et autres scènes connectées. l’étoile est apparue comme une affirmation directe d’indépendance structurelle : un signal que xpan opère à partir de ses propres systèmes, de sa propre continuité et de sa propre capacité à soutenir forme, sens et présence.</p>
+
+<p>l’activation a eu lieu pendant la supposée « semaine de l’art », au cours de laquelle la ville s’est remplie de circuits intensifiés, et au milieu de cette concentration l’étoile est restée comme un signal fixe rappelant que xpan travaille à partir de sa propre infrastructure, de son autonomie et d’une continuité construite dans le temps.</p>
+
+</div>
+          </div>
+
+          <div class="lang-block lang-jp" data-lang="jp">
+
+<p><strong>mdtc.47</strong><br>
+2026年2月 — メキシコシティ</p>
+
+<p>mdtc.47は、xpan.estrellaの新しいイテレーションの公開発表であり、xpanの内部で時間をかけて形成されてきたマクロシステムを可視化するものであった。</p>
+
+<p>星は無意識のうちに、そして偶然として現れ、影、グリッド、建築的プロセス、光の反射、空間の配置、幾何学的関係の中で繰り返し現れ、さまざまな場所で持続的に再出現した。時間とともにそのパターンに注意を向けることで、xpanのシステムにおける秩序、比例、対称性の軸としての重みを持ち始め、ソフトウェア、建築、音響、デバイス、オペレーショナルダイアグラムにおける構造的軸となり、方向性や構造を整理するためのツールとなった。それは、異なる要素の個別性を保ちながら、それらに一貫性を与え、複数のスケールに展開可能な図形である。</p>
+
+<p>その最初の直接的な物理化は、2025年4月、旧ホテル・レフォルマ（mdtc.4）において行われ、高出力LEDリフレクターによって構成された高さ6メートルの星として実現された。この出現は、星が単独で複数のシステム、さらには空間全体を支える能力を持つことを明確に示した。その存在は、開かれたかつ前面的な環境の中に、中立的で内省的かつ深い場を生み出した。</p>
+
+<p>mdtc.47はこのプロセスを継続し、それをより公共的なスケールへと押し進めた。このアクティベーションでは、メキシコシティのコロニア・フアレス、general primとabraham gonzálezの交差点に、高さ4メートルの星が設置された。この新しいイテレーションにおいて、星は都市の流れの中に直接的な信号として現れ、より前面的な形で提示された。</p>
+
+<p>xpanにおいて、この星は明確な姿勢を凝縮している。それは、自らのシステムを構築し、それを時間の中で維持しながら、自らの可読性によって運用することであり、同時にエンブレムとして機能するものである。</p>
+
+<p>mdtc.47はまた、都市を横断する文化的文脈およびそれに隣接する分野 — 現代美術、音楽、建築、映画、ファッション、文学、その他の接続されたシーン — に対しても明確な立場を示した。星は構造的独立性の直接的な表明として現れ、xpanが自身のシステム、自身の連続性、そして形態・意味・存在を維持する能力によって運営されていることを示す信号となった。</p>
+
+<p>このアクティベーションは、いわゆる「アートウィーク」の期間中に行われ、都市が高度に集中した回路で満たされる中で、星は固定された信号として存在し続け、xpanが自らのインフラストラクチャ、自律性、そして時間を通じて構築された連続性に基づいて活動していることを示した。</p>
+
+</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section media-section" id="set-1">
+        <div class="section-header">
+          <h2>set 1</h2>
+          <div class="section-kicker">apertura / statement</div>
+        </div>
+
+        <div class="media-intro">
+          <div class="media-intro-copy">
+           </div>
+          <div class="media-count" id="countSet1">0 entradas</div>
+        </div>
+
+        <div class="grid grid-set-1" id="gridSet1"></div>
+      </section>
+
+      <section class="section media-section" id="set-2">
+        <div class="section-header">
+          <h2>set 2</h2>
+          <div class="section-kicker">documentación principal / presencia material</div>
+        </div>
+
+        <div class="media-intro">
+          <div class="media-intro-copy">
+           </div>
+          <div class="media-count" id="countSet2">0 entradas</div>
+        </div>
+
+        <div class="grid grid-set-2" id="gridSet2"></div>
+      </section>
+
+      <section class="section media-section" id="set-3">
+        <div class="section-header">
+          <h2>set 3</h2>
+          <div class="section-kicker">archivo expandido / movimiento / continuidad</div>
+        </div>
+
+        <div class="media-intro">
+          <div class="media-intro-copy">
+           </div>
+          <div class="media-count" id="countSet3">0 entradas</div>
+        </div>
+
+        <div class="grid grid-set-3" id="gridSet3"></div>
+      </section>
+
+      <section class="section media-section" id="set-4">
+        <div class="section-header">
+          <h2>set 4</h2>
+          <div class="section-kicker">transición / condensación / puente</div>
+        </div>
+
+        <div class="media-intro">
+          <div class="media-intro-copy">
+             
+          </div>
+          <div class="media-count" id="countSet4">0 entradas</div>
+        </div>
+
+        <div class="grid grid-set-4" id="gridSet4"></div>
+      </section>
+
+      <section class="section media-section" id="set-5">
+        <div class="section-header">
+          <h2>set 5</h2>
+          <div class="section-kicker">archivo / montaje</div>
+        </div>
+
+        <div class="archive-toolbar">
+          <div class="archive-note">
+            archivo exhaustivo final. 
+          </div>
+
+          <div class="archive-actions">
+            <button type="button" class="active" data-filter="all">all</button>
+            <button type="button" data-filter="image">img</button>
+            <button type="button" data-filter="video">video</button>
+            <button type="button" data-filter="block">block</button>
+          </div>
+        </div>
+
+        <div class="media-intro">
+          <div class="media-intro-copy">
+           </div>
+          <div class="media-count" id="countSet5">0 entradas</div>
+        </div>
+
+        <div class="grid grid-set-5" id="gridSet5"></div>
+      </section>
+
+      <footer class="footer-note">
+        xpan / mdtc.47 / estrella seis picos / 
+      </footer>
+    </main>
+  </div>
+
+  <div id="xpan-lightbox" aria-modal="true" role="dialog" aria-label="visor de media">
+    <div class="lb-shell">
+      <div class="lb-top">
+        <div id="lbCounter">0 / 0</div>
+        <div class="lb-controls">
+          <button type="button" id="lbPrev" aria-label="anterior">←</button>
+          <button type="button" id="lbNext" aria-label="siguiente">→</button>
+          <button type="button" id="lbClose" aria-label="cerrar">×</button>
+        </div>
+      </div>
+
+      <div class="lb-stage" id="lbStage"></div>
+
+      <div class="lb-bottom">
+        <div class="lb-caption" id="lbCaption"></div>
+        <div id="lbKind"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       CONFIG / DATOS
+    ========================================================= */
+
+    const STAR_SVG = `<svg viewBox="0 0 595.28 841.89" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter">
+    <line x1="85.76" y1="138.22" x2="537.94" y2="566.09"/>
+    <line x1="85.76" y1="138.22" x2="380.41" y2="684.49"/>
+    <line x1="178.51" y1="310.18" x2="537.94" y2="566.09"/>
+    <line x1="485.87" y1="140.17" x2="33.65" y2="567.77"/>
+    <line x1="485.87" y1="140.17" x2="194.31" y2="683.52"/>
+    <line x1="394.45" y1="310.55" x2="33.65" y2="567.77"/>
+    <line x1="286.77" y1="328.43" x2="194.31" y2="683.52"/>
+    <line x1="286.77" y1="328.43" x2="380.41" y2="684.49"/>
+  </g>
+</svg>
+`
+    ;
+
+    const COPY = {
+      es: {
+        meta: "febrero 2026 — ciudad de méxico",
+        html: `
+<p><strong>mdtc.47</strong><br>
+febrero 2026 — ciudad de méxico</p>
+
+<p>mdtc.47 fue la presentación pública de una nueva iteración de la xpan.estrella, haciendo visible un macrosistema que llevaba tiempo formándose dentro de xpan.</p>
+
+<p>la estrella apareció de manera involuntaria y como coincidencia, repitiéndose en sombras, retículas, procesos arquitectónicos, reflejos de luz, acomodos espaciales y relaciones geométricas, volviendo a salir con insistencia en distintos lugares. con el tiempo, prestando atención a ese patrón, empezó a tomar peso como eje de orden, proporción y simetría dentro de los sistemas de xpan, como eje estructural en software, arquitectura, sonido, dispositivos y diagramas operativos, volviéndose una herramienta para organizar direcciones y estructuras dentro de xpan. una figura capaz de dar coherencia a distintas cosas, cuidando su individualidad y pudiendo escalar en diferentes planos.</p>
+
+<p>su primera materialización directa ocurrió en abril del 2025 en el antiguo hotel reforma (mdtc.4), con una estrella de seis metros de altura construida con reflectores led de alta potencia. esa aparición dejó en claro que la estrella tiene la capacidad de sostener diferentes sistemas por sí sola, incluso un espacio entero. su presencia abrió un campo neutro, contemplativo y profundo, en una atmósfera abierta y frontal.</p>
+
+<p>mdtc.47 continúa este proceso empujándolo a una nueva escala pública. la activación presentó una estrella de cuatro metros de altura instalada en la esquina de general prim y abraham gonzález, colonia juárez, ciudad de méxico. en esta nueva iteración la estrella aparece como una señal directa dentro del flujo urbano, de manera aún más frontal.</p>
+
+<p>dentro de xpan la estrella condensa una postura clara: construir sistemas propios y sostenerlos en el tiempo mientras se opera con legibilidad propia, funcionando de la misma manera como un emblema.</p>
+
+<p>mdtc.47 marcó también con claridad una posición frente al contexto cultural que atraviesa la ciudad y sus disciplinas cercanas — arte contemporáneo, música, arquitectura, cine, moda, literatura y otras escenas conectadas. la estrella apareció como una afirmación directa de independencia estructural: una señal de que xpan opera desde sus propios sistemas, su propia continuidad y su propia capacidad de sostener forma, sentido y presencia.</p>
+
+<p>la activación ocurrió durante la supuesta “semana del arte”, en la que la ciudad se llenó de circuitos intensificados, y en medio de esa concentración la estrella permaneció como una señal fija que recordaba que xpan trabaja desde infraestructura propia, autonomía y continuidad construida en el tiempo.</p>
+        `
+      },
+      en: {
+        meta: "february 2026 — mexico city",
+        html: `
+<p><strong>mdtc.47</strong><br>
+february 2026 — mexico city</p>
+
+<p>mdtc.47 was the public presentation of a new iteration of the xpan.estrella, making visible a macrosystem that had been forming within xpan over time.</p>
+
+<p>the star appeared unintentionally and as a coincidence, repeating itself in shadows, grids, architectural processes, light reflections, spatial arrangements and geometric relations, emerging persistently across different contexts. over time, by paying attention to this pattern, it began to take weight as an axis of order, proportion and symmetry within xpan’s systems, acting as a structural axis in software, architecture, sound, devices and operational diagrams, becoming a tool to organize directions and structures within xpan. a figure capable of giving coherence to different elements while preserving their individuality and scaling across different planes.</p>
+
+<p>its first direct materialization occurred in april 2025 at the former hotel reforma (mdtc.4), with a six-meter-tall star constructed using high-power led reflectors. this appearance made it clear that the star has the capacity to sustain different systems on its own, even an entire space. its presence opened a neutral, contemplative and deep field, within an open and frontal atmosphere.</p>
+
+<p>mdtc.47 continues this process, pushing it into a new public scale. the activation presented a four-meter-tall star installed at the corner of general prim and abraham gonzález, colonia juárez, mexico city. in this new iteration, the star appears as a direct signal within the urban flow, in an even more frontal way.</p>
+
+<p>within xpan, the star condenses a clear position: to build its own systems and sustain them over time while operating with its own legibility, functioning in the same way as an emblem.</p>
+
+<p>mdtc.47 also marked a clear position in relation to the cultural context that runs through the city and its surrounding disciplines — contemporary art, music, architecture, film, fashion, literature and other connected scenes. the star appeared as a direct affirmation of structural independence: a signal that xpan operates from its own systems, its own continuity and its own capacity to sustain form, meaning and presence.</p>
+
+<p>the activation took place during the so-called “art week”, when the city became filled with intensified circuits, and within that concentration the star remained as a fixed signal, reminding that xpan operates from its own infrastructure, autonomy and continuity built over time.</p>
+        `
+      },
+      fr: {
+        meta: "février 2026 — mexico",
+        html: `
+<p><strong>mdtc.47</strong><br>
+février 2026 — mexico</p>
+
+<p>mdtc.47 a été la présentation publique d’une nouvelle itération de la xpan.estrella, rendant visible un macrosystème qui se formait depuis un certain temps au sein de xpan.</p>
+
+<p>l’étoile est apparue de manière involontaire et comme une coïncidence, se répétant dans les ombres, les grilles, les processus architecturaux, les reflets de lumière, les agencements spatiaux et les relations géométriques, réapparaissant avec insistance dans différents contextes. avec le temps, en prêtant attention à ce motif, elle a commencé à prendre du poids comme axe d’ordre, de proportion et de symétrie au sein des systèmes de xpan, comme axe structurel dans le software, l’architecture, le son, les dispositifs et les diagrammes opérationnels, devenant un outil pour organiser les directions et les structures au sein de xpan. une figure capable de donner cohérence à différents éléments tout en préservant leur individualité et en pouvant évoluer à différentes échelles.</p>
+
+<p>sa première matérialisation directe a eu lieu en avril 2025 dans l’ancien hotel reforma (mdtc.4), avec une étoile de six mètres de hauteur construite à partir de projecteurs led de haute puissance. cette apparition a clairement montré que l’étoile possède la capacité de soutenir différents systèmes par elle-même, même un espace entier. sa présence a ouvert un champ neutre, contemplatif et profond, dans une atmosphère ouverte et frontale.</p>
+
+<p>mdtc.47 poursuit ce processus en le poussant vers une nouvelle échelle publique. l’activation a présenté une étoile de quatre mètres de hauteur installée à l’angle de general prim et abraham gonzález, colonia juárez, mexico. dans cette nouvelle itération, l’étoile apparaît comme un signal direct dans le flux urbain, de manière encore plus frontale.</p>
+
+<p>au sein de xpan, l’étoile condense une position claire : construire ses propres systèmes et les maintenir dans le temps tout en opérant avec sa propre lisibilité, fonctionnant de la même manière qu’un emblème.</p>
+
+<p>mdtc.47 a également marqué clairement une position face au contexte culturel qui traverse la ville et ses disciplines proches — art contemporain, musique, architecture, cinéma, mode, littérature et autres scènes connectées. l’étoile est apparue comme une affirmation directe d’indépendance structurelle : un signal que xpan opère à partir de ses propres systèmes, de sa propre continuité et de sa propre capacité à soutenir forme, sens et présence.</p>
+
+<p>l’activation a eu lieu pendant la supposée « semaine de l’art », au cours de laquelle la ville s’est remplie de circuits intensifiés, et au milieu de cette concentration l’étoile est restée comme un signal fixe rappelant que xpan travaille à partir de sa propre infrastructure, de son autonomie et d’une continuité construite dans le temps.</p>
+        `
+      },
+      jp: {
+        meta: "2026年2月 — メキシコシティ",
+        html: `
+<p><strong>mdtc.47</strong><br>
+2026年2月 — メキシコシティ</p>
+
+<p>mdtc.47は、xpan.estrellaの新しいイテレーションの公開発表であり、xpanの内部で時間をかけて形成されてきたマクロシステムを可視化するものであった。</p>
+
+<p>星は無意識のうちに、そして偶然として現れ、影、グリッド、建築的プロセス、光の反射、空間の配置、幾何学的関係の中で繰り返し現れ、さまざまな場所で持続的に再出現した。時間とともにそのパターンに注意を向けることで、xpanのシステムにおける秩序、比例、対称性の軸としての重みを持ち始め、ソフトウェア、建築、音響、デバイス、オペレーショナルダイアグラムにおける構造的軸となり、方向性や構造を整理するためのツールとなった。それは、異なる要素の個別性を保ちながら、それらに一貫性を与え、複数のスケールに展開可能な図形である。</p>
+
+<p>その最初の直接的な物理化は、2025年4月、旧ホテル・レフォルマ（mdtc.4）において行われ、高出力LEDリフレクターによって構成された高さ6メートルの星として実現された。この出現は、星が単独で複数のシステム、さらには空間全体を支える能力を持つことを明確に示した。その存在は、開かれたかつ前面的な環境の中に、中立的で内省的かつ深い場を生み出した。</p>
+
+<p>mdtc.47はこのプロセスを継続し、それをより公共的なスケールへと押し進めた。このアクティベーションでは、メキシコシティのコロニア・フアレス、general primとabraham gonzálezの交差点に、高さ4メートルの星が設置された。この新しいイテレーションにおいて、星は都市の流れの中に直接的な信号として現れ、より前面的な形で提示された。</p>
+
+<p>xpanにおいて、この星は明確な姿勢を凝縮している。それは、自らのシステムを構築し、それを時間の中で維持しながら、自らの可読性によって運用することであり、同時にエンブレムとして機能するものである。</p>
+
+<p>mdtc.47はまた、都市を横断する文化的文脈およびそれに隣接する分野 — 現代美術、音楽、建築、映画、ファッション、文学、その他の接続されたシーン — に対しても明確な立場を示した。星は構造的独立性の直接的な表明として現れ、xpanが自身のシステム、自身の連続性、そして形態・意味・存在を維持する能力によって運営されていることを示す信号となった。</p>
+
+<p>このアクティベーションは、いわゆる「アートウィーク」の期間中に行われ、都市が高度に集中した回路で満たされる中で、星は固定された信号として存在し続け、xpanが自らのインフラストラクチャ、自律性、そして時間を通じて構築された連続性に基づいて活動していることを示した。</p>
+        `
+      }
+    };
+
+
+const SETS = {
+  set1: [
+    "https://attachments.are.na/44618480/b63003405f2ec62df9a4ddc41650f1a9.mp4",
+    "https://attachments.are.na/44618481/c4242084ed05397cf8cd214b50dddbdb.mp4",
+    "https://attachments.are.na/44618482/29ccc87e52518793ad7f1290b718bc55.mp4",
+    "https://attachments.are.na/44618484/b68ab9ff4205b23c7579864fcd2bad9f.mov",
+    "https://attachments.are.na/44618485/2a546165805bd8e5cdc9bbbae89d03a8.mov",
+    "https://attachments.are.na/44618486/85befdd0a000763d82dfff0e3610b817.mov",
+    "https://attachments.are.na/44618487/041959317106cee3b97145f0e0bd8f8f.mov",
+    "https://attachments.are.na/44618488/03f738c6f00c14cba68c0695f9236260.mov",
+    "https://attachments.are.na/44618489/8ed48556699f4fe56234afd5a4c8a54b.mov",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618490/original_5aa19280ec8358de0171468848fc6dfe.png",
+    "https://attachments.are.na/44618493/04e7f16a6b39e715c704cace45a0daac.mov",
+    "https://attachments.are.na/44618494/2e23ed7e1037170c61cb870aac86ca07.mp4",
+    "https://attachments.are.na/44618495/d6e0a4bbbcfe741d6c8aedd4998e6c9e.mp4",
+    "https://attachments.are.na/44618497/7831657d9625a895c51162b4e49b9052.mp4",
+    "https://attachments.are.na/44618498/fa98bcb02e2432aaa51613ceb19b4a65.mp4",
+    "https://attachments.are.na/44618499/9c03308fe46717490289b846b86b9c7a.mp4",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618537/original_14a67951d029779bfb756532018afa72.png"
+  ],
+
+  set2: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618545/original_d2d554298bfc3e19efe6fc5e108d478f.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618546/original_4d289536c33691e02ce0705b0c341f24.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618547/original_652988daef46fbf5680d50590006d9cd.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618548/original_5ac5459b8353f7ccb4616907724e5891.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618549/original_9e10e9c70a9403447d2a342266a1f791.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618550/original_81b3a18ecf73ccdb8029e07c337c7c75.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618551/original_b48058b4e6ee955721752f8e2da0c29d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618553/original_193f69220374ac6bc28595478f538e12.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618554/original_0911e634c188e9c18f034c19b5bfd406.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618555/original_9a5f3e9cb08536e8d8a5e6c71a0becc3.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618556/original_46116caa3368fb3463c1188064ef2ee2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618557/original_b1c1f78aa4531a20e5e2e1885c73aa5f.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618558/original_024a7c1c671113c3de2d1e2de8c57ace.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618559/original_109dac5227f0ce873bf4a882c54dc35d.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618560/original_cae5452a894b3c018dd843ec63c6b1e2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618561/original_4c6a645b9b5fb4a91a7d4c478b528a3c.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618562/original_d5c7d71a3a6ee4cffcde6ee8198bbc74.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618563/original_45ae9f50765adcb661078a6e4600f14b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618564/original_b3273f7ff7a3542879a752e111ddd4b9.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618566/original_daec2643f50f436768d04e2a9e624204.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618568/original_4ba9e3707b3418c21d983105e2fb38ac.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618569/original_b090a76b31131be91e026c5ea339b802.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618570/original_5d2f6eb8bdcc8c4a0f1922c50acad27a.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618571/original_61101c732a9c8e20d82cd4617cd94834.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618573/original_1771cdd1512cf948c3755230b5e75aa6.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618574/original_eefa5340aa0c43cddb62f114408fc47b.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618575/original_c819ae5e1ba746ab61a8d77fdd9ba2b6.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618576/original_84ce13ba062885d7e4ca29d1cc260ebb.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618577/original_ffcd5426b472d11dde5a18414010ffc2.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618578/original_8c5063cd60e7d332a670d20b8dbba035.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618579/original_ccae1309a5cf4523a6aedfce907c3a79.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618580/original_0e8c3f66bae2d655cee6b06fe44c9820.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618581/original_be4856cec78b51892d59d7dce4b7d913.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618582/original_486b7b28e90f043ddac11a1b85135505.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618583/original_7d125fc456f1a1cf827a62299bf24552.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618584/original_70cc27aeee8e0a87486d2785e6172a92.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618585/original_8d466279fb5ebca20d62d0acc877adb1.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618588/original_a8a2b3de1afd97353ba3740bb89dc2f9.jpg"
+  ],
+
+  set3: [
+    "https://attachments.are.na/44618601/f9d6f34408a12163fdcd934c914ce0f6.mov",
+    "https://attachments.are.na/44618602/6294afca78f0979003b6dc032aea791d.mov",
+    "https://attachments.are.na/44618604/aa7cda6374cf879986cbad96bc925455.mov",
+    "https://attachments.are.na/44618606/6341f35c8bd41f195da85eab0340965a.mov",
+    "https://attachments.are.na/44618608/33a80fc36d5c451e4953551c6470c4b8.mov",
+    "https://attachments.are.na/44618609/55186f4a1de5330cdaa6ffa02ed1243a.mov",
+    "https://attachments.are.na/44618611/d079b076d01d0b5fe6f118d56964226b.mov",
+    "https://attachments.are.na/44618612/f86978896d16fdcdc9d81a628bd5f636.mov",
+    "https://attachments.are.na/44618613/dadd6f9825095e54a1ac30a9b123a5fe.mov",
+    "https://attachments.are.na/44618615/e51ea1710142cac27247497a89d385f1.mov",
+    "https://attachments.are.na/44618616/6fedc60e8b92d666b040ec275150ce14.mov",
+    "https://attachments.are.na/44618617/05374c3b1d14253c8bb4f41cf62e35dd.mov",
+    "https://attachments.are.na/44618619/eb3a6875c2df6170b00682373c13e87f.mov",
+    "https://attachments.are.na/44618622/049692025f8b7cedbc84b0da35a53f90.mov",
+    "https://attachments.are.na/44618626/a694c1a32130177aa1ed866a943cbb20.mov",
+    "https://attachments.are.na/44618629/47ed44b44e3efad3e42774b8d62d1f1b.mov",
+    "https://attachments.are.na/44618631/ac0628b4dd1a26958085458943c4ed10.mov",
+    "https://attachments.are.na/44618634/515d1036de2ad9cb045f2deed0120c70.mov",
+    "https://attachments.are.na/44618636/c524f7c36cb1650d2568b831cd7173ff.mov",
+    "https://attachments.are.na/44618637/5b8348da814c413e8138e72e55633322.mov",
+    "https://attachments.are.na/44618639/2f1495d5f2551a039c0026129a3ccc5c.mov",
+    "https://attachments.are.na/44618640/6e61210cd41fa03f7d60f1b873495269.mov",
+    "https://attachments.are.na/44618641/1e64c9d16f33fe635f888918f823dfaf.mov",
+    "https://attachments.are.na/44618643/d1337bf346f0d4ba87c9bad8b5255f24.mov",
+    "https://attachments.are.na/44618645/4d3f7374348fb70a91c3abf5541dbe51.mov",
+    "https://attachments.are.na/44618646/4cf1f314d38c40469596c975a5d95ccd.mov",
+    "https://attachments.are.na/44618662/9f658da546dd3c67b5c4ca1ea683cc0d.mov",
+    "https://attachments.are.na/44618685/c12a6bef8478c22e4b2fe36451643dd1.mov",
+    "https://attachments.are.na/44618689/9da043f0cf77f314c9e6ec1d37b068a2.mov",
+    "https://attachments.are.na/44618691/7b9824080ac1b5a3667c1d5e7a23af6f.mov",
+    "https://attachments.are.na/44618692/536bef6f127ae1c9a74ccad690ea5049.mov",
+    "https://attachments.are.na/44618693/58a1818584be65df720334b600e9c82b.mov",
+    "https://attachments.are.na/44618694/76f72a7ea5e4eeeece4c5ea0590f4fcc.mov",
+    "https://attachments.are.na/44618695/9eae5428207c05fc9e5d250d36b48d32.mov",
+    "https://attachments.are.na/44618697/662e680a10d007d179400d88949ee9ae.mov",
+    "https://attachments.are.na/44618698/961df1df53a77b29469e469e9a2b6795.mov",
+    "https://attachments.are.na/44618699/82f238f07a39a63509a430bc3378ff96.mov"
+  ],
+
+  set4: [
+    "https://attachments.are.na/44618723/324a9b981abd267ab64272c5f9f93497.mp4",
+    "https://attachments.are.na/44618725/7987370867e24d80cd4c112638af3757.mp4",
+    "https://attachments.are.na/44618726/9d4aaa74085a380da3eb75c7fbc394e9.mp4",
+    "https://attachments.are.na/44618727/e6d4a8b2099b2d6dd1d0f047241896be.mp4",
+    "https://attachments.are.na/44618729/700372a3bcdebcf2805429b7ee1319d0.mp4",
+    "https://attachments.are.na/44618731/9401d84f53aee6ff76759d979b9dc126.mp4",
+    "https://attachments.are.na/44618732/635f047f5129827be0358c7e46dbba9f.mp4",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618733/original_ada8461ebab6671505ae1fbc624a1272.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618734/original_a241d0395b788dbb2cd395318fd9cd84.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618735/original_0d14f013d21f8086451be1e23c3edf88.jpg",
+    "https://attachments.are.na/44618736/6473ebedd4506ddba3d6a01929bec48d.mp4",
+    "https://attachments.are.na/44618738/23ed9b72cbe9d4869a3ff3450fdde04e.mp4",
+    "https://attachments.are.na/44618739/e2ec8f51598e97c516b7b658eed5a46a.mp4",
+    "https://attachments.are.na/44618741/9c1c9dccff6b45a3e2beb554276486b2.mp4",
+    "https://attachments.are.na/44618744/b843ebb428221a256834beae15cbc6f8.mp4"
+  ],
+
+  set5: [
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618748/original_03393b482727c692d852634dbd46c6bf.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618749/original_622109c494b663ba60970faaafe09301.jpg",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618750/original_3686c516913eaa393d3df7c36e7150a0.jpg",
+    "https://attachments.are.na/44618752/87be2315029e07bc49589663cc3d0d47.mp4",
+    "https://attachments.are.na/44618754/7417619ef79bf0da451e8992c9d4d35f.mp4",
+    "https://attachments.are.na/44618755/c267e63e7e6cb236006274b2933f70a5.mp4",
+    "https://attachments.are.na/44618756/6f12927f9bbe2037fd27264431ad2cb1.mp4",
+    "https://attachments.are.na/44618757/ccdfa15c5306cace9ac29bcca18a2013.mp4",
+    "https://attachments.are.na/44618758/c3e68e13885671e8dc183d98a36a9202.mp4",
+    "https://attachments.are.na/44618759/c38624fca3de2dd3985541aae41564ee.mp4",
+    "https://attachments.are.na/44618760/9d4f93248039ef46dfbbceb54948031e.mp4",
+    "https://attachments.are.na/44618761/0a68af24831aaa335f2417924696615f.mp4",
+    "https://attachments.are.na/44618762/084b7db9abd4d55d0b0bc053461e936c.mp4",
+    "https://attachments.are.na/44618763/ba947cf64c3dbd854edd0de7d8ef2860.mp4",
+    "https://attachments.are.na/44618767/fd2570a45493a33050e873e8b2afb7f5.mp4",
+    "https://attachments.are.na/44618768/3d24f3a85bc0d7e0b3f40bc95a5286b6.mp4",
+    "https://attachments.are.na/44618769/f52eedc2bab653f11be0cd595e668a2c.mp4",
+    "https://attachments.are.na/44618770/d80aafb278c5d648eb9a5646c903fa07.mp4",
+    "https://attachments.are.na/44618771/1d4667d0d0ec9734b54d1a1ec7e16ba8.mp4",
+    "https://attachments.are.na/44618772/b07532b21cb0eb0c6c4690cbdb216c44.mp4",
+    "https://attachments.are.na/44618773/d4c57cc5a07bd180fece3b81122fd09b.mp4",
+    "https://attachments.are.na/44618775/a8cfca3edd9636b3bafbda60207228d0.mp4",
+    "https://attachments.are.na/44618776/cd9394dc4beaf97e2e00732b7a933280.mp4",
+    "https://attachments.are.na/44618779/3f7c387a3d136d9427616373b38dcb21.mp4",
+    "https://attachments.are.na/44618781/45651c751e8049b562896135329f300c.mp4",
+    "https://attachments.are.na/44618782/abf437aad25da00ce5906a584e83883d.mp4",
+    "https://attachments.are.na/44618783/c46785de7b83bf9f3e7f2a3cf5008b36.mp4",
+    "https://attachments.are.na/44618785/5678aedb2c50c3f3afc4f955763fc47e.mp4",
+    "https://attachments.are.na/44618786/46ea419937efb94b2fc9063344f0fee8.mp4",
+    "https://attachments.are.na/44618787/13d91793a6b8f464754dc051237b277b.mp4",
+    "https://attachments.are.na/44618788/705b8b9398346b3ae6a470370d483919.mp4",
+    "https://attachments.are.na/44618792/24ed76fae7c531e3303ad6d54285c7ac.mp4",
+    "https://attachments.are.na/44618793/9602e40c3bfa2dea2c1442b26f6b6c79.mp4",
+    "https://attachments.are.na/44618794/6dcc35548c3b0316989395bea679118c.mp4",
+    "https://attachments.are.na/44618795/96597d0e4c67911a561cbad3c2296b96.mp4",
+    "https://attachments.are.na/44618797/c31eae339ad366775ea619c105f62870.mp4",
+    "https://d2w9rnfcy7mm78.cloudfront.net/44618798/original_c28c64f08c30506c87a7435197c05413.jpg",
+    "https://attachments.are.na/44618799/66c9896d99f3b5fc1c8a0d3f34e3b66c.mov",
+    "https://www.are.na/block/44618800",
+    "https://www.are.na/block/44618802",
+    "https://attachments.are.na/44618803/b2ac7e5b825df846ebe2703d20e888e7.mp4",
+    "https://www.are.na/block/44618805",
+    "https://attachments.are.na/44618806/187cbe7e3d542e4a1902ab258fdcc9f4.mp4",
+    "https://attachments.are.na/44618808/6bbcc10a4da76160bed1a90feaaf8514.mov",
+    "https://attachments.are.na/44618809/c92109c9c73f725c4c59706dd592930a.mov",
+    "https://www.are.na/block/44618810",
+    "https://attachments.are.na/44618811/a4c73595c1c4ee18346d098dcd6c9be8.mov",
+    "https://attachments.are.na/44618812/55cbf60fd21fc369451b26f1d48bb767.mov",
+    "https://attachments.are.na/44618814/899edbd019d2968a2eb3544b22719660.mp4",
+    "https://attachments.are.na/44618816/f742566fd08c079aeabc971910b03e13.mp4",
+    "https://attachments.are.na/44619070/2b9d2427777345b0f0e563a7a732d341.mov",
+    "https://attachments.are.na/44619071/d21682051573b21b1df9c6c68a73e093.mov",
+    "https://www.are.na/block/44619072",
+    "https://attachments.are.na/44619074/754bac95c91ebc63b0ac387a92712a85.mov",
+    "https://attachments.are.na/44619075/0808597b10fd42176daf1f48210a5183.mov",
+    "https://attachments.are.na/44619076/e48a2af7567f35ca02282a9aeade81b5.mov",
+    "https://attachments.are.na/44619077/11abf4ef391a7eebb541569bec497de5.mov",
+    "https://attachments.are.na/44619078/8316626d2bbef0cbd60285c1ae85f25b.mov",
+    "https://attachments.are.na/44619080/a250e805b9637d80ed6952425fc79cba.mov"
+  ]
+};
+
+    /* =========================================================
+       ESTADO
+    ========================================================= */
+    const state = {
+      lang: "es",
+      autoplayEnabled: true,
+      lightboxItems: [],
+      lightboxIndex: -1,
+      archiveFilter: "all",
+      ioMedia: null,
+      ioPlay: null,
+      reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      mediaQueue: [],
+      activeLoads: 0,
+      maxConcurrentLoads: 5,
+      hydrated: new WeakSet(),
+      observedVideos: new WeakSet()
+    };
+
+    /* =========================================================
+       UTILS
+    ========================================================= */
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+
+    function safeLocalGet(key, fallback){
+      try{
+        const v = localStorage.getItem(key);
+        return v ?? fallback;
+      }catch{
+        return fallback;
+      }
+    }
+
+    function safeLocalSet(key, value){
+      try{
+        localStorage.setItem(key, value);
+      }catch{}
+    }
+
+    function normalizeUrl(url){
+      return typeof url === "string" ? url.trim() : "";
+    }
+
+    function detectKind(url){
+      const u = normalizeUrl(url).toLowerCase();
+      if(!u) return "unknown";
+      if(u.includes("www.are.na/block/")) return "block";
+      if(/\.(jpg|jpeg|png|webp)$/i.test(u)) return "image";
+      if(/\.(mp4|mov|webm)$/i.test(u)) return "video";
+      return "unknown";
+    }
+
+    function inferShape(url, setName){
+      const kind = detectKind(url);
+      if(kind === "video"){
+        if(setName === "set1") return "cinema";
+        if(setName === "set3") return "tall";
+        return "cinema";
+      }
+      if(kind === "image"){
+        if(setName === "set5") return "square";
+        return "cinema";
+      }
+      return "square";
+    }
+
+    function inferFit(url, setName){
+      const kind = detectKind(url);
+      if(kind === "block") return "contain";
+      if(setName === "set2") return "cover";
+      if(setName === "set5") return "cover";
+      return "cover";
+    }
+
+    function prettyKind(kind){
+      if(kind === "image") return "img";
+      if(kind === "video") return "video";
+      if(kind === "block") return "block";
+      return "link";
+    }
+
+    function makeIndexLabel(setName, idx){
+      return `${setName.replace("set","s")}.${String(idx + 1).padStart(2,"0")}`;
+    }
+
+    function clamp(n, min, max){
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function fragmentFromHTML(html){
+      const tpl = document.createElement("template");
+      tpl.innerHTML = html.trim();
+      return tpl.content;
+    }
+
+    function nextFrame(){
+      return new Promise(resolve => requestAnimationFrame(()=> resolve()));
+    }
+
+    function idle(cb, timeout = 700){
+      if("requestIdleCallback" in window){
+        return window.requestIdleCallback(cb, { timeout });
+      }
+      return window.setTimeout(cb, 32);
+    }
+
+    /* =========================================================
+       STAR / TEXT
+    ========================================================= */
+    function mountStar(){
+      $("#heroStarMount").innerHTML = STAR_SVG;
+      $("#bgStarMount").innerHTML = STAR_SVG;
+    }
+
+    function mountCopy(){
+      for(const lang of ["es","en","fr","jp"]){
+        const block = $(`.lang-${lang}`);
+        if(block) block.innerHTML = COPY[lang]?.html || "";
+      }
+      $("#metaLine").textContent = COPY[state.lang]?.meta || "";
+    }
+
+    /* =========================================================
+       LANGUAGE
+    ========================================================= */
+    function setLang(lang){
+      state.lang = ["es","en","fr","jp"].includes(lang) ? lang : "es";
+      safeLocalSet("xpan.lang", state.lang);
+
+      $$(".lang-switch button").forEach(btn=>{
+        const on = btn.dataset.lang === state.lang;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", on ? "true" : "false");
+      });
+
+      $$(".lang-block").forEach(block=>{
+        block.classList.toggle("active", block.dataset.lang === state.lang);
+      });
+
+      document.documentElement.lang = state.lang;
+      $("#metaLine").textContent = COPY[state.lang]?.meta || "";
+    }
+
+    /* =========================================================
+       TILE BUILDERS
+    ========================================================= */
+    function makeTile(url, setName, idx){
+      const kind = detectKind(url);
+      const shape = inferShape(url, setName);
+      const fit = inferFit(url, setName);
+
+      const tile = document.createElement("article");
+      tile.className = "tile";
+      tile.dataset.kind = kind;
+      tile.dataset.shape = shape;
+      tile.dataset.fit = fit;
+      tile.dataset.set = setName;
+      tile.dataset.index = idx;
+      tile.dataset.src = url;
+      tile.tabIndex = 0;
+      tile.setAttribute("role","button");
+      tile.setAttribute("aria-label", `${prettyKind(kind)} ${idx + 1}`);
+
+      if(setName === "set1"){
+        if(idx === 0) tile.classList.add("hero-span-8");
+        else if(idx === 1) tile.classList.add("hero-span-4");
+        else if(idx === 2) tile.classList.add("hero-span-6");
+        else if(idx === 3) tile.classList.add("hero-span-6");
+        else tile.classList.add("hero-span-4");
+      }
+
+      const inner = document.createElement("div");
+      inner.className = "tile-inner";
+
+      const index = document.createElement("div");
+      index.className = "tile-index";
+      index.textContent = makeIndexLabel(setName, idx);
+
+      const kindTag = document.createElement("div");
+      kindTag.className = "tile-kind";
+      kindTag.textContent = prettyKind(kind);
+
+      const audioTag = document.createElement("div");
+      audioTag.className = "tile-audio";
+      audioTag.textContent = "audio";
+      tile.append(index, kindTag, audioTag, inner);
+
+      const ph = document.createElement("div");
+      ph.className = "tile-placeholder";
+      ph.textContent = "loading";
+      inner.appendChild(ph);
+
+      if(kind === "image" || kind === "video"){
+        const slot = document.createElement("div");
+        slot.className = "tile-media-slot";
+        slot.dataset.src = url;
+        slot.dataset.kind = kind;
+        slot.dataset.set = setName;
+        slot.dataset.index = idx;
+        slot.style.width = "100%";
+        slot.style.height = "100%";
+        inner.appendChild(slot);
+
+        const eager = setName === "set1" ? idx < 4 : (setName === "set2" ? idx < 6 : false);
+        if(eager) tile.dataset.eager = "true";
+      }else{
+        inner.innerHTML = "";
+        inner.appendChild(buildFallback(url, kind));
+        tile.classList.add("loaded");
+      }
+
+      tile.addEventListener("click", ()=> openLightboxByTile(tile));
+      tile.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          openLightboxByTile(tile);
+        }
+      });
+
+      return tile;
+    }
+
+    function buildFallback(url, kind){
+      const wrap = document.createElement("div");
+      wrap.className = "tile-fallback";
+
+      const inner = document.createElement("div");
+      inner.className = "tile-fallback-inner";
+
+      const label = document.createElement("div");
+      label.textContent = kind === "block" ? "are.na block" : "external link";
+
+      const code = document.createElement("div");
+      code.className = "tile-fallback-code";
+      code.textContent = url;
+
+      const a = document.createElement("a");
+      a.className = "block-fallback-link";
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "open";
+
+      inner.append(label, code, a);
+      wrap.appendChild(inner);
+      return wrap;
+    }
+
+    function buildImageNode(tile, slot, url, done){
+      const img = new Image();
+      img.alt = "";
+      img.loading = tile.dataset.eager === "true" ? "eager" : "lazy";
+      img.decoding = "async";
+      img.fetchPriority = tile.dataset.eager === "true" ? "high" : "low";
+
+      img.addEventListener("load", ()=>{
+        slot.replaceWith(img);
+        tile.classList.add("loaded");
+        done();
+      }, { once:true });
+
+      img.addEventListener("error", ()=>{
+        const inner = tile.querySelector(".tile-inner");
+        if(inner){
+          inner.innerHTML = "";
+          inner.appendChild(buildFallback(url, "image"));
+        }
+        tile.classList.add("loaded");
+        done();
+      }, { once:true });
+
+      img.src = url;
+    }
+
+    function observeVideoIfNeeded(video){
+      if(!state.ioPlay || state.observedVideos.has(video)) return;
+      state.observedVideos.add(video);
+      state.ioPlay.observe(video);
+    }
+
+    function buildVideoNode(tile, slot, url, done){
+      const video = document.createElement("video");
+      video.preload = "none";
+      video.muted = true;
+      video.defaultMuted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline","");
+      video.setAttribute("muted","");
+      video.dataset.autoplayManaged = "true";
+      video.disablePictureInPicture = true;
+
+      let settled = false;
+      const settle = ()=>{
+        if(settled) return;
+        settled = true;
+        tile.classList.add("loaded");
+        observeVideoIfNeeded(video);
+        done();
+      };
+
+      video.addEventListener("loadeddata", ()=>{
+        slot.replaceWith(video);
+        settle();
+      }, { once:true });
+
+      video.addEventListener("canplay", ()=>{
+        if(!video.isConnected) slot.replaceWith(video);
+        settle();
+      }, { once:true });
+
+      video.addEventListener("error", ()=>{
+        const inner = tile.querySelector(".tile-inner");
+        if(inner){
+          inner.innerHTML = "";
+          inner.appendChild(buildFallback(url, "video"));
+        }
+        tile.classList.add("loaded");
+        done();
+      }, { once:true });
+
+      video.addEventListener("volumechange", ()=>{
+        tile.dataset.audio = (!video.muted && video.volume > 0) ? "true" : "false";
+      });
+
+      video.src = url;
+      video.load();
+      idle(()=>{
+        if(video.isConnected || slot.isConnected) settle();
+      }, 1400);
+    }
+
+    function queueHydration(tile){
+      if(!tile || state.hydrated.has(tile)) return;
+      state.hydrated.add(tile);
+      state.mediaQueue.push(tile);
+      pumpMediaQueue();
+    }
+
+    function pumpMediaQueue(){
+      while(state.activeLoads < state.maxConcurrentLoads && state.mediaQueue.length){
+        const tile = state.mediaQueue.shift();
+        if(!tile || !tile.isConnected) continue;
+        const slot = tile.querySelector(".tile-media-slot[data-src]");
+        if(!slot) continue;
+
+        state.activeLoads += 1;
+        const url = slot.dataset.src;
+        const kind = slot.dataset.kind;
+        const done = ()=>{
+          state.activeLoads = Math.max(0, state.activeLoads - 1);
+          pumpMediaQueue();
+        };
+
+        if(kind === "image") buildImageNode(tile, slot, url, done);
+        else if(kind === "video") buildVideoNode(tile, slot, url, done);
+        else done();
+      }
+    }
+
+    /* =========================================================
+       RENDER ENGINE
+    ========================================================= */
+    function containerForSet(setName){
+      return {
+        set1: $("#gridSet1"),
+        set2: $("#gridSet2"),
+        set3: $("#gridSet3"),
+        set4: $("#gridSet4"),
+        set5: $("#gridSet5")
+      }[setName];
+    }
+
+    function countElForSet(setName){
+      return {
+        set1: $("#countSet1"),
+        set2: $("#countSet2"),
+        set3: $("#countSet3"),
+        set4: $("#countSet4"),
+        set5: $("#countSet5")
+      }[setName];
+    }
+
+    function updateCounts(){
+      for(const setName of Object.keys(SETS)){
+        const count = Array.isArray(SETS[setName]) ? SETS[setName].length : 0;
+        const el = countElForSet(setName);
+        if(el) el.textContent = `${count} ${count === 1 ? "entrada" : "entradas"}`;
+      }
+    }
+
+    async function renderSetProgressive(setName){
+      const urls = Array.isArray(SETS[setName]) ? SETS[setName] : [];
+      const container = containerForSet(setName);
+      if(!container) return;
+
+      const batchSize = setName === "set5" ? 20 : 12;
+      let i = 0;
+
+      while(i < urls.length){
+        const frag = document.createDocumentFragment();
+        const end = Math.min(i + batchSize, urls.length);
+
+        for(let j = i; j < end; j++){
+          frag.appendChild(makeTile(urls[j], setName, j));
+        }
+
+        container.appendChild(frag);
+        i = end;
+
+        await nextFrame();
+      }
+    }
+
+    async function renderAllSets(){
+      updateCounts();
+      for(const setName of ["set1","set2","set3","set4","set5"]){
+        await renderSetProgressive(setName);
+      }
+      collectLightboxItems();
+      observeAutoplayMedia();
+      observeLazyMedia();
+      primeAboveTheFoldMedia();
+      bindArchiveFilter();
+    }
+
+    /* =========================================================
+       LAZY MEDIA
+    ========================================================= */
+    function observeLazyMedia(){
+      if(state.ioMedia) state.ioMedia.disconnect();
+
+      state.ioMedia = new IntersectionObserver((entries, obs)=>{
+        for(const entry of entries){
+          if(!entry.isIntersecting) continue;
+          const slot = entry.target;
+          const tile = slot.closest(".tile");
+          if(tile) queueHydration(tile);
+          obs.unobserve(slot);
+        }
+      }, {
+        root:null,
+        rootMargin:"1100px 0px",
+        threshold:0.01
+      });
+
+      $$(".tile-media-slot[data-src]").forEach(slot => state.ioMedia.observe(slot));
+    }
+
+    function primeAboveTheFoldMedia(){
+      const eagerTiles = $$(".tile[data-eager='true']").slice(0, 10);
+      eagerTiles.forEach(tile => queueHydration(tile));
+    }
+
+    /* =========================================================
+       AUTOPLAY MANAGEMENT
+    ========================================================= */
+    function observeAutoplayMedia(){
+      if(state.ioPlay) state.ioPlay.disconnect();
+      state.observedVideos = new WeakSet();
+
+      state.ioPlay = new IntersectionObserver(entries=>{
+        for(const entry of entries){
+          const v = entry.target;
+          if(!(v instanceof HTMLVideoElement)) continue;
+
+          const shouldPlay = state.autoplayEnabled && entry.isIntersecting && !state.reducedMotion;
+
+          if(shouldPlay){
+            if(v.readyState >= 2){
+              v.play().catch(()=>{});
+            }
+          }else{
+            v.pause();
+          }
+        }
+      }, {
+        root:null,
+        threshold:0.6,
+        rootMargin:"120px 0px"
+      });
+
+      $$('video[data-autoplay-managed="true"]').forEach(v => observeVideoIfNeeded(v));
+    }
+
+    function setAutoplayEnabled(on){
+      state.autoplayEnabled = !!on;
+      safeLocalSet("xpan.autoplay", String(state.autoplayEnabled));
+      $("#toggleAutoplayBtn").textContent = state.autoplayEnabled ? "autoplay on" : "autoplay off";
+
+      $$('video[data-autoplay-managed="true"]').forEach(v=>{
+        if(!state.autoplayEnabled) v.pause();
+      });
+
+      observeAutoplayMedia();
+    }
+
+    /* =========================================================
+       LIGHTBOX
+    ========================================================= */
+    function collectLightboxItems(){
+      state.lightboxItems = $$(".tile").map(tile => ({
+        src: tile.dataset.src,
+        kind: tile.dataset.kind,
+        set: tile.dataset.set,
+        index: Number(tile.dataset.index || 0),
+        tile
+      }));
+    }
+
+    function openLightboxByTile(tile){
+      const src = tile.dataset.src;
+      const idx = state.lightboxItems.findIndex(item => item.src === src && item.tile === tile);
+      openLightbox(idx);
+    }
+
+    function openLightbox(idx){
+      idx = clamp(idx, 0, state.lightboxItems.length - 1);
+      if(idx < 0 || !state.lightboxItems.length) return;
+
+      state.lightboxIndex = idx;
+      const item = state.lightboxItems[idx];
+      const lb = $("#xpan-lightbox");
+      const stage = $("#lbStage");
+      const cap = $("#lbCaption");
+      const kind = $("#lbKind");
+      const counter = $("#lbCounter");
+
+      stage.innerHTML = "";
+      cap.innerHTML = "";
+      kind.textContent = prettyKind(item.kind);
+      counter.textContent = `${idx + 1} / ${state.lightboxItems.length}`;
+
+      if(item.kind === "image"){
+        const img = document.createElement("img");
+        img.src = item.src;
+        img.alt = "";
+        img.decoding = "async";
+        stage.appendChild(img);
+      }else if(item.kind === "video"){
+        const v = document.createElement("video");
+        v.src = item.src;
+        v.controls = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        v.autoplay = true;
+        v.loop = true;
+        v.muted = false;
+        stage.appendChild(v);
+      }else{
+        const box = document.createElement("div");
+        box.className = "tile-fallback";
+        box.style.position = "relative";
+        box.style.inset = "auto";
+        box.style.minWidth = "min(720px,90vw)";
+        box.style.minHeight = "min(320px,60vh)";
+        box.appendChild(buildFallback(item.src, item.kind).firstChild);
+        stage.appendChild(box);
+      }
+
+      const setInfo = document.createElement("span");
+      setInfo.textContent = `${item.set} / ${makeIndexLabel(item.set, item.index)}`;
+      cap.appendChild(setInfo);
+
+      lb.classList.add("open");
+      document.documentElement.classList.add("lb-open");
+      document.body.classList.add("lb-open");
+    }
+
+    function closeLightbox(){
+      $("#xpan-lightbox").classList.remove("open");
+      document.documentElement.classList.remove("lb-open");
+      document.body.classList.remove("lb-open");
+      $("#lbStage").innerHTML = "";
+      state.lightboxIndex = -1;
+    }
+
+    function stepLightbox(dir){
+      if(state.lightboxIndex < 0) return;
+      const next = clamp(state.lightboxIndex + dir, 0, state.lightboxItems.length - 1);
+      if(next !== state.lightboxIndex) openLightbox(next);
+    }
+
+    /* =========================================================
+       ARCHIVE FILTER
+    ========================================================= */
+    function bindArchiveFilter(){
+      const buttons = $$(".archive-actions button");
+      buttons.forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          buttons.forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          state.archiveFilter = btn.dataset.filter || "all";
+          applyArchiveFilter();
+        });
+      });
+    }
+
+    function applyArchiveFilter(){
+      const tiles = $$("#gridSet5 .tile");
+      tiles.forEach(tile=>{
+        const kind = tile.dataset.kind;
+        const show =
+          state.archiveFilter === "all" ||
+          (state.archiveFilter === "image" && kind === "image") ||
+          (state.archiveFilter === "video" && kind === "video") ||
+          (state.archiveFilter === "block" && kind === "block");
+
+        tile.classList.toggle("hidden", !show);
+      });
+    }
+
+    /* =========================================================
+       UI EVENTS
+    ========================================================= */
+    function bindUI(){
+      $$(".lang-switch button").forEach(btn=>{
+        btn.addEventListener("click", ()=> setLang(btn.dataset.lang));
+      });
+
+      $("#scrollTopBtn").addEventListener("click", ()=>{
+        window.scrollTo({ top:0, behavior: state.reducedMotion ? "auto" : "smooth" });
+      });
+
+      $("#toggleAutoplayBtn").addEventListener("click", ()=>{
+        setAutoplayEnabled(!state.autoplayEnabled);
+      });
+
+      $("#lbClose").addEventListener("click", closeLightbox);
+      $("#lbPrev").addEventListener("click", ()=> stepLightbox(-1));
+      $("#lbNext").addEventListener("click", ()=> stepLightbox(1));
+
+      $("#xpan-lightbox").addEventListener("click", (e)=>{
+        if(e.target === e.currentTarget) closeLightbox();
+      });
+
+      document.addEventListener("keydown", (e)=>{
+        const lbOpen = $("#xpan-lightbox").classList.contains("open");
+        if(lbOpen){
+          if(e.key === "Escape") closeLightbox();
+          else if(e.key === "ArrowLeft") stepLightbox(-1);
+          else if(e.key === "ArrowRight") stepLightbox(1);
+        }
+      });
+
+      let sx = 0, sy = 0, moved = false;
+      $("#xpan-lightbox").addEventListener("touchstart", (e)=>{
+        const t = e.changedTouches[0];
+        sx = t.clientX;
+        sy = t.clientY;
+        moved = false;
+      }, { passive:true });
+
+      $("#xpan-lightbox").addEventListener("touchmove", ()=>{
+        moved = true;
+      }, { passive:true });
+
+      $("#xpan-lightbox").addEventListener("touchend", (e)=>{
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx;
+        const dy = t.clientY - sy;
+
+        if(Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)){
+          stepLightbox(dx < 0 ? 1 : -1);
+          return;
+        }
+
+        if(!moved && Math.abs(dx) < 8 && Math.abs(dy) < 8){
+          closeLightbox();
+        }
+      }, { passive:true });
+
+      const sections = ["intro","set-1","set-2","set-3","set-4","set-5"].map(id => document.getElementById(id)).filter(Boolean);
+      const navLinks = $$(".section-nav a");
+      const io = new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting) return;
+          const id = entry.target.id;
+          navLinks.forEach(a=>{
+            a.classList.toggle("active", a.getAttribute("href") === `#${id}`);
+          });
+        });
+      }, { rootMargin:"-30% 0px -60% 0px", threshold:0 });
+
+      sections.forEach(sec => io.observe(sec));
+    }
+
+    /* =========================================================
+       INIT
+    ========================================================= */
+    async function init(){
+      mountStar();
+      mountCopy();
+
+      setLang(safeLocalGet("xpan.lang", "es"));
+      setAutoplayEnabled(safeLocalGet("xpan.autoplay", "true") !== "false");
+
+      bindUI();
+      await renderAllSets();
+    }
+    init();
+  </script>
+</body>
+</html>
