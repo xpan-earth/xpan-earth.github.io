@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="format-detection" content="telephone=no, email=no, address=no" />
+  <meta name="description" content="s.e.a. — silla de electrocución acústica — xpan" />
+  <title>s.e.a. — arquitectura</title>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin />
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin />
+  <link rel="preconnect" href="https://www.are.na" crossorigin />
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net" />
+  <link rel="dns-prefetch" href="https://attachments.are.na" />
+  <link rel="dns-prefetch" href="https://www.are.na" />
+
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#E0E3E6;
+      --fg-dim:#AEB4BA;
+      --line:#2A2E31;
+      --line-weak:#1A1D20;
+      --accent:#1860FF;
+      --surface:#0B0D10;
+      --surface-2:#111418;
+      --surface-3:rgba(255,255,255,.04);
+      --shadow:0 0 0 1px rgba(255,255,255,.02);
+      --maxw:1440px;
+      --textw:920px;
+      --contentw:1080px;
+      --header-h:64px;
+      --pad-x:clamp(16px,4vw,48px);
+      --pad-y:clamp(12px,2vw,24px);
+      --gap-1:.25rem;
+      --gap-2:.5rem;
+      --gap-3:.75rem;
+      --gap-4:1rem;
+      --gap-5:1.5rem;
+      --gap-6:2rem;
+      --radius:0;
+      --b1:1px solid var(--line);
+      --b0:1px solid var(--line-weak);
+      --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-mono:"SFMono-Regular","IBM Plex Mono","Menlo","Consolas","Monaco",monospace;
+      --hero-h:min(82vh,900px);
+      --fast:120ms linear;
+      --mid:180ms linear;
+      --slow:260ms linear;
+      --tile-min-main:280px;
+      --tile-min-dense:180px;
+      --focus:0 0 0 1px var(--accent) inset;
+      --safe-bottom:max(16px, env(safe-area-inset-bottom));
+      --safe-top:max(12px, env(safe-area-inset-top));
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#fff;
+        --fg:#0E1113;
+        --fg-dim:#4A5158;
+        --line:#D9DEE2;
+        --line-weak:#ECEFF2;
+        --surface:#F7F8FA;
+        --surface-2:#F0F2F5;
+        --surface-3:rgba(0,0,0,.03);
+        --shadow:0 0 0 1px rgba(0,0,0,.03);
+      }
+    }
+
+    *{box-sizing:border-box}
+    *::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--font-ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    body{overflow-x:hidden}
+    img,video,svg,canvas,iframe,object{display:block;max-width:100%}
+    img{height:auto}
+    button,input,select,textarea{font:inherit}
+    a{color:inherit;text-decoration:none}
+    ::selection{background:rgba(24,96,255,.22)}
+    :focus-visible{outline:none;box-shadow:var(--focus)}
+
+    .page-shell{position:relative;min-height:100vh;isolation:isolate}
+
+    .global-bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      pointer-events:none;
+      background:
+        linear-gradient(to right, transparent 0 calc(50% - .5px), var(--line-weak) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px) 100%),
+        linear-gradient(to bottom, transparent 0 calc(50% - .5px), var(--line-weak) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px) 100%);
+      opacity:.48;
+    }
+
+    .global-bg-chair{
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      opacity:.08;
+    }
+
+    .global-bg-chair svg{
+      width:min(92vw,1240px);
+      height:auto;
+      color:var(--fg);
+      transform:translateY(-1vh);
+    }
+
+    header{
+      position:fixed;
+      top:var(--safe-top);
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      z-index:120;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .brand,.lang-switch,.top-tools{pointer-events:auto}
+    .brand{display:inline-flex;align-items:center;gap:.75rem;min-height:40px}
+    .brand img{width:50px;height:auto;mix-blend-mode:difference;filter:invert(1) saturate(100%)}
+    @media (prefers-color-scheme: light){.brand img{mix-blend-mode:normal;filter:none}}
+
+    .lang-switch{
+      display:flex;
+      gap:.4rem;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .lang-switch button,
+    .top-tools button,
+    .section-nav a,
+    .audio-chip,
+    .block-fallback-link{
+      appearance:none;
+      margin:0;
+      padding:.42rem .7rem;
+      border:var(--b1);
+      background:rgba(0,0,0,.08);
+      color:var(--fg-dim);
+      cursor:pointer;
+      transition:color var(--fast),border-color var(--fast),background-color var(--fast),opacity var(--fast);
+      text-transform:lowercase;
+      letter-spacing:.01em;
+      line-height:1;
+      min-height:34px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:saturate(120%);
+      -webkit-backdrop-filter:saturate(120%);
+    }
+
+    @media (prefers-color-scheme: light){
+      .lang-switch button,
+      .top-tools button,
+      .section-nav a,
+      .audio-chip,
+      .block-fallback-link{background:rgba(255,255,255,.75)}
+    }
+
+    .lang-switch button:hover,
+    .lang-switch button.active,
+    .top-tools button:hover,
+    .section-nav a:hover,
+    .section-nav a.active,
+    .audio-chip.active{
+      color:var(--fg);
+      border-color:var(--accent);
+      background:rgba(24,96,255,.06);
+    }
+
+    .top-tools{
+      position:fixed;
+      right:var(--pad-x);
+      bottom:var(--safe-bottom);
+      z-index:110;
+      display:flex;
+      gap:.4rem;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      pointer-events:none;
+    }
+    .top-tools > *{pointer-events:auto}
+
+    main{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:calc(var(--header-h) + 28px + env(safe-area-inset-top)) var(--pad-x) calc(80px + env(safe-area-inset-bottom));
+    }
+
+    .section{
+      margin:0 0 var(--gap-6);
+      content-visibility:auto;
+      contain-intrinsic-size:1px 1000px;
+    }
+
+    .section-header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:1rem;
+      margin:0 0 .8rem;
+      border-top:var(--b1);
+      padding-top:.7rem;
+    }
+    .section-header h2{
+      margin:0;
+      font:700 .98rem/1.1 var(--font-ui);
+      text-transform:lowercase;
+      letter-spacing:.01em;
+    }
+    .section-kicker{
+      color:var(--fg-dim);
+      font:.82rem/1.2 var(--font-mono);
+      text-transform:lowercase;
+      white-space:nowrap;
+    }
+
+    .hero{
+      min-height:var(--hero-h);
+      display:grid;
+      grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);
+      gap:var(--gap-6);
+      align-items:center;
+      margin-bottom:var(--gap-6);
+      border-top:var(--b1);
+      padding-top:1rem;
+    }
+
+    .hero-object-wrap{
+      position:relative;
+      min-height:min(74vh,820px);
+      display:grid;
+      place-items:center;
+      border:var(--b1);
+      background:
+        linear-gradient(to bottom, transparent, var(--surface-3)),
+        radial-gradient(circle at 50% 50%, rgba(24,96,255,.05), transparent 58%);
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .hero-object-wrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(to right, transparent 0 49.8%, var(--line-weak) 49.8% 50.2%, transparent 50.2% 100%),
+        linear-gradient(to bottom, transparent 0 49.8%, var(--line-weak) 49.8% 50.2%, transparent 50.2% 100%);
+      opacity:.42;
+    }
+
+    .hero-object{
+      position:relative;
+      width:min(76%,780px);
+      height:auto;
+      color:var(--fg);
+      z-index:1;
+    }
+
+    .hero-object svg{width:100%;height:auto}
+
+    .hero-copy{display:grid;gap:1rem;align-content:start;min-width:0}
+    .title{margin:0;font:700 clamp(1.24rem,2.2vw,1.86rem)/1.08 var(--font-ui);text-transform:lowercase;letter-spacing:.005em}
+    .meta{margin:0;color:var(--fg-dim);font:.92rem/1.45 var(--font-ui);text-transform:lowercase}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+    .copy p,.lead p{margin:.9rem 0 0;max-width:var(--textw);font:400 .98rem/1.68 var(--font-ui);letter-spacing:.002em}
+    .copy p:first-child,.lead p:first-child{margin-top:0}
+
+    .section-nav{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.3rem}
+    .hero-meta-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.45rem;
+      margin-top:.35rem;
+      font:.8rem/1.35 var(--font-mono);
+      color:var(--fg-dim);
+    }
+    .hero-meta-grid div{border-top:var(--b1);padding-top:.45rem}
+
+    .spec-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:var(--gap-4);
+      max-width:var(--contentw);
+    }
+    .spec-card{
+      border:var(--b1);
+      background:var(--surface);
+      padding:1rem;
+      min-width:0;
+    }
+    .spec-label{font:.74rem/1.2 var(--font-mono);text-transform:lowercase;color:var(--fg-dim);margin:0 0 .5rem}
+    .spec-value{font:400 .95rem/1.6 var(--font-ui);margin:0}
+
+    .audio-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(280px,380px);
+      gap:var(--gap-5);
+      align-items:start;
+      max-width:var(--maxw);
+    }
+
+    .audio-panel,
+    .audio-notes,
+    .pdf-panel,
+    .media-count,
+    .placeholder-note{
+      border:var(--b1);
+      background:var(--surface);
+      box-shadow:var(--shadow);
+    }
+
+    .audio-panel{padding:1rem}
+    .audio-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;margin-bottom:1rem}
+    .audio-title{margin:0;font:600 .96rem/1.3 var(--font-ui);text-transform:lowercase}
+    .audio-status{font:.76rem/1.2 var(--font-mono);color:var(--fg-dim);text-transform:lowercase}
+    .audio-controls{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+    .audio-btn{
+      appearance:none;border:var(--b1);background:transparent;color:var(--fg);min-width:42px;min-height:42px;
+      padding:0 .9rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-transform:lowercase
+    }
+    .audio-btn:hover{border-color:var(--accent);background:rgba(24,96,255,.06)}
+    .audio-progress-wrap{display:grid;gap:.55rem}
+    .audio-timebar{display:flex;justify-content:space-between;gap:.7rem;font:.74rem/1.2 var(--font-mono);color:var(--fg-dim)}
+    .audio-range{width:100%;appearance:none;background:transparent;cursor:pointer}
+    .audio-range::-webkit-slider-runnable-track{height:1px;background:var(--line)}
+    .audio-range::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--fg);margin-top:-6.5px;border:1px solid var(--bg)}
+    .audio-range::-moz-range-track{height:1px;background:var(--line)}
+    .audio-range::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;background:var(--fg)}
+    .audio-wave{position:relative;height:120px;border:var(--b1);background:linear-gradient(to bottom,var(--surface),var(--surface-2));overflow:hidden}
+    .audio-wave canvas{width:100%;height:100%}
+    .audio-empty{
+      display:grid;place-items:center;height:120px;border:var(--b1);background:linear-gradient(to bottom,var(--surface),var(--surface-2));
+      color:var(--fg-dim);font:.8rem/1.5 var(--font-mono);text-align:center;padding:1rem
+    }
+    .audio-notes{padding:1rem;font:.88rem/1.55 var(--font-ui);color:var(--fg-dim)}
+    .audio-note-title{margin:0 0 .7rem;font:.76rem/1.2 var(--font-mono);text-transform:lowercase;color:var(--fg-dim)}
+
+    .media-intro{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(240px,320px);
+      gap:1rem;
+      align-items:start;
+    }
+    .media-intro-copy{max-width:900px;color:var(--fg-dim);font:.92rem/1.58 var(--font-ui)}
+    .media-count{padding:.8rem .85rem;font:.82rem/1.45 var(--font-mono);color:var(--fg-dim);background:var(--surface-3)}
+
+    .grid{display:grid;gap:var(--gap-1)}
+    .grid-main{grid-template-columns:repeat(auto-fit,minmax(var(--tile-min-main),1fr))}
+    .grid-dense{grid-template-columns:repeat(auto-fit,minmax(var(--tile-min-dense),1fr))}
+    .grid-pdf{grid-template-columns:1fr}
+
+    .tile{
+      position:relative;
+      border:var(--b1);
+      background:var(--surface);
+      overflow:hidden;
+      min-width:0;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+    .tile:focus-visible{box-shadow:var(--focus)}
+    .tile-inner{position:relative;width:100%;height:100%;background:linear-gradient(to bottom, transparent, rgba(0,0,0,.04));aspect-ratio:4/3}
+    .tile[data-shape="portrait"] .tile-inner{aspect-ratio:3/4}
+    .tile[data-shape="square"] .tile-inner{aspect-ratio:1/1}
+    .tile[data-shape="cinema"] .tile-inner{aspect-ratio:16/9}
+    .tile[data-shape="tall"] .tile-inner{aspect-ratio:9/16}
+    .tile img,.tile video{width:100%;height:100%;object-fit:cover;background:#000}
+    .tile[data-fit="contain"] img,.tile[data-fit="contain"] video{object-fit:contain;background:var(--surface)}
+    .tile-index,.tile-kind,.tile-audio{
+      position:absolute;z-index:3;font:.72rem/1 var(--font-mono);color:#fff;background:rgba(0,0,0,.52);
+      border:1px solid rgba(255,255,255,.16);padding:.26rem .4rem;pointer-events:none;letter-spacing:.01em
+    }
+    .tile-index{left:.45rem;top:.45rem}
+    .tile-kind{right:.45rem;top:.45rem;text-transform:lowercase}
+    .tile-audio{right:.45rem;bottom:.45rem;display:none}
+    .tile[data-audio="true"] .tile-audio{display:inline-flex}
+    .tile-fallback{
+      position:absolute;inset:0;display:grid;place-items:center;padding:1rem;color:var(--fg-dim);font:.88rem/1.45 var(--font-ui);
+      text-align:center;background:linear-gradient(to bottom,var(--surface),var(--surface-2))
+    }
+    .tile-fallback-inner{max-width:320px;display:grid;gap:.8rem;place-items:center}
+    .tile-fallback-code{font:.76rem/1.4 var(--font-mono);color:var(--fg-dim);word-break:break-all;opacity:.85}
+    .tile-placeholder{
+      position:absolute;inset:0;display:grid;place-items:center;color:var(--fg-dim);font:.76rem/1 var(--font-mono);letter-spacing:.02em;
+      pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);animation:shimmer 2.1s linear infinite
+    }
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .tile.loaded .tile-placeholder,.tile.failed .tile-placeholder{display:none}
+
+    .pdf-panel{padding:0;overflow:hidden}
+    .pdf-frame{position:relative;width:100%;height:min(76vh,960px);border:0;background:#0C0D0F}
+    .pdf-fallback{padding:1rem;color:var(--fg-dim);font:.88rem/1.55 var(--font-ui)}
+    @media (prefers-color-scheme: light){.pdf-frame{background:#F3F5F7}}
+
+    .placeholder-note{padding:1rem;color:var(--fg-dim);font:.88rem/1.55 var(--font-ui);max-width:var(--contentw)}
+    .footer-note{margin-top:3rem;border-top:var(--b1);padding-top:.8rem;color:var(--fg-dim);font:.82rem/1.5 var(--font-mono);text-transform:lowercase}
+
+    #xpan-lightbox{
+      position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);
+      backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);overscroll-behavior:contain;touch-action:none
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .lb-shell{
+      width:min(96vw,1800px);height:min(94vh,1200px);display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:.55rem;pointer-events:none
+    }
+    .lb-top,.lb-bottom{display:flex;align-items:center;justify-content:space-between;gap:.75rem;color:#fff;font:.78rem/1.2 var(--font-mono);pointer-events:auto}
+    .lb-controls{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+    .lb-controls button{appearance:none;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.36);color:#fff;cursor:pointer;min-width:36px;min-height:36px;display:grid;place-items:center;padding:0 .8rem}
+    .lb-stage{min-width:0;min-height:0;display:grid;place-items:center;overflow:hidden;pointer-events:auto}
+    .lb-stage img,.lb-stage video,.lb-stage iframe,.lb-stage object{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;background:transparent}
+    .lb-caption{opacity:.82;display:flex;flex-wrap:wrap;gap:.65rem;align-items:center}
+    html.lb-open,body.lb-open{overflow:hidden}
+    .hidden{display:none !important}
+
+    @media (max-width:1100px){
+      .hero{grid-template-columns:1fr}
+      .hero-copy{order:2}
+      .hero-object-wrap{order:1;min-height:min(70vh,680px)}
+      .audio-layout{grid-template-columns:1fr}
+      .media-intro{grid-template-columns:1fr}
+      .spec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media (max-width:780px){
+      .brand img{width:46px}
+      .top-tools{left:var(--pad-x);right:var(--pad-x);justify-content:space-between}
+      .hero{min-height:auto;gap:1.2rem}
+      .hero-object-wrap{min-height:min(58vh,520px)}
+      .hero-meta-grid,.spec-grid{grid-template-columns:1fr}
+      .section-header{align-items:flex-start;flex-direction:column}
+      .copy p,.lead p{font-size:.95rem;line-height:1.62}
+      .pdf-frame{height:auto;aspect-ratio:4/3}
+      .lb-top,.lb-bottom{font-size:.74rem}
+    }
+
+    @media (max-width:520px){
+      .lang-switch{gap:.3rem}
+      .lang-switch button,.top-tools button,.section-nav a,.audio-chip,.block-fallback-link{padding:.42rem .56rem;min-height:32px;font-size:.82rem}
+      .tile-index,.tile-kind,.tile-audio{font-size:.68rem}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      .tile-placeholder{animation:none}
+      *{transition:none !important}
+    }
+  </style>
+
+<!-- Site helpers -->
+  <script src="/assets/js/video-autoplay-mobile.js" defer></script>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="global-bg-grid" aria-hidden="true"></div>
+    <div class="global-bg-chair" aria-hidden="true"><div id="bgChairMount"></div></div>
+
+    <header>
+      <a class="brand" href="https://xpan.earth" target="_blank" rel="noopener" aria-label="xpan home">
+        <img src="xpan.svg" alt="xpan logo" fetchpriority="high" onerror="this.replaceWith((()=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 180 36');s.setAttribute('width','50');s.setAttribute('height','10');s.setAttribute('aria-label','xpan');const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x','0');t.setAttribute('y','26');t.setAttribute('fill','currentColor');t.setAttribute('font-size','24');t.setAttribute('font-family','-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif');t.textContent='xpan';s.appendChild(t);return s;})())" />
+      </a>
+
+      <div class="lang-switch" role="tablist" aria-label="selector de idioma">
+        <button type="button" data-lang="es" class="active" aria-selected="true">es</button>
+        <button type="button" data-lang="en" aria-selected="false">en</button>
+        <button type="button" data-lang="fr" aria-selected="false">fr</button>
+        <button type="button" data-lang="jp" aria-selected="false">jp</button>
+      </div>
+    </header>
+
+    <div class="top-tools">
+      <button type="button" id="scrollTopBtn" aria-label="volver arriba">top</button>
+      <button type="button" id="toggleAutoplayBtn" aria-label="alternar autoplay">autoplay on</button>
+    </div>
+
+    <main>
+      <section class="hero section" id="top">
+        <div class="hero-object-wrap">
+          <div class="hero-object" id="heroChairMount" aria-hidden="true"></div>
+        </div>
+
+        <div class="hero-copy">
+          <div>
+            <h1 class="title">s.e.a. — silla de electrocución acústica</h1>
+            <p class="meta" id="metaLine">febrero 2023 — ciudad de méxico</p>
+          </div>
+
+          <div class="section-nav" aria-label="navegación interna">
+            <a href="#intro">descripción</a>
+            <a href="#specs">ficha</a>
+            <a href="#audio">audio</a>
+            <a href="#gallery-main">galería</a>
+            <a href="#pdf">planos</a>
+            <a href="#archive">archivo</a>
+          </div>
+
+          <div class="hero-meta-grid" aria-hidden="true">
+            <div>tipología: objeto / sistema de escucha individual</div>
+            <div>estructura: 18 láminas de acero soldadas</div>
+            <div>audio: 4.1 embebido</div>
+            <div>estado: sistema documentado / archivo activo</div>
+          </div>
+
+
+        </div>
+      </section>
+
+      <section class="section" id="intro">
+        <div class="section-header">
+          <h2>descripción</h2>
+          <div class="section-kicker">statement / contexto</div>
+        </div>
+        <div class="copy" id="copyMount"></div>
+      </section>
+
+      <section class="section" id="specs">
+        <div class="section-header">
+          <h2>ficha técnica</h2>
+          <div class="section-kicker">datos / sistema</div>
+        </div>
+        <div class="spec-grid" id="specGrid"></div>
+      </section>
+
+      <section class="section" id="audio">
+        <div class="section-header">
+          <h2>pieza sonora</h2>
+          <div class="section-kicker">player / archivo</div>
+        </div>
+        <div class="audio-layout">
+          <div class="audio-panel">
+            <div class="audio-top">
+              <div>
+                <p class="audio-title" id="audioTitle">s.e.a. — pieza sonora</p>
+                <div class="audio-status" id="audioStatus">ready</div>
+              </div>
+              <div class="audio-chip" id="audioModeChip">4.1 embedded</div>
+            </div>
+
+            <div class="audio-controls">
+              <button type="button" class="audio-btn" id="audioPlayBtn" aria-label="play">play</button>
+              <button type="button" class="audio-btn" id="audioMuteBtn" aria-label="mute">mute</button>
+              <button type="button" class="audio-btn" id="audioLoopBtn" aria-label="loop">loop</button>
+            </div>
+
+            <div id="audioWaveWrap" class="audio-wave hidden"><canvas id="audioCanvas" width="1200" height="300" aria-hidden="true"></canvas></div>
+            <div id="audioEmpty" class="audio-empty">archivo sonoro no disponible en esta versión</div>
+
+            <div class="audio-progress-wrap">
+              <input id="audioSeek" class="audio-range" type="range" min="0" max="100" value="0" step="0.01" aria-label="progreso" />
+              <div class="audio-timebar">
+                <span id="audioCurrent">00:00</span>
+                <span id="audioDuration">00:00</span>
+              </div>
+            </div>
+
+            <audio id="audioEl" preload="metadata" crossorigin="anonymous"></audio>
+          </div>
+
+          <aside class="audio-notes">
+            <p class="audio-note-title">notas</p>
+            <div class="lang-block lang-es active" data-lang="es">
+              reproducción, mute, loop, visualización en canvas, barra de progreso y lectura de duración.
+            </div>
+            <div class="lang-block lang-en" data-lang="en">
+              playback, mute, loop, canvas visualization, progress bar, and duration readout.
+            </div>
+            <div class="lang-block lang-fr" data-lang="fr">
+              lecture, mute, boucle, visualisation sur canvas, barre de progression et lecture de durée.
+            </div>
+            <div class="lang-block lang-jp" data-lang="jp">
+              再生、ミュート、ループ、canvas ビジュアライゼーション、進行バー、長さ表示。
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section media-section" id="gallery-main">
+        <div class="section-header">
+          <h2>galería principal</h2>
+          <div class="section-kicker">documentación / vistas</div>
+        </div>
+        <div class="media-intro">
+          <div class="media-intro-copy">
+            documentación principal del proyecto: imágenes, vistas generales, registros y secuencias de activación.
+          </div>
+          <div class="media-count" id="countMain">0 entradas</div>
+        </div>
+        <div class="grid grid-main" id="gridMain"></div>
+      </section>
+
+      <section class="section media-section" id="gallery-detail">
+        <div class="section-header">
+          <h2>detalles / proceso</h2>
+          <div class="section-kicker">close-ups / construcción</div>
+        </div>
+        <div class="media-intro">
+          <div class="media-intro-copy">
+            material de proceso, ensamblaje, pruebas, resonancias, soldadura, despiece y activación.
+          </div>
+          <div class="media-count" id="countDetail">0 entradas</div>
+        </div>
+        <div class="grid grid-dense" id="gridDetail"></div>
+      </section>
+
+      <section class="section" id="pdf">
+        <div class="section-header">
+          <h2>planos / documento</h2>
+          <div class="section-kicker">pdf embed</div>
+        </div>
+        <div class="pdf-panel" id="pdfPanel">
+          <div class="pdf-fallback" id="pdfFallback">documento pdf no disponible en esta versión.</div>
+        </div>
+      </section>
+
+      <section class="section media-section" id="archive">
+        <div class="section-header">
+          <h2>archivo expandido</h2>
+          <div class="section-kicker">reserva / material complementario</div>
+        </div>
+        <div class="placeholder-note">
+          material complementario, variaciones, diagramas, scans, capturas y archivo adicional del proyecto.
+        </div>
+        <div class="media-count" id="countArchive">0 entradas</div>
+        <div class="grid grid-dense" id="gridArchive"></div>
+      </section>
+
+      <div class="footer-note">arq.xpan.s.e.a.html — s.e.a. / xpan</div>
+    </main>
+  </div>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <div class="lb-shell">
+      <div class="lb-top">
+        <div class="lb-caption"><span id="lbCount">0 / 0</span><span id="lbKind">img</span></div>
+        <div class="lb-controls">
+          <button type="button" id="lbPrev" aria-label="anterior">←</button>
+          <button type="button" id="lbNext" aria-label="siguiente">→</button>
+          <button type="button" id="lbClose" aria-label="cerrar">×</button>
+        </div>
+      </div>
+      <div class="lb-stage" id="lbStage"></div>
+      <div class="lb-bottom"><span id="lbUrl"></span><span>esc / swipe / flechas</span></div>
+    </div>
+  </div>
+
+  <script>
+    const CHAIR_SVG = `
+      <svg viewBox="0 0 800 1200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter">
+          <rect x="250" y="130" width="300" height="330" />
+          <rect x="285" y="190" width="230" height="210" />
+          <rect x="220" y="460" width="360" height="115" />
+          <rect x="250" y="575" width="300" height="80" />
+          <path d="M220 500 H150 V740 H220" />
+          <path d="M580 500 H650 V740 H580" />
+          <path d="M250 655 L220 1030" />
+          <path d="M550 655 L580 1030" />
+          <path d="M320 655 L312 1090" />
+          <path d="M480 655 L488 1090" />
+          <rect x="305" y="750" width="190" height="140" />
+          <path d="M300 930 H500" />
+          <path d="M275 1030 H525" />
+          <path d="M360 130 V60" />
+          <path d="M440 130 V60" />
+          <path d="M250 130 L210 90" />
+          <path d="M550 130 L590 90" />
+          <circle cx="180" cy="620" r="22" />
+          <circle cx="620" cy="620" r="22" />
+          <circle cx="400" cy="320" r="24" />
+          <circle cx="400" cy="515" r="28" />
+          <circle cx="400" cy="820" r="56" />
+        </g>
+      </svg>`;
+
+    const COPY = {
+  es: {
+    meta: "febrero 2023 — ciudad de méxico",
+    html: `
+      <div class="lang-block lang-es active" data-lang="es">
+        <p><strong>s.e.a. — silla de electrocución acústica</strong><br>febrero 2023</p>
+
+        <p>s.e.a. es un sistema objetual de escucha desarrollado por xpan a partir de una estructura monolítica de acero. la pieza se construye mediante el ensamble de 18 láminas de acero de 3 mm de espesor, cortadas y soldadas para conformar una silla de alta densidad material y peso considerable. la geometría responde a una lógica directa de contención y transmisión: un volumen cerrado que concentra masa, contacto y vibración en un solo punto.</p>
+
+        <p>el sistema integra un arreglo de audio 4.1 embebido en la estructura. cuatro elementos de agudos se distribuyen en zonas de contacto directo con el cuerpo: respaldo, asiento y descansabrazos, generando una emisión localizada y cercana. el subwoofer se posiciona suspendido debajo del asiento, desacoplado parcialmente de la estructura principal, permitiendo que las frecuencias bajas operen como una base vibracional que se propaga a través de la estructura y el cuerpo.</p>
+
+        <p>la pieza activa una escucha simultánea en dos escalas: una lectura directa a través del contacto físico con la estructura y una proyección espacial que expande el campo sonoro alrededor del objeto. la relación entre acero, cuerpo y audio se organiza como un sistema continuo de transmisión, donde la energía sonora circula entre superficie, volumen y entorno.</p>
+
+        <p>s.e.a. fue activada mediante una pieza sonora construida a partir de grabaciones de campo realizadas durante su propio proceso de fabricación. cortes, fricción de herramientas, impactos, resonancias de lámina y vibraciones estructurales fueron registradas y posteriormente reorganizadas en una composición que reintroduce esos mismos eventos dentro del objeto terminado.</p>
+
+        <p>el sistema reproduce el audio de su propia construcción desde su interior, utilizando la misma materia que originalmente generó esos sonidos. esto establece una correspondencia directa entre origen y reproducción: la estructura actúa simultáneamente como archivo físico y como medio de emisión. las propiedades del acero —densidad, rigidez, capacidad de resonancia— reconfiguran las grabaciones, generando reflexiones, acumulaciones y variaciones derivadas de su comportamiento material.</p>
+
+        <p>la escucha se configura como un circuito donde el proceso constructivo se vuelve audible desde dentro de la pieza, amplificado, contenido y modulado por la misma lógica material que lo produjo.</p>
+      </div>`
+  },
+
+  en: {
+    meta: "february 2023 — mexico city",
+    html: `
+      <div class="lang-block lang-en" data-lang="en">
+        <p><strong>s.e.a. — acoustic electrocution chair</strong><br>february 2023</p>
+
+        <p>s.e.a. is an object-based listening system developed by xpan from a monolithic steel structure. the piece is constructed through the assembly of 18 steel plates of 3 mm thickness, cut and welded to form a chair with high material density and considerable weight. its geometry follows a direct logic of containment and transmission: a closed volume that concentrates mass, contact, and vibration into a single point.</p>
+
+        <p>the system integrates a 4.1 audio array embedded within the structure. four high-frequency elements are distributed in areas of direct contact with the body: backrest, seat, and armrests, generating a localized and intimate emission. the subwoofer is suspended beneath the seat, partially decoupled from the main structure, allowing low frequencies to operate as a vibrational base that propagates through both the structure and the body.</p>
+
+        <p>the piece activates listening on two simultaneous scales: a direct reading through physical contact with the structure and a spatial projection that expands the sonic field around the object. the relationship between steel, body, and audio is organized as a continuous transmission system, where sonic energy circulates between surface, volume, and environment.</p>
+
+        <p>s.e.a. was activated through a sound piece constructed from field recordings captured during its own fabrication process. cuts, tool friction, impacts, sheet metal resonances, and structural vibrations were recorded and later reorganized into a composition that reintroduces these same events into the finished object.</p>
+
+        <p>the system reproduces the sound of its own construction from within, using the same material that originally generated those sounds. this establishes a direct correspondence between origin and playback: the structure operates simultaneously as a physical archive and as an emission medium. the properties of steel—density, rigidity, and resonance capacity—reconfigure the recordings, generating reflections, accumulations, and variations derived from its material behavior.</p>
+
+        <p>listening is configured as a circuit where the construction process becomes audible from within the piece, amplified, contained, and modulated by the same material logic that produced it.</p>
+      </div>`
+  },
+
+  fr: {
+    meta: "février 2023 — mexico",
+    html: `
+      <div class="lang-block lang-fr" data-lang="fr">
+        <p><strong>s.e.a. — chaise d’électrocution acoustique</strong><br>février 2023</p>
+
+        <p>s.e.a. est un système d’écoute objectuel développé par xpan à partir d’une structure monolithique en acier. la pièce est construite par l’assemblage de 18 plaques d’acier de 3 mm d’épaisseur, découpées et soudées pour former une chaise à forte densité matérielle et à poids considérable. sa géométrie répond à une logique directe de contention et de transmission : un volume fermé qui concentre masse, contact et vibration en un seul point.</p>
+
+        <p>le système intègre un dispositif audio 4.1 intégré à la structure. quatre éléments d’aigus sont distribués dans des zones de contact direct avec le corps : dossier, assise et accoudoirs, générant une émission localisée et proche. le subwoofer est suspendu sous l’assise, partiellement désolidarisé de la structure principale, permettant aux basses fréquences d’opérer comme une base vibratoire se propageant à travers la structure et le corps.</p>
+
+        <p>la pièce active une écoute simultanée à deux échelles : une lecture directe par contact physique avec la structure et une projection spatiale qui étend le champ sonore autour de l’objet. la relation entre acier, corps et audio s’organise comme un système continu de transmission, où l’énergie sonore circule entre surface, volume et environnement.</p>
+
+        <p>s.e.a. a été activée par une pièce sonore construite à partir d’enregistrements de terrain réalisés durant son propre processus de fabrication. découpes, frictions d’outils, impacts, résonances de tôle et vibrations structurelles ont été enregistrés puis réorganisés en une composition réintroduisant ces événements dans l’objet final.</p>
+
+        <p>le système reproduit le son de sa propre construction depuis son intérieur, en utilisant la même matière qui a généré ces sons. cela établit une correspondance directe entre origine et reproduction : la structure agit simultanément comme archive physique et comme médium d’émission. les propriétés de l’acier — densité, rigidité, capacité de résonance — reconfigurent les enregistrements, générant des réflexions, accumulations et variations issues de son comportement matériel.</p>
+
+        <p>l’écoute se configure comme un circuit où le processus constructif devient audible depuis l’intérieur de la pièce, amplifié, contenu et modulé par la même logique matérielle qui l’a produit.</p>
+      </div>`
+  },
+
+  jp: {
+    meta: "2023年2月 — メキシコシティ",
+    html: `
+      <div class="lang-block lang-jp" data-lang="jp">
+        <p><strong>s.e.a. — 音響電気椅子</strong><br>2023年2月</p>
+
+        <p>s.e.a.は、モノリシックな鋼構造から開発されたオブジェクト型リスニングシステムである。18枚の厚さ3mmの鋼板を切断・溶接して構成され、高い物質密度と重量を持つ椅子として形成されている。その幾何は、質量・接触・振動を一点に集中させる閉じた体積として、直接的な収束と伝達の論理に基づいている。</p>
+
+        <p>システムには4.1の音響構成が構造内に組み込まれている。高域の4つの要素は、背もたれ、座面、肘掛けなど身体と直接接触する位置に配置され、局所的で近接的な音の放射を生む。サブウーファーは座面下に吊り下げられ、主構造から部分的に分離されることで、低周波が構造と身体を通して伝播する振動基盤として機能する。</p>
+
+        <p>この装置は二つのスケールで同時に聴取を発生させる。ひとつは構造との物理的接触による直接的な知覚、もうひとつは対象の周囲に音場を拡張する空間的投射である。鋼、身体、音響の関係は連続した伝達システムとして構成され、音のエネルギーが表面、体積、環境の間を循環する。</p>
+
+        <p>s.e.a.は、その製作過程で記録されたフィールドレコーディングから構成された音響作品によって起動された。切断、工具の摩擦、衝撃、鋼板の共鳴、構造振動が記録され、それらが再構成されることで完成したオブジェクト内部に再導入される。</p>
+
+        <p>システムは自身の生成過程の音を内部から再生し、それらを生み出した同一の素材を用いて再提示する。これにより生成と再生の直接的な対応関係が成立する。構造は物理的アーカイブであり同時に発信媒体として機能する。鋼の特性—密度、剛性、共鳴性—が録音を再構成し、素材の挙動に由来する反射、蓄積、変調を生み出す。</p>
+
+        <p>聴取は回路として構成され、製作プロセスが装置内部から可聴化される。音は増幅され、内部に保持され、同一の物質的論理によって変調される。</p>
+      </div>`
+  }
+};
+
+    const SPECS = [
+      {
+        label: { es: "estructura", en: "structure", fr: "structure", jp: "構造" },
+        value: {
+          es: "18 láminas de acero ensambladas con soldadura.",
+          en: "18 steel plates assembled by welding.",
+          fr: "18 plaques d’acier assemblées par soudure.",
+          jp: "18枚の鋼板を溶接で組み上げた構造。"
+        }
+      },
+      {
+        label: { es: "espesor", en: "thickness", fr: "épaisseur", jp: "厚み" },
+        value: {
+          es: "placa de acero de 3 mm de espesor.",
+          en: "3 mm thick steel plate.",
+          fr: "plaque d’acier de 3 mm d’épaisseur.",
+          jp: "厚さ3mmの鋼板。"
+        }
+      },
+      {
+        label: { es: "audio", en: "audio", fr: "audio", jp: "音響" },
+        value: {
+          es: "sistema 4.1 embebido en respaldo, asiento, descansabrazos y subwoofer suspendido bajo el asiento.",
+          en: "4.1 system embedded in backrest, seat, armrests, and a suspended subwoofer beneath the seat.",
+          fr: "système 4.1 intégré au dossier, à l’assise, aux accoudoirs et avec un subwoofer suspendu sous l’assise.",
+          jp: "背もたれ、座面、肘掛けに組み込まれた4.1システムと、座面下に吊られたサブウーファー。"
+        }
+      },
+      {
+        label: { es: "tipología", en: "type", fr: "typologie", jp: "類型" },
+        value: {
+          es: "objeto de escucha individual / sistema escultórico-sonoro.",
+          en: "individual listening object / sculptural-sound system.",
+          fr: "objet d’écoute individuel / système sculptural-sonore.",
+          jp: "個別リスニングオブジェクト / 彫刻的音響システム。"
+        }
+      },
+      {
+        label: { es: "estado", en: "status", fr: "état", jp: "状態" },
+        value: {
+          es: "sistema documentado con estructura, materia y arreglo de escucha embebido.",
+          en: "documented system with embedded structure, material logic, and listening array.",
+          fr: "système documenté avec structure, logique matérielle et dispositif d’écoute intégré.",
+          jp: "構造、素材論理、埋め込み型リスニング構成を備えた記録済みシステム。"
+        }
+      },
+      {
+        label: { es: "uso web", en: "web use", fr: "usage web", jp: "web用途" },
+        value: {
+          es: "página multilingüe con archivo visual, audio y soporte para documento técnico.",
+          en: "multilingual page with visual archive, audio, and support for technical documents.",
+          fr: "page multilingue avec archive visuelle, audio et prise en charge des documents techniques.",
+          jp: "ビジュアルアーカイブ、音声、技術文書対応を備えた多言語ページ。"
+        }
+      }
+    ];
+
+    const AUDIO_DATA = {
+  src: "https://attachments.are.na/44680442/9e5297017cdd8cc7a7a6c0fd5710f933.mp3",
+  title: {
+    es: "s.e.a. — pieza sonora",
+    en: "s.e.a. — sound piece",
+    fr: "s.e.a. — pièce sonore",
+    jp: "s.e.a. — 音響作品"
+  }
+};
+
+    const PDF_DATA = {
+      src: "https://attachments.are.na/44681053/2a36df85ec74f05e6b2a0a8d048402f4.pdf?1774308454",
+      label: {
+        es: "s.e.a. — planos",
+        en: "s.e.a. — plans",
+        fr: "s.e.a. — plans",
+        jp: "s.e.a. — 図面"
+      }
+    };
+
+    const MEDIA = {
+      main: [
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680383/original_1f819558ba1e05fcfc8b1658ced49349.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680384/original_f7be52cbb2270ebc77b2213d6d86dbce.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680385/original_bb7d27e83cac498f3c4915e8332bd2b2.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680386/original_6d50863e466e84fa2d098f9644b63ed5.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680387/original_23b35069e84249c44320163f8fbfc980.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680388/original_49e049ab1dc0612dd49dfb67832e764c.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680389/original_09361c47fe9ad119a95c0e1759100aa0.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680390/original_50aefe7ebca54123c085a30ffe364a53.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680391/original_1e43bb9669dff460e75959bd9f783a13.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680392/original_fc7e81ce4f1b84d92740666e4c3a8676.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680393/original_de8f6bd0e37cd5e7d94474642ffa8210.jpg", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680395/original_4f3697f109fec569afcb55bd69a3035c.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680398/original_fb15307db932409cdb82d12f7983e257.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680400/original_8b7992ba8f469c95808df1d41e5268fa.png", shape:"cinema", fit:"cover" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680403/original_8b1a1170a26ca0d4baf4c537aa42d4f1.png", shape:"cinema", fit:"cover" },
+  { src:"https://attachments.are.na/44680408/8792bc90070bc0f9c9fa8a61eb264b63.mov", shape:"cinema", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680415/2ab0f029ac760bc41821b535fd6e6179.mp4", shape:"cinema", fit:"cover", audio:true }
+],
+      detail: [
+  { src:"https://attachments.are.na/44680297/7f56083c4e6a2aee08b063183e071359.mp4", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680324/original_cf0b209a8f2a9acdb187d4362663ea67.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680325/original_f77cf13b150c24f66e17d1748e07d85d.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680326/original_64bb7694d9253621dd477de0f773e91a.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680327/original_150e5ba303c2db804a94fae8dc7fdc36.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680329/original_ec02cbee7c2b496ff5fbd247dbdb2de4.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680330/original_3f51d67b8229700d37430a87e4a74a55.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680331/original_64b57fd6d041603c24200a1f502d81de.jpg", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680334/original_066f7fec0f92eb2cf94e63ebb5b14be9.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680335/original_c944feb9165aa8584848916fd59ed5ab.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680336/original_8ffcf654316a47b45e1063cee48603df.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680337/original_28f4d3595812e90660192af9928162de.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680338/original_2a4ec21c67dbad076039fd5b412fdf9c.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680339/original_01787b78c5e4f0b516dffca0d201a6a3.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680340/original_1408b083b1d669f913cd52c07a3ba486.png", shape:"square", fit:"contain" },
+  { src:"https://attachments.are.na/44680344/2c6f13d5004239d8b455a809e7e7c828.mov", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680351/cd45d0530f43a9e093f3e29994bc6950.mp4", shape:"portrait", fit:"cover", audio:true }
+],
+      archive: [
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680260/original_ec3b3e42252ada60fb7444feafa94ea7.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680261/original_939ca8bfc4f15f054b8df2a295112e9c.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680262/original_daae9eb0dbf203b5d3f9a1c291d21976.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680263/original_1076811e5471a4214a0eb4f6620f8f54.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680264/original_5fa7bc01efd2fc881d5ff6507df9a155.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680266/original_b295f1d71d3ed55548aac65150b71002.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680267/original_01c3cce4ca396a28127711ebd1035db5.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680268/original_6318dec0edbac7f48a317a20c534641b.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680269/original_07b41e356db27f53ac960c10086c4909.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680270/original_660893158e43fc4ce1d0e8fc356254a0.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680271/original_9b8427081b83d25e41494a9c76dd903e.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680273/original_678b78076c0837c5e87e0580844e9509.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680274/original_60d69a10c2e0eb8fcdd01428e998849a.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680277/original_417208b72236df3ad71c9af1bf843945.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680278/original_2981014858bec6744b65460c9980a810.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680282/original_823ff5d7e551a58092a233bba757553d.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680284/original_5761f4ab4c43da0462cce869cd4935f2.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680285/original_9ad7c783bd25d8711cfc1efc62e83a51.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680286/original_ba2be9bd6bd2429871c588a96dba675c.png", shape:"square", fit:"contain" },
+  { src:"https://attachments.are.na/44680287/f8ea4890a95e35dd99dfa9ba4dfdf5bd.mov", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680288/445cd83f7182e1403c530a2b660707a8.mp4", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680289/40247ebd75eb35dc5756301178e9eb54.mov", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680290/original_e611893818d0c5eed7c3427bd8b9b0f9.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680291/original_043dcc9409a8f421519486ce553ae7d4.png", shape:"square", fit:"contain" },
+  { src:"https://attachments.are.na/44680293/e782cf7bf7245766bdafb6382a6a0432.mp4", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680294/48f15f609afa015a6aafd6e4ea73fe1d.mp4", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680295/ec06c06534f4dfbbfb50ff70e03dc1fe.mov", shape:"portrait", fit:"cover", audio:true },
+  { src:"https://attachments.are.na/44680297/7f56083c4e6a2aee08b063183e071359.mp4", shape:"portrait", fit:"cover", audio:true },
+    // sección 4 — extensión / variaciones
+
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680233/original_94c688c322d7eafaf4644580db6f41a3.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680235/original_0fd0382ecb8b8a33575021b19ab3b3bb.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680236/original_82865e1d2775362589a0598c0a645d7f.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680238/original_77c07156f1e9e20c36ba40851b052401.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680239/original_2e748b1fb57418f776ef517aeaae3919.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680240/original_f3aea8a90a2147e460f4e0571c9f789f.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680241/original_0e910aae3e353b17e53f2837e38baa8d.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680242/original_e7e49fbff2899e37a53d19943e13a2bb.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680243/original_9903788980d728160862088fa5b054f1.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680244/original_f0912a2711300bb6a4563f27e58d667b.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680245/original_c38013306626ea327e7f1778e6aaa5f9.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680246/original_f9faec720ac839b6aebb9b5f64356361.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680247/original_1397e04f97161fbdba5e93bba448e97a.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680248/original_ec2dab3d36135c2e2721acb4a033d661.png", shape:"square", fit:"contain" },
+  { src:"https://d2w9rnfcy7mm78.cloudfront.net/44680249/original_a93db27a6996624bbc4613ea24a2fc1c.png", shape:"square", fit:"contain" }
+]
+    };
+
+    const state = {
+      lang: safeLocalGet("xpan.lang", "es"),
+      autoplayEnabled: safeLocalGet("xpan.autoplay", "on") !== "off",
+      audioMuted: false,
+      audioLoop: false,
+      audioReady: false,
+      lightboxItems: [],
+      lightboxIndex: -1,
+      audioCtx: null,
+      analyser: null,
+      sourceNode: null,
+      raf: 0
+    };
+
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
+
+    function safeLocalGet(key, fallback){
+      try{ const v = localStorage.getItem(key); return v ?? fallback; }catch{ return fallback; }
+    }
+    function safeLocalSet(key, value){ try{ localStorage.setItem(key, value); }catch{} }
+    function normalizeUrl(url){ return typeof url === "string" ? url.trim() : ""; }
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+    function detectKind(url){
+      const u = normalizeUrl(url).toLowerCase();
+      if(!u) return "unknown";
+      if(u.includes("www.are.na/block/")) return "block";
+      if(/\.(jpg|jpeg|png|webp|gif|avif)$/i.test(u)) return "image";
+      if(/\.(mp4|mov|webm)$/i.test(u)) return "video";
+      if(/\.pdf($|\?)/i.test(u)) return "pdf";
+      if(/\.(mp3|wav|m4a|aac|flac|ogg)$/i.test(u)) return "audio";
+      return "unknown";
+    }
+    function prettyKind(kind){ return ({ image:"img", video:"video", block:"block", pdf:"pdf", audio:"audio" })[kind] || "link"; }
+    function inferShape(item, setName){
+      if(item.shape) return item.shape;
+      const kind = detectKind(item.src || item);
+      if(kind === "video") return setName === "detail" ? "portrait" : "cinema";
+      if(setName === "archive") return "square";
+      return "cinema";
+    }
+    function inferFit(item){ return item.fit || "cover"; }
+    function formatClock(sec){
+      if(!Number.isFinite(sec) || sec < 0) return "00:00";
+      const s = Math.floor(sec % 60).toString().padStart(2, "0");
+      const m = Math.floor((sec / 60) % 60).toString().padStart(2, "0");
+      const h = Math.floor(sec / 3600);
+      return h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+    }
+    function fragmentFromHTML(html){ const tpl = document.createElement("template"); tpl.innerHTML = html.trim(); return tpl.content; }
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+    function mountChair(){
+      $("#heroChairMount").innerHTML = CHAIR_SVG;
+      $("#bgChairMount").innerHTML = CHAIR_SVG;
+    }
+
+    function mountCopy(){
+      const copyMount = $("#copyMount");
+      copyMount.innerHTML = "";
+      ["es","en","fr","jp"].forEach(lang => {
+        copyMount.appendChild(fragmentFromHTML(COPY[lang].html));
+      });
+      $("#metaLine").textContent = COPY[state.lang]?.meta || "";
+    }
+
+    function mountSpecs(){
+      const grid = $("#specGrid");
+      grid.innerHTML = "";
+      SPECS.forEach(item => {
+        const el = document.createElement("article");
+        el.className = "spec-card";
+        el.innerHTML = `
+          <p class="spec-label">${escapeHtml(item.label[state.lang] || item.label.es || "")}</p>
+          <p class="spec-value">${escapeHtml(item.value[state.lang] || item.value.es || "")}</p>
+        `;
+        grid.appendChild(el);
+      });
+    }
+
+    function setLang(lang){
+      state.lang = ["es","en","fr","jp"].includes(lang) ? lang : "es";
+      safeLocalSet("xpan.lang", state.lang);
+      document.documentElement.setAttribute("lang", state.lang);
+      $$(".lang-switch button").forEach(btn => {
+        const on = btn.dataset.lang === state.lang;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      $$(".lang-block").forEach(block => block.classList.toggle("active", block.dataset.lang === state.lang));
+      $("#metaLine").textContent = COPY[state.lang]?.meta || "";
+      $("#audioTitle").textContent = AUDIO_DATA.title[state.lang] || AUDIO_DATA.title.es;
+      mountSpecs();
+      renderPdf();
+    }
+
+    function createTile(item, idx, setName){
+      const src = normalizeUrl(item.src || item);
+      const kind = detectKind(src);
+      const tile = document.createElement("article");
+      tile.className = "tile";
+      tile.dataset.shape = inferShape(item, setName);
+      tile.dataset.fit = inferFit(item);
+      tile.dataset.audio = item.audio ? "true" : "false";
+      tile.tabIndex = 0;
+
+      const inner = document.createElement("div");
+      inner.className = "tile-inner";
+      inner.innerHTML = `
+        <span class="tile-index">${setName}.${String(idx + 1).padStart(2, "0")}</span>
+        <span class="tile-kind">${prettyKind(kind)}</span>
+        <span class="tile-audio">audio</span>
+        <div class="tile-placeholder">loading</div>
+      `;
+
+      if(kind === "image"){
+        const img = document.createElement("img");
+        img.alt = "";
+        img.loading = "lazy";
+        img.decoding = "async";
+        img.fetchPriority = idx < 2 && setName === 'main' ? 'high' : 'auto';
+        img.setAttribute("data-src", src);
+        img.addEventListener("load", ()=> tile.classList.add("loaded"), { once:true });
+        img.addEventListener("error", ()=> markTileFailed(tile, src, "image"), { once:true });
+        inner.appendChild(img);
+      }else if(kind === "video"){
+        const video = document.createElement("video");
+        video.setAttribute("data-src", src);
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        video.setAttribute("preload", idx < 2 && setName === 'main' ? "metadata" : "none");
+        video.muted = true;
+        video.defaultMuted = true;
+        video.loop = true;
+        video.controls = false;
+        if(state.autoplayEnabled) video.setAttribute("autoplay", "");
+        video.addEventListener("loadeddata", ()=> tile.classList.add("loaded"), { once:true });
+        video.addEventListener("error", ()=> markTileFailed(tile, src, "video"), { once:true });
+        inner.appendChild(video);
+      }else if(kind === "block"){
+        inner.innerHTML += `
+          <div class="tile-fallback"><div class="tile-fallback-inner"><div>link de are.na</div><div class="tile-fallback-code">${escapeHtml(src)}</div><a class="block-fallback-link" href="${escapeHtml(src)}" target="_blank" rel="noopener">open</a></div></div>
+        `;
+        tile.classList.add("loaded");
+      }else{
+        inner.innerHTML += `
+          <div class="tile-fallback"><div class="tile-fallback-inner"><div>fuente pendiente o no reconocida</div><div class="tile-fallback-code">${escapeHtml(src || "sin src")}</div></div></div>
+        `;
+        tile.classList.add("loaded");
+      }
+
+      tile.appendChild(inner);
+      if(kind === "image" || kind === "video"){
+        tile.addEventListener("click", () => openLightboxFromTile(tile));
+        tile.addEventListener("keydown", (e) => {
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            openLightboxFromTile(tile);
+          }
+        });
+      }else{
+        tile.tabIndex = -1;
+      }
+      return tile;
+    }
+
+    function markTileFailed(tile, src, kind){
+      tile.classList.add('failed','loaded');
+      if($('.tile-fallback', tile)) return;
+      const fallback = document.createElement('div');
+      fallback.className = 'tile-fallback';
+      fallback.innerHTML = `<div class="tile-fallback-inner"><div>${kind === 'video' ? 'video no disponible' : 'imagen no disponible'}</div><div class="tile-fallback-code">${escapeHtml(src)}</div><a class="block-fallback-link" href="${escapeHtml(src)}" target="_blank" rel="noopener">open</a></div>`;
+      $('.tile-inner', tile)?.appendChild(fallback);
+    }
+
+    function mountGrid(targetId, items, setName){
+      const grid = $("#" + targetId);
+      const counter = $(setName === "main" ? "#countMain" : setName === "detail" ? "#countDetail" : "#countArchive");
+      grid.innerHTML = "";
+      if(!items.length){
+        const note = document.createElement("div");
+        note.className = "placeholder-note";
+        note.textContent = "sin media disponible en esta sección.";
+        grid.appendChild(note);
+      }else{
+        items.forEach((item, idx) => grid.appendChild(createTile(item, idx, setName)));
+      }
+      counter.textContent = `${items.length} ${items.length === 1 ? "entrada" : "entradas"}`;
+    }
+
+    let lazyMediaObserver = null;
+    function observeLazyMedia(){
+      if(!('IntersectionObserver' in window)){
+        $$('img[data-src],video[data-src],object[data-src],iframe[data-src]').forEach(el => loadLazyMedia(el));
+        return;
+      }
+      if(!lazyMediaObserver){
+        lazyMediaObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if(!entry.isIntersecting) return;
+            const el = entry.target;
+            loadLazyMedia(el);
+            lazyMediaObserver.unobserve(el);
+          });
+        }, { rootMargin:"700px 0px", threshold:0.01 });
+      }
+      $$('img[data-src],video[data-src],object[data-src],iframe[data-src]').forEach(el => lazyMediaObserver.observe(el));
+    }
+
+    function loadLazyMedia(el){
+      const src = el.getAttribute('data-src');
+      if(!src) return;
+      if(el.tagName === 'VIDEO'){
+        el.src = src;
+        el.load();
+        if(state.autoplayEnabled){
+          const p = el.play();
+          if(p && typeof p.catch === 'function') p.catch(()=>{});
+        }
+      }else if(el.tagName === 'OBJECT'){
+        el.data = src;
+      }else if(el.tagName === 'IFRAME'){
+        el.src = src;
+      }else{
+        el.src = src;
+      }
+      el.removeAttribute('data-src');
+    }
+
+    function renderPdf(){
+      const panel = $("#pdfPanel");
+      panel.innerHTML = "";
+      const src = normalizeUrl(PDF_DATA.src);
+      if(!src){
+        const fallback = document.createElement("div");
+        fallback.id = "pdfFallback";
+        fallback.className = "pdf-fallback";
+        fallback.innerHTML = 'documento pdf no disponible en esta versión.';
+        panel.appendChild(fallback);
+        return;
+      }
+      const obj = document.createElement("object");
+      obj.className = "pdf-frame";
+      obj.type = "application/pdf";
+      obj.setAttribute("aria-label", PDF_DATA.label[state.lang] || PDF_DATA.label.es || "pdf");
+      obj.setAttribute("data-src", src);
+      panel.appendChild(obj);
+      observeLazyMedia();
+    }
+
+    function syncAutoplayUI(){
+      $("#toggleAutoplayBtn").textContent = state.autoplayEnabled ? "autoplay on" : "autoplay off";
+      $$('video').forEach(v => {
+        if(v.closest('#xpan-lightbox')) return;
+        if(state.autoplayEnabled){
+          v.setAttribute('autoplay','');
+          if(v.src){ const p=v.play(); if(p && typeof p.catch === 'function') p.catch(()=>{}); }
+        }else{
+          v.removeAttribute('autoplay');
+          try{ v.pause(); }catch{}
+        }
+      });
+    }
+
+    function initAudio(){
+      const audio = $("#audioEl");
+      const playBtn = $("#audioPlayBtn");
+      const muteBtn = $("#audioMuteBtn");
+      const loopBtn = $("#audioLoopBtn");
+      const seek = $("#audioSeek");
+      const current = $("#audioCurrent");
+      const duration = $("#audioDuration");
+      const status = $("#audioStatus");
+      const waveWrap = $("#audioWaveWrap");
+      const waveCanvas = $("#audioCanvas");
+      const empty = $("#audioEmpty");
+      const src = normalizeUrl(AUDIO_DATA.src);
+      $("#audioTitle").textContent = AUDIO_DATA.title[state.lang] || AUDIO_DATA.title.es;
+
+      if(!src){
+        status.textContent = "archivo no disponible";
+        playBtn.disabled = true;
+        muteBtn.disabled = true;
+        loopBtn.disabled = true;
+        seek.disabled = true;
+        waveWrap.classList.add("hidden");
+        empty.classList.remove("hidden");
+        return;
+      }
+
+      audio.src = src;
+      status.textContent = "metadata pending";
+      playBtn.disabled = false;
+      muteBtn.disabled = false;
+      loopBtn.disabled = false;
+      seek.disabled = false;
+      waveWrap.classList.remove("hidden");
+      empty.classList.add("hidden");
+
+      audio.addEventListener("loadedmetadata", () => {
+        state.audioReady = true;
+        duration.textContent = formatClock(audio.duration);
+        status.textContent = "ready";
+        setupAudioAnalyser(audio, waveCanvas);
+      }, { once:true });
+
+      audio.addEventListener("timeupdate", () => {
+        if(Number.isFinite(audio.duration) && audio.duration > 0){
+          seek.value = String((audio.currentTime / audio.duration) * 100);
+        }
+        current.textContent = formatClock(audio.currentTime);
+      });
+
+      audio.addEventListener("ended", () => { if(!audio.loop) playBtn.textContent = "play"; });
+      audio.addEventListener("play", () => { playBtn.textContent = "pause"; status.textContent = "playing"; drawWave(waveCanvas); });
+      audio.addEventListener("pause", () => { playBtn.textContent = "play"; status.textContent = state.audioReady ? "paused" : status.textContent; });
+
+      playBtn.addEventListener("click", async () => {
+        if(!state.audioReady && audio.readyState === 0){ try{ await audio.load(); }catch{} }
+        if(audio.paused){
+          try{ await audio.play(); }catch{}
+        }else{
+          audio.pause();
+        }
+      });
+
+      muteBtn.addEventListener("click", () => {
+        audio.muted = !audio.muted;
+        state.audioMuted = audio.muted;
+        muteBtn.textContent = audio.muted ? "unmute" : "mute";
+      });
+
+      loopBtn.addEventListener("click", () => {
+        audio.loop = !audio.loop;
+        state.audioLoop = audio.loop;
+        loopBtn.classList.toggle("active", audio.loop);
+      });
+
+      seek.addEventListener("input", () => {
+        if(Number.isFinite(audio.duration) && audio.duration > 0){
+          audio.currentTime = (Number(seek.value) / 100) * audio.duration;
+        }
+      });
+    }
+
+    function setupAudioAnalyser(audio, canvas){
+      if(state.audioCtx || !window.AudioContext && !window.webkitAudioContext) return;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      try{
+        state.audioCtx = new AudioCtx();
+        state.analyser = state.audioCtx.createAnalyser();
+        state.analyser.fftSize = 256;
+        state.sourceNode = state.audioCtx.createMediaElementSource(audio);
+        state.sourceNode.connect(state.analyser);
+        state.analyser.connect(state.audioCtx.destination);
+      }catch{}
+
+      audio.addEventListener("play", () => {
+        if(state.audioCtx?.state === "suspended") state.audioCtx.resume().catch(()=>{});
+        drawWave(canvas);
+      });
+    }
+
+    function drawWave(canvas){
+      if(!state.analyser) return;
+      cancelAnimationFrame(state.raf);
+      const ctx = canvas.getContext("2d");
+      const bufferLength = state.analyser.frequencyBinCount;
+      const data = new Uint8Array(bufferLength);
+      const w = canvas.width;
+      const h = canvas.height;
+
+      const draw = () => {
+        state.raf = requestAnimationFrame(draw);
+        state.analyser.getByteFrequencyData(data);
+        ctx.clearRect(0,0,w,h);
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() || '#E0E3E6';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        const step = w / bufferLength;
+        for(let i = 0; i < bufferLength; i++){
+          const x = i * step;
+          const v = data[i] / 255;
+          const y = h - (v * (h * .92));
+          if(i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      };
+      draw();
+    }
+
+    function collectLightboxItems(){
+      state.lightboxItems = $$('.tile').flatMap(tile => {
+        const media = $('img,video', tile);
+        if(!media) return [];
+        const src = media.currentSrc || media.src || media.getAttribute('data-src') || '';
+        if(!src) return [];
+        return [{
+          src,
+          kind: media.tagName.toLowerCase() === 'video' ? 'video' : 'image',
+          tile
+        }];
+      });
+    }
+
+    function openLightboxFromTile(tile){
+      collectLightboxItems();
+      const index = state.lightboxItems.findIndex(item => item.tile === tile);
+      if(index < 0) return;
+      openLightbox(index);
+    }
+
+    function openLightbox(index){
+      const lb = $('#xpan-lightbox');
+      const stage = $('#lbStage');
+      const item = state.lightboxItems[index];
+      if(!item) return;
+      state.lightboxIndex = index;
+      stage.innerHTML = '';
+      let el;
+      if(item.kind === 'video'){
+        el = document.createElement('video');
+        el.src = item.src;
+        el.controls = true;
+        el.autoplay = true;
+        el.playsInline = true;
+        el.loop = true;
+      }else{
+        el = document.createElement('img');
+        el.src = item.src;
+        el.alt = '';
+        el.decoding = 'async';
+      }
+      stage.appendChild(el);
+      $('#lbCount').textContent = `${index + 1} / ${state.lightboxItems.length}`;
+      $('#lbKind').textContent = prettyKind(item.kind);
+      $('#lbUrl').textContent = item.src.length > 96 ? item.src.slice(0, 96) + '…' : item.src;
+      lb.classList.add('open');
+      document.documentElement.classList.add('lb-open');
+      document.body.classList.add('lb-open');
+      lb.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeLightbox(){
+      const lb = $('#xpan-lightbox');
+      $('#lbStage').innerHTML = '';
+      lb.classList.remove('open');
+      document.documentElement.classList.remove('lb-open');
+      document.body.classList.remove('lb-open');
+      lb.setAttribute('aria-hidden', 'true');
+      state.lightboxIndex = -1;
+    }
+
+    function stepLightbox(delta){
+      if(state.lightboxIndex < 0 || !state.lightboxItems.length) return;
+      const next = clamp(state.lightboxIndex + delta, 0, state.lightboxItems.length - 1);
+      if(next !== state.lightboxIndex) openLightbox(next);
+    }
+
+    function bindGlobalUI(){
+      $("#scrollTopBtn").addEventListener("click", () => window.scrollTo({ top:0, behavior:'smooth' }));
+      $("#toggleAutoplayBtn").addEventListener("click", () => {
+        state.autoplayEnabled = !state.autoplayEnabled;
+        safeLocalSet('xpan.autoplay', state.autoplayEnabled ? 'on' : 'off');
+        syncAutoplayUI();
+      });
+      $$('.lang-switch button').forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.lang)));
+      $('#lbClose').addEventListener('click', closeLightbox);
+      $('#lbPrev').addEventListener('click', () => stepLightbox(-1));
+      $('#lbNext').addEventListener('click', () => stepLightbox(1));
+      $('#xpan-lightbox').addEventListener('click', e => { if(e.target.id === 'xpan-lightbox') closeLightbox(); });
+      window.addEventListener('keydown', e => {
+        if(!$('#xpan-lightbox').classList.contains('open')) return;
+        if(e.key === 'Escape') closeLightbox();
+        if(e.key === 'ArrowRight' || e.key === 'l') stepLightbox(1);
+        if(e.key === 'ArrowLeft' || e.key === 'h') stepLightbox(-1);
+      });
+    }
+
+
+    function enableStandaloneMediaFallbacks(){
+      document.querySelectorAll('.tile img, .tile video').forEach(el => {
+        el.addEventListener('error', () => {
+          const tile = el.closest('.tile');
+          const src = el.currentSrc || el.src || el.getAttribute('data-src') || '';
+          if(tile && src) markTileFailed(tile, src, el.tagName.toLowerCase());
+        }, { once:true });
+      });
+    }
+    function init(){
+      mountChair();
+      mountCopy();
+      mountSpecs();
+      mountGrid('gridMain', MEDIA.main, 'main');
+      mountGrid('gridDetail', MEDIA.detail, 'detail');
+      mountGrid('gridArchive', MEDIA.archive, 'archive');
+      renderPdf();
+      initAudio();
+      observeLazyMedia();
+      bindGlobalUI();
+      enableStandaloneMediaFallbacks();
+      setLang(state.lang);
+      syncAutoplayUI();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
