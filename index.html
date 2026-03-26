@@ -10,11 +10,11 @@
     /* ===== tokens post-tech ===== */
     [data-xpan]{
       --bg:#000; --fg:#E0E3E6; --fg-dim:#AEB4BA; --accent:#1860FF;
-      --line:#2A2E31; --line-weak:#1A1D20;
+      --line:#2A2E31; --line-weak:#1A1D20;   --star-opacity:.12;
       --font-ui:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
     @media (prefers-color-scheme:light){
-      [data-xpan]{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --line-weak:#ECEFF2; }
+      [data-xpan]{ --bg:#fff; --fg:#0E1113; --fg-dim:#4A5158; --line:#D9DEE2; --line-weak:#ECEFF2;     --star-opacity:.05; }
     }
 
     *,*::before,*::after{box-sizing:border-box}
@@ -60,12 +60,13 @@
       pointer-events:none;transition:opacity .15s linear;
     }
     svg.lines line{
-      stroke:var(--fg);stroke-opacity:.03;stroke-width:3;
+      stroke:var(--fg);stroke-opacity:var(--star-opacity);stroke-width:3;
       vector-effect:non-scaling-stroke;
       stroke-dasharray:1000;stroke-dashoffset:1000;
       animation:draw 6.6s linear forwards;
     }
-    svg.lines line.spoke{stroke-opacity:.1}
+    svg.lines line.spoke{
+  stroke-opacity:calc(var(--star-opacity) * 2);}
     @keyframes draw{to{stroke-dashoffset:0}}
     @keyframes fadeIn{from{opacity:0;transform:translate(-50%,-50%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 
