@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xpan — ep.2 research builder</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#fafafa;
+      --line:#cfcfcf;
+      --line-strong:#8c8c8c;
+      --text:#111111;
+      --muted:#666666;
+      --accent:#1b1b1b;
+      --soft:#f2f2f2;
+      --danger:#7f1d1d;
+      --ok:#1f5130;
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+      --radius:16px;
+      --radius-sm:10px;
+      --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:var(--font-sans);
+      line-height:1.4;
+    }
+
+    button,input,textarea,select{ font:inherit; color:inherit; }
+
+    .app{
+      display:grid;
+      grid-template-columns: 320px minmax(480px, 1fr) minmax(420px, 0.95fr);
+      height:100vh;
+      overflow:hidden;
+    }
+
+    .sidebar,
+    .editor,
+    .preview{
+      min-height:0;
+      overflow:auto;
+    }
+
+    .sidebar{
+      border-right:1px solid var(--line);
+      background:#fcfcfc;
+      padding:18px 16px 24px;
+    }
+
+    .editor{
+      border-right:1px solid var(--line);
+      padding:18px 22px 40px;
+      background:var(--bg);
+    }
+
+    .preview{
+      padding:18px 22px 40px;
+      background:#fdfdfd;
+    }
+
+    .brand{
+      font-family:var(--font-serif);
+      letter-spacing:.02em;
+      font-size:20px;
+      margin:0 0 6px 0;
+    }
+
+    .subtle{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .section-title{
+      margin:22px 0 10px;
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .meta-card{
+      padding:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .field{
+      display:grid;
+      gap:6px;
+      margin-bottom:14px;
+    }
+
+    .field.inline{
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .field label{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .field input[type="text"],
+    .field input[type="date"],
+    .field textarea,
+    .field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 12px;
+      background:#fff;
+      outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .field textarea{
+      min-height:92px;
+      resize:vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus{
+      border-color:var(--line-strong);
+      box-shadow:0 0 0 3px rgba(0,0,0,.04);
+    }
+
+    .toolbar{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .btn,
+    .btn-ghost,
+    .btn-danger{
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      cursor:pointer;
+      text-align:left;
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .btn:hover, .btn-ghost:hover, .btn-danger:hover{
+      transform:translateY(-1px);
+      border-color:var(--line-strong);
+    }
+
+    .btn strong, .btn-ghost strong, .btn-danger strong{
+      display:block;
+      font-size:13px;
+    }
+
+    .btn span, .btn-ghost span, .btn-danger span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:3px;
+    }
+
+    .btn-primary{
+      background:var(--accent);
+      color:white;
+      border-color:var(--accent);
+    }
+
+    .btn-danger{
+      border-color:#e2b5b5;
+      color:var(--danger);
+      background:#fff9f9;
+    }
+
+    .list{
+      display:grid;
+      gap:10px;
+    }
+
+    .activation-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:12px;
+      cursor:pointer;
+      transition:border-color .15s ease, transform .08s ease, box-shadow .15s ease;
+    }
+
+    .activation-item:hover{
+      transform:translateY(-1px);
+      border-color:var(--line-strong);
+      box-shadow:var(--shadow);
+    }
+
+    .activation-item.active{
+      border-color:var(--text);
+      box-shadow:0 0 0 1px var(--text) inset;
+    }
+
+    .activation-item .name{
+      font-family:var(--font-serif);
+      font-size:17px;
+      margin:0 0 4px;
+    }
+
+    .activation-item .meta{
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .editor-header,
+    .preview-header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+      padding-bottom:14px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .editor-header h2,
+    .preview-header h2{
+      font-family:var(--font-serif);
+      font-size:28px;
+      line-height:1.05;
+      margin:0 0 4px;
+      font-weight:500;
+    }
+
+    .editor-header .minor,
+    .preview-header .minor{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .editor-section{
+      margin:0 0 22px;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fbfbfb;
+      box-shadow:var(--shadow);
+    }
+
+    .editor-section h3{
+      margin:0 0 12px;
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .chip{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .chip.active{
+      border-color:var(--text);
+      background:#f4f4f4;
+    }
+
+    .dropzone{
+      position:relative;
+      border:1px dashed var(--line-strong);
+      border-radius:16px;
+      padding:16px;
+      background:#fff;
+      display:grid;
+      gap:8px;
+    }
+
+    .dropzone input[type=file]{
+      width:100%;
+    }
+
+    .media-list{
+      display:grid;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .media-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:10px;
+      display:grid;
+      grid-template-columns:88px 1fr auto;
+      gap:10px;
+      align-items:start;
+    }
+
+    .media-thumb{
+      width:88px;
+      height:88px;
+      border-radius:10px;
+      overflow:hidden;
+      background:#f3f3f3;
+      border:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .media-thumb img,
+    .media-thumb video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .media-actions{
+      display:grid;
+      gap:6px;
+    }
+
+    .media-actions button{
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+    }
+
+    .helper{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .preview-doc{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      min-height:calc(100vh - 90px);
+    }
+
+    .doc-title{
+      font-family:var(--font-serif);
+      font-size:34px;
+      line-height:1;
+      margin:0 0 10px;
+      font-weight:500;
+    }
+
+    .doc-subtitle{
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:24px;
+    }
+
+    .doc-meta{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px 18px;
+      margin-bottom:24px;
+      padding-bottom:18px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .doc-meta-block{
+      display:grid;
+      gap:3px;
+    }
+
+    .doc-meta-label{
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+
+    .doc-meta-value{
+      font-size:15px;
+    }
+
+    .doc-section{
+      margin:24px 0 0;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+    }
+
+    .doc-section h3{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin:0 0 14px;
+      font-weight:600;
+    }
+
+    .doc-block{
+      margin:0 0 18px;
+    }
+
+    .doc-block-title{
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .doc-text{
+      white-space:pre-wrap;
+      font-family:var(--font-serif);
+      font-size:17px;
+      line-height:1.45;
+    }
+
+    .doc-list{
+      margin:0;
+      padding-left:18px;
+      display:grid;
+      gap:6px;
+      font-size:15px;
+    }
+
+    .doc-media-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .doc-media{
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background:#fafafa;
+    }
+
+    .doc-media img,
+    .doc-media video{
+      width:100%;
+      display:block;
+      background:#f3f3f3;
+    }
+
+    .doc-media figcaption{
+      padding:10px 12px;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px solid var(--line);
+    }
+
+    .status{
+      font-size:12px;
+      color:var(--muted);
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      white-space:nowrap;
+    }
+
+    .small-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .small-actions button{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:8px 12px;
+      cursor:pointer;
+    }
+
+    .kbd{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size:11px;
+      background:#f4f4f4;
+      border:1px solid var(--line);
+      border-bottom-width:2px;
+      padding:2px 6px;
+      border-radius:6px;
+    }
+
+    @media (max-width: 1280px){
+      .app{
+        grid-template-columns: 290px 1fr 0.95fr;
+      }
+    }
+
+    @media (max-width: 1080px){
+      .app{
+        grid-template-columns:1fr;
+        height:auto;
+      }
+      .sidebar,.editor,.preview{
+        height:auto;
+        max-height:none;
+        overflow:visible;
+        border-right:none;
+      }
+      .sidebar,.editor{
+        border-bottom:1px solid var(--line);
+      }
+      .preview-doc{
+        min-height:auto;
+      }
+      .grid-2, .doc-meta, .doc-media-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media print{
+      body{
+        background:#fff;
+      }
+      .app{
+        display:block;
+        height:auto;
+      }
+      .sidebar,.editor{
+        display:none !important;
+      }
+      .preview{
+        padding:0;
+      }
+      .preview-header{
+        display:none;
+      }
+      .preview-doc{
+        border:none;
+        box-shadow:none;
+        border-radius:0;
+        padding:0;
+      }
+      @page{
+        size:A4;
+        margin:18mm 15mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1 class="brand">xpan — ep.2 research builder</h1>
+      <div class="subtle">plataforma interna / carpeta de investigación</div>
+
+      <div class="section-title">proyecto</div>
+      <div class="card meta-card">
+        <div class="field">
+          <label for="projectTitle">título del proyecto</label>
+          <input id="projectTitle" type="text" placeholder="ep.2 — carpeta de investigación" />
+        </div>
+        <div class="field inline">
+          <div>
+            <label for="projectCode">código</label>
+            <input id="projectCode" type="text" placeholder="ep.2 / 2026" />
+          </div>
+          <div>
+            <label for="projectOwner">responsable</label>
+            <input id="projectOwner" type="text" placeholder="xpan" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="projectSummary">síntesis del proyecto</label>
+          <textarea id="projectSummary" placeholder="definición operativa, foco, contexto y objetivo general"></textarea>
+        </div>
+      </div>
+
+      <div class="section-title">activaciones</div>
+      <div id="activationList" class="list"></div>
+
+      <div class="toolbar">
+        <button class="btn btn-primary" id="addActivationBtn">
+          <strong>añadir activación</strong>
+          <span>crear una nueva carpeta dentro del proyecto</span>
+        </button>
+        <button class="btn-ghost" id="duplicateActivationBtn">
+          <strong>duplicar activación actual</strong>
+          <span>replicar estructura y contenido base</span>
+        </button>
+        <button class="btn-danger" id="deleteActivationBtn">
+          <strong>eliminar activación actual</strong>
+          <span>remover del proyecto</span>
+        </button>
+      </div>
+
+      <div class="section-title">acciones</div>
+      <div class="toolbar">
+        <button class="btn-ghost" id="saveJsonBtn">
+          <strong>guardar .json</strong>
+          <span>descargar archivo editable del proyecto</span>
+        </button>
+        <button class="btn-ghost" id="loadJsonBtn">
+          <strong>cargar .json</strong>
+          <span>abrir proyecto guardado</span>
+        </button>
+        <input id="loadJsonInput" type="file" accept=".json,application/json" style="display:none" />
+        <button class="btn-ghost" id="exportHtmlBtn">
+          <strong>exportar .html</strong>
+          <span>generar dossier limpio listo para sitio o archivo</span>
+        </button>
+        <button class="btn-ghost" id="printPdfBtn">
+          <strong>imprimir / pdf</strong>
+          <span>usar impresión del navegador con formato editorial</span>
+        </button>
+      </div>
+
+      <div class="section-title">estado</div>
+      <div class="card meta-card">
+        <div class="helper">autosave local activo</div>
+        <div id="autosaveStatus" class="status">sin cambios recientes</div>
+        <div class="helper">atajos: <span class="kbd">⌘/ctrl + s</span> guardar json · <span class="kbd">⌘/ctrl + p</span> imprimir</div>
+      </div>
+    </aside>
+
+    <main class="editor">
+      <div class="editor-header">
+        <div>
+          <h2 id="editorActivationTitle">activación</h2>
+          <div class="minor">editor estructurado / pre · durante · post · media</div>
+        </div>
+        <div class="small-actions">
+          <button id="applyTemplateA1">plantilla a1</button>
+          <button id="applyTemplateA2">plantilla a2</button>
+          <button id="applyTemplateA3">plantilla a3</button>
+          <button id="applyTemplateA4">plantilla a4</button>
+        </div>
+      </div>
+
+      <section class="editor-section">
+        <h3>identidad</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label for="activationName">nombre</label>
+            <input id="activationName" type="text" placeholder="a1 — captación de información" />
+          </div>
+          <div class="field">
+            <label for="activationDate">fecha</label>
+            <input id="activationDate" type="date" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="activationType">tipo</label>
+            <select id="activationType">
+              <option value="captación de información">captación de información</option>
+              <option value="despliegue de información">despliegue de información</option>
+              <option value="sonora">sonora</option>
+              <option value="ambiental / extrema">ambiental / extrema</option>
+              <option value="otro">otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="activationLocation">locación</label>
+            <input id="activationLocation" type="text" placeholder="sitio / ciudad / contexto" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="activationSummary">síntesis</label>
+          <textarea id="activationSummary" placeholder="descripción breve de la activación y su sentido dentro del sistema"></textarea>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <h3>sección 01 — pre</h3>
+        <div class="field">
+          <label for="preObjective">objetivo</label>
+          <textarea id="preObjective"></textarea>
+        </div>
+        <div class="field">
+          <label for="preHypothesis">hipótesis</label>
+          <textarea id="preHypothesis"></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="preContext">contexto</label>
+            <textarea id="preContext"></textarea>
+          </div>
+          <div class="field">
+            <label for="preReferences">referencias</label>
+            <textarea id="preReferences" placeholder="separa por líneas"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="preSiteMap">mapa del sitio</label>
+            <textarea id="preSiteMap"></textarea>
+          </div>
+          <div class="field">
+            <label for="preMountDiagram">diagrama de montaje</label>
+            <textarea id="preMountDiagram"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="preDevices">dispositivos utilizados</label>
+            <textarea id="preDevices" placeholder="separa por líneas"></textarea>
+          </div>
+          <div class="field">
+            <label for="preChecklist">checklist técnico</label>
+            <textarea id="preChecklist" placeholder="separa por líneas"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="preShotlist">shot list</label>
+            <textarea id="preShotlist" placeholder="separa por líneas"></textarea>
+          </div>
+          <div class="field">
+            <label for="prePlan">plan de registro</label>
+            <textarea id="prePlan"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <h3>sección 02 — durante</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label for="duringMountPhotos">fotos de montaje</label>
+            <textarea id="duringMountPhotos" placeholder="criterios, tomas o hallazgos"></textarea>
+          </div>
+          <div class="field">
+            <label for="duringDetailPhotos">fotos de detalle</label>
+            <textarea id="duringDetailPhotos"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="duringVideo">video</label>
+            <textarea id="duringVideo"></textarea>
+          </div>
+          <div class="field">
+            <label for="duringAudio">audio</label>
+            <textarea id="duringAudio"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label for="duringNotes">notas de campo</label>
+          <textarea id="duringNotes"></textarea>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="duringMeasurements">mediciones / observaciones</label>
+            <textarea id="duringMeasurements"></textarea>
+          </div>
+          <div class="field">
+            <label for="duringIssues">problemas y ajustes</label>
+            <textarea id="duringIssues"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label for="duringBehavior">comportamiento del sistema</label>
+          <textarea id="duringBehavior"></textarea>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <h3>sección 03 — post</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label for="postSelection">selección de imágenes</label>
+            <textarea id="postSelection"></textarea>
+          </div>
+          <div class="field">
+            <label for="postFindings">hallazgos</label>
+            <textarea id="postFindings"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="postTechnical">evaluación técnica</label>
+            <textarea id="postTechnical"></textarea>
+          </div>
+          <div class="field">
+            <label for="postSpatial">evaluación espacial</label>
+            <textarea id="postSpatial"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="postLanguage">evaluación de lenguaje</label>
+            <textarea id="postLanguage"></textarea>
+          </div>
+          <div class="field">
+            <label for="postDevicesWorked">dispositivos que funcionaron</label>
+            <textarea id="postDevicesWorked"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="postMissing">faltantes</label>
+            <textarea id="postMissing"></textarea>
+          </div>
+          <div class="field">
+            <label for="postImprove">mejoras</label>
+            <textarea id="postImprove"></textarea>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="postFuture">posibilidades futuras</label>
+            <textarea id="postFuture"></textarea>
+          </div>
+          <div class="field">
+            <label for="postDeck">síntesis breve para deck</label>
+            <textarea id="postDeck"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label for="postQuote">frase corta testimonial / observación</label>
+          <textarea id="postQuote" placeholder="la configuración X permitió… / el dispositivo Y resolvió…"></textarea>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <h3>capas activas</h3>
+        <div class="chips" id="layerChips"></div>
+      </section>
+
+      <section class="editor-section">
+        <h3>media</h3>
+        <div class="dropzone">
+          <div class="helper">añade imágenes, video o audio. todo vive localmente mientras trabajas. al guardar json se incrustan referencias base64 para poder reabrir el proyecto.</div>
+          <input id="mediaInput" type="file" accept="image/*,video/*,audio/*" multiple />
+        </div>
+        <div id="mediaList" class="media-list"></div>
+      </section>
+    </main>
+
+    <section class="preview">
+      <div class="preview-header">
+        <div>
+          <h2>preview</h2>
+          <div class="minor">documento editorial exportable</div>
+        </div>
+        <div class="small-actions">
+          <button id="openStandaloneBtn">abrir html limpio</button>
+          <button id="refreshPreviewBtn">actualizar</button>
+        </div>
+      </div>
+
+      <article id="previewDoc" class="preview-doc"></article>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'xpan_ep2_research_builder_v1';
+
+    const layerOptions = [
+      'registro técnico',
+      'registro analítico',
+      'registro expandido',
+      'registro de contenido',
+      'sonido',
+      'display / imagen',
+      'luz / señal',
+      'archivo / mediación'
+    ];
+
+    const templates = {
+      a1: {
+        type: 'captación de información',
+        name: 'a1 — captación de información',
+        summary: 'ep.2 como instrumento de investigación, registro y producción de evidencia.',
+        preObjective: 'probar cómo el sistema produce experiencia y archivo de manera simultánea.',
+        preHypothesis: 'la configuración activa de ep.2 puede capturar información útil mientras construye una experiencia espacial consistente.',
+        preContext: 'activación enfocada en evidencia, observación y estructura de documentación.',
+        prePlan: 'captura audiovisual estructurada, levantamiento fotográfico, notas, observaciones espaciales, registro técnico.',
+        postDeck: 'ep.2 opera aquí como instrumento de captación de información y producción de archivo.',
+        layers: ['registro técnico','registro analítico','archivo / mediación']
+      },
+      a2: {
+        type: 'despliegue de información',
+        name: 'a2 — despliegue de información',
+        summary: 'ep.2 como portador de información, transmisión y despliegue de contenido.',
+        preObjective: 'mostrar información captada previamente mediante el sistema.',
+        preHypothesis: 'ep.2 puede operar como una estructura de transmisión y visualización de contenidos producidos por su propia secuencia anterior.',
+        preContext: 'esta activación establece continuidad directa con la carpeta y el material de a1.',
+        prePlan: 'seleccionar información captada en a1, estructurar display, integrar montaje y lectura de contenido.',
+        postDeck: 'ep.2 despliega información producida por su propia activación previa, estableciendo una continuidad interna del sistema.',
+        layers: ['display / imagen','registro de contenido','registro analítico']
+      },
+      a3: {
+        type: 'sonora',
+        name: 'a3 — activación sonora',
+        summary: 'caso sólido de sonido y comportamiento espacial.',
+        preObjective: 'validar el sistema en su lenguaje más desarrollado y controlar su comportamiento acústico.',
+        preHypothesis: 'la activación sonora produce una lectura espacial fuerte, precisa y registrable.',
+        preContext: 'activación dedicada a espacialidad, orientación y evidencia acústica.',
+        prePlan: 'registro sonoro, fotos de montaje y detalle, video y observación del comportamiento espacial.',
+        postDeck: 'caso sólido de activación sonora del sistema.',
+        layers: ['sonido','registro técnico','registro analítico']
+      },
+      a4: {
+        type: 'ambiental / extrema',
+        name: 'a4 — activación ambiental / extrema',
+        summary: 'ensayo arquitectónico de portabilidad, autonomía y fuerza espacial.',
+        preObjective: 'probar el sistema en condiciones no controladas y medir su autonomía.',
+        preHypothesis: 'ep.2 mantiene operación, presencia y estructura en un contexto austero o extremo.',
+        preContext: 'ensayo arquitectónico de resistencia, adaptación y comportamiento material.',
+        prePlan: 'registro del montaje, observación del comportamiento del sistema, notas de contexto, prueba de portabilidad y autonomía.',
+        postDeck: 'ep.2 demuestra portabilidad, autonomía y fuerza espacial en condiciones no controladas.',
+        layers: ['registro técnico','registro analítico','luz / señal']
+      }
+    };
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function splitLines(str) {
+      return (str || '').split('\n').map(s => s.trim()).filter(Boolean);
+    }
+
+    function todayISO(){
+      const d = new Date();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${d.getFullYear()}-${m}-${day}`;
+    }
+
+    function blankActivation(name='nueva activación'){
+      return {
+        id: uid(),
+        name,
+        date: todayISO(),
+        type: 'otro',
+        location: '',
+        summary: '',
+        preObjective: '',
+        preHypothesis: '',
+        preContext: '',
+        preReferences: '',
+        preSiteMap: '',
+        preMountDiagram: '',
+        preDevices: '',
+        preChecklist: '',
+        preShotlist: '',
+        prePlan: '',
+        duringMountPhotos: '',
+        duringDetailPhotos: '',
+        duringVideo: '',
+        duringAudio: '',
+        duringNotes: '',
+        duringMeasurements: '',
+        duringIssues: '',
+        duringBehavior: '',
+        postSelection: '',
+        postFindings: '',
+        postTechnical: '',
+        postSpatial: '',
+        postLanguage: '',
+        postDevicesWorked: '',
+        postMissing: '',
+        postImprove: '',
+        postFuture: '',
+        postDeck: '',
+        postQuote: '',
+        layers: [],
+        media: []
+      };
+    }
+
+    function defaultProject(){
+      const a1 = blankActivation('a1 — captación de información');
+      Object.assign(a1, templates.a1, { date: todayISO() });
+      return {
+        project: {
+          title: 'ep.2 — carpeta de investigación',
+          code: 'ep.2 / 2026',
+          owner: 'xpan',
+          summary: 'sistema de investigación, activación, documentación y producción de evidencia.'
+        },
+        activations: [a1],
+        currentActivationId: a1.id
+      };
+    }
+
+    let state = loadState();
+
+    const projectTitle = document.getElementById('projectTitle');
+    const projectCode = document.getElementById('projectCode');
+    const projectOwner = document.getElementById('projectOwner');
+    const projectSummary = document.getElementById('projectSummary');
+    const activationList = document.getElementById('activationList');
+    const autosaveStatus = document.getElementById('autosaveStatus');
+
+    const activationName = document.getElementById('activationName');
+    const activationDate = document.getElementById('activationDate');
+    const activationType = document.getElementById('activationType');
+    const activationLocation = document.getElementById('activationLocation');
+    const activationSummary = document.getElementById('activationSummary');
+
+    const editorFields = [
+      'preObjective','preHypothesis','preContext','preReferences','preSiteMap','preMountDiagram','preDevices',
+      'preChecklist','preShotlist','prePlan','duringMountPhotos','duringDetailPhotos','duringVideo','duringAudio',
+      'duringNotes','duringMeasurements','duringIssues','duringBehavior','postSelection','postFindings',
+      'postTechnical','postSpatial','postLanguage','postDevicesWorked','postMissing','postImprove',
+      'postFuture','postDeck','postQuote'
+    ].reduce((acc, id) => {
+      acc[id] = document.getElementById(id);
+      return acc;
+    }, {});
+
+    const previewDoc = document.getElementById('previewDoc');
+    const layerChips = document.getElementById('layerChips');
+    const mediaInput = document.getElementById('mediaInput');
+    const mediaList = document.getElementById('mediaList');
+    const editorActivationTitle = document.getElementById('editorActivationTitle');
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return defaultProject();
+        const parsed = JSON.parse(raw);
+        if(!parsed.project || !Array.isArray(parsed.activations) || !parsed.activations.length){
+          return defaultProject();
+        }
+        return parsed;
+      } catch(e){
+        return defaultProject();
+      }
+    }
+
+    function saveState(statusText='autosave actualizado'){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      autosaveStatus.textContent = statusText + ' · ' + new Date().toLocaleString();
+    }
+
+    function getCurrentActivation(){
+      return state.activations.find(a => a.id === state.currentActivationId) || state.activations[0];
+    }
+
+    function setCurrentActivation(id){
+      state.currentActivationId = id;
+      render();
+      saveState('activación seleccionada');
+    }
+
+    function applyProjectBindings(){
+      projectTitle.value = state.project.title || '';
+      projectCode.value = state.project.code || '';
+      projectOwner.value = state.project.owner || '';
+      projectSummary.value = state.project.summary || '';
+    }
+
+    function bindCurrentActivation(){
+      const a = getCurrentActivation();
+      if(!a) return;
+      editorActivationTitle.textContent = a.name || 'activación';
+      activationName.value = a.name || '';
+      activationDate.value = a.date || '';
+      activationType.value = a.type || 'otro';
+      activationLocation.value = a.location || '';
+      activationSummary.value = a.summary || '';
+      Object.entries(editorFields).forEach(([key, el]) => {
+        el.value = a[key] || '';
+      });
+      renderLayerChips(a);
+      renderMediaList(a);
+    }
+
+    function renderActivationList(){
+      activationList.innerHTML = '';
+      state.activations.forEach((a, index) => {
+        const div = document.createElement('div');
+        div.className = 'activation-item' + (a.id === state.currentActivationId ? ' active' : '');
+        div.innerHTML = `
+          <div class="name">${escapeHtml(a.name || `activación ${index + 1}`)}</div>
+          <div class="meta">
+            <span>${escapeHtml(a.type || 'sin tipo')}</span>
+            <span>${escapeHtml(a.date || '')}</span>
+          </div>
+          <div class="meta" style="margin-top:6px">
+            <span>${escapeHtml(a.location || 'sin locación')}</span>
+            <span>${(a.media || []).length} media</span>
+          </div>
+        `;
+        div.addEventListener('click', () => setCurrentActivation(a.id));
+        activationList.appendChild(div);
+      });
+    }
+
+    function renderLayerChips(a){
+      layerChips.innerHTML = '';
+      layerOptions.forEach(layer => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip' + ((a.layers || []).includes(layer) ? ' active' : '');
+        chip.textContent = layer;
+        chip.addEventListener('click', () => {
+          a.layers = a.layers || [];
+          if(a.layers.includes(layer)){
+            a.layers = a.layers.filter(l => l !== layer);
+          } else {
+            a.layers.push(layer);
+          }
+          renderLayerChips(a);
+          renderPreview();
+          saveState('capas actualizadas');
+        });
+        layerChips.appendChild(chip);
+      });
+    }
+
+    function renderMediaList(a){
+      mediaList.innerHTML = '';
+      if(!a.media || !a.media.length){
+        mediaList.innerHTML = `<div class="helper">sin media cargada para esta activación</div>`;
+        return;
+      }
+      a.media.forEach((m, index) => {
+        const item = document.createElement('div');
+        item.className = 'media-item';
+
+        let thumb = '<div class="media-thumb">media</div>';
+        if(m.kind === 'image'){
+          thumb = `<div class="media-thumb"><img src="${m.data}" alt="${escapeHtml(m.caption || m.name || '')}"></div>`;
+        } else if(m.kind === 'video'){
+          thumb = `<div class="media-thumb"><video src="${m.data}" muted playsinline></video></div>`;
+        } else if(m.kind === 'audio'){
+          thumb = `<div class="media-thumb">audio</div>`;
+        }
+
+        item.innerHTML = `
+          ${thumb}
+          <div>
+            <div class="field" style="margin-bottom:8px">
+              <label>archivo</label>
+              <div>${escapeHtml(m.name || 'untitled')}</div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label>caption</label>
+              <input type="text" value="${escapeAttr(m.caption || '')}" data-media-caption="${index}">
+            </div>
+          </div>
+          <div class="media-actions">
+            <button type="button" data-media-up="${index}">↑</button>
+            <button type="button" data-media-down="${index}">↓</button>
+            <button type="button" data-media-remove="${index}">eliminar</button>
+          </div>
+        `;
+        mediaList.appendChild(item);
+      });
+
+      mediaList.querySelectorAll('[data-media-caption]').forEach(input => {
+        input.addEventListener('input', e => {
+          const idx = Number(e.target.getAttribute('data-media-caption'));
+          a.media[idx].caption = e.target.value;
+          renderPreview();
+          saveState('caption de media actualizado');
+        });
+      });
+
+      mediaList.querySelectorAll('[data-media-up]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = Number(e.target.getAttribute('data-media-up'));
+          if(idx > 0){
+            [a.media[idx - 1], a.media[idx]] = [a.media[idx], a.media[idx - 1]];
+            renderMediaList(a);
+            renderPreview();
+            saveState('orden de media actualizado');
+          }
+        });
+      });
+
+      mediaList.querySelectorAll('[data-media-down]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = Number(e.target.getAttribute('data-media-down'));
+          if(idx < a.media.length - 1){
+            [a.media[idx + 1], a.media[idx]] = [a.media[idx], a.media[idx + 1]];
+            renderMediaList(a);
+            renderPreview();
+            saveState('orden de media actualizado');
+          }
+        });
+      });
+
+      mediaList.querySelectorAll('[data-media-remove]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const idx = Number(e.target.getAttribute('data-media-remove'));
+          a.media.splice(idx, 1);
+          renderMediaList(a);
+          renderPreview();
+          saveState('media eliminada');
+        });
+      });
+    }
+
+    function renderPreview(){
+      const a = getCurrentActivation();
+      if(!a){
+        previewDoc.innerHTML = '';
+        return;
+      }
+
+      const metaRows = [
+        ['proyecto', state.project.title || ''],
+        ['código', state.project.code || ''],
+        ['responsable', state.project.owner || ''],
+        ['activación', a.name || ''],
+        ['tipo', a.type || ''],
+        ['fecha', a.date || ''],
+        ['locación', a.location || ''],
+        ['capas activas', (a.layers || []).join(' · ')]
+      ];
+
+      previewDoc.innerHTML = `
+        <div class="doc-title">${escapeHtml(state.project.title || 'ep.2 — carpeta de investigación')}</div>
+        <div class="doc-subtitle">${escapeHtml(state.project.code || '')} — ${escapeHtml(a.name || '')}</div>
+
+        <div class="doc-meta">
+          ${metaRows.map(([label, value]) => `
+            <div class="doc-meta-block">
+              <div class="doc-meta-label">${escapeHtml(label)}</div>
+              <div class="doc-meta-value">${escapeHtml(value || '—')}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        ${renderDocBlock('síntesis del proyecto', state.project.summary)}
+        ${renderDocBlock('síntesis de activación', a.summary)}
+
+        <section class="doc-section">
+          <h3>sección 01 — pre</h3>
+          ${renderDocBlock('objetivo', a.preObjective)}
+          ${renderDocBlock('hipótesis', a.preHypothesis)}
+          ${renderDocBlock('contexto', a.preContext)}
+          ${renderDocList('referencias', a.preReferences)}
+          ${renderDocBlock('mapa del sitio', a.preSiteMap)}
+          ${renderDocBlock('diagrama de montaje', a.preMountDiagram)}
+          ${renderDocList('dispositivos utilizados', a.preDevices)}
+          ${renderDocList('checklist técnico', a.preChecklist)}
+          ${renderDocList('shot list', a.preShotlist)}
+          ${renderDocBlock('plan de registro', a.prePlan)}
+        </section>
+
+        <section class="doc-section">
+          <h3>sección 02 — durante</h3>
+          ${renderDocBlock('fotos de montaje', a.duringMountPhotos)}
+          ${renderDocBlock('fotos de detalle', a.duringDetailPhotos)}
+          ${renderDocBlock('video', a.duringVideo)}
+          ${renderDocBlock('audio', a.duringAudio)}
+          ${renderDocBlock('notas de campo', a.duringNotes)}
+          ${renderDocBlock('mediciones / observaciones', a.duringMeasurements)}
+          ${renderDocBlock('problemas y ajustes', a.duringIssues)}
+          ${renderDocBlock('comportamiento del sistema', a.duringBehavior)}
+        </section>
+
+        <section class="doc-section">
+          <h3>sección 03 — post</h3>
+          ${renderDocBlock('selección de imágenes', a.postSelection)}
+          ${renderDocBlock('hallazgos', a.postFindings)}
+          ${renderDocBlock('evaluación técnica', a.postTechnical)}
+          ${renderDocBlock('evaluación espacial', a.postSpatial)}
+          ${renderDocBlock('evaluación de lenguaje', a.postLanguage)}
+          ${renderDocBlock('dispositivos que funcionaron', a.postDevicesWorked)}
+          ${renderDocBlock('faltantes', a.postMissing)}
+          ${renderDocBlock('mejoras', a.postImprove)}
+          ${renderDocBlock('posibilidades futuras', a.postFuture)}
+          ${renderDocBlock('síntesis breve para deck', a.postDeck)}
+          ${renderDocBlock('frase corta testimonial / observación', a.postQuote)}
+        </section>
+
+        <section class="doc-section">
+          <h3>media</h3>
+          ${(a.media && a.media.length) ? `
+            <div class="doc-media-grid">
+              ${a.media.map(m => renderPreviewMedia(m)).join('')}
+            </div>
+          ` : '<div class="helper">sin media cargada</div>'}
+        </section>
+      `;
+    }
+
+    function renderDocBlock(title, text){
+      const safeText = (text || '').trim();
+      if(!safeText) return '';
+      return `
+        <div class="doc-block">
+          <div class="doc-block-title">${escapeHtml(title)}</div>
+          <div class="doc-text">${escapeHtml(safeText)}</div>
+        </div>
+      `;
+    }
+
+    function renderDocList(title, text){
+      const items = splitLines(text);
+      if(!items.length) return '';
+      return `
+        <div class="doc-block">
+          <div class="doc-block-title">${escapeHtml(title)}</div>
+          <ul class="doc-list">
+            ${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    function renderPreviewMedia(m){
+      const caption = escapeHtml(m.caption || m.name || '');
+      if(m.kind === 'image'){
+        return `<figure class="doc-media"><img src="${m.data}" alt="${caption}"><figcaption>${caption}</figcaption></figure>`;
+      }
+      if(m.kind === 'video'){
+        return `<figure class="doc-media"><video src="${m.data}" controls playsinline></video><figcaption>${caption}</figcaption></figure>`;
+      }
+      if(m.kind === 'audio'){
+        return `<figure class="doc-media"><div style="padding:16px"><audio src="${m.data}" controls style="width:100%"></audio></div><figcaption>${caption}</figcaption></figure>`;
+      }
+      return '';
+    }
+
+    function render(){
+      applyProjectBindings();
+      renderActivationList();
+      bindCurrentActivation();
+      renderPreview();
+    }
+
+    function exportJson(){
+      const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+      downloadBlob(blob, fileSlug((state.project.title || 'ep2_research_builder')) + '.json');
+      saveState('json exportado');
+    }
+
+    function exportHtmlDocument(standalone=false){
+      const htmlString = buildStandaloneHtml();
+      if(standalone){
+        const win = window.open('', '_blank');
+        win.document.open();
+        win.document.write(htmlString);
+        win.document.close();
+        return;
+      }
+      const blob = new Blob([htmlString], {type:'text/html;charset=utf-8'});
+      downloadBlob(blob, fileSlug((state.project.title || 'ep2_research_builder')) + '.html');
+      saveState('html exportado');
+    }
+
+    function buildStandaloneHtml(){
+      const activationDocs = state.activations.map(a => `
+        <article class="doc">
+          <div class="doc-title">${escapeHtml(state.project.title || 'ep.2 — carpeta de investigación')}</div>
+          <div class="doc-subtitle">${escapeHtml(state.project.code || '')} — ${escapeHtml(a.name || '')}</div>
+
+          <div class="doc-meta">
+            ${[
+              ['proyecto', state.project.title || ''],
+              ['código', state.project.code || ''],
+              ['responsable', state.project.owner || ''],
+              ['activación', a.name || ''],
+              ['tipo', a.type || ''],
+              ['fecha', a.date || ''],
+              ['locación', a.location || ''],
+              ['capas activas', (a.layers || []).join(' · ')]
+            ].map(([label, value]) => `
+              <div class="doc-meta-block">
+                <div class="doc-meta-label">${escapeHtml(label)}</div>
+                <div class="doc-meta-value">${escapeHtml(value || '—')}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          ${renderDocBlock('síntesis del proyecto', state.project.summary)}
+          ${renderDocBlock('síntesis de activación', a.summary)}
+
+          <section class="doc-section">
+            <h3>sección 01 — pre</h3>
+            ${renderDocBlock('objetivo', a.preObjective)}
+            ${renderDocBlock('hipótesis', a.preHypothesis)}
+            ${renderDocBlock('contexto', a.preContext)}
+            ${renderDocList('referencias', a.preReferences)}
+            ${renderDocBlock('mapa del sitio', a.preSiteMap)}
+            ${renderDocBlock('diagrama de montaje', a.preMountDiagram)}
+            ${renderDocList('dispositivos utilizados', a.preDevices)}
+            ${renderDocList('checklist técnico', a.preChecklist)}
+            ${renderDocList('shot list', a.preShotlist)}
+            ${renderDocBlock('plan de registro', a.prePlan)}
+          </section>
+
+          <section class="doc-section">
+            <h3>sección 02 — durante</h3>
+            ${renderDocBlock('fotos de montaje', a.duringMountPhotos)}
+            ${renderDocBlock('fotos de detalle', a.duringDetailPhotos)}
+            ${renderDocBlock('video', a.duringVideo)}
+            ${renderDocBlock('audio', a.duringAudio)}
+            ${renderDocBlock('notas de campo', a.duringNotes)}
+            ${renderDocBlock('mediciones / observaciones', a.duringMeasurements)}
+            ${renderDocBlock('problemas y ajustes', a.duringIssues)}
+            ${renderDocBlock('comportamiento del sistema', a.duringBehavior)}
+          </section>
+
+          <section class="doc-section">
+            <h3>sección 03 — post</h3>
+            ${renderDocBlock('selección de imágenes', a.postSelection)}
+            ${renderDocBlock('hallazgos', a.postFindings)}
+            ${renderDocBlock('evaluación técnica', a.postTechnical)}
+            ${renderDocBlock('evaluación espacial', a.postSpatial)}
+            ${renderDocBlock('evaluación de lenguaje', a.postLanguage)}
+            ${renderDocBlock('dispositivos que funcionaron', a.postDevicesWorked)}
+            ${renderDocBlock('faltantes', a.postMissing)}
+            ${renderDocBlock('mejoras', a.postImprove)}
+            ${renderDocBlock('posibilidades futuras', a.postFuture)}
+            ${renderDocBlock('síntesis breve para deck', a.postDeck)}
+            ${renderDocBlock('frase corta testimonial / observación', a.postQuote)}
+          </section>
+
+          <section class="doc-section">
+            <h3>media</h3>
+            ${(a.media && a.media.length) ? `
+              <div class="doc-media-grid">
+                ${a.media.map(m => renderPreviewMedia(m)).join('')}
+              </div>
+            ` : '<div class="helper">sin media cargada</div>'}
+          </section>
+        </article>
+      `).join('<div class="page-break"></div>');
+
+      return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(state.project.title || 'ep.2 — carpeta de investigación')}</title>
+<style>
+  :root{
+    --line:#d0d0d0; --text:#111; --muted:#666;
+    --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, "Times New Roman", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--text);font-family:var(--font-sans);padding:24px}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .toolbar button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;cursor:pointer}
+  .doc{max-width:1040px;margin:0 auto 40px auto}
+  .doc-title{font-family:var(--font-serif);font-size:34px;line-height:1;margin:0 0 10px;font-weight:500}
+  .doc-subtitle{color:var(--muted);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:24px}
+  .doc-meta{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:10px 18px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .doc-meta-block{display:grid;gap:3px}
+  .doc-meta-label{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+  .doc-meta-value{font-size:15px}
+  .doc-section{margin:24px 0 0;padding-top:16px;border-top:1px solid var(--line)}
+  .doc-section h3{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin:0 0 14px;font-weight:600}
+  .doc-block{margin:0 0 18px}
+  .doc-block-title{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .doc-text{white-space:pre-wrap;font-family:var(--font-serif);font-size:17px;line-height:1.45}
+  .doc-list{margin:0;padding-left:18px;display:grid;gap:6px;font-size:15px}
+  .doc-media-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:12px;margin-top:12px}
+  .doc-media{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fafafa}
+  .doc-media img,.doc-media video{width:100%;display:block;background:#f3f3f3}
+  .doc-media figcaption{padding:10px 12px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+  .helper{font-size:12px;color:var(--muted)}
+  .page-break{height:1px;border-top:1px dashed var(--line);margin:32px auto;max-width:1040px}
+  @media (max-width:900px){.doc-meta,.doc-media-grid{grid-template-columns:1fr}}
+  @media print{
+    body{padding:0}
+    .toolbar{display:none}
+    .page-break{page-break-before:always;border:none;height:0;margin:0}
+    @page{size:A4;margin:18mm 15mm}
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button onclick="window.print()">imprimir / guardar pdf</button>
+  </div>
+  ${activationDocs}
+</body>
+</html>`;
+    }
+
+    function downloadBlob(blob, filename){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function fileSlug(str){
+      return (str || 'file')
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function escapeHtml(str){
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttr(str){
+      return escapeHtml(str).replace(/"/g, '&quot;');
+    }
+
+    function wireProjectInputs(){
+      projectTitle.addEventListener('input', e => {
+        state.project.title = e.target.value;
+        renderActivationList();
+        renderPreview();
+        saveState('proyecto actualizado');
+      });
+      projectCode.addEventListener('input', e => {
+        state.project.code = e.target.value;
+        renderPreview();
+        saveState('código actualizado');
+      });
+      projectOwner.addEventListener('input', e => {
+        state.project.owner = e.target.value;
+        renderPreview();
+        saveState('responsable actualizado');
+      });
+      projectSummary.addEventListener('input', e => {
+        state.project.summary = e.target.value;
+        renderPreview();
+        saveState('síntesis actualizada');
+      });
+    }
+
+    function wireActivationInputs(){
+      const map = {
+        activationName: 'name',
+        activationDate: 'date',
+        activationType: 'type',
+        activationLocation: 'location',
+        activationSummary: 'summary'
+      };
+      Object.entries(map).forEach(([domId, key]) => {
+        document.getElementById(domId).addEventListener('input', e => {
+          const a = getCurrentActivation();
+          a[key] = e.target.value;
+          if(key === 'name') editorActivationTitle.textContent = e.target.value || 'activación';
+          renderActivationList();
+          renderPreview();
+          saveState('activación actualizada');
+        });
+      });
+
+      Object.entries(editorFields).forEach(([key, el]) => {
+        el.addEventListener('input', e => {
+          const a = getCurrentActivation();
+          a[key] = e.target.value;
+          renderPreview();
+          saveState('campo actualizado');
+        });
+      });
+    }
+
+    async function filesToMedia(files){
+      const out = [];
+      for(const file of files){
+        const data = await readAsDataURL(file);
+        let kind = 'file';
+        if(file.type.startsWith('image/')) kind = 'image';
+        else if(file.type.startsWith('video/')) kind = 'video';
+        else if(file.type.startsWith('audio/')) kind = 'audio';
+        out.push({
+          id: uid(),
+          name: file.name,
+          type: file.type,
+          kind,
+          data,
+          caption: ''
+        });
+      }
+      return out;
+    }
+
+    function readAsDataURL(file){
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function wireMedia(){
+      mediaInput.addEventListener('change', async e => {
+        const files = Array.from(e.target.files || []);
+        if(!files.length) return;
+        const media = await filesToMedia(files);
+        const a = getCurrentActivation();
+        a.media = (a.media || []).concat(media);
+        renderMediaList(a);
+        renderPreview();
+        saveState('media añadida');
+        mediaInput.value = '';
+      });
+    }
+
+    function applyTemplate(key){
+      const a = getCurrentActivation();
+      const t = templates[key];
+      if(!a || !t) return;
+      const preserved = {
+        id: a.id,
+        date: a.date || todayISO(),
+        location: a.location || '',
+        media: a.media || []
+      };
+      Object.assign(a, blankActivation(t.name), t, preserved);
+      render();
+      saveState('plantilla aplicada');
+    }
+
+    function wireButtons(){
+      document.getElementById('addActivationBtn').addEventListener('click', () => {
+        const a = blankActivation(`activación ${state.activations.length + 1}`);
+        state.activations.push(a);
+        state.currentActivationId = a.id;
+        render();
+        saveState('activación añadida');
+      });
+
+      document.getElementById('duplicateActivationBtn').addEventListener('click', () => {
+        const current = getCurrentActivation();
+        if(!current) return;
+        const copy = JSON.parse(JSON.stringify(current));
+        copy.id = uid();
+        copy.name = (current.name || 'activación') + ' — copia';
+        state.activations.push(copy);
+        state.currentActivationId = copy.id;
+        render();
+        saveState('activación duplicada');
+      });
+
+      document.getElementById('deleteActivationBtn').addEventListener('click', () => {
+        if(state.activations.length <= 1){
+          alert('el proyecto necesita al menos una activación.');
+          return;
+        }
+        const current = getCurrentActivation();
+        state.activations = state.activations.filter(a => a.id !== current.id);
+        state.currentActivationId = state.activations[0].id;
+        render();
+        saveState('activación eliminada');
+      });
+
+      document.getElementById('saveJsonBtn').addEventListener('click', exportJson);
+      document.getElementById('loadJsonBtn').addEventListener('click', () => document.getElementById('loadJsonInput').click());
+      document.getElementById('loadJsonInput').addEventListener('change', async e => {
+        const file = e.target.files?.[0];
+        if(!file) return;
+        try{
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          if(parsed.project && Array.isArray(parsed.activations) && parsed.activations.length){
+            state = parsed;
+            render();
+            saveState('json cargado');
+          } else {
+            alert('archivo inválido.');
+          }
+        } catch(err){
+          alert('no se pudo cargar el json.');
+        }
+        e.target.value = '';
+      });
+
+      document.getElementById('exportHtmlBtn').addEventListener('click', () => exportHtmlDocument(false));
+      document.getElementById('printPdfBtn').addEventListener('click', () => window.print());
+      document.getElementById('openStandaloneBtn').addEventListener('click', () => exportHtmlDocument(true));
+      document.getElementById('refreshPreviewBtn').addEventListener('click', renderPreview);
+
+      document.getElementById('applyTemplateA1').addEventListener('click', () => applyTemplate('a1'));
+      document.getElementById('applyTemplateA2').addEventListener('click', () => applyTemplate('a2'));
+      document.getElementById('applyTemplateA3').addEventListener('click', () => applyTemplate('a3'));
+      document.getElementById('applyTemplateA4').addEventListener('click', () => applyTemplate('a4'));
+    }
+
+    function wireShortcuts(){
+      window.addEventListener('keydown', e => {
+        if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's'){
+          e.preventDefault();
+          exportJson();
+        }
+        if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'p'){
+          e.preventDefault();
+          window.print();
+        }
+      });
+    }
+
+    render();
+    wireProjectInputs();
+    wireActivationInputs();
+    wireMedia();
+    wireButtons();
+    wireShortcuts();
+  </script>
+</body>
+</html>
