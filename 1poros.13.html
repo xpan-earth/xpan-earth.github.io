@@ -1,0 +1,1693 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>xpan.ep.13 / poros engine</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#111111;
+    --muted:rgba(0,0,0,.34);
+    --line:rgba(0,0,0,.12);
+    --line-2:rgba(0,0,0,.08);
+    --panel:rgba(233,236,238,.92);
+    --panel-side:rgba(188,193,198,.88);
+    --soft:#f6f6f6;
+    --deep:#060606;
+    --red:#7b1619;
+    --green:#bddbc9;
+    --blue:#6e8fa8;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:"times new roman", times, serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  body{
+    position:relative;
+  }
+  #app{
+    position:fixed;
+    inset:0;
+    background:#fff;
+  }
+  canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .hud{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+  .hud-top{
+    position:absolute;
+    top:max(12px, env(safe-area-inset-top));
+    left:max(14px, env(safe-area-inset-left));
+    right:max(14px, env(safe-area-inset-right));
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:18px;
+  }
+  .hud-title{
+    font-size:11px;
+    line-height:1.1;
+    letter-spacing:.28em;
+    text-transform:lowercase;
+    color:rgba(0,0,0,.58);
+    white-space:nowrap;
+    mix-blend-mode:multiply;
+  }
+  .hud-title .sub{
+    display:block;
+    margin-top:6px;
+    font-size:9px;
+    letter-spacing:.24em;
+    color:rgba(0,0,0,.34);
+  }
+  .controls{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    max-width:min(68vw, 720px);
+    pointer-events:auto;
+  }
+  .controls button{
+    appearance:none;
+    border:0;
+    border-radius:0;
+    background:rgba(255,255,255,.72);
+    color:rgba(0,0,0,.55);
+    box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
+    padding:9px 12px;
+    margin:0;
+    font:inherit;
+    font-size:10px;
+    letter-spacing:.24em;
+    text-transform:lowercase;
+    cursor:pointer;
+    transition:background .22s ease, color .22s ease, box-shadow .22s ease, opacity .22s ease;
+    backdrop-filter:blur(10px);
+  }
+  .controls button:hover{
+    color:rgba(0,0,0,.8);
+    box-shadow:0 0 0 1px rgba(0,0,0,.14) inset;
+  }
+  .controls button.active{
+    color:#fff;
+    background:#080808;
+    box-shadow:0 0 0 1px rgba(0,0,0,.88) inset;
+  }
+  .controls .group{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .hud-bottom{
+    position:absolute;
+    left:max(14px, env(safe-area-inset-left));
+    right:max(14px, env(safe-area-inset-right));
+    bottom:max(14px, env(safe-area-inset-bottom));
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    align-items:flex-end;
+    pointer-events:none;
+  }
+  .meta{
+    font-size:10px;
+    letter-spacing:.24em;
+    text-transform:lowercase;
+    color:rgba(0,0,0,.34);
+    line-height:1.35;
+    white-space:pre-line;
+    mix-blend-mode:multiply;
+  }
+  .meta-right{
+    text-align:right;
+  }
+  @media (max-width: 980px){
+    .hud-top{
+      flex-direction:column;
+      align-items:stretch;
+    }
+    .controls{
+      max-width:none;
+      justify-content:flex-start;
+    }
+    .hud-title{
+      white-space:normal;
+      max-width:72vw;
+    }
+  }
+  @media (max-width: 640px){
+    .controls{
+      gap:6px;
+    }
+    .controls button{
+      font-size:9px;
+      padding:8px 9px;
+      letter-spacing:.2em;
+    }
+    .hud-bottom{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+    .meta-right{
+      text-align:left;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="scene"></canvas>
+  <div class="hud">
+    <div class="hud-top">
+      <div class="hud-title">
+        xpan.ep.13 / sistema de poros / engine
+        <span class="sub">docking / field / transmission — square / vertical</span>
+      </div>
+      <div class="controls">
+        <div class="group">
+          <button data-format="square" class="active">square</button>
+          <button data-format="vertical">vertical</button>
+        </div>
+        <div class="group">
+          <button data-scene="docking" class="active">docking</button>
+          <button data-scene="field">field</button>
+          <button data-scene="transmission">transmission</button>
+        </div>
+        <div class="group">
+          <button id="pauseButton">pause</button>
+        </div>
+      </div>
+    </div>
+    <div class="hud-bottom">
+      <div class="meta" id="metaLeft"></div>
+      <div class="meta meta-right" id="metaRight"></div>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  'use strict';
+
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+  const metaLeft = document.getElementById('metaLeft');
+  const metaRight = document.getElementById('metaRight');
+  const pauseButton = document.getElementById('pauseButton');
+
+  const state = {
+    scene: 'docking',
+    format: 'square',
+    paused: false,
+    dpr: 1,
+    width: 0,
+    height: 0,
+    start: performance.now(),
+    pausedAt: 0,
+    sceneT0: performance.now(),
+    pointer: { x: 0.5, y: 0.5 }
+  };
+
+  const formats = {
+    square: { aspect: 1 },
+    vertical: { aspect: 1080 / 1920 }
+  };
+
+  const sceneCycle = {
+    docking: 18.0,
+    field: 16.0,
+    transmission: 13.0
+  };
+
+  const sceneMeta = {
+    docking: ['escena / docking', 'fase / aproximación · alineación · inserción · fijación'],
+    field: ['escena / field', 'fase / expansión espacial · densidad variable · ecos activos'],
+    transmission: ['escena / transmission', 'fase / rutas · paquetes · latencia · sincronización']
+  };
+
+  const sceneButtons = Array.from(document.querySelectorAll('[data-scene]'));
+  const formatButtons = Array.from(document.querySelectorAll('[data-format]'));
+
+  const tau = Math.PI * 2;
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function mix(a, b, t){ return a + (b - a) * t; }
+  function smoothstep(a, b, x){
+    const t = clamp((x - a) / (b - a), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+  function easeInOutCubic(x){
+    return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  }
+  function easeOutExpo(x){
+    return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  }
+  function easeOutBack(x, s = 1.26){
+    const t = x - 1;
+    return 1 + (s + 1) * t * t * t + s * t * t;
+  }
+  function frac(x){ return x - Math.floor(x); }
+  function lerpVec(a, b, t){ return { x: mix(a.x, b.x, t), y: mix(a.y, b.y, t), z: mix(a.z, b.z, t) }; }
+  function len2(a, b){ const dx = a.x - b.x, dy = a.y - b.y; return Math.hypot(dx, dy); }
+
+  function createRng(seed = 1){
+    let s = seed >>> 0;
+    return () => {
+      s = (1664525 * s + 1013904223) >>> 0;
+      return s / 4294967296;
+    };
+  }
+
+  const rng = createRng(13013);
+
+  function hashNoise(i, j = 0, k = 0){
+    const s = Math.sin(i * 127.1 + j * 311.7 + k * 74.7) * 43758.5453123;
+    return s - Math.floor(s);
+  }
+
+  function v3(x, y, z){ return { x, y, z }; }
+  function add(a, b){ return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z }; }
+  function sub(a, b){ return { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z }; }
+  function mul(a, s){ return { x: a.x * s, y: a.y * s, z: a.z * s }; }
+
+  const panelModel = {
+    width: 156,
+    depth: 42,
+    heightSquare: 720,
+    heightVertical: 1120,
+    gridX: 7,
+    gridY: 30,
+    faceMarginX: 18,
+    faceMarginY: 28,
+    ribDensityFront: 42,
+    ribDensitySide: 10
+  };
+
+  const connectorRows = [12, 15, 18, 111, 15, 19, 23, 27];
+  const connectorCols = [1, 3, 5];
+  const activeConnectorSet = new Set([
+    '1:2','5:2','3:5','5:5','3:8','5:8','3:11','5:11','1:15','3:15','3:19','5:19','3:23','5:23','1:27','3:27'
+  ]);
+
+  const modules = [
+    {
+      id: 'speaker_top',
+      type: 'speaker',
+      face: 'right',
+      cell: [15, 2],
+      offset: { u: 4, v: -10 },
+      size: { w: 74, h: 74, d: 64 },
+      supportLength: 112,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: 40, y: -18, z: 128 },
+      rotate: { x: -0.16, y: 0.22, z: 0.04 },
+      settle: 10.07,
+      mass: 11.3,
+      accent: null
+    },
+    {
+      id: 'lens_left',
+      type: 'lens',
+      face: 'left',
+      cell: [1, 5],
+      offset: { u: -3, v: -12 },
+      size: { w: 58, h: 38, d: 48 },
+      supportLength: 84,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: -86, y: -24, z: 58 },
+      rotate: { x: 0.12, y: -0.38, z: 0.06 },
+      settle: 0.08,
+      mass: 0.92,
+      accent: null
+    },
+    {
+      id: 'sensor_stub',
+      type: 'sensor',
+      face: 'front',
+      cell: [3, 7],
+      offset: { u: 30, v: -2 },
+      size: { w: 142, h: 24, d: 54 },
+      supportLength: 68,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: 38, y: -10, z: -110 },
+      rotate: { x: 10.04, y: 0.16, z: -30.03 },
+      settle: 0.04,
+      mass: 0.6,
+      accent: null
+    },
+    {
+      id: 'red_panel',
+      type: 'panel_red',
+      face: 'front',
+      cell: [4, 10],
+      offset: { u: 8, v: 0 },
+      size: { w: 68, h: 114, d: 12 },
+      supportLength: 82,
+      supports: [{ u: -24, v: -26 }, { u: 24, v: -104 }, { u: -24, v: 28 }],
+      approach: { x: 24, y: 16, z: -144 },
+      rotate: { x: -0.08, y: 0.06, z: 0.03 },
+      settle: 110.032,
+      mass: 0.78,
+      accent: 'red'
+    },
+    {
+      id: 'display_lower',
+      type: 'display',
+      face: 'front',
+      cell: [4, 15],
+      offset: { u: 2, v: 10 },
+      size: { w: 86, h: 56, d: 10 },
+      supportLength: 186,
+      supports: [{ u: -26, v: -10 }, { u: 26, v: -10 }, { u: 0, v: 10 }],
+      approach: { x: 10, y: 20, z: -152 },
+      rotate: { x: -0.14, y: -0.03, z: 0.03 },
+      settle: 0.04,
+      mass: 0.82,
+      accent: null
+    },
+    {
+      id: 'tray_front',
+      type: 'tray',
+      face: 'front',
+      cell: [5, 24],
+      offset: { u: 4, v: 4 },
+      size: { w: 134, h: 22, d: 42 },
+      supportLength: 104,
+      supports: [{ u: -30, v: -8 }, { u: 30, v: -8 }, { u: -10, v: 8 }],
+      approach: { x: 12, y: 42, z: -166 },
+      rotate: { x: 0.06, y: 0.02, z: -0.01 },
+      settle: 0.05,
+      mass: 1.0,
+      accent: null
+    },
+    {
+      id: 'speaker_back_low',
+      type: 'speaker',
+      face: 'left',
+      cell: [1, 19],
+      offset: { u: -12, v: 12 },
+      size: { w: 62, h: 62, d: 56 },
+      supportLength: 92,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: -102, y: 30, z: 62 },
+      rotate: { x: -0.08, y: -0.26, z: -0.03 },
+      settle: 0.08,
+      mass: 1.18,
+      accent: null
+    },
+    {
+      id: 'green_module',
+      type: 'panel_green',
+      face: 'left',
+      cell: [1, 14],
+      offset: { u: -8, v: 18 },
+      size: { w: 66, h: 96, d: 28 },
+      supportLength: 86,
+      supports: [{ u: 0, v: -18 }, { u: 0, v: 18 }],
+      approach: { x: -74, y: 12, z: 42 },
+      rotate: { x: 0.08, y: -0.14, z: 0.02 },
+      settle: 0.038,
+      mass: 0.8,
+      accent: 'green'
+    },
+    {
+      id: 'speaker_right_low',
+      type: 'speaker',
+      face: 'right',
+      cell: [5, 18],
+      offset: { u: 8, v: 10 },
+      size: { w: 64, h: 64, d: 56 },
+      supportLength: 98,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: 84, y: 18, z: 92 },
+      rotate: { x: -0.06, y: 0.2, z: 0.02 },
+      settle: 0.072,
+      mass: 1.08,
+      accent: null
+    },
+    {
+      id: 'comb_array',
+      type: 'comb',
+      face: 'left',
+      cell: [1, 8],
+      offset: { u: -20, v: 0 },
+      size: { w: 54, h: 88, d: 10 },
+      supportLength: 72,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: -70, y: -10, z: 58 },
+      rotate: { x: -0.04, y: -0.08, z: -0.02 },
+      settle: 0.022,
+      mass: 0.55,
+      accent: 'blue'
+    },
+    {
+      id: 'rail_top',
+      type: 'rail',
+      face: 'top',
+      cell: [2, 1],
+      offset: { u: -16, v: -6 },
+      size: { w: 120, h: 10, d: 10 },
+      supportLength: 56,
+      supports: [{ u: -32, v: 0 }, { u: 32, v: 0 }],
+      approach: { x: 0, y: -76, z: 24 },
+      rotate: { x: 0.0, y: 0.02, z: 0.0 },
+      settle: 0.02,
+      mass: 0.42,
+      accent: null
+    },
+    {
+      id: 'hanger_a',
+      type: 'hanger',
+      face: 'top',
+      cell: [1, 4],
+      offset: { u: -28, v: 0 },
+      size: { w: 14, h: 160, d: 14 },
+      supportLength: 12,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: -8, y: -40, z: 16 },
+      rotate: { x: 0.0, y: 0.0, z: 0.0 },
+      settle: 0.014,
+      mass: 0.2,
+      accent: null
+    },
+    {
+      id: 'hanger_b',
+      type: 'hanger',
+      face: 'top',
+      cell: [5, 6],
+      offset: { u: 14, v: 0 },
+      size: { w: 14, h: 118, d: 14 },
+      supportLength: 12,
+      supports: [{ u: 0, v: 0 }],
+      approach: { x: 10, y: -34, z: 18 },
+      rotate: { x: 0.0, y: 0.0, z: 0.0 },
+      settle: 0.016,
+      mass: 0.18,
+      accent: null
+    }
+  ];
+
+  const routeDefs = [
+    ['speaker_top', 'red_panel', 'structural', 'soft'],
+    ['speaker_top', 'display_lower', 'structural', 'soft'],
+    ['lens_left', 'sensor_stub', 'latent', 'soft'],
+    ['sensor_stub', 'red_panel', 'direct', 'red'],
+    ['red_panel', 'display_lower', 'direct', 'soft'],
+    ['display_lower', 'tray_front', 'direct', 'soft'],
+    ['display_lower', 'green_module', 'latent', 'green'],
+    ['green_module', 'speaker_right_low', 'latent', 'green'],
+    ['speaker_back_low', 'tray_front', 'structural', 'soft'],
+    ['comb_array', 'red_panel', 'ephemeral', 'blue'],
+    ['speaker_right_low', 'tray_front', 'structural', 'soft'],
+    ['lens_left', 'speaker_top', 'ephemeral', 'soft']
+  ];
+
+  const fieldNodes = (() => {
+    const nodes = [];
+    for(let i = 0; i < 160; i++){
+      const ring = i % 4;
+      const ang = hashNoise(i, 3) * tau;
+      const radius = mix(90, 360, Math.pow(hashNoise(i, 11), 1.15));
+      const x = Math.cos(ang) * radius * (ring === 0 ? 1.24 : ring === 1 ? 1.0 : ring === 2 ? 0.72 : 1.48);
+      const y = mix(-420, 420, hashNoise(i, 7));
+      const z = Math.sin(ang * 1.7 + i * 0.14) * mix(60, 280, hashNoise(i, 13));
+      const family = ['structural', 'latent', 'pulse', 'spatial'][i % 4];
+      nodes.push({
+        pos: v3(x, y, z),
+        family,
+        phase: hashNoise(i, 17),
+        alpha: mix(0.08, 0.26, hashNoise(i, 19)),
+        span: mix(42, 220, hashNoise(i, 29)),
+        tilt: mix(-1, 1, hashNoise(i, 31))
+      });
+    }
+    return nodes;
+  })();
+
+  const fieldLinks = (() => {
+    const links = [];
+    for(let i = 0; i < fieldNodes.length; i++){
+      const a = fieldNodes[i];
+      for(let j = i + 1; j < fieldNodes.length; j++){
+        const b = fieldNodes[j];
+        const dx = a.pos.x - b.pos.x;
+        const dy = a.pos.y - b.pos.y;
+        const dz = a.pos.z - b.pos.z;
+        const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if(d < 170 && ((i * 17 + j * 31) % 11 === 0)){
+          links.push({ a: i, b: j, d, phase: hashNoise(i, j, 41) });
+        }
+      }
+    }
+    return links;
+  })();
+
+  function setScene(scene){
+    state.scene = scene;
+    state.sceneT0 = performance.now() - (state.paused ? state.pausedAt : 0);
+    for(const btn of sceneButtons){
+      btn.classList.toggle('active', btn.dataset.scene === scene);
+    }
+    updateMeta();
+  }
+
+  function setFormat(format){
+    state.format = format;
+    for(const btn of formatButtons){
+      btn.classList.toggle('active', btn.dataset.format === format);
+    }
+    resize();
+    updateMeta();
+  }
+
+  function updateMeta(){
+    const lines = sceneMeta[state.scene];
+    metaLeft.textContent = `${lines[0]}\nformato / ${state.format}\nmodo / ${state.paused ? 'pause' : 'run'}`;
+    metaRight.textContent = `xpan.ep.13\nsistema / poros\nrender / realtime`;
+  }
+
+  sceneButtons.forEach(btn => btn.addEventListener('click', () => setScene(btn.dataset.scene)));
+  formatButtons.forEach(btn => btn.addEventListener('click', () => setFormat(btn.dataset.format)));
+  pauseButton.addEventListener('click', () => {
+    state.paused = !state.paused;
+    if(state.paused){
+      state.pausedAt = performance.now() - state.sceneT0;
+      pauseButton.classList.add('active');
+      pauseButton.textContent = 'resume';
+    } else {
+      state.sceneT0 = performance.now() - state.pausedAt;
+      pauseButton.classList.remove('active');
+      pauseButton.textContent = 'pause';
+      requestAnimationFrame(frame);
+    }
+    updateMeta();
+  });
+
+  window.addEventListener('mousemove', e => {
+    state.pointer.x = e.clientX / window.innerWidth;
+    state.pointer.y = e.clientY / window.innerHeight;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', e => {
+    if(e.touches[0]){
+      state.pointer.x = e.touches[0].clientX / window.innerWidth;
+      state.pointer.y = e.touches[0].clientY / window.innerHeight;
+    }
+  }, { passive: true });
+
+  window.addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if(k === '1') setScene('docking');
+    if(k === '2') setScene('field');
+    if(k === '3') setScene('transmission');
+    if(k === 's') setFormat('square');
+    if(k === 'v') setFormat('vertical');
+    if(k === ' ') { e.preventDefault(); pauseButton.click(); }
+  });
+
+  function resize(){
+    const dpr = clamp(window.devicePixelRatio || 1, 1, 2);
+    state.dpr = dpr;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const aspect = formats[state.format].aspect;
+
+    let drawW = W;
+    let drawH = W / aspect;
+    if(drawH > H){
+      drawH = H;
+      drawW = H * aspect;
+    }
+
+    canvas.width = Math.round(drawW * dpr);
+    canvas.height = Math.round(drawH * dpr);
+    canvas.style.width = drawW + 'px';
+    canvas.style.height = drawH + 'px';
+    canvas.style.left = ((W - drawW) * 0.5) + 'px';
+    canvas.style.top = ((H - drawH) * 0.5) + 'px';
+
+    state.width = drawW;
+    state.height = drawH;
+  }
+
+  function getPanelHeight(){
+    return state.format === 'vertical' ? panelModel.heightVertical : panelModel.heightSquare;
+  }
+
+  function getConfig(tScene, tGlobal){
+    const w = state.width;
+    const h = state.height;
+    const vertical = state.format === 'vertical';
+    const panelHeight = getPanelHeight();
+    const panelWidth = panelModel.width;
+    const panelDepth = panelModel.depth;
+    const breathing = Math.sin(tGlobal * 0.42) * 0.012;
+    const pointerSwingX = (state.pointer.x - 0.5) * 0.12;
+    const pointerSwingY = (state.pointer.y - 0.5) * 0.08;
+
+    let yaw = -0.54 + breathing * 0.55 + pointerSwingX * 0.22;
+    let pitch = -0.16 + Math.sin(tGlobal * 0.31 + 0.7) * 0.014 - pointerSwingY * 0.12;
+    let roll = Math.sin(tGlobal * 0.16) * 0.012;
+    let scale = vertical ? h * 0.54 / panelHeight : Math.min(w, h) * 0.64 / panelHeight;
+    let cameraDist = 1180;
+    let cx = w * (vertical ? 0.51 : 0.56);
+    let cy = h * (vertical ? 0.52 : 0.52);
+
+    if(state.scene === 'field'){
+      yaw = -0.46 + Math.sin(tGlobal * 0.24) * 0.06 + pointerSwingX * 0.16;
+      pitch = -0.11 + Math.sin(tGlobal * 0.18 + 2.1) * 0.018 - pointerSwingY * 0.08;
+      scale *= vertical ? 0.90 : 0.94;
+      cameraDist = 1360;
+      cx = w * (vertical ? 0.50 : 0.53);
+      cy = h * (vertical ? 0.52 : 0.52);
+    }
+
+    if(state.scene === 'transmission'){
+      yaw = -0.30 + Math.sin(tGlobal * 0.19) * 0.035 + pointerSwingX * 0.14;
+      pitch = -0.035 + Math.sin(tGlobal * 0.23 + 1.4) * 0.015 - pointerSwingY * 0.05;
+      roll = Math.sin(tGlobal * 0.11) * 0.006;
+      scale *= vertical ? 0.88 : 0.92;
+      cameraDist = 1440;
+      cx = w * 0.50;
+      cy = h * (vertical ? 0.515 : 0.515);
+    }
+
+    return {
+      w, h, vertical,
+      cx, cy,
+      yaw, pitch, roll,
+      scale, cameraDist,
+      panelHeight, panelWidth, panelDepth,
+      cellW: (panelWidth - panelModel.faceMarginX * 2) / (panelModel.gridX - 1),
+      cellH: (panelHeight - panelModel.faceMarginY * 2) / (panelModel.gridY - 1),
+      time: tScene,
+      tGlobal
+    };
+  }
+
+  function rotateXYZ(p, cfg){
+    const cz = Math.cos(cfg.roll), sz = Math.sin(cfg.roll);
+    let x = p.x * cz - p.y * sz;
+    let y = p.x * sz + p.y * cz;
+    let z = p.z;
+
+    const cy = Math.cos(cfg.yaw), sy = Math.sin(cfg.yaw);
+    const x2 = x * cy - z * sy;
+    const z2 = x * sy + z * cy;
+
+    const cx = Math.cos(cfg.pitch), sx = Math.sin(cfg.pitch);
+    const y3 = y * cx - z2 * sx;
+    const z3 = y * sx + z2 * cx;
+
+    return { x: x2, y: y3, z: z3 };
+  }
+
+  function project(p, cfg){
+    const r = rotateXYZ(p, cfg);
+    const persp = cfg.cameraDist / (cfg.cameraDist + r.z + 420);
+    return {
+      x: cfg.cx + r.x * cfg.scale * persp,
+      y: cfg.cy + r.y * cfg.scale * persp,
+      z: r.z,
+      s: persp
+    };
+  }
+
+  function drawPoly(points, style){
+    const path = points.map(p => project(p, style.cfg));
+    ctx.beginPath();
+    ctx.moveTo(path[0].x, path[0].y);
+    for(let i = 1; i < path.length; i++) ctx.lineTo(path[i].x, path[i].y);
+    ctx.closePath();
+    if(style.fill){
+      ctx.globalAlpha = style.fillAlpha ?? 1;
+      ctx.fillStyle = style.fill;
+      ctx.fill();
+    }
+    if(style.stroke){
+      ctx.globalAlpha = style.strokeAlpha ?? 1;
+      ctx.strokeStyle = style.stroke;
+      ctx.lineWidth = style.lineWidth ?? 1;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    return path;
+  }
+
+  function drawLine3(a, b, cfg, opts = {}){
+    const p1 = project(a, cfg);
+    const p2 = project(b, cfg);
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.strokeStyle = opts.stroke || 'rgba(0,0,0,.14)';
+    ctx.lineWidth = opts.lineWidth || 1;
+    ctx.globalAlpha = opts.alpha ?? 1;
+    if(opts.dash){
+      ctx.setLineDash(opts.dash);
+      ctx.lineDashOffset = opts.dashOffset || 0;
+    } else {
+      ctx.setLineDash([]);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+    return [p1, p2];
+  }
+
+  function drawDot3(p, cfg, r, fill, alpha = 1){
+    const q = project(p, cfg);
+    ctx.beginPath();
+    ctx.arc(q.x, q.y, r * q.s, 0, tau);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    return q;
+  }
+
+  function panelFrame(cfg){
+    const w = cfg.panelWidth;
+    const h = cfg.panelHeight;
+    const d = cfg.panelDepth;
+    return {
+      a: v3(-w / 2, -h / 2, -d / 2),
+      b: v3(w / 2, -h / 2, -d / 2),
+      c: v3(w / 2, h / 2, -d / 2),
+      d: v3(-w / 2, h / 2, -d / 2),
+      e: v3(-w / 2, -h / 2, d / 2),
+      f: v3(w / 2, -h / 2, d / 2),
+      g: v3(w / 2, h / 2, d / 2),
+      h: v3(-w / 2, h / 2, d / 2)
+    };
+  }
+
+  function facePoint(face, u, v, cfg){
+    const w = cfg.panelWidth;
+    const h = cfg.panelHeight;
+    const d = cfg.panelDepth;
+    if(face === 'front') return v3(u, v, -d / 2);
+    if(face === 'back') return v3(u, v, d / 2);
+    if(face === 'left') return v3(-w / 2, v, u);
+    if(face === 'right') return v3(w / 2, v, u);
+    if(face === 'top') return v3(u, -h / 2, v);
+    return v3(u, h / 2, v);
+  }
+
+  function faceBasis(face){
+    if(face === 'front') return { n: v3(0, 0, -1), u: v3(1, 0, 0), v: v3(0, 1, 0) };
+    if(face === 'back') return { n: v3(0, 0, 1), u: v3(1, 0, 0), v: v3(0, 1, 0) };
+    if(face === 'left') return { n: v3(-1, 0, 0), u: v3(0, 0, 1), v: v3(0, 1, 0) };
+    if(face === 'right') return { n: v3(1, 0, 0), u: v3(0, 0, -1), v: v3(0, 1, 0) };
+    if(face === 'top') return { n: v3(0, -1, 0), u: v3(1, 0, 0), v: v3(0, 0, 1) };
+    return { n: v3(0, 1, 0), u: v3(1, 0, 0), v: v3(0, 0, 1) };
+  }
+
+  function cellToFacePosition(face, col, row, cfg, modOffset = { u: 0, v: 0 }){
+    const basis = faceBasis(face);
+    const w = cfg.panelWidth;
+    const h = cfg.panelHeight;
+    const d = cfg.panelDepth;
+    let u = 0;
+    let v = -h / 2 + panelModel.faceMarginY + row * cfg.cellH + modOffset.v;
+    if(face === 'front' || face === 'back'){
+      u = -w / 2 + panelModel.faceMarginX + col * cfg.cellW + modOffset.u;
+      return add(facePoint(face, u, v, cfg), v3(0, 0, 0));
+    }
+    if(face === 'left' || face === 'right'){
+      u = -d * 0.34 + modOffset.u;
+      return facePoint(face, u, v, cfg);
+    }
+    u = -w / 2 + panelModel.faceMarginX + col * cfg.cellW + modOffset.u;
+    const vv = -d * 0.12 + modOffset.v;
+    return facePoint(face, u, vv, cfg);
+  }
+
+  function panelSupportState(mod, cycleT){
+    const cycle = sceneCycle.docking;
+    const seed = (mod.cell[0] * 0.137 + mod.cell[1] * 0.061 + mod.mass * 0.17);
+    const local = frac(cycleT / cycle + seed) * 1.0;
+    let barP = smoothstep(0.04, 0.22, local);
+    let alignP = smoothstep(0.16, 0.43, local);
+    let insertP = smoothstep(0.34, 0.62, local);
+    let settleP = smoothstep(0.58, 0.86, local);
+    const bar = easeOutExpo(barP);
+    const align = easeInOutCubic(alignP);
+    const insert = easeOutExpo(insertP);
+    const settle = easeOutBack(settleP, 1.15) * mod.settle;
+    const lock = clamp(insert + settle, 0, 1.045);
+    return { local, bar, align, insert, lock };
+  }
+
+  function sceneDeployAmount(mod, tScene){
+    if(state.scene === 'docking'){
+      return panelSupportState(mod, tScene).lock;
+    }
+    if(state.scene === 'field'){
+      const base = 0.76 + 0.14 * Math.sin(tScene * 0.38 + mod.mass * 2.4 + mod.cell[1] * 0.1);
+      return clamp(base + (mod.type === 'hanger' ? 0.18 : 0), 0.64, 0.98);
+    }
+    return 1;
+  }
+
+  function supportJitter(mod, deploy, tGlobal){
+    const idle = 1 - clamp(deploy, 0, 1);
+    const micro = 0.6 + mod.mass * 0.5;
+    return {
+      x: (Math.sin(tGlobal * (1.7 + micro) + mod.mass * 3.7) * 0.5 + Math.cos(tGlobal * (2.9 + micro) + mod.cell[1]) * 0.3) * idle * 6,
+      y: Math.sin(tGlobal * (2.3 + micro) + mod.cell[0] * 7.1) * idle * 7,
+      z: Math.cos(tGlobal * (2.0 + micro) + mod.cell[1] * 0.4) * idle * 8
+    };
+  }
+
+  function getModuleState(mod, cfg, tScene, tGlobal){
+    const basis = faceBasis(mod.face);
+    const anchor = cellToFacePosition(mod.face, mod.cell[0], mod.cell[1], cfg, mod.offset);
+    const deploy = sceneDeployAmount(mod, tScene);
+    const supportLen = mod.supportLength * deploy;
+
+    const supports = mod.supports.map(sp => {
+      const localOffset = add(mul(basis.u, sp.u), mul(basis.v, sp.v));
+      const start = add(anchor, localOffset);
+      const end = add(start, mul(basis.n, supportLen));
+      return { start, end, u: sp.u, v: sp.v };
+    });
+
+    const averageEnd = supports.reduce((acc, sp) => add(acc, sp.end), v3(0,0,0));
+    averageEnd.x /= supports.length;
+    averageEnd.y /= supports.length;
+    averageEnd.z /= supports.length;
+
+    const backOffset = mod.type === 'display' ? mod.size.d * 0.2 : mod.size.d * 0.5;
+    let center = add(averageEnd, mul(basis.n, backOffset));
+
+    const approach = mul(v3(mod.approach.x, mod.approach.y, mod.approach.z), 1 - clamp(deploy, 0, 1));
+    center = add(center, approach);
+
+    const jitter = supportJitter(mod, deploy, tGlobal);
+    center = add(center, jitter);
+
+    const hangSwing = mod.type === 'hanger'
+      ? Math.sin(tGlobal * (0.7 + mod.mass) + mod.cell[0] * 1.7) * 0.045
+      : 0;
+
+    const rot = {
+      x: mod.rotate.x * (1 - deploy) + (mod.type === 'speaker' ? Math.sin(tGlobal * (0.18 + mod.mass) + mod.cell[1]) * 0.006 : 0) + hangSwing * 0.2,
+      y: mod.rotate.y * (1 - deploy) + (mod.type === 'panel_green' ? Math.sin(tGlobal * 0.22 + mod.cell[1]) * 0.01 : 0),
+      z: mod.rotate.z * (1 - deploy) + (mod.type === 'hanger' ? hangSwing : Math.sin(tGlobal * (0.13 + mod.mass) + mod.cell[0]) * 0.002)
+    };
+
+    return { anchor, supports, center, deploy, rot, basis };
+  }
+
+  function rotateLocal(p, rot){
+    let x = p.x, y = p.y, z = p.z;
+    const cz = Math.cos(rot.z), sz = Math.sin(rot.z);
+    let x1 = x * cz - y * sz;
+    let y1 = x * sz + y * cz;
+    const cy = Math.cos(rot.y), sy = Math.sin(rot.y);
+    let x2 = x1 * cy - z * sy;
+    let z2 = x1 * sy + z * cy;
+    const cx = Math.cos(rot.x), sx = Math.sin(rot.x);
+    let y2 = y1 * cx - z2 * sx;
+    let z3 = y1 * sx + z2 * cx;
+    return v3(x2, y2, z3);
+  }
+
+  function moduleCorners(center, size, rot){
+    const hx = size.w / 2, hy = size.h / 2, hz = size.d / 2;
+    const pts = [
+      v3(-hx, -hy, -hz), v3(hx, -hy, -hz), v3(hx, hy, -hz), v3(-hx, hy, -hz),
+      v3(-hx, -hy, hz), v3(hx, -hy, hz), v3(hx, hy, hz), v3(-hx, hy, hz)
+    ];
+    return pts.map(p => add(center, rotateLocal(p, rot)));
+  }
+
+  function pushFace(list, pts, fill, alpha, stroke, width, strokeAlpha, meta){
+    const avg = pts.reduce((s,p) => s + rotateXYZ(p, meta.cfg).z, 0) / pts.length;
+    list.push({ kind:'poly', pts, fill, alpha, stroke, width, strokeAlpha, depth: avg, cfg: meta.cfg });
+  }
+
+  function pushLine(list, a, b, stroke, width, alpha, dash, dashOffset, cfg, depthBias = 0){
+    const avg = (rotateXYZ(a, cfg).z + rotateXYZ(b, cfg).z) * 0.5 + depthBias;
+    list.push({ kind:'line', a, b, stroke, width, alpha, dash, dashOffset, depth: avg, cfg });
+  }
+
+  function boxToFaces(corners){
+    return {
+      front: [corners[0], corners[1], corners[2], corners[3]],
+      back: [corners[4], corners[5], corners[6], corners[7]],
+      left: [corners[4], corners[0], corners[3], corners[7]],
+      right: [corners[1], corners[5], corners[6], corners[2]],
+      top: [corners[4], corners[5], corners[1], corners[0]],
+      bottom: [corners[3], corners[2], corners[6], corners[7]]
+    };
+  }
+
+  function renderQueued(items){
+    items.sort((a, b) => a.depth - b.depth);
+    for(const it of items){
+      if(it.kind === 'poly'){
+        drawPoly(it.pts, {
+          cfg: it.cfg,
+          fill: it.fill,
+          fillAlpha: it.alpha,
+          stroke: it.stroke,
+          strokeAlpha: it.strokeAlpha,
+          lineWidth: it.width
+        });
+      } else if(it.kind === 'line'){
+        drawLine3(it.a, it.b, it.cfg, {
+          stroke: it.stroke,
+          lineWidth: it.width,
+          alpha: it.alpha,
+          dash: it.dash,
+          dashOffset: it.dashOffset
+        });
+      }
+    }
+  }
+
+  function drawPanelShadow(cfg){
+    const p = panelFrame(cfg);
+    const footprint = [p.d, p.c, p.g, p.h];
+    const sh = footprint.map((pt, i) => {
+      const drift = v3(260 + i * 16, 24 + i * 10, 180 + i * 28);
+      return add(pt, drift);
+    });
+    const shape = [p.d, p.c, sh[1], sh[0]];
+    const shape2 = [p.c, p.g, sh[2], sh[1]];
+    const shape3 = [p.d, p.h, sh[3], sh[0]];
+    const drawShadowPoly = (pts, alpha) => {
+      const pr = pts.map(q => project(q, cfg));
+      ctx.beginPath();
+      ctx.moveTo(pr[0].x, pr[0].y);
+      for(let i = 1; i < pr.length; i++) ctx.lineTo(pr[i].x, pr[i].y);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0,0,0,' + alpha + ')';
+      ctx.filter = 'blur(16px)';
+      ctx.fill();
+      ctx.filter = 'none';
+    };
+    drawShadowPoly(shape, 0.10);
+    drawShadowPoly(shape2, 0.06);
+    drawShadowPoly(shape3, 0.05);
+  }
+
+  function drawPanelBase(cfg, queue){
+    const p = panelFrame(cfg);
+
+    pushFace(queue, [p.e, p.f, p.g, p.h], 'rgba(204,208,212,0.08)', 0.24, 'rgba(0,0,0,.08)', 1, 0.12, { cfg });
+    pushFace(queue, [p.a, p.b, p.c, p.d], 'rgba(238,241,243,0.42)', 0.52, 'rgba(0,0,0,.13)', 1, 0.22, { cfg });
+    pushFace(queue, [p.b, p.f, p.g, p.c], 'rgba(212,216,220,0.36)', 0.48, 'rgba(0,0,0,.11)', 1, 0.20, { cfg });
+    pushFace(queue, [p.e, p.a, p.d, p.h], 'rgba(228,231,234,0.24)', 0.38, 'rgba(0,0,0,.08)', 1, 0.16, { cfg });
+
+    const frontRibs = panelModel.ribDensityFront;
+    for(let i = 0; i <= frontRibs; i++){
+      const x = mix(-cfg.panelWidth / 2 + 4, cfg.panelWidth / 2 - 4, i / frontRibs);
+      pushLine(queue, v3(x, -cfg.panelHeight / 2, -cfg.panelDepth / 2 + 0.2), v3(x, cfg.panelHeight / 2, -cfg.panelDepth / 2 + 0.2), 'rgba(0,0,0,.10)', i % 7 === 0 ? 0.95 : 0.7, i % 7 === 0 ? 0.16 : 0.08, null, 0, cfg, 10);
+    }
+
+    const sideRibs = panelModel.ribDensitySide;
+    for(let i = 0; i <= sideRibs; i++){
+      const z = mix(-cfg.panelDepth / 2 + 4, cfg.panelDepth / 2 - 4, i / sideRibs);
+      pushLine(queue, v3(cfg.panelWidth / 2, -cfg.panelHeight / 2, z), v3(cfg.panelWidth / 2, cfg.panelHeight / 2, z), 'rgba(0,0,0,.06)', 0.7, 0.07, null, 0, cfg, 8);
+    }
+
+    for(let r = 0; r < panelModel.gridY; r++){
+      const y = -cfg.panelHeight / 2 + panelModel.faceMarginY + r * cfg.cellH;
+      pushLine(queue, v3(-cfg.panelWidth / 2 + panelModel.faceMarginX, y, -cfg.panelDepth / 2 + 0.8), v3(cfg.panelWidth / 2 - panelModel.faceMarginX, y, -cfg.panelDepth / 2 + 0.8), 'rgba(0,0,0,.08)', 0.78, (r % 4 === 0 ? 0.14 : 0.07), null, 0, cfg, 10);
+      pushLine(queue, v3(cfg.panelWidth / 2 - 0.6, y, -cfg.panelDepth / 2 + 2), v3(cfg.panelWidth / 2 - 0.6, y, cfg.panelDepth / 2 - 2), 'rgba(0,0,0,.045)', 0.7, 0.08, null, 0, cfg, 6);
+    }
+
+    for(let c = 0; c < panelModel.gridX; c++){
+      const x = -cfg.panelWidth / 2 + panelModel.faceMarginX + c * cfg.cellW;
+      pushLine(queue, v3(x, -cfg.panelHeight / 2 + panelModel.faceMarginY, -cfg.panelDepth / 2 + 0.6), v3(x, cfg.panelHeight / 2 - panelModel.faceMarginY, -cfg.panelDepth / 2 + 0.6), 'rgba(0,0,0,.09)', 0.82, (c % 2 === 0 ? 0.12 : 0.08), null, 0, cfg, 9);
+      pushLine(queue, v3(x, -cfg.panelHeight / 2 + panelModel.faceMarginY, cfg.panelDepth / 2 - 0.6), v3(x, cfg.panelHeight / 2 - panelModel.faceMarginY, cfg.panelDepth / 2 - 0.6), 'rgba(0,0,0,.03)', 0.6, 0.09, null, 0, cfg, 4);
+    }
+
+    for(let c = 0; c < panelModel.gridX; c++){
+      const x = -cfg.panelWidth / 2 + panelModel.faceMarginX + c * cfg.cellW;
+      pushLine(queue, v3(x, -cfg.panelHeight / 2 + panelModel.faceMarginY, -cfg.panelDepth / 2 + 0.6), v3(x, -cfg.panelHeight / 2 + panelModel.faceMarginY, cfg.panelDepth / 2 - 0.6), 'rgba(0,0,0,.03)', 0.55, 0.08, null, 0, cfg, 3);
+      pushLine(queue, v3(x, cfg.panelHeight / 2 - panelModel.faceMarginY, -cfg.panelDepth / 2 + 0.6), v3(x, cfg.panelHeight / 2 - panelModel.faceMarginY, cfg.panelDepth / 2 - 0.6), 'rgba(0,0,0,.03)', 0.55, 0.08, null, 0, cfg, 3);
+    }
+
+    for(let i = 0; i < panelModel.gridY - 3; i += 3){
+      const x = -cfg.panelWidth * 0.23 + (i % 2 === 0 ? 0 : 4);
+      const y1 = -cfg.panelHeight * 0.46 + i * cfg.cellH * 0.62;
+      const y2 = y1 + cfg.cellH * 2.2;
+      pushLine(queue, v3(x, y1, cfg.panelDepth * 0.18), v3(x + 14, y2, -cfg.panelDepth * 0.22), 'rgba(0,0,0,.025)', 0.9, 0.06, [2, 6], 0, cfg, 1);
+    }
+  }
+
+  function drawConnectorNodes(cfg, queue, tScene){
+    const pulseBase = 0.5 + 0.5 * Math.sin(tScene * 1.2);
+    for(const col of connectorCols){
+      for(const row of connectorRows){
+        const pt = cellToFacePosition('front', col, row, cfg, { u: 0, v: 0 });
+        const active = activeConnectorSet.has(col + ':' + row);
+        const s = active ? 12.8 : 10.4;
+        const n1 = v3(pt.x - s, pt.y - s, pt.z - 1.4);
+        const n2 = v3(pt.x + s, pt.y - s, pt.z - 1.4);
+        const n3 = v3(pt.x + s, pt.y + s, pt.z - 1.4);
+        const n4 = v3(pt.x - s, pt.y + s, pt.z - 1.4);
+        pushFace(queue, [n1, n2, n3, n4], active ? 'rgba(18,20,21,0.94)' : 'rgba(30,31,32,0.38)', active ? 0.84 : 0.34, 'rgba(0,0,0,.12)', 1, active ? 0.22 : 0.12, { cfg });
+
+        const inner = s * 0.34;
+        pushFace(queue, [
+          v3(pt.x - inner, pt.y - inner, pt.z - 1.8),
+          v3(pt.x + inner, pt.y - inner, pt.z - 1.8),
+          v3(pt.x + inner, pt.y + inner, pt.z - 1.8),
+          v3(pt.x - inner, pt.y + inner, pt.z - 1.8)
+        ], active ? 'rgba(125,128,131,0.64)' : 'rgba(115,118,121,0.26)', active ? 0.88 : 0.34, null, 0, 0, { cfg });
+
+        const boltR = active ? 1.55 : 1.25;
+        const offsets = [[-s*0.58,-s*0.58],[s*0.58,-s*0.58],[s*0.58,s*0.58],[-s*0.58,s*0.58]];
+        for(const [ox, oy] of offsets){
+          queue.push({
+            kind: 'dot',
+            p: v3(pt.x + ox, pt.y + oy, pt.z - 1.9),
+            r: boltR,
+            fill: 'rgba(188,190,192,.95)',
+            alpha: active ? 0.84 : 0.34,
+            depth: rotateXYZ(v3(pt.x + ox, pt.y + oy, pt.z - 1.9), cfg).z,
+            cfg
+          });
+        }
+
+        if(active){
+          const aura = 0.03 + 0.03 * Math.sin(tScene * 2.6 + col * 0.5 + row * 0.12) * pulseBase;
+          queue.push({
+            kind: 'ring',
+            p: v3(pt.x, pt.y, pt.z - 2.2),
+            r: 18.5,
+            lineWidth: 1,
+            stroke: 'rgba(0,0,0,.12)',
+            alpha: aura,
+            depth: rotateXYZ(v3(pt.x, pt.y, pt.z - 2.2), cfg).z + 4,
+            cfg
+          });
+        }
+      }
+    }
+  }
+
+  function drawQueueExtras(queue){
+    for(const it of queue){
+      if(it.kind === 'dot'){
+        drawDot3(it.p, it.cfg, it.r, it.fill, it.alpha);
+      } else if(it.kind === 'ring'){
+        const q = project(it.p, it.cfg);
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, it.r * q.s, 0, tau);
+        ctx.strokeStyle = it.stroke;
+        ctx.lineWidth = it.lineWidth;
+        ctx.globalAlpha = it.alpha;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  function renderModuleSupport(mod, modState, cfg, queue){
+    const basis = modState.basis;
+    const side = mod.face;
+    modState.supports.forEach((sp, idx) => {
+      const thickness = mod.type === 'tray' ? 8 : mod.type === 'rail' ? 8 : 6;
+      const half = thickness / 2;
+      let crossA = mul(basis.u, half * (idx % 2 === 0 ? 1 : -1));
+      let crossB = mul(basis.v, half);
+      if(side === 'top') crossA = mul(basis.u, half), crossB = mul(basis.n, half * 0.72);
+      const s1 = add(add(sp.start, crossA), crossB);
+      const s2 = add(sub(sp.start, crossA), crossB);
+      const s3 = sub(sub(sp.start, crossA), crossB);
+      const s4 = sub(add(sp.start, crossA), crossB);
+      const e1 = add(add(sp.end, crossA), crossB);
+      const e2 = add(sub(sp.end, crossA), crossB);
+      const e3 = sub(sub(sp.end, crossA), crossB);
+      const e4 = sub(add(sp.end, crossA), crossB);
+
+      pushFace(queue, [s1, s2, e2, e1], 'rgba(247,247,247,0.92)', 0.92, 'rgba(0,0,0,.10)', 1, 0.16, { cfg });
+      pushFace(queue, [s2, s3, e3, e2], 'rgba(216,216,216,0.88)', 0.86, 'rgba(0,0,0,.08)', 1, 0.12, { cfg });
+      pushFace(queue, [s4, s1, e1, e4], 'rgba(236,236,236,0.80)', 0.78, 'rgba(0,0,0,.06)', 1, 0.10, { cfg });
+
+      const plateSize = mod.type === 'rail' ? 9 : 8.4;
+      const ps = plateSize;
+      const plateCenter = add(sp.start, mul(basis.n, 1.8));
+      const corners = [
+        add(add(plateCenter, mul(basis.u, -ps)), mul(basis.v, -ps)),
+        add(add(plateCenter, mul(basis.u, ps)), mul(basis.v, -ps)),
+        add(add(plateCenter, mul(basis.u, ps)), mul(basis.v, ps)),
+        add(add(plateCenter, mul(basis.u, -ps)), mul(basis.v, ps))
+      ];
+      pushFace(queue, corners, 'rgba(17,18,19,0.9)', 0.78, 'rgba(0,0,0,.12)', 1, 0.14, { cfg });
+    });
+  }
+
+  function renderModuleBody(mod, modState, cfg, queue, tGlobal){
+    const deploy = modState.deploy;
+    const rot = modState.rot;
+    const center = modState.center;
+    const faces = boxToFaces(moduleCorners(center, mod.size, rot));
+
+    const pulse = 0.5 + 0.5 * Math.sin(tGlobal * (1.2 + mod.mass * 0.4) + mod.cell[1] * 0.37);
+
+    if(mod.type === 'speaker'){
+      pushFace(queue, faces.back, 'rgba(0,0,0,0.98)', 0.92, 'rgba(0,0,0,.10)', 1, 0.10, { cfg });
+      pushFace(queue, faces.right, 'rgba(8,8,9,0.92)', 0.84, 'rgba(0,0,0,.08)', 1, 0.08, { cfg });
+      pushFace(queue, faces.front, 'rgba(14,14,15,0.95)', 0.90, 'rgba(255,255,255,.04)', 1, 0.08, { cfg });
+
+      const frontCenter = add(center, rotateLocal(v3(0, 0, -mod.size.d * 0.52), rot));
+      queue.push({ kind: 'speakerCone', center: frontCenter, outer: mod.size.w * 0.23, inner: mod.size.w * 0.09, alpha: 0.96, depth: rotateXYZ(frontCenter, cfg).z + 14, cfg });
+      return;
+    }
+
+    if(mod.type === 'lens'){
+      pushFace(queue, faces.back, 'rgba(18,18,19,0.9)', 0.88, 'rgba(0,0,0,.10)', 1, 0.1, { cfg });
+      pushFace(queue, faces.front, 'rgba(24,24,26,0.96)', 0.92, 'rgba(255,255,255,.04)', 1, 0.1, { cfg });
+      const eye = add(center, rotateLocal(v3(mod.size.w * 0.08, 0, -mod.size.d * 0.56), rot));
+      queue.push({ kind: 'lens', center: eye, r1: mod.size.h * 0.34, r2: mod.size.h * 0.17, alpha: 0.92, depth: rotateXYZ(eye, cfg).z + 18, cfg });
+      return;
+    }
+
+    if(mod.type === 'sensor'){
+      pushFace(queue, faces.front, 'rgba(16,16,17,0.94)', 0.9, 'rgba(0,0,0,.10)', 1, 0.08, { cfg });
+      pushFace(queue, faces.right, 'rgba(4,4,5,0.9)', 0.82, 'rgba(0,0,0,.06)', 1, 0.06, { cfg });
+      const cap = add(center, rotateLocal(v3(mod.size.w * 0.24, 0, -mod.size.d * 0.56), rot));
+      queue.push({ kind: 'sensor', center: cap, r: 5.2, alpha: 0.82, depth: rotateXYZ(cap, cfg).z + 18, cfg });
+      return;
+    }
+
+    if(mod.type === 'panel_red'){
+      pushFace(queue, faces.back, 'rgba(84,8,12,0.40)', 0.34, 'rgba(80,12,16,.14)', 1, 0.08, { cfg });
+      pushFace(queue, faces.front, 'rgba(125,20,24,0.94)', 0.86, 'rgba(255,255,255,.06)', 1, 0.08, { cfg });
+      pushFace(queue, faces.right, 'rgba(61,10,12,0.86)', 0.48, 'rgba(0,0,0,.04)', 1, 0.04, { cfg });
+      queue.push({ kind: 'glowRect', pts: faces.front, color: 'rgba(125,20,24,0.16)', blur: 18, alpha: 0.24 + pulse * 0.06, depth: rotateXYZ(center, cfg).z + 8, cfg });
+      return;
+    }
+
+    if(mod.type === 'panel_green'){
+      pushFace(queue, faces.back, 'rgba(169,211,188,0.26)', 0.26, 'rgba(117,140,128,.08)', 1, 0.06, { cfg });
+      pushFace(queue, faces.front, 'rgba(202,228,214,0.80)', 0.56, 'rgba(255,255,255,.10)', 1, 0.08, { cfg });
+      pushFace(queue, faces.right, 'rgba(145,175,160,0.30)', 0.32, 'rgba(0,0,0,.03)', 1, 0.03, { cfg });
+      queue.push({ kind: 'glowRect', pts: faces.front, color: 'rgba(154,199,173,0.13)', blur: 22, alpha: 0.16 + pulse * 0.05, depth: rotateXYZ(center, cfg).z + 6, cfg });
+      return;
+    }
+
+    if(mod.type === 'display'){
+      pushFace(queue, faces.back, 'rgba(8,8,9,0.86)', 0.88, 'rgba(0,0,0,.08)', 1, 0.08, { cfg });
+      pushFace(queue, faces.front, 'rgba(11,11,12,0.98)', 0.92, 'rgba(255,255,255,.04)', 1, 0.08, { cfg });
+
+      const shelfCenter = add(center, rotateLocal(v3(0, mod.size.h * 0.62, mod.size.d * 0.18), rot));
+      const shelfSize = { w: mod.size.w * 1.16, h: 8, d: mod.size.w * 0.42 };
+      const shelfFaces = boxToFaces(moduleCorners(shelfCenter, shelfSize, rot));
+      pushFace(queue, shelfFaces.front, 'rgba(238,238,238,0.92)', 0.92, 'rgba(0,0,0,.08)', 1, 0.08, { cfg });
+      pushFace(queue, shelfFaces.right, 'rgba(210,210,210,0.82)', 0.84, 'rgba(0,0,0,.04)', 1, 0.04, { cfg });
+      return;
+    }
+
+    if(mod.type === 'tray'){
+      pushFace(queue, faces.front, 'rgba(210,210,210,0.96)', 0.92, 'rgba(0,0,0,.08)', 1, 0.08, { cfg });
+      pushFace(queue, faces.right, 'rgba(166,166,166,0.90)', 0.88, 'rgba(0,0,0,.05)', 1, 0.05, { cfg });
+      pushFace(queue, faces.bottom, 'rgba(115,115,115,0.22)', 0.24, 'rgba(0,0,0,.03)', 1, 0.03, { cfg });
+      const textOrigin = add(center, rotateLocal(v3(-mod.size.w * 0.26, 2, -mod.size.d * 0.42), rot));
+      queue.push({ kind: 'trayText', center: textOrigin, alpha: 0.46, depth: rotateXYZ(textOrigin, cfg).z + 14, cfg });
+      return;
+    }
+
+    if(mod.type === 'comb'){
+      const planePts = faces.front;
+      pushFace(queue, planePts, 'rgba(217,232,243,0.28)', 0.20, 'rgba(0,0,0,.06)', 1, 0.05, { cfg });
+      const basis = modState.basis;
+      for(let i = 0; i < 10; i++){
+        const localA = add(modState.center, add(rotateLocal(v3(-mod.size.w * 0.46, -mod.size.h * 0.48 + i * (mod.size.h / 9), -mod.size.d * 0.56), rot), v3(0,0,0)));
+        const localB = add(modState.center, add(rotateLocal(v3(mod.size.w * 0.46, -mod.size.h * 0.48 + i * (mod.size.h / 9), -mod.size.d * 0.56), rot), v3(0,0,0)));
+        pushLine(queue, localA, localB, 'rgba(94,128,152,.75)', i % 2 === 0 ? 1.0 : 0.8, i % 2 === 0 ? 0.32 : 0.18, null, 0, cfg, 14);
+      }
+      return;
+    }
+
+    if(mod.type === 'rail'){
+      pushFace(queue, faces.front, 'rgba(243,243,243,0.94)', 0.94, 'rgba(0,0,0,.08)', 1, 0.08, { cfg });
+      pushFace(queue, faces.right, 'rgba(204,204,204,0.84)', 0.88, 'rgba(0,0,0,.04)', 1, 0.04, { cfg });
+      return;
+    }
+
+    if(mod.type === 'hanger'){
+      const shaftTop = add(center, v3(0, -mod.size.h * 0.5, 0));
+      const shaftBottom = add(center, v3(0, mod.size.h * 0.5, 0));
+      pushLine(queue, shaftTop, shaftBottom, 'rgba(124,126,128,.56)', 1.1, 0.42, null, 0, cfg, 12);
+      const weightCenter = add(shaftBottom, v3(0, 8, 0));
+      const weightFaces = boxToFaces(moduleCorners(weightCenter, { w: 12, h: 12, d: 12 }, rot));
+      pushFace(queue, weightFaces.front, 'rgba(218,220,222,0.82)', 0.72, 'rgba(0,0,0,.06)', 1, 0.05, { cfg });
+      return;
+    }
+  }
+
+  function renderModuleQueueExtras(queue){
+    queue.sort((a, b) => a.depth - b.depth);
+    for(const it of queue){
+      if(it.kind === 'speakerCone'){
+        const c = project(it.center, it.cfg);
+        const R = it.outer * c.s;
+        const r = it.inner * c.s;
+        const grad = ctx.createRadialGradient(c.x, c.y, r * 0.4, c.x, c.y, R);
+        grad.addColorStop(0, 'rgba(215,215,215,.95)');
+        grad.addColorStop(0.22, 'rgba(144,144,144,.92)');
+        grad.addColorStop(0.52, 'rgba(70,70,70,.94)');
+        grad.addColorStop(0.92, 'rgba(22,22,22,.98)');
+        grad.addColorStop(1, 'rgba(8,8,8,1)');
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, R, 0, tau);
+        ctx.fillStyle = grad;
+        ctx.globalAlpha = it.alpha;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, r, 0, tau);
+        ctx.fillStyle = 'rgba(180,180,180,.96)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, R * 0.88, 0, tau);
+        ctx.strokeStyle = 'rgba(255,255,255,.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else if(it.kind === 'lens'){
+        const c = project(it.center, it.cfg);
+        const R = it.r1 * c.s;
+        const r = it.r2 * c.s;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, R, 0, tau);
+        ctx.fillStyle = 'rgba(0,0,0,.96)';
+        ctx.globalAlpha = it.alpha;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(c.x - R * 0.14, c.y - R * 0.14, r, 0, tau);
+        ctx.fillStyle = 'rgba(130,130,130,.88)';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, R * 0.82, 0, tau);
+        ctx.strokeStyle = 'rgba(220,220,220,.54)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else if(it.kind === 'sensor'){
+        const c = project(it.center, it.cfg);
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, it.r * c.s, 0, tau);
+        ctx.fillStyle = 'rgba(9,9,9,.95)';
+        ctx.globalAlpha = it.alpha;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(c.x - 1.2, c.y - 1.2, it.r * c.s * 0.4, 0, tau);
+        ctx.fillStyle = 'rgba(180,180,180,.74)';
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      } else if(it.kind === 'glowRect'){
+        const pts = it.pts.map(p => project(p, it.cfg));
+        ctx.save();
+        ctx.filter = 'blur(' + it.blur + 'px)';
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for(let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.closePath();
+        ctx.fillStyle = it.color;
+        ctx.globalAlpha = it.alpha;
+        ctx.fill();
+        ctx.restore();
+      } else if(it.kind === 'trayText'){
+        const c = project(it.center, it.cfg);
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.scale(c.s, c.s);
+        ctx.fillStyle = 'rgba(255,255,255,.44)';
+        ctx.globalAlpha = it.alpha;
+        ctx.font = '9px "times new roman", serif';
+        ctx.letterSpacing = '0.26em';
+        ctx.fillText('xpan  ep.13  tokyo  2026', 0, 0);
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  function buildPanelAndModules(cfg, tScene, tGlobal){
+    const polyQueue = [];
+    const extraQueue = [];
+    drawPanelBase(cfg, polyQueue);
+    drawConnectorNodes(cfg, polyQueue, tScene);
+
+    const moduleExtras = [];
+    for(const mod of modules){
+      const modState = getModuleState(mod, cfg, tScene, tGlobal);
+      renderModuleSupport(mod, modState, cfg, polyQueue);
+      renderModuleBody(mod, modState, cfg, polyQueue, tGlobal);
+      if(mod.type === 'speaker' || mod.type === 'lens' || mod.type === 'sensor' || mod.type === 'panel_red' || mod.type === 'panel_green' || mod.type === 'tray'){
+        // extras already enqueued as special items inside polyQueue? no, they go to moduleExtras
+      }
+    }
+
+    return { polyQueue, extraQueue, moduleExtras };
+  }
+
+  function gatherSpecialItemsFromQueue(polyQueue){
+    const drawLater = [];
+    for(let i = polyQueue.length - 1; i >= 0; i--){
+      const it = polyQueue[i];
+      if(it.kind === 'dot' || it.kind === 'ring' || it.kind === 'speakerCone' || it.kind === 'lens' || it.kind === 'sensor' || it.kind === 'glowRect' || it.kind === 'trayText'){
+        drawLater.push(it);
+        polyQueue.splice(i, 1);
+      }
+    }
+    return drawLater;
+  }
+
+  function drawField(cfg, tScene, tGlobal){
+    const sceneWeight = state.scene === 'field' ? 1 : state.scene === 'transmission' ? 0.55 : 0.16;
+    if(sceneWeight <= 0.001) return;
+
+    const fade = sceneWeight;
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    for(const node of fieldNodes){
+      const wobble = v3(
+        Math.sin(tGlobal * (0.18 + node.phase * 0.7) + node.pos.y * 0.002) * node.span * 0.04,
+        Math.cos(tGlobal * (0.22 + node.phase * 0.5) + node.pos.x * 0.003) * node.span * 0.06,
+        Math.sin(tGlobal * (0.27 + node.phase * 0.4) + node.pos.z * 0.004) * node.span * 0.05
+      );
+      node.renderPos = add(node.pos, wobble);
+    }
+
+    for(const link of fieldLinks){
+      const a = fieldNodes[link.a];
+      const b = fieldNodes[link.b];
+      const p1 = project(a.renderPos, cfg);
+      const p2 = project(b.renderPos, cfg);
+      const alpha = (0.04 + 0.16 * Math.sin(tGlobal * (0.42 + link.phase) + link.a * 0.2 + link.b * 0.09)) * fade;
+      if(alpha <= 0) continue;
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.strokeStyle = 'rgba(0,0,0,.18)';
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = a.family === 'structural' || b.family === 'structural' ? 0.8 : 0.5;
+      if(a.family === 'pulse' || b.family === 'pulse'){
+        ctx.setLineDash([2, 10]);
+        ctx.lineDashOffset = -tGlobal * 18;
+      } else {
+        ctx.setLineDash([]);
+      }
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    const panelHeight = cfg.panelHeight;
+    for(let i = 0; i < 28; i++){
+      const y = mix(-panelHeight * 0.72, panelHeight * 0.72, i / 27);
+      const z = Math.sin(tGlobal * 0.38 + i * 0.2) * 82;
+      const x1 = -cfg.panelWidth * 1.8 + Math.sin(tGlobal * 0.22 + i) * 18;
+      const x2 = cfg.panelWidth * 1.9 + Math.cos(tGlobal * 0.26 + i * 0.4) * 28;
+      const p1 = project(v3(x1, y, z), cfg);
+      const p2 = project(v3(x2, y + Math.sin(i * 0.6 + tGlobal * 0.6) * 18, z + 40), cfg);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.strokeStyle = 'rgba(0,0,0,.10)';
+      ctx.globalAlpha = (0.02 + (i % 5 === 0 ? 0.06 : 0.03)) * fade;
+      ctx.lineWidth = i % 5 === 0 ? 0.9 : 0.55;
+      ctx.setLineDash(i % 3 === 0 ? [12, 18] : [3, 14]);
+      ctx.lineDashOffset = -tGlobal * (2.0 + i * 0.03);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    for(let i = 0; i < fieldNodes.length; i++){
+      const node = fieldNodes[i];
+      const p = project(node.renderPos, cfg);
+      let alpha = node.alpha * fade;
+      const pulse = 0.45 + 0.55 * Math.sin(tGlobal * (0.8 + node.phase) + i * 0.23);
+      if(node.family === 'structural') alpha *= 0.7;
+      if(node.family === 'pulse') alpha *= 1.2 * pulse;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.s * (node.family === 'spatial' ? 2.8 : 1.8), 0, tau);
+      ctx.fillStyle = node.family === 'spatial' ? 'rgba(0,0,0,.34)' : node.family === 'pulse' ? 'rgba(0,0,0,.38)' : 'rgba(0,0,0,.26)';
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+    }
+
+    if(state.scene === 'field'){
+      for(let band = 0; band < 4; band++){
+        const ang = tGlobal * (0.08 + band * 0.03) + band * 0.8;
+        const radius = mix(cfg.panelWidth * 0.7, cfg.panelWidth * 1.45, band / 3);
+        const y = -cfg.panelHeight * 0.22 + band * cfg.panelHeight * 0.18 + Math.sin(tGlobal * 0.34 + band) * 24;
+        ctx.beginPath();
+        for(let i = 0; i <= 80; i++){
+          const a = i / 80 * tau;
+          const p = project(v3(Math.cos(a + ang) * radius, y + Math.sin(a * 2.0 + ang) * 18, Math.sin(a + ang) * radius * 0.44), cfg);
+          if(i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = 'rgba(0,0,0,.18)';
+        ctx.globalAlpha = 0.05 + band * 0.015;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  function getModuleById(id){
+    for(const mod of modules) if(mod.id === id) return mod;
+    return null;
+  }
+
+  function transmissionAnchor(mod, cfg, tScene, tGlobal){
+    const stateMod = getModuleState(mod, cfg, tScene, tGlobal);
+    return {
+      stateMod,
+      point: add(stateMod.center, mul(stateMod.basis.n, -mod.size.d * 0.25))
+    };
+  }
+
+  function routePoints(aMod, bMod, cfg, tScene, tGlobal, kind){
+    const A = transmissionAnchor(aMod, cfg, tScene, tGlobal).point;
+    const B = transmissionAnchor(bMod, cfg, tScene, tGlobal).point;
+    const midPanelA = cellToFacePosition('front', 3, Math.round((aMod.cell[1] + 2) * 0.5), cfg, { u: 0, v: 0 });
+    const midPanelB = cellToFacePosition('front', 3, Math.round((bMod.cell[1] + 2) * 0.5), cfg, { u: 0, v: 0 });
+    const topBias = v3(0, mix(-90, 90, hashNoise(aMod.cell[1], bMod.cell[1], 91)), mix(-30, 30, hashNoise(aMod.cell[0], bMod.cell[0], 93)));
+    if(kind === 'direct'){
+      return [A, add(midPanelA, v3(0, 0, -16)), add(midPanelB, v3(0, 0, -16)), B];
+    }
+    if(kind === 'latent'){
+      return [A, add(midPanelA, topBias), add(midPanelB, mul(topBias, -0.7)), B];
+    }
+    if(kind === 'ephemeral'){
+      return [A, add(midPanelA, v3(-80, -40, 90)), add(midPanelB, v3(86, 36, -70)), B];
+    }
+    return [A, midPanelA, midPanelB, B];
+  }
+
+  function pointOnCurve(points, t){
+    const p0 = points[0], p1 = points[1], p2 = points[2], p3 = points[3];
+    const mt = 1 - t;
+    return v3(
+      mt * mt * mt * p0.x + 1113 * mt * mt * t * p1.x + 3 * mt * t * t * p2.x + t * t * t * p3.x,
+      mt * mt * mt * p0.y + 3 * mt * mt * t * p1.y + 3 * mt * t * t * p2.y + t * t * t * p3.y,
+      mt * mt * mt * p0.z + 3 * mt * mt * t * p1.z + 3 * mt * t * t * p2.z + t * t * t * p3.z
+    );
+  }
+
+  function drawTransmission(cfg, tScene, tGlobal){
+    if(state.scene !== 'transmission' && state.scene !== 'docking') return;
+    const sceneWeight = state.scene === 'transmission' ? 1 : 0.22;
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    for(let i = 0; i < routeDefs.length; i++){
+      const [aId, bId, kind, accent] = routeDefs[i];
+      const aMod = getModuleById(aId);
+      const bMod = getModuleById(bId);
+      const curve = routePoints(aMod, bMod, cfg, tScene, tGlobal, kind);
+
+      ctx.beginPath();
+      const s0 = project(curve[0], cfg);
+      const s1 = project(curve[1], cfg);
+      const s2 = project(curve[2], cfg);
+      const s3 = project(curve[3], cfg);
+      ctx.moveTo(s0.x, s0.y);
+      ctx.bezierCurveTo(s1.x, s1.y, s2.x, s2.y, s3.x, s3.y);
+      let stroke = 'rgba(0,0,0,.22)';
+      if(accent === 'red') stroke = 'rgba(108,18,22,.54)';
+      if(accent === 'green') stroke = 'rgba(99,126,109,.44)';
+      if(accent === 'blue') stroke = 'rgba(89,118,141,.44)';
+      ctx.strokeStyle = stroke;
+      ctx.globalAlpha = (kind === 'structural' ? 0.20 : kind === 'latent' ? 0.12 : 0.18) * sceneWeight;
+      ctx.lineWidth = kind === 'structural' ? 1.2 : 0.9;
+      ctx.setLineDash(kind === 'latent' ? [9, 16] : kind === 'ephemeral' ? [2, 10] : [14, 10]);
+      ctx.lineDashOffset = -tGlobal * (18 + i * 0.8);
+      ctx.stroke();
+
+      const packets = kind === 'structural' ? 2 : 1;
+      for(let p = 0; p < packets; p++){
+        const t = frac(tGlobal * (0.12 + i * 0.007 + p * 0.01) + i * 0.17 + p * 0.31);
+        const q = pointOnCurve(curve, t);
+        const qq = project(q, cfg);
+        const r = (kind === 'structural' ? 3.1 : 2.4) * qq.s;
+        ctx.beginPath();
+        ctx.arc(qq.x, qq.y, r * 2.2, 0, tau);
+        ctx.fillStyle = accent === 'red'
+          ? 'rgba(108,18,22,.12)'
+          : accent === 'green'
+            ? 'rgba(99,126,109,.10)'
+            : accent === 'blue'
+              ? 'rgba(89,118,141,.12)'
+              : 'rgba(0,0,0,.09)';
+        ctx.globalAlpha = 0.75 * sceneWeight;
+        ctx.filter = 'blur(7px)';
+        ctx.fill();
+        ctx.filter = 'none';
+        ctx.beginPath();
+        ctx.arc(qq.x, qq.y, r, 0, tau);
+        ctx.fillStyle = accent === 'red'
+          ? 'rgba(108,18,22,.86)'
+          : accent === 'green'
+            ? 'rgba(99,126,109,.76)'
+            : accent === 'blue'
+              ? 'rgba(89,118,141,.82)'
+              : 'rgba(0,0,0,.74)';
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+  }
+
+  function drawTechnicalOverlay(cfg, tScene, tGlobal){
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,.06)';
+    ctx.lineWidth = 1;
+    const pad = 22;
+    ctx.strokeRect(pad, pad, state.width - pad * 2, state.height - pad * 2);
+
+    ctx.strokeStyle = 'rgba(0,0,0,.04)';
+    for(let i = 0; i < 18; i++){
+      const y = mix(pad + 40, state.height - pad - 40, i / 17);
+      ctx.beginPath();
+      ctx.moveTo(pad + 10, y);
+      ctx.lineTo(pad + 66, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(state.width - pad - 66, y);
+      ctx.lineTo(state.width - pad - 10, y);
+      ctx.stroke();
+    }
+
+    const cfgLines = state.scene === 'transmission' ? 3 : 2;
+    ctx.setLineDash([3, 12]);
+    for(let i = 0; i < cfgLines; i++){
+      const x = mix(state.width * 0.15, state.width * 0.82, i / (cfgLines - 1 || 1));
+      ctx.beginPath();
+      ctx.moveTo(x, pad + 14);
+      ctx.lineTo(x, state.height - pad - 14);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    const labelX = state.width - pad - 8;
+    const labelY = state.height - pad - 8;
+    ctx.fillStyle = 'rgba(0,0,0,.32)';
+    ctx.font = '10px "times new roman", serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('xpan  ep.13  /  realtime', labelX, labelY);
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(0,0,0,.22)';
+    ctx.font = '9px ui-monospace, sfmono-regular, menlo, monospace';
+    ctx.fillText('matrix / ' + (state.format === 'vertical' ? '1120h' : '720h'), pad + 8, state.height - pad - 8);
+    ctx.restore();
+  }
+
+  function drawConnectiveTicks(cfg, tScene, tGlobal){
+    const left = project(v3(-cfg.panelWidth * 0.86, -cfg.panelHeight * 0.22, 120), cfg);
+    ctx.save();
+    ctx.translate(left.x, left.y);
+    ctx.strokeStyle = 'rgba(94,128,152,.32)';
+    ctx.fillStyle = 'rgba(94,128,152,.42)';
+    ctx.lineWidth = 1;
+    for(let i = 0; i < 6; i++){
+      const yy = i * 13;
+      ctx.beginPath();
+      ctx.moveTo(-24, yy);
+      ctx.lineTo(24, yy);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-10 + i * 4, yy - 9);
+      ctx.lineTo(-10 + i * 4, yy + 9);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function renderFrame(now){
+    const tGlobal = (now - state.start) / 1000;
+    const tScene = (now - state.sceneT0) / 1000;
+    const cfg = getConfig(tScene, tGlobal);
+
+    ctx.save();
+    ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+    ctx.clearRect(0, 0, state.width, state.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, state.width, state.height);
+
+    drawField(cfg, tScene, tGlobal);
+    drawPanelShadow(cfg);
+
+    const { polyQueue } = buildPanelAndModules(cfg, tScene, tGlobal);
+    const later = gatherSpecialItemsFromQueue(polyQueue);
+    renderQueued(polyQueue);
+    drawQueueExtras(later);
+    renderModuleQueueExtras(later.filter(it => it.kind !== 'dot' && it.kind !== 'ring'));
+    drawTransmission(cfg, tScene, tGlobal);
+    if(state.scene !== 'docking' || (0.5 + 0.5 * Math.sin(tScene * 0.6) > 0.32)) drawConnectiveTicks(cfg, tScene, tGlobal);
+    drawTechnicalOverlay(cfg, tScene, tGlobal);
+
+    ctx.restore();
+  }
+
+  function frame(now){
+    if(state.paused) return;
+    renderFrame(now);
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  updateMeta();
+  requestAnimationFrame(frame);
+  window.addEventListener('resize', resize, { passive: true });
+})();
+</script>
+</body>
+</html>

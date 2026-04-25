@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>xpan.ep.13 / poros engine</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#0f0f10;
+    --line:rgba(0,0,0,.16);
+    --soft:rgba(0,0,0,.055);
+    --muted:rgba(0,0,0,.42);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:"Times New Roman", serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  body{display:flex;flex-direction:column;overflow:hidden}
+  .topbar{
+    position:sticky;top:0;z-index:10;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 14px;border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.92);backdrop-filter:blur(12px)
+  }
+  .title{
+    font-size:12px;letter-spacing:.22em;text-transform:lowercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.92
+  }
+  .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  button{
+    appearance:none;border:1px solid rgba(0,0,0,.14);background:#fff;color:#111;
+    padding:8px 10px;font:inherit;font-size:11px;letter-spacing:.16em;text-transform:lowercase;cursor:pointer
+  }
+  button.active{background:#0f0f10;color:#fff;border-color:#0f0f10}
+  .stage-wrap{flex:1;min-height:0;display:grid;place-items:center;padding:16px}
+  .stage{
+    position:relative;
+    width:min(94vw,1280px);
+    height:min(calc(100vh - 86px),1280px);
+    background:#fff;
+    box-shadow:0 0 0 1px rgba(0,0,0,.06) inset;
+    overflow:hidden;
+  }
+  .stage.vertical{
+    width:min(62vw,760px);
+    height:min(calc(100vh - 86px),1360px);
+    max-height:92vh;
+  }
+  canvas{display:block;width:100%;height:100%;background:#fff}
+  .meta,.corner,.status{
+    position:absolute;pointer-events:none;mix-blend-mode:multiply;color:rgba(0,0,0,.48)
+  }
+  .meta{left:14px;bottom:12px;font-size:10px;letter-spacing:.24em;text-transform:lowercase}
+  .status{right:14px;bottom:12px;font-size:10px;letter-spacing:.18em;text-transform:lowercase;text-align:right}
+  .corner{left:14px;top:12px;font-size:10px;letter-spacing:.18em;text-transform:lowercase}
+  @media (max-width:960px){
+    .topbar{padding:10px 10px}
+    .title{font-size:11px;letter-spacing:.16em}
+    button{font-size:10px;padding:7px 8px;letter-spacing:.12em}
+    .stage.vertical{width:min(94vw,760px)}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="title">xpan.ep.13 / sistema de poros — structured engine</div>
+    <div class="controls">
+      <button id="btn-square" class="active">square</button>
+      <button id="btn-vertical">vertical</button>
+      <button id="btn-docking" class="active">docking</button>
+      <button id="btn-field">field</button>
+      <button id="btn-transmission">transmission</button>
+      <button id="btn-pause">pause</button>
+    </div>
+  </div>
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <canvas id="canvas"></canvas>
+      <div class="corner">xpan.ep.13 / tokyo.2026 / poros matrix</div>
+      <div class="meta" id="meta">square / docking</div>
+      <div class="status">modular insertion / field expansion / transmission routing</div>
+    </div>
+  </div>
+<script>
+(() => {
+  'use strict';
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { alpha:false, desynchronized:true });
+  const stage = document.getElementById('stage');
+  const meta = document.getElementById('meta');
+
+  const state = {
+    format:'square',
+    scene:'docking',
+    paused:false,
+    start:performance.now(),
+    now:0,
+    dpr:Math.min(2, window.devicePixelRatio || 1),
+    w:0,
+    h:0
+  };
+
+  const fmtCfg = {
+    square:{logicalW:1080, logicalH:1080},
+    vertical:{logicalW:1080, logicalH:1920}
+  };
+
+  const buttonMap = {
+    square:document.getElementById('btn-square'),
+    vertical:document.getElementById('btn-vertical'),
+    docking:document.getElementById('btn-docking'),
+    field:document.getElementById('btn-field'),
+    transmission:document.getElementById('btn-transmission')
+  };
+
+  function setFormat(fmt){
+    state.format = fmt;
+    stage.classList.toggle('vertical', fmt === 'vertical');
+    buttonMap.square.classList.toggle('active', fmt === 'square');
+    buttonMap.vertical.classList.toggle('active', fmt === 'vertical');
+    resize();
+    syncMeta();
+  }
+  function setScene(scene){
+    state.scene = scene;
+    buttonMap.docking.classList.toggle('active', scene === 'docking');
+    buttonMap.field.classList.toggle('active', scene === 'field');
+    buttonMap.transmission.classList.toggle('active', scene === 'transmission');
+    syncMeta();
+  }
+  function syncMeta(){ meta.textContent = state.format + ' / ' + state.scene; }
+
+  document.getElementById('btn-square').onclick = () => setFormat('square');
+  document.getElementById('btn-vertical').onclick = () => setFormat('vertical');
+  document.getElementById('btn-docking').onclick = () => setScene('docking');
+  document.getElementById('btn-field').onclick = () => setScene('field');
+  document.getElementById('btn-transmission').onclick = () => setScene('transmission');
+  document.getElementById('btn-pause').onclick = e => {
+    state.paused = !state.paused;
+    e.currentTarget.classList.toggle('active', state.paused);
+    e.currentTarget.textContent = state.paused ? 'resume' : 'pause';
+    if(!state.paused){
+      state.start = performance.now() - state.now * 1000;
+      requestAnimationFrame(loop);
+    }
+  };
+
+  window.addEventListener('resize', resize, {passive:true});
+  resize();
+
+  function resize(){
+    const rect = stage.getBoundingClientRect();
+    state.dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.max(1, Math.round(rect.width * state.dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * state.dpr));
+    state.w = rect.width;
+    state.h = rect.height;
+    ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+  }
+
+  const math = {
+    clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),
+    mix:(a,b,t)=>a + (b-a)*t,
+    cyc:t=>t - Math.floor(t),
+    easeInOut:t=>t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2,
+    easeOut:t=>1 - Math.pow(1-t,4),
+    smoothstep:(a,b,x)=>{
+      const t = Math.max(0, Math.min(1, (x-a)/(b-a)));
+      return t*t*(3-2*t);
+    },
+    spring:t=>{
+      if(t <= 0) return 0;
+      if(t >= 1) return 1;
+      return 1 - (Math.cos(t*5.4) * Math.exp(-t*6.5));
+    }
+  };
+
+  function v3(x=0,y=0,z=0){ return {x,y,z}; }
+  function add(a,b){ return {x:a.x+b.x,y:a.y+b.y,z:a.z+b.z}; }
+  function sub(a,b){ return {x:a.x-b.x,y:a.y-b.y,z:a.z-b.z}; }
+  function mul(a,s){ return {x:a.x*s,y:a.y*s,z:a.z*s}; }
+  function lerpV(a,b,t){ return {x:math.mix(a.x,b.x,t),y:math.mix(a.y,b.y,t),z:math.mix(a.z,b.z,t)}; }
+  function avgZ(points){ let s=0; for(const p of points) s += p.cz; return s/points.length; }
+
+  function rotateY(p, a){ const c=Math.cos(a), s=Math.sin(a); return {x:p.x*c + p.z*s, y:p.y, z:-p.x*s + p.z*c}; }
+  function rotateX(p, a){ const c=Math.cos(a), s=Math.sin(a); return {x:p.x, y:p.y*c - p.z*s, z:p.y*s + p.z*c}; }
+
+  function getView(t){
+    const vertical = state.format === 'vertical';
+    const scene = state.scene;
+    const baseYaw = scene === 'field' ? -0.56 : scene === 'transmission' ? -0.22 : -0.46;
+    const basePitch = vertical ? -0.15 : -0.18;
+    const yaw = baseYaw + Math.sin(t*0.18)*0.05 + (scene === 'docking' ? Math.sin(t*0.09)*0.025 : 0);
+    const pitch = basePitch + Math.sin(t*0.14 + 1.2)*0.02;
+    const perspective = vertical ? 960 : 1040;
+    const cameraZ = 1260;
+    const scale = vertical ? 1.12 : 1;
+    const centerX = state.w * 0.5;
+    const centerY = vertical ? state.h * 0.54 : state.h * 0.53;
+    return { yaw, pitch, perspective, cameraZ, centerX, centerY, scale };
+  }
+
+  function project(p, view){
+    const ry = rotateY(p, view.yaw);
+    const rx = rotateX(ry, view.pitch);
+    const depth = view.cameraZ - rx.z;
+    const s = view.perspective / depth * 210 * view.scale;
+    return {
+      x: view.centerX + rx.x * s,
+      y: view.centerY + rx.y * s,
+      s,
+      cz: rx.z,
+      depth
+    };
+  }
+
+  function face(points, fill, stroke, lineWidth, alpha=1, shadow=false){
+    return {type:'face', points, fill, stroke, lineWidth, alpha, z:avgZ(points), shadow};
+  }
+  function seg(a,b,color,width,alpha=1,dash=null,z=0){
+    return {type:'seg', a,b,color,width,alpha,dash,z};
+  }
+  function disc(p,r,fill,alpha=1,stroke=null,lineWidth=1,z=0){
+    return {type:'disc', p,r,fill,alpha,stroke,lineWidth,z};
+  }
+  function label(text,x,y,alpha=1,align='left'){
+    return {type:'label', text, x, y, alpha, align, z:1e9};
+  }
+
+  function boxFaces(center, size, euler, material){
+    const hx=size.x/2, hy=size.y/2, hz=size.z/2;
+    const pts = [
+      v3(-hx,-hy,-hz), v3(hx,-hy,-hz), v3(hx,hy,-hz), v3(-hx,hy,-hz),
+      v3(-hx,-hy,hz),  v3(hx,-hy,hz),  v3(hx,hy,hz),  v3(-hx,hy,hz)
+    ].map(p => rotateLocal(p,euler,center));
+    const faces = [
+      {idx:[4,5,6,7], fill:material.front, stroke:material.stroke, lw:material.lw, alpha:material.af},
+      {idx:[0,1,2,3], fill:material.back, stroke:material.stroke, lw:material.lw, alpha:material.ab},
+      {idx:[1,5,6,2], fill:material.right, stroke:material.stroke, lw:material.lw, alpha:material.as},
+      {idx:[0,4,7,3], fill:material.left, stroke:material.stroke, lw:material.lw, alpha:material.as},
+      {idx:[0,1,5,4], fill:material.top, stroke:material.stroke, lw:material.lw, alpha:material.at},
+      {idx:[3,2,6,7], fill:material.bottom, stroke:material.stroke, lw:material.lw, alpha:material.abt}
+    ];
+    return {pts, faces};
+  }
+
+  function rotateLocal(p, euler, center){
+    let r = p;
+    if(euler.z){
+      const c=Math.cos(euler.z), s=Math.sin(euler.z);
+      r = {x:r.x*c - r.y*s, y:r.x*s + r.y*c, z:r.z};
+    }
+    if(euler.y){ r = rotateY(r, euler.y); }
+    if(euler.x){ r = rotateX(r, euler.x); }
+    return add(r, center);
+  }
+
+  function polyPath(projected){
+    ctx.beginPath();
+    ctx.moveTo(projected[0].x, projected[0].y);
+    for(let i=1;i<projected.length;i++) ctx.lineTo(projected[i].x, projected[i].y);
+    ctx.closePath();
+  }
+
+  function drawShape(shape){
+    if(shape.type === 'face'){
+      const pts = shape.points;
+      if(!pts || pts.length < 3) return;
+      polyPath(pts);
+      if(shape.fill){
+        ctx.globalAlpha = shape.alpha;
+        ctx.fillStyle = shape.fill;
+        ctx.fill();
+      }
+      if(shape.stroke && shape.lineWidth > 0){
+        ctx.globalAlpha = Math.min(1, shape.alpha * 0.95);
+        ctx.strokeStyle = shape.stroke;
+        ctx.lineWidth = shape.lineWidth;
+        ctx.stroke();
+      }
+    } else if(shape.type === 'seg'){
+      ctx.beginPath();
+      ctx.moveTo(shape.a.x, shape.a.y);
+      ctx.lineTo(shape.b.x, shape.b.y);
+      ctx.globalAlpha = shape.alpha;
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = shape.width;
+      ctx.setLineDash(shape.dash || []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else if(shape.type === 'disc'){
+      ctx.beginPath();
+      ctx.arc(shape.p.x, shape.p.y, shape.r, 0, Math.PI*2);
+      ctx.globalAlpha = shape.alpha;
+      if(shape.fill){ ctx.fillStyle = shape.fill; ctx.fill(); }
+      if(shape.stroke){ ctx.strokeStyle = shape.stroke; ctx.lineWidth = shape.lineWidth; ctx.stroke(); }
+    } else if(shape.type === 'label'){
+      ctx.globalAlpha = shape.alpha;
+      ctx.fillStyle = 'rgba(0,0,0,.52)';
+      ctx.font = '10px times new roman';
+      ctx.textAlign = shape.align;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(shape.text, shape.x, shape.y);
+    }
+  }
+
+  function plateNodes(){
+    const cols = [-54, 0, 54];
+    const rows = [-278,-198,-118,-38,42,122,202,282];
+    const out = [];
+    rows.forEach((y, ri) => cols.forEach((x, ci) => out.push({x,y,id:`n-${ri}-${ci}`})));
+    return out;
+  }
+  const nodes = plateNodes();
+
+  const modules = [
+    {id:'top_speaker', kind:'speaker', anchor:v3(0,-309,23), dir:v3(0,0,1), size:v3(78,78,68), bar:116, travel:150, tint:'dark', phase:0.00},
+    {id:'left_lens', kind:'lens', anchor:v3(-82,-235,4), dir:v3(-1,0,0), size:v3(52,34,32), bar:92, travel:120, tint:'dark', phase:0.07},
+    {id:'right_probe', kind:'probe', anchor:v3(82,-225,2), dir:v3(1,0,0), size:v3(36,24,24), bar:90, travel:112, tint:'dark', phase:0.12},
+    {id:'blue_ticks', kind:'ticks', anchor:v3(-84,-86,0), dir:v3(-1,0,0), size:v3(40,56,2), bar:88, travel:110, tint:'blue', phase:0.18},
+    {id:'red_panel', kind:'panel_red', anchor:v3(-2,-34,23), dir:v3(0,0,1), size:v3(82,114,16), bar:92, travel:130, tint:'red', phase:0.26},
+    {id:'front_black', kind:'screen_black', anchor:v3(-6,64,23), dir:v3(0,0,1), size:v3(96,58,10), bar:84, travel:120, tint:'dark', phase:0.33},
+    {id:'green_box', kind:'panel_green', anchor:v3(-76,92,2), dir:v3(-1,0,0), size:v3(72,96,28), bar:84, travel:120, tint:'green', phase:0.39},
+    {id:'right_speaker', kind:'speaker', anchor:v3(80,155,0), dir:v3(1,0,0), size:v3(68,68,62), bar:106, travel:140, tint:'dark', phase:0.46},
+    {id:'lower_tray', kind:'tray', anchor:v3(-12,302,23), dir:v3(0,0,1), size:v3(150,18,34), bar:102, travel:130, tint:'metal', phase:0.55},
+    {id:'left_beam', kind:'beam', anchor:v3(-82,285,2), dir:v3(-1,0,0), size:v3(86,12,14), bar:104, travel:118, tint:'metal', phase:0.62},
+    {id:'top_rail_a', kind:'rail', anchor:v3(-28,-342,8), dir:v3(0,-1,0), size:v3(114,10,12), bar:64, travel:80, tint:'metal', phase:0.70},
+    {id:'top_rail_b', kind:'rail', anchor:v3(28,-342,8), dir:v3(0,-1,0), size:v3(114,10,12), bar:64, travel:80, tint:'metal', phase:0.74},
+    {id:'hang_line', kind:'line_drop', anchor:v3(-102,-340,4), dir:v3(0,-1,0), size:v3(0,0,0), bar:146, travel:0, tint:'metal', phase:0.8}
+  ];
+
+  const palette = {
+    ink:'#0f1011',
+    softInk:'rgba(0,0,0,.18)',
+    hardLine:'rgba(0,0,0,.35)',
+    metalA:'#f6f6f4',
+    metalB:'#d8d8d5',
+    metalC:'#b7b7b3',
+    panelFront:'rgba(226,230,232,.18)',
+    panelBack:'rgba(176,182,186,.08)',
+    panelSide:'rgba(160,166,170,.10)',
+    plate:'#252628',
+    plateEdge:'rgba(0,0,0,.36)',
+    red:'#7f151b',
+    red2:'#521015',
+    green:'rgba(200,240,220,.66)',
+    greenEdge:'rgba(140,186,165,.52)',
+    blue:'rgba(86,126,189,.58)',
+    blueSoft:'rgba(86,126,189,.18)'
+  };
+
+  function sceneProgress(mod, t){
+    if(state.scene === 'docking'){
+      const cycle = math.cyc(t / 22);
+      const start = mod.phase * 0.78;
+      const a = math.clamp((cycle - start) / 0.24, 0, 1);
+      const b = math.clamp((cycle - (0.84 + mod.phase * 0.03)) / 0.10, 0, 1);
+      const ins = math.spring(a);
+      return ins * (1 - 0.05 * b);
+    }
+    if(state.scene === 'field') return 0.96 + Math.sin(t*0.36 + mod.phase*9) * 0.02;
+    return 1;
+  }
+
+  function modulePose(mod, t){
+    const prog = sceneProgress(mod, t);
+    const dir = mod.dir;
+    const travel = mod.travel || 0;
+    const backoff = (1 - prog) * travel;
+    const micro = Math.sin(t*2.4 + mod.phase*20) * (state.scene === 'docking' ? (1 - prog) * 8 : 2.2);
+    const lateral = Math.sin(t*1.3 + mod.phase*12) * (state.scene === 'docking' ? (1 - prog) * 5 : 1.2);
+    const center = add(mod.anchor, mul(dir, mod.bar + backoff + ((1-prog) * 10 * Math.sin(t*8 + mod.phase*30))));
+    if(Math.abs(dir.x) > .5){ center.y += micro; center.z += lateral; }
+    else if(Math.abs(dir.z) > .5){ center.x += lateral; center.y += micro; }
+    else { center.x += lateral; center.z += micro * 0.35; }
+
+    const euler = {x:0,y:0,z:0};
+    if(state.scene === 'docking'){
+      if(mod.kind === 'speaker'){ euler.y = (1-prog) * 0.08 * Math.sin(t*5 + mod.phase*30); euler.x = (1-prog) * 0.05 * Math.cos(t*4 + mod.phase*18); }
+      if(mod.kind === 'panel_red' || mod.kind === 'panel_green'){ euler.x = (1-prog) * 0.07 * Math.sin(t*5.2 + mod.phase*14); }
+      if(mod.kind === 'screen_black'){ euler.x = (1-prog) * -0.12; }
+      if(mod.kind === 'tray'){ euler.x = (1-prog) * 0.06; }
+    } else {
+      euler.y = Math.sin(t*0.35 + mod.phase*9) * 0.01;
+      euler.x = Math.cos(t*0.31 + mod.phase*7) * 0.008;
+    }
+
+    const barEnd = add(mod.anchor, mul(dir, mod.bar * prog));
+    return {prog, center, barEnd, euler};
+  }
+
+  function barBox(mod, pose){
+    const anchor = mod.anchor;
+    const tip = pose.barEnd;
+    const thick = mod.kind === 'rail' ? v3(10,8,10) : mod.kind === 'line_drop' ? v3(2, pose.prog * (mod.bar || 0), 2) : v3(12,12,12);
+    if(mod.kind === 'line_drop') return null;
+
+    if(Math.abs(mod.dir.x) > .5){
+      const len = Math.abs(tip.x - anchor.x);
+      return {center:v3((tip.x+anchor.x)/2, anchor.y, anchor.z), size:v3(Math.max(8,len), thick.y, thick.z), euler:{x:0,y:0,z:0}};
+    }
+    if(Math.abs(mod.dir.z) > .5){
+      const len = Math.abs(tip.z - anchor.z);
+      return {center:v3(anchor.x, anchor.y, (tip.z+anchor.z)/2), size:v3(thick.x, thick.y, Math.max(8,len)), euler:{x:0,y:0,z:0}};
+    }
+    const len = Math.abs(tip.y - anchor.y);
+    return {center:v3(anchor.x, (tip.y+anchor.y)/2, anchor.z), size:v3(mod.size.x, Math.max(8,len), thick.z), euler:{x:0,y:0,z:0}};
+  }
+
+  function panelSpec(){
+    const vertical = state.format === 'vertical';
+    return {
+      size:v3(168, 642, 46),
+      frontZ:23,
+      backZ:-23,
+      cols:[-56, 0, 56],
+      rows:[-281,-201,-121,-41,39,119,199,279],
+      ribsX:[-56,-40,-24,-8,8,24,40,56],
+      ribsY:[-301,-261,-221,-181,-141,-101,-61,-21,19,59,99,139,179,219,259,299],
+      shiftY: vertical ? -8 : 0
+    };
+  }
+
+  function buildScene(t){
+    const view = getView(t);
+    const pSpec = panelSpec();
+    const shapes = [];
+    const overlay = [];
+
+    const panelCenter = v3(0,pSpec.shiftY,0);
+    const panelMat = {front:palette.panelFront,back:palette.panelBack,left:palette.panelSide,right:palette.panelSide,top:'rgba(255,255,255,.22)',bottom:'rgba(120,120,120,.05)',stroke:'rgba(0,0,0,.12)',lw:1,af:1,ab:.9,as:.9,at:.9,abt:.4};
+    const panel = boxFaces(panelCenter, pSpec.size, {x:0,y:0,z:0}, panelMat);
+
+    const floorY = panelCenter.y + pSpec.size.y/2 + 26;
+
+    addPanelShadows(panel, floorY, shapes, view, t);
+    addPanelFaces(panel, shapes, view);
+    addPanelRibs(shapes, view, pSpec, t);
+    addNodePlates(shapes, view, pSpec, t);
+    addInternalDiagonals(shapes, view, pSpec, t);
+
+    const moduleAnchors = {};
+
+    modules.forEach(mod => {
+      const pose = modulePose(mod, t);
+      moduleAnchors[mod.id] = project(pose.center, view);
+
+      if(mod.kind === 'line_drop'){
+        const top = project(mod.anchor, view);
+        const bottom = project(add(mod.anchor, v3(0,mod.bar * pose.prog,0)), view);
+        shapes.push(seg(top, bottom, 'rgba(0,0,0,.28)', 1.05, .8, [2,4], (top.cz + bottom.cz)*.5));
+        return;
+      }
+
+      const b = barBox(mod, pose);
+      if(b){ addMetalBox(shapes, view, b.center, b.size, b.euler, 0.92); }
+
+      addConnectorPlate(shapes, view, mod.anchor, mod.dir, t, pose.prog);
+      addModuleBody(shapes, view, mod, pose, t);
+
+      if(state.scene === 'docking'){
+        addDockingGuides(shapes, view, mod, pose, t);
+      }
+    });
+
+    if(state.scene === 'field') addFieldSystem(shapes, view, pSpec, t);
+    if(state.scene === 'transmission') addTransmissionSystem(shapes, view, moduleAnchors, t);
+
+    addTechnicalOverlay(overlay, view, t, pSpec, moduleAnchors);
+    return {shapes, overlay};
+  }
+
+  function addPanelFaces(panel, shapes, view){
+    panel.faces.forEach(f => {
+      const pts = f.idx.map(i => project(panel.pts[i], view));
+      shapes.push(face(pts, f.fill, f.stroke, f.lw, f.alpha));
+    });
+  }
+
+  function addPanelRibs(shapes, view, spec, t){
+    const zFront = spec.frontZ - .3;
+    const zBack = spec.backZ + .3;
+    spec.ribsX.forEach((x,i) => {
+      const a = project(v3(x, spec.rows[0]-34 + spec.shiftY, zFront), view);
+      const b = project(v3(x, spec.rows[spec.rows.length-1]+34 + spec.shiftY, zFront), view);
+      shapes.push(seg(a,b,'rgba(0,0,0,.08)',1,.9, null, (a.cz+b.cz)*.5));
+      const a2 = project(v3(x+3.5, spec.rows[0]-34 + spec.shiftY, zBack), view);
+      const b2 = project(v3(x+3.5, spec.rows[spec.rows.length-1]+34 + spec.shiftY, zBack), view);
+      shapes.push(seg(a2,b2,'rgba(0,0,0,.045)',1,.8,[4,5], (a2.cz+b2.cz)*.5));
+      const glow = 0.02 + 0.03 * (0.5 + 0.5*Math.sin(t*0.8 + i));
+      const g1 = project(v3(x+1.5, spec.rows[0]-30 + spec.shiftY, zFront), view);
+      const g2 = project(v3(x+1.5, spec.rows[spec.rows.length-1]+30 + spec.shiftY, zFront), view);
+      shapes.push(seg(g1,g2,'rgba(255,255,255,.9)',1.2,glow,null,(g1.cz+g2.cz)*.5));
+    });
+
+    spec.ribsY.forEach((y,i) => {
+      const a = project(v3(spec.cols[0]-26, y + spec.shiftY, zFront), view);
+      const b = project(v3(spec.cols[2]+26, y + spec.shiftY, zFront), view);
+      const alpha = (i%2===0 ? .05 : .03) * (0.8 + 0.2*Math.sin(t*0.5 + i));
+      shapes.push(seg(a,b,'rgba(0,0,0,.16)',1,alpha,null,(a.cz+b.cz)*.5));
+    });
+
+    for(let i=0;i<38;i++){
+      const x = -74 + i*4;
+      const a = project(v3(x, -322 + spec.shiftY, spec.frontZ-1), view);
+      const b = project(v3(x, 322 + spec.shiftY, spec.frontZ-1), view);
+      shapes.push(seg(a,b,'rgba(0,0,0,.028)',.7,.8,null,(a.cz+b.cz)*.5));
+    }
+  }
+
+  function addInternalDiagonals(shapes, view, spec, t){
+    const lines = [
+      [v3(-68,-315+spec.shiftY,-10), v3(68,315+spec.shiftY,-18)],
+      [v3(-56,-315+spec.shiftY,10), v3(56,315+spec.shiftY,18)],
+      [v3(-16,-315+spec.shiftY,-20), v3(74,120+spec.shiftY,10)],
+      [v3(-74,-36+spec.shiftY,12), v3(18,315+spec.shiftY,-14)]
+    ];
+    lines.forEach((pair, i) => {
+      const a = project(pair[0], view), b = project(pair[1], view);
+      shapes.push(seg(a,b,'rgba(0,0,0,.065)',1.05,.8,[8,8],(a.cz+b.cz)*.5));
+      if(i < 2){
+        const p = lerpV(pair[0], pair[1], 0.55 + Math.sin(t*0.8+i)*0.03);
+        const pp = project(p, view);
+        shapes.push(disc(pp, 1.3, 'rgba(0,0,0,.42)', .28, null, 1, pp.cz));
+      }
+    });
+  }
+
+  function addNodePlates(shapes, view, spec, t){
+    spec.rows.forEach((y, ri) => {
+      spec.cols.forEach((x, ci) => {
+        const active = ((ri + ci) % 3 === 0);
+        const size = 18;
+        const center = v3(x, y + spec.shiftY, spec.frontZ + 0.3);
+        const box = boxFaces(center, v3(size,size,4), {x:0,y:0,z:0}, {
+          front:active ? 'rgba(34,35,38,.92)' : 'rgba(27,28,31,.84)',
+          back:'rgba(12,12,12,.08)',
+          left:'rgba(14,14,14,.26)',
+          right:'rgba(14,14,14,.26)',
+          top:'rgba(80,80,80,.14)',
+          bottom:'rgba(0,0,0,.06)',
+          stroke:'rgba(0,0,0,.22)',
+          lw:.9, af:1,ab:.3,as:.6,at:.4,abt:.2
+        });
+        box.faces.slice(0,3).forEach(f => {
+          const pts = f.idx.map(i => project(box.pts[i], view));
+          shapes.push(face(pts, f.fill, f.stroke, f.lw, f.alpha));
+        });
+
+        const frontCenter = project(v3(x, y + spec.shiftY, spec.frontZ + 2.6), view);
+        const slotA = project(v3(x-2.5, y-5 + spec.shiftY, spec.frontZ + 2.7), view);
+        const slotB = project(v3(x+2.5, y+5 + spec.shiftY, spec.frontZ + 2.7), view);
+        shapes.push(seg(slotA, slotB, 'rgba(255,255,255,.62)', 1.2, .32, null, frontCenter.cz));
+        shapes.push(disc(frontCenter, 1.1 + 0.5 * (active ? (0.45 + 0.55*Math.sin(t*1.2 + ri + ci)) : 0), active ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.28)', active ? .24 : .18, null, 1, frontCenter.cz+1));
+
+        [[-5.4,-5.4],[5.4,-5.4],[5.4,5.4],[-5.4,5.4]].forEach(([dx,dy]) => {
+          const s = project(v3(x+dx, y+dy + spec.shiftY, spec.frontZ + 2.5), view);
+          shapes.push(disc(s, 1.1, 'rgba(240,240,240,.95)', .45, 'rgba(0,0,0,.22)', .5, s.cz+2));
+        });
+      });
+    });
+  }
+
+  function addMetalBox(shapes, view, center, size, euler, alphaMul=1){
+    const box = boxFaces(center, size, euler, {
+      front:'rgba(247,247,244,.96)', back:'rgba(170,170,167,.12)', left:'rgba(225,225,221,.82)', right:'rgba(202,202,198,.76)',
+      top:'rgba(252,252,250,.88)', bottom:'rgba(140,140,140,.12)', stroke:'rgba(0,0,0,.16)', lw:.9,
+      af:1*alphaMul,ab:.3*alphaMul,as:.95*alphaMul,at:.92*alphaMul,abt:.16*alphaMul
+    });
+    box.faces.forEach(f => {
+      const pts = f.idx.map(i => project(box.pts[i], view));
+      shapes.push(face(pts, f.fill, f.stroke, f.lw, f.alpha));
+    });
+  }
+
+  function addConnectorPlate(shapes, view, anchor, dir, t, prog){
+    const frontBias = Math.abs(dir.z) > .5 ? dir.z * 2 : 2.5;
+    const center = add(anchor, v3(0,0,frontBias));
+    const box = boxFaces(center, v3(16,16,5), {x:0,y:0,z:0}, {
+      front:'rgba(22,23,26,.95)',back:'rgba(0,0,0,.1)',left:'rgba(12,12,12,.28)',right:'rgba(12,12,12,.28)',top:'rgba(80,80,80,.12)',bottom:'rgba(0,0,0,.05)',stroke:'rgba(0,0,0,.22)',lw:.9,
+      af:1,ab:.2,as:.65,at:.3,abt:.1
+    });
+    box.faces.slice(0,3).forEach(f => {
+      const pts = f.idx.map(i => project(box.pts[i], view));
+      shapes.push(face(pts, f.fill, f.stroke, f.lw, f.alpha));
+    });
+    const c = project(add(anchor, v3(0,0,3)), view);
+    const s1 = project(add(anchor, v3(-2.5,-4.5,3.2)), view);
+    const s2 = project(add(anchor, v3( 2.5, 4.5,3.2)), view);
+    shapes.push(seg(s1,s2,'rgba(255,255,255,.65)',1.15,.28+prog*.05,null,c.cz));
+    [[-5.4,-5.4],[5.4,-5.4],[5.4,5.4],[-5.4,5.4]].forEach(([dx,dy]) => {
+      const p = project(add(anchor, v3(dx,dy,3.15)), view);
+      shapes.push(disc(p, 1.02, 'rgba(250,250,250,.92)', .44, 'rgba(0,0,0,.24)', .45, p.cz+1));
+    });
+  }
+
+  function addModuleBody(shapes, view, mod, pose, t){
+    const c = pose.center;
+    if(mod.kind === 'speaker'){
+      const box = boxFaces(c, mod.size, pose.euler, {
+        front:'rgba(21,21,22,.98)', back:'rgba(0,0,0,.08)', left:'rgba(9,9,10,.88)', right:'rgba(8,8,9,.9)', top:'rgba(15,15,16,.9)', bottom:'rgba(0,0,0,.18)', stroke:'rgba(0,0,0,.24)', lw:1,
+        af:.98,ab:.2,as:.96,at:.96,abt:.18
+      });
+      box.faces.forEach(f => {
+        const pts = f.idx.map(i => project(box.pts[i], view));
+        shapes.push(face(pts, f.fill, f.stroke, f.lw, f.alpha));
+      });
+      const front = project(add(c, mul(mod.dir, mod.size.z/2 + .6)), view);
+      shapes.push(disc(front, 18 * front.s/40, 'rgba(230,230,230,.96)', .95, 'rgba(0,0,0,.18)', 1, front.cz+1));
+      shapes.push(disc(front, 6 * front.s/40, 'rgba(145,145,145,.94)', .95, null, 1, front.cz+2));
+      shapes.push(disc(front, 22 * front.s/40, null, .3, 'rgba(255,255,255,.28)', .8, front.cz+2));
+    } else if(mod.kind === 'lens' || mod.kind === 'probe'){
+      const size = mod.kind === 'lens' ? mod.size : v3(28,20,18);
+      const box = boxFaces(c, size, pose.euler, {
+        front:'rgba(18,18,20,.96)', back:'rgba(0,0,0,.08)', left:'rgba(10,10,11,.88)', right:'rgba(10,10,11,.88)', top:'rgba(18,18,20,.92)', bottom:'rgba(0,0,0,.15)', stroke:'rgba(0,0,0,.24)', lw:1,
+        af:.98,ab:.18,as:.94,at:.9,abt:.16
+      });
+      box.faces.forEach(f => { shapes.push(face(f.idx.map(i => project(box.pts[i], view)), f.fill, f.stroke, f.lw, f.alpha)); });
+      const lensPoint = project(add(c, mul(mod.dir, size.z/2 + 5)), view);
+      shapes.push(disc(lensPoint, (mod.kind === 'lens' ? 7 : 4.5) * lensPoint.s/40, 'rgba(8,8,8,.96)', .96, 'rgba(220,220,220,.45)', 1, lensPoint.cz+2));
+      shapes.push(disc(lensPoint, (mod.kind === 'lens' ? 2.2 : 1.5) * lensPoint.s/40, 'rgba(130,130,130,.9)', .75, null, 1, lensPoint.cz+3));
+    } else if(mod.kind === 'panel_red'){
+      const box = boxFaces(c, mod.size, pose.euler, {
+        front:'rgba(123,20,28,.96)', back:'rgba(26,0,0,.08)', left:'rgba(88,18,24,.92)', right:'rgba(70,12,16,.95)', top:'rgba(130,32,36,.76)', bottom:'rgba(30,0,0,.12)', stroke:'rgba(0,0,0,.18)', lw:1,
+        af:.96,ab:.16,as:.95,at:.72,abt:.12
+      });
+      box.faces.forEach(f => { shapes.push(face(f.idx.map(i => project(box.pts[i], view)), f.fill, f.stroke, f.lw, f.alpha)); });
+      const highlightA = project(add(c, v3(-mod.size.x*.22, -mod.size.y*.2, mod.size.z/2+1)), view);
+      const highlightB = project(add(c, v3(mod.size.x*.16, -mod.size.y*.14, mod.size.z/2+1)), view);
+      shapes.push(seg(highlightA, highlightB, 'rgba(255,255,255,.56)', 1.2, .22, null, (highlightA.cz+highlightB.cz)/2));
+    } else if(mod.kind === 'screen_black'){
+      const panel = boxFaces(c, mod.size, {x:pose.euler.x - 0.03, y:pose.euler.y, z:0}, {
+        front:'rgba(12,12,13,.98)', back:'rgba(0,0,0,.08)', left:'rgba(25,25,28,.72)', right:'rgba(25,25,28,.72)', top:'rgba(35,35,38,.65)', bottom:'rgba(0,0,0,.12)', stroke:'rgba(0,0,0,.2)', lw:1,
+        af:.98,ab:.14,as:.86,at:.6,abt:.1
+      });
+      panel.faces.forEach(f => { shapes.push(face(f.idx.map(i => project(panel.pts[i], view)), f.fill, f.stroke, f.lw, f.alpha)); });
+      const base = boxFaces(add(c, v3(0, mod.size.y*.44, 16)), v3(mod.size.x, 10, 54), {x:0,y:0,z:0}, {
+        front:'rgba(242,242,238,.96)', back:'rgba(100,100,100,.08)', left:'rgba(214,214,210,.88)', right:'rgba(194,194,190,.84)', top:'rgba(248,248,246,.92)', bottom:'rgba(0,0,0,.12)', stroke:'rgba(0,0,0,.14)', lw:.9,
+        af:.96,ab:.12,as:.9,at:.94,abt:.1
+      });
+      base.faces.forEach(f => { shapes.push(face(f.idx.map(i => project(base.pts[i], view)), f.fill, f.stroke, f.lw, f.alpha)); });
+    } else if(mod.kind === 'panel_green'){
+      const box = boxFaces(c, mod.size, pose.euler, {
+        front:'rgba(204,244,224,.74)', back:'rgba(186,232,212,.12)', left:'rgba(176,220,198,.54)', right:'rgba(170,214,192,.54)', top:'rgba(232,255,245,.42)', bottom:'rgba(90,90,90,.06)', stroke:'rgba(128,164,148,.35)', lw:1,
+        af:.94,ab:.12,as:.78,at:.56,abt:.06
+      });
+      box.faces.forEach(f => { shapes.push(face(f.idx.map(i => project(box.pts[i], view)), f.fill, f.stroke, f.lw, f.alpha)); });
+    } else if(mod.kind === 'tray'){
+      const tray = boxFaces(c, mod.size, pose.euler, {
+        front:'rgba(236,236,232,.96)', back:'rgba(120,120,120,.08)', left:'rgba(216,216,212,.88)', right:'rgba(196,196,192,.84)', top:'rgba(248,248,245,.95)', bottom:'rgba(0,0,0,.12)', stroke:'rgba(0,0,0,.15)', lw:.9,
+        af:.98,ab:.1,as:.9,at:.96,abt:.1
+      });
+      tray.faces.forEach(f => { shapes.push(face(f.idx.map(i => project(tray.pts[i], view)), f.fill, f.stroke, f.lw, f.alpha)); });
+      const t1 = project(add(c, v3(-45,-2,17)), view);
+      const t2 = project(add(c, v3(45,-2,17)), view);
+      shapes.push(seg(t1,t2,'rgba(0,0,0,.34)',.8,.52,[3,7],(t1.cz+t2.cz)/2));
+    } else if(mod.kind === 'beam' || mod.kind === 'rail'){
+      addMetalBox(shapes, view, c, mod.size, pose.euler, .96);
+    } else if(mod.kind === 'ticks'){
+      for(let i=0;i<7;i++){
+        const x = c.x - 16 + i*5;
+        const a = project(v3(x,c.y - 28,c.z), view);
+        const b = project(v3(x,c.y + 28,c.z), view);
+        shapes.push(seg(a,b,'rgba(86,126,189,.68)',1,.54 - i*0.04,null,(a.cz+b.cz)/2));
+      }
+      for(let i=0;i<4;i++){
+        const a = project(v3(c.x - 20,c.y - 18 + i*12,c.z), view);
+        const b = project(v3(c.x + 20,c.y - 18 + i*12,c.z), view);
+        shapes.push(seg(a,b,'rgba(86,126,189,.22)',.9,.55,[2,6],(a.cz+b.cz)/2));
+      }
+    }
+  }
+
+  function addDockingGuides(shapes, view, mod, pose, t){
+    const pr = pose.prog;
+    if(pr > .985 || mod.kind === 'line_drop') return;
+    const start = project(add(mod.anchor, mul(mod.dir, mod.bar + mod.travel + 10)), view);
+    const end = project(pose.center, view);
+    const mid = project(add(mod.anchor, mul(mod.dir, mod.bar + mod.travel*.55)), view);
+    shapes.push(seg(start, end, 'rgba(0,0,0,.10)', .85, .9 - pr * .7, [6,10], (start.cz+end.cz)/2));
+    shapes.push(seg(mid, end, 'rgba(0,0,0,.12)', .75, .7 - pr*.5, [2,5], (mid.cz+end.cz)/2));
+    const r = 8 + (1-pr)*8;
+    shapes.push(disc(end, r * (1-pr), null, .22*(1-pr), 'rgba(0,0,0,.20)', .75, end.cz+1));
+    const crossA1 = {x:end.x-8, y:end.y}, crossA2 = {x:end.x+8,y:end.y};
+    const crossB1 = {x:end.x, y:end.y-8}, crossB2 = {x:end.x,y:end.y+8};
+    shapes.push(seg(crossA1,crossA2,'rgba(0,0,0,.18)',.75,.28*(1-pr),null,end.cz+2));
+    shapes.push(seg(crossB1,crossB2,'rgba(0,0,0,.18)',.75,.28*(1-pr),null,end.cz+2));
+  }
+
+  function addPanelShadows(panel, floorY, shapes, view, t){
+    const light = v3(1.2,-2.2,1.75);
+    const polys = [];
+    panel.faces.slice(0,3).forEach(f => {
+      const poly = f.idx.map(i => castShadowPoint(panel.pts[i], floorY, light));
+      polys.push(poly.map(p => project(p, view)));
+    });
+    polys.forEach((poly, i) => {
+      shapes.push(face(poly, 'rgba(0,0,0,' + (0.05 - i*0.01) + ')', null, 0, 1, true));
+    });
+
+    modules.forEach((mod, idx) => {
+      if(mod.kind === 'line_drop' || mod.kind === 'ticks') return;
+      const pose = modulePose(mod, t);
+      const c = pose.center;
+      const poly3 = [
+        castShadowPoint(add(c,v3(-mod.size.x*.55, mod.size.y*.5, -mod.size.z*.3)), floorY, light),
+        castShadowPoint(add(c,v3( mod.size.x*.55, mod.size.y*.5, -mod.size.z*.3)), floorY, light),
+        castShadowPoint(add(c,v3( mod.size.x*.45, mod.size.y*.5,  mod.size.z*.55)), floorY, light),
+        castShadowPoint(add(c,v3(-mod.size.x*.45, mod.size.y*.5,  mod.size.z*.55)), floorY, light)
+      ].map(p => project(p, view));
+      shapes.push(face(poly3, 'rgba(0,0,0,' + (0.032 + idx*0.001) + ')', null, 0, 1, true));
+    });
+  }
+
+  function castShadowPoint(point, floorY, light){
+    const t = (floorY - point.y) / light.y;
+    return {x:point.x + light.x * t, y:floorY, z:point.z + light.z * t};
+  }
+
+  function addFieldSystem(shapes, view, spec, t){
+    const active = [];
+    spec.rows.forEach((y, ri) => spec.cols.forEach((x, ci) => { if((ri + ci) % 2 === 0) active.push(v3(x, y + spec.shiftY, spec.frontZ + 4)); }));
+
+    for(let i=0;i<active.length;i++){
+      const p = active[i];
+      const p2 = active[(i*7 + 5) % active.length];
+      const driftA = v3(Math.sin(t*0.52 + i)*90, Math.cos(t*0.41 + i*0.7)*48, 140 + Math.sin(t*0.23 + i*0.3)*70);
+      const driftB = v3(Math.cos(t*0.46 + i*0.4)*120, Math.sin(t*0.35 + i*0.5)*58, -120 + Math.cos(t*0.2 + i)*60);
+      const a = project(add(p, driftA), view);
+      const b = project(add(p2, driftB), view);
+      const c = project(p, view);
+      shapes.push(seg(c, a, 'rgba(0,0,0,.08)', .8, .52, [3,8], (c.cz+a.cz)*.5));
+      shapes.push(seg(c, b, 'rgba(0,0,0,.06)', .8, .35, [10,8], (c.cz+b.cz)*.5));
+      shapes.push(disc(a, 1.8 + 1.6*Math.sin(t*2 + i), 'rgba(0,0,0,.14)', .6, null, 1, a.cz+1));
+      if(i % 4 === 0){
+        const ring = project(add(p, v3(Math.sin(t*0.5+i)*160, Math.cos(t*0.36+i)*110, 40)), view);
+        shapes.push(disc(ring, 12 + 7*Math.sin(t*1.4+i), null, .18, 'rgba(0,0,0,.18)', .8, ring.cz));
+      }
+    }
+
+    for(let i=0;i<12;i++){
+      const z = -220 + i*42;
+      const a3 = project(v3(-210, -310 + spec.shiftY + Math.sin(t*0.5+i)*12, z), view);
+      const b3 = project(v3(210, 314 + spec.shiftY + Math.cos(t*0.4+i)*18, z+30), view);
+      shapes.push(seg(a3, b3, 'rgba(0,0,0,.045)', .8, .8, [16,16], (a3.cz+b3.cz)*.5));
+    }
+  }
+
+  function addTransmissionSystem(shapes, view, anchors, t){
+    const routes = [
+      ['top_speaker','red_panel'],
+      ['top_speaker','left_lens'],
+      ['left_lens','green_box'],
+      ['red_panel','front_black'],
+      ['front_black','lower_tray'],
+      ['green_box','right_speaker'],
+      ['right_probe','top_speaker'],
+      ['left_beam','lower_tray']
+    ];
+    routes.forEach((pair, idx) => {
+      const aId = pair[0], bId = pair[1];
+      const a = anchors[aId], b = anchors[bId];
+      if(!a || !b) return;
+      const mx = (a.x + b.x) * .5 + Math.sin(t*0.55 + idx) * 34;
+      const my = (a.y + b.y) * .5 + Math.cos(t*0.7 + idx*1.4) * 22;
+      const k1x = math.mix(a.x,mx,.52), k1y = math.mix(a.y,my,.52) - 18;
+      const k2x = math.mix(mx,b.x,.48), k2y = math.mix(my,b.y,.48) + 18;
+      drawCubicCurve(shapes, a, {x:k1x,y:k1y,cz:(a.cz+b.cz)*.5}, {x:k2x,y:k2y,cz:(a.cz+b.cz)*.5}, b, idx, t);
+    });
+
+    Object.keys(anchors).forEach((id, idx) => {
+      const p = anchors[id];
+      if(!p) return;
+      const r = 10 + 4*Math.sin(t*1.8 + idx);
+      shapes.push(disc(p, r, null, .12, 'rgba(0,0,0,.20)', .8, p.cz+1));
+      shapes.push(disc(p, 2.2, 'rgba(0,0,0,.62)', .35, null, 1, p.cz+2));
+    });
+  }
+
+  function drawCubicCurve(shapes, a, c1, c2, b, idx, t){
+    const points = [];
+    for(let i=0;i<=28;i++){
+      const s = i / 28;
+      const p = cubic2D(a,c1,c2,b,s);
+      points.push(p);
+      if(i>0){
+        const prev = points[i-1];
+        const width = i%4===0 ? 1.05 : .85;
+        const alpha = .14 + .08*Math.sin(t*1.2 + idx + i*.2);
+        shapes.push(seg(prev, p, 'rgba(0,0,0,.36)', width, alpha, i%7===0 ? [4,7] : null, (a.cz+b.cz)/2));
+      }
+    }
+    const travel = math.cyc(t*0.18 + idx*0.11);
+    for(let j=0;j<3;j++){
+      const s = math.cyc(travel + j*0.22);
+      const p = cubic2D(a,c1,c2,b,s);
+      shapes.push(disc(p, 3.2 - j*.5, 'rgba(0,0,0,.82)', .26 - j*.05, null, 1, (a.cz+b.cz)/2 + 1));
+      shapes.push(disc(p, 1.25, 'rgba(255,255,255,.95)', .38 - j*.07, null, 1, (a.cz+b.cz)/2 + 2));
+    }
+  }
+
+  function cubic2D(p0,p1,p2,p3,t){
+    const mt = 1-t;
+    return {
+      x: mt*mt*mt*p0.x + 3*mt*mt*t*p1.x + 3*mt*t*t*p2.x + t*t*t*p3.x,
+      y: mt*mt*mt*p0.y + 3*mt*mt*t*p1.y + 3*mt*t*t*p2.y + t*t*t*p3.y,
+      cz: mt*mt*mt*p0.cz + 3*mt*mt*t*p1.cz + 3*mt*t*t*p2.cz + t*t*t*p3.cz
+    };
+  }
+
+  function addTechnicalOverlay(overlay, view, t, spec, anchors){
+    const pad = 22;
+    overlay.push({kind:'frame', x:pad, y:pad, w:state.w-pad*2, h:state.h-pad*2});
+    overlay.push({kind:'ticks', side:'left'});
+    overlay.push({kind:'ticks', side:'right'});
+
+    const q = project(v3(-112,-130 + spec.shiftY, 120), view);
+    overlay.push({kind:'scan', x:q.x, y:q.y, label:'active node cluster'});
+
+    if(state.scene === 'transmission'){
+      overlay.push({kind:'legend', lines:['routing / latency / phase','structural path / volatile path']});
+    } else if(state.scene === 'field'){
+      overlay.push({kind:'legend', lines:['field density / porous expansion','latent vectors / spatial reading']});
+    } else {
+      overlay.push({kind:'legend', lines:['approach / alignment / insertion','settlement / fixation / calibration']});
+    }
+  }
+
+  function renderOverlay(overlay){
+    ctx.save();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'rgba(0,0,0,.08)';
+    ctx.fillStyle = 'rgba(0,0,0,.45)';
+    ctx.lineWidth = 1;
+    ctx.font = '10px times new roman';
+    overlay.forEach(item => {
+      if(item.kind === 'frame'){
+        ctx.strokeRect(item.x, item.y, item.w, item.h);
+      } else if(item.kind === 'ticks'){
+        const x0 = item.side === 'left' ? 28 : state.w - 28;
+        for(let i=0;i<18;i++){
+          const y = 56 + i * ((state.h - 112) / 17);
+          ctx.beginPath();
+          ctx.moveTo(item.side === 'left' ? x0 : x0-42, y);
+          ctx.lineTo(item.side === 'left' ? x0+42 : x0, y);
+          ctx.globalAlpha = .05 + (i%3===0 ? .03 : 0);
+          ctx.stroke();
+        }
+      } else if(item.kind === 'scan'){
+        ctx.globalAlpha = .18;
+        ctx.strokeStyle = 'rgba(86,126,189,.75)';
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, 24, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(item.x-34, item.y); ctx.lineTo(item.x+34, item.y); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(item.x, item.y-34); ctx.lineTo(item.x, item.y+34); ctx.stroke();
+        ctx.globalAlpha = .42;
+        ctx.fillStyle = 'rgba(0,0,0,.42)';
+        ctx.textAlign = 'left';
+        ctx.fillText(item.label, item.x + 36, item.y - 3);
+      } else if(item.kind === 'legend'){
+        ctx.globalAlpha = .5;
+        ctx.textAlign = 'right';
+        item.lines.forEach((line, i) => ctx.fillText(line, state.w - 30, 50 + i * 14));
+      }
+    });
+    ctx.restore();
+  }
+
+  function render(t){
+    ctx.save();
+    ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+    ctx.clearRect(0,0,state.w,state.h);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,state.w,state.h);
+
+    const scene = buildScene(t);
+    const shapes = scene.shapes;
+    shapes.sort((a,b) => (a.shadow === b.shadow ? a.z - b.z : (a.shadow ? -1 : 1)));
+
+    for(const sh of shapes){
+      if(sh.shadow){
+        ctx.save();
+        ctx.filter = 'blur(18px)';
+        drawShape(sh);
+        ctx.restore();
+      } else drawShape(sh);
+    }
+
+    renderOverlay(scene.overlay);
+    ctx.restore();
+  }
+
+  function loop(now){
+    if(state.paused) return;
+    state.now = (now - state.start) / 1000;
+    render(state.now);
+    requestAnimationFrame(loop);
+  }
+
+  setFormat('square');
+  setScene('docking');
+  syncMeta();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
