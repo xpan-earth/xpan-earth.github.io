@@ -5,1660 +5,1421 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <meta name="color-scheme" content="light dark"/>
   <title>xpan.ep.2</title>
+  <meta name="description" content="xpan.ep.2 — sistema público de captación, lectura y despliegue desarrollado a partir del sistema de poros. ciudad de méxico, 2026."/>
 
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
   <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/41759254/original_e813de0fef1c86f350f4fab767bdccaa.png?1765512921?bc=0" fetchpriority="high">
 
   <style>
     :root{
       --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
-      --line:#2A2E31; --grid:#181B1F;
-      --pad:clamp(14px,3.4vw,48px); --pad-x:clamp(16px,4vw,48px);
-      --header-h:64px; --maxw:1440px; --b1:1px solid var(--line);
-
+      --line:#2A2E31; --grid:#181B1F; --panel:#101316;
+      --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
       --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
       --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
     }
-@media (prefers-color-scheme:light){
-  :root{
-    --bg:#FFFFFF; 
-    --fg:#0B0D0F; 
-    --fg-dim:#4A525A;
-    --line:#D7DDE2; 
-    --grid:#EBEEF2;
-  }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A; --line:#D7DDE2; --grid:#EBEEF2; --panel:#F7F8FA; }
+      header{ mix-blend-mode:normal; color:var(--fg); }
+      header img{ mix-blend-mode:normal; filter:none; }
+      .chip{ border-color:var(--line); color:var(--fg-dim); }
+      .chip.lang-active{ color:var(--fg); border-color:var(--fg); }
+      .neg-shell{ mix-blend-mode:normal; color:var(--fg); }
+      .bg-hero::before{ opacity:.16; filter:blur(5px) contrast(35) brightness(.55) saturate(.9); }
+    }
 
-  /* texto y header en modo normal, sin negativo */
-  header{
-    mix-blend-mode:normal;
-    color:var(--fg);
-  }
-
-  header img{
-    mix-blend-mode:normal;
-    filter:none;
-  }
-
-  .neg-shell{
-    mix-blend-mode:normal;
-    color:var(--fg);
-  }
-}
-
-
-    *,*::before,*::after{ box-sizing:border-box }
-    html,body{ height:100%; margin:0 }
+    *,*::before,*::after{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    html,body{ min-height:100%; margin:0; }
     body{
-      background:var(--bg); color:var(--fg);
-      font-family:var(--ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      background:var(--bg); color:var(--fg); font-family:var(--ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
       overflow-x:hidden;
     }
-    a{ color:inherit; text-decoration:none }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ max-width:100%; }
 
-    /* ===== capa de acceso seguro ===== */
-    body.locked{
-      overflow:hidden;
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x); height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      z-index:40; pointer-events:auto; mix-blend-mode:difference; color:#fff;
     }
-
-    #access-shell{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:var(--pad-x);
-      z-index:100;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(24,96,255,.14) 0, transparent 52%),
-        radial-gradient(circle at 90% 100%, rgba(24,96,255,.18) 0, transparent 55%),
-        linear-gradient(135deg, #050608 0, #0B0D0F 40%, #050608 100%);
+    header img{ width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%); -webkit-user-drag:none; user-select:none; }
+    .stack{ display:flex; align-items:center; gap:12px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:10px; font:600 12px/1 var(--ui);
+      text-transform:lowercase; padding:8px 10px; border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74); background:transparent; user-select:none; cursor:default;
     }
-
-    body.unlocked #access-shell{
-      display:none;
-    }
-
-    body.locked header,
-    body.locked .bg-hero,
-    body.locked .grain,
-    body.locked .bg-grid,
-    body.locked .crosshair,
-    body.locked main{
-      display:none;
-    }
-
-    .access-panel{
-      position:relative;
-      max-width:420px;
-      width:100%;
-      border:1px solid var(--line);
-      background:
-        linear-gradient(145deg, rgba(12,13,15,.96), rgba(8,9,11,.98));
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,.02),
-        0 18px 45px rgba(0,0,0,.75);
-      padding:18px 18px 16px;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      overflow:hidden;
-    }
-
-    .access-panel::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:
-        repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px),
-        repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0 1px, transparent 1px 4px);
-      mix-blend-mode:screen;
-      opacity:.18;
-      pointer-events:none;
-    }
-
-    .access-header{
-      position:relative;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
-      z-index:1;
-    }
-
-    .access-id{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-
-    .access-tagline{
-      font:600 11px/1.2 var(--mono);
-      text-transform:lowercase;
-      letter-spacing:.12em;
-      color:var(--fg-dim);
-    }
-
-    .access-title{
-      font:600 13px/1.35 var(--ui);
-      text-transform:none;
-      color:var(--fg);
-    }
-
-    .access-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:5px 8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      font:600 10px/1.1 var(--mono);
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--fg-dim);
-      background:linear-gradient(135deg, rgba(0,0,0,.4), rgba(33,37,43,.8));
-      white-space:nowrap;
-    }
-
-    .access-badge-dot{
-      width:7px; height:7px;
-      border-radius:999px;
-      background:radial-gradient(circle at 30% 30%, #817dff, #2b31d3);
-      box-shadow:0 0 6px rgba(43, 57, 211, 0.85);
-    }
- 
-    .access-body{
-      position:relative;
-      z-index:1;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .access-body p{
-      margin:0;
-      font:400 12px/1.5 var(--ui);
-      color:var(--fg-dim);
-    }
-
-    .access-form{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-top:4px;
-    }
-
-    .access-row{
-      display:flex;
-      align-items:stretch;
-      gap:8px;
-    }
-
-    .access-input{
-      flex:1;
-      min-width:0;
-      border:1px solid var(--line);
-      background:rgba(5,7,10,.85);
-      color:var(--fg);
-      font:500 12px/1.3 var(--mono);
-      padding:8px 9px;
-      border-radius:3px;
-      outline:none;
-    }
-
-    .access-input::placeholder{
-      color:rgba(164,171,178,.7);
-    }
-
-    .access-input:focus-visible{
-      border-color:#1820ff;
-      box-shadow:0 0 0 1px rgba(24,96,255,.45);
-    }
-
-    .access-btn{
-      border:1px solid #1860FF;
-      background:radial-gradient(circle at 0 0, rgba(80,140,255,.9), rgba(24,96,255,1));
-      color:#F8FAFF;
-      font:600 11px/1.1 var(--mono);
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      padding:0 14px;
-      border-radius:3px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      white-space:nowrap;
-      min-width:92px;
-    }
-
-    .access-btn:disabled{
-      opacity:.6;
-      cursor:wait;
-    }
-
-    .access-meta{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-top:4px;
-      flex-wrap:wrap;
-    }
-
-    .access-hint{
-      font:400 11px/1.4 var(--ui);
-      color:var(--fg-dim);
-    }
-
-    .access-fingerprint{
-      font:500 10px/1.4 var(--mono);
-      color:rgba(135,141,150,.95);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      white-space:nowrap;
-    }
-
-    .access-log{
-      margin-top:8px;
-      padding:7px 8px;
-      border-radius:3px;
-      border:1px solid rgba(71,77,86,.9);
-      background:radial-gradient(circle at 0 0, rgba(24,96,255,.08), rgba(0,0,0,.75));
-      font:400 11px/1.4 var(--mono);
-      color:#C6CBD3;
-      min-height:30px;
-      display:flex;
-      align-items:center;
-      overflow:hidden;
-      white-space:nowrap;
-      text-overflow:ellipsis;
-    }
-
-    .access-panel::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        linear-gradient(90deg, transparent 0, rgba(24,96,255,.12) 48%, transparent 100%);
-      mix-blend-mode:soft-light;
-      opacity:.0;
-      pointer-events:none;
-      transition:opacity .22s ease-out;
-    }
-
-    .access-form.access-processing ~ .access-log,
-    .access-form.access-processing + .access-meta + .access-log{
-      border-color:rgba(24,96,255,.85);
-      box-shadow:0 0 8px rgba(24,96,255,.45) inset;
-    }
-
-    .access-form.access-processing .access-btn{
-      cursor:wait;
-    }
-
-    .access-form.access-processing .access-btn span::after{
-      content:" …";
-    }
-
-    .access-form.access-error{
-      animation:access-shake .03s ease-out;
-    }
-
-    @keyframes access-shake{
-      0%{ transform:translateX(0); }
-      25%{ transform:translateX(-.04px); }
-      50%{ transform:translateX(.03px); }
-      75%{ transform:translateX(-.02px); }
-      100%{ transform:translateX(0); }
-    }
-
-    /* ===== layout principal ===== */
-
-    /* ===== header siempre en negativo respecto al fondo ===== */
-header{
-  position:fixed;
-  top:12px;
-  left:var(--pad-x);
-  right:var(--pad-x);
-  height:var(--header-h);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  z-index:40;
-  border-bottom:0;
-  pointer-events:auto;
-
-  /* clave para que logo + texto siempre vayan en negativo */
-  mix-blend-mode:difference;
-  color:#fff;
-}
-
-header img{
-  width:50px;
-  height:auto;
-  display:block;
-  filter:invert(1) saturate(140%);
-  -webkit-user-drag:none;
-  user-select:none;
-}
-
-/* chips del header en blanco translúcido, sin fondo opaco */
-.stack{ display:flex; align-items:center; gap:12px; }
-
-.chip{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  font:600 12px/1 var(--ui);
-  text-transform:lowercase;
-  padding:8px 10px;
-  border:1px solid rgba(255,255,255,.42);
-  color:rgba(255,255,255,.74);
-  background:transparent;
-  user-select:none;
-  cursor:default;
-}
-
-.chip[data-lang-btn]{
-  cursor:pointer;
-}
-
-.chip.lang-active{
-  color:#fff;
-  border-color:#fff;
-  background:transparent;
-}
-
-
-header img{
-  width:50px;
-  height:auto;
-  display:block;
-  mix-blend-mode:difference;
-  filter:invert(1) saturate(100%);
-  -webkit-user-drag:none;
-  user-select:none;
-}
-
+    .chip[data-lang-btn]{ cursor:pointer; }
+    .chip.lang-active{ color:#fff; border-color:#fff; }
 
     .bg-grid{
       position:fixed; inset:0; z-index:0; pointer-events:none;
-      background:
-        linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/64px 64px,
-        linear-gradient(0deg, var(--grid) 1px, transparent 1px) 0 0/64px 64px;
+      background:linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+                 linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
     }
     .crosshair{
       position:fixed; inset:0; z-index:1; pointer-events:none;
-      background:
-        linear-gradient(90deg, transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
-        linear-gradient(0deg,  transparent calc(50% - .5px), var(--line) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px));
+      background:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+                 linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
       opacity:.18;
     }
-
-
-
-    .img{
-      position:absolute; z-index:2; pointer-events:none;
-      width:clamp(96px, 12vw, 220px);
-      filter:grayscale(1) contrast(1.15) brightness(.92);
-      mix-blend-mode:multiply;
-      border:1px solid var(--line);
-      background:#000;
-    }
-
-    main{ padding-top:calc(var(--header-h) + 24px); position:relative; z-index:3 }
-    .section{
-      max-width:var(--maxw); margin:0 auto;
-      padding:24px var(--pad-x) 72px;
-      border-top:var(--b1); padding-top:1.25rem; margin-top:1.25rem;
-    }
-    .plate{
-      display:grid; gap:4px; border:1px solid var(--line);
-      padding:8px 10px; color:var(--fg-dim);
-      font:600 11px/1.3 var(--mono); text-transform:lowercase;
-      background:color-mix(in oklab, var(--bg) 92%, transparent);
-      user-select:none; max-width:fit-content;
-      margin-bottom:18px;
-    }
-
-    /* contenedor en negativo para todo el bloque de texto */
-.neg-shell{
-  position:relative;
-  z-index:30;
-  mix-blend-mode:difference;
-  color:var(--fg);
-}
-
-.neg-shell h2,
-.neg-shell p,
-.neg-shell li{
-  color:inherit;
-}
-
-
-
-   .description{
-  max-width:800px;
-  font:400 14px/1.6 var(--ui);
-  position:relative;
-  color:var(--fg);
-}
-
-.description h2{
-  font:600 12px/1 var(--mono);
-  text-transform:lowercase;
-  letter-spacing:0.08em;
-  margin:0 0 12px;
-  color:var(--fg-dim);
-}
-
-.description p{
-  margin:0 0 10px;
-  color:var(--fg);
-}
-
-.description ul,
-.description ol{
-  margin:0 0 12px 1.25rem;
-  padding:0;
-}
-
-.description li{
-  margin:3px 0;
-  color:var(--fg);
-}
-
-.description strong{
-  font-weight:600;
-  color:var(--fg);
-}
-
-
-
-    .lang-block{ display:none; }
-    .lang-block.active{ display:block; }
-
-    /* respeta animaciones salvo usuarios con reduced motion */
-    @media (prefers-reduced-motion:reduce){
-      *{
-        animation:none !important;
-        transition:none !important;
-      }
-    }
-
-    /* ===== imagen central con ruido y flash ===== */
-    .bg-hero{
-      position:fixed; inset:0; z-index:0; pointer-events:none;
-      display:flex; align-items:center; justify-content:center;
-    }
+    .bg-hero{ position:fixed; inset:0; z-index:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
     .bg-hero::before{
-      content:"";
-      background-image:var(--hero, none);
-      background-size:contain;
-      background-position:center;
-      background-repeat:no-repeat;
-      width:80vw; height:80vh;
-      filter:blur(6px) contrast(60) brightness(.1) saturate(.95);
-      opacity:.28;
-      animation:flashFX 6s steps(30,end) infinite !important;
-      will-change:opacity,filter;
+      content:""; background-image:var(--hero,none); background-size:contain; background-position:center; background-repeat:no-repeat;
+      width:80vw; height:80vh; filter:blur(6px) contrast(60) brightness(.1) saturate(.95); opacity:.28;
+      animation:flashFX 6s steps(30,end) infinite; will-change:opacity,filter;
     }
     .grain{
       position:fixed; inset:-40%; z-index:0; pointer-events:none;
-      background:
-        repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px),
-        repeating-linear-gradient(90deg, rgba(0,0,0,.02) 0 1px, transparent 1px 4px);
-      mix-blend-mode:overlay;
-      opacity:.15;
-      filter:blur(1px);
-      animation:noiseShift 1.8s steps(6,end) infinite !important;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
+                 repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
+      mix-blend-mode:overlay; opacity:.15; filter:blur(1px); animation:noiseShift 1.8s steps(6,end) infinite;
     }
-    @keyframes flashFX{
-      0%,10%{opacity:.25;}
-      15%{opacity:.32;}
-      30%{opacity:.27;}
-      50%{opacity:.34;}
-      60%{opacity:.22;}
-      100%{opacity:.28;}
-    }
-    @keyframes noiseShift{
-      0%{transform:translate3d(0,0,0);}
-      25%{transform:translate3d(-1%,1%,0);}
-      50%{transform:translate3d(1%,-1%,0);}
-      75%{transform:translate3d(2%,2%,0);}
-      100%{transform:translate3d(0,0,0);}
-    }
+    @keyframes flashFX{ 0%,10%{opacity:.25;} 15%{opacity:.32;} 30%{opacity:.27;} 50%{opacity:.34;} 60%{opacity:.22;} 100%{opacity:.28;} }
+    @keyframes noiseShift{ 0%{transform:translate3d(0,0,0);} 25%{transform:translate3d(-1%,1%,0);} 50%{transform:translate3d(1%,-1%,0);} 75%{transform:translate3d(2%,2%,0);} 100%{transform:translate3d(0,0,0);} }
 
-    
-    .bg-hero::before, .grain{ will-change: transform, opacity, filter; }
+    main{ position:relative; z-index:3; padding-top:calc(var(--header-h) + 28px); }
+    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; }
+    .section:first-of-type{ border-top:0; padding-top:22px; min-height:78vh; display:flex; align-items:flex-end; }
+    .plate{
+      display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px;
+      color:var(--fg-dim); font:600 11px/1.3 var(--mono); text-transform:lowercase; background:color-mix(in oklab,var(--bg) 92%,transparent); user-select:none; margin-bottom:18px;
+    }
+    .neg-shell{ position:relative; z-index:30; mix-blend-mode:difference; color:var(--fg); }
+    .lang-block{ display:none; }
+    .lang-block.active{ display:block; }
 
-    /* ===== media index ep.2 ===== */
+    .intro-wrap{ width:100%; max-width:920px; }
+    .kicker{ margin:0 0 12px; font:600 11px/1.35 var(--mono); text-transform:lowercase; letter-spacing:.12em; color:var(--fg-dim); }
+    h1{ margin:0 0 10px; font:500 clamp(38px,8vw,112px)/.9 var(--ui); letter-spacing:-.065em; text-transform:lowercase; }
+    .subtitle{ margin:0 0 18px; font:500 clamp(15px,2vw,22px)/1.25 var(--ui); letter-spacing:-.02em; color:var(--fg); }
+    .intro-text{ max-width:780px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .intro-text p{ margin:0; }
 
-    .section-media .plate{
-      margin-bottom:16px;
+    .anchor-nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+    .anchor-nav a{
+      border:1px solid var(--line); padding:7px 9px; font:600 11px/1 var(--mono); text-transform:lowercase; color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
     }
+    .anchor-nav a:hover{ color:var(--fg); border-color:var(--fg-dim); }
 
-    .media-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-      gap:16px;
-    }
+    .section-head{ display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr); gap:clamp(18px,4vw,64px); margin-bottom:28px; }
+    .section-title{ margin:0; font:500 clamp(24px,4vw,56px)/.95 var(--ui); letter-spacing:-.055em; text-transform:lowercase; }
+    .section-meta{ margin:9px 0 0; font:600 11px/1.45 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em; }
+    .section-copy{ max-width:720px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .section-copy p{ margin:0; }
 
-    .media-slot{
-      border:1px solid var(--line);
-      background:color-mix(in oklab, var(--bg) 90%, #050608 10%);
-      padding:10px 12px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-height:112px;
-      position:relative;
-      overflow:hidden;
-    }
+    .facts{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--line); margin-top:28px; }
+    .fact{ padding:13px 14px; border-right:1px solid var(--line); min-height:72px; background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .fact:last-child{ border-right:0; }
+    .fact b{ display:block; margin-bottom:8px; font:600 10px/1 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
+    .fact span{ display:block; font:500 13px/1.35 var(--ui); color:var(--fg); }
 
-    .media-slot::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:
-        linear-gradient(90deg, rgba(24,96,255,.12), transparent 65%);
-      mix-blend-mode:soft-light;
-      opacity:.06;
-      pointer-events:none;
+    .media-grid{ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:12px; align-items:start; }
+    .media-card{ grid-column:span 4; margin:0; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
+    .media-card.is-wide{ grid-column:span 8; }
+    .media-open{ display:block; width:100%; border:0; padding:0; margin:0; background:transparent; cursor:pointer; color:inherit; }
+    .media-card img{
+      display:block; width:100%; height:auto; min-height:180px; max-height:72vh; object-fit:contain; background:#050608;
+      opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease;
     }
+    .media-card img.loaded{ opacity:1; transform:translateY(0); }
+    .media-card figcaption{
+      display:flex; justify-content:space-between; gap:12px; padding:8px 9px; border-top:1px solid var(--line);
+      font:600 10px/1.3 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em;
+    }
+    .media-card figcaption span:last-child{ text-align:right; }
 
-    .media-slot-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      position:relative;
-      z-index:1;
-      font:600 11px/1.3 var(--mono);
-      text-transform:lowercase;
-      letter-spacing:.08em;
-      color:var(--fg-dim);
-    }
 
-    .media-tag{
-      border:1px solid var(--line);
-      padding:2px 6px;
-      border-radius:999px;
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-    }
 
-    .media-label{
-      flex:1;
-      text-align:right;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
+    .related-projects{ display:grid; gap:18px; }
+    .related-project-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 91%,transparent); padding:14px; }
+    .related-project-head{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px; align-items:start; margin-bottom:14px; }
+    .related-code{ margin:0 0 7px; font:600 10px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--fg-dim); }
+    .related-project-card h3{ margin:0; font:500 clamp(22px,3.2vw,42px)/.95 var(--ui); letter-spacing:-.052em; text-transform:lowercase; color:var(--fg); }
+    .related-meta{ margin:8px 0 0; font:600 10px/1.35 var(--mono); letter-spacing:.08em; text-transform:lowercase; color:var(--fg-dim); }
+    .related-link{ border:1px solid var(--line); padding:8px 10px; font:600 10px/1 var(--mono); letter-spacing:.08em; text-transform:lowercase; color:var(--fg-dim); white-space:nowrap; background:color-mix(in oklab,var(--bg) 88%,transparent); }
+    .related-link:hover{ color:var(--fg); border-color:var(--fg-dim); }
+    .related-copy{ max-width:760px; margin-bottom:14px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .related-copy p{ margin:0; }
+    .related-media-grid{ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:10px; align-items:start; }
+    .related-media-card{ grid-column:span 3; margin:0; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
+    .related-media-card.is-wide{ grid-column:span 6; }
+    .related-media-card img{ display:block; width:100%; height:auto; min-height:120px; max-height:56vh; object-fit:contain; background:#050608; opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease; }
+    .related-media-card img.loaded{ opacity:1; transform:translateY(0); }
+    .related-media-card figcaption{ display:flex; justify-content:space-between; gap:12px; padding:8px 9px; border-top:1px solid var(--line); font:600 10px/1.3 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em; }
+    .related-media-card figcaption span:last-child{ text-align:right; }
 
-    .media-hint{
-      position:relative;
-      margin:0;
-      font:400 11px/1.45 var(--ui);
-      color:var(--fg-dim);
-      z-index:1;
-    }
+    .pdf-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+    .pdf-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .pdf-head{ display:flex; justify-content:space-between; gap:16px; padding:9px 10px; border-bottom:1px solid var(--line); font:600 11px/1.2 var(--mono); text-transform:lowercase; color:var(--fg-dim); }
+    .pdf-head a{ text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; }
+    .pdf-card object{ width:100%; height:520px; display:block; background:#050608; }
 
-    .media-link{
-      position:relative;
-      margin-top:2px;
-      font:500 12px/1.4 var(--ui);
-      text-decoration:underline;
-      text-decoration-style:dotted;
-      text-underline-offset:2px;
-      word-break:break-all;
-      z-index:1;
-    }
-
-    .media-link[href="#"]{
-      opacity:.45;
-      pointer-events:none;
-    }
-
-    .media-meta{
-      position:relative;
-      margin-top:auto;
-      font:500 10px/1.4 var(--mono);
-      color:var(--fg-dim);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      z-index:1;
-      opacity:.8;
-    }
-
-        /* ===== galería de imágenes ep.2 ===== */
-    .gallery{
-      max-width:var(--maxw);
-      margin:32px auto 40px;
-      padding:0 var(--pad-x);
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:16px;
-    }
-    .gallery img{
-      display:block;
-      width:100%;
-      height:auto;
-      border:1px solid var(--line);
-      background:#000;
-      object-fit:cover;
-      aspect-ratio:4/3;
-      cursor:pointer;
-    }
-
-    /* ===== planos embebidos (PDF) ===== */
-    .pdf-embed{
-      max-width:var(--maxw);
-      margin:0 auto 72px;
-      padding:0 var(--pad-x);
-      display:grid;
-      grid-template-columns:1fr;
-      gap:24px;
-    }
-    .pdf-embed object{
-      width:100%;
-      height:640px;
-      border:1px solid var(--line);
-      background:#000;
-    }
-    @media (prefers-color-scheme:light){
-      .pdf-embed object{
-        background:#F3F5F7;
-      }
-    }
-    @media (max-width:768px){
-      .pdf-embed object{
-        height:auto;
-        aspect-ratio:4/3;
-      }
-    }
-
-       /* ===== lightbox simple ===== */
     #xpan-lightbox{
-      position:fixed;
-      inset:0;
-      z-index:9999;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      background:rgba(5,7,10,.75);
-      backdrop-filter:blur(10px) saturate(120%);
-      -webkit-backdrop-filter:blur(10px) saturate(120%);
+      position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
+      background:rgba(5,7,10,.78); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%);
     }
-    #xpan-lightbox.open{
-      display:flex;
-    }
-    #xpan-lightbox .sheet{
-      max-width:96vw;
-      max-height:96vh;
-      border:1px solid var(--line);
-      background:#000;
-      padding:6px;
-      box-shadow:0 18px 45px rgba(0,0,0,.8);
-    }
-    #xpan-lightbox img{
-      display:block;
-      max-width:100%;
-      max-height:calc(96vh - 12px);
-      width:auto;
-      height:auto;
-      object-fit:contain;
-    }
-
-    /* botón cerrar */
+    #xpan-lightbox.open{ display:flex; }
+    #xpan-lightbox .sheet{ max-width:96vw; max-height:96vh; border:1px solid var(--line); background:#000; padding:6px; box-shadow:0 18px 45px rgba(0,0,0,.8); }
+    #xpan-lightbox img{ display:block; max-width:100%; max-height:calc(96vh - 12px); width:auto; height:auto; object-fit:contain; }
     #xpan-lightbox [data-lb-close]{
-      position:absolute;
-      top:16px;
-      right:18px;
-      border:1px solid var(--line);
-      background:color-mix(in oklab, var(--bg) 90%, #050608 10%);
-      color:var(--fg-dim);
-      font:600 11px/1 var(--mono);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      padding:6px 10px;
-      cursor:pointer;
+      position:absolute; top:16px; right:18px; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%);
+      color:var(--fg-dim); font:600 11px/1 var(--mono); text-transform:uppercase; letter-spacing:.14em; padding:6px 10px; cursor:pointer;
     }
-
-    /* botones prev / next */
     #xpan-lightbox .nav-btn{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      border:1px solid var(--line);
-      background:rgba(5,7,10,.78);
-      color:var(--fg-dim);
-      width:40px;
-      height:40px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      font:600 16px/1 var(--mono);
-      padding:0;
-      user-select:none;
+      position:absolute; top:50%; transform:translateY(-50%); border:1px solid var(--line); background:rgba(5,7,10,.78);
+      color:var(--fg-dim); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font:600 16px/1 var(--mono); padding:0; user-select:none;
     }
-    #xpan-lightbox .nav-btn[data-dir="prev"]{
-      left:18px;
-    }
-    #xpan-lightbox .nav-btn[data-dir="next"]{
-      right:18px;
+    #xpan-lightbox .nav-btn[data-dir="prev"]{ left:18px; }
+    #xpan-lightbox .nav-btn[data-dir="next"]{ right:18px; }
+
+    @media (max-width:980px){
+      .section-head{ grid-template-columns:1fr; gap:16px; }
+      .facts{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .fact:nth-child(2){ border-right:0; }
+      .fact:nth-child(-n+2){ border-bottom:1px solid var(--line); }
+      .media-card,.media-card.is-wide{ grid-column:span 6; }
+      .related-project-head{ grid-template-columns:1fr; }
+      .related-link{ width:fit-content; }
+      .related-media-card{ grid-column:span 6; }
+      .related-media-card.is-wide{ grid-column:span 12; }
     }
     @media (max-width:640px){
-      #xpan-lightbox .nav-btn{
-        width:32px;
-        height:32px;
-        font-size:14px;
-        left:10px;
-        right:10px;
-      }
-      #xpan-lightbox .nav-btn[data-dir="prev"]{
-        left:10px;
-      }
-      #xpan-lightbox .nav-btn[data-dir="next"]{
-        right:10px;
-      }
+      header{ top:10px; align-items:flex-start; height:auto; }
+      .stack{ gap:7px; flex-wrap:wrap; }
+      .chip{ font-size:10px; padding:7px 8px; }
+      header img{ width:44px; }
+      main{ padding-top:86px; }
+      .section{ padding:22px var(--pad-x) 56px; }
+      .section:first-of-type{ min-height:72vh; }
+      .facts{ grid-template-columns:1fr; }
+      .fact,.fact:nth-child(2){ border-right:0; border-bottom:1px solid var(--line); }
+      .fact:last-child{ border-bottom:0; }
+      .media-grid{ gap:10px; }
+      .media-card,.media-card.is-wide{ grid-column:span 12; }
+      .media-card img{ min-height:120px; max-height:none; }
+      .pdf-card object{ height:auto; aspect-ratio:4/3; }
+      .related-project-card{ padding:10px; }
+      #continuidad .related-media-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      #continuidad .related-media-card,
+      #continuidad .related-media-card.is-wide{ grid-column:auto; }
+      #continuidad .related-media-card img{ min-height:96px; max-height:none; }
+      #xpan-lightbox .nav-btn{ width:32px; height:32px; font-size:14px; }
+      #xpan-lightbox .nav-btn[data-dir="prev"]{ left:10px; }
+      #xpan-lightbox .nav-btn[data-dir="next"]{ right:10px; }
     }
-
-
-
-    @media (max-width:640px){
-      .access-panel{
-        max-width:none;
-      }
-      header{
-        top:10px;
-      }
-    }
+    @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
   </style>
-    <script src="/assets/js/media-proxy.js" defer></script>
+  <script src="/assets/js/media-proxy.js" defer></script>
 </head>
-<body class="locked">
-  <!-- capa de acceso / password gate -->
-  <div id="access-shell" aria-label="secure access ep.2">
-    <section class="access-panel">
-      <header class="access-header">
-        <div class="access-id">
-          <div class="access-tagline">xpan / restricted brief</div>
-          <div class="access-title">ep.2 / acceso a documento técnico</div>
-        </div>
-        <div class="access-badge" id="access-badge">
-          <span class="access-badge-dot"></span>
-          <span>channel locked</span>
-        </div>
-      </header>
-      <div class="access-body">
-        <p>este documento está diseñado como ficha técnica extendida para ep.2. si recibiste este enlace, también recibiste una clave de acceso única.</p>
-
-        <form id="access-form" class="access-form" autocomplete="off" novalidate>
-          <div class="access-row">
-            <input
-              id="access-input"
-              class="access-input"
-              type="password"
-              inputmode="text"
-              autocomplete="current-password"
-              placeholder="ingresa la clave de acceso"
-              spellcheck="false"
-              autocapitalize="off"
-              aria-label="clave de acceso ep.2"
-              required
-            />
-            <button type="submit" class="access-btn">
-              <span>enter</span>
-            </button>
-          </div>
-          <div class="access-meta">
-            <div class="access-fingerprint">ep.2 // secure channel v1.0</div>
-          </div>
-        </form>
-
-        <div id="access-status" class="access-log" aria-live="polite">
-          [boot] standby / waiting for access key
-        </div>
-      </div>
-    </section>
-  </div>
-
+<body>
   <header>
     <div class="stack">
-      <a href="https://xpan.earth" target="_blank" rel="noopener">
-        <img src="xpan.svg" alt="xpan" fetchpriority="high"/>
-      </a>
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
       <div class="chip">xpan.ep.2</div>
     </div>
-    <div class="stack" id="lang-switch">
-      <div class="chip lang-active" data-lang-btn="es">es</div>
-      <div class="chip" data-lang-btn="en">en</div>
-      <div class="chip" data-lang-btn="fr">fr</div>
-      <div class="chip" data-lang-btn="jp">jp</div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
     </div>
   </header>
 
-  <!-- imagen central + ruido -->
   <div class="bg-hero" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
-
-  <!-- fondo -->
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="crosshair" aria-hidden="true"></div>
 
-
   <main>
-    <!-- sección descriptiva multilenguaje -->
-    <section class="section">
-      <div class="plate">
-        <span>xpan.ep.2 / [espacio público dos]</span>
-        <span>instrumento modular de activación</span>
-      </div>
-<div class="neg-shell">
-      <!-- ES -->
-      <div class="description lang-block active" data-lang-block="es">
-        <h2>descripción</h2>
-        <p>el sistema ep.2 es un dispositivo espacial ajustable en su acomodo, geografía, uso y acoplamiento. su estructura continúa la investigación de xpan sobre sistemas espaciales y deriva directamente del sistema de poros, central en proyectos como xpan.ep.1, seevs.12 y espacio.gdl.</p>
-
-        <p>el sistema de poros se compone de una matriz de placas de acero perforadas con aperturas centrales que permiten acoplar dispositivos desarrollados por xpan de forma modular y variable. estos dispositivos incluyen sistemas de sonido, bocinas, micrófonos, amplificadores, herramientas audiovisuales, cámaras, pantallas, sensores, objetos funcionales de diseño y subestructuras auxiliares para soportar otros instrumentos.</p>
-
-        <p>el uso dentro de esos dispositivos como parte del sistema lo convierte directamente en un instrumento que integra sonido, archivo, investigación y arquitectura dentro del mismo cuerpo, siendo pieza, arquitectura y sistema desplegado a nuevos formatos y geografías.</p>
-
-        <p>el ep.2 existe como una iteración avanzada de los sistemas espaciales de xpan, consolida desarrollos previos y abre una nueva capa de investigación espacial. su lenguaje material, basado en paneles de resina translúcida con iluminación integrada y barras estructurales de aluminio, habilita nuevas maneras de habitar, activar y componer en torno al sistema.</p>
-
-        <h2>capacidades del sistema</h2>
-        <p>el objetivo principal es ser un instrumento metabólico, donde cada activación transforma al sistema y amplía sus capacidades por medio del desarrollo de nuevos dispositivos a acoplar, diferentes escalas y acomodos, y el acumulamiento de experiencia material, sonora, espacial y cognitiva.</p>
-
-        <ol>
-          <li><strong>evolución continua</strong><br>
-            cada activación genera tanto nuevos dispositivos como nuevas configuraciones espaciales, pero también nuevas formas de relación con el contexto al ser un sistema que se activa de manera versátil en diferentes geografías. el ep.2 se enriquece de cada uso y construye constantemente un archivo material tangible y utilizable de activaciones.
-          </li>
-          <li><strong>reconfiguración espacial precisa</strong><br>
-            el sistema se ajusta en longitud, escala, densidad y orientación, desde un solo núcleo compacto a secuencias repetidas en espacios de mayor tamaño. de esta manera permite pensar al sistema como un instrumento de composición espacial dentro de un rango amplio.
-          </li>
-          <li><strong>acoplamiento multitecnológico</strong><br>
-            el sistema admite la integración de luz, sonido, cámaras, pantallas, sensores, objetos funcionales y soportes para otros instrumentos. cada nuevo dispositivo es fijado con facilidad a la estructura, y esto lo convierte en un instrumento con una escala prácticamente infinita.
-          </li>
-          <li><strong>movilidad geográfica</strong><br>
-            el sistema se desmonta en elementos y viaja en volumen contenido. se reinstala de la misma manera y esta movilidad permite generar un intercambio constante entre geografías y contextos.
-          </li>
-          <li><strong>lectura contextual y ajuste preciso</strong><br>
-            el ep.2 se utiliza para estudiar y comprender cada espacio donde se activa. las decisiones sobre densidad, opacidad, dirección de la luz y distribución de los elementos surgen de una lectura específica del lugar.
-          </li>
-        </ol>
-
-        <h2>modos de activación</h2>
-        <p>el ep.2 se activa siempre desde la creación y la experimentación. su función principal es producir piezas y procesos.</p>
-
-        <ol>
-          <li><strong>escucha expandida y composición sonora multicanal</strong><br>
-            el sistema funciona como instrumento de performance, instalación y composición sonora gracias al acoplamiento de diferentes instrumentos, así como sistemas de sonido multicanal que permiten la espacialización y trayectoria del sonido de manera escalable alrededor del sistema.
-          </li>
-          <li><strong>instrumento de retrabajo de archivo</strong><br>
-            el sistema se utiliza de manera versátil para generar nuevas lecturas y articulaciones de archivos tanto de xpan como de los contextos específicos donde se activa. registros visuales, textuales o sonoros se reinyectan en el espacio mediante bocinas, pantallas y dispositivos acoplados, permitiendo una nueva relación y comunicación con este material.
-          </li>
-          <li><strong>laboratorio espacial y material</strong><br>
-            banco de pruebas para nuevos dispositivos, materiales, subestructuras y formas de acoplamiento espacial. cada activación puede permitir ensayos y composiciones arquitectónicas/espaciales, desarrollo de nuevos dispositivos y piezas que respondan a contextos y/o necesidades específicas. la estructura se convierte en plataforma de desarrollo continuo para la investigación espacial de xpan.
-          </li>
-        </ol>
-
-        <h2>requisitos técnicos</h2>
-        <p>xpan.ep.2 está diseñado para operar con condiciones técnicas accesibles, básicas y adaptarse a diferentes tipos de espacio.</p>
-
-        <ol>
-          <li><strong>espacio</strong><br>
-            el sistema se ajusta a diferentes volúmenes con facilidad bajo la densidad de módulos incluidos. los módulos se apoyan sobre puntos regulables que permiten nivelar sobre pisos irregulares y distintos materiales. la altura mínima recomendada es de 2.10 m.
-          </li>
-          <li><strong>energía</strong><br>
-            consumo eléctrico bajo; un enchufe doméstico estándar basta para alimentar la iluminación y amplificación para el sistema de sonido. la configuración eléctrica se adapta a rangos de corriente habituales y a diferentes estándares según ciudad.
-          </li>
-          <li><strong>montaje y operación</strong><br>
-            el montaje base puede realizarse con dos personas en un rango aproximado de dos horas. las herramientas necesarias son mínimas y se limitan a llaves, tornillería estándar y elementos básicos de sujeción.
-          </li>
-          <li><strong>entorno y condiciones de uso</strong><br>
-            el sistema está pensado principalmente para interiores o espacios controlados. la propia estructura contribuye a afinar las condiciones acústicas y lumínicas del entorno mediante la orientación de paneles, densidad de módulos y disposición de la luz.
-          </li>
-        </ol>
-
-        <p>estos requisitos permiten que ep.2 se despliegue como pieza, instrumento y dispositivo cultural en múltiples contextos, sin depender de una infraestructura técnica compleja y manteniendo la coherencia con su lógica modular y nómada.</p>
-      </div>
-
-      <!-- EN -->
-      <div class="description lang-block" data-lang-block="en">
-        <h2>description</h2>
-        <p>the ep.2 system is a spatial device adjustable in its arrangement, geography, use, and coupling. its structure continues xpan&rsquo;s investigation into spatial systems and derives directly from the poros system, central in projects such as xpan.ep.1, seevs.12, and espacio.gdl.</p>
-
-        <p>the poros system is composed of a matrix of perforated steel plates with central openings that allow devices developed by xpan to be coupled in a modular and variable way. these devices include sound systems, speakers, microphones, amplifiers, audiovisual tools, cameras, screens, sensors, functional design objects, and auxiliary substructures supporting other instruments.</p>
-
-        <p>the incorporation of these devices as part of the system turns it into an instrument that integrates sound, archive, research, and architecture within the same body, operating at once as piece, architecture, and system deployed into new formats and geographies.</p>
-
-        <p>ep.2 exists as an advanced iteration of xpan&rsquo;s spatial systems, consolidating previous developments and opening a new layer of spatial research. its material language &mdash; based on translucent resin panels with integrated lighting and aluminum structural bars &mdash; enables new ways of inhabiting, activating, and composing around the system.</p>
-
-        <h2>system capabilities</h2>
-        <p>the main objective is to operate as a metabolic instrument, where each activation transforms the system and expands its capacities through the development of new devices to couple, different scales and configurations, and the accumulation of material, sonic, spatial, and cognitive experience.</p>
-
-        <ol>
-          <li><strong>continuous evolution</strong><br>
-            each activation generates new devices and spatial configurations, as well as new forms of relation to context, as the system activates in versatile ways across different geographies. ep.2 grows with each use and continuously constructs a tangible and usable material archive of activations.
-          </li>
-          <li><strong>precise spatial reconfiguration</strong><br>
-            the system adjusts in length, scale, density, and orientation, from a compact single core to repeated sequences in larger spaces. this allows the system to function as an instrument of spatial composition across a wide range.
-          </li>
-          <li><strong>multitechnological coupling</strong><br>
-            the system integrates light, sound, cameras, screens, sensors, functional objects, and supports for other instruments. each new device is easily fixed to the structure, turning it into an instrument with virtually infinite scale.
-          </li>
-          <li><strong>geographical mobility</strong><br>
-            the system can be disassembled into elements and transported in contained volume. reinstalling follows the same logic, enabling constant exchange across geographies and contexts.
-          </li>
-          <li><strong>contextual reading and precise adjustment</strong><br>
-            ep.2 analyzes and adapts to each space where it is activated. decisions regarding density, opacity, light direction, and distribution of elements emerge from a specific reading of the site.
-          </li>
-        </ol>
-
-        <h2>activation modes</h2>
-        <p>ep.2 always operates from creation and experimentation. its primary function is to generate pieces and processes.</p>
-
-        <ol>
-          <li><strong>expanded listening and multichannel sound composition</strong><br>
-            the system works as an instrument for performance, installation, and sound composition through the coupling of various instruments, as well as multichannel sound systems that enable spatialization and sonic trajectories in scalable ways around the system.
-          </li>
-          <li><strong>archive reworking instrument</strong><br>
-            the system is used in a versatile manner to generate new readings and articulations of archives from both xpan and the specific contexts where it activates. visual, textual, or sonic records are re-injected into space through speakers, screens, and coupled devices, creating new relationships and communication with this material.
-          </li>
-          <li><strong>spatial and material laboratory</strong><br>
-            a testing ground for new devices, materials, substructures, and spatial coupling methods. each activation enables architectural/spatial studies, the development of new devices, and pieces that respond to specific contexts or needs. the structure becomes a platform for continuous development of xpan&rsquo;s spatial research.
-          </li>
-        </ol>
-
-        <h2>technical requirements</h2>
-        <p>xpan.ep.2 is designed to operate with accessible technical conditions and adapt to different types of spaces.</p>
-
-        <ol>
-          <li><strong>space</strong><br>
-            the system adapts easily to different volumes through the density of included modules. modules rest on adjustable points that level on irregular floors and varied materials. recommended minimum height: 2.10 m.
-          </li>
-          <li><strong>energy</strong><br>
-            low electrical consumption; a standard domestic outlet is sufficient to power lighting and sound amplification. electrical configuration adapts to common voltage ranges and varying standards depending on city.
-          </li>
-          <li><strong>assembly and operation</strong><br>
-            basic assembly can be carried out by two people in approximately two hours. required tools are minimal: wrenches, standard hardware, and basic fastening elements.
-          </li>
-          <li><strong>environment and usage conditions</strong><br>
-            the system is primarily intended for interiors or controlled spaces. its structure helps refine acoustic and lighting conditions through panel orientation, module density, and light distribution.
-          </li>
-        </ol>
-
-        <p>these requirements allow ep.2 to be deployed as a piece, instrument, and cultural device across multiple contexts while maintaining coherence with its modular and nomadic logic.</p>
-      </div>
-
-      <!-- FR -->
-      <div class="description lang-block" data-lang-block="fr">
-        <h2>description</h2>
-        <p>le système ep.2 est un dispositif spatial ajustable dans son agencement, sa géographie, son usage et son couplage. sa structure prolonge la recherche de xpan sur les systèmes spatiaux et dérive directement du système de poros, central dans des projets tels que xpan.ep.1, seevs.12 et espacio.gdl.</p>
-
-        <p>le système de poros se compose d’une matrice de plaques d’acier perforées avec des ouvertures centrales permettant d’adapter des dispositifs développés par xpan de manière modulaire et variable. ces dispositifs incluent des systèmes sonores, haut-parleurs, microphones, amplificateurs, outils audiovisuels, caméras, écrans, capteurs, objets fonctionnels de design et sous-structures auxiliaires.</p>
-
-        <p>l’usage de ces dispositifs au sein du système le transforme en un instrument intégrant son, archive, recherche et architecture dans un même corps, opérant simultanément comme pièce, architecture et système déployé dans de nouveaux formats et géographies.</p>
-
-        <p>ep.2 constitue une itération avancée des systèmes spatiaux de xpan, consolidant des développements antérieurs et ouvrant une nouvelle couche de recherche spatiale. son langage matériel — panneaux de résine translucide avec éclairage intégré et barres structurelles en aluminium — permet de nouvelles manières d’habiter, d’activer et de composer autour du système.</p>
-
-        <h2>capacités du système</h2>
-        <p>l’objectif principal est d’être un instrument métabolique où chaque activation transforme le système et élargit ses capacités grâce au développement de nouveaux dispositifs, à différentes échelles et configurations, ainsi qu’à l’accumulation d’expérience matérielle, sonore, spatiale et cognitive.</p>
-
-        <ol>
-          <li><strong>évolution continue</strong><br>
-            chaque activation génère de nouveaux dispositifs et configurations spatiales, ainsi que de nouvelles relations au contexte, le système s’activant de manière polyvalente dans différentes géographies. ep.2 se nourrit de chaque usage et construit un archive matérielle tangible et exploitable.
-          </li>
-          <li><strong>reconfiguration spatiale précise</strong><br>
-            le système s’ajuste en longueur, échelle, densité et orientation, allant d’un noyau compact à des séquences répétées dans des espaces plus vastes. il permet ainsi une composition spatiale précise et adaptable.
-          </li>
-          <li><strong>couplage multitechnologique</strong><br>
-            le système permet l’intégration de lumière, son, caméras, écrans, capteurs, objets fonctionnels et supports pour autres instruments. chaque dispositif se fixe facilement, donnant au système une échelle pratiquement infinie.
-          </li>
-          <li><strong>mobilité géographique</strong><br>
-            le système se démonte en éléments transportables et se réinstalle selon la même logique, permettant un échange constant entre géographies et contextes.
-          </li>
-          <li><strong>lecture contextuelle et ajustement précis</strong><br>
-            ep.2 sert à analyser et comprendre chaque espace où il est activé. les décisions concernant densité, opacité, orientation de la lumière et distribution des éléments proviennent d’une lecture spécifique du lieu.
-          </li>
-        </ol>
-
-        <h2>modes d’activation</h2>
-        <p>ep.2 s’active toujours à partir de la création et de l’expérimentation. sa fonction principale est de produire pièces et processus.</p>
-
-        <ol>
-          <li><strong>écoute étendue et composition sonore multicanale</strong><br>
-            le système fonctionne comme instrument de performance, installation et composition sonore grâce au couplage de divers instruments, ainsi qu’à des systèmes multicanaux permettant des trajectoires sonores spatialisées.
-          </li>
-          <li><strong>instrument de retravail d’archive</strong><br>
-            il permet de nouvelles lectures et articulations d’archives de xpan ou des contextes locaux. les registres visuels, textuels ou sonores sont réinjectés dans l’espace via haut-parleurs, écrans et dispositifs couplés.
-          </li>
-          <li><strong>laboratoire spatial et matériel</strong><br>
-            terrain d’essai pour dispositifs, matériaux, sous-structures et formes d’assemblage spatial. chaque activation permet études architecturales/spatiales, développement de nouveaux dispositifs et pièces adaptées à des contextes précis.
-          </li>
-        </ol>
-
-        <h2>exigences techniques</h2>
-        <p>xpan.ep.2 est conçu pour fonctionner dans des conditions techniques accessibles et s’adapter à différents types d’espaces.</p>
-
-        <ol>
-          <li><strong>espace</strong><br>
-            adaptation facile à différents volumes grâce à la densité des modules. points réglables pour niveler sur sols irréguliers. hauteur minimale recommandée : 2,10 m.
-          </li>
-          <li><strong>énergie</strong><br>
-            faible consommation ; une prise domestique suffit pour l’éclairage et l’amplification. compatibilité avec différents standards selon ville.
-          </li>
-          <li><strong>montage et opération</strong><br>
-            montage en environ deux heures par deux personnes, avec outils minimaux : clés, visserie standard, éléments de fixation.
-          </li>
-          <li><strong>environnement et conditions d’usage</strong><br>
-            destiné principalement aux intérieurs ou espaces contrôlés, le système améliore acoustique et lumière via orientation des panneaux, densité des modules et répartition lumineuse.
-          </li>
-        </ol>
-
-        <p>ces exigences permettent à ep.2 de se déployer comme pièce, instrument et dispositif culturel dans divers contextes, en conservant une logique modulaire et nomade.</p>
-      </div>
-
-      <!-- JP -->
-      <div class="description lang-block" data-lang-block="jp">
-        <h2>概要</h2>
-        <p>ep.2 システムは、配置・地理・用途・接続方法に応じて調整可能な空間デバイスである。その構造は、xpan が継続して行う空間システムの研究を発展させたものであり、xpan.ep.1、seevs.12、espacio.gdl などの中心となる「poros システム」から直接派生している。</p>
-
-        <p>poros システムは、中央開口を備えた穿孔鋼板のマトリクスで構成され、xpan によって開発されたデバイスを可変かつモジュール式に接続できる。これには、音響システム、スピーカー、マイク、アンプ、映像機器、カメラ、スクリーン、センサー、機能的なデザインオブジェ、補助的なサブストラクチャーなどが含まれる。</p>
-
-        <p>これらのデバイスをシステム内部で使用することで、音・アーカイブ・リサーチ・建築を同一の身体に統合する「楽器」として機能し、新たな形式や地理へ展開される作品・建築・システムとなる。</p>
-
-        <p>ep.2 は、xpan の空間システムの高度な反復形態として存在し、これまでの開発を統合し、新たな空間研究の層を拓く。樹脂パネル（内蔵照明付き）とアルミ構造バーを中心とした素材言語は、システムを中心に新たな居住・活性・構成方法を可能にする。</p>
-
-        <h2>システムの能力</h2>
-        <p>本システムの主目的は「メタボリックな楽器」として機能することであり、各アクティベーションがシステムを変容させ、新しいデバイス、スケール、構成、そして物質的・音響的・空間的・認知的経験を蓄積しながら能力を拡張する。</p>
-
-        <ol>
-          <li><strong>連続的な進化</strong><br>
-            各アクティベーションは新しいデバイスと空間構成を生み、さらに多様な地理における文脈との新しい関係性を形成する。ep.2 は使用のたびに成長し、活性化の具体的で活用可能なアーカイブを構築する。
-          </li>
-          <li><strong>精密な空間再構成</strong><br>
-            システムは長さ・スケール・密度・方向を調整でき、コンパクトな単一核から大規模空間での反復配置まで対応する。これにより、幅広い範囲で精密な空間構成が可能となる。
-          </li>
-          <li><strong>マルチテクノロジー接続</strong><br>
-            照明・音響・カメラ・スクリーン・センサー・機能オブジェ・他機器の支持構造などを統合できる。各デバイスは容易に接続可能で、システムは事実上無限のスケールを持つ楽器となる。
-          </li>
-          <li><strong>地理的モビリティ</strong><br>
-            システムは分解してコンパクトに輸送でき、同様の手順で再設置できる。この可搬性は、地理や文脈のあいだで継続的な交換を可能にする。
-          </li>
-          <li><strong>文脈読解と精密調整</strong><br>
-            ep.2 は設置空間を読み取り、その特性に応じて密度・不透明度・光の方向・要素の分布を決定する。
-          </li>
-        </ol>
-
-        <h2>活性化モード</h2>
-        <p>ep.2 は常に創造と実験から作動し、その主要な機能は作品とプロセスを生成することである。</p>
-
-        <ol>
-          <li><strong>拡張されたリスニングとマルチチャンネル音響構成</strong><br>
-            多様な機器との接続、マルチチャンネル音響システムとの組み合わせにより、パフォーマンス・インスタレーション・音響作曲のための楽器として機能し、音の軌跡と空間化を柔軟に構成できる。
-          </li>
-          <li><strong>アーカイブ再構成楽器</strong><br>
-            xpan のアーカイブや設置文脈の資料（映像・文章・音響）を再注入し、新しい読みと関係を生成する。スピーカー、スクリーン、接続デバイスを通じて空間に再展開される。
-          </li>
-          <li><strong>空間・素材実験ラボ</strong><br>
-            新しいデバイス、素材、サブストラクチャー、空間接続方法の試験場として機能する。各アクティベーションは空間的研究、装置開発、文脈に応じた作品生成を可能にする。
-          </li>
-        </ol>
-
-        <h2>技術要件</h2>
-        <p>xpan.ep.2 は、基本的でアクセスしやすい技術条件で運用でき、様々な空間に適応するよう設計されている。</p>
-
-        <ol>
-          <li><strong>空間</strong><br>
-            モジュールの密度に応じて多様な体積に適応でき、調整脚により不整地でも水平を確保できる。推奨最低天井高は 2.10 m。
-          </li>
-          <li><strong>電源</strong><br>
-            低消費電力で、家庭用コンセント 1 口で照明と音響アンプを駆動できる。都市ごとの電源規格に対応可能。
-          </li>
-          <li><strong>設置と操作</strong><br>
-            基本設置は 2 名で約 2 時間。必要な工具は最小限で、レンチ、標準ボルト、基本的な固定具のみ。
-          </li>
-          <li><strong>環境と使用条件</strong><br>
-            主に屋内または制御された空間向け。パネル配置、モジュール密度、光分布により音響・光環境の調整も可能となる。
-          </li>
-        </ol>
-
-        <p>これらにより ep.2 は、複雑な技術インフラに依存せず、モジュール性とノマド性を維持しながら、多様な文脈で作品／楽器／文化デバイスとして展開できる。</p>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate"><span data-i18n="plate.project">xpan.ep.2 / sistema de captación y despliegue</span><span data-i18n="plate.location">ciudad de méxico / 2026</span></div>
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros / captación y despliegue</p>
+          <h1>xpan.ep.2</h1>
+          <p class="subtitle">sistema modular para captar, leer y desplegar información en espacio público.</p>
+          <div class="intro-text">
+            <p>xpan.ep.2 es una infraestructura modular desarrollada a partir del sistema de poros de xpan. articula placas perforadas, barras, soportes, luminarias, superficies translúcidas y puntos técnicos para operar como estructura, soporte de medios y dispositivo de lectura espacial.</p>
+            <p>su función principal es establecer un ciclo entre sitio, registro y despliegue: captar información de un contexto público, procesarla como material espacial y presentarla en otra configuración. en 2026 fue producido y activado en ciudad de méxico mediante dos operaciones consecutivas.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system / capture and deployment</p>
+          <h1>xpan.ep.2</h1>
+          <p class="subtitle">modular system for capturing, reading, and deploying information in public space.</p>
+          <div class="intro-text">
+            <p>xpan.ep.2 is a modular infrastructure developed from xpan’s poros system. it articulates perforated plates, bars, supports, lighting, translucent surfaces, and technical points to operate as structure, media support, and spatial reading device.</p>
+            <p>its main function is to establish a cycle between site, record, and deployment: to capture information from a public context, process it as spatial material, and present it in another configuration. in 2026 it was produced and activated in mexico city through two consecutive operations.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système de poros / captation et déploiement</p>
+          <h1>xpan.ep.2</h1>
+          <p class="subtitle">système modulaire pour capter, lire et déployer l’information dans l’espace public.</p>
+          <div class="intro-text">
+            <p>xpan.ep.2 est une infrastructure modulaire développée à partir du système de poros de xpan. elle articule plaques perforées, barres, supports, luminaires, surfaces translucides et points techniques pour opérer comme structure, support de médias et dispositif de lecture spatiale.</p>
+            <p>sa fonction principale consiste à établir un cycle entre site, enregistrement et déploiement : capter l’information d’un contexte public, la traiter comme matière spatiale et la présenter dans une autre configuration. en 2026, le système a été produit et activé à mexico à travers deux opérations consécutives.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros system / 情報取得と展開</p>
+          <h1>xpan.ep.2</h1>
+          <p class="subtitle">公共空間で情報を取得し、読み取り、展開するためのモジュール式システム。</p>
+          <div class="intro-text">
+            <p>xpan.ep.2 は、xpan の poros system から開発されたモジュール式インフラである。穿孔プレート、バー、支持部材、照明、半透明の面、技術ポイントを組み合わせ、構造体、メディア支持体、空間を読み取る装置として機能する。</p>
+            <p>主な機能は、場所、記録、展開をつなぐ運用サイクルを構成することにある。公共空間で情報を取得し、それを空間的な素材として再構成し、別の配置で提示する。2026年、メキシコシティで2つの連続した操作として制作・起動された。</p>
+          </div>
+        </div>
+        <nav class="anchor-nav" aria-label="page sections" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#despliegues" data-i18n="nav.deployments">despliegues del sistema</a>
+          <a href="#activacion-001" data-i18n="nav.activation001">activación 001</a>
+          <a href="#activacion-002" data-i18n="nav.activation002">activación 002</a>
+          <a href="#documentos" data-i18n="nav.documents">documentos técnicos</a>
+        </nav>
       </div>
     </section>
 
-        <!-- galería y planos embebidos -->
-    <section class="section section-media">
-      <div class="plate">
-        <span>ep.2 / media</span>
-        <span>galería, planos, archivo visual</span>
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+          <p class="section-meta" data-i18n="section.system.meta">estructura / poros / dispositivos / registro / despliegue</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>ep.2 funciona como una unidad de operación espacial. cada poro actúa como punto de acoplamiento para barras, cajas técnicas, iluminación, pantallas, cámaras, objetos de soporte y otros dispositivos. la matriz permite ajustar altura, posición, orientación y densidad, manteniendo una misma lógica estructural entre montaje, registro, lectura y despliegue.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>ep.2 functions as a spatial operation unit. each poro acts as an attachment point for bars, technical boxes, lighting, screens, cameras, support objects, and other devices. the matrix allows height, position, orientation, and density to be adjusted while keeping the same structural logic across assembly, recording, reading, and deployment.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>ep.2 fonctionne comme une unité d’opération spatiale. chaque poro agit comme point d’accouplement pour barres, boîtiers techniques, éclairage, écrans, caméras, objets de support et autres dispositifs. la matrice permet d’ajuster hauteur, position, orientation et densité, en maintenant une même logique structurelle entre montage, enregistrement, lecture et déploiement.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>ep.2 は空間運用ユニットとして機能する。各 poro は、バー、技術ボックス、照明、スクリーン、カメラ、支持用オブジェクト、その他のデバイスを接続するためのポイントになる。マトリクスにより、高さ、位置、向き、密度を調整しながら、組立、記録、読解、展開を同じ構造ロジックで扱うことができる。</p></div>
+        </div>
       </div>
-
-      <!-- galería principal + secundaria (todas las fotos) -->
-      <div class="gallery">
-
-        <!-- registros principales -->
-        <img
-          alt="ep.2 — registro principal 01"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736746/original_05d855da10f6a7c07cf8beebab47557b.jpg">
-        <img
-          alt="ep.2 — registro principal 02"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736747/original_2aa59a131afba0b5476aad8ef036ccf2.jpg">
-        <img
-          alt="ep.2 — registro principal 03"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736748/original_f9cef195689ecfff583a7c770545f316.jpg">
-        <img
-          alt="ep.2 — registro principal 04"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736749/original_a6ce92c7f714c80015bf9ebb47b3a0ed.jpg">
-        <img
-          alt="ep.2 — registro principal 07"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736752/original_1087ac316f15cc56e5e56d5b661b6f39.jpg">
-        <img 
-          alt="ep.2 — registro principal 05"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736750/original_bbf8738c2e71ea38b2024829fdcad976.jpg">
-        <img
-          alt="ep.2 — registro principal 06"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736751/original_a162acea9471403bb83929bc07ed86c1.jpg">
-
-
-        <!-- galería secundaria -->
-        <img
-          alt="ep.2 — secundaria 01"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736724/original_7746037b08006c69613b205b90298a24.jpg">
-        <img
-          alt="ep.2 — secundaria 02"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736725/original_60b6bca078e35c61e963725d17746d09.jpg">
-        <img
-          alt="ep.2 — secundaria 03"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736726/original_1844be37f516b6251fcffaf6ae904281.jpg">
-        <img
-          alt="ep.2 — secundaria 04"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736727/original_8a15b55d812c70a82734de7f6419be6b.jpg">
-        <img
-          alt="ep.2 — secundaria 05"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736728/original_ce21e2b7586baf13995d8700e3cdf26f.jpg">
-        <img
-          alt="ep.2 — secundaria 06"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736729/original_391ef5cb18feaf26850fd9618710d0b7.jpg">
-        <img
-          alt="ep.2 — secundaria 07"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736730/original_a0774eb86356dadc2fd187bbd90d78c5.jpg">
-        <img
-          alt="ep.2 — secundaria 08"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736731/original_6b6e7eb2e6df066c82bc0324c5513426.jpg">
-        <img
-          alt="ep.2 — secundaria 09"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736732/original_58db6d04cbb3c257667fac1686937b6e.jpg">
-        <img
-          alt="ep.2 — secundaria 10"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736733/original_868337c237c6bf58d4f1a33fbbfc3926.jpg">
-        <img
-          alt="ep.2 — secundaria 11"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736734/original_22589589c9e4f3ca48c11c970cd8c679.jpg">
-        <img
-          alt="ep.2 — secundaria 12"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736735/original_7fdca8bc546795812c983633777290d6.jpg">
-        <img
-          alt="ep.2 — secundaria 13"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736736/original_4ce7ee906b18c5abe95e73ec33c94b26.jpg">
-        <img
-          alt="ep.2 — secundaria 14"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736737/original_88098481326328cc00ad90ae4db773af.jpg">
-        <img
-          alt="ep.2 — secundaria 15"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736738/original_5047bd9aec3a1d50079bd8540dcc5daf.jpg">
-        <img
-          alt="ep.2 — secundaria 16"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736739/original_331b008145d842de8036d9d1c890431d.jpg">
-        <img
-          alt="ep.2 — secundaria 17"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736740/original_693f05d4e8f0d0ac91c4fe6aca7850a6.jpg">
-        <img
-          alt="ep.2 — secundaria 18"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736741/original_d25438e2999d6d518a0b415f0df51e88.jpg">
-        <img
-          alt="ep.2 — secundaria 19"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41736742/original_f97045ed71478d23b15d27f27450eaed.jpg">
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.base.label">base</b><span data-i18n="fact.base.value">sistema de poros de xpan</span></div>
+        <div class="fact"><b data-i18n="fact.type.label">tipo</b><span data-i18n="fact.type.value">infraestructura modular</span></div>
+        <div class="fact"><b data-i18n="fact.operation.label">operación</b><span data-i18n="fact.operation.value">captación / lectura / despliegue</span></div>
+        <div class="fact"><b data-i18n="fact.status.label">estado</b><span data-i18n="fact.status.value">producido / activado / publicado</span></div>
       </div>
-
-      <!-- planos técnicos embebidos -->
-      <div class="pdf-embed">
-        <object
-          type="application/pdf"
-          aria-label="ep.2 — plano 01"
-          data="https://attachments.are.na/41736756/1b59980d457c7b4e9a03ce1fe857af33.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
-        </object>
-
-        <object
-          type="application/pdf"
-          aria-label="ep.2 — plano 02"
-          data="https://attachments.are.na/41736757/a71669119166f458f7e782800d75ad93.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
-        </object>
-
-        <object
-          type="application/pdf"
-          aria-label="ep.2 — plano 03"
-          data="https://attachments.are.na/41736758/1214c0ebf452c86412936ac7f5d02860.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
-        </object>
-
-        <object
-          type="application/pdf"
-          aria-label="ep.2 — plano 04"
-          data="https://attachments.are.na/41736759/7413b6ad0ddbfe27ca99e4576e4d31e6.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
-        </object>
-
-        <object
-          type="application/pdf"
-          aria-label="ep.2 — plano 05"
-          data="https://attachments.are.na/41736760/92126b645c2a45640a2c746002cd9f93.pdf#page=1&view=FitH&toolbar=1&navpanes=0">
-        </object>
-      </div>
-
-            </div> <!-- .pdf-embed -->
-
-      <!-- sistema de poros aplicado en proyectos previos -->
-      <div class="plate">
-        <span>sistema de poros / aplicaciones previas</span>
-        <span>c&c.s.e.e.v.s.12 / espacio.gdl / xpan.ep.1</span>
-      </div>
-
-      <div class="gallery gallery-poros-prev">
-        <!-- c&c.s.e.e.v.s.12 -->
-        <img
-          alt="sistema de poros — c&c.s.e.e.v.s.12 — 01"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067327/original_2d945dcb2f2e4785a459cdd870c0f826.jpg?1762984942?bc=0">
-        <img
-          alt="sistema de poros — c&c.s.e.e.v.s.12 — 02"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067318/original_97a2fd7f1ec77dddfdb5920a3997e164.jpg?1762984924?bc=0">
-        <img
-          alt="sistema de poros — c&c.s.e.e.v.s.12 — 03"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067313/original_50093b09d120e9d9081f6317b5c230dd.jpg?1762984915?bc=0">
-        <img
-          alt="sistema de poros — c&c.s.e.e.v.s.12 — 04"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067293/original_484d059516d28bfb721e804ed1f69732.jpg?1762984883?bc=0">
-        <img
-          alt="sistema de poros — c&c.s.e.e.v.s.12 — 05"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067315/original_f0dd3fc69706824cda9c2e0eec47fb2d.jpg?1762984918?bc=0">
-
-        <!-- espacio.gdl -->
-        <img
-          alt="sistema de poros — espacio.gdl — 01"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732511/original_7ccd99e5ea4bc9bf2cb8cd8850d3833e.jpg?1751080334?bc=0">
-        <img
-          alt="sistema de poros — espacio.gdl — 02"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732505/original_f5aa5f18eb1a06fe1cddae66dbebcb9e.jpg?1751080320?bc=0">
-        <img
-          alt="sistema de poros — espacio.gdl — 03"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732497/original_4cd18fc3ebd161d2b5daab598f8761d0.jpg?1751080316?bc=0">
-        <img
-          alt="sistema de poros — espacio.gdl — 04"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732506/original_11a6284cd70e4a16b896291e1472f492.jpg?1751080319?bc=0">
-        <img
-          alt="sistema de poros — espacio.gdl — 05"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732479/original_1b11c5ecd3cb8bd055e1a1ed41a3a3d5.jpg?1751080237?bc=0">
-
-        <!-- xpan.ep.1 -->
-        <img
-          alt="sistema de poros — xpan.ep.1 — 01"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792457/original_295a9c4e13123d8dd00799089cfb85ba.jpg?1747625330?bc=0">
-        <img
-          alt="sistema de poros — xpan.ep.1 — 02"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794115/original_f257566a80a28f3015afb3f16e949c2b.jpg?1747633361?bc=0">
-        <img
-          alt="sistema de poros — xpan.ep.1 — 03"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339?bc=0">
-        <img
-          alt="sistema de poros — xpan.ep.1 — 04"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341?bc=0">
-        <img
-          alt="sistema de poros — xpan.ep.1 — 05"
-          data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794113/original_bdc9522862d81b4ea5c2a7d9fb8a1fd6.jpg?1747633360?bc=0">
-      </div>
-
-      <!-- ejemplos de dispositivos desarrollados para sistema de poros -->
-      <div class="plate">
-        <span>dispositivos desarrollados para sistema de poros</span>
-        <span>ejemplos de módulos, soportes y elementos acoplados</span>
-      </div>
-
-      <div class="gallery gallery-poros-devices">
-        <img alt="dispositivos poros — 01" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759628/original_ffc8982abf70549c120c03491e82cb40.jpg">
-        <img alt="dispositivos poros — 02" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759629/original_7a088b42bd127a6f9fa211c79b8bfe4a.jpg">
-        <img alt="dispositivos poros — 03" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759630/original_6564b80afd1bda4c4533873ab523cc5a.jpg">
-        <img alt="dispositivos poros — 04" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759631/original_704ee64f006d1c5b2bbe4f3ae9a8b665.jpg">
-        <img alt="dispositivos poros — 05" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759632/original_86c9f22010628794a6ea555be04a3662.jpg">
-        <img alt="dispositivos poros — 06" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759633/original_198285de1845c16e833b2c48c5569741.jpg">
-        <img alt="dispositivos poros — 07" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759634/original_8503c29deeddded8cfd453254024e095.jpg">
-        <img alt="dispositivos poros — 08" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759635/original_8bf32cd066c085fe24e2310ba3a9b96d.jpg">
-        <img alt="dispositivos poros — 09" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759636/original_076b160f7c3c92e9b1592ff30123c49d.jpg">
-        <img alt="dispositivos poros — 10" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759637/original_d50a5d6a6d1ec4a291313d2a27478ca0.jpg">
-        <img alt="dispositivos poros — 11" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759638/original_53cb001bf8cee5a3bc11d8b361949a9e.jpg">
-        <img alt="dispositivos poros — 12" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759639/original_84912db10e39bc49460fb55604694545.jpg">
-        <img alt="dispositivos poros — 13" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759641/original_25df48eee426e0a25cb0fea8180eb699.jpg">
-        <img alt="dispositivos poros — 14" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759642/original_e7c5b54cf53398cfafbcc986da46cf4f.jpg">
-        <img alt="dispositivos poros — 15" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759643/original_da3a5f17e77671c82efced83f6abaf7c.jpg">
-        <img alt="dispositivos poros — 16" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759644/original_bc6c14e20f3c2ae8fbff2b082f6422fe.jpg">
-        <img alt="dispositivos poros — 17" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759645/original_596234bace1dad379253fa714e6a2a0e.jpg">
-        <img alt="dispositivos poros — 18" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759646/original_65c07e72c97deb096436b365d939f759.jpg">
-        <img alt="dispositivos poros — 19" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759647/original_de3cd83d3e0bb4e96c9b5facb06dfb97.jpg">
-        <img alt="dispositivos poros — 20" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759648/original_af0af8c6487624634c5875d79c685754.jpg">
-        <img alt="dispositivos poros — 21" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759649/original_afae33f9b8567598681e0376675d47bd.jpg">
-        <img alt="dispositivos poros — 22" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759650/original_de7ac42a35cf74ee869eb14af9c6e761.jpg">
-        <img alt="dispositivos poros — 23" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759651/original_80cf9ab8792ae935d525ce01e7c9e92f.jpg">
-        <img alt="dispositivos poros — 24" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759652/original_66fc126f25acb2c66ccdda97c8ab90ce.jpg">
-        <img alt="dispositivos poros — 25" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759653/original_8dff86c7b97117a8fac629674b46b829.jpg">
-        <img alt="dispositivos poros — 26" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759654/original_7bebf4c372270a2662239d14145f3210.jpg">
-        <img alt="dispositivos poros — 27" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759655/original_0826fee2816a1e814520b0a30e27fb7b.jpg">
-        <img alt="dispositivos poros — 28" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759656/original_2f032c8674e6a931db2a29ae54695528.jpg">
-        <img alt="dispositivos poros — 29" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759657/original_ee31e253a397ae898620e0cd205d778a.jpg">
-        <img alt="dispositivos poros — 30" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759658/original_32eefc64968bac41a35e241c02e60f5c.jpg">
-        <img alt="dispositivos poros — 31" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759659/original_7f4aa8608ab1fe1034b60daa005aa558.jpg">
-        <img alt="dispositivos poros — 32" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759660/original_cb4dfcbf7a40a61851a9bfd9277ab378.jpg">
-        <img alt="dispositivos poros — 33" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759661/original_01558da2432efba42576d88ddd621f63.jpg">
-        <img alt="dispositivos poros — 34" data-src="https://d2w9rnfcy7mm78.cloudfront.net/41759662/original_ab4b1a65bf805de1a0ec36efd8f1d5fd.jpg">
-      </div>
-
     </section>
 
+    <section class="section" id="despliegues">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.deployments.title">despliegues del sistema</h2>
+          <p class="section-meta" data-i18n="section.deployments.meta">ensayos de montaje / escala / estabilidad / orientación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>los despliegues documentan la transición del sistema de poros a infraestructura instalada. cada ensayo verifica ensamblaje, estabilidad, orientación, escala, relación con luz y capacidad de recibir dispositivos.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>the deployments document the transition from the poros system to installed infrastructure. each test verifies assembly, stability, orientation, scale, relation to light, and capacity to receive devices.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>les déploiements documentent la transition du système de poros vers une infrastructure installée. chaque essai vérifie l’assemblage, la stabilité, l’orientation, l’échelle, la relation à la lumière et la capacité à recevoir des dispositifs.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>これらの展開は、poros system が設置型インフラへ移行する過程を記録する。各テストでは、組立、安定性、向き、スケール、光との関係、デバイスを受ける能力を確認する。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class=" media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065323/original_eaf93f4b0315adabbfb7e5518b45dd07.jpeg" alt="xpan.ep.2 — despliegue del sistema — 01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.01</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065304/original_11d1a30ce9e45f2d9be0bcb7436255fa.jpeg" alt="xpan.ep.2 — despliegue del sistema — 02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.02</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065311/original_07e2251ccb4c0d472515ac7617b34e2a.jpeg" alt="xpan.ep.2 — despliegue del sistema — 03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.03</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065316/original_d810b9c2427a8b26e556231b94957391.jpeg" alt="xpan.ep.2 — despliegue del sistema — 04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.04</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065297/original_a5dab8976d631da669ffd1709a182ce6.jpeg" alt="xpan.ep.2 — despliegue del sistema — 05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.05</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065325/original_186dd5be30b9a2b8f357841f659edecd.jpeg" alt="xpan.ep.2 — despliegue del sistema — 06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.06</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.07">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065328/original_ebc5051fd1cbdb3a76f0abdb3b01cb62.jpeg" alt="xpan.ep.2 — despliegue del sistema — 07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.07</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.08">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067541/original_ad7f562150a830966a3ff49066e17a2a.jpeg" alt="xpan.ep.2 — despliegue del sistema — 08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.08</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.09">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067558/original_11299a7f3c6ca76d26490430045a7890.jpeg" alt="xpan.ep.2 — despliegue del sistema — 09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.09</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067559/original_b9328186caa7b0f74e40d737de72f251.jpeg" alt="xpan.ep.2 — despliegue del sistema — 10" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.10</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067562/original_9d76f5526d4f9c5f198bfd0ff337064a.jpeg" alt="xpan.ep.2 — despliegue del sistema — 11" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.11</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067563/original_6916658455321b3308014d0b70877d5d.jpeg" alt="xpan.ep.2 — despliegue del sistema — 12" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.12</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067566/original_4fdab3adf283404d31d8f6dc689f16d1.jpeg" alt="xpan.ep.2 — despliegue del sistema — 13" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.13</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067568/original_b46c11fc9df02c89ec559fb6dcd3fa45.jpeg" alt="xpan.ep.2 — despliegue del sistema — 14" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.14</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.15">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067577/original_32ddb9e0ec87db4a1830b7dfbf886e8e.jpeg" alt="xpan.ep.2 — despliegue del sistema — 15" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.15</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.16">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067580/original_52982f4cbff73741b497835b468da2e5.jpeg" alt="xpan.ep.2 — despliegue del sistema — 16" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.16</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.17">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067585/original_31c7bf7763fa5ea59070fc23c4be45da.jpeg" alt="xpan.ep.2 — despliegue del sistema — 17" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.17</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.18">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067586/original_405d78e946e18f0556fe3c3af1fc87b0.jpeg" alt="xpan.ep.2 — despliegue del sistema — 18" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.18</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.19">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067589/original_1c89fe8b066839726c92dc04b7815a6b.jpeg" alt="xpan.ep.2 — despliegue del sistema — 19" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.19</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.20">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067936/original_9e55becc46ac92dd7f62726c74a89205.jpeg" alt="xpan.ep.2 — despliegue del sistema — 20" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.20</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir d.21">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46067938/original_9b2de4fd7dae7e93f1b964e086bb8379.jpeg" alt="xpan.ep.2 — despliegue del sistema — 21" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>d.21</span><span data-i18n="caption.spatialDeployment">despliegue del sistema</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="activacion-001">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.activation001.title">activación 001</h2>
+          <p class="section-meta" data-i18n="section.activation001.meta">09.04.26 / plaza de las tres culturas / tlatelolco / ciudad de méxico / captación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>activación 001 utilizó ep.2 como dispositivo de captación en la plaza de las tres culturas. durante seis horas, el sistema operó como punto público de observación, registro y lectura del sitio: tránsito, permanencia, escala urbana, capas históricas y respuesta del entorno.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>activation 001 used ep.2 as a capture device at plaza de las tres culturas. for six hours, the system operated as a public point for observation, recording, and site reading: movement, permanence, urban scale, historical layers, and environmental response.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>activation 001 a utilisé ep.2 comme dispositif de captation à la plaza de las tres culturas. pendant six heures, le système a opéré comme point public d’observation, d’enregistrement et de lecture du site : circulation, permanence, échelle urbaine, couches historiques et réponse de l’environnement.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>activation 001 では、ep.2 を plaza de las tres culturas に設置し、情報取得のための装置として起動した。6時間にわたり、通行、滞在、都市スケール、歴史的レイヤー、周囲の反応を観察・記録・読解するための公開ポイントとして運用された。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class=" media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065244/original_75d6ee790c7b88e53a432b124455e4dc.jpeg" alt="xpan.ep.2 — captación y lectura — 01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.01</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065246/original_2e518ad3308099c366731fb022fba472.jpeg" alt="xpan.ep.2 — captación y lectura — 02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.02</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065248/original_0a89fe682e39c137da0ed2c395f434d9.jpeg" alt="xpan.ep.2 — captación y lectura — 03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.03</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065249/original_ee191bdd14b59e2d7e521c4ec37e690b.jpeg" alt="xpan.ep.2 — captación y lectura — 04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.04</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065251/original_dc491928249c9266ddc45199dcf6d5e8.jpeg" alt="xpan.ep.2 — captación y lectura — 05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.05</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065252/original_221ac080153272e8ef70ac3932f1f06f.jpeg" alt="xpan.ep.2 — captación y lectura — 06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.06</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.07">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065254/original_750ac0b9afba83d7d9ccaf6e8266963e.jpeg" alt="xpan.ep.2 — captación y lectura — 07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.07</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.08">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065255/original_0afed18d24a3ffc0bcb3cb9eb37b7015.jpeg" alt="xpan.ep.2 — captación y lectura — 08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.08</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.09">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065267/original_2da855e5249bc4868d9a2d48e8709f50.jpeg" alt="xpan.ep.2 — captación y lectura — 09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.09</span><span data-i18n="caption.informationCapture">captación / lectura</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="activacion-002">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.activation002.title">activación 002</h2>
+          <p class="section-meta" data-i18n="section.activation002.meta">16.04.26 / general prim 47 / ciudad de méxico / despliegue</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>activación 002 trasladó el material captado en tlatelolco a general prim 47. ep.2 funcionó como infraestructura de despliegue: el registro previo fue reorganizado sobre el sistema para activar una lectura nueva entre archivo, imagen, estructura y espacio interior.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>activation 002 transferred the material captured in tlatelolco to general prim 47. ep.2 operated as deployment infrastructure: the previous record was reorganized on the system to activate a new reading between archive, image, structure, and interior space.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>activation 002 a transféré le matériau capté à tlatelolco vers general prim 47. ep.2 a fonctionné comme infrastructure de déploiement : l’enregistrement précédent a été réorganisé sur le système pour activer une nouvelle lecture entre archive, image, structure et espace intérieur.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>activation 002 では、tlatelolco で取得した素材を general prim 47 へ移した。ep.2 は情報展開のインフラとして機能し、前回の記録をシステム上で再構成し、アーカイブ、イメージ、構造、室内空間の間に新しい読解を発生させた。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class=" media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065227/original_370a500144f3b15203bb9edf477b6a67.jpeg" alt="xpan.ep.2 — despliegue y lectura — 01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.01</span><span data-i18n="caption.informationDeployment">despliegue / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065228/original_1be442b3145bdafd76f91a5336aaa2fe.jpeg" alt="xpan.ep.2 — despliegue y lectura — 02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.02</span><span data-i18n="caption.informationDeployment">despliegue / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065229/original_9451fd576f762da3954f5bfbd5fb9251.jpeg" alt="xpan.ep.2 — despliegue y lectura — 03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.03</span><span data-i18n="caption.informationDeployment">despliegue / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065230/original_d08d038cc93e2d3814fcdfe39faf6fb4.jpeg" alt="xpan.ep.2 — despliegue y lectura — 04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.04</span><span data-i18n="caption.informationDeployment">despliegue / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065232/original_148c889b57c68532cfd37a5e8b6b981f.jpeg" alt="xpan.ep.2 — despliegue y lectura — 05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.05</span><span data-i18n="caption.informationDeployment">despliegue / lectura</span></figcaption>
+        </figure>
+        <figure class=" media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46065233/original_3ae8214de01d5a63f5d7d9eb0b9d2a4c.jpeg" alt="xpan.ep.2 — despliegue y lectura — 06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.06</span><span data-i18n="caption.informationDeployment">despliegue / lectura</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="documentos">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.documents.title">documentos técnicos</h2>
+          <p class="section-meta" data-i18n="section.documents.meta">planos / medidas / uniones / módulos / ensamblaje</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>documentos técnicos, planos y levantamientos que fijan la lógica constructiva del sistema: piezas, uniones, medidas, módulos, soportes y secuencias de ensamblaje.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>technical documents, drawings, and surveys that define the constructive logic of the system: pieces, joints, dimensions, modules, supports, and assembly sequences.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>documents techniques, plans et relevés qui fixent la logique constructive du système : pièces, assemblages, dimensions, modules, supports et séquences de montage.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>システムの構築ロジックを定義する技術資料、図面、記録。部材、接合部、寸法、モジュール、支持部、組立手順を含む。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head"><span data-i18n="pdf.plan01">plano 01</span><a href="https://attachments.are.na/41736756/1b59980d457c7b4e9a03ce1fe857af33.pdf" target="_blank" rel="noopener" data-i18n="action.open" >abrir</a></div>
+          <object type="application/pdf" data="https://attachments.are.na/41736756/1b59980d457c7b4e9a03ce1fe857af33.pdf#page=1&view=FitH&toolbar=1&navpanes=0" aria-label="ep.2 — plano 01">
+            <a href="https://attachments.are.na/41736756/1b59980d457c7b4e9a03ce1fe857af33.pdf" target="_blank" rel="noopener" data-i18n="pdf.openPlan01">abrir plano 01</a>
+          </object>
+        </article>
+        <article class="pdf-card">
+          <div class="pdf-head"><span data-i18n="pdf.plan02">plano 02</span><a href="https://attachments.are.na/41736757/a71669119166f458f7e782800d75ad93.pdf" target="_blank" rel="noopener" data-i18n="action.open" >abrir</a></div>
+          <object type="application/pdf" data="https://attachments.are.na/41736757/a71669119166f458f7e782800d75ad93.pdf#page=1&view=FitH&toolbar=1&navpanes=0" aria-label="ep.2 — plano 02">
+            <a href="https://attachments.are.na/41736757/a71669119166f458f7e782800d75ad93.pdf" target="_blank" rel="noopener" data-i18n="pdf.openPlan02">abrir plano 02</a>
+          </object>
+        </article>
+        <article class="pdf-card">
+          <div class="pdf-head"><span data-i18n="pdf.plan03">plano 03</span><a href="https://attachments.are.na/41736758/1214c0ebf452c86412936ac7f5d02860.pdf" target="_blank" rel="noopener" data-i18n="action.open" >abrir</a></div>
+          <object type="application/pdf" data="https://attachments.are.na/41736758/1214c0ebf452c86412936ac7f5d02860.pdf#page=1&view=FitH&toolbar=1&navpanes=0" aria-label="ep.2 — plano 03">
+            <a href="https://attachments.are.na/41736758/1214c0ebf452c86412936ac7f5d02860.pdf" target="_blank" rel="noopener" data-i18n="pdf.openPlan03">abrir plano 03</a>
+          </object>
+        </article>
+        <article class="pdf-card">
+          <div class="pdf-head"><span data-i18n="pdf.plan04">plano 04</span><a href="https://attachments.are.na/41736759/7413b6ad0ddbfe27ca99e4576e4d31e6.pdf" target="_blank" rel="noopener" data-i18n="action.open" >abrir</a></div>
+          <object type="application/pdf" data="https://attachments.are.na/41736759/7413b6ad0ddbfe27ca99e4576e4d31e6.pdf#page=1&view=FitH&toolbar=1&navpanes=0" aria-label="ep.2 — plano 04">
+            <a href="https://attachments.are.na/41736759/7413b6ad0ddbfe27ca99e4576e4d31e6.pdf" target="_blank" rel="noopener" data-i18n="pdf.openPlan04">abrir plano 04</a>
+          </object>
+        </article>
+        <article class="pdf-card">
+          <div class="pdf-head"><span data-i18n="pdf.plan05">plano 05</span><a href="https://attachments.are.na/41736760/92126b645c2a45640a2c746002cd9f93.pdf" target="_blank" rel="noopener" data-i18n="action.open" >abrir</a></div>
+          <object type="application/pdf" data="https://attachments.are.na/41736760/92126b645c2a45640a2c746002cd9f93.pdf#page=1&view=FitH&toolbar=1&navpanes=0" aria-label="ep.2 — plano 05">
+            <a href="https://attachments.are.na/41736760/92126b645c2a45640a2c746002cd9f93.pdf" target="_blank" rel="noopener" data-i18n="pdf.openPlan05">abrir plano 05</a>
+          </object>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="sistema-de-poros">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.continuity.title">continuidad del sistema de poros</h2>
+          <p class="section-meta" data-i18n="section.continuity.meta">proyectos relacionados / sistema de poros / archivo transversal</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>esta sección sitúa ep.2 dentro de una secuencia mayor del sistema de poros. los proyectos reunidos muestran la misma lógica de placas perforadas, barras, acoplamientos y dispositivos operando en escalas distintas: espacio público, infraestructura comercial, sistema escultórico estructural y unidad transportable.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>this section places ep.2 within a broader sequence of the poros system. the selected projects show the same logic of perforated plates, bars, couplings, and devices operating across different scales: public space, commercial infrastructure, sculptural-structural system, and transportable unit.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>cette section situe ep.2 dans une séquence plus large du système de poros. les projets réunis montrent la même logique de plaques perforées, de barres, d’assemblages et de dispositifs opérant à différentes échelles : espace public, infrastructure commerciale, système sculptural-structurel et unité transportable.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>このセクションは、ep.2 を poros system のより大きな連続性の中に位置づける。ここに集められたプロジェクトは、穿孔プレート、バー、接続部、デバイスという同じロジックが、公共空間、商業インフラ、彫刻的・構造的システム、可搬ユニットという異なるスケールで作動することを示している。</p></div>
+        </div>
+      </div>
+      <div class="related-projects">
+        <article class="related-project-card" id="relacion-ep1">
+          <div class="related-project-head">
+            <div>
+              <p class="related-code">poros.01</p>
+              <h3>xpan.ep.1</h3>
+              <p class="related-meta" data-i18n="related.ep1.meta"></p>
+            </div>
+            <a class="related-link" href="mdtc.xpan.ep.1.html" target="_blank" rel="noopener" data-i18n="action.visitProject">visitar proyecto completo</a>
+          </div>
+          <div class="related-copy">
+              <div class="lang-block active" data-lang-block="es"><p>primera implementación espacial del sistema de poros. una retícula de bastidores de acero y aluminio, junto con una envolvente de policarbonato perforado, estableció una interfaz activa entre estructura, luz, ocupación y espacio público.</p></div>
+              <div class="lang-block" data-lang-block="en"><p>the first spatial implementation of the poros system. a grid of steel and aluminum frames, combined with a perforated polycarbonate envelope, established an active interface between structure, light, occupation, and public space.</p></div>
+              <div class="lang-block" data-lang-block="fr"><p>première mise en œuvre spatiale du système de poros. une grille de cadres en acier et en aluminium, associée à une enveloppe en polycarbonate perforé, a établi une interface active entre structure, lumière, occupation et espace public.</p></div>
+              <div class="lang-block" data-lang-block="jp"><p>poros system の最初の空間実装。スチールとアルミのフレームグリッド、穿孔ポリカーボネートの外皮によって、構造、光、占有、公共空間を接続する能動的なインターフェースを形成した。</p></div>
+          </div>
+          <div class="related-media-grid">
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.01">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792475/original_7490285aa05acdab621f22ba6c1e429f.jpg?1747625341" alt="xpan — sistema de poros — ep1 — 01" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.01</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.02">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792474/original_086d66608bda3ae5bddb8bb2119f24ff.jpg?1747625341" alt="xpan — sistema de poros — ep1 — 02" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.02</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.03">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792472/original_7db102cac79b1640a8d9eb280d3df31d.jpg?1747625340" alt="xpan — sistema de poros — ep1 — 03" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.03</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.04">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792470/original_944cb81e871d9960a15806f4bb4bfa96.jpg?1747625339" alt="xpan — sistema de poros — ep1 — 04" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.04</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.05">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792469/original_8d03afe9f867abc31de44b6108ad445a.jpg?1747625338" alt="xpan — sistema de poros — ep1 — 05" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.05</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.06">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792467/original_f7c5df59e567b20dd7f4103345a6cdf0.jpg?1747625336" alt="xpan — sistema de poros — ep1 — 06" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.06</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.07">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792468/original_d0d96c6f8ee2aa331d17f6b75a5120b7.jpg?1747625338" alt="xpan — sistema de poros — ep1 — 07" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.07</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.08">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792466/original_2ae3f0c655beb094434461d91e86d2bf.jpg?1747625336" alt="xpan — sistema de poros — ep1 — 08" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.08</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.09">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36792458/original_201d055b783aa4a610e329a23fcc0968.jpg?1747625331" alt="xpan — sistema de poros — ep1 — 09" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.09</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.10">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794123/original_5a43036d33a9ac72aed7a14c1450f68c.jpg?1747633367" alt="xpan — sistema de poros — ep1 — 10" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.10</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.11">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794120/original_61b8534028a7c86a88ee95950a9ef07c.jpg?1747633366" alt="xpan — sistema de poros — ep1 — 11" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.11</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.12">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794119/original_e99bc8ad613c89a09f6dbc0aaee5e628.jpg?1747633364" alt="xpan — sistema de poros — ep1 — 12" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.12</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.13">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794117/original_9b78c0133d9714cf1538ee3a11f536f6.jpg?1747633364" alt="xpan — sistema de poros — ep1 — 13" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.13</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir ep1.14">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/36794116/original_9e320a0687df404efc9fcab076388b0e.jpg?1747633363" alt="xpan — sistema de poros — ep1 — 14" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>ep1.14</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+          </div>
+        </article>
+        <article class="related-project-card" id="relacion-gdl">
+          <div class="related-project-head">
+            <div>
+              <p class="related-code">poros.02</p>
+              <h3>espacio.gdl</h3>
+              <p class="related-meta" data-i18n="related.gdl.meta"></p>
+            </div>
+            <a class="related-link" href="arq.xpan.espacio.gdl.html" target="_blank" rel="noopener" data-i18n="action.visitProject">visitar proyecto completo</a>
+          </div>
+          <div class="related-copy">
+              <div class="lang-block active" data-lang-block="es"><p>infraestructura comercial basada en una retícula perimetral de bastidores, barras insertables, repisas, racks, sonido, vegetación e iluminación difusa. el sistema de poros aparece como soporte adaptable para uso, exhibición y operación cotidiana.</p></div>
+              <div class="lang-block" data-lang-block="en"><p>commercial infrastructure based on a perimeter grid of frames, insertable bars, shelves, racks, sound, vegetation, and diffused lighting. the poros system appears as an adaptable support for use, display, and daily operation.</p></div>
+              <div class="lang-block" data-lang-block="fr"><p>infrastructure commerciale fondée sur une grille périphérique de cadres, de barres insérables, d’étagères, de racks, de son, de végétation et d’éclairage diffus. le système de poros agit comme support adaptable pour l’usage, l’exposition et l’opération quotidienne.</p></div>
+              <div class="lang-block" data-lang-block="jp"><p>外周フレームのグリッド、挿入可能なバー、棚、ラック、音響、植栽、拡散照明による商業インフラ。poros system は、使用、展示、日常運用を支える可変的な支持体として機能する。</p></div>
+          </div>
+          <div class="related-media-grid">
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.01">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732475/original_bdce083f058ef01aba42c7ff9008d869.jpg?1751080233" alt="xpan — sistema de poros — gdl — 01" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.01</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.02">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732476/original_6fefc576bb41163bc2732cdef709c7d0.jpg?1751080235" alt="xpan — sistema de poros — gdl — 02" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.02</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.03">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732477/original_215ba7dbf81197d08f7e525b8cbf8334.jpg?1751080236" alt="xpan — sistema de poros — gdl — 03" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.03</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.04">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732478/original_9f891339662385746399f7fd311dc9aa.jpg?1751080236" alt="xpan — sistema de poros — gdl — 04" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.04</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.05">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732479/original_1b11c5ecd3cb8bd055e1a1ed41a3a3d5.jpg?1751080237" alt="xpan — sistema de poros — gdl — 05" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.05</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.06">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732481/original_2e1bca9d0a2f4b62d8761a9235cd6e64.jpg?1751080237" alt="xpan — sistema de poros — gdl — 06" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.06</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.07">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732482/original_23e971b19176780b722dac82fc598559.jpg?1751080239" alt="xpan — sistema de poros — gdl — 07" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.07</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.08">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732483/original_75ed82473eb97aa319d4c2cd4869eb23.jpg?1751080239" alt="xpan — sistema de poros — gdl — 08" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.08</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.09">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732484/original_05ebd40cbd55b3c3b6279e4a1079352e.jpg?1751080239" alt="xpan — sistema de poros — gdl — 09" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.09</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.10">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732485/original_5f0e0f0781842ccc038af7a287277b7d.jpg?1751080240" alt="xpan — sistema de poros — gdl — 10" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.10</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.11">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732486/original_ddfe7acab2aad1d2e4d69076833c3275.jpg?1751080241" alt="xpan — sistema de poros — gdl — 11" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.11</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.12">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732487/original_61c3f0bb03a5b6dcd24ba4c12f6e43bf.jpg?1751080240" alt="xpan — sistema de poros — gdl — 12" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.12</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.13">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732496/original_fff396fdd0142b88cca48076f34e9e66.jpg?1751080312" alt="xpan — sistema de poros — gdl — 13" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.13</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.14">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732497/original_4cd18fc3ebd161d2b5daab598f8761d0.jpg?1751080316" alt="xpan — sistema de poros — gdl — 14" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.14</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.15">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732500/original_2073f0865fe7c1724838f25f00484adf.jpg?1751080317" alt="xpan — sistema de poros — gdl — 15" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.15</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir gdl.16">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/37732501/original_cd7d81741dadcb78d02d555cc3269153.jpg?1751080317" alt="xpan — sistema de poros — gdl — 16" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>gdl.16</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+          </div>
+        </article>
+        <article class="related-project-card" id="relacion-seevs">
+          <div class="related-project-head">
+            <div>
+              <p class="related-code">poros.03</p>
+              <h3>c&c_xpan.s.e.e.v.s_12</h3>
+              <p class="related-meta" data-i18n="related.seevs.meta"></p>
+            </div>
+            <a class="related-link" href="arq.xpan.s.e.e.v.s.12.html" target="_blank" rel="noopener" data-i18n="action.visitProject">visitar proyecto completo</a>
+          </div>
+          <div class="related-copy">
+              <div class="lang-block active" data-lang-block="es"><p>sistema escultórico estructural compuesto por doce brazos radiales de acero. cada brazo incorpora poros y puntos de acoplamiento para recibir vegetación, sonido, cámaras, sensores, pantallas, luminarias y otros dispositivos funcionales.</p></div>
+              <div class="lang-block" data-lang-block="en"><p>sculptural-structural system composed of twelve radial steel arms. each arm incorporates pores and coupling points for vegetation, sound, cameras, sensors, screens, lighting, and other functional devices.</p></div>
+              <div class="lang-block" data-lang-block="fr"><p>système sculptural-structurel composé de douze bras radiaux en acier. chaque bras intègre des poros et des points d’acoplage pour recevoir végétation, son, caméras, capteurs, écrans, luminaires et autres dispositifs fonctionnels.</p></div>
+              <div class="lang-block" data-lang-block="jp"><p>十二本の放射状スチールアームで構成された彫刻的・構造的システム。各アームは poros と接続点を備え、植栽、音響、カメラ、センサー、スクリーン、照明、その他の機能デバイスを受け入れる。</p></div>
+          </div>
+          <div class="related-media-grid">
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.01">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067330/original_67db70d60ba470bfef646f1c3eb6e1ac.jpg" alt="xpan — sistema de poros — seevs — 01" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.01</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.02">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067315/original_f0dd3fc69706824cda9c2e0eec47fb2d.jpg" alt="xpan — sistema de poros — seevs — 02" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.02</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.03">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067322/original_262ee193a60bd23e8de238f6e8cad4bc.jpg" alt="xpan — sistema de poros — seevs — 03" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.03</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.04">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067325/original_41281b323961fdb7eacedc650de3da30.jpg" alt="xpan — sistema de poros — seevs — 04" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.04</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.05">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067287/original_37685c9212ad65045d92c0ecf7c26832.jpg" alt="xpan — sistema de poros — seevs — 05" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.05</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.06">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067293/original_484d059516d28bfb721e804ed1f69732.jpg" alt="xpan — sistema de poros — seevs — 06" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.06</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.07">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067294/original_f2a69c6a5540c4c2f254dd8e7314c9f0.jpg" alt="xpan — sistema de poros — seevs — 07" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.07</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.08">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067295/original_6ead1144bf13db194d09ebc91fc80e59.jpg" alt="xpan — sistema de poros — seevs — 08" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.08</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.09">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067296/original_a61474f5eaf6836488d71caa6dc5bb3d.jpg" alt="xpan — sistema de poros — seevs — 09" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.09</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.10">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067301/original_738a7d203ed1a59deb3ec4b4918c13b5.jpg" alt="xpan — sistema de poros — seevs — 10" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.10</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.11">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067302/original_a4cfd1f052ca524ceabef6eb83bf6468.jpg" alt="xpan — sistema de poros — seevs — 11" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.11</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.12">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067305/original_c3bf587d6c9627383af1ea4fd90cc8c9.jpg" alt="xpan — sistema de poros — seevs — 12" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.12</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.13">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067310/original_3ad506abfe4ea51c0fab398fd6b1eb2e.jpg" alt="xpan — sistema de poros — seevs — 13" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.13</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.14">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067313/original_50093b09d120e9d9081f6317b5c230dd.jpg" alt="xpan — sistema de poros — seevs — 14" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.14</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.15">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067317/original_a2eedca6090c38de7774a5f00d5e6936.jpg" alt="xpan — sistema de poros — seevs — 15" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.15</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir seevs.16">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/41067318/original_97a2fd7f1ec77dddfdb5920a3997e164.jpg" alt="xpan — sistema de poros — seevs — 16" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>seevs.16</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+          </div>
+        </article>
+        <article class="related-project-card" id="relacion-portatil">
+          <div class="related-project-head">
+            <div>
+              <p class="related-code">poros.04</p>
+              <h3>dispositivo portátil 001</h3>
+              <p class="related-meta" data-i18n="related.portable.meta"></p>
+            </div>
+            <a class="related-link" href="arq.xpan.ep.13.html" target="_blank" rel="noopener" data-i18n="action.visitProject">visitar proyecto completo</a>
+          </div>
+          <div class="related-copy">
+              <div class="lang-block active" data-lang-block="es"><p>primera unidad transportable desarrollada a partir del sistema de poros. integra soporte, sonido, archivo, visualización, registro y publicación dentro de una estructura ensamblable capaz de viajar y activarse fuera de una sede fija.</p></div>
+              <div class="lang-block" data-lang-block="en"><p>the first transportable unit developed from the poros system. it integrates support, sound, archive, visualization, recording, and publication within an assemblable structure able to travel and operate outside a fixed site.</p></div>
+              <div class="lang-block" data-lang-block="fr"><p>première unité transportable développée à partir du système de poros. elle intègre support, son, archive, visualisation, enregistrement et publication dans une structure assemblable capable de voyager et de s’activer hors d’un site fixe.</p></div>
+              <div class="lang-block" data-lang-block="jp"><p>poros system から開発された最初の可搬ユニット。支持、音響、アーカイブ、可視化、記録、出版を、移動と展開が可能な組立式構造の中に統合する。</p></div>
+          </div>
+          <div class="related-media-grid">
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.01">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071288/original_55e53c00fd7d7852ec3bf803c1b0beb3.jpeg" alt="xpan — sistema de poros — pt — 01" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.01</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.02">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071284/original_26a61949f69902b77ec9a80510902e4a.jpeg" alt="xpan — sistema de poros — pt — 02" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.02</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.03">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071283/original_1f0cf758c1f263ee9f46ab03e1f23aee.jpeg" alt="xpan — sistema de poros — pt — 03" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.03</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.04">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071279/original_c921e43c1c8fc0ed24919d83c9fb46cd.jpeg" alt="xpan — sistema de poros — pt — 04" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.04</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.05">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071289/original_11f1b9d57836a8f6b94f163030eab193.jpeg" alt="xpan — sistema de poros — pt — 05" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.05</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.06">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071277/original_4f4e1571240a26644b48aa1f1835f728.jpeg" alt="xpan — sistema de poros — pt — 06" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.06</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.07">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071272/original_32e3e13073440f67310732265ef9e1a3.jpeg" alt="xpan — sistema de poros — pt — 07" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.07</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card is-wide" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.08">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071334/original_74312584a5547eac4000aa970046918b.jpeg" alt="xpan — sistema de poros — pt — 08" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.08</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.09">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071333/original_668ed424c476b94909c85facd25c6393.jpeg" alt="xpan — sistema de poros — pt — 09" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.09</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.10">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071271/original_ae71b8d8495941ac81505db467344754.jpeg" alt="xpan — sistema de poros — pt — 10" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.10</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.11">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071270/original_ee28b833aa93cf0e3bb4cdc8bd6ccbb6.jpeg" alt="xpan — sistema de poros — pt — 11" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.11</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.12">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071269/original_84c205af073abd133fbe4a11fa7b2712.jpeg" alt="xpan — sistema de poros — pt — 12" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.12</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.13">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071268/original_b2e489391c0bf37cce46b49cd43f97a6.jpeg" alt="xpan — sistema de poros — pt — 13" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.13</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.14">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071267/original_25a3dd6b5ec28f88be723c104ea0ad09.jpeg" alt="xpan — sistema de poros — pt — 14" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.14</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.15">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071532/original_ee3f9e8d7d78ecd978fc2770bd361f9e.jpeg" alt="xpan — sistema de poros — pt — 15" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.15</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+            <figure class="related-media-card" data-media-item>
+              <button class="media-open" type="button" aria-label="abrir pt.16">
+                <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071531/original_a34e617ce36d8ddf9280ab1efb4f8273.jpeg" alt="xpan — sistema de poros — pt — 16" loading="lazy" decoding="async"/>
+              </button>
+              <figcaption><span>pt.16</span><span data-i18n="caption.porosContinuity">sistema de poros</span></figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+    </section>
   </main>
 
-    <!-- lightbox para galería -->
-    <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-label="visor de imágenes ep.2">
-      <button type="button" class="nav-btn" data-dir="prev" aria-label="imagen anterior">‹</button>
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">close</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="previous" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="next" data-i18n-aria="action.next">›</button>
+  </div>
 
-      <div class="sheet">
-        <!-- la imagen se inyecta por JS -->
-      </div>
-
-      <button type="button" class="nav-btn" data-dir="next" aria-label="imagen siguiente">›</button>
-      <button type="button" data-lb-close>close</button>
-    </div>
-
-
-
-    <script>
-    // ===== acceso con hash (SHA-256) =====
-    (function accessControl(){
-      const form   = document.getElementById('access-form');
-      const input  = document.getElementById('access-input');
-      const status = document.getElementById('access-status');
-      const badge  = document.getElementById('access-badge');
-      const STORAGE_KEY = 'xpan_ep2_access_v1';
-
-      // hash SHA-256 de la clave "xpan.2026"
-      // si quieres cambiar la clave:
-      // 1. en la consola del navegador:
-      //    crypto.subtle.digest("SHA-256", new TextEncoder().encode("NUEVA_CLAVE")).then(b => {
-      //      console.log(Array.from(new Uint8Array(b)).map(v => v.toString(16).padStart(2,"0")).join(""));
-      //    });
-      // 2. sustituye el valor de EXPECTED_HASH por el resultado
-      const EXPECTED_HASH = "d65a3d52e600eb5ab6a39c523076fc452652290455e4bdd20eb29d234c314292";
-
-
-      function setUnlockedUI(){
-        document.body.classList.remove('locked');
-        document.body.classList.add('unlocked');
-        status.textContent = '[access] channel open / ep.2 brief unlocked';
-        if (badge){
-          badge.querySelector('span:nth-child(2)').textContent = 'channel open';
-        }
-      }
-
-      async function hashString(str){
-        const enc  = new TextEncoder();
-        const data = enc.encode(str);
-        const buf  = await crypto.subtle.digest('SHA-256', data);
-        return Array.from(new Uint8Array(buf)).map(v => v.toString(16).padStart(2,'0')).join('');
-      }
-
-      // intenta restaurar acceso desde storage
-      try{
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved && saved === EXPECTED_HASH){
-          setUnlockedUI();
-        }else{
-          document.body.classList.add('locked');
-          status.textContent = '[boot] standby / waiting for access key';
-        }
-      }catch(e){
-        document.body.classList.add('locked');
-      }
-
-      if (!form) return;
-
-      form.addEventListener('submit', async (ev) => {
-        ev.preventDefault();
-        const val = (input.value || '').trim();
-        if (!val){
-          form.classList.add('access-error');
-          status.textContent = '[error] clave vacía / intenta de nuevo';
-          setTimeout(() => form.classList.remove('access-error'), 260);
-          return;
-        }
-
-        form.classList.add('access-processing');
-        status.textContent = '[hash] verificando clave de acceso…';
-
-        try{
-          const digest = await hashString(val);
-          if (digest === EXPECTED_HASH){
-            try{
-              localStorage.setItem(STORAGE_KEY, digest);
-            }catch(e){}
-            setUnlockedUI();
-          }else{
-            form.classList.add('access-error');
-            status.textContent = '[denied] clave incorrecta / acceso bloqueado';
-            setTimeout(() => form.classList.remove('access-error'), 260);
-          }
-        }catch(e){
-          status.textContent = '[error] no se pudo verificar la clave en este navegador';
-        }finally{
-          form.classList.remove('access-processing');
-          input.value = '';
-        }
-      });
-    })();
-
-    // ===== selector de idioma =====
+  <script>
     (function langSwitch(){
       const switcher = document.getElementById('lang-switch');
       if (!switcher) return;
-
       const buttons = switcher.querySelectorAll('[data-lang-btn]');
-      const blocks  = document.querySelectorAll('[data-lang-block]');
-
+      const blocks = document.querySelectorAll('[data-lang-block]');
+      const staticText = {
+        es: {
+          metaDescription:'xpan.ep.2 — sistema público de captación, lectura y despliegue desarrollado a partir del sistema de poros. ciudad de méxico, 2026.',
+          'plate.project':'xpan.ep.2 / sistema de captación y despliegue',
+          'plate.location':'ciudad de méxico / 2026',
+          'aria.pageSections':'secciones de página',
+          'nav.system':'sistema',
+          'nav.deployments':'despliegues',
+          'nav.activation001':'activación 001',
+          'nav.activation002':'activación 002',
+          'nav.documents':'documentos',
+          'nav.continuity':'sistema de poros',
+          'section.system.title':'sistema',
+          'section.system.meta':'estructura / poros / dispositivos / registro / despliegue',
+          'section.deployments.title':'despliegues del sistema',
+          'section.deployments.meta':'ensayos de montaje / escala / estabilidad / orientación',
+          'section.activation001.title':'activación 001',
+          'section.activation001.meta':'09.04.26 / plaza de las tres culturas / tlatelolco / ciudad de méxico / captación',
+          'section.activation002.title':'activación 002',
+          'section.activation002.meta':'16.04.26 / general prim 47 / ciudad de méxico / despliegue',
+          'section.documents.title':'documentos técnicos',
+          'section.documents.meta':'planos / medidas / uniones / módulos / ensamblaje',
+          'section.continuity.title':'continuidad del sistema de poros',
+          'section.continuity.meta':'proyectos relacionados / sistema de poros / archivo transversal',
+          'fact.base.label':'base',
+          'fact.base.value':'sistema de poros de xpan',
+          'fact.type.label':'tipo',
+          'fact.type.value':'infraestructura modular',
+          'fact.operation.label':'operación',
+          'fact.operation.value':'captación / lectura / despliegue',
+          'fact.status.label':'estado',
+          'fact.status.value':'producido / activado / publicado',
+          'related.ep1.meta':'2024 / ciudad de méxico / primera iteración espacial',
+          'related.gdl.meta':'2025 / guadalajara / infraestructura comercial',
+          'related.seevs.meta':'2025 / ciudad de méxico / sistema escultórico estructural',
+          'related.portable.meta':'2026 / japón / unidad transportable',
+          'caption.spatialDeployment':'despliegue del sistema',
+          'caption.informationCapture':'captación / lectura',
+          'caption.informationDeployment':'despliegue / lectura',
+          'caption.porosContinuity':'sistema de poros',
+          'pdf.plan01':'plano 01',
+          'pdf.plan02':'plano 02',
+          'pdf.plan03':'plano 03',
+          'pdf.plan04':'plano 04',
+          'pdf.plan05':'plano 05',
+          'pdf.openPlan01':'abrir plano 01',
+          'pdf.openPlan02':'abrir plano 02',
+          'pdf.openPlan03':'abrir plano 03',
+          'pdf.openPlan04':'abrir plano 04',
+          'pdf.openPlan05':'abrir plano 05',
+          'action.open':'abrir',
+          'action.visitProject':'visitar proyecto completo',
+          'action.close':'cerrar',
+          'action.previous':'anterior',
+          'action.next':'siguiente'
+        },
+        en: {
+          metaDescription:'xpan.ep.2 — public capture, reading, and deployment system developed from the poros system. mexico city, 2026.',
+          'plate.project':'xpan.ep.2 / capture and deployment system',
+          'plate.location':'mexico city / 2026',
+          'aria.pageSections':'page sections',
+          'nav.system':'system',
+          'nav.deployments':'deployments',
+          'nav.activation001':'activation 001',
+          'nav.activation002':'activation 002',
+          'nav.documents':'documents',
+          'nav.continuity':'poros system',
+          'section.system.title':'system',
+          'section.system.meta':'structure / poros / devices / recording / deployment',
+          'section.deployments.title':'system deployments',
+          'section.deployments.meta':'assembly tests / scale / stability / orientation',
+          'section.activation001.title':'activation 001',
+          'section.activation001.meta':'09.04.26 / plaza de las tres culturas / tlatelolco / mexico city / capture',
+          'section.activation002.title':'activation 002',
+          'section.activation002.meta':'16.04.26 / general prim 47 / mexico city / deployment',
+          'section.documents.title':'technical documents',
+          'section.documents.meta':'drawings / dimensions / joints / modules / assembly',
+          'section.continuity.title':'continuity of the poros system',
+          'section.continuity.meta':'related projects / poros system / transversal archive',
+          'fact.base.label':'base',
+          'fact.base.value':'xpan poros system',
+          'fact.type.label':'type',
+          'fact.type.value':'modular infrastructure',
+          'fact.operation.label':'operation',
+          'fact.operation.value':'capture / reading / deployment',
+          'fact.status.label':'status',
+          'fact.status.value':'produced / activated / published',
+          'related.ep1.meta':'2024 / mexico city / first spatial iteration',
+          'related.gdl.meta':'2025 / guadalajara / commercial infrastructure',
+          'related.seevs.meta':'2025 / mexico city / sculptural-structural system',
+          'related.portable.meta':'2026 / japan / transportable unit',
+          'caption.spatialDeployment':'system deployment',
+          'caption.informationCapture':'capture / reading',
+          'caption.informationDeployment':'deployment / reading',
+          'caption.porosContinuity':'poros system',
+          'pdf.plan01':'drawing 01',
+          'pdf.plan02':'drawing 02',
+          'pdf.plan03':'drawing 03',
+          'pdf.plan04':'drawing 04',
+          'pdf.plan05':'drawing 05',
+          'pdf.openPlan01':'open drawing 01',
+          'pdf.openPlan02':'open drawing 02',
+          'pdf.openPlan03':'open drawing 03',
+          'pdf.openPlan04':'open drawing 04',
+          'pdf.openPlan05':'open drawing 05',
+          'action.open':'open',
+          'action.visitProject':'visit full project',
+          'action.close':'close',
+          'action.previous':'previous',
+          'action.next':'next'
+        },
+        fr: {
+          metaDescription:'xpan.ep.2 — système public de captation, lecture et déploiement développé à partir du système de poros. mexico, 2026.',
+          'plate.project':'xpan.ep.2 / système de captation et déploiement',
+          'plate.location':'mexico / 2026',
+          'aria.pageSections':'sections de la page',
+          'nav.system':'système',
+          'nav.deployments':'déploiements',
+          'nav.activation001':'activation 001',
+          'nav.activation002':'activation 002',
+          'nav.documents':'documents',
+          'nav.continuity':'système de poros',
+          'section.system.title':'système',
+          'section.system.meta':'structure / poros / dispositifs / enregistrement / déploiement',
+          'section.deployments.title':'déploiements du système',
+          'section.deployments.meta':'essais de montage / échelle / stabilité / orientation',
+          'section.activation001.title':'activation 001',
+          'section.activation001.meta':'09.04.26 / plaza de las tres culturas / tlatelolco / mexico / captation',
+          'section.activation002.title':'activation 002',
+          'section.activation002.meta':'16.04.26 / general prim 47 / mexico / déploiement',
+          'section.documents.title':'technical documents',
+          'section.documents.meta':'plans / dimensions / assemblages / modules / montage',
+          'section.continuity.title':'continuité du système de poros',
+          'section.continuity.meta':'projets liés / système de poros / archive transversale',
+          'fact.base.label':'base',
+          'fact.base.value':'système de poros de xpan',
+          'fact.type.label':'type',
+          'fact.type.value':'infrastructure modulaire',
+          'fact.operation.label':'opération',
+          'fact.operation.value':'captation / lecture / déploiement',
+          'fact.status.label':'état',
+          'fact.status.value':'produit / activé / publié',
+          'related.ep1.meta':'2024 / mexico / première itération spatiale',
+          'related.gdl.meta':'2025 / guadalajara / infrastructure commerciale',
+          'related.seevs.meta':'2025 / mexico / système sculptural-structurel',
+          'related.portable.meta':'2026 / japon / unité transportable',
+          'caption.spatialDeployment':'déploiement du système',
+          'caption.informationCapture':'captation / lecture',
+          'caption.informationDeployment':'déploiement / lecture',
+          'caption.porosContinuity':'système de poros',
+          'pdf.plan01':'plan 01',
+          'pdf.plan02':'plan 02',
+          'pdf.plan03':'plan 03',
+          'pdf.plan04':'plan 04',
+          'pdf.plan05':'plan 05',
+          'pdf.openPlan01':'ouvrir le plan 01',
+          'pdf.openPlan02':'ouvrir le plan 02',
+          'pdf.openPlan03':'ouvrir le plan 03',
+          'pdf.openPlan04':'ouvrir le plan 04',
+          'pdf.openPlan05':'ouvrir le plan 05',
+          'action.open':'ouvrir',
+          'action.visitProject':'voir le projet complet',
+          'action.close':'fermer',
+          'action.previous':'précédent',
+          'action.next':'suivant'
+        },
+        jp: {
+          metaDescription:'xpan.ep.2 — poros system から開発された、公共空間での情報取得・読解・展開システム。メキシコシティ、2026年。',
+          'plate.project':'xpan.ep.2 / 情報取得・展開システム',
+          'plate.location':'メキシコシティ / 2026',
+          'aria.pageSections':'ページ内セクション',
+          'nav.system':'システム',
+          'nav.deployments':'展開',
+          'nav.activation001':'アクティベーション 001',
+          'nav.activation002':'アクティベーション 002',
+          'nav.documents':'資料',
+          'nav.continuity':'poros system',
+          'section.system.title':'システム',
+          'section.system.meta':'構造 / poros / デバイス / 記録 / 展開',
+          'section.deployments.title':'システム展開',
+          'section.deployments.meta':'組立テスト / スケール / 安定性 / 向き',
+          'section.activation001.title':'アクティベーション 001',
+          'section.activation001.meta':'09.04.26 / plaza de las tres culturas / tlatelolco / メキシコシティ / 情報取得',
+          'section.activation002.title':'アクティベーション 002',
+          'section.activation002.meta':'16.04.26 / general prim 47 / メキシコシティ / 情報展開',
+          'section.documents.title':'技術資料',
+          'section.documents.meta':'図面 / 寸法 / 接合部 / モジュール / 組立',
+          'section.continuity.title':'poros system の連続性',
+          'section.continuity.meta':'関連プロジェクト / poros system / 横断的アーカイブ',
+          'fact.base.label':'基盤',
+          'fact.base.value':'xpan poros system',
+          'fact.type.label':'種別',
+          'fact.type.value':'モジュール式インフラ',
+          'fact.operation.label':'運用',
+          'fact.operation.value':'情報取得 / 読解 / 展開',
+          'fact.status.label':'状態',
+          'fact.status.value':'制作済み / 起動済み / 公開済み',
+          'related.ep1.meta':'2024 / メキシコシティ / 最初の空間実装',
+          'related.gdl.meta':'2025 / グアダラハラ / 商業インフラ',
+          'related.seevs.meta':'2025 / メキシコシティ / 彫刻的・構造的システム',
+          'related.portable.meta':'2026 / 日本 / 可搬ユニット',
+          'caption.spatialDeployment':'システム展開',
+          'caption.informationCapture':'情報取得 / 読解',
+          'caption.informationDeployment':'情報展開 / 読解',
+          'caption.porosContinuity':'poros system',
+          'pdf.plan01':'図面 01',
+          'pdf.plan02':'図面 02',
+          'pdf.plan03':'図面 03',
+          'pdf.plan04':'図面 04',
+          'pdf.plan05':'図面 05',
+          'pdf.openPlan01':'図面 01 を開く',
+          'pdf.openPlan02':'図面 02 を開く',
+          'pdf.openPlan03':'図面 03 を開く',
+          'pdf.openPlan04':'図面 04 を開く',
+          'pdf.openPlan05':'図面 05 を開く',
+          'action.open':'開く',
+          'action.visitProject':'プロジェクト全体を見る',
+          'action.close':'閉じる',
+          'action.previous':'前へ',
+          'action.next':'次へ'
+        }
+      };
+      function applyStaticLang(code){
+        const dict = staticText[code] || staticText.es;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (dict[key]) el.textContent = dict[key];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+          const key = el.getAttribute('data-i18n-aria');
+          if (dict[key]) el.setAttribute('aria-label', dict[key]);
+        });
+        const meta = document.querySelector('meta[name="description"]');
+        if (meta && dict.metaDescription) meta.setAttribute('content', dict.metaDescription);
+      }
       function setLang(code){
-        buttons.forEach(btn => {
-          const active = btn.getAttribute('data-lang-btn') === code;
-          btn.classList.toggle('lang-active', active);
-        });
-        blocks.forEach(block => {
-          const match = block.getAttribute('data-lang-block') === code;
-          block.classList.toggle('active', match);
-        });
+        buttons.forEach(btn => btn.classList.toggle('lang-active', btn.getAttribute('data-lang-btn') === code));
+        blocks.forEach(block => block.classList.toggle('active', block.getAttribute('data-lang-block') === code));
+        applyStaticLang(code);
         document.documentElement.setAttribute('lang', code === 'jp' ? 'ja' : code);
       }
-
-      buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const code = btn.getAttribute('data-lang-btn');
-          setLang(code);
-        });
-      });
-
-      // idioma inicial
+      buttons.forEach(btn => btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang-btn'))));
       setLang('es');
     })();
 
-    
-        // ===== solo fondo hero dinámico (sin aei lines) =====
     (function heroOnly(){
       const hero = document.querySelector('.bg-hero');
       if (!hero) return;
-
       const mainImg = 'https://d2w9rnfcy7mm78.cloudfront.net/41759254/original_e813de0fef1c86f350f4fab767bdccaa.png?1765512921?bc=0';
       hero.style.setProperty('--hero', `url("${mainImg}")`);
     })();
 
+    (function lazyMedia(){
+      const imgs = document.querySelectorAll('[data-media-item] img[data-src]');
+      if (!imgs.length) return;
+      function load(img){
+        if (!img || !img.dataset.src) return;
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.addEventListener('load', () => img.classList.add('loaded'), { once:true });
+      }
+      if (!('IntersectionObserver' in window)){ imgs.forEach(load); return; }
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          load(entry.target); obs.unobserve(entry.target);
+        });
+      }, { rootMargin:'420px 0px' });
+      imgs.forEach(img => obs.observe(img));
+    })();
+
+    (function lightbox(){
+      const lb = document.getElementById('xpan-lightbox');
+      if (!lb) return;
+      const sheet = lb.querySelector('.sheet');
+      const btnClose = lb.querySelector('[data-lb-close]');
+      const btnPrev = lb.querySelector('.nav-btn[data-dir="prev"]');
+      const btnNext = lb.querySelector('.nav-btn[data-dir="next"]');
+      const buttons = Array.from(document.querySelectorAll('.media-open'));
+      const imgs = buttons.map(btn => btn.querySelector('img')).filter(Boolean);
+      let currentIndex = -1;
+      let touchStartX = null;
+
+      function srcFor(img){ return img.currentSrc || img.src || img.dataset.src || ''; }
+      function ensureLoaded(img){ if (img && img.dataset.src) { img.src = img.dataset.src; img.removeAttribute('data-src'); img.classList.add('loaded'); } }
+      function render(){
+        if (currentIndex < 0 || currentIndex >= imgs.length) return;
+        const source = imgs[currentIndex];
+        ensureLoaded(source);
+        sheet.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = srcFor(source);
+        img.alt = source.alt || '';
+        sheet.appendChild(img);
+      }
+      function openLightbox(index){
+        if (index < 0 || index >= imgs.length) return;
+        currentIndex = index; render(); lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); document.body.style.overflow = 'hidden';
+      }
+      function closeLightbox(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); sheet.innerHTML = ''; document.body.style.overflow = ''; currentIndex = -1; }
+      function next(){ if (!imgs.length) return; currentIndex = (currentIndex + 1 + imgs.length) % imgs.length; render(); }
+      function prev(){ if (!imgs.length) return; currentIndex = (currentIndex - 1 + imgs.length) % imgs.length; render(); }
+
+      buttons.forEach((btn, idx) => btn.addEventListener('click', () => openLightbox(idx)));
+      if (btnNext) btnNext.addEventListener('click', next);
+      if (btnPrev) btnPrev.addEventListener('click', prev);
+      if (btnClose) btnClose.addEventListener('click', closeLightbox);
+      lb.addEventListener('click', ev => { if (ev.target === lb) closeLightbox(); });
+      window.addEventListener('keydown', ev => {
+        if (!lb.classList.contains('open')) return;
+        if (ev.key === 'Escape') closeLightbox();
+        if (ev.key === 'ArrowRight') next();
+        if (ev.key === 'ArrowLeft') prev();
+      });
+      lb.addEventListener('touchstart', ev => { if (ev.changedTouches && ev.changedTouches.length) touchStartX = ev.changedTouches[0].clientX; }, { passive:true });
+      lb.addEventListener('touchend', ev => {
+        if (touchStartX == null || !ev.changedTouches || !ev.changedTouches.length) return;
+        const dx = ev.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+        touchStartX = null;
+      }, { passive:true });
+    })();
   </script>
-          <script>
-      // lazy load de imágenes de galería
-      (function(){
-        const imgs = document.querySelectorAll('.gallery img');
-        if (!imgs.length) return;
-
-        imgs.forEach(img => {
-          if (!img.getAttribute('loading')) img.loading = 'lazy';
-          if (!img.getAttribute('decoding')) img.decoding = 'async';
-        });
-
-        if (!('IntersectionObserver' in window)){
-          imgs.forEach(img => {
-            if (img.dataset.src && !img.src){
-              img.src = img.dataset.src;
-            }
-          });
-          return;
-        }
-
-        const obs = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const img = entry.target;
-            if (img.dataset.src){
-              img.src = img.dataset.src;
-              img.removeAttribute('data-src');
-            }
-            obs.unobserve(img);
-          });
-        }, { rootMargin:'300px 0px' });
-
-        imgs.forEach(img => obs.observe(img));
-      })();
-
-      // lightbox con navegación por teclas y swipe
-      (function(){
-        const lb    = document.getElementById('xpan-lightbox');
-        if (!lb) return;
-
-        const sheet   = lb.querySelector('.sheet');
-        const btnClose= lb.querySelector('[data-lb-close]');
-        const btnPrev = lb.querySelector('.nav-btn[data-dir="prev"]');
-        const btnNext = lb.querySelector('.nav-btn[data-dir="next"]');
-        const imgs    = Array.from(document.querySelectorAll('.gallery img'));
-
-        if (!imgs.length) return;
-
-        let currentIndex = -1;
-        let touchStartX  = null;
-
-        function render(){
-          if (currentIndex < 0 || currentIndex >= imgs.length) return;
-          const el  = imgs[currentIndex];
-          const src = el.currentSrc || el.src || el.dataset.src;
-          const alt = el.alt || '';
-
-          sheet.innerHTML = '';
-          const img = document.createElement('img');
-          img.src = src;
-          img.alt = alt;
-          sheet.appendChild(img);
-        }
-
-        function openLightbox(index){
-          if (index < 0 || index >= imgs.length) return;
-          currentIndex = index;
-          render();
-          lb.classList.add('open');
-          document.body.style.overflow = 'hidden';
-        }
-
-        function closeLightbox(){
-          lb.classList.remove('open');
-          sheet.innerHTML = '';
-          document.body.style.overflow = '';
-          currentIndex = -1;
-        }
-
-        function next(){
-          if (!imgs.length) return;
-          if (currentIndex === -1) currentIndex = 0;
-          currentIndex = (currentIndex + 1 + imgs.length) % imgs.length;
-          render();
-        }
-
-        function prev(){
-          if (!imgs.length) return;
-          if (currentIndex === -1) currentIndex = 0;
-          currentIndex = (currentIndex - 1 + imgs.length) % imgs.length;
-          render();
-        }
-
-        // click en thumbnails abre lightbox en ese índice
-        imgs.forEach((el, idx) => {
-          el.addEventListener('click', () => openLightbox(idx));
-        });
-
-        // botones de navegación
-        if (btnNext) btnNext.addEventListener('click', next);
-        if (btnPrev) btnPrev.addEventListener('click', prev);
-        if (btnClose) btnClose.addEventListener('click', closeLightbox);
-
-        // cerrar al hacer click en el fondo
-        lb.addEventListener('click', (ev) => {
-          if (ev.target === lb){
-            closeLightbox();
-          }
-        });
-
-        // teclado: esc, flecha izq/der
-        window.addEventListener('keydown', (ev) => {
-          if (!lb.classList.contains('open')) return;
-
-          if (ev.key === 'Escape'){
-            closeLightbox();
-          }else if (ev.key === 'ArrowRight'){
-            next();
-          }else if (ev.key === 'ArrowLeft'){
-            prev();
-          }
-        });
-
-        // swipe horizontal en móvil
-        lb.addEventListener('touchstart', (ev) => {
-          if (!lb.classList.contains('open')) return;
-          if (!ev.changedTouches || !ev.changedTouches.length) return;
-          touchStartX = ev.changedTouches[0].clientX;
-        }, { passive:true });
-
-        lb.addEventListener('touchend', (ev) => {
-          if (touchStartX == null) return;
-          if (!ev.changedTouches || !ev.changedTouches.length) return;
-
-          const endX = ev.changedTouches[0].clientX;
-          const dx   = endX - touchStartX;
-          const threshold = 40; // px
-
-          if (Math.abs(dx) > threshold){
-            if (dx < 0){
-              // swipe izquierda -> siguiente
-              next();
-            }else{
-              // swipe derecha -> anterior
-              prev();
-            }
-          }
-
-          touchStartX = null;
-        }, { passive:true });
-      })();
-    </script>
-
-
 </body>
 </html>

@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>dispositivo portátil 001 — xpan</title>
+  <meta name="description" content="dispositivo portátil 001 — primera unidad transportable desarrollada a partir del sistema de poros de xpan. japón, 2026."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/46071288/original_55e53c00fd7d7852ec3bf803c1b0beb3.jpeg" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
+      --line:#2A2E31; --grid:#181B1F; --panel:#101316; --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --b1:1px solid var(--line);
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A; --line:#D7DDE2; --grid:#EBEEF2; --panel:#F7F8FA; }
+      header{ mix-blend-mode:normal; color:var(--fg); }
+      header img{ mix-blend-mode:normal; filter:none; }
+      .chip{ border-color:var(--line); color:var(--fg-dim); }
+      .chip.lang-active{ color:var(--fg); border-color:var(--accent); }
+      .neg-shell{ mix-blend-mode:normal; color:var(--fg); }
+      .bg-hero::before{ opacity:.13; filter:blur(5px) contrast(28) brightness(.65) saturate(.9); }
+    }
+
+    *,*::before,*::after{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    html,body{ min-height:100%; margin:0; }
+    body{
+      background:var(--bg); color:var(--fg); font-family:var(--ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    img,video{ max-width:100%; }
+    button{ font:inherit; }
+    ::selection{ background:rgba(24,96,255,.24); }
+
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x); height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      z-index:40; pointer-events:auto; mix-blend-mode:difference; color:#fff;
+    }
+    header img{ width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%); -webkit-user-drag:none; user-select:none; }
+    .stack{ display:flex; align-items:center; gap:12px; }
+    .chip{
+      appearance:none; display:inline-flex; align-items:center; gap:10px; font:600 12px/1 var(--ui);
+      text-transform:lowercase; padding:8px 10px; border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74); background:transparent; user-select:none; cursor:default; border-radius:0;
+    }
+    .chip[data-lang-btn]{ cursor:pointer; }
+    .chip.lang-active{ color:#fff; border-color:#fff; background:rgba(24,96,255,.06); }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+                 linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed; inset:0; z-index:1; pointer-events:none;
+      background:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+                 linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{ position:fixed; inset:0; z-index:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
+    .bg-hero::before{
+      content:""; background-image:var(--hero,none); background-size:contain; background-position:center; background-repeat:no-repeat;
+      width:82vw; height:82vh; filter:blur(259px) contrast(54) brightness(.12) saturate(.95); opacity:.25;
+      animation:flashFX 6s steps(30,end) infinite; will-change:opacity,filter;
+    }
+    .grain{
+      position:fixed; inset:-40%; z-index:0; pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
+                 repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
+      mix-blend-mode:overlay; opacity:.15; filter:blur(1px); animation:noiseShift 1.8s steps(6,end) infinite;
+    }
+    @keyframes flashFX{ 0%,10%{opacity:.22;} 15%{opacity:.30;} 30%{opacity:.24;} 50%{opacity:.32;} 60%{opacity:.19;} 100%{opacity:.25;} }
+    @keyframes noiseShift{ 0%{transform:translate3d(0,0,0);} 25%{transform:translate3d(-1%,1%,0);} 50%{transform:translate3d(1%,-1%,0);} 75%{transform:translate3d(2%,2%,0);} 100%{transform:translate3d(0,0,0);} }
+
+    main{ position:relative; z-index:3; padding-top:calc(var(--header-h) + 28px); }
+    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; }
+    .section:first-of-type{ border-top:0; padding-top:22px; min-height:78vh; display:flex; align-items:flex-end; }
+    .plate{
+      display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px;
+      color:var(--fg-dim); font:600 11px/1.3 var(--mono); text-transform:lowercase; background:color-mix(in oklab,var(--bg) 92%,transparent); user-select:none; margin-bottom:18px;
+    }
+    .neg-shell{ position:relative; z-index:30; mix-blend-mode:difference; color:var(--fg); }
+    .lang-block{ display:none; }
+    .lang-block.active{ display:block; }
+
+    .intro-wrap{ width:100%; max-width:920px; }
+    .kicker{ margin:0 0 12px; font:600 11px/1.35 var(--mono); text-transform:lowercase; letter-spacing:.12em; color:var(--fg-dim); }
+    h1{ margin:0 0 10px; font:500 clamp(38px,8vw,112px)/.9 var(--ui); letter-spacing:-.065em; text-transform:lowercase; }
+    .subtitle{ margin:0 0 18px; font:500 clamp(15px,2vw,22px)/1.25 var(--ui); letter-spacing:-.02em; color:var(--fg); }
+    .intro-text{ max-width:780px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .intro-text p{ margin:0; }
+
+    .anchor-nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+    .anchor-nav a{
+      border:1px solid var(--line); padding:7px 9px; font:600 11px/1 var(--mono); text-transform:lowercase; color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{ color:var(--fg); border-color:var(--fg-dim); }
+
+    .section-head{ display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr); gap:clamp(18px,4vw,64px); margin-bottom:28px; }
+    .section-title{ margin:0; font:500 clamp(24px,4vw,56px)/.95 var(--ui); letter-spacing:-.055em; text-transform:lowercase; }
+    .section-meta{ margin:9px 0 0; font:600 11px/1.45 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em; }
+    .section-copy{ max-width:720px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .section-copy p{ margin:0; }
+
+    .facts{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--line); margin-top:28px; }
+    .fact{ padding:13px 14px; border-right:1px solid var(--line); min-height:72px; background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .fact:last-child{ border-right:0; }
+    .fact b{ display:block; margin-bottom:8px; font:600 10px/1 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
+    .fact span{ display:block; font:500 13px/1.35 var(--ui); color:var(--fg); }
+
+    .activation-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .activation-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 91%,transparent); padding:14px; min-height:260px; display:grid; align-content:space-between; gap:18px; }
+    .activation-card h3{ margin:0; font:500 clamp(22px,2.6vw,38px)/.95 var(--ui); letter-spacing:-.04em; text-transform:lowercase; }
+    .activation-card p{ margin:0; font:400 14px/1.58 var(--ui); color:var(--fg); }
+    .activation-card .code{ font:600 10px/1.35 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--fg-dim); }
+    .activation-card .data{ display:grid; gap:5px; color:var(--fg-dim); font:600 10px/1.35 var(--mono); letter-spacing:.08em; text-transform:lowercase; }
+
+    .media-grid{ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:12px; align-items:start; }
+    .media-card{ grid-column:span 4; margin:0; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
+    .media-card.is-wide{ grid-column:span 8; }
+    .media-open{ display:block; width:100%; border:0; padding:0; margin:0; background:transparent; cursor:pointer; color:inherit; border-radius:0; }
+    .media-card img{
+      display:block; width:100%; height:auto; min-height:180px; max-height:72vh; object-fit:contain; background:#050608;
+      opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease;
+    }
+    .media-card img.loaded{ opacity:1; transform:translateY(0); }
+    .media-card figcaption{
+      display:flex; justify-content:space-between; gap:12px; padding:8px 9px; border-top:1px solid var(--line);
+      font:600 10px/1.3 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em;
+    }
+    .media-card figcaption span:last-child{ text-align:right; }
+
+    #xpan-lightbox{
+      position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
+      background:rgba(5,7,10,.78); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{ display:flex; }
+    #xpan-lightbox .sheet{ max-width:96vw; max-height:96vh; border:1px solid var(--line); background:#000; padding:6px; box-shadow:0 18px 45px rgba(0,0,0,.8); }
+    #xpan-lightbox img{ display:block; max-width:100%; max-height:calc(96vh - 12px); width:auto; height:auto; object-fit:contain; }
+    #xpan-lightbox [data-lb-close]{
+      position:absolute; top:16px; right:18px; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%);
+      color:var(--fg-dim); font:600 11px/1 var(--mono); text-transform:uppercase; letter-spacing:.14em; padding:6px 10px; cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute; top:50%; transform:translateY(-50%); border:1px solid var(--line); background:rgba(5,7,10,.78);
+      color:var(--fg-dim); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font:600 16px/1 var(--mono); padding:0; user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{ left:18px; }
+    #xpan-lightbox .nav-btn[data-dir="next"]{ right:18px; }
+    html.lb-open,body.lb-open{ overflow:hidden; }
+
+    @media (max-width:980px){
+      .section-head{ grid-template-columns:1fr; gap:16px; }
+      .facts{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .fact:nth-child(2){ border-right:0; }
+      .fact:nth-child(-n+2){ border-bottom:1px solid var(--line); }
+      .activation-grid{ grid-template-columns:1fr; }
+      .activation-card{ min-height:220px; }
+      .media-card,.media-card.is-wide{ grid-column:span 6; }
+    }
+    @media (max-width:640px){
+      header{ top:10px; align-items:flex-start; height:auto; }
+      .stack{ gap:7px; flex-wrap:wrap; }
+      .chip{ font-size:10px; padding:7px 8px; }
+      header img{ width:44px; }
+      main{ padding-top:86px; }
+      .section{ padding:22px var(--pad-x) 56px; content-visibility:visible; }
+      .section:first-of-type{ min-height:72vh; }
+      .facts{ grid-template-columns:1fr; }
+      .fact,.fact:nth-child(2){ border-right:0; border-bottom:1px solid var(--line); }
+      .fact:last-child{ border-bottom:0; }
+      .media-grid{ gap:10px; }
+      .media-card,.media-card.is-wide{ grid-column:span 12; }
+      .media-card img{ min-height:120px; max-height:none; }
+      #xpan-lightbox .nav-btn{ width:32px; height:32px; font-size:14px; }
+      #xpan-lightbox .nav-btn[data-dir="prev"]{ left:10px; }
+      #xpan-lightbox .nav-btn[data-dir="next"]{ right:10px; }
+    }
+    @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/46071288/original_55e53c00fd7d7852ec3bf803c1b0beb3.jpeg')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip">dispositivo portátil 001</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate"><span data-i18n="plate.project">dispositivo portátil 001 / sistema de poros</span><span data-i18n="plate.location">japón / 2026</span></div>
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">unidad transportable / sistema de poros</p>
+          <h1>dispositivo portátil 001</h1>
+          <p class="subtitle">primera unidad transportable desarrollada a partir del sistema de poros de xpan.</p>
+          <div class="intro-text">
+            <p>dispositivo portátil 001 integra soporte, sonido, archivo, visualización, registro y publicación dentro de una estructura ensamblable capaz de viajar y activarse fuera de una sede fija.</p>
+            <p>el sistema fue concebido, construido, optimizado y probado en diecinueve días. su primera secuencia de despliegues ocurrió en japón entre tokio y kioto durante abril y mayo de 2026.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">transportable unit / poros system</p>
+          <h1>portable device 001</h1>
+          <p class="subtitle">the first transportable unit developed from xpan’s poros system.</p>
+          <div class="intro-text">
+            <p>portable device 001 integrates support, sound, archive, visualization, recording and publication within an assemblable structure able to travel and operate outside a fixed site.</p>
+            <p>the system was conceived, built, optimized and tested in nineteen days. its first deployment sequence took place in japan between tokyo and kyoto during april and may 2026.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">unité transportable / système de poros</p>
+          <h1>dispositif portable 001</h1>
+          <p class="subtitle">première unité transportable développée à partir du système de poros de xpan.</p>
+          <div class="intro-text">
+            <p>dispositif portable 001 intègre support, son, archive, visualisation, enregistrement et publication dans une structure assemblable capable de voyager et de s’activer hors d’un site fixe.</p>
+            <p>le système a été conçu, construit, optimisé et testé en dix-neuf jours. sa première séquence de déploiements a eu lieu au japon entre tokyo et kyoto, entre avril et mai 2026.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">可搬ユニット / poros system</p>
+          <h1>dispositivo portátil 001</h1>
+          <p class="subtitle">xpan の poros system から開発された最初の可搬ユニット。</p>
+          <div class="intro-text">
+            <p>dispositivo portátil 001 は、支持、音響、アーカイブ、可視化、記録、出版を、移動と展開が可能な組立式構造の中に統合する。</p>
+            <p>このシステムは19日間で構想、製作、最適化、検証された。最初の展開シークエンスは2026年4月から5月にかけて、東京と京都で行われた。</p>
+          </div>
+        </div>
+        <nav class="anchor-nav" aria-label="page sections" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#desarrollo" data-i18n="nav.development">desarrollo</a>
+          <a href="#activaciones" data-i18n="nav.activations">activaciones</a>
+          <a href="#domicile" data-i18n="nav.domicile">domicile</a>
+          <a href="#kizashi" data-i18n="nav.kizashi">kizashi</a>
+          <a href="#kamo" data-i18n="nav.kamo">kamo jinja</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+          <p class="section-meta" data-i18n="section.system.meta">estructura / soporte / sonido / archivo / registro / publicación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>La unidad traslada el sistema de poros a una escala compacta, desmontable y operativa. La estructura trabaja como matriz de acoplamiento: placas perforadas, barras, superficies auxiliares y piezas de fijación permiten sostener objetos, publicaciones, dispositivos de sonido y herramientas de registro dentro de una misma infraestructura.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>The unit moves the poros system into a compact, disassemblable and operational scale. The structure works as a coupling matrix: perforated plates, bars, auxiliary surfaces and fixing pieces allow objects, publications, sound devices and recording tools to be supported within a single infrastructure.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>L’unité déplace le système de poros vers une échelle compacte, démontable et opérationnelle. La structure fonctionne comme une matrice de couplage : plaques perforées, barres, surfaces auxiliaires et pièces de fixation permettent de soutenir objets, publications, dispositifs sonores et outils d’enregistrement au sein d’une même infrastructure.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>このユニットは poros system を、コンパクトで分解可能かつ実運用できるスケールへ移行させる。構造体は接続のマトリクスとして機能し、穿孔プレート、バー、補助面、固定部品によって、物体、出版物、音響装置、記録装置をひとつのインフラの中で支持する。</p></div>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact"><b data-i18n="fact.origin.label">origen</b><span data-i18n="fact.origin.value">sistema de poros de xpan</span></div>
+        <div class="fact"><b data-i18n="fact.type.label">tipo</b><span data-i18n="fact.type.value">unidad portátil y transportable</span></div>
+        <div class="fact"><b data-i18n="fact.period.label">periodo</b><span data-i18n="fact.period.value">04.2026 — 05.2026</span></div>
+        <div class="fact"><b data-i18n="fact.sequence.label">secuencia</b><span data-i18n="fact.sequence.value">tokio / kioto / kansai</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="desarrollo">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.development.title">desarrollo</h2>
+          <p class="section-meta" data-i18n="section.development.meta">19 días / concepción / construcción / prueba / traslado</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>El dispositivo fue desarrollado como una unidad de despliegue rápido. Su construcción condensó diseño estructural, fabricación, ajustes de estabilidad, reducción de peso, lógica de embalaje, pruebas de ensamblaje y verificación completa de funcionamiento antes del traslado.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>The device was developed as a rapid deployment unit. Its construction condensed structural design, fabrication, stability adjustments, weight reduction, packing logic, assembly testing and full operational verification before transport.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>Le dispositif a été développé comme une unité de déploiement rapide. Sa construction a condensé design structurel, fabrication, ajustements de stabilité, réduction du poids, logique d’emballage, essais d’assemblage et vérification complète du fonctionnement avant le transport.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>このデバイスは迅速に展開するためのユニットとして開発された。構造設計、製作、安定性の調整、軽量化、梱包のロジック、組立検証、移動前の完全な動作確認をひとつの工程の中で統合した。</p></div>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact"><b>04.04.26</b><span data-i18n="development.start">concepción inicial</span></div>
+        <div class="fact"><b data-i18n="development.interval.label">intervalo</b><span data-i18n="development.interval.value">diecinueve días</span></div>
+        <div class="fact"><b data-i18n="development.output.label">resultado</b><span data-i18n="development.output.value">unidad completa funcional</span></div>
+        <div class="fact"><b>23.04.26</b><span data-i18n="development.ready">sistema probado y listo para traslado</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="activaciones">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.activations.title">activaciones</h2>
+          <p class="section-meta" data-i18n="section.activations.meta">japón / 30.04.26 — 10.05.26</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>La primera secuencia del dispositivo portátil 001 ocurrió en japón a través de tres despliegues. Cada activación modificó la función del sistema: presentación editorial, registro arquitectónico y documentación en un recinto histórico protegido.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>The first sequence of portable device 001 took place in japan through three deployments. Each activation shifted the function of the system: editorial presentation, architectural registration and documentation within a protected historic precinct.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>La première séquence du dispositif portable 001 a eu lieu au japon à travers trois déploiements. Chaque activation a déplacé la fonction du système : présentation éditoriale, enregistrement architectural et documentation dans un site historique protégé.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>dispositivo portátil 001 の最初のシークエンスは、日本での三つの展開によって行われた。それぞれの展開は、編集物の提示、建築的記録、保護された歴史的領域でのドキュメンテーションとして、システムの機能を変化させた。</p></div>
+        </div>
+      </div>
+      <div class="activation-grid">
+        <article class="activation-card">
+          <div><div class="code">001 / 30.04.26</div><h3>domicile / atlas.3</h3></div>
+          <div class="lang-block active" data-lang-block="es"><p>primer despliegue público en domicile, harajuku. el dispositivo funcionó como soporte de presentación para atlas.3 y como infraestructura mínima para activar publicación, sonido, archivo y presencia física dentro del espacio.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>first public deployment at domicile, harajuku. the device operated as presentation support for atlas.3 and as a minimal infrastructure for activating publication, sound, archive and physical presence within the space.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>premier déploiement public à domicile, harajuku. le dispositif a fonctionné comme support de présentation pour atlas.3 et comme infrastructure minimale pour activer publication, son, archive et présence physique dans l’espace.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>原宿の domicile における最初の公開展開。デバイスは atlas.3 の提示台として機能し、出版、音響、アーカイブ、空間内の物理的存在を作動させる最小インフラとして配置された。</p></div>
+          <div class="data">domicile / harajuku / tokio</div>
+        </article>
+        <article class="activation-card">
+          <div><div class="code">002 / 07.05.26</div><h3>kizashi / kioto</h3></div>
+          <div class="lang-block active" data-lang-block="es"><p>despliegue arquitectónico dentro de una habitación japonesa con tatami. la estructura fue registrada en relación con la modulación del piso, la escala baja del cuarto, los planos horizontales y la precisión material del espacio.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>architectural deployment inside a japanese room with tatami. the structure was registered in relation to floor modulation, the low scale of the room, horizontal planes and the material precision of the space.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>déploiement architectural dans une chambre japonaise avec tatami. la structure a été enregistrée en relation avec la modulation du sol, l’échelle basse de la pièce, les plans horizontaux et la précision matérielle de l’espace.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>畳を備えた日本の室内における建築的展開。構造体は、床のモジュール、低い室内スケール、水平面、空間の素材的精度との関係の中で記録された。</p></div>
+          <div class="data">kizashi / kioto</div>
+        </article>
+        <article class="activation-card">
+          <div><div class="code">003 / 10.05.26</div><h3>kamo jinja / kamigamo jinja</h3></div>
+          <div class="lang-block active" data-lang-block="es"><p>registro del dispositivo en Kamo Wakeikazuchi Jinja, también conocido como Kamigamo Jinja. recinto fundado en 678, situado junto a los bosques montañosos de la región Kansai. uno de los santuarios sintoístas más antiguos de japón y patrimonio mundial protegido por la UNESCO.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>registration of the device at Kamo Wakeikazuchi Jinja, also known as Kamigamo Jinja. a precinct founded in 678, located by the mountainous forests of the Kansai region. one of the oldest Shinto shrines in japan and a UNESCO protected World Heritage Site.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>enregistrement du dispositif à Kamo Wakeikazuchi Jinja, aussi connu sous le nom de Kamigamo Jinja. site fondé en 678, situé près des forêts montagneuses de la région du Kansai. l’un des plus anciens sanctuaires shinto du japon et un site du patrimoine mondial protégé par l’UNESCO.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>賀茂別雷神社、通称・上賀茂神社でのデバイスの記録。678年に創建されたとされ、関西地方の山林に隣接するこの神社は、日本でも最古級の神道神社のひとつであり、UNESCO世界遺産に登録されている。</p></div>
+          <div class="data">kamigamo jinja / kioto / kansai</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="domicile">
+      <div class="section-head neg-shell">
+        <div><h2 class="section-title">001 / domicile</h2><p class="section-meta">harajuku / tokio / 30.04.26 / atlas.3</p></div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>presentación de atlas.3 a través del dispositivo portátil 001 como soporte físico, estructura editorial y sistema de presencia dentro de domicile.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>presentation of atlas.3 through portable device 001 as physical support, editorial structure and system of presence within domicile.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>présentation d’atlas.3 à travers le dispositif portable 001 comme support physique, structure éditoriale et système de présence au sein de domicile.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>domicile において、dispositivo portátil 001 を物理的支持体、編集的構造、空間内の存在のシステムとして用いた atlas.3 の提示。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071288/original_55e53c00fd7d7852ec3bf803c1b0beb3.jpeg" alt="dispositivo portátil 001 — 001.01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.01</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071284/original_26a61949f69902b77ec9a80510902e4a.jpeg" alt="dispositivo portátil 001 — 001.02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.02</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071283/original_1f0cf758c1f263ee9f46ab03e1f23aee.jpeg" alt="dispositivo portátil 001 — 001.03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.03</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071279/original_c921e43c1c8fc0ed24919d83c9fb46cd.jpeg" alt="dispositivo portátil 001 — 001.04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.04</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071289/original_11f1b9d57836a8f6b94f163030eab193.jpeg" alt="dispositivo portátil 001 — 001.05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.05</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071277/original_4f4e1571240a26644b48aa1f1835f728.jpeg" alt="dispositivo portátil 001 — 001.06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.06</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.07">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071272/original_32e3e13073440f67310732265ef9e1a3.jpeg" alt="dispositivo portátil 001 — 001.07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.07</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.08">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071334/original_74312584a5547eac4000aa970046918b.jpeg" alt="dispositivo portátil 001 — 001.08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.08</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.09">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071333/original_668ed424c476b94909c85facd25c6393.jpeg" alt="dispositivo portátil 001 — 001.09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.09</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071271/original_ae71b8d8495941ac81505db467344754.jpeg" alt="dispositivo portátil 001 — 001.10" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.10</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071270/original_ee28b833aa93cf0e3bb4cdc8bd6ccbb6.jpeg" alt="dispositivo portátil 001 — 001.11" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.11</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071269/original_84c205af073abd133fbe4a11fa7b2712.jpeg" alt="dispositivo portátil 001 — 001.12" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.12</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071268/original_b2e489391c0bf37cce46b49cd43f97a6.jpeg" alt="dispositivo portátil 001 — 001.13" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.13</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 001.14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071267/original_25a3dd6b5ec28f88be723c104ea0ad09.jpeg" alt="dispositivo portátil 001 — 001.14" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>001.14</span><span data-i18n="caption.domicile"></span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="kizashi">
+      <div class="section-head neg-shell">
+        <div><h2 class="section-title">002 / kizashi</h2><p class="section-meta">kioto / 07.05.26 / despliegue arquitectónico</p></div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>registro del dispositivo en un cuarto japonés con tatami, atendiendo la relación entre estructura ensamblable, superficie horizontal, escala baja y precisión espacial.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>registration of the device inside a japanese room with tatami, addressing the relation between assemblable structure, horizontal surface, low scale and spatial precision.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>enregistrement du dispositif dans une chambre japonaise avec tatami, à partir de la relation entre structure assemblable, surface horizontale, échelle basse et précision spatiale.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>畳のある日本の室内において、組立式構造、水平面、低いスケール、空間的精度の関係を記録した。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071532/original_ee3f9e8d7d78ecd978fc2770bd361f9e.jpeg" alt="dispositivo portátil 001 — 002.01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.01</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071531/original_a34e617ce36d8ddf9280ab1efb4f8273.jpeg" alt="dispositivo portátil 001 — 002.02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.02</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071513/original_1d304d3b866f043d7015959d7dbc60cb.png" alt="dispositivo portátil 001 — 002.03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.03</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071511/original_d52e7d59b91d5c24ec4c3688a27e4a10.png" alt="dispositivo portátil 001 — 002.04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.04</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071507/original_dd83ce94f34f0b62fe21733d9c4a8e33.png" alt="dispositivo portátil 001 — 002.05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.05</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071506/original_7942cada0f7d576bc110fb2d4d78b0a5.png" alt="dispositivo portátil 001 — 002.06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.06</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.07">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071502/original_3f73bc2e4c54932f525da725134a752b.png" alt="dispositivo portátil 001 — 002.07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.07</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.08">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071497/original_b9e62b0ab7ba800fe209d00df6720407.png" alt="dispositivo portátil 001 — 002.08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.08</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.09">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071488/original_373ac6eba859e523b2cf232bde664e28.png" alt="dispositivo portátil 001 — 002.09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.09</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071478/original_c986f0692b67fd63ec8cd4276198d063.jpeg" alt="dispositivo portátil 001 — 002.10" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.10</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071469/original_197b1a1e63fe9f626c912d818d63dd5c.jpeg" alt="dispositivo portátil 001 — 002.11" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.11</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071468/original_080ed3e63b16eb4ab8ef274fe6022af4.jpeg" alt="dispositivo portátil 001 — 002.12" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.12</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071444/original_6133cfdc705a526ce9e23b790919d731.png" alt="dispositivo portátil 001 — 002.13" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.13</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071442/original_356a85ea5db80d47275b2ed6fc0caac7.png" alt="dispositivo portátil 001 — 002.14" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.14</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.15">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071440/original_e973dfcce8a8ae9be03cb0c877e5c7e2.png" alt="dispositivo portátil 001 — 002.15" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.15</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.16">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071436/original_a6647a7d4e7f4ef048d4b29f941e16f4.png" alt="dispositivo portátil 001 — 002.16" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.16</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.17">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071434/original_26d2bacfadb62f3575c046c67bbd5505.png" alt="dispositivo portátil 001 — 002.17" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.17</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.18">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071428/original_4c7c8a4012e2f33299489b3b43033b1f.png" alt="dispositivo portátil 001 — 002.18" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.18</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.19">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071410/original_19693849eaa756cf25f2285fa46dfb12.png" alt="dispositivo portátil 001 — 002.19" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.19</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.20">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071407/original_ae9006529f7ec2f1b1a2d6e57bd5fbd1.png" alt="dispositivo portátil 001 — 002.20" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.20</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.21">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071406/original_3160f9bb011d939bee6caeb1e801d882.png" alt="dispositivo portátil 001 — 002.21" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.21</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.22">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071405/original_0c4f164185711c533399dc79626dee03.png" alt="dispositivo portátil 001 — 002.22" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.22</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.23">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071403/original_d13a263462b491a70b8a07c2ac25b204.png" alt="dispositivo portátil 001 — 002.23" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.23</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 002.24">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071386/original_02f944dc5526977e61cdf6f43b757b90.png" alt="dispositivo portátil 001 — 002.24" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>002.24</span><span data-i18n="caption.kizashi"></span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="kamo">
+      <div class="section-head neg-shell">
+        <div><h2 class="section-title">003 / kamo jinja</h2><p class="section-meta">kamigamo jinja / kioto / kansai / 10.05.26</p></div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>registro del dispositivo en Kamo Wakeikazuchi Jinja / Kamigamo Jinja, recinto fundado en 678 y protegido por la UNESCO como parte de los monumentos históricos de la antigua Kioto.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>registration of the device at Kamo Wakeikazuchi Jinja / Kamigamo Jinja, a precinct founded in 678 and protected by UNESCO as part of the Historic Monuments of Ancient Kyoto.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>enregistrement du dispositif à Kamo Wakeikazuchi Jinja / Kamigamo Jinja, site fondé en 678 et protégé par l’UNESCO dans le cadre des monuments historiques de l’ancienne Kyoto.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>賀茂別雷神社 / 上賀茂神社でのデバイスの記録。678年に創建されたとされ、古都京都の文化財の一部としてUNESCOに保護されている。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071607/original_45620ac1ea63f8bec3ec52ab2b56fb53.jpeg" alt="dispositivo portátil 001 — 003.01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.01</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071599/original_e00d65484ebe5a911f921d8f73cab716.png" alt="dispositivo portátil 001 — 003.02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.02</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071596/original_a4deef1dff0656d149f5969e874ab15a.png" alt="dispositivo portátil 001 — 003.03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.03</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071593/original_4e6eaea7e8909452e5f2aa3ac9c7237e.jpeg" alt="dispositivo portátil 001 — 003.04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.04</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071591/original_13b81df46769c7722d543d0756e0ba81.jpeg" alt="dispositivo portátil 001 — 003.05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.05</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071589/original_e3b7717b659e8ac508d7eeda5052caf5.jpeg" alt="dispositivo portátil 001 — 003.06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.06</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.07">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071588/original_6687a6309c85be8105dea39ea150750c.jpeg" alt="dispositivo portátil 001 — 003.07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.07</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.08">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071587/original_f3c04985095866396b5e4a26916e97ba.jpeg" alt="dispositivo portátil 001 — 003.08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.08</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.09">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071585/original_a6c03f8dd9b36b52a682ef5bd77a6cac.jpeg" alt="dispositivo portátil 001 — 003.09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.09</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071583/original_5f5d061a8eb42c188bdf7d448bdf2423.jpeg" alt="dispositivo portátil 001 — 003.10" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.10</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071582/original_a7fd0b711a1b253d51a9c547d91eda35.jpeg" alt="dispositivo portátil 001 — 003.11" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.11</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071581/original_5c9a93c70a869a4e0d0d36c8cca32e8a.jpeg" alt="dispositivo portátil 001 — 003.12" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.12</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071580/original_4cf512f209e92adf94c386af2f8fe2f4.jpeg" alt="dispositivo portátil 001 — 003.13" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.13</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071578/original_bd56e599c76dcfe2b243089f4ca96e71.jpeg" alt="dispositivo portátil 001 — 003.14" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.14</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.15">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071576/original_66ec79ab8e3c6c47ee573b05e07bdc0c.jpeg" alt="dispositivo portátil 001 — 003.15" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.15</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.16">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071570/original_9786c96d7323afd1eb85c6f42255c87c.jpeg" alt="dispositivo portátil 001 — 003.16" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.16</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.17">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071569/original_a6befea34ddbb23893f7d17cc720a4d0.jpeg" alt="dispositivo portátil 001 — 003.17" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.17</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.18">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071568/original_a438b9d0d3fa5aa7bbaf281de0d21907.jpeg" alt="dispositivo portátil 001 — 003.18" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.18</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.19">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071567/original_14ad202b5f0f52d537ec0c34c4990068.jpeg" alt="dispositivo portátil 001 — 003.19" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.19</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.20">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071566/original_ea0935e6195d3e70815a13dcc45aa2c1.jpeg" alt="dispositivo portátil 001 — 003.20" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.20</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.21">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071563/original_06702b9cac766a6c463eeb9f6e03adc1.jpeg" alt="dispositivo portátil 001 — 003.21" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.21</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.22">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071562/original_4a84e9fbd6f71b53a6722312fa4a2f06.jpeg" alt="dispositivo portátil 001 — 003.22" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.22</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.23">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071561/original_edfbf9c9ed7bd1caf5d9fa61b62d4e71.jpeg" alt="dispositivo portátil 001 — 003.23" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.23</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.24">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071560/original_d0b9de6d1d1f58f9ed7d1d9567888288.jpeg" alt="dispositivo portátil 001 — 003.24" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.24</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir 003.25">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/46071557/original_5d1cdc6bdb0c14ff0ebfbad267ad7c33.jpeg" alt="dispositivo portátil 001 — 003.25" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>003.25</span><span data-i18n="caption.kamo"></span></figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">close</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="previous" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="next" data-i18n-aria="action.next">›</button>
+  </div>
+
+  <script>
+    (function langSwitch(){
+      const switcher = document.getElementById('lang-switch');
+      if (!switcher) return;
+      const buttons = switcher.querySelectorAll('[data-lang-btn]');
+      const blocks = document.querySelectorAll('[data-lang-block]');
+      const staticText = {
+        es: {
+          metaDescription:'dispositivo portátil 001 — primera unidad transportable desarrollada a partir del sistema de poros de xpan. japón, 2026.',
+          'plate.project':'dispositivo portátil 001 / sistema de poros',
+          'plate.location':'japón / 2026',
+          'aria.pageSections':'secciones de página',
+          'nav.system':'sistema','nav.development':'desarrollo','nav.activations':'activaciones','nav.domicile':'domicile','nav.kizashi':'kizashi','nav.kamo':'kamo jinja',
+          'section.system.title':'sistema','section.system.meta':'estructura / soporte / sonido / archivo / registro / publicación',
+          'section.development.title':'desarrollo','section.development.meta':'19 días / concepción / construcción / prueba / traslado',
+          'section.activations.title':'activaciones','section.activations.meta':'japón / 30.04.26 — 10.05.26',
+          'fact.origin.label':'origen','fact.origin.value':'sistema de poros de xpan','fact.type.label':'tipo','fact.type.value':'unidad portátil y transportable','fact.period.label':'periodo','fact.period.value':'04.2026 — 05.2026','fact.sequence.label':'secuencia','fact.sequence.value':'tokio / kioto / kansai',
+          'development.start':'concepción inicial','development.interval.label':'intervalo','development.interval.value':'diecinueve días','development.output.label':'resultado','development.output.value':'unidad completa funcional','development.ready':'sistema probado y listo para traslado',
+          'caption.domicile':'domicile / atlas.3','caption.kizashi':'kizashi / despliegue arquitectónico','caption.kamo':'kamo jinja / UNESCO','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        en: {
+          metaDescription:'portable device 001 — the first transportable unit developed from xpan’s poros system. japan, 2026.',
+          'plate.project':'portable device 001 / poros system','plate.location':'japan / 2026','aria.pageSections':'page sections',
+          'nav.system':'system','nav.development':'development','nav.activations':'activations','nav.domicile':'domicile','nav.kizashi':'kizashi','nav.kamo':'kamo jinja',
+          'section.system.title':'system','section.system.meta':'structure / support / sound / archive / recording / publication',
+          'section.development.title':'development','section.development.meta':'19 days / conception / construction / testing / transport',
+          'section.activations.title':'activations','section.activations.meta':'japan / 30.04.26 — 10.05.26',
+          'fact.origin.label':'origin','fact.origin.value':'xpan poros system','fact.type.label':'type','fact.type.value':'portable and transportable unit','fact.period.label':'period','fact.period.value':'04.2026 — 05.2026','fact.sequence.label':'sequence','fact.sequence.value':'tokyo / kyoto / kansai',
+          'development.start':'initial conception','development.interval.label':'interval','development.interval.value':'nineteen days','development.output.label':'output','development.output.value':'complete functional unit','development.ready':'tested system ready for transport',
+          'caption.domicile':'domicile / atlas.3','caption.kizashi':'kizashi / architectural deployment','caption.kamo':'kamo jinja / UNESCO','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        fr: {
+          metaDescription:'dispositif portable 001 — première unité transportable développée à partir du système de poros de xpan. japon, 2026.',
+          'plate.project':'dispositif portable 001 / système de poros','plate.location':'japon / 2026','aria.pageSections':'sections de page',
+          'nav.system':'système','nav.development':'développement','nav.activations':'activations','nav.domicile':'domicile','nav.kizashi':'kizashi','nav.kamo':'kamo jinja',
+          'section.system.title':'système','section.system.meta':'structure / support / son / archive / enregistrement / publication',
+          'section.development.title':'développement','section.development.meta':'19 jours / conception / construction / essai / transport',
+          'section.activations.title':'activations','section.activations.meta':'japon / 30.04.26 — 10.05.26',
+          'fact.origin.label':'origine','fact.origin.value':'système de poros de xpan','fact.type.label':'type','fact.type.value':'unité portable et transportable','fact.period.label':'période','fact.period.value':'04.2026 — 05.2026','fact.sequence.label':'séquence','fact.sequence.value':'tokyo / kyoto / kansai',
+          'development.start':'conception initiale','development.interval.label':'intervalle','development.interval.value':'dix-neuf jours','development.output.label':'résultat','development.output.value':'unité fonctionnelle complète','development.ready':'système testé et prêt au transport',
+          'caption.domicile':'domicile / atlas.3','caption.kizashi':'kizashi / déploiement architectural','caption.kamo':'kamo jinja / UNESCO','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        jp: {
+          metaDescription:'dispositivo portátil 001 — xpan の poros system から開発された最初の可搬ユニット。日本、2026年。',
+          'plate.project':'dispositivo portátil 001 / poros system','plate.location':'日本 / 2026','aria.pageSections':'ページセクション',
+          'nav.system':'システム','nav.development':'開発','nav.activations':'展開','nav.domicile':'domicile','nav.kizashi':'kizashi','nav.kamo':'kamo jinja',
+          'section.system.title':'システム','section.system.meta':'構造 / 支持 / 音響 / アーカイブ / 記録 / 出版',
+          'section.development.title':'開発','section.development.meta':'19日間 / 構想 / 製作 / 検証 / 移動',
+          'section.activations.title':'日本での展開','section.activations.meta':'日本 / 30.04.26 — 10.05.26',
+          'fact.origin.label':'起点','fact.origin.value':'xpan の poros system','fact.type.label':'形式','fact.type.value':'可搬・運搬可能なユニット','fact.period.label':'期間','fact.period.value':'04.2026 — 05.2026','fact.sequence.label':'シークエンス','fact.sequence.value':'東京 / 京都 / 関西',
+          'development.start':'初期構想','development.interval.label':'期間','development.interval.value':'19日間','development.output.label':'結果','development.output.value':'完全に機能するユニット','development.ready':'移動可能な状態まで検証済み',
+          'caption.domicile':'domicile / atlas.3','caption.kizashi':'kizashi / 建築的展開','caption.kamo':'kamo jinja / UNESCO','action.close':'close','action.previous':'previous','action.next':'next'
+        }
+      };
+      function setText(lang){
+        const dict = staticText[lang] || staticText.es;
+        document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
+        const meta = document.querySelector('meta[name="description"]');
+        if (meta && dict.metaDescription) meta.setAttribute('content', dict.metaDescription);
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (dict[key]) el.textContent = dict[key];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+          const key = el.getAttribute('data-i18n-aria');
+          if (dict[key]) el.setAttribute('aria-label', dict[key]);
+        });
+      }
+      function setLang(lang){
+        buttons.forEach(btn => btn.classList.toggle('lang-active', btn.dataset.langBtn === lang));
+        blocks.forEach(block => block.classList.toggle('active', block.dataset.langBlock === lang));
+        setText(lang);
+        try{ localStorage.setItem('xpan.lang', lang); }catch(e){}
+      }
+      buttons.forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.langBtn)));
+      let initial = 'es';
+      try{ initial = localStorage.getItem('xpan.lang') || 'es'; }catch(e){}
+      if (!staticText[initial]) initial = 'es';
+      setLang(initial);
+    })();
+
+    (function lazyMedia(){
+      const imgs = Array.from(document.querySelectorAll('img[data-src]'));
+      function load(img){
+        if (!img || !img.dataset.src) return;
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.addEventListener('load', () => img.classList.add('loaded'), { once:true });
+        if (img.complete) img.classList.add('loaded');
+      }
+      if ('IntersectionObserver' in window){
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting){ load(entry.target); observer.unobserve(entry.target); }
+          });
+        }, { rootMargin:'700px 0px' });
+        imgs.forEach(img => observer.observe(img));
+      }else{ imgs.forEach(load); }
+    })();
+
+    (function lightbox(){
+      const lb = document.getElementById('xpan-lightbox');
+      const sheet = lb.querySelector('.sheet');
+      const items = Array.from(document.querySelectorAll('[data-media-item] img'));
+      let index = -1;
+      function srcOf(img){ return img.getAttribute('src') || img.getAttribute('data-src'); }
+      function open(i){
+        if (i < 0 || i >= items.length) return;
+        index = i;
+        const source = srcOf(items[index]);
+        sheet.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = source;
+        img.alt = items[index].alt || '';
+        img.decoding = 'async';
+        sheet.appendChild(img);
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        sheet.innerHTML = '';
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+        index = -1;
+      }
+      function step(delta){
+        if (index < 0) return;
+        const next = Math.max(0, Math.min(items.length - 1, index + delta));
+        if (next !== index) open(next);
+      }
+      document.querySelectorAll('.media-open').forEach((btn, i) => btn.addEventListener('click', () => open(i)));
+      lb.querySelector('[data-lb-close]').addEventListener('click', close);
+      lb.querySelector('[data-dir="prev"]').addEventListener('click', () => step(-1));
+      lb.querySelector('[data-dir="next"]').addEventListener('click', () => step(1));
+      lb.addEventListener('click', e => { if (e.target === lb) close(); });
+      window.addEventListener('keydown', e => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowRight' || e.key === 'l') step(1);
+        if (e.key === 'ArrowLeft' || e.key === 'h') step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>
