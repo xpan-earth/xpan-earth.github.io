@@ -13,8 +13,8 @@
   <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
   <link rel="preconnect" href="https://attachments.are.na" crossorigin>
   <link rel="dns-prefetch" href="https://attachments.are.na">
-  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png" fetchpriority="high">
+  <link rel="preload" as="image" href="xpan.svg" type="image/svg+xml" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png" type="image/png" fetchpriority="high">
 
   <style>
     :root{
@@ -36,12 +36,12 @@
     }
 
     *,*::before,*::after{ box-sizing:border-box; }
-    html{ scroll-behavior:smooth; }
+    html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
     html,body{ min-height:100%; margin:0; }
     body{
       background:var(--bg); color:var(--fg); font-family:var(--ui);
       -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      overflow-x:hidden;
+      overflow-x:hidden; text-rendering:geometricPrecision;
     }
     body.lb-open{ overflow:hidden; }
     a{ color:inherit; text-decoration:none; }
@@ -67,7 +67,7 @@
     .bg-grid{
       position:fixed; inset:0; z-index:0; pointer-events:none;
       width:100vw; height:100vh; display:block;
-      opacity:.86;
+      opacity:.86; contain:strict;
     }
     .crosshair{
       position:fixed; inset:0; z-index:1; pointer-events:none;
@@ -79,7 +79,7 @@
     .bg-hero::before{
       content:""; background-image:var(--hero,none); background-size:contain; background-position:center; background-repeat:no-repeat;
       width:82vw; height:82vh; filter:blur(170px) contrast(44) brightness(.16) saturate(.8); opacity:.23;
-      animation:flashFX 6s steps(30,end) infinite; will-change:opacity,filter;
+      animation:flashFX 6s steps(30,end) infinite; will-change:opacity; transform:translateZ(0); backface-visibility:hidden;
     }
     .grain{
       position:fixed; inset:-40%; z-index:0; pointer-events:none;
@@ -91,7 +91,7 @@
     @keyframes noiseShift{ 0%{transform:translate3d(0,0,0);} 25%{transform:translate3d(-1%,1%,0);} 50%{transform:translate3d(1%,-1%,0);} 75%{transform:translate3d(2%,2%,0);} 100%{transform:translate3d(0,0,0);} }
 
     main{ position:relative; z-index:3; padding-top:calc(var(--header-h) + 28px); }
-    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; }
+    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; contain:layout paint style; }
     .section:first-of-type{ border-top:0; padding-top:22px; min-height:78vh; display:flex; align-items:flex-end; }
     .plate{
       display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px;
@@ -140,13 +140,13 @@
     .media-card img{
       display:block; width:100%; aspect-ratio:4/5; height:auto; object-fit:cover; background:#050608;
       opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease, filter .28s ease;
-      filter:saturate(.96) contrast(1.02);
+      filter:saturate(.96) contrast(1.02); content-visibility:auto;
     }
     .media-card img.loaded{ opacity:1; transform:translateY(0); }
     .media-card:hover img{ filter:saturate(1) contrast(1.06); }
 
     .pdf-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
-    .pdf-card object{ display:block; width:100%; height:72vh; min-height:560px; border:0; background:#0C0D0F; }
+    .pdf-card object{ display:block; width:100%; height:72vh; min-height:560px; border:0; background:#0C0D0F; content-visibility:auto; contain-intrinsic-size:560px; }
     @media (prefers-color-scheme:light){ .pdf-card object{ background:#F3F5F7; } }
 
     footer{ max-width:var(--maxw); margin:0 auto; padding:0 var(--pad-x) 64px; color:var(--fg-dim); font:600 10px/1.35 var(--mono); letter-spacing:.08em; text-transform:lowercase; display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; }
@@ -181,7 +181,7 @@
       .chip{ font-size:10px; padding:7px 8px; }
       header img{ width:44px; }
       main{ padding-top:86px; }
-      .section{ padding:22px var(--pad-x) 56px; content-visibility:visible; }
+      .section{ padding:22px var(--pad-x) 56px; content-visibility:auto; contain-intrinsic-size:680px; }
       .section:first-of-type{ min-height:72vh; }
       .media-grid,.media-set{ gap:6px; }
       .media-card img{ aspect-ratio:3/4; }
@@ -194,6 +194,7 @@
     @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
   </style>
 </head>
+  <script src="/assets/js/media-proxy.js" defer></script>
 <body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png')">
   <header>
     <div class="stack">
@@ -401,7 +402,7 @@
   <div id="xpan-lightbox" aria-hidden="true">
     <button type="button" data-lb-close>cerrar</button>
     <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior">←</button>
-    <div class="sheet"><img alt=""/></div>
+    <div class="sheet"><img alt="" decoding="async"/></div>
     <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente">→</button>
   </div>
 
@@ -461,113 +462,162 @@
     const allMedia = MEDIA_GROUPS.flat();
     let lbIndex = 0;
 
+    const doc = document;
+    const root = doc.documentElement;
+    const idle = window.requestIdleCallback ? (fn, timeout = 900) => requestIdleCallback(fn, { timeout }) : (fn) => setTimeout(fn, 0);
+    let mediaRendered = false;
+    let mediaObserver = null;
+    let lazyImageObserver = null;
+    let pdfObserver = null;
+
     function setLang(lang){
       if(!I18N[lang]) lang = 'es';
-      document.documentElement.lang = lang;
-      localStorage.setItem('xpan-lang', lang);
-      document.querySelectorAll('[data-lang-block]').forEach(el => el.classList.toggle('active', el.dataset.langBlock === lang));
-      document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+      root.lang = lang;
+      try{ localStorage.setItem('xpan-lang', lang); }catch(e){}
+      const dict = I18N[lang];
+      doc.querySelectorAll('[data-lang-block]').forEach(el => el.classList.toggle('active', el.dataset.langBlock === lang));
+      doc.querySelectorAll('[data-lang-btn]').forEach(btn => {
         const active = btn.dataset.langBtn === lang;
         btn.classList.toggle('lang-active', active);
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
-      Object.entries(I18N[lang]).forEach(([key, value]) => {
-        document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.textContent = value; });
+      Object.keys(dict).forEach(key => {
+        doc.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.textContent = dict[key]; });
       });
     }
 
     function renderMedia(){
-      const grid = document.getElementById('mediaGrid');
+      if(mediaRendered) return;
+      const grid = doc.getElementById('mediaGrid');
+      if(!grid) return;
+      mediaRendered = true;
+      const frag = doc.createDocumentFragment();
       MEDIA_GROUPS.forEach((group) => {
-        const set = document.createElement('div');
+        const set = doc.createElement('div');
         set.className = 'media-set';
         group.forEach((src) => {
           const index = allMedia.indexOf(src);
-          const figure = document.createElement('figure');
+          const figure = doc.createElement('figure');
           figure.className = 'media-card';
-          const button = document.createElement('button');
+          const button = doc.createElement('button');
           button.className = 'media-open';
           button.type = 'button';
           button.setAttribute('aria-label', 'abrir imagen');
-          const img = document.createElement('img');
+          const img = doc.createElement('img');
           img.alt = 'xpan / florero de pared';
-          img.loading = index === 0 ? 'eager' : 'lazy';
+          img.loading = 'lazy';
           img.decoding = 'async';
-          if(index === 0){ img.fetchPriority = 'high'; img.src = src; }
-          else { img.dataset.src = src; }
-          img.addEventListener('load', () => img.classList.add('loaded'));
+          img.fetchPriority = 'low';
+          img.dataset.src = src;
+          img.addEventListener('load', () => img.classList.add('loaded'), { once:true });
           button.appendChild(img);
-          button.addEventListener('click', () => openLightbox(index));
+          button.addEventListener('click', () => openLightbox(index), { passive:true });
           figure.appendChild(button);
           set.appendChild(figure);
         });
-        grid.appendChild(set);
+        frag.appendChild(set);
       });
+      grid.appendChild(frag);
+      lazyLoadImages();
     }
 
-    function lazyLoad(){
-      const images = [...document.querySelectorAll('img[data-src]')];
+    function lazyLoadImages(){
+      const images = [...doc.querySelectorAll('img[data-src]')];
+      const margin = window.matchMedia('(max-width: 640px)').matches ? '220px 0px' : '520px 0px';
+      if(lazyImageObserver) lazyImageObserver.disconnect();
       if('IntersectionObserver' in window){
-        const io = new IntersectionObserver(entries => {
+        lazyImageObserver = new IntersectionObserver(entries => {
           entries.forEach(entry => {
             if(entry.isIntersecting){
               const img = entry.target;
               img.src = img.dataset.src;
               img.removeAttribute('data-src');
-              io.unobserve(img);
+              lazyImageObserver.unobserve(img);
             }
           });
-        }, { rootMargin:'600px 0px' });
-        images.forEach(img => io.observe(img));
+        }, { rootMargin:margin, threshold:.01 });
+        images.forEach(img => lazyImageObserver.observe(img));
       } else {
         images.forEach(img => { img.src = img.dataset.src; img.removeAttribute('data-src'); });
       }
+    }
 
-      const pdf = document.querySelector('[data-pdf-src]');
-      if(pdf && 'IntersectionObserver' in window){
-        const po = new IntersectionObserver(entries => {
+    function lazyLoadPdf(){
+      const pdf = doc.querySelector('[data-pdf-src]');
+      if(!pdf) return;
+      const margin = window.matchMedia('(max-width: 640px)').matches ? '140px 0px' : '360px 0px';
+      if('IntersectionObserver' in window){
+        pdfObserver = new IntersectionObserver(entries => {
           entries.forEach(entry => {
             if(entry.isIntersecting){
               pdf.data = pdf.dataset.pdfSrc;
               pdf.removeAttribute('data-pdf-src');
-              po.disconnect();
+              pdfObserver.disconnect();
             }
           });
-        }, { rootMargin:'800px 0px' });
-        po.observe(pdf);
-      } else if(pdf){
+        }, { rootMargin:margin, threshold:.01 });
+        pdfObserver.observe(pdf);
+      } else {
         pdf.data = pdf.dataset.pdfSrc;
         pdf.removeAttribute('data-pdf-src');
       }
     }
 
+    function scheduleMedia(){
+      const record = doc.getElementById('registro');
+      if(!record){ renderMedia(); return; }
+      const margin = window.matchMedia('(max-width: 640px)').matches ? '320px 0px' : '700px 0px';
+      if('IntersectionObserver' in window){
+        mediaObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              renderMedia();
+              mediaObserver.disconnect();
+            }
+          });
+        }, { rootMargin:margin, threshold:.01 });
+        mediaObserver.observe(record);
+      } else {
+        idle(renderMedia);
+      }
+    }
+
+    function preloadAround(index){
+      [index + 1, index - 1].forEach(i => {
+        const src = allMedia[(i + allMedia.length) % allMedia.length];
+        const preload = new Image();
+        preload.decoding = 'async';
+        preload.src = src;
+      });
+    }
+
     function openLightbox(index){
       lbIndex = index;
-      const lb = document.getElementById('xpan-lightbox');
+      const lb = doc.getElementById('xpan-lightbox');
       const img = lb.querySelector('.sheet img');
       img.src = allMedia[lbIndex];
       img.alt = 'xpan / florero de pared';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('lb-open');
+      doc.body.classList.add('lb-open');
+      preloadAround(lbIndex);
     }
     function closeLightbox(){
-      const lb = document.getElementById('xpan-lightbox');
+      const lb = doc.getElementById('xpan-lightbox');
       const img = lb.querySelector('.sheet img');
       lb.classList.remove('open');
       lb.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('lb-open');
+      doc.body.classList.remove('lb-open');
       img.src = '';
     }
     function moveLightbox(dir){
       lbIndex = (lbIndex + dir + allMedia.length) % allMedia.length;
-      document.querySelector('#xpan-lightbox .sheet img').src = allMedia[lbIndex];
+      doc.querySelector('#xpan-lightbox .sheet img').src = allMedia[lbIndex];
+      preloadAround(lbIndex);
     }
 
-
-
     function initBreathingGrid(){
-      const canvas = document.getElementById('xpanBreathGrid');
+      const canvas = doc.getElementById('xpanBreathGrid');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha:true, desynchronized:true }) || canvas.getContext('2d');
       if(!ctx){
@@ -577,14 +627,18 @@
       }
 
       const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let w = 1, h = 1, dpr = 1, step = 20, detail = 7, margin = 60;
+      const mobileQuery = window.matchMedia('(max-width: 640px), (pointer: coarse)');
+      let isMobile = mobileQuery.matches;
+      let w = 1, h = 1, dpr = 1, step = 20, detail = 7, margin = 60, frameInterval = 34;
       let cores = [], shocks = [], raf = null, lastFrame = 0, lastShock = 0, nextShock = 1100;
       let currentTheme = '';
       let colors = { grid:[24,27,31], line:[42,46,49], accent:[24,96,255] };
+      let running = false;
+      const point = { x:0, y:0, z:0, stress:0 };
 
       const rand = (a,b) => a + Math.random() * (b - a);
       const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
-      const css = () => getComputedStyle(document.documentElement);
+      const css = () => getComputedStyle(root);
 
       function parseColor(input, fallback){
         const s = String(input || '').trim();
@@ -632,24 +686,26 @@
       }
 
       function resize(){
+        isMobile = mobileQuery.matches;
         w = Math.max(1, window.innerWidth);
         h = Math.max(1, window.innerHeight);
         const pixels = w * h;
-        const maxDpr = pixels > 2200000 ? 1.15 : pixels > 1400000 ? 1.35 : 1.65;
+        const maxDpr = isMobile ? 1 : pixels > 2200000 ? 1.15 : pixels > 1400000 ? 1.35 : 1.65;
         dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
         canvas.style.width = w + 'px';
         canvas.style.height = h + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        step = w < 640 ? 17 : w > 1600 ? 22 : 20;
-        detail = w < 640 ? 6 : 7;
+        step = isMobile ? 19 : w > 1600 ? 22 : 20;
+        detail = isMobile ? 8 : 7;
+        frameInterval = isMobile ? 72 : 34;
         margin = step * 4;
-        const count = w < 640 ? 7 : 11;
+        const count = isMobile ? 6 : 11;
         cores = Array.from({ length:count }, (_, i) => makeCore(i));
         shocks = [];
         lastShock = performance.now();
-        nextShock = rand(900, 1900);
+        nextShock = rand(1000, 2100);
         draw(performance.now(), true);
       }
 
@@ -680,7 +736,7 @@
         }
       }
 
-      function displacement(x, y, t){
+      function displacement(x, y, t, out){
         let dx = 0, dy = 0, z = 0, stress = 0;
         for(const c of cores){
           const px = x - c.x;
@@ -720,9 +776,11 @@
         const cx = w * .5, cy = h * .5;
         const perspective = Math.max(w, h) * 1.45;
         const scale = perspective / (perspective + z);
-        const ox = cx + ((x + dx) - cx) * scale;
-        const oy = cy + ((y + dy) - cy) * scale;
-        return { x:ox, y:oy, z, stress:clamp(stress,0,2.4) };
+        out.x = cx + ((x + dx) - cx) * scale;
+        out.y = cy + ((y + dy) - cy) * scale;
+        out.z = z;
+        out.stress = clamp(stress, 0, 2.4);
+        return out;
       }
 
       function drawGridPass(t, offset, alpha, lineWidth, stressPass){
@@ -736,10 +794,9 @@
 
         for(let x = startX; x <= endX; x += step){
           ctx.beginPath();
-          let first = true;
-          let averageStress = 0, count = 0;
+          let first = true, averageStress = 0, count = 0;
           for(let y = -margin; y <= h + margin; y += detail){
-            const p = displacement(x, y, t);
+            const p = displacement(x, y, t, point);
             averageStress += p.stress; count++;
             if(first){ ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
           }
@@ -749,10 +806,9 @@
         }
         for(let y = startY; y <= endY; y += step){
           ctx.beginPath();
-          let first = true;
-          let averageStress = 0, count = 0;
+          let first = true, averageStress = 0, count = 0;
           for(let x = -margin; x <= w + margin; x += detail){
-            const p = displacement(x, y, t);
+            const p = displacement(x, y, t, point);
             averageStress += p.stress; count++;
             if(first){ ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
           }
@@ -775,7 +831,6 @@
           }
           shocks = shocks.filter(s => t - s.born < s.life + s.delay);
         }
-
         ctx.save();
         ctx.globalCompositeOperation = 'source-over';
         drawGridPass(t, 0, .55, .74, false);
@@ -785,46 +840,61 @@
       }
 
       function tick(t){
-        if(t - lastFrame > 30){
+        if(!running) return;
+        if(t - lastFrame > frameInterval){
           draw(t, false);
           lastFrame = t;
         }
         raf = requestAnimationFrame(tick);
       }
+      function start(){
+        if(reducedMotion || running || doc.hidden) return;
+        running = true;
+        lastFrame = 0;
+        raf = requestAnimationFrame(tick);
+      }
+      function stop(){
+        running = false;
+        if(raf) cancelAnimationFrame(raf);
+        raf = null;
+      }
 
       resize();
-      if(!reducedMotion) raf = requestAnimationFrame(tick);
+      idle(start, isMobile ? 1200 : 500);
 
       let resizeTimer = null;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-          if(raf) cancelAnimationFrame(raf);
+          stop();
           resize();
-          lastFrame = 0;
-          if(!reducedMotion) raf = requestAnimationFrame(tick);
-        }, 90);
+          idle(start, isMobile ? 900 : 300);
+        }, 140);
+      }, { passive:true });
+      doc.addEventListener('visibilitychange', () => {
+        if(doc.hidden) stop(); else idle(start, 500);
       }, { passive:true });
     }
 
-
-    document.addEventListener('DOMContentLoaded', () => {
-      initBreathingGrid();
-      renderMedia();
-      lazyLoad();
-      setLang(localStorage.getItem('xpan-lang') || 'es');
-      document.querySelectorAll('[data-lang-btn]').forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.langBtn)));
-      document.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
-      document.querySelector('[data-dir="prev"]').addEventListener('click', () => moveLightbox(-1));
-      document.querySelector('[data-dir="next"]').addEventListener('click', () => moveLightbox(1));
-      document.getElementById('xpan-lightbox').addEventListener('click', event => { if(event.target.id === 'xpan-lightbox') closeLightbox(); });
+    doc.addEventListener('DOMContentLoaded', () => {
+      let savedLang = 'es';
+      try{ savedLang = localStorage.getItem('xpan-lang') || 'es'; }catch(e){}
+      setLang(savedLang);
+      doc.querySelectorAll('[data-lang-btn]').forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.langBtn), { passive:true }));
+      doc.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
+      doc.querySelector('[data-dir="prev"]').addEventListener('click', () => moveLightbox(-1));
+      doc.querySelector('[data-dir="next"]').addEventListener('click', () => moveLightbox(1));
+      doc.getElementById('xpan-lightbox').addEventListener('click', event => { if(event.target.id === 'xpan-lightbox') closeLightbox(); });
       window.addEventListener('keydown', event => {
-        const open = document.getElementById('xpan-lightbox').classList.contains('open');
+        const open = doc.getElementById('xpan-lightbox').classList.contains('open');
         if(!open) return;
         if(event.key === 'Escape') closeLightbox();
         if(event.key === 'ArrowLeft') moveLightbox(-1);
         if(event.key === 'ArrowRight') moveLightbox(1);
       });
+      initBreathingGrid();
+      scheduleMedia();
+      lazyLoadPdf();
     });
   </script>
 </body>
