@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>florero de pared — xpan</title>
+  <meta name="description" content="florero de pared desarrollado por xpan en aluminio maquinado y tubos de vidrio independientes."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
+      --line:#2A2E31; --grid:#181B1F; --panel:#101316; --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+      --b1:1px solid var(--line);
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A; --line:#D7DDE2; --grid:#EBEEF2; --panel:#F7F8FA; }
+      header{ mix-blend-mode:normal; color:var(--fg); }
+      header img{ mix-blend-mode:normal; filter:none; }
+      .chip{ border-color:var(--line); color:var(--fg-dim); }
+      .chip.lang-active{ color:var(--fg); border-color:var(--accent); }
+      .neg-shell{ mix-blend-mode:normal; color:var(--fg); }
+      .bg-hero::before{ opacity:.12; filter:blur(5px) contrast(28) brightness(.7) saturate(.86); }
+    }
+
+    *,*::before,*::after{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    html,body{ min-height:100%; margin:0; }
+    body{
+      background:var(--bg); color:var(--fg); font-family:var(--ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    body.lb-open{ overflow:hidden; }
+    a{ color:inherit; text-decoration:none; }
+    img,object{ max-width:100%; }
+    button{ font:inherit; }
+    ::selection{ background:rgba(24,96,255,.24); }
+
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x); height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      z-index:40; pointer-events:auto; mix-blend-mode:difference; color:#fff;
+    }
+    header img{ width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%); -webkit-user-drag:none; user-select:none; }
+    .stack{ display:flex; align-items:center; gap:12px; }
+    .chip{
+      appearance:none; display:inline-flex; align-items:center; gap:10px; font:600 12px/1 var(--ui);
+      text-transform:lowercase; padding:8px 10px; border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74); background:transparent; user-select:none; cursor:default; border-radius:0;
+    }
+    .chip[data-lang-btn]{ cursor:pointer; }
+    .chip.lang-active{ color:#fff; border-color:#fff; background:rgba(24,96,255,.06); }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      width:100vw; height:100vh; display:block;
+      opacity:.86;
+    }
+    .crosshair{
+      position:fixed; inset:0; z-index:1; pointer-events:none;
+      background:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+                 linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{ position:fixed; inset:0; z-index:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
+    .bg-hero::before{
+      content:""; background-image:var(--hero,none); background-size:contain; background-position:center; background-repeat:no-repeat;
+      width:82vw; height:82vh; filter:blur(170px) contrast(44) brightness(.16) saturate(.8); opacity:.23;
+      animation:flashFX 6s steps(30,end) infinite; will-change:opacity,filter;
+    }
+    .grain{
+      position:fixed; inset:-40%; z-index:0; pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
+                 repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
+      mix-blend-mode:overlay; opacity:.15; filter:blur(1px); animation:noiseShift 1.8s steps(6,end) infinite;
+    }
+    @keyframes flashFX{ 0%,10%{opacity:.21;} 15%{opacity:.27;} 30%{opacity:.22;} 50%{opacity:.30;} 60%{opacity:.18;} 100%{opacity:.23;} }
+    @keyframes noiseShift{ 0%{transform:translate3d(0,0,0);} 25%{transform:translate3d(-1%,1%,0);} 50%{transform:translate3d(1%,-1%,0);} 75%{transform:translate3d(2%,2%,0);} 100%{transform:translate3d(0,0,0);} }
+
+    main{ position:relative; z-index:3; padding-top:calc(var(--header-h) + 28px); }
+    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; }
+    .section:first-of-type{ border-top:0; padding-top:22px; min-height:78vh; display:flex; align-items:flex-end; }
+    .plate{
+      display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px;
+      color:var(--fg-dim); font:600 11px/1.3 var(--mono); text-transform:lowercase; background:color-mix(in oklab,var(--bg) 92%,transparent); user-select:none; margin-bottom:18px;
+    }
+    .neg-shell{ position:relative; z-index:30; mix-blend-mode:difference; color:var(--fg); }
+    .lang-block{ display:none; }
+    .lang-block.active{ display:block; }
+
+    .intro-wrap{ width:100%; max-width:920px; }
+    .kicker{ margin:0 0 12px; font:600 11px/1.35 var(--mono); text-transform:lowercase; letter-spacing:.12em; color:var(--fg-dim); }
+    h1{ margin:0 0 10px; font:500 clamp(38px,8vw,112px)/.9 var(--ui); letter-spacing:-.065em; text-transform:lowercase; }
+    .subtitle{ margin:0 0 18px; font:500 clamp(15px,2vw,22px)/1.25 var(--ui); letter-spacing:-.02em; color:var(--fg); }
+    .intro-text{ max-width:780px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .intro-text p{ margin:0; }
+
+    .anchor-nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+    .anchor-nav a{
+      border:1px solid var(--line); padding:7px 9px; font:600 11px/1 var(--mono); text-transform:lowercase; color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{ color:var(--fg); border-color:var(--fg-dim); }
+
+    .section-head{ display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr); gap:clamp(18px,4vw,64px); margin-bottom:28px; }
+    .section-title{ margin:0; font:500 clamp(24px,4vw,56px)/.95 var(--ui); letter-spacing:-.055em; text-transform:lowercase; }
+    .section-meta{ margin:9px 0 0; font:600 11px/1.45 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em; }
+    .section-copy{ max-width:720px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .section-copy p{ margin:0; }
+
+    .info-grid{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:12px; align-items:start; }
+    .price-line{ border:1px solid var(--line); padding:14px; background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .price-line b{ display:block; margin-bottom:8px; font:600 10px/1 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
+    .price-line span{ display:block; font:500 16px/1.35 var(--ui); color:var(--fg); letter-spacing:-.01em; text-transform:lowercase; }
+    .specs{ display:grid; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .spec{ display:grid; grid-template-columns:minmax(112px,.34fr) minmax(0,1fr); gap:14px; padding:12px 14px; border-bottom:1px solid var(--line); }
+    .spec:last-child{ border-bottom:0; }
+    .spec dt{ margin:0; font:600 10px/1.35 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
+    .spec dd{ margin:0; font:400 13px/1.55 var(--ui); color:var(--fg); }
+    .spec a{ color:var(--accent); }
+
+    .media-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; align-items:start; }
+    .media-set{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; grid-column:1/-1; }
+    .media-set + .media-set{ margin-top:2px; }
+    .media-card{ margin:0; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); overflow:hidden; }
+    .media-open{ display:block; width:100%; border:0; padding:0; margin:0; background:transparent; cursor:pointer; color:inherit; border-radius:0; }
+    .media-card img{
+      display:block; width:100%; aspect-ratio:4/5; height:auto; object-fit:cover; background:#050608;
+      opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease, filter .28s ease;
+      filter:saturate(.96) contrast(1.02);
+    }
+    .media-card img.loaded{ opacity:1; transform:translateY(0); }
+    .media-card:hover img{ filter:saturate(1) contrast(1.06); }
+
+    .pdf-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
+    .pdf-card object{ display:block; width:100%; height:72vh; min-height:560px; border:0; background:#0C0D0F; }
+    @media (prefers-color-scheme:light){ .pdf-card object{ background:#F3F5F7; } }
+
+    footer{ max-width:var(--maxw); margin:0 auto; padding:0 var(--pad-x) 64px; color:var(--fg-dim); font:600 10px/1.35 var(--mono); letter-spacing:.08em; text-transform:lowercase; display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; }
+    footer a{ color:var(--fg-dim); }
+    footer a:hover{ color:var(--fg); }
+
+    #xpan-lightbox{
+      position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
+      background:rgba(5,7,10,.78); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{ display:flex; }
+    #xpan-lightbox .sheet{ max-width:96vw; max-height:96vh; border:1px solid var(--line); background:#000; padding:6px; box-shadow:0 18px 45px rgba(0,0,0,.8); }
+    #xpan-lightbox img{ display:block; max-width:100%; max-height:calc(96vh - 12px); width:auto; height:auto; object-fit:contain; }
+    #xpan-lightbox [data-lb-close]{
+      position:absolute; top:16px; right:18px; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%);
+      color:var(--fg-dim); font:600 11px/1 var(--mono); text-transform:uppercase; letter-spacing:.14em; padding:6px 10px; cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute; top:50%; transform:translateY(-50%); border:1px solid var(--line); background:rgba(5,7,10,.78);
+      color:var(--fg-dim); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font:600 16px/1 var(--mono); padding:0; user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{ left:18px; }
+    #xpan-lightbox .nav-btn[data-dir="next"]{ right:18px; }
+
+    @media (max-width:980px){
+      .section-head{ grid-template-columns:1fr; gap:16px; }
+      .info-grid{ grid-template-columns:1fr; }
+    }
+    @media (max-width:640px){
+      header{ top:10px; align-items:flex-start; height:auto; }
+      .stack{ gap:7px; flex-wrap:wrap; }
+      .chip{ font-size:10px; padding:7px 8px; }
+      header img{ width:44px; }
+      main{ padding-top:86px; }
+      .section{ padding:22px var(--pad-x) 56px; content-visibility:visible; }
+      .section:first-of-type{ min-height:72vh; }
+      .media-grid,.media-set{ gap:6px; }
+      .media-card img{ aspect-ratio:3/4; }
+      .spec{ grid-template-columns:1fr; gap:6px; }
+      .pdf-card object{ height:auto; min-height:0; aspect-ratio:4/3; }
+      #xpan-lightbox .nav-btn{ width:32px; height:32px; font-size:14px; }
+      #xpan-lightbox .nav-btn[data-dir="prev"]{ left:10px; }
+      #xpan-lightbox .nav-btn[data-dir="next"]{ right:10px; }
+    }
+    @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+  </style>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip" data-i18n="header.chip">florero de pared</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas class="bg-grid" id="xpanBreathGrid" aria-hidden="true"></canvas>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate"><span data-i18n="plate.1">xpan / florero de pared</span><span data-i18n="plate.2">soporte botánico vertical</span></div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">producto / soporte botánico vertical</p>
+          <h1>florero de pared</h1>
+          <p class="subtitle">dispositivo de muro para composiciones botánicas con flor viva o seca.</p>
+          <div class="intro-text">
+            <p>florero de pared desarrollado por xpan en aluminio maquinado y tubos de vidrio independientes.</p>
+            <p>la pieza funciona como soporte vertical para composiciones botánicas y como contenedor de flor viva o seca. el sistema permite controlar altura, densidad y composición desde cada tubo.</p>
+          </div>
+          <nav class="anchor-nav" aria-label="navegación interna">
+            <a href="#descripcion">descripción</a><a href="#informacion">información</a><a href="#registro">registro</a><a href="#plano">plano</a>
+          </nav>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">product / vertical botanical support</p>
+          <h1>wall-mounted vase</h1>
+          <p class="subtitle">wall device for botanical compositions with fresh or dried flowers.</p>
+          <div class="intro-text">
+            <p>wall-mounted vase developed by xpan in machined aluminum and independent glass tubes.</p>
+            <p>the piece works as a vertical support for botanical compositions and as a container for fresh or dried flowers. the system allows height, density, and composition to be adjusted through each tube.</p>
+          </div>
+          <nav class="anchor-nav" aria-label="internal navigation">
+            <a href="#descripcion">description</a><a href="#informacion">information</a><a href="#registro">record</a><a href="#plano">drawing</a>
+          </nav>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">produit / support botanique vertical</p>
+          <h1>vase mural</h1>
+          <p class="subtitle">dispositif mural pour compositions botaniques avec fleurs fraîches ou sèches.</p>
+          <div class="intro-text">
+            <p>vase mural développé par xpan en aluminium usiné et tubes de verre indépendants.</p>
+            <p>la pièce fonctionne comme support vertical pour compositions botaniques et comme contenant pour fleurs fraîches ou sèches. le système permet d’ajuster la hauteur, la densité et la composition à partir de chaque tube.</p>
+          </div>
+          <nav class="anchor-nav" aria-label="navigation interne">
+            <a href="#descripcion">description</a><a href="#informacion">information</a><a href="#registro">registre</a><a href="#plano">plan</a>
+          </nav>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">product / vertical botanical support</p>
+          <h1>壁面花器</h1>
+          <p class="subtitle">生花またはドライフラワーのための壁面ボタニカルデバイス。</p>
+          <div class="intro-text">
+            <p>xpan による壁面花器。切削アルミニウムと独立したガラス管で構成される。</p>
+            <p>植物構成のための垂直支持体であり、生花またはドライフラワーを保持する容器として機能する。各ガラス管によって高さ、密度、構成を調整できる。</p>
+          </div>
+          <nav class="anchor-nav" aria-label="internal navigation">
+            <a href="#descripcion">description</a><a href="#informacion">information</a><a href="#registro">record</a><a href="#plano">drawing</a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="descripcion">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title" data-i18n="desc.title">descripción</h2>
+          <p class="section-meta" data-i18n="desc.meta">sistema de muro / aluminio + vidrio</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>cada unidad se instala directamente a muro mediante una pieza de acero [poro.brida]. la separación entre tubos permite construir arreglos verticales sin depender de un contenedor único.</p>
+            <p>el florero opera como una pieza funcional y como una extensión mínima del sistema material de xpan: soporte, fijación, composición y uso cotidiano concentrados en un objeto de muro.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>each unit is installed directly onto the wall through a steel [poro.brida] piece. the separation between tubes allows vertical arrangements without relying on a single container.</p>
+            <p>the vase operates as a functional piece and as a minimal extension of xpan’s material system: support, fixing, composition, and daily use concentrated in a wall object.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>chaque unité s’installe directement au mur par une pièce en acier [poro.brida]. la séparation entre les tubes permet de composer des arrangements verticaux sans dépendre d’un seul contenant.</p>
+            <p>le vase fonctionne comme pièce d’usage et comme extension minimale du système matériel de xpan : support, fixation, composition et usage quotidien concentrés dans un objet mural.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>各ユニットは鋼製パーツ [poro.brida] によって壁面へ直接固定される。ガラス管を分離することで、単一の容器に依存せず垂直方向の配置を構成できる。</p>
+            <p>この花器は機能的なピースであり、xpan の素材システムの最小限の延長でもある。支持、固定、構成、日常使用がひとつの壁面オブジェクトに集約されている。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="informacion">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title" data-i18n="info.title">información</h2>
+          <p class="section-meta" data-i18n="info.meta">producto / pedido / instalación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>pieza disponible bajo pedido. la instalación está incluida para ciudad de méxico.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>piece available by request. installation is included in mexico city.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>pièce disponible sur commande. l’installation est incluse à mexico.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>受注制作。メキシコシティ内の設置を含む。</p></div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="price-line">
+          <div class="lang-block active" data-lang-block="es"><b>precio</b><span>$11,000 mxn</span></div>
+          <div class="lang-block" data-lang-block="en"><b>price</b><span>mxn $11,000 / approx. usd $630</span></div>
+          <div class="lang-block" data-lang-block="fr"><b>prix</b><span>11 000 mxn / env. 545 eur</span></div>
+          <div class="lang-block" data-lang-block="jp"><b>price</b><span>mxn $11,000 / 約101,000円</span></div>
+        </div>
+
+        <dl class="specs">
+          <div class="spec">
+            <dt data-i18n="spec.materials.label">materiales</dt>
+            <dd data-i18n="spec.materials.value">aluminio maquinado, tubos de vidrio independientes, acero</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.fixing.label">fijación</dt>
+            <dd data-i18n="spec.fixing.value">instalación directa a muro mediante [poro.brida]</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.includes.label">incluye</dt>
+            <dd data-i18n="spec.includes.value">unidad de florero, tubos de vidrio, sistema de fijación e instalación</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.use.label">uso</dt>
+            <dd data-i18n="spec.use.value">flor viva o seca</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.dimensions.label">medidas</dt>
+            <dd data-i18n="spec.dimensions.value">dados de 6.35 × 2.54 × 2.54 cm; barras cilíndricas Ø1.27 cm en largos de 35 cm total, 15 + 10 cm</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.weight.label">peso</dt>
+            <dd data-i18n="spec.weight.value">por confirmar según configuración</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.production.label">producción</dt>
+            <dd data-i18n="spec.production.value">disponible bajo pedido</dd>
+          </div>
+          <div class="spec">
+            <dt data-i18n="spec.contact.label">contacto</dt>
+            <dd><a href="mailto:yes@xpan.earth">yes@xpan.earth</a></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="registro">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title" data-i18n="record.title">registro visual</h2>
+          <p class="section-meta" data-i18n="record.meta">pieza instalada / documentación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>archivo de imagen de la pieza instalada.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>image archive of the installed piece.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>archive d’images de la pièce installée.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>設置されたピースのイメージアーカイブ。</p></div>
+        </div>
+      </div>
+      <div class="media-grid" id="mediaGrid" aria-label="xpan florero de pared"></div>
+    </section>
+
+    <section class="section" id="plano">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title" data-i18n="plan.title">plano</h2>
+          <p class="section-meta" data-i18n="plan.meta">documento técnico</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano de referencia para lectura técnica de la pieza.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>reference drawing for the technical reading of the piece.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan de référence pour la lecture technique de la pièce.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>ピースの技術的読解のための参照図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-card">
+        <object type="application/pdf" aria-label="xpan / florero de pared / plano" data-pdf-src="https://attachments.are.na/46918843/c045cf2ec986db28abd3ea7cc332c0b9.pdf#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0"></object>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>xpan / florero de pared</span>
+    <a href="mailto:yes@xpan.earth">yes@xpan.earth</a>
+  </footer>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close>cerrar</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior">←</button>
+    <div class="sheet"><img alt=""/></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente">→</button>
+  </div>
+
+  <script>
+    const I18N = {
+      es:{
+        'header.chip':'florero de pared','plate.1':'xpan / florero de pared','plate.2':'soporte botánico vertical','desc.title':'descripción','desc.meta':'sistema de muro / aluminio + vidrio','info.title':'información','info.meta':'producto / pedido / instalación','record.title':'registro visual','record.meta':'pieza instalada / documentación','plan.title':'plano','plan.meta':'documento técnico',
+        'spec.materials.label':'materiales','spec.materials.value':'aluminio maquinado, tubos de vidrio independientes, acero','spec.fixing.label':'fijación','spec.fixing.value':'instalación directa a muro mediante [poro.brida]','spec.includes.label':'incluye','spec.includes.value':'unidad de florero, tubos de vidrio, sistema de fijación e instalación','spec.use.label':'uso','spec.use.value':'flor viva o seca','spec.dimensions.label':'medidas','spec.dimensions.value':'dados de 6.35 × 2.54 × 2.54 cm; barras cilíndricas Ø1.27 cm en largos de 35 cm total, 15 + 10 cm','spec.weight.label':'peso','spec.weight.value':'por confirmar según configuración','spec.production.label':'producción','spec.production.value':'disponible bajo pedido','spec.contact.label':'contacto'
+      },
+      en:{
+        'header.chip':'wall-mounted vase','plate.1':'xpan / wall-mounted vase','plate.2':'vertical botanical support','desc.title':'description','desc.meta':'wall system / aluminum + glass','info.title':'information','info.meta':'product / order / installation','record.title':'visual record','record.meta':'installed piece / documentation','plan.title':'drawing','plan.meta':'technical document',
+        'spec.materials.label':'materials','spec.materials.value':'machined aluminum, independent glass tubes, steel','spec.fixing.label':'fixing','spec.fixing.value':'direct wall installation through [poro.brida]','spec.includes.label':'includes','spec.includes.value':'vase unit, glass tubes, fixing system, and installation','spec.use.label':'use','spec.use.value':'fresh or dried flowers','spec.dimensions.label':'dimensions','spec.dimensions.value':'blocks 6.35 × 2.54 × 2.54 cm; cylindrical bars Ø1.27 cm in lengths of 35 cm total, 15 + 10 cm','spec.weight.label':'weight','spec.weight.value':'to be confirmed according to configuration','spec.production.label':'production','spec.production.value':'available by request','spec.contact.label':'contact'
+      },
+      fr:{
+        'header.chip':'vase mural','plate.1':'xpan / vase mural','plate.2':'support botanique vertical','desc.title':'description','desc.meta':'système mural / aluminium + verre','info.title':'information','info.meta':'produit / commande / installation','record.title':'registre visuel','record.meta':'pièce installée / documentation','plan.title':'plan','plan.meta':'document technique',
+        'spec.materials.label':'matériaux','spec.materials.value':'aluminium usiné, tubes de verre indépendants, acier','spec.fixing.label':'fixation','spec.fixing.value':'installation directe au mur par [poro.brida]','spec.includes.label':'inclus','spec.includes.value':'unité de vase, tubes de verre, système de fixation et installation','spec.use.label':'usage','spec.use.value':'fleurs fraîches ou sèches','spec.dimensions.label':'dimensions','spec.dimensions.value':'dés de 6,35 × 2,54 × 2,54 cm ; barres cylindriques Ø1,27 cm en longueurs de 35 cm au total, 15 + 10 cm','spec.weight.label':'poids','spec.weight.value':'à confirmer selon la configuration','spec.production.label':'production','spec.production.value':'disponible sur commande','spec.contact.label':'contact'
+      },
+      jp:{
+        'header.chip':'壁面花器','plate.1':'xpan / 壁面花器','plate.2':'vertical botanical support','desc.title':'description','desc.meta':'wall system / aluminum + glass','info.title':'information','info.meta':'product / order / installation','record.title':'visual record','record.meta':'installed piece / documentation','plan.title':'drawing','plan.meta':'technical document',
+        'spec.materials.label':'materials','spec.materials.value':'切削アルミニウム、独立したガラス管、鋼材','spec.fixing.label':'fixing','spec.fixing.value':'[poro.brida] による壁面直接固定','spec.includes.label':'includes','spec.includes.value':'花器本体、ガラス管、固定システム、設置','spec.use.label':'use','spec.use.value':'生花またはドライフラワー','spec.dimensions.label':'dimensions','spec.dimensions.value':'ブロック 6.35 × 2.54 × 2.54 cm；円柱バー Ø1.27 cm、全長35 cm、15 + 10 cm','spec.weight.label':'weight','spec.weight.value':'構成に基づき確認','spec.production.label':'production','spec.production.value':'受注制作','spec.contact.label':'contact'
+      }
+    };
+
+    const MEDIA_GROUPS = [
+      [
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919045/original_0e00e4dfb7ae50972dfacd0df4b6525f.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919044/original_6d36c00fa6ec26db9418576db4453a81.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919043/original_0d45cf2ca8d117a1b45c63dc143d7be3.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919042/original_aa2e319be03f130fabe5adf89e08c2d3.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919041/original_905838b544cbce428747d4a989c2047c.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919040/original_515302182d64e90e556c27d43277ace7.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919039/original_57e84303f13bdd37b28cf1308c3a7bcf.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919038/original_4f2f800aa5919cc1ac30f21d4cb5f793.png'
+      ],
+      [
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919033/original_c0a3957cc46dbba8ef5c12b72884ae9f.jpeg',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919029/original_0cd1502e71328a56b7ee2d3dfb5db08f.jpeg',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919028/original_bb1fcbf963021ca262363b9bb5d8ddcd.jpeg',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919027/original_3e226c5490d43ead72b964ac49212b4c.jpeg',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919026/original_c2ccc45276094a9bd8420777c324089f.jpeg',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46919025/original_51277ed59a92607a463f545db11e17c1.jpeg'
+      ],
+      [
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918973/original_e23c9aaaf06b5599bc8abe4f8cce56bf.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918972/original_e9692c6fb01520935c15808e6673c64a.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918971/original_c0ec4f1a0e0066820b70a35ff20187e1.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918970/original_98921e5fceb882fda81f874763f418d5.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918969/original_1c4255a9585becaa3fcba1332dadab28.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918968/original_8b9c4b31bb886c216cc713ee71eca8f7.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918967/original_ba1ad0b6625ef85b2da27c491840b4de.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918966/original_aa9797e019982b21bd6980b28c03b5b2.png',
+        'https://d2w9rnfcy7mm78.cloudfront.net/46918965/original_d0cf78f2c1c938ec1f00c1430f60aa1f.png'
+      ]
+    ];
+
+    const allMedia = MEDIA_GROUPS.flat();
+    let lbIndex = 0;
+
+    function setLang(lang){
+      if(!I18N[lang]) lang = 'es';
+      document.documentElement.lang = lang;
+      localStorage.setItem('xpan-lang', lang);
+      document.querySelectorAll('[data-lang-block]').forEach(el => el.classList.toggle('active', el.dataset.langBlock === lang));
+      document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+        const active = btn.dataset.langBtn === lang;
+        btn.classList.toggle('lang-active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      Object.entries(I18N[lang]).forEach(([key, value]) => {
+        document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.textContent = value; });
+      });
+    }
+
+    function renderMedia(){
+      const grid = document.getElementById('mediaGrid');
+      MEDIA_GROUPS.forEach((group) => {
+        const set = document.createElement('div');
+        set.className = 'media-set';
+        group.forEach((src) => {
+          const index = allMedia.indexOf(src);
+          const figure = document.createElement('figure');
+          figure.className = 'media-card';
+          const button = document.createElement('button');
+          button.className = 'media-open';
+          button.type = 'button';
+          button.setAttribute('aria-label', 'abrir imagen');
+          const img = document.createElement('img');
+          img.alt = 'xpan / florero de pared';
+          img.loading = index === 0 ? 'eager' : 'lazy';
+          img.decoding = 'async';
+          if(index === 0){ img.fetchPriority = 'high'; img.src = src; }
+          else { img.dataset.src = src; }
+          img.addEventListener('load', () => img.classList.add('loaded'));
+          button.appendChild(img);
+          button.addEventListener('click', () => openLightbox(index));
+          figure.appendChild(button);
+          set.appendChild(figure);
+        });
+        grid.appendChild(set);
+      });
+    }
+
+    function lazyLoad(){
+      const images = [...document.querySelectorAll('img[data-src]')];
+      if('IntersectionObserver' in window){
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              const img = entry.target;
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+              io.unobserve(img);
+            }
+          });
+        }, { rootMargin:'600px 0px' });
+        images.forEach(img => io.observe(img));
+      } else {
+        images.forEach(img => { img.src = img.dataset.src; img.removeAttribute('data-src'); });
+      }
+
+      const pdf = document.querySelector('[data-pdf-src]');
+      if(pdf && 'IntersectionObserver' in window){
+        const po = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              pdf.data = pdf.dataset.pdfSrc;
+              pdf.removeAttribute('data-pdf-src');
+              po.disconnect();
+            }
+          });
+        }, { rootMargin:'800px 0px' });
+        po.observe(pdf);
+      } else if(pdf){
+        pdf.data = pdf.dataset.pdfSrc;
+        pdf.removeAttribute('data-pdf-src');
+      }
+    }
+
+    function openLightbox(index){
+      lbIndex = index;
+      const lb = document.getElementById('xpan-lightbox');
+      const img = lb.querySelector('.sheet img');
+      img.src = allMedia[lbIndex];
+      img.alt = 'xpan / florero de pared';
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('lb-open');
+    }
+    function closeLightbox(){
+      const lb = document.getElementById('xpan-lightbox');
+      const img = lb.querySelector('.sheet img');
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('lb-open');
+      img.src = '';
+    }
+    function moveLightbox(dir){
+      lbIndex = (lbIndex + dir + allMedia.length) % allMedia.length;
+      document.querySelector('#xpan-lightbox .sheet img').src = allMedia[lbIndex];
+    }
+
+
+
+    function initBreathingGrid(){
+      const canvas = document.getElementById('xpanBreathGrid');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha:true, desynchronized:true }) || canvas.getContext('2d');
+      if(!ctx){
+        canvas.style.backgroundImage = 'linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(0deg,var(--grid) 1px,transparent 1px)';
+        canvas.style.backgroundSize = '20px 20px';
+        return;
+      }
+
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let w = 1, h = 1, dpr = 1, step = 20, detail = 7, margin = 60;
+      let cores = [], shocks = [], raf = null, lastFrame = 0, lastShock = 0, nextShock = 1100;
+      let currentTheme = '';
+      let colors = { grid:[24,27,31], line:[42,46,49], accent:[24,96,255] };
+
+      const rand = (a,b) => a + Math.random() * (b - a);
+      const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+      const css = () => getComputedStyle(document.documentElement);
+
+      function parseColor(input, fallback){
+        const s = String(input || '').trim();
+        if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(s)){
+          let hex = s.slice(1);
+          if(hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+          const n = parseInt(hex, 16);
+          return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+        }
+        const m = s.match(/rgba?\(([^)]+)\)/i);
+        if(m){
+          const nums = m[1].split(',').slice(0,3).map(v => parseFloat(v));
+          if(nums.every(Number.isFinite)) return nums;
+        }
+        return fallback;
+      }
+      function stroke(rgb, alpha){ return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`; }
+
+      function syncColors(){
+        const styles = css();
+        const signature = [styles.getPropertyValue('--grid'), styles.getPropertyValue('--line'), styles.getPropertyValue('--accent')].join('|');
+        if(signature === currentTheme) return;
+        currentTheme = signature;
+        colors.grid = parseColor(styles.getPropertyValue('--grid'), [24,27,31]);
+        colors.line = parseColor(styles.getPropertyValue('--line'), [42,46,49]);
+        colors.accent = parseColor(styles.getPropertyValue('--accent'), [24,96,255]);
+      }
+
+      function makeCore(i){
+        const base = Math.min(w, h);
+        return {
+          x: rand(-w * .08, w * 1.08),
+          y: rand(-h * .08, h * 1.08),
+          r: rand(base * .18, base * .42),
+          amp: rand(8, 25) * (Math.random() < .5 ? -1 : 1),
+          depth: rand(38, 115) * (Math.random() < .5 ? -1 : 1),
+          spin: rand(-7, 7),
+          phase: rand(0, Math.PI * 2),
+          speed: rand(.00013, .00038),
+          vx: rand(-.025, .025),
+          vy: rand(-.025, .025),
+          drift: rand(.00004, .00011),
+          idx: i
+        };
+      }
+
+      function resize(){
+        w = Math.max(1, window.innerWidth);
+        h = Math.max(1, window.innerHeight);
+        const pixels = w * h;
+        const maxDpr = pixels > 2200000 ? 1.15 : pixels > 1400000 ? 1.35 : 1.65;
+        dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        step = w < 640 ? 17 : w > 1600 ? 22 : 20;
+        detail = w < 640 ? 6 : 7;
+        margin = step * 4;
+        const count = w < 640 ? 7 : 11;
+        cores = Array.from({ length:count }, (_, i) => makeCore(i));
+        shocks = [];
+        lastShock = performance.now();
+        nextShock = rand(900, 1900);
+        draw(performance.now(), true);
+      }
+
+      function spawnShock(t){
+        const base = Math.min(w, h);
+        shocks.push({
+          x: rand(w * .04, w * .96),
+          y: rand(h * .05, h * .95),
+          r: rand(base * .16, base * .46),
+          amp: rand(15, 42) * (Math.random() < .5 ? -1 : 1),
+          depth: rand(90, 210) * (Math.random() < .5 ? -1 : 1),
+          spin: rand(-10, 10),
+          born:t,
+          life:rand(6200, 11800),
+          delay:rand(0, 500)
+        });
+      }
+
+      function updateCores(t){
+        const base = Math.min(w, h);
+        for(const c of cores){
+          c.x += c.vx + Math.sin(t * c.drift + c.phase) * .028;
+          c.y += c.vy + Math.cos(t * c.drift * 1.17 + c.phase) * .026;
+          if(c.x < -base * .45) c.x = w + base * .2;
+          if(c.x > w + base * .45) c.x = -base * .2;
+          if(c.y < -base * .45) c.y = h + base * .2;
+          if(c.y > h + base * .45) c.y = -base * .2;
+        }
+      }
+
+      function displacement(x, y, t){
+        let dx = 0, dy = 0, z = 0, stress = 0;
+        for(const c of cores){
+          const px = x - c.x;
+          const py = y - c.y;
+          const d2 = px * px + py * py + .0001;
+          const inv = 1 / Math.sqrt(d2);
+          const rr = c.r * (1 + Math.sin(t * c.speed * .71 + c.phase) * .08);
+          const fall = Math.exp(-d2 / (rr * rr));
+          const inhale = Math.sin(t * c.speed + c.phase) * .82 + Math.sin(t * c.speed * 2.31 + c.phase * .43) * .18;
+          const pressure = c.amp * inhale * fall;
+          const torsion = c.spin * Math.cos(t * c.speed * 1.7 + c.phase) * fall;
+          dx += px * inv * pressure - py * inv * torsion;
+          dy += py * inv * pressure + px * inv * torsion;
+          z += c.depth * inhale * fall;
+          stress += Math.abs(fall * inhale);
+        }
+        for(const s of shocks){
+          const age = t - s.born - s.delay;
+          if(age <= 0 || age >= s.life) continue;
+          const progress = age / s.life;
+          const env = Math.sin(progress * Math.PI);
+          const px = x - s.x;
+          const py = y - s.y;
+          const dist = Math.sqrt(px * px + py * py) + .0001;
+          const ring = s.r * (.16 + progress * .86);
+          const shell = Math.exp(-Math.pow((dist - ring) / (s.r * .18), 2));
+          const dome = Math.exp(-(px * px + py * py) / (s.r * s.r));
+          const force = (shell * .82 + dome * .36) * env;
+          const radial = s.amp * force;
+          const twist = s.spin * force * Math.sin(progress * Math.PI * 2);
+          dx += (px / dist) * radial - (py / dist) * twist;
+          dy += (py / dist) * radial + (px / dist) * twist;
+          z += s.depth * force * Math.sin(progress * Math.PI);
+          stress += force * 1.4;
+        }
+        z = clamp(z, -180, 240);
+        const cx = w * .5, cy = h * .5;
+        const perspective = Math.max(w, h) * 1.45;
+        const scale = perspective / (perspective + z);
+        const ox = cx + ((x + dx) - cx) * scale;
+        const oy = cy + ((y + dy) - cy) * scale;
+        return { x:ox, y:oy, z, stress:clamp(stress,0,2.4) };
+      }
+
+      function drawGridPass(t, offset, alpha, lineWidth, stressPass){
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'butt';
+        ctx.lineJoin = 'round';
+        const startX = -margin + offset;
+        const endX = w + margin;
+        const startY = -margin + offset;
+        const endY = h + margin;
+
+        for(let x = startX; x <= endX; x += step){
+          ctx.beginPath();
+          let first = true;
+          let averageStress = 0, count = 0;
+          for(let y = -margin; y <= h + margin; y += detail){
+            const p = displacement(x, y, t);
+            averageStress += p.stress; count++;
+            if(first){ ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
+          }
+          const local = count ? averageStress / count : 0;
+          ctx.strokeStyle = stressPass ? stroke(colors.accent, alpha * clamp(local, .05, 1)) : stroke(colors.grid, alpha + local * .025);
+          ctx.stroke();
+        }
+        for(let y = startY; y <= endY; y += step){
+          ctx.beginPath();
+          let first = true;
+          let averageStress = 0, count = 0;
+          for(let x = -margin; x <= w + margin; x += detail){
+            const p = displacement(x, y, t);
+            averageStress += p.stress; count++;
+            if(first){ ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
+          }
+          const local = count ? averageStress / count : 0;
+          ctx.strokeStyle = stressPass ? stroke(colors.accent, alpha * clamp(local, .05, 1)) : stroke(colors.grid, alpha + local * .025);
+          ctx.stroke();
+        }
+      }
+
+      function draw(t, frozen){
+        syncColors();
+        ctx.clearRect(0, 0, w, h);
+        const moving = !reducedMotion && !frozen;
+        if(moving){
+          updateCores(t);
+          if(t - lastShock > nextShock){
+            spawnShock(t);
+            lastShock = t;
+            nextShock = rand(1000, 2400);
+          }
+          shocks = shocks.filter(s => t - s.born < s.life + s.delay);
+        }
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        drawGridPass(t, 0, .55, .74, false);
+        ctx.globalCompositeOperation = 'screen';
+        drawGridPass(t + 110, step * .5, .075, .55, true);
+        ctx.restore();
+      }
+
+      function tick(t){
+        if(t - lastFrame > 30){
+          draw(t, false);
+          lastFrame = t;
+        }
+        raf = requestAnimationFrame(tick);
+      }
+
+      resize();
+      if(!reducedMotion) raf = requestAnimationFrame(tick);
+
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          if(raf) cancelAnimationFrame(raf);
+          resize();
+          lastFrame = 0;
+          if(!reducedMotion) raf = requestAnimationFrame(tick);
+        }, 90);
+      }, { passive:true });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initBreathingGrid();
+      renderMedia();
+      lazyLoad();
+      setLang(localStorage.getItem('xpan-lang') || 'es');
+      document.querySelectorAll('[data-lang-btn]').forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.langBtn)));
+      document.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
+      document.querySelector('[data-dir="prev"]').addEventListener('click', () => moveLightbox(-1));
+      document.querySelector('[data-dir="next"]').addEventListener('click', () => moveLightbox(1));
+      document.getElementById('xpan-lightbox').addEventListener('click', event => { if(event.target.id === 'xpan-lightbox') closeLightbox(); });
+      window.addEventListener('keydown', event => {
+        const open = document.getElementById('xpan-lightbox').classList.contains('open');
+        if(!open) return;
+        if(event.key === 'Escape') closeLightbox();
+        if(event.key === 'ArrowLeft') moveLightbox(-1);
+        if(event.key === 'ArrowRight') moveLightbox(1);
+      });
+    });
+  </script>
+</body>
+</html>
