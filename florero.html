@@ -13,8 +13,7 @@
   <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
   <link rel="preconnect" href="https://attachments.are.na" crossorigin>
   <link rel="dns-prefetch" href="https://attachments.are.na">
-  <link rel="preload" as="image" href="xpan.svg" type="image/svg+xml" fetchpriority="high">
-  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png" type="image/png" fetchpriority="high">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
 
   <style>
     :root{
@@ -23,30 +22,23 @@
       --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
       --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
       --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
-      --b1:1px solid var(--line);
     }
     @media (prefers-color-scheme:light){
       :root{ --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A; --line:#D7DDE2; --grid:#EBEEF2; --panel:#F7F8FA; }
       header{ mix-blend-mode:normal; color:var(--fg); }
       header img{ mix-blend-mode:normal; filter:none; }
       .chip{ border-color:var(--line); color:var(--fg-dim); }
-      .chip.lang-active{ color:var(--fg); border-color:var(--accent); }
+      .chip.lang-active{ color:var(--fg); border-color:var(--fg); }
       .neg-shell{ mix-blend-mode:normal; color:var(--fg); }
-      .bg-hero::before{ opacity:.12; filter:blur(5px) contrast(28) brightness(.7) saturate(.86); }
     }
-
     *,*::before,*::after{ box-sizing:border-box; }
-    html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+    html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
     html,body{ min-height:100%; margin:0; }
-    body{
-      background:var(--bg); color:var(--fg); font-family:var(--ui);
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      overflow-x:hidden; text-rendering:geometricPrecision;
-    }
+    body{ background:var(--bg); color:var(--fg); font-family:var(--ui); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
     body.lb-open{ overflow:hidden; }
     a{ color:inherit; text-decoration:none; }
     img,object{ max-width:100%; }
-    button{ font:inherit; }
+    button{ font:inherit; color:inherit; }
     ::selection{ background:rgba(24,96,255,.24); }
 
     header{
@@ -57,46 +49,20 @@
     header img{ width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%); -webkit-user-drag:none; user-select:none; }
     .stack{ display:flex; align-items:center; gap:12px; }
     .chip{
-      appearance:none; display:inline-flex; align-items:center; gap:10px; font:600 12px/1 var(--ui);
+      display:inline-flex; align-items:center; gap:10px; font:600 12px/1 var(--ui);
       text-transform:lowercase; padding:8px 10px; border:1px solid rgba(255,255,255,.42);
-      color:rgba(255,255,255,.74); background:transparent; user-select:none; cursor:default; border-radius:0;
+      color:rgba(255,255,255,.74); background:transparent; user-select:none; cursor:default;
     }
     .chip[data-lang-btn]{ cursor:pointer; }
-    .chip.lang-active{ color:#fff; border-color:#fff; background:rgba(24,96,255,.06); }
+    .chip.lang-active{ color:#fff; border-color:#fff; }
 
-    .bg-grid{
-      position:fixed; inset:0; z-index:0; pointer-events:none;
-      width:100vw; height:100vh; display:block;
-      opacity:.86; contain:strict;
-    }
-    .crosshair{
-      position:fixed; inset:0; z-index:1; pointer-events:none;
-      background:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
-                 linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
-      opacity:.18;
-    }
-    .bg-hero{ position:fixed; inset:0; z-index:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
-    .bg-hero::before{
-      content:""; background-image:var(--hero,none); background-size:contain; background-position:center; background-repeat:no-repeat;
-      width:82vw; height:82vh; filter:blur(170px) contrast(44) brightness(.16) saturate(.8); opacity:.23;
-      animation:flashFX 6s steps(30,end) infinite; will-change:opacity; transform:translateZ(0); backface-visibility:hidden;
-    }
-    .grain{
-      position:fixed; inset:-40%; z-index:0; pointer-events:none;
-      background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
-                 repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
-      mix-blend-mode:overlay; opacity:.15; filter:blur(1px); animation:noiseShift 1.8s steps(6,end) infinite;
-    }
-    @keyframes flashFX{ 0%,10%{opacity:.21;} 15%{opacity:.27;} 30%{opacity:.22;} 50%{opacity:.30;} 60%{opacity:.18;} 100%{opacity:.23;} }
-    @keyframes noiseShift{ 0%{transform:translate3d(0,0,0);} 25%{transform:translate3d(-1%,1%,0);} 50%{transform:translate3d(1%,-1%,0);} 75%{transform:translate3d(2%,2%,0);} 100%{transform:translate3d(0,0,0);} }
+    .bg-grid{ position:fixed; inset:0; z-index:0; pointer-events:none; width:100vw; height:100vh; display:block; opacity:.62; contain:strict; background-image:linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(0deg,var(--grid) 1px,transparent 1px); background-size:20px 20px,20px 20px; background-position:center center; }
+    .crosshair{ position:fixed; inset:0; z-index:1; pointer-events:none; background:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)); opacity:.14; }
 
     main{ position:relative; z-index:3; padding-top:calc(var(--header-h) + 28px); }
-    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; contain:layout paint style; }
+    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; }
     .section:first-of-type{ border-top:0; padding-top:22px; min-height:78vh; display:flex; align-items:flex-end; }
-    .plate{
-      display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px;
-      color:var(--fg-dim); font:600 11px/1.3 var(--mono); text-transform:lowercase; background:color-mix(in oklab,var(--bg) 92%,transparent); user-select:none; margin-bottom:18px;
-    }
+    .plate{ display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px; color:var(--fg-dim); font:600 11px/1.3 var(--mono); text-transform:lowercase; background:var(--bg); user-select:none; margin-bottom:18px; }
     .neg-shell{ position:relative; z-index:30; mix-blend-mode:difference; color:var(--fg); }
     .lang-block{ display:none; }
     .lang-block.active{ display:block; }
@@ -107,12 +73,8 @@
     .subtitle{ margin:0 0 18px; font:500 clamp(15px,2vw,22px)/1.25 var(--ui); letter-spacing:-.02em; color:var(--fg); }
     .intro-text{ max-width:780px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
     .intro-text p{ margin:0; }
-
     .anchor-nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
-    .anchor-nav a{
-      border:1px solid var(--line); padding:7px 9px; font:600 11px/1 var(--mono); text-transform:lowercase; color:var(--fg-dim);
-      background:color-mix(in oklab,var(--bg) 88%,transparent);
-    }
+    .anchor-nav a{ border:1px solid var(--line); padding:7px 9px; font:600 11px/1 var(--mono); text-transform:lowercase; color:var(--fg-dim); background:var(--bg); }
     .anchor-nav a:hover{ color:var(--fg); border-color:var(--fg-dim); }
 
     .section-head{ display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr); gap:clamp(18px,4vw,64px); margin-bottom:28px; }
@@ -122,10 +84,10 @@
     .section-copy p{ margin:0; }
 
     .info-grid{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:12px; align-items:start; }
-    .price-line{ border:1px solid var(--line); padding:14px; background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .price-line{ border:1px solid var(--line); padding:14px; background:var(--panel); }
     .price-line b{ display:block; margin-bottom:8px; font:600 10px/1 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
     .price-line span{ display:block; font:500 16px/1.35 var(--ui); color:var(--fg); letter-spacing:-.01em; text-transform:lowercase; }
-    .specs{ display:grid; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .specs{ display:grid; border:1px solid var(--line); background:var(--panel); }
     .spec{ display:grid; grid-template-columns:minmax(112px,.34fr) minmax(0,1fr); gap:14px; padding:12px 14px; border-bottom:1px solid var(--line); }
     .spec:last-child{ border-bottom:0; }
     .spec dt{ margin:0; font:600 10px/1.35 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
@@ -135,67 +97,39 @@
     .media-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; align-items:start; }
     .media-set{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; grid-column:1/-1; }
     .media-set + .media-set{ margin-top:2px; }
-    .media-card{ margin:0; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); overflow:hidden; }
+    .media-card{ margin:0; border:1px solid var(--line); background:#050608; overflow:hidden; }
     .media-open{ display:block; width:100%; border:0; padding:0; margin:0; background:transparent; cursor:pointer; color:inherit; border-radius:0; }
-    .media-card img{
-      display:block; width:100%; aspect-ratio:4/5; height:auto; object-fit:cover; background:#050608;
-      opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease, filter .28s ease;
-      filter:saturate(.96) contrast(1.02); content-visibility:auto;
-    }
-    .media-card img.loaded{ opacity:1; transform:translateY(0); }
-    .media-card:hover img{ filter:saturate(1) contrast(1.06); }
+    .media-card img{ display:block; width:100%; aspect-ratio:4/5; height:auto; object-fit:cover; background:#050608; }
 
-    .pdf-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
-    .pdf-card object{ display:block; width:100%; height:72vh; min-height:560px; border:0; background:#0C0D0F; content-visibility:auto; contain-intrinsic-size:560px; }
+    .pdf-card{ border:1px solid var(--line); background:#050608; }
+    .pdf-card object{ display:block; width:100%; height:72vh; min-height:560px; border:0; background:#0C0D0F; }
     @media (prefers-color-scheme:light){ .pdf-card object{ background:#F3F5F7; } }
-
     footer{ max-width:var(--maxw); margin:0 auto; padding:0 var(--pad-x) 64px; color:var(--fg-dim); font:600 10px/1.35 var(--mono); letter-spacing:.08em; text-transform:lowercase; display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; }
     footer a{ color:var(--fg-dim); }
     footer a:hover{ color:var(--fg); }
 
-    #xpan-lightbox{
-      position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
-      background:rgba(5,7,10,.78); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%);
-    }
+    #xpan-lightbox{ position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; background:rgba(5,7,10,.92); }
     #xpan-lightbox.open{ display:flex; }
-    #xpan-lightbox .sheet{ max-width:96vw; max-height:96vh; border:1px solid var(--line); background:#000; padding:6px; box-shadow:0 18px 45px rgba(0,0,0,.8); }
+    #xpan-lightbox .sheet{ max-width:96vw; max-height:96vh; border:1px solid var(--line); background:#000; padding:6px; }
     #xpan-lightbox img{ display:block; max-width:100%; max-height:calc(96vh - 12px); width:auto; height:auto; object-fit:contain; }
-    #xpan-lightbox [data-lb-close]{
-      position:absolute; top:16px; right:18px; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%);
-      color:var(--fg-dim); font:600 11px/1 var(--mono); text-transform:uppercase; letter-spacing:.14em; padding:6px 10px; cursor:pointer;
-    }
-    #xpan-lightbox .nav-btn{
-      position:absolute; top:50%; transform:translateY(-50%); border:1px solid var(--line); background:rgba(5,7,10,.78);
-      color:var(--fg-dim); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font:600 16px/1 var(--mono); padding:0; user-select:none;
-    }
+    #xpan-lightbox [data-lb-close]{ position:absolute; top:16px; right:18px; border:1px solid var(--line); background:var(--bg); color:var(--fg-dim); font:600 11px/1 var(--mono); text-transform:uppercase; letter-spacing:.14em; padding:6px 10px; cursor:pointer; }
+    #xpan-lightbox .nav-btn{ position:absolute; top:50%; transform:translateY(-50%); border:1px solid var(--line); background:rgba(5,7,10,.78); color:var(--fg-dim); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font:600 16px/1 var(--mono); padding:0; user-select:none; }
     #xpan-lightbox .nav-btn[data-dir="prev"]{ left:18px; }
     #xpan-lightbox .nav-btn[data-dir="next"]{ right:18px; }
 
-    @media (max-width:980px){
-      .section-head{ grid-template-columns:1fr; gap:16px; }
-      .info-grid{ grid-template-columns:1fr; }
-    }
+    @media (max-width:980px){ .section-head{ grid-template-columns:1fr; gap:16px; } .info-grid{ grid-template-columns:1fr; } }
     @media (max-width:640px){
-      header{ top:10px; align-items:flex-start; height:auto; }
-      .stack{ gap:7px; flex-wrap:wrap; }
-      .chip{ font-size:10px; padding:7px 8px; }
-      header img{ width:44px; }
-      main{ padding-top:86px; }
-      .section{ padding:22px var(--pad-x) 56px; content-visibility:auto; contain-intrinsic-size:680px; }
-      .section:first-of-type{ min-height:72vh; }
-      .media-grid,.media-set{ gap:6px; }
-      .media-card img{ aspect-ratio:3/4; }
-      .spec{ grid-template-columns:1fr; gap:6px; }
+      header{ top:10px; align-items:flex-start; height:auto; } .stack{ gap:7px; flex-wrap:wrap; } .chip{ font-size:10px; padding:7px 8px; } header img{ width:44px; }
+      .bg-grid{ opacity:.44; background-size:18px 18px,18px 18px; } main{ padding-top:86px; }
+      .section{ padding:22px var(--pad-x) 56px; contain-intrinsic-size:680px; } .section:first-of-type{ min-height:72vh; }
+      .media-grid,.media-set{ gap:6px; } .media-card img{ aspect-ratio:3/4; } .spec{ grid-template-columns:1fr; gap:6px; }
       .pdf-card object{ height:auto; min-height:0; aspect-ratio:4/3; }
-      #xpan-lightbox .nav-btn{ width:32px; height:32px; font-size:14px; }
-      #xpan-lightbox .nav-btn[data-dir="prev"]{ left:10px; }
-      #xpan-lightbox .nav-btn[data-dir="next"]{ right:10px; }
+      #xpan-lightbox .nav-btn{ width:32px; height:32px; font-size:14px; } #xpan-lightbox .nav-btn[data-dir="prev"]{ left:10px; } #xpan-lightbox .nav-btn[data-dir="next"]{ right:10px; }
     }
     @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
   </style>
 </head>
-  <script src="/assets/js/media-proxy.js" defer></script>
-<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png')">
+<body>
   <header>
     <div class="stack">
       <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
@@ -208,10 +142,7 @@
       <button class="chip" type="button" data-lang-btn="jp">jp</button>
     </div>
   </header>
-
-  <div class="bg-hero" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-  <canvas class="bg-grid" id="xpanBreathGrid" aria-hidden="true"></canvas>
+  <div class="bg-grid" aria-hidden="true"></div>
   <div class="crosshair" aria-hidden="true"></div>
 
   <main>
@@ -372,7 +303,134 @@
           <div class="lang-block" data-lang-block="jp"><p>設置されたピースのイメージアーカイブ。</p></div>
         </div>
       </div>
-      <div class="media-grid" id="mediaGrid" aria-label="xpan florero de pared"></div>
+      <div class="media-grid" id="mediaGrid" aria-label="xpan florero de pared">
+        <div class="media-set">
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="0" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="1" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919045/original_0e00e4dfb7ae50972dfacd0df4b6525f.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="2" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919044/original_6d36c00fa6ec26db9418576db4453a81.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="3" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919043/original_0d45cf2ca8d117a1b45c63dc143d7be3.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="4" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919042/original_aa2e319be03f130fabe5adf89e08c2d3.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="5" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919041/original_905838b544cbce428747d4a989c2047c.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="6" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919040/original_515302182d64e90e556c27d43277ace7.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="7" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919039/original_57e84303f13bdd37b28cf1308c3a7bcf.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="8" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919038/original_4f2f800aa5919cc1ac30f21d4cb5f793.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+        </div>
+        <div class="media-set">
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="9" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919033/original_c0a3957cc46dbba8ef5c12b72884ae9f.jpeg" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="10" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919029/original_0cd1502e71328a56b7ee2d3dfb5db08f.jpeg" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="11" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919028/original_bb1fcbf963021ca262363b9bb5d8ddcd.jpeg" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="12" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919027/original_3e226c5490d43ead72b964ac49212b4c.jpeg" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="13" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919026/original_c2ccc45276094a9bd8420777c324089f.jpeg" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="14" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46919025/original_51277ed59a92607a463f545db11e17c1.jpeg" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+        </div>
+        <div class="media-set">
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="15" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918973/original_e23c9aaaf06b5599bc8abe4f8cce56bf.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="16" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918972/original_e9692c6fb01520935c15808e6673c64a.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="17" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918971/original_c0ec4f1a0e0066820b70a35ff20187e1.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="18" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918970/original_98921e5fceb882fda81f874763f418d5.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="19" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918969/original_1c4255a9585becaa3fcba1332dadab28.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="20" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918968/original_8b9c4b31bb886c216cc713ee71eca8f7.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="21" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918967/original_ba1ad0b6625ef85b2da27c491840b4de.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="22" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918966/original_aa9797e019982b21bd6980b28c03b5b2.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+          <figure class="media-card">
+            <button class="media-open" type="button" data-media-index="23" aria-label="abrir imagen">
+              <img src="https://d2w9rnfcy7mm78.cloudfront.net/46918965/original_d0cf78f2c1c938ec1f00c1430f60aa1f.png" alt="xpan / florero de pared" loading="lazy" decoding="async" fetchpriority="low" width="900" height="1125">
+            </button>
+          </figure>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="plano">
@@ -402,7 +460,7 @@
   <div id="xpan-lightbox" aria-hidden="true">
     <button type="button" data-lb-close>cerrar</button>
     <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior">←</button>
-    <div class="sheet"><img alt="" decoding="async"/></div>
+    <div class="sheet"><img alt=""/></div>
     <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente">→</button>
   </div>
 
@@ -426,475 +484,98 @@
       }
     };
 
-    const MEDIA_GROUPS = [
-      [
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919049/original_c25a3e1dc5a63c0e082dd00a44689f46.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919045/original_0e00e4dfb7ae50972dfacd0df4b6525f.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919044/original_6d36c00fa6ec26db9418576db4453a81.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919043/original_0d45cf2ca8d117a1b45c63dc143d7be3.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919042/original_aa2e319be03f130fabe5adf89e08c2d3.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919041/original_905838b544cbce428747d4a989c2047c.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919040/original_515302182d64e90e556c27d43277ace7.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919039/original_57e84303f13bdd37b28cf1308c3a7bcf.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919038/original_4f2f800aa5919cc1ac30f21d4cb5f793.png'
-      ],
-      [
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919033/original_c0a3957cc46dbba8ef5c12b72884ae9f.jpeg',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919029/original_0cd1502e71328a56b7ee2d3dfb5db08f.jpeg',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919028/original_bb1fcbf963021ca262363b9bb5d8ddcd.jpeg',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919027/original_3e226c5490d43ead72b964ac49212b4c.jpeg',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919026/original_c2ccc45276094a9bd8420777c324089f.jpeg',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46919025/original_51277ed59a92607a463f545db11e17c1.jpeg'
-      ],
-      [
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918973/original_e23c9aaaf06b5599bc8abe4f8cce56bf.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918972/original_e9692c6fb01520935c15808e6673c64a.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918971/original_c0ec4f1a0e0066820b70a35ff20187e1.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918970/original_98921e5fceb882fda81f874763f418d5.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918969/original_1c4255a9585becaa3fcba1332dadab28.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918968/original_8b9c4b31bb886c216cc713ee71eca8f7.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918967/original_ba1ad0b6625ef85b2da27c491840b4de.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918966/original_aa9797e019982b21bd6980b28c03b5b2.png',
-        'https://d2w9rnfcy7mm78.cloudfront.net/46918965/original_d0cf78f2c1c938ec1f00c1430f60aa1f.png'
-      ]
-    ];
-
-    const allMedia = MEDIA_GROUPS.flat();
+    let allMedia = [];
     let lbIndex = 0;
 
-    const doc = document;
-    const root = doc.documentElement;
-    const idle = window.requestIdleCallback ? (fn, timeout = 900) => requestIdleCallback(fn, { timeout }) : (fn) => setTimeout(fn, 0);
-    let mediaRendered = false;
-    let mediaObserver = null;
-    let lazyImageObserver = null;
-    let pdfObserver = null;
+    function safeSetStorage(key, value){ try{ localStorage.setItem(key, value); }catch(e){} }
+    function safeGetStorage(key, fallback){ try{ return localStorage.getItem(key) || fallback; }catch(e){ return fallback; } }
 
     function setLang(lang){
       if(!I18N[lang]) lang = 'es';
-      root.lang = lang;
-      try{ localStorage.setItem('xpan-lang', lang); }catch(e){}
-      const dict = I18N[lang];
-      doc.querySelectorAll('[data-lang-block]').forEach(el => el.classList.toggle('active', el.dataset.langBlock === lang));
-      doc.querySelectorAll('[data-lang-btn]').forEach(btn => {
+      document.documentElement.lang = lang;
+      safeSetStorage('xpan-lang', lang);
+      document.querySelectorAll('[data-lang-block]').forEach(el => el.classList.toggle('active', el.dataset.langBlock === lang));
+      document.querySelectorAll('[data-lang-btn]').forEach(btn => {
         const active = btn.dataset.langBtn === lang;
         btn.classList.toggle('lang-active', active);
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
-      Object.keys(dict).forEach(key => {
-        doc.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.textContent = dict[key]; });
-      });
-    }
-
-    function renderMedia(){
-      if(mediaRendered) return;
-      const grid = doc.getElementById('mediaGrid');
-      if(!grid) return;
-      mediaRendered = true;
-      const frag = doc.createDocumentFragment();
-      MEDIA_GROUPS.forEach((group) => {
-        const set = doc.createElement('div');
-        set.className = 'media-set';
-        group.forEach((src) => {
-          const index = allMedia.indexOf(src);
-          const figure = doc.createElement('figure');
-          figure.className = 'media-card';
-          const button = doc.createElement('button');
-          button.className = 'media-open';
-          button.type = 'button';
-          button.setAttribute('aria-label', 'abrir imagen');
-          const img = doc.createElement('img');
-          img.alt = 'xpan / florero de pared';
-          img.loading = 'lazy';
-          img.decoding = 'async';
-          img.fetchPriority = 'low';
-          img.dataset.src = src;
-          img.addEventListener('load', () => img.classList.add('loaded'), { once:true });
-          button.appendChild(img);
-          button.addEventListener('click', () => openLightbox(index), { passive:true });
-          figure.appendChild(button);
-          set.appendChild(figure);
-        });
-        frag.appendChild(set);
-      });
-      grid.appendChild(frag);
-      lazyLoadImages();
-    }
-
-    function lazyLoadImages(){
-      const images = [...doc.querySelectorAll('img[data-src]')];
-      const margin = window.matchMedia('(max-width: 640px)').matches ? '220px 0px' : '520px 0px';
-      if(lazyImageObserver) lazyImageObserver.disconnect();
-      if('IntersectionObserver' in window){
-        lazyImageObserver = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if(entry.isIntersecting){
-              const img = entry.target;
-              img.src = img.dataset.src;
-              img.removeAttribute('data-src');
-              lazyImageObserver.unobserve(img);
-            }
-          });
-        }, { rootMargin:margin, threshold:.01 });
-        images.forEach(img => lazyImageObserver.observe(img));
-      } else {
-        images.forEach(img => { img.src = img.dataset.src; img.removeAttribute('data-src'); });
-      }
+      Object.entries(I18N[lang]).forEach(([key, value]) => { document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.textContent = value; }); });
     }
 
     function lazyLoadPdf(){
-      const pdf = doc.querySelector('[data-pdf-src]');
+      const pdf = document.querySelector('[data-pdf-src]');
       if(!pdf) return;
-      const margin = window.matchMedia('(max-width: 640px)').matches ? '140px 0px' : '360px 0px';
+      const load = () => { pdf.data = pdf.dataset.pdfSrc; pdf.removeAttribute('data-pdf-src'); };
       if('IntersectionObserver' in window){
-        pdfObserver = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if(entry.isIntersecting){
-              pdf.data = pdf.dataset.pdfSrc;
-              pdf.removeAttribute('data-pdf-src');
-              pdfObserver.disconnect();
-            }
-          });
-        }, { rootMargin:margin, threshold:.01 });
-        pdfObserver.observe(pdf);
-      } else {
-        pdf.data = pdf.dataset.pdfSrc;
-        pdf.removeAttribute('data-pdf-src');
-      }
-    }
-
-    function scheduleMedia(){
-      const record = doc.getElementById('registro');
-      if(!record){ renderMedia(); return; }
-      const margin = window.matchMedia('(max-width: 640px)').matches ? '320px 0px' : '700px 0px';
-      if('IntersectionObserver' in window){
-        mediaObserver = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            if(entry.isIntersecting){
-              renderMedia();
-              mediaObserver.disconnect();
-            }
-          });
-        }, { rootMargin:margin, threshold:.01 });
-        mediaObserver.observe(record);
-      } else {
-        idle(renderMedia);
-      }
-    }
-
-    function preloadAround(index){
-      [index + 1, index - 1].forEach(i => {
-        const src = allMedia[(i + allMedia.length) % allMedia.length];
-        const preload = new Image();
-        preload.decoding = 'async';
-        preload.src = src;
-      });
+        const margin = matchMedia('(max-width: 640px)').matches ? '120px 0px' : '520px 0px';
+        const observer = new IntersectionObserver(entries => { if(entries.some(entry => entry.isIntersecting)){ load(); observer.disconnect(); } }, { rootMargin:margin, threshold:.01 });
+        observer.observe(pdf);
+      } else { load(); }
     }
 
     function openLightbox(index){
-      lbIndex = index;
-      const lb = doc.getElementById('xpan-lightbox');
+      lbIndex = Number(index) || 0;
+      const lb = document.getElementById('xpan-lightbox');
       const img = lb.querySelector('.sheet img');
       img.src = allMedia[lbIndex];
       img.alt = 'xpan / florero de pared';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
-      doc.body.classList.add('lb-open');
-      preloadAround(lbIndex);
+      document.body.classList.add('lb-open');
+      preloadLightboxNeighbors(lbIndex);
     }
     function closeLightbox(){
-      const lb = doc.getElementById('xpan-lightbox');
+      const lb = document.getElementById('xpan-lightbox');
       const img = lb.querySelector('.sheet img');
       lb.classList.remove('open');
       lb.setAttribute('aria-hidden', 'true');
-      doc.body.classList.remove('lb-open');
-      img.src = '';
+      document.body.classList.remove('lb-open');
+      img.removeAttribute('src');
     }
     function moveLightbox(dir){
       lbIndex = (lbIndex + dir + allMedia.length) % allMedia.length;
-      doc.querySelector('#xpan-lightbox .sheet img').src = allMedia[lbIndex];
-      preloadAround(lbIndex);
+      document.querySelector('#xpan-lightbox .sheet img').src = allMedia[lbIndex];
+      preloadLightboxNeighbors(lbIndex);
+    }
+    function preloadLightboxNeighbors(index){
+      [index - 1, index + 1].forEach(i => { const img = new Image(); img.decoding = 'async'; img.src = allMedia[(i + allMedia.length) % allMedia.length]; });
+    }
+    function warmMediaAfterPaint(){
+      const queue = allMedia.slice();
+      let active = 0;
+      const max = matchMedia('(max-width: 640px)').matches ? 2 : 4;
+      const next = () => {
+        while(active < max && queue.length){
+          active++;
+          const img = new Image();
+          img.decoding = 'async';
+          img.onload = img.onerror = () => { active--; next(); };
+          img.src = queue.shift();
+        }
+      };
+      const start = () => setTimeout(next, 250);
+      if('requestIdleCallback' in window) requestIdleCallback(start, { timeout:1200 }); else setTimeout(start, 800);
     }
 
-    function initBreathingGrid(){
-      const canvas = doc.getElementById('xpanBreathGrid');
-      if(!canvas) return;
-      const ctx = canvas.getContext('2d', { alpha:true, desynchronized:true }) || canvas.getContext('2d');
-      if(!ctx){
-        canvas.style.backgroundImage = 'linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(0deg,var(--grid) 1px,transparent 1px)';
-        canvas.style.backgroundSize = '20px 20px';
-        return;
-      }
-
-      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const mobileQuery = window.matchMedia('(max-width: 640px), (pointer: coarse)');
-      let isMobile = mobileQuery.matches;
-      let w = 1, h = 1, dpr = 1, step = 20, detail = 7, margin = 60, frameInterval = 34;
-      let cores = [], shocks = [], raf = null, lastFrame = 0, lastShock = 0, nextShock = 1100;
-      let currentTheme = '';
-      let colors = { grid:[24,27,31], line:[42,46,49], accent:[24,96,255] };
-      let running = false;
-      const point = { x:0, y:0, z:0, stress:0 };
-
-      const rand = (a,b) => a + Math.random() * (b - a);
-      const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
-      const css = () => getComputedStyle(root);
-
-      function parseColor(input, fallback){
-        const s = String(input || '').trim();
-        if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(s)){
-          let hex = s.slice(1);
-          if(hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-          const n = parseInt(hex, 16);
-          return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-        }
-        const m = s.match(/rgba?\(([^)]+)\)/i);
-        if(m){
-          const nums = m[1].split(',').slice(0,3).map(v => parseFloat(v));
-          if(nums.every(Number.isFinite)) return nums;
-        }
-        return fallback;
-      }
-      function stroke(rgb, alpha){ return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`; }
-
-      function syncColors(){
-        const styles = css();
-        const signature = [styles.getPropertyValue('--grid'), styles.getPropertyValue('--line'), styles.getPropertyValue('--accent')].join('|');
-        if(signature === currentTheme) return;
-        currentTheme = signature;
-        colors.grid = parseColor(styles.getPropertyValue('--grid'), [24,27,31]);
-        colors.line = parseColor(styles.getPropertyValue('--line'), [42,46,49]);
-        colors.accent = parseColor(styles.getPropertyValue('--accent'), [24,96,255]);
-      }
-
-      function makeCore(i){
-        const base = Math.min(w, h);
-        return {
-          x: rand(-w * .08, w * 1.08),
-          y: rand(-h * .08, h * 1.08),
-          r: rand(base * .18, base * .42),
-          amp: rand(8, 25) * (Math.random() < .5 ? -1 : 1),
-          depth: rand(38, 115) * (Math.random() < .5 ? -1 : 1),
-          spin: rand(-7, 7),
-          phase: rand(0, Math.PI * 2),
-          speed: rand(.00013, .00038),
-          vx: rand(-.025, .025),
-          vy: rand(-.025, .025),
-          drift: rand(.00004, .00011),
-          idx: i
-        };
-      }
-
-      function resize(){
-        isMobile = mobileQuery.matches;
-        w = Math.max(1, window.innerWidth);
-        h = Math.max(1, window.innerHeight);
-        const pixels = w * h;
-        const maxDpr = isMobile ? 1 : pixels > 2200000 ? 1.15 : pixels > 1400000 ? 1.35 : 1.65;
-        dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
-        canvas.width = Math.round(w * dpr);
-        canvas.height = Math.round(h * dpr);
-        canvas.style.width = w + 'px';
-        canvas.style.height = h + 'px';
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        step = isMobile ? 19 : w > 1600 ? 22 : 20;
-        detail = isMobile ? 8 : 7;
-        frameInterval = isMobile ? 72 : 34;
-        margin = step * 4;
-        const count = isMobile ? 6 : 11;
-        cores = Array.from({ length:count }, (_, i) => makeCore(i));
-        shocks = [];
-        lastShock = performance.now();
-        nextShock = rand(1000, 2100);
-        draw(performance.now(), true);
-      }
-
-      function spawnShock(t){
-        const base = Math.min(w, h);
-        shocks.push({
-          x: rand(w * .04, w * .96),
-          y: rand(h * .05, h * .95),
-          r: rand(base * .16, base * .46),
-          amp: rand(15, 42) * (Math.random() < .5 ? -1 : 1),
-          depth: rand(90, 210) * (Math.random() < .5 ? -1 : 1),
-          spin: rand(-10, 10),
-          born:t,
-          life:rand(6200, 11800),
-          delay:rand(0, 500)
-        });
-      }
-
-      function updateCores(t){
-        const base = Math.min(w, h);
-        for(const c of cores){
-          c.x += c.vx + Math.sin(t * c.drift + c.phase) * .028;
-          c.y += c.vy + Math.cos(t * c.drift * 1.17 + c.phase) * .026;
-          if(c.x < -base * .45) c.x = w + base * .2;
-          if(c.x > w + base * .45) c.x = -base * .2;
-          if(c.y < -base * .45) c.y = h + base * .2;
-          if(c.y > h + base * .45) c.y = -base * .2;
-        }
-      }
-
-      function displacement(x, y, t, out){
-        let dx = 0, dy = 0, z = 0, stress = 0;
-        for(const c of cores){
-          const px = x - c.x;
-          const py = y - c.y;
-          const d2 = px * px + py * py + .0001;
-          const inv = 1 / Math.sqrt(d2);
-          const rr = c.r * (1 + Math.sin(t * c.speed * .71 + c.phase) * .08);
-          const fall = Math.exp(-d2 / (rr * rr));
-          const inhale = Math.sin(t * c.speed + c.phase) * .82 + Math.sin(t * c.speed * 2.31 + c.phase * .43) * .18;
-          const pressure = c.amp * inhale * fall;
-          const torsion = c.spin * Math.cos(t * c.speed * 1.7 + c.phase) * fall;
-          dx += px * inv * pressure - py * inv * torsion;
-          dy += py * inv * pressure + px * inv * torsion;
-          z += c.depth * inhale * fall;
-          stress += Math.abs(fall * inhale);
-        }
-        for(const s of shocks){
-          const age = t - s.born - s.delay;
-          if(age <= 0 || age >= s.life) continue;
-          const progress = age / s.life;
-          const env = Math.sin(progress * Math.PI);
-          const px = x - s.x;
-          const py = y - s.y;
-          const dist = Math.sqrt(px * px + py * py) + .0001;
-          const ring = s.r * (.16 + progress * .86);
-          const shell = Math.exp(-Math.pow((dist - ring) / (s.r * .18), 2));
-          const dome = Math.exp(-(px * px + py * py) / (s.r * s.r));
-          const force = (shell * .82 + dome * .36) * env;
-          const radial = s.amp * force;
-          const twist = s.spin * force * Math.sin(progress * Math.PI * 2);
-          dx += (px / dist) * radial - (py / dist) * twist;
-          dy += (py / dist) * radial + (px / dist) * twist;
-          z += s.depth * force * Math.sin(progress * Math.PI);
-          stress += force * 1.4;
-        }
-        z = clamp(z, -180, 240);
-        const cx = w * .5, cy = h * .5;
-        const perspective = Math.max(w, h) * 1.45;
-        const scale = perspective / (perspective + z);
-        out.x = cx + ((x + dx) - cx) * scale;
-        out.y = cy + ((y + dy) - cy) * scale;
-        out.z = z;
-        out.stress = clamp(stress, 0, 2.4);
-        return out;
-      }
-
-      function drawGridPass(t, offset, alpha, lineWidth, stressPass){
-        ctx.lineWidth = lineWidth;
-        ctx.lineCap = 'butt';
-        ctx.lineJoin = 'round';
-        const startX = -margin + offset;
-        const endX = w + margin;
-        const startY = -margin + offset;
-        const endY = h + margin;
-
-        for(let x = startX; x <= endX; x += step){
-          ctx.beginPath();
-          let first = true, averageStress = 0, count = 0;
-          for(let y = -margin; y <= h + margin; y += detail){
-            const p = displacement(x, y, t, point);
-            averageStress += p.stress; count++;
-            if(first){ ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
-          }
-          const local = count ? averageStress / count : 0;
-          ctx.strokeStyle = stressPass ? stroke(colors.accent, alpha * clamp(local, .05, 1)) : stroke(colors.grid, alpha + local * .025);
-          ctx.stroke();
-        }
-        for(let y = startY; y <= endY; y += step){
-          ctx.beginPath();
-          let first = true, averageStress = 0, count = 0;
-          for(let x = -margin; x <= w + margin; x += detail){
-            const p = displacement(x, y, t, point);
-            averageStress += p.stress; count++;
-            if(first){ ctx.moveTo(p.x, p.y); first = false; } else ctx.lineTo(p.x, p.y);
-          }
-          const local = count ? averageStress / count : 0;
-          ctx.strokeStyle = stressPass ? stroke(colors.accent, alpha * clamp(local, .05, 1)) : stroke(colors.grid, alpha + local * .025);
-          ctx.stroke();
-        }
-      }
-
-      function draw(t, frozen){
-        syncColors();
-        ctx.clearRect(0, 0, w, h);
-        const moving = !reducedMotion && !frozen;
-        if(moving){
-          updateCores(t);
-          if(t - lastShock > nextShock){
-            spawnShock(t);
-            lastShock = t;
-            nextShock = rand(1000, 2400);
-          }
-          shocks = shocks.filter(s => t - s.born < s.life + s.delay);
-        }
-        ctx.save();
-        ctx.globalCompositeOperation = 'source-over';
-        drawGridPass(t, 0, .55, .74, false);
-        ctx.globalCompositeOperation = 'screen';
-        drawGridPass(t + 110, step * .5, .075, .55, true);
-        ctx.restore();
-      }
-
-      function tick(t){
-        if(!running) return;
-        if(t - lastFrame > frameInterval){
-          draw(t, false);
-          lastFrame = t;
-        }
-        raf = requestAnimationFrame(tick);
-      }
-      function start(){
-        if(reducedMotion || running || doc.hidden) return;
-        running = true;
-        lastFrame = 0;
-        raf = requestAnimationFrame(tick);
-      }
-      function stop(){
-        running = false;
-        if(raf) cancelAnimationFrame(raf);
-        raf = null;
-      }
-
-      resize();
-      idle(start, isMobile ? 1200 : 500);
-
-      let resizeTimer = null;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          stop();
-          resize();
-          idle(start, isMobile ? 900 : 300);
-        }, 140);
-      }, { passive:true });
-      doc.addEventListener('visibilitychange', () => {
-        if(doc.hidden) stop(); else idle(start, 500);
-      }, { passive:true });
-    }
-
-    doc.addEventListener('DOMContentLoaded', () => {
-      let savedLang = 'es';
-      try{ savedLang = localStorage.getItem('xpan-lang') || 'es'; }catch(e){}
-      setLang(savedLang);
-      doc.querySelectorAll('[data-lang-btn]').forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.langBtn), { passive:true }));
-      doc.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
-      doc.querySelector('[data-dir="prev"]').addEventListener('click', () => moveLightbox(-1));
-      doc.querySelector('[data-dir="next"]').addEventListener('click', () => moveLightbox(1));
-      doc.getElementById('xpan-lightbox').addEventListener('click', event => { if(event.target.id === 'xpan-lightbox') closeLightbox(); });
+    document.addEventListener('DOMContentLoaded', () => {
+      allMedia = Array.from(document.querySelectorAll('[data-media-index] img')).map(img => img.currentSrc || img.src);
+      setLang(safeGetStorage('xpan-lang', 'es'));
+      document.querySelectorAll('[data-lang-btn]').forEach(btn => btn.addEventListener('click', () => setLang(btn.dataset.langBtn)));
+      document.querySelectorAll('[data-media-index]').forEach(btn => btn.addEventListener('click', () => openLightbox(btn.dataset.mediaIndex)));
+      document.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
+      document.querySelector('[data-dir="prev"]').addEventListener('click', () => moveLightbox(-1));
+      document.querySelector('[data-dir="next"]').addEventListener('click', () => moveLightbox(1));
+      document.getElementById('xpan-lightbox').addEventListener('click', event => { if(event.target.id === 'xpan-lightbox') closeLightbox(); });
       window.addEventListener('keydown', event => {
-        const open = doc.getElementById('xpan-lightbox').classList.contains('open');
+        const open = document.getElementById('xpan-lightbox').classList.contains('open');
         if(!open) return;
         if(event.key === 'Escape') closeLightbox();
         if(event.key === 'ArrowLeft') moveLightbox(-1);
         if(event.key === 'ArrowRight') moveLightbox(1);
       });
-      initBreathingGrid();
-      scheduleMedia();
       lazyLoadPdf();
+      warmMediaAfterPaint();
     });
   </script>
 </body>
