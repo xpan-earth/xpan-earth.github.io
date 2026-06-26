@@ -128,6 +128,9 @@
 
       <input id="ua" name="user_agent" type="hidden" value="">
       <input id="page" name="page" type="hidden" value="">
+<input id="started_at" name="started_at" type="hidden" value="">
+<input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;opacity:0;pointer-events:none;">
+<input name="session_token" type="hidden" value="xpan_ls83_300626_protected">
       <p id="formNote" aria-live="polite" style="margin:0;color:var(--fg-dim);font:400 .9rem/1.4 var(--font-ui)"></p>
 
 
@@ -213,13 +216,19 @@
   const note = document.getElementById("formNote");
   const ua   = document.getElementById("ua");
   const pg   = document.getElementById("page");
+  const started = document.getElementById("started_at");
 
   if (!form || !btn) return;
 
-  try {
-    if (ua) ua.value = navigator.userAgent || "";
-    if (pg) pg.value = location.pathname || location.href || "";
-  } catch {}
+  function hydrateHiddenFields() {
+    try {
+      if (ua) ua.value = navigator.userAgent || "";
+      if (pg) pg.value = location.pathname || location.href || "";
+      if (started) started.value = String(Date.now());
+    } catch {}
+  }
+
+  hydrateHiddenFields();
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -232,8 +241,7 @@
       return;
     }
 
-    const action = form.getAttribute("action");
-    if (!action) {
+    if (!form.action) {
       if (note) note.textContent = "registro no configurado.";
       return;
     }
@@ -243,24 +251,15 @@
     if (note) note.textContent = "procesando registro…";
 
     try {
-      const res = await fetch(action, {
+      await fetch(form.action, {
         method: "POST",
+        mode: "no-cors",
         body: new FormData(form)
       });
 
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {}
-
-      if (data.ok) {
-        if (note) note.textContent = "registro confirmado. revisa tu correo.";
-        form.reset();
-        if (ua) ua.value = navigator.userAgent || "";
-        if (pg) pg.value = location.pathname || location.href || "";
-      } else {
-        if (note) note.textContent = "registro recibido. confirmación pendiente.";
-      }
+      if (note) note.textContent = "registro enviado. revisa tu correo.";
+      form.reset();
+      hydrateHiddenFields();
 
     } catch (err) {
       if (note) note.textContent = "error de red. intenta de nuevo.";
