@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="xpan — propuesta económica de desarrollo conceptual para emerson 121">
+  <title>xpan / emerson 121 / desarrollo conceptual</title>
+  <style>
+    :root{
+      --black:#050606;--ink:#0e1113;--paper:#f4f5f4;--white:#eef0f1;
+      --muted:#777e83;--line:#292d30;--line-light:#d4d8da;--blue:#1860ff;
+      --sans:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Inter","Segoe UI",Arial,sans-serif;
+      --mono:"SFMono-Regular","IBM Plex Mono",Menlo,Consolas,monospace;
+      --ease:cubic-bezier(.22,1,.36,1);--pad:clamp(24px,5.2vw,100px);
+    }
+    *{box-sizing:border-box}
+    html{scrollbar-width:none;background:var(--black);scroll-behavior:smooth}
+    html::-webkit-scrollbar{display:none}
+    body{margin:0;overflow-x:hidden;background:var(--black);color:var(--white);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+    button,input{font:inherit}
+    a{color:inherit}
+    ::selection{background:var(--blue);color:#fff}
+
+    .gate{position:fixed;z-index:1000;inset:0;display:grid;grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr);background:var(--black);color:var(--white);transition:clip-path 1.05s var(--ease),visibility 1.05s;clip-path:inset(0)}
+    body.is-unlocked .gate{clip-path:inset(0 0 100% 0);visibility:hidden}
+    .gate__rail{position:relative;padding:32px var(--pad);border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between}
+    .gate__brand{display:flex;gap:18px;align-items:flex-start}
+    .mark{width:38px;height:45px;display:grid;place-items:center;flex:none;color:currentColor;text-decoration:none}
+    .mark svg{display:block;width:34px;height:auto;fill:currentColor}
+    .gate__brand div,.head__project{display:grid;gap:5px}
+    .gate__brand b,.head__project b{font:600 10px/1 var(--sans)}
+    .gate__brand span,.head__project span{font:8px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+    .gate__coord{font:7px/1.65 var(--mono);color:#5f666b;letter-spacing:.07em;text-transform:uppercase}
+    .gate__coord i{display:block;width:54px;height:1px;margin-bottom:14px;background:var(--blue);animation:pulse 1.8s ease-in-out infinite;transform-origin:left}
+    .gate__main{position:relative;overflow:hidden;display:grid;align-content:center;padding:clamp(70px,12vh,150px) var(--pad)}
+    .gate__main::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 72% 30%,rgba(24,96,255,.12),transparent 32%),linear-gradient(115deg,transparent 47%,rgba(255,255,255,.035) 47.1%,transparent 47.2%);pointer-events:none}
+    .gate__axis{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+    .gate__axis::after{content:"";display:block;width:42%;height:1px;background:var(--blue);animation:axis 2.6s var(--ease) infinite alternate;transform-origin:left}
+    .gate__copy{position:relative;width:min(690px,100%)}
+    .eyebrow{margin:0 0 20px;font:8px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .gate h1{margin:0;font:500 clamp(48px,7vw,112px)/.82 var(--sans);letter-spacing:-.078em;text-transform:lowercase}
+    .gate__form{position:relative;width:min(430px,100%);margin-top:42px}
+    .gate__form label{display:block;margin-bottom:9px;font:7px/1 var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+    .gate__field{display:grid;grid-template-columns:1fr auto;border-bottom:1px solid #53595d;transition:border-color .2s}
+    .gate__field:focus-within{border-color:var(--blue)}
+    .gate__field input{min-width:0;padding:13px 0;border:0;outline:0;background:transparent;color:var(--white);font:400 18px/1 var(--sans);letter-spacing:.04em}
+    .gate__field input::placeholder{color:#4b5155}
+    .gate__field button{appearance:none;border:0;padding:0 0 0 28px;background:transparent;color:var(--white);font:8px/1 var(--mono);cursor:pointer;text-transform:uppercase;letter-spacing:.08em}
+    .gate__field button:hover,.gate__field button:focus-visible{color:var(--blue);outline:0}
+    .gate__message{min-height:1em;margin:12px 0 0;font:7px/1 var(--mono);color:var(--muted);letter-spacing:.05em}
+    .gate__message.is-error{color:#ff5c52}
+
+    .site{visibility:hidden;opacity:0;transition:opacity .55s .38s linear}
+    body.is-unlocked .site{visibility:visible;opacity:1}
+    .head{position:fixed;z-index:80;top:14px;left:var(--pad);right:var(--pad);height:47px;display:grid;grid-template-columns:48px 1fr auto 1fr;gap:15px;align-items:center;color:#fff;mix-blend-mode:difference;pointer-events:none}
+    .head::after{content:"";position:absolute;left:53px;right:0;bottom:-8px;height:1px;background:currentColor;opacity:.22}
+    .head .mark{pointer-events:auto}
+    .head__center{display:flex;justify-self:center;gap:16px;font:8px/1 var(--mono);letter-spacing:.04em}
+    .head__center span{opacity:.62}.head__center b{font-weight:400;color:var(--blue)}
+    .head__place{justify-self:end;display:flex;gap:22px;font:8px/1 var(--mono);opacity:.62}
+    .head__lock{pointer-events:auto;appearance:none;border:0;padding:0;background:transparent;color:inherit;font:8px/1 var(--mono);cursor:pointer;opacity:.6}
+    .head__lock:hover,.head__lock:focus-visible{opacity:1;color:var(--blue);outline:0}
+    .progress{position:fixed;z-index:79;left:0;right:0;bottom:0;height:2px;background:rgba(127,134,139,.18);pointer-events:none}
+    .progress i{display:block;width:100%;height:2px;background:var(--blue);transform:scaleX(0);transform-origin:left;will-change:transform}
+    .side-index{position:fixed;z-index:79;right:18px;top:50%;display:flex;align-items:center;gap:9px;transform:rotate(90deg) translateX(50%);transform-origin:right center;color:#fff;mix-blend-mode:difference;font:7px/1 var(--mono);pointer-events:none}
+    .side-index i{display:block;width:38px;height:1px;background:var(--blue)}
+
+    .model-field{position:fixed;z-index:2;inset:0;width:100%;height:100%;pointer-events:none;opacity:.72;transition:opacity .6s linear;mix-blend-mode:screen}
+    .slide{position:relative;z-index:3;min-height:100svh;overflow:hidden;padding:clamp(104px,14vh,148px) var(--pad) clamp(62px,8vh,92px);isolation:isolate}
+    .slide--black{background:rgba(5,6,6,.76);color:var(--white)}
+    .slide--paper{background:var(--paper);color:var(--ink)}
+    .slide--blue{background:var(--blue);color:#fff}
+    .slide__rule{position:absolute;z-index:-1;top:0;bottom:0;left:50%;width:1px;background:currentColor;opacity:.1}
+    .slide__number{position:absolute;left:var(--pad);top:88px;font:8px/1 var(--mono);color:var(--blue);letter-spacing:.06em}
+    .slide--blue .slide__number{color:#fff}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s linear,transform 1.1s var(--ease)}
+    .is-visible .reveal{opacity:1;transform:none}
+    .reveal--delay{transition-delay:.12s}
+    .reveal--delay2{transition-delay:.22s}
+
+    .cover{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,.65fr);align-items:end;gap:8vw}
+    .cover__copy{align-self:center;max-width:1020px}
+    .cover__copy h1{margin:0;font:500 clamp(54px,8.3vw,145px)/.79 var(--sans);letter-spacing:-.085em;text-transform:lowercase}
+    .cover__copy h1 span{display:block;color:var(--blue)}
+    .cover__brief{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px;padding-top:11px;border-top:1px solid var(--line)}
+    .cover__brief p{max-width:500px;margin:0;font:400 clamp(12px,1vw,16px)/1.42 var(--sans);color:#9ca1a5}
+    .cover__brief div{justify-self:end;text-align:right;font:8px/1.6 var(--mono);color:#777e83}
+    .cover__index{align-self:end;margin:0 0 4vh;padding:0;list-style:none;border-top:1px solid var(--line)}
+    .cover__index li{display:grid;grid-template-columns:28px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:baseline;font:8px/1.2 var(--mono)}
+    .cover__index span{color:var(--blue)}.cover__index b{font-weight:500}.cover__index em{font-style:normal;color:#6f767b}
+    .cover__cue{position:absolute;left:var(--pad);bottom:24px;display:flex;gap:13px;align-items:center;font:7px/1 var(--mono);color:#686f74;text-transform:uppercase;letter-spacing:.08em}
+    .cover__cue i{display:block;width:52px;height:1px;background:var(--blue);animation:pulse 1.8s ease-in-out infinite;transform-origin:left}
+
+    .evidence{display:grid;grid-template-columns:minmax(250px,.55fr) minmax(0,1.45fr);gap:9vw;align-items:center}
+    .section-title p{margin:0 0 18px;font:8px/1 var(--mono);color:#6f767b;letter-spacing:.06em}
+    .section-title h2{margin:0;font:500 clamp(48px,6.8vw,112px)/.82 var(--sans);letter-spacing:-.078em;text-transform:lowercase}
+    .section-title > span{display:block;max-width:410px;margin-top:22px;font:400 13px/1.5 var(--sans);color:#697075}
+    .evidence__matrix{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line-light);border-left:1px solid var(--line-light)}
+    .datum{position:relative;min-height:210px;padding:22px;border-right:1px solid var(--line-light);border-bottom:1px solid var(--line-light);overflow:hidden}
+    .datum::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform 1.2s var(--ease)}
+    .is-visible .datum::after{transform:scaleX(var(--fill,1))}
+    .datum span{display:flex;justify-content:space-between;font:7px/1 var(--mono);color:#737a7f;text-transform:uppercase;letter-spacing:.06em}
+    .datum b{display:block;margin-top:40px;font:400 clamp(48px,5.6vw,86px)/.8 var(--sans);letter-spacing:-.075em}
+    .datum p{margin:15px 0 0;font:8px/1.35 var(--mono);color:#70777c}
+
+    .scope{display:grid;grid-template-columns:minmax(250px,.56fr) minmax(270px,.52fr) minmax(340px,.92fr);gap:5vw;align-items:center}
+    .scope__device{position:relative;aspect-ratio:1;display:grid;place-items:center}
+    .scope__orbit{position:absolute;border:1px solid #33383c;border-radius:50%;animation:orbit 16s linear infinite}
+    .scope__orbit:nth-child(1){inset:5%;transform:rotate(8deg)}
+    .scope__orbit:nth-child(2){inset:17%;animation-duration:12s;animation-direction:reverse;transform:rotate(-19deg)}
+    .scope__orbit:nth-child(3){inset:29%;animation-duration:9s;transform:rotate(34deg)}
+    .scope__orbit::before{content:"";position:absolute;left:50%;top:-4px;width:7px;height:7px;border:1px solid var(--blue);border-radius:50%;background:var(--black)}
+    .scope__core{position:relative;display:grid;place-items:center;width:31%;aspect-ratio:1;border:1px solid var(--blue);transform:rotate(45deg);box-shadow:0 0 60px rgba(24,96,255,.09)}
+    .scope__core span{transform:rotate(-45deg);font:7px/1.4 var(--mono);text-align:center;color:#a8adb0;text-transform:uppercase;letter-spacing:.07em}
+    .scope__list{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+    .scope__list li{display:grid;grid-template-columns:30px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font:400 clamp(11px,1vw,15px)/1.25 var(--sans);color:#d3d6d8;opacity:0;transform:translateX(18px);transition:opacity .55s linear,transform .85s var(--ease)}
+    .scope__list li span{font:7px/1.7 var(--mono);color:var(--blue)}
+    .is-visible .scope__list li{opacity:1;transform:none}
+    .scope__list li:nth-child(2){transition-delay:.04s}.scope__list li:nth-child(3){transition-delay:.08s}.scope__list li:nth-child(4){transition-delay:.12s}.scope__list li:nth-child(5){transition-delay:.16s}.scope__list li:nth-child(6){transition-delay:.2s}.scope__list li:nth-child(7){transition-delay:.24s}.scope__list li:nth-child(8){transition-delay:.28s}.scope__list li:nth-child(9){transition-delay:.32s}
+
+    .timeline{display:grid;grid-template-columns:minmax(270px,.58fr) minmax(0,1.42fr);gap:8vw;align-items:center}
+    .timeline__body{position:relative;padding:30px 0 0}
+    .timeline__axis{position:absolute;left:0;right:0;top:9px;height:1px;background:var(--line-light)}
+    .timeline__axis i{display:block;width:100%;height:1px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform 1.5s .18s var(--ease)}
+    .timeline.is-visible .timeline__axis i{transform:scaleX(1)}
+    .timeline__weeks{display:grid;grid-template-columns:repeat(4,1fr);border-left:1px solid var(--line-light)}
+    .week{min-height:380px;padding:22px;border-right:1px solid var(--line-light);border-bottom:1px solid var(--line-light);opacity:0;transform:translateY(20px);transition:opacity .6s linear,transform .9s var(--ease)}
+    .is-visible .week{opacity:1;transform:none}.is-visible .week:nth-child(2){transition-delay:.1s}.is-visible .week:nth-child(3){transition-delay:.2s}.is-visible .week:nth-child(4){transition-delay:.3s}
+    .week > span{font:7px/1 var(--mono);color:var(--blue);letter-spacing:.06em}
+    .week h3{min-height:2.5em;margin:65px 0 0;font:500 clamp(19px,1.75vw,29px)/.95 var(--sans);letter-spacing:-.045em;text-transform:lowercase}
+    .week p{margin:24px 0 0;font:8px/1.55 var(--mono);color:#687075}
+    .timeline__dates{display:flex;justify-content:space-between;margin-top:13px;font:8px/1 var(--mono);color:#6f767b}
+
+    .investment{display:grid;grid-template-columns:minmax(300px,.52fr) minmax(0,1.48fr);gap:7vw;align-items:center}
+    .investment__figure{position:relative;align-self:center;border-top:1px solid rgba(255,255,255,.34);padding-top:18px}
+    .investment__label{display:flex;justify-content:space-between;font:8px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em}
+    .investment__number{display:flex;align-items:flex-start;margin-top:clamp(42px,8vh,90px);white-space:nowrap}
+    .investment__number sup{padding-top:1.1vw;font:500 clamp(24px,3vw,54px)/1 var(--sans)}
+    .investment__number b{font:500 clamp(80px,13.5vw,240px)/.72 var(--sans);letter-spacing:-.095em}
+    .investment__currency{display:flex;justify-content:space-between;align-items:flex-end;margin-top:25px;padding-top:12px;border-top:1px solid rgba(255,255,255,.34);font:8px/1.35 var(--mono)}
+    .investment__currency p{margin:0;text-align:right;opacity:.75}.investment__currency strong{font:500 clamp(14px,1.5vw,22px)/1 var(--sans)}
+    .formula{margin-top:24px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:13px;align-items:center;font:8px/1 var(--mono)}
+    .formula span{padding:11px;border:1px solid rgba(255,255,255,.32);text-align:center}.formula i{font-style:normal}
+    .investment__note{position:absolute;left:var(--pad);bottom:24px;font:7px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;opacity:.72}
+
+    .fees{display:grid;grid-template-columns:minmax(270px,.48fr) minmax(0,1.52fr);gap:8vw;align-items:center}
+    .fees__body{align-self:center}
+    .fees__head{display:flex;justify-content:space-between;gap:24px;margin-bottom:22px;padding-bottom:10px;border-bottom:1px solid var(--line-light);font:8px/1 var(--mono);color:#6f767b;text-transform:uppercase;letter-spacing:.06em}
+    .fees__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-light);border-left:1px solid var(--line-light)}
+    .fee{position:relative;min-height:410px;padding:22px;border-right:1px solid var(--line-light);border-bottom:1px solid var(--line-light);overflow:hidden;opacity:0;transform:translateY(24px);transition:opacity .6s linear,transform 1s var(--ease)}
+    .fee:nth-child(2){transition-delay:.1s}.fee:nth-child(3){transition-delay:.2s}.is-visible .fee{opacity:1;transform:none}
+    .fee::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform 1.25s .25s var(--ease)}
+    .is-visible .fee::after{transform:scaleX(1)}
+    .fee__meta{display:flex;justify-content:space-between;font:7px/1 var(--mono);color:#72797e;letter-spacing:.05em}.fee__meta b{font-weight:400;color:var(--blue)}
+    .fee h3{min-height:2.1em;margin:42px 0 0;font:500 clamp(21px,2vw,34px)/.93 var(--sans);letter-spacing:-.05em;text-transform:lowercase}
+    .fee__amount{margin-top:70px}.fee__amount sup{font:500 18px/1 var(--sans)}.fee__amount strong{font:500 clamp(43px,4.3vw,72px)/.76 var(--sans);letter-spacing:-.075em}.fee__amount span{display:block;margin-top:11px;font:8px/1.35 var(--mono);color:#697075}
+    .fee__formula{position:absolute;left:22px;right:22px;bottom:28px;padding-top:10px;border-top:1px solid var(--line-light);font:7px/1.45 var(--mono);color:#737a7f}
+    .fee--active{background:#0e1113;color:#e8eaeb}.fee--active .fee__meta,.fee--active .fee__amount span,.fee--active .fee__formula{color:#949a9e}.fee--active .fee__formula{border-color:#303538}
+    .fees__note{display:flex;justify-content:space-between;gap:30px;margin-top:15px;font:7px/1.45 var(--mono);color:#70777c}.fees__note span:last-child{text-align:right}
+
+    .terms{display:grid;grid-template-columns:minmax(260px,.52fr) minmax(0,1.48fr);gap:8vw;align-items:center}
+    .terms__body{display:grid;gap:38px}
+    .payments{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line)}
+    .payment{position:relative;min-height:230px;padding:19px 20px 20px 0;border-bottom:1px solid var(--line)}
+    .payment:not(:last-child){border-right:1px solid var(--line);padding-right:20px;margin-right:20px}
+    .payment span{font:7px/1 var(--mono);color:var(--blue);letter-spacing:.06em}.payment b{display:block;margin-top:38px;font:500 clamp(33px,4vw,66px)/.8 var(--sans);letter-spacing:-.065em}.payment p{margin:17px 0 0;font:8px/1.45 var(--mono);color:#737a7f}.payment em{position:absolute;left:0;bottom:18px;font:400 12px/1 var(--sans);font-style:normal;color:#b9bdc0}
+    .terms__legal{display:grid;grid-template-columns:1fr 1fr;gap:45px}
+    .terms__legal article{padding-top:10px;border-top:1px solid var(--line)}
+    .terms__legal h3{margin:0 0 13px;font:8px/1 var(--mono);color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+    .terms__legal p{margin:0;font:400 11px/1.55 var(--sans);color:#868d91}
+
+    .closing{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(290px,.75fr);gap:8vw;align-items:end}
+    .closing h2{margin:0;font:500 clamp(58px,9vw,160px)/.78 var(--sans);letter-spacing:-.09em;text-transform:lowercase}
+    .closing h2 span{display:block;color:var(--blue)}
+    .closing__action{align-self:end;margin-bottom:4vh}
+    .closing__action p{margin:0 0 30px;font:400 14px/1.5 var(--sans);color:#9ba0a4}
+    .closing__action a{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-decoration:none;font:8px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .closing__action a span{color:var(--blue);transition:transform .45s var(--ease)}.closing__action a:hover span{transform:translateX(8px)}
+    .closing__footer{position:absolute;left:var(--pad);right:var(--pad);bottom:20px;display:flex;justify-content:space-between;font:7px/1 var(--mono);color:#62696e;text-transform:uppercase;letter-spacing:.05em}
+
+    @keyframes pulse{0%,100%{transform:scaleX(.15)}50%{transform:scaleX(1)}}
+    @keyframes axis{from{transform:translateX(0) scaleX(.25)}to{transform:translateX(138%) scaleX(.62)}}
+    @keyframes orbit{to{transform:rotate(368deg)}}
+    @media(max-width:880px){
+      .gate{grid-template-columns:1fr}.gate__rail{min-height:105px;padding:20px 24px;border-right:0;border-bottom:1px solid var(--line);flex-direction:row}.gate__coord{align-self:end;text-align:right}.gate__main{padding:58px 24px}.gate h1{font-size:clamp(48px,15vw,78px)}
+      .head{left:18px;right:18px;grid-template-columns:45px 1fr auto}.head__center{display:none}.head__place span:first-child{display:none}.head__project span{display:none}
+      .side-index{right:10px}.slide{padding:102px 24px 72px}.slide__number{left:24px}
+      .cover,.evidence,.scope,.timeline,.investment,.fees,.terms,.closing{grid-template-columns:1fr;gap:48px;align-items:start}.cover__index{margin:0}.cover__brief{grid-template-columns:1fr}.cover__brief div{justify-self:start;text-align:left}.cover__copy{align-self:end}
+      .evidence__matrix{margin-top:10px}.datum{min-height:165px;padding:16px}.datum b{margin-top:28px}
+      .scope__device{width:min(76vw,360px);justify-self:center;order:3}.scope__list{order:2}.scope .section-title{order:1}
+      .timeline__weeks{grid-template-columns:1fr 1fr}.week{min-height:255px}.week h3{margin-top:35px}.timeline__axis{display:none}
+      .investment__number{margin-top:45px}.investment__number b{font-size:clamp(78px,22vw,130px)}.formula{grid-template-columns:1fr auto 1fr;row-gap:8px}.formula span:last-child{grid-column:1/4}.formula i:nth-of-type(2){display:none}.investment__note{display:none}
+      .fees__grid{grid-template-columns:1fr}.fee{min-height:310px}.fee h3{margin-top:28px;min-height:auto}.fee__amount{margin-top:42px}.fees__note{display:grid}.fees__note span:last-child{text-align:left}
+      .payments{grid-template-columns:1fr}.payment{min-height:180px}.payment:not(:last-child){border-right:0;margin-right:0;padding-right:0}.terms__legal{grid-template-columns:1fr;gap:22px}
+      .closing{align-content:center}.closing__footer{left:24px;right:24px}.model-field{opacity:.45}
+    }
+    @media(max-width:520px){
+      .gate__coord{display:none}.gate__rail{min-height:86px}.gate__main{align-content:start;padding-top:13vh}.gate__form{margin-top:34px}
+      .cover__copy h1,.section-title h2,.closing h2{font-size:clamp(46px,15vw,76px)}.cover__brief{margin-top:24px}.cover__index em{display:none}
+      .evidence__matrix{grid-template-columns:1fr}.datum{min-height:135px}.datum b{font-size:56px}
+      .timeline__weeks{grid-template-columns:1fr}.week{min-height:220px}.week h3{min-height:auto}
+      .investment__number b{font-size:clamp(64px,21vw,100px)}.investment__number sup{font-size:22px}.investment__currency{align-items:start;gap:20px}.investment__currency p{max-width:160px}
+      .fees__head{display:grid}.fee__amount strong{font-size:52px}
+      .closing__footer span:nth-child(2){display:none}
+    }
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal,.scope__list li,.week{opacity:1;transform:none}}
+    @media print{.gate,.head,.progress,.side-index,.model-field,.cover__cue{display:none!important}.site{visibility:visible!important;opacity:1!important}.slide{min-height:100vh;break-after:page}.reveal,.scope__list li,.week{opacity:1!important;transform:none!important}}
+  </style>
+</head>
+<body>
+  <section class="gate" aria-label="acceso privado">
+    <aside class="gate__rail">
+      <div class="gate__brand">
+        <a class="mark" href="https://xpan.earth" target="_blank" rel="noopener" aria-label="xpan.earth">
+          <svg viewBox="0 0 1750.869 2055.509" aria-hidden="true"><path d="m1679.856,2055.509H71.013v-841.861H0V0h1750.869v1213.648h-71.013v841.861Z"/></svg>
+        </a>
+        <div><b>emerson.121</b><span>[propuesta privada]</span></div>
+      </div>
+      <div class="gate__coord"><i></i>mx.cdmx<br>2026.07<br>acceso 01</div>
+    </aside>
+    <div class="gate__main">
+      <div class="gate__axis" aria-hidden="true"></div>
+      <div class="gate__copy">
+        <p class="eyebrow">xpan / documento reservado</p>
+        <h1>desarrollo<br>conceptual</h1>
+        <form class="gate__form" autocomplete="off">
+          <label for="password">contraseña de acceso</label>
+          <div class="gate__field">
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••••••" required aria-describedby="gate-message">
+            <button type="submit">abrir →</button>
+          </div>
+          <p class="gate__message" id="gate-message" role="status">propuesta económica / emerson 121</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <main class="site" inert>
+    <header class="head">
+      <a class="mark" href="https://xpan.earth" target="_blank" rel="noopener" aria-label="xpan.earth">
+        <svg viewBox="0 0 1750.869 2055.509" aria-hidden="true"><path d="m1679.856,2055.509H71.013v-841.861H0V0h1750.869v1213.648h-71.013v841.861Z"/></svg>
+      </a>
+      <div class="head__project"><b>emerson.121</b><span>[propuesta económica]</span></div>
+      <div class="head__center"><span class="head-label">desarrollo conceptual</span><b class="head-index">01</b></div>
+      <div class="head__place"><span>mx.cdmx</span><span>2026.07</span><button class="head__lock" type="button">bloquear</button></div>
+    </header>
+    <div class="progress" aria-hidden="true"><i></i></div>
+    <div class="side-index" aria-hidden="true"><span class="side-current">01</span><i></i><span>08</span></div>
+    <canvas class="model-field" aria-hidden="true"></canvas>
+
+    <section class="slide slide--black cover" data-label="propuesta conceptual" data-index="01">
+      <div class="slide__rule"></div><span class="slide__number">01 / 08</span>
+      <div class="cover__copy reveal">
+        <p class="eyebrow">emerson 121 / etapa 02</p>
+        <h1>desarrollo<span>conceptual</span></h1>
+        <div class="cover__brief">
+          <p>definir una dirección espacial, material y atmosférica única antes de entrar a documentación ejecutiva, compras o producción.</p>
+          <div>superficie confirmada / 278 m²<br>duración / 04 semanas<br>modalidad / honorario fijo</div>
+        </div>
+      </div>
+      <ol class="cover__index reveal reveal--delay">
+        <li><span>01</span><b>base confirmada</b><em>diagnóstico</em></li>
+        <li><span>02</span><b>alcance</b><em>entregables</em></li>
+        <li><span>03</span><b>secuencia</b><em>04 semanas</em></li>
+        <li><span>04</span><b>honorario</b><em>monto fijo</em></li>
+        <li><span>05</span><b>continuidad</b><em>montos definidos</em></li>
+        <li><span>06</span><b>activación</b><em>80 / 20</em></li>
+      </ol>
+      <div class="cover__cue"><span>desplegar propuesta</span><i></i></div>
+    </section>
+
+    <section class="slide slide--paper evidence" data-label="base de alcance" data-index="02">
+      <div class="slide__rule"></div><span class="slide__number">02 / 08</span>
+      <div class="section-title reveal">
+        <p>02 / base confirmada</p>
+        <h2>diagnóstico<br>como sistema.</h2>
+        <span>el honorario se construye sobre un alcance ya levantado, clasificado y validado; no sobre una estimación preliminar.</span>
+      </div>
+      <div class="evidence__matrix reveal reveal--delay">
+        <article class="datum" style="--fill:1"><span><i>01</i><i>superficie</i></span><b>278</b><p>m² interiores confirmados</p></article>
+        <article class="datum" style="--fill:.82"><span><i>02</i><i>sistema espacial</i></span><b>10</b><p>espacios coordinados como un proyecto único</p></article>
+        <article class="datum" style="--fill:.94"><span><i>03</i><i>desarrollo xpan</i></span><b>93+</b><p>elementos identificados para diseño y definición</p></article>
+        <article class="datum" style="--fill:.88"><span><i>04</i><i>interdependencias</i></span><b>114+</b><p>compras y subcontratos a considerar conceptualmente</p></article>
+      </div>
+    </section>
+
+    <section class="slide slide--black scope" data-label="alcance conceptual" data-index="03">
+      <div class="slide__rule"></div><span class="slide__number">03 / 08</span>
+      <div class="section-title reveal">
+        <p>03 / alcance de la etapa</p>
+        <h2>una dirección<br>integral.</h2>
+        <span>cada decisión se prueba contra uso, materia, atmósfera y viabilidad antes de convertirse en instrucción ejecutiva.</span>
+      </div>
+      <div class="scope__device reveal reveal--delay" aria-hidden="true">
+        <i class="scope__orbit"></i><i class="scope__orbit"></i><i class="scope__orbit"></i>
+        <div class="scope__core"><span>concepto<br>rector</span></div>
+      </div>
+      <ol class="scope__list reveal reveal--delay2">
+        <li><span>01</span>concepto rector y narrativa espacial</li>
+        <li><span>02</span>distribución general del departamento</li>
+        <li><span>03</span>criterios de uso para los 10 espacios</li>
+        <li><span>04</span>referencias visuales y materiales</li>
+        <li><span>05</span>paleta preliminar de acabados</li>
+        <li><span>06</span>criterios de mobiliario fijo y suelto</li>
+        <li><span>07</span>criterios de iluminación y atmósfera</li>
+        <li><span>08</span>visualización integral del proyecto</li>
+        <li><span>09</span>presupuesto preliminar ajustado por partidas</li>
+      </ol>
+    </section>
+
+    <section class="slide slide--paper timeline" data-label="secuencia de desarrollo" data-index="04">
+      <div class="slide__rule"></div><span class="slide__number">04 / 08</span>
+      <div class="section-title reveal">
+        <p>04 / cronología</p>
+        <h2>cuatro semanas<br>de definición.</h2>
+        <span>la etapa avanza mediante cierres parciales; cada semana reduce variables y consolida la dirección general.</span>
+      </div>
+      <div class="timeline__body reveal reveal--delay">
+        <div class="timeline__axis" aria-hidden="true"><i></i></div>
+        <div class="timeline__weeks">
+          <article class="week"><span>01 / dirección</span><h3>concepto rector</h3><p>alineación general, jerarquías, lenguaje espacial y criterios de intervención.</p></article>
+          <article class="week"><span>02 / organización</span><h3>distribución + uso</h3><p>ajuste de layout, circulaciones, relaciones y funcionamiento de cada espacio.</p></article>
+          <article class="week"><span>03 / expresión</span><h3>materia + atmósfera</h3><p>acabados, mobiliario, iluminación y sistemas visuales del proyecto.</p></article>
+          <article class="week"><span>04 / cierre</span><h3>visualización integral</h3><p>consolidación, ajustes finales y presupuesto preliminar organizado por partidas.</p></article>
+        </div>
+        <div class="timeline__dates"><span>20 julio 2026</span><span>14 agosto 2026</span></div>
+      </div>
+    </section>
+
+    <section class="slide slide--blue investment" data-label="honorario fijo" data-index="05">
+      <div class="slide__rule"></div><span class="slide__number">05 / 08</span>
+      <div class="section-title reveal">
+        <p style="color:rgba(255,255,255,.72)">05 / propuesta económica</p>
+        <h2>honorario<br>cerrado.</h2>
+        <span style="color:rgba(255,255,255,.78)">un monto fijo para activar el desarrollo conceptual. Los honorarios ya definidos de continuidad se presentan en la siguiente sección.</span>
+      </div>
+      <div class="investment__figure reveal reveal--delay">
+        <div class="investment__label"><span>desarrollo conceptual</span><span>monto fijo / etapa 02</span></div>
+        <div class="investment__number"><sup>$</sup><b data-count="194600">194,600</b></div>
+        <div class="investment__currency"><strong>MXN + IVA</strong><p>IVA $31,136<br>total con IVA $225,736</p></div>
+        <div class="formula"><span>$700 / m²</span><i>×</i><span>278 m²</span><i>=</i><span>$194,600</span></div>
+      </div>
+      <p class="investment__note">esta propuesta activa únicamente desarrollo conceptual; cada etapa posterior se formaliza por separado.</p>
+    </section>
+
+    <section class="slide slide--paper fees" data-label="montos siguientes etapas" data-index="06">
+      <div class="slide__rule"></div><span class="slide__number">06 / 08</span>
+      <div class="section-title reveal">
+        <p>06 / ruta económica</p>
+        <h2>montos<br>definidos.</h2>
+        <span>el diagnóstico permite sustituir rangos preliminares por honorarios concretos. Cada etapa se contrata y cobra únicamente al activarse.</span>
+      </div>
+      <div class="fees__body reveal reveal--delay">
+        <div class="fees__head"><span>emerson 121 / 278 m²</span><span>honorarios profesionales / mxn + iva</span></div>
+        <div class="fees__grid">
+          <article class="fee fee--active">
+            <div class="fee__meta"><b>01 / ahora</b><span>04 semanas</span></div>
+            <h3>desarrollo<br>conceptual</h3>
+            <div class="fee__amount"><sup>$</sup><strong>700</strong><span>MXN / m²</span></div>
+            <p class="fee__formula">monto total: $194,600 + IVA<br>278 m² / etapa activada mediante esta propuesta</p>
+          </article>
+          <article class="fee">
+            <div class="fee__meta"><b>02 / siguiente</b><span>08 semanas</span></div>
+            <h3>desarrollo<br>ejecutivo</h3>
+            <div class="fee__amount"><sup>$</sup><strong>1,200</strong><span>MXN / m²</span></div>
+            <p class="fee__formula">monto total: $333,600 + IVA<br>contratación independiente al concluir conceptual</p>
+          </article>
+          <article class="fee">
+            <div class="fee__meta"><b>03 / ejecución</b><span>mensual</span></div>
+            <h3>dirección +<br>coordinación de obra</h3>
+            <div class="fee__amount"><sup>$</sup><strong>333</strong><span>MXN / m² / mes</span></div>
+            <p class="fee__formula">monto mensual: $92,574 + IVA<br>proyección 05 meses: $462,870 + IVA</p>
+          </article>
+        </div>
+        <div class="fees__note"><span>los honorarios no incluyen costos de obra física, materiales, compras, fabricación ni especialistas.</span><span>la proyección de obra corresponde al calendario octubre 2026—febrero 2027 y se ajusta a la duración efectiva.</span></div>
+      </div>
+    </section>
+
+    <section class="slide slide--black terms" data-label="activación de etapa" data-index="07">
+      <div class="slide__rule"></div><span class="slide__number">07 / 08</span>
+      <div class="section-title reveal">
+        <p>07 / forma de activación</p>
+        <h2>decidir.<br>aprobar.<br>avanzar.</h2>
+        <span>la etapa inicia con aceptación escrita, anticipo y confirmación del calendario de trabajo.</span>
+      </div>
+      <div class="terms__body reveal reveal--delay">
+        <div class="payments" aria-label="esquema de pagos">
+          <article class="payment"><span>01 / activación</span><b>80%</b><p>al aceptar la propuesta e iniciar el desarrollo conceptual.</p><em>$155,680 + IVA</em></article>
+          <article class="payment"><span>02 / cierre</span><b>20%</b><p>contra entrega del paquete conceptual final.</p><em>$38,920 + IVA</em></article>
+        </div>
+        <div class="terms__legal">
+          <article><h3>incluye</h3><p>los nueve entregables descritos, coordinación conceptual de los diez espacios y hasta dos rondas consolidadas de ajustes dentro del alcance aprobado.</p></article>
+          <article><h3>no incluye</h3><p>proyecto ejecutivo, ingenierías o especialistas, permisos, obra física, materiales, compras, fabricación, instalación ni cambios posteriores al cierre conceptual.</p></article>
+          <article><h3>regla de pagos</h3><p>conceptual y ejecutivo operan 80% al iniciar y 20% contra entrega. En obra, el mismo esquema se aplica a cada periodo mensual contratado.</p></article>
+          <article><h3>vigencia</h3><p>propuesta válida durante 15 días naturales. Importes expresados en pesos mexicanos; IVA no incluido en el honorario base.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide slide--black closing" data-label="cierre" data-index="08">
+      <div class="slide__rule"></div>
+      <div class="reveal">
+        <p class="eyebrow">emerson 121 / continuidad</p>
+        <h2>activar<span>conceptual.</span></h2>
+      </div>
+      <div class="closing__action reveal reveal--delay">
+        <p>la siguiente decisión es confirmar la etapa, formalizar el alcance y comenzar la definición integral del proyecto.</p>
+        <a href="https://xpan.earth" target="_blank" rel="noopener">confirmar por escrito / xpan <span>→</span></a>
+      </div>
+      <footer class="closing__footer"><span>www.xpan.earth</span><span>arquitectura como medio</span><span>emerson.121 / 2026</span></footer>
+    </section>
+  </main>
+
+  <script>
+  (()=>{
+    const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
+    const body=document.body, gate=$('.gate'), form=$('.gate__form'), input=$('#password'), message=$('.gate__message'), site=$('.site');
+    const EXPECTED='b8ccf38e11bf564d2c1107ec8f912d0b5e9c9e7aca24eeeca7f5f963cfa005fd';
+    const fallback='bnVtZXJvcy5lMQ==';
+    async function digest(value){
+      if(crypto?.subtle){const data=new TextEncoder().encode(value);const hash=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(hash)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+      return value===decodeURIComponent(escape(atob(fallback)))?EXPECTED:'';
+    }
+    function unlock(save=true){
+      body.classList.add('is-unlocked');site.removeAttribute('inert');message.classList.remove('is-error');
+      if(save)try{sessionStorage.setItem('xpan-e121-numeros-e1','1')}catch{}
+      setTimeout(()=>{$('.slide')?.focus?.();update()},450);
+    }
+    function lock(){
+      try{sessionStorage.removeItem('xpan-e121-numeros-e1')}catch{}
+      body.classList.remove('is-unlocked');site.setAttribute('inert','');input.value='';message.textContent='propuesta económica / emerson 121';message.classList.remove('is-error');scrollTo(0,0);setTimeout(()=>input.focus(),650)
+    }
+    try{if(sessionStorage.getItem('xpan-e121-numeros-e1')==='1')unlock(false);else setTimeout(()=>input.focus(),250)}catch{setTimeout(()=>input.focus(),250)}
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();const value=input.value.trim();message.textContent='verificando acceso…';message.classList.remove('is-error');
+      const ok=await digest(value)===EXPECTED;
+      if(ok){message.textContent='acceso confirmado';unlock()}else{message.textContent='contraseña incorrecta';message.classList.add('is-error');input.select();gate.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],{duration:260,easing:'ease-out'})}
+    });
+    $('.head__lock').addEventListener('click',lock);
+
+    const slides=$$('.slide'), progress=$('.progress i'), headLabel=$('.head-label'), headIndex=$('.head-index'), sideCurrent=$('.side-current');
+    let visible=0,ticking=false;
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('is-visible')}),{threshold:.18});
+    slides.forEach(s=>observer.observe(s));
+    const countNode=$('[data-count]');let counted=false;
+    const priceObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting&&!counted){counted=true;animateCount(countNode,194600,1250)}}),{threshold:.48});
+    priceObserver.observe(countNode);
+    function animateCount(node,target,duration){
+      const start=performance.now();const fmt=new Intl.NumberFormat('es-MX');
+      function frame(now){const p=Math.min(1,(now-start)/duration),e=1-Math.pow(1-p,4);node.textContent=fmt.format(Math.round(target*e));if(p<1)requestAnimationFrame(frame)}requestAnimationFrame(frame)
+    }
+    function update(){
+      ticking=false;if(!body.classList.contains('is-unlocked'))return;
+      const max=Math.max(1,document.documentElement.scrollHeight-innerHeight),p=Math.min(1,Math.max(0,scrollY/max));progress.style.transform=`scaleX(${p})`;
+      const marker=scrollY+innerHeight*.48;let idx=0;slides.forEach((s,i)=>{if(s.offsetTop<=marker)idx=i});
+      if(idx!==visible){visible=idx;headLabel.textContent=slides[idx].dataset.label;headIndex.textContent=slides[idx].dataset.index||String(idx+1).padStart(2,'0');sideCurrent.textContent=String(Math.min(idx+1,8)).padStart(2,'0')}
+      draw();
+    }
+    function requestUpdate(){if(!ticking){ticking=true;requestAnimationFrame(update)}}
+    addEventListener('scroll',requestUpdate,{passive:true});addEventListener('resize',()=>{resizeCanvas();requestUpdate()});
+    addEventListener('keydown',e=>{
+      if(!body.classList.contains('is-unlocked'))return;
+      if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();scrollBy({top:innerHeight*.9,behavior:'smooth'})}
+      if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();scrollBy({top:-innerHeight*.9,behavior:'smooth'})}
+      if(e.key==='Home'){e.preventDefault();scrollTo({top:0,behavior:'smooth'})}
+      if(e.key==='End'){e.preventDefault();scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'})}
+    });
+
+    const canvas=$('.model-field'),ctx=canvas.getContext('2d',{alpha:true});let dpr=1,frame=0,mx=0,my=0;
+    const rooms=[
+      [2.55,13.15,4.8,3.15],[5.15,7.65,6.4,5.9],[5.15,1.42,7.2,2.35],[9.5,13.58,3.05,2.05],[14.9,13.2,6.45,3.25],
+      [15.08,9.47,6.1,3.2],[15.62,6.12,5.15,3.15],[8.75,3.22,3.6,2.15],[21.03,1.74,3.55,2.55],[24.24,1.72,3.5,2.55]
+    ];
+    function resizeCanvas(){dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(innerWidth*dpr);canvas.height=Math.round(innerHeight*dpr);canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
+    function iso(x,y,z=0){const scale=Math.min(innerWidth/48,innerHeight/29),cx=innerWidth*.62+mx*12,cy=innerHeight*.48+my*9;return[cx+(x-y)*scale*.82,cy+(x+y)*scale*.31-z*scale]}
+    function line(points,color,width=1,alpha=1){ctx.beginPath();points.forEach((p,i)=>{const q=iso(...p);i?ctx.lineTo(...q):ctx.moveTo(...q)});ctx.strokeStyle=color;ctx.globalAlpha=alpha;ctx.lineWidth=width;ctx.stroke();ctx.globalAlpha=1}
+    function draw(){
+      frame++;ctx.clearRect(0,0,innerWidth,innerHeight);if(!body.classList.contains('is-unlocked'))return;
+      const dark=visible===0||visible===2||visible>=5,base=dark?'#7f878c':'#101315',accent='#1860ff';
+      ctx.save();ctx.globalCompositeOperation=dark?'screen':'multiply';
+      const drift=matchMedia('(prefers-reduced-motion: reduce)').matches?0:Math.sin(frame*.006)*.08;
+      rooms.forEach((r,i)=>{
+        const [x,y,w,h]=r,z=(visible===2?Math.sin(i*.9+frame*.008)*.04:0)+drift;
+        const active=visible===1?i<4:visible===2?true:visible===3?i%3===0:visible===4?i===1||i===4:false;
+        const color=active?accent:base,alpha=active?.56:.14;
+        line([[x,y,z],[x+w,y,z],[x+w,y+h,z],[x,y+h,z],[x,y,z]],color,active?1.05:.65,alpha);
+        if(active&&visible===2){line([[x,y,z],[x,y,1.2],[x+w,y,1.2],[x+w,y,z]],accent,.55,.17);line([[x+w,y,z],[x+w,y+h,z],[x+w,y+h,1.2],[x+w,y,1.2]],accent,.55,.13)}
+      });
+      for(let i=0;i<16;i++){const t=(i+frame*.0015)%16;line([[t*1.7,0,0],[0,t*.94,0]],base,.45,.055)}
+      ctx.restore();
+    }
+    addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5);my=(e.clientY/innerHeight-.5);draw()},{passive:true});
+    function loop(){if(body.classList.contains('is-unlocked'))draw();requestAnimationFrame(loop)}
+    resizeCanvas();update();loop();
+  })();
+  </script>
+</body>
+</html>
