@@ -1,15 +1,37 @@
-DERIVA / XPAN — VALIDACIÓN DE ENTREGA
+DERIVA / XPAN — VALIDACIÓN V4
 
-- JavaScript: sintaxis válida en app, datos y service worker.
-- Publicación: todos los recursos internos responden desde /deriva/.
-- PWA: manifest, scope, start_url, iconos 180/192/512 y service worker incluidos.
-- Datos: 3 ediciones finitas, 8 acontecimientos y 10 piezas documentales.
-- Local-first: guardados, historial y preferencias en IndexedDB.
-- Archivo: búsqueda, filtro, importación y exportación JSON.
-- Interacción: anterior/siguiente, gesto horizontal, seis operadores de deriva,
-  cruce explicado, compartir y apertura de fuentes.
-- Responsive: composición móvil primero y variante de escritorio a partir de 760 px.
-- Accesibilidad: landmarks, foco visible, teclado, textos alternativos, reducción de
-  movimiento y objetivos táctiles.
+ARQUITECTURA
+- PWA estática autocontenida para /deriva/.
+- Sin npm, build, backend, claves o dependencia de la estructura del resto de xpan.
+- Manifest, iconos normales/maskable, Apple touch icon y service worker versionado.
+- Shell, corpus, tipografías, iconos y dos atlas visuales disponibles offline.
 
-No hay dependencias de producción, compilación ni servidor.
+CORPUS
+- 9 alteraciones actuales investigadas.
+- 26 piezas documentales.
+- 27 relaciones actualidad → archivo comprobadas, sin destinos inexistentes.
+- Fuentes primarias del corte: NASA, CERN, UNESCO, INAH y arXiv.
+
+PRUEBA FUNCIONAL EJECUTADA
+- Umbral: correcto.
+- Entrada al presente: correcto.
+- Excavación: correcto.
+- Secuencia entre estratos: correcto.
+- Ficha y enlace de origen: correcto.
+- Guardado local: correcto.
+- Memoria: correcto.
+- Importación/exportación: validación de estructura incluida.
+- JavaScript de app, corpus y service worker: sintaxis válida.
+- Manifest: JSON válido.
+
+RENDIMIENTO
+- Aplicación completa: aproximadamente 1.2 MB sin comprimir.
+- Materia visual: 24 campos en dos solicitudes locales WebP.
+- No existen hotlinks necesarios para componer la pantalla.
+- Tipografías servidas localmente.
+
+LÍMITE EXPLÍCITO
+La edición curada es un corte cerrado el 20.07.2026. El pulso exterior consulta
+Wikimedia diariamente cuando hay conexión, pero se mantiene separado hasta que una
+señal sea revisada editorialmente. Ningún algoritmo generalista entra automáticamente
+a la edición principal.
