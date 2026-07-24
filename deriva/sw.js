@@ -1,4 +1,4 @@
-const VERSION = "deriva-v6-final-2026-07-22";
+const VERSION = "deriva-v6-beta-2026-07-24";
 const SHELL = `${VERSION}-shell`;
 const DATA = `${VERSION}-data`;
 const MEDIA = `${VERSION}-media`;
@@ -129,7 +129,7 @@ self.addEventListener("fetch", (event) => {
           return (
             (await cache.match(request)) ||
             new Response(
-              "window.__DERIVA_CONFIG__=Object.freeze({apiBaseUrl:'https://deriva-api.yes-6e1.workers.dev',build:'v6-offline'});",
+              "window.__DERIVA_CONFIG__=Object.freeze({apiBaseUrl:'https://deriva-api.yes-6e1.workers.dev',build:'v6-beta-offline'});",
               {
                 headers: {
                   "Content-Type": "application/javascript; charset=utf-8",
