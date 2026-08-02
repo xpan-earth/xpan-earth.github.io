@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>florero solera — xpan</title>
+  <meta name="description" content="florero solera — sistema botánico estratificado desarrollado por xpan mediante soleras de aluminio perforadas, ocho tubos de vidrio y una conexión central roscada. marzo de 2026."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/49162150/original_49702ed3fc351ee9da937ce8b1f33e42.png" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
+      --line:#2A2E31; --grid:#181B1F; --panel:#101316; --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media (prefers-color-scheme:light){
+      :root{ --bg:#FFFFFF; --fg:#0B0D0F; --fg-dim:#4A525A; --line:#D7DDE2; --grid:#EBEEF2; --panel:#F7F8FA; }
+      header{ mix-blend-mode:normal; color:var(--fg); }
+      header img{ mix-blend-mode:normal; filter:none; }
+      .chip{ border-color:var(--line); color:var(--fg-dim); }
+      .chip.lang-active{ color:var(--fg); border-color:var(--accent); }
+      .neg-shell{ mix-blend-mode:normal; color:var(--fg); }
+      .bg-hero::before{ opacity:.13; filter:blur(5px) contrast(28) brightness(.65) saturate(.9); }
+    }
+
+    *,*::before,*::after{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+    html,body{ min-height:100%; margin:0; }
+    body{
+      background:var(--bg); color:var(--fg); font-family:var(--ui);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    img,object{ max-width:100%; }
+    button{ font:inherit; color:inherit; }
+    ::selection{ background:rgba(24,96,255,.24); }
+
+    header{
+      position:fixed; top:12px; left:var(--pad-x); right:var(--pad-x); height:var(--header-h);
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      z-index:40; pointer-events:auto; mix-blend-mode:difference; color:#fff;
+    }
+    header img{ width:50px; height:auto; display:block; mix-blend-mode:difference; filter:invert(1) saturate(100%); -webkit-user-drag:none; user-select:none; }
+    .stack{ display:flex; align-items:center; gap:12px; }
+    .chip{
+      appearance:none; display:inline-flex; align-items:center; gap:10px; font:600 12px/1 var(--ui);
+      text-transform:lowercase; padding:8px 10px; border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74); background:transparent; user-select:none; cursor:default; border-radius:0;
+    }
+    .chip[data-lang-btn]{ cursor:pointer; }
+    .chip.lang-active{ color:#fff; border-color:#fff; background:rgba(24,96,255,.06); }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+                 linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed; inset:0; z-index:1; pointer-events:none;
+      background:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+                 linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{ position:fixed; inset:0; z-index:0; pointer-events:none; display:flex; align-items:center; justify-content:center; }
+    .bg-hero::before{
+      content:""; background-image:var(--hero,none); background-size:contain; background-position:center; background-repeat:no-repeat;
+      width:82vw; height:82vh; filter:blur(7px) contrast(48) brightness(.12) saturate(.9); opacity:.24;
+      animation:flashFX 6s steps(30,end) infinite; will-change:opacity,filter;
+    }
+    .grain{
+      position:fixed; inset:-40%; z-index:0; pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
+                 repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
+      mix-blend-mode:overlay; opacity:.15; filter:blur(1px); animation:noiseShift 1.8s steps(6,end) infinite;
+    }
+    @keyframes flashFX{ 0%,10%{opacity:.22;} 15%{opacity:.30;} 30%{opacity:.24;} 50%{opacity:.32;} 60%{opacity:.19;} 100%{opacity:.24;} }
+    @keyframes noiseShift{ 0%{transform:translate3d(0,0,0);} 25%{transform:translate3d(-1%,1%,0);} 50%{transform:translate3d(1%,-1%,0);} 75%{transform:translate3d(2%,2%,0);} 100%{transform:translate3d(0,0,0);} }
+
+    main{ position:relative; z-index:3; padding-top:calc(var(--header-h) + 28px); }
+    .section{ max-width:var(--maxw); margin:0 auto; padding:26px var(--pad-x) 78px; border-top:1px solid var(--line); content-visibility:auto; contain-intrinsic-size:760px; }
+    .section:first-of-type{ border-top:0; padding-top:22px; min-height:78vh; display:flex; align-items:flex-end; }
+    .plate{
+      display:grid; gap:4px; width:fit-content; max-width:100%; border:1px solid var(--line); padding:8px 10px;
+      color:var(--fg-dim); font:600 11px/1.3 var(--mono); text-transform:lowercase; background:color-mix(in oklab,var(--bg) 92%,transparent); user-select:none; margin-bottom:18px;
+    }
+    .neg-shell{ position:relative; z-index:30; mix-blend-mode:difference; color:var(--fg); }
+    .lang-block{ display:none; }
+    .lang-block.active{ display:block; }
+
+    .intro-wrap{ width:100%; max-width:920px; }
+    .kicker{ margin:0 0 12px; font:600 11px/1.35 var(--mono); text-transform:lowercase; letter-spacing:.12em; color:var(--fg-dim); }
+    h1{ margin:0 0 10px; font:500 clamp(38px,8vw,112px)/.9 var(--ui); letter-spacing:-.065em; text-transform:lowercase; }
+    .subtitle{ margin:0 0 18px; font:500 clamp(15px,2vw,22px)/1.25 var(--ui); letter-spacing:-.02em; color:var(--fg); }
+    .intro-text{ max-width:780px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .intro-text p{ margin:0; }
+
+    .anchor-nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+    .anchor-nav a{
+      border:1px solid var(--line); padding:7px 9px; font:600 11px/1 var(--mono); text-transform:lowercase; color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{ color:var(--fg); border-color:var(--fg-dim); }
+
+    .section-head{ display:grid; grid-template-columns:minmax(0,420px) minmax(0,1fr); gap:clamp(18px,4vw,64px); margin-bottom:28px; }
+    .section-title{ margin:0; font:500 clamp(24px,4vw,56px)/.95 var(--ui); letter-spacing:-.055em; text-transform:lowercase; }
+    .section-meta{ margin:9px 0 0; font:600 11px/1.45 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em; }
+    .section-copy{ max-width:720px; display:grid; gap:10px; font:400 14px/1.65 var(--ui); color:var(--fg); }
+    .section-copy p{ margin:0; }
+
+    .facts{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--line); margin-top:28px; }
+    .fact{ padding:13px 14px; border-right:1px solid var(--line); min-height:78px; background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .fact:last-child{ border-right:0; }
+    .fact b{ display:block; margin-bottom:8px; font:600 10px/1 var(--mono); color:var(--fg-dim); text-transform:uppercase; letter-spacing:.14em; }
+    .fact span{ display:block; font:500 13px/1.35 var(--ui); color:var(--fg); }
+
+    .media-grid{ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:12px; align-items:start; }
+    .media-card{ grid-column:span 4; margin:0; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%); }
+    .media-card.is-wide{ grid-column:span 8; }
+    .media-open{ display:block; width:100%; border:0; padding:0; margin:0; background:transparent; cursor:pointer; color:inherit; border-radius:0; }
+    .media-card img{
+      display:block; width:100%; height:auto; min-height:180px; max-height:76vh; object-fit:contain; background:#050608;
+      opacity:0; transform:translateY(4px); transition:opacity .28s ease, transform .28s ease;
+    }
+    .media-card img.loaded{ opacity:1; transform:translateY(0); }
+    .media-card figcaption{
+      display:flex; justify-content:space-between; gap:12px; padding:8px 9px; border-top:1px solid var(--line);
+      font:600 10px/1.3 var(--mono); color:var(--fg-dim); text-transform:lowercase; letter-spacing:.08em;
+    }
+    .media-card figcaption span:last-child{ text-align:right; }
+
+    .pdf-grid{ display:grid; grid-template-columns:minmax(0,1fr); gap:14px; }
+    .pdf-card{ border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 91%,transparent); }
+    .pdf-head{ display:flex; justify-content:space-between; gap:16px; padding:9px 10px; border-bottom:1px solid var(--line); font:600 11px/1.2 var(--mono); text-transform:lowercase; color:var(--fg-dim); }
+    .pdf-head a{ text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; }
+    .pdf-card object{ width:100%; height:72vh; min-height:560px; display:block; background:#050608; }
+    @media (prefers-color-scheme:light){ .pdf-card object{ background:#F3F5F7; } }
+
+    #xpan-lightbox{
+      position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center;
+      background:rgba(5,7,10,.78); backdrop-filter:blur(10px) saturate(120%); -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{ display:flex; }
+    #xpan-lightbox .sheet{ max-width:96vw; max-height:96vh; border:1px solid var(--line); background:#000; padding:6px; box-shadow:0 18px 45px rgba(0,0,0,.8); }
+    #xpan-lightbox img{ display:block; max-width:100%; max-height:calc(96vh - 12px); width:auto; height:auto; object-fit:contain; }
+    #xpan-lightbox [data-lb-close]{
+      position:absolute; top:16px; right:18px; border:1px solid var(--line); background:color-mix(in oklab,var(--bg) 90%,#050608 10%);
+      color:var(--fg-dim); font:600 11px/1 var(--mono); text-transform:uppercase; letter-spacing:.14em; padding:6px 10px; cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute; top:50%; transform:translateY(-50%); border:1px solid var(--line); background:rgba(5,7,10,.78);
+      color:var(--fg-dim); width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer; font:600 16px/1 var(--mono); padding:0; user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{ left:18px; }
+    #xpan-lightbox .nav-btn[data-dir="next"]{ right:18px; }
+    html.lb-open,body.lb-open{ overflow:hidden; }
+
+    @media (max-width:980px){
+      .section-head{ grid-template-columns:1fr; gap:16px; }
+      .facts{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .fact:nth-child(2){ border-right:0; }
+      .fact:nth-child(-n+2){ border-bottom:1px solid var(--line); }
+      .media-card,.media-card.is-wide{ grid-column:span 6; }
+    }
+    @media (max-width:640px){
+      header{ top:10px; align-items:flex-start; height:auto; }
+      .stack{ gap:7px; flex-wrap:wrap; }
+      .chip{ font-size:10px; padding:7px 8px; }
+      header img{ width:44px; }
+      main{ padding-top:86px; }
+      .section{ padding:22px var(--pad-x) 56px; content-visibility:visible; }
+      .section:first-of-type{ min-height:72vh; }
+      .facts{ grid-template-columns:1fr; }
+      .fact,.fact:nth-child(2){ border-right:0; border-bottom:1px solid var(--line); }
+      .fact:last-child{ border-bottom:0; }
+      .media-grid{ gap:10px; }
+      .media-card,.media-card.is-wide{ grid-column:span 12; }
+      .media-card img{ min-height:120px; max-height:none; }
+      .pdf-card object{ height:auto; min-height:0; aspect-ratio:4/3; }
+      #xpan-lightbox .nav-btn{ width:32px; height:32px; font-size:14px; }
+      #xpan-lightbox .nav-btn[data-dir="prev"]{ left:10px; }
+      #xpan-lightbox .nav-btn[data-dir="next"]{ right:10px; }
+    }
+    @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/49162150/original_49702ed3fc351ee9da937ce8b1f33e42.png')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip" data-i18n="header.chip">florero solera</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate"><span data-i18n="plate.project">florero solera / sistema botánico estratificado</span><span data-i18n="plate.context">xpan / 04.03.2026</span></div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema botánico estratificado / apoyo + acoplamiento</p>
+          <h1>florero solera</h1>
+          <p class="subtitle">unidad compacta de aluminio perforado para organizar ocho tubos de vidrio en configuraciones apoyadas o acopladas.</p>
+          <div class="intro-text">
+            <p>florero solera es un sistema botánico compacto desarrollado por xpan mediante la superposición de soleras de aluminio perforadas. veintiuna placas de 6.35 mm forman un cuerpo estratificado de 10 × 7.62 × 5.08 cm, atravesado por ocho conductos para tubos de vidrio y una conexión roscada central.</p>
+            <p>la pieza puede operar apoyada sobre dos bases inferiores o acoplada a una barra vertical. al elevarse, el volumen mantiene el material botánico sobre su plano superior y deja los tubos visibles por debajo, exponiendo la relación entre soporte, contención y ensamblaje.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">layered botanical system / support + coupling</p>
+          <h1>florero solera</h1>
+          <p class="subtitle">compact perforated-aluminum unit for organizing eight glass tubes in supported or coupled configurations.</p>
+          <div class="intro-text">
+            <p>florero solera is a compact botanical system developed by xpan through the superposition of perforated aluminum flat bars. twenty-one 6.35 mm plates form a layered body measuring 10 × 7.62 × 5.08 cm, crossed by eight passages for glass tubes and a central threaded connection.</p>
+            <p>the piece can operate on two lower supports or coupled to a vertical bar. when elevated, the volume keeps the botanical material above its upper plane while exposing the tubes below, making the relation between support, containment, and assembly visible.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système botanique stratifié / appui + couplage</p>
+          <h1>florero solera</h1>
+          <p class="subtitle">unité compacte en aluminium perforé pour organiser huit tubes de verre en configurations posée ou couplée.</p>
+          <div class="intro-text">
+            <p>florero solera est un système botanique compact développé par xpan par superposition de plats d’aluminium perforés. vingt et une plaques de 6,35 mm forment un corps stratifié de 10 × 7,62 × 5,08 cm, traversé par huit passages pour tubes de verre et une connexion filetée centrale.</p>
+            <p>la pièce peut fonctionner sur deux appuis inférieurs ou être couplée à une barre verticale. lorsqu’elle est élevée, le volume maintient la matière botanique au-dessus de son plan supérieur tout en laissant les tubes visibles en dessous, révélant la relation entre support, contenance et assemblage.</p>
+          </div>
+        </div>
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">積層ボタニカルシステム / 支持 + 接続</p>
+          <h1>florero solera</h1>
+          <p class="subtitle">8本のガラス管を支持型または接続型の構成で整理する、穿孔アルミニウムのコンパクトユニット。</p>
+          <div class="intro-text">
+            <p>florero solera は、穿孔したアルミニウム平鋼を積層して構成した xpan のコンパクトなボタニカルシステムである。厚さ6.35 mmの21枚のプレートが、10 × 7.62 × 5.08 cmの積層体を形成し、8本のガラス管用の貫通孔と中央のねじ接続部を備える。</p>
+            <p>ユニットは下部の二つの支持部に置くことも、垂直バーへ接続することもできる。持ち上げられた状態では、植物素材を上面に保ちながらガラス管を下面へ露出させ、支持、保持、組立の関係を可視化する。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="page sections" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#configuraciones" data-i18n="nav.configurations">configuraciones</a>
+          <a href="#registro" data-i18n="nav.record">registro</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+          <p class="section-meta" data-i18n="section.system.meta">estratificación / perforación / contención / composición</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">            <p>el sistema se organiza en tres franjas longitudinales y siete estratos. la perforación continúa a través del espesor para producir ocho canales independientes de Ø1.5 cm; cada canal recibe un tubo de vidrio y separa cada tallo del resto de la composición.</p>
+            <p>la masa del aluminio estabiliza el conjunto mientras la repetición de placas mantiene visibles las juntas horizontales. el volumen funciona simultáneamente como estructura, guía de inserción y soporte para construir densidad, altura y dirección botánica.</p></div>
+          <div class="lang-block" data-lang-block="en">            <p>the system is organized into three longitudinal bands and seven layers. perforation continues through the thickness to produce eight independent Ø1.5 cm channels; each channel receives a glass tube and separates each stem from the rest of the composition.</p>
+            <p>the mass of the aluminum stabilizes the assembly while the repetition of plates keeps the horizontal joints visible. the volume operates simultaneously as structure, insertion guide, and support for constructing botanical density, height, and direction.</p></div>
+          <div class="lang-block" data-lang-block="fr">            <p>le système s’organise en trois bandes longitudinales et sept strates. la perforation se prolonge dans toute l’épaisseur afin de produire huit canaux indépendants de Ø1,5 cm ; chaque canal reçoit un tube de verre et sépare chaque tige du reste de la composition.</p>
+            <p>la masse de l’aluminium stabilise l’ensemble tandis que la répétition des plaques maintient visibles les joints horizontaux. le volume agit simultanément comme structure, guide d’insertion et support pour construire densité, hauteur et direction botaniques.</p></div>
+          <div class="lang-block" data-lang-block="jp">            <p>システムは三つの長手方向の帯と七つの層で構成される。厚みを貫通する穿孔によって、直径1.5 cmの独立した八つのチャンネルを形成し、各チャンネルが一本のガラス管を受けて茎を個別に分離する。</p>
+            <p>アルミニウムの質量が全体を安定させ、プレートの反復によって水平の接合線が表面に残る。ボリュームは構造、挿入ガイド、植物の密度・高さ・方向を組み立てる支持体として同時に機能する。</p></div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.type.label">tipo</b><span data-i18n="fact.type.value">sistema botánico estratificado</span></div>
+        <div class="fact"><b data-i18n="fact.date.label">fecha</b><span data-i18n="fact.date.value">04.03.2026</span></div>
+        <div class="fact"><b data-i18n="fact.operation.label">operación</b><span data-i18n="fact.operation.value">apoyo / acoplamiento vertical</span></div>
+        <div class="fact"><b data-i18n="fact.status.label">estado</b><span data-i18n="fact.status.value">fabricado / probado / documentado</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+          <p class="section-meta" data-i18n="section.construction.meta">21 soleras / 7 estratos / 8 tubos / aluminio + vidrio</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">            <p>el cuerpo principal utiliza veintiuna soleras de aluminio de 2.54 × 10 cm y 6.35 mm de espesor. se distribuyen en tres columnas y siete niveles, registradas mediante perforaciones roscadas y tornillería que conserva la alineación de cada estrato.</p>
+            <p>dos soleras auxiliares de 1.905 × 7.62 cm forman los apoyos inferiores. ocho tubos de vidrio atraviesan los conductos principales, mientras una rosca central de 1/4” permite incorporar la barra vertical sin alterar la matriz botánica.</p></div>
+          <div class="lang-block" data-lang-block="en">            <p>the main body uses twenty-one aluminum flat bars measuring 2.54 × 10 cm and 6.35 mm thick. they are distributed across three columns and seven levels, registered through threaded perforations and fasteners that maintain the alignment of each layer.</p>
+            <p>two auxiliary flat bars measuring 1.905 × 7.62 cm form the lower supports. eight glass tubes pass through the main channels, while a central 1/4-inch thread allows a vertical bar to be incorporated without altering the botanical matrix.</p></div>
+          <div class="lang-block" data-lang-block="fr">            <p>le corps principal utilise vingt et un plats d’aluminium de 2,54 × 10 cm et de 6,35 mm d’épaisseur. ils sont répartis en trois colonnes et sept niveaux, enregistrés par des perforations filetées et des éléments de fixation qui maintiennent l’alignement de chaque strate.</p>
+            <p>deux plats auxiliaires de 1,905 × 7,62 cm forment les appuis inférieurs. huit tubes de verre traversent les canaux principaux, tandis qu’un filetage central de 1/4 pouce permet d’intégrer une barre verticale sans modifier la matrice botanique.</p></div>
+          <div class="lang-block" data-lang-block="jp">            <p>本体には、2.54 × 10 cm、厚さ6.35 mmのアルミニウム平鋼を21枚使用する。三列・七層に配置し、ねじ切りされた穿孔と固定部品によって各層の位置を保持する。</p>
+            <p>1.905 × 7.62 cmの補助平鋼二枚が下部支持部を形成する。8本のガラス管が主要チャンネルを貫通し、中央の1/4インチねじ部によって植物マトリクスを変えずに垂直バーを接続できる。</p></div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.body.label">cuerpo</b><span data-i18n="fact.body.value">21 soleras / 2.54 × 10 × 0.635 cm</span></div>
+        <div class="fact"><b data-i18n="fact.supports.label">apoyos</b><span data-i18n="fact.supports.value">2 soleras / 1.905 × 7.62 × 0.635 cm</span></div>
+        <div class="fact"><b data-i18n="fact.dimensions.label">dimensiones</b><span data-i18n="fact.dimensions.value">10 × 7.62 × 5.08 cm</span></div>
+        <div class="fact"><b data-i18n="fact.capacity.label">capacidad</b><span data-i18n="fact.capacity.value">8 tubos / pasos Ø1.5 cm</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="configuraciones">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.configurations.title">configuraciones</h2>
+          <p class="section-meta" data-i18n="section.configurations.meta">sobremesa / elevación / barra vertical / profundidad visible</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">            <p>en configuración de apoyo, el cuerpo descansa sobre dos bases y presenta los tubos desde el plano superior como una matriz compacta de sobremesa. la pieza puede ocuparse de manera parcial o completa sin modificar su estructura.</p>
+            <p>en configuración acoplada, la conexión central recibe una barra vertical y eleva el volumen. los tubos continúan atravesando el cuerpo y se proyectan por debajo, haciendo legible la profundidad de cada contenedor y la continuidad material del ensamblaje.</p></div>
+          <div class="lang-block" data-lang-block="en">            <p>in the supported configuration, the body rests on two bases and presents the tubes from the upper plane as a compact tabletop matrix. the piece can be occupied partially or completely without modifying its structure.</p>
+            <p>in the coupled configuration, the central connection receives a vertical bar and elevates the volume. the tubes continue through the body and project below it, making the depth of each container and the material continuity of the assembly legible.</p></div>
+          <div class="lang-block" data-lang-block="fr">            <p>dans la configuration posée, le corps repose sur deux bases et présente les tubes depuis le plan supérieur comme une matrice compacte de table. la pièce peut être occupée partiellement ou entièrement sans modification de sa structure.</p>
+            <p>dans la configuration couplée, la connexion centrale reçoit une barre verticale et élève le volume. les tubes continuent à travers le corps et se projettent en dessous, rendant lisibles la profondeur de chaque contenant et la continuité matérielle de l’assemblage.</p></div>
+          <div class="lang-block" data-lang-block="jp">            <p>支持型では、本体が二つのベース上に置かれ、上面からガラス管が立ち上がるコンパクトな卓上マトリクスとして機能する。構造を変更せず、部分的にも全面的にも植物を配置できる。</p>
+            <p>接続型では、中央接続部が垂直バーを受けてボリュームを持ち上げる。ガラス管は本体を貫通して下面へ伸び、各容器の深さと組立の素材的連続性を明確にする。</p></div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.supported.label">apoyada</b><span data-i18n="fact.supported.value">dos bases inferiores</span></div>
+        <div class="fact"><b data-i18n="fact.coupled.label">acoplada</b><span data-i18n="fact.coupled.value">barra vertical desmontable</span></div>
+        <div class="fact"><b data-i18n="fact.central.label">conexión central</b><span data-i18n="fact.central.value">rosca estándar 1/4”</span></div>
+        <div class="fact"><b data-i18n="fact.fastening.label">fijación</b><span data-i18n="fact.fastening.value">puntos roscados 1/8”</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="registro">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.record.title">registro del sistema</h2>
+          <p class="section-meta" data-i18n="section.record.meta">42 imágenes / cuerpo / tubos / vegetación / configuraciones</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">            <p>el registro reúne vistas aisladas del cuerpo estratificado, detalles de perforación y tornillería, inserción de tubos, ocupación botánica y las configuraciones de apoyo y acoplamiento vertical. las cuarenta y dos imágenes se presentan en el orden definido para el archivo del proyecto.</p></div>
+          <div class="lang-block" data-lang-block="en">            <p>the record brings together isolated views of the layered body, perforation and fastening details, tube insertion, botanical occupation, and the supported and vertically coupled configurations. the forty-two images are presented in the order defined for the project archive.</p></div>
+          <div class="lang-block" data-lang-block="fr">            <p>le registre réunit des vues isolées du corps stratifié, des détails de perforation et de fixation, l’insertion des tubes, l’occupation botanique et les configurations posée et couplée verticalement. les quarante-deux images sont présentées dans l’ordre défini pour l’archive du projet.</p></div>
+          <div class="lang-block" data-lang-block="jp">            <p>記録には、積層体の単体写真、穿孔と固定部の詳細、ガラス管の挿入、植物の配置、支持型と垂直接続型の構成を収録する。42点の画像はプロジェクトアーカイブで定めた順序で提示する。</p></div>
+        </div>
+      </div>
+      <div class="media-grid">
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.01">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162150/original_49702ed3fc351ee9da937ce8b1f33e42.png" alt="florero solera — registro 01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.01</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.02">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162149/original_d888ff556ed5bb6b04767e1dc5f95150.png" alt="florero solera — registro 02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.02</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.03">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162148/original_2ff32a04232b91683f5ba0418549eb0e.png" alt="florero solera — registro 03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.03</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.04">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162145/original_b6f00896dc2f32f469b965c20b5ba07b.png" alt="florero solera — registro 04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.04</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.05">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162141/original_e25180056f930181e4fd6901274fd65b.png" alt="florero solera — registro 05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.05</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.06">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162139/original_fa18afa44d346ac62abbe11c189577e2.png" alt="florero solera — registro 06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.06</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.07">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162138/original_98287688285aa23011fb396300efa619.png" alt="florero solera — registro 07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.07</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.08">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162146/original_fc919483474727b675fbdea5eb469000.png" alt="florero solera — registro 08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.08</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.09">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162137/original_e636d06d09c0e384de2d83de67623ed5.png" alt="florero solera — registro 09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.09</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162136/original_11dd8b3aadcf8d84432e187891af474c.png" alt="florero solera — registro 10" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.10</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162135/original_d1e2d88830f4298715d71c59aab7f82f.png" alt="florero solera — registro 11" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.11</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162134/original_8ad332d8959a889a8e945c4ef7e3081a.png" alt="florero solera — registro 12" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.12</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162133/original_52272575b768b60f4de736bbebf923a5.png" alt="florero solera — registro 13" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.13</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162128/original_6813f1b0ad7531d798539405469d5f3b.png" alt="florero solera — registro 14" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.14</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.15">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162127/original_4d6c3074d0e7be9560a7469629e48c27.png" alt="florero solera — registro 15" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.15</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.16">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162126/original_a10b8c670514e8d1eb5fa5ec817f2a30.png" alt="florero solera — registro 16" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.16</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.17">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162125/original_7ddb97908bf85a2f848c5f267105644e.png" alt="florero solera — registro 17" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.17</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.18">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162123/original_8f0c5488183632ccf251d6cc71b1306f.png" alt="florero solera — registro 18" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.18</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.19">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162122/original_0e5602b161fc39c3b2806570bfa802a7.png" alt="florero solera — registro 19" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.19</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.20">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162121/original_c2b6f53a01e187ef7523446a50f17a43.png" alt="florero solera — registro 20" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.20</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.21">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162119/original_e6ec61dd09142314c373a9c12f777ba2.png" alt="florero solera — registro 21" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.21</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.22">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162118/original_252bdbdc9e88ed5f273baf8fde7bd495.png" alt="florero solera — registro 22" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.22</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.23">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162115/original_282e07a7b4a91fa117fb8d0c610dcfde.png" alt="florero solera — registro 23" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.23</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.24">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162114/original_4d9368bfec1546804102b54bfc5ac33d.png" alt="florero solera — registro 24" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.24</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.25">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162113/original_56645dbe21f74a59f4b2d4524d005de7.png" alt="florero solera — registro 25" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.25</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.26">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162100/original_cdc7a789ca45868d180f2adfafe8eea4.png" alt="florero solera — registro 26" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.26</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.27">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162099/original_29dbb083c314d1b00464cc0eb090f2e8.png" alt="florero solera — registro 27" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.27</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.28">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162098/original_4feb24b91af54a9f2e5ce4a7fb46915b.png" alt="florero solera — registro 28" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.28</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.29">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162097/original_2531754c0bceed5e7ae5ad245b65b577.png" alt="florero solera — registro 29" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.29</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.30">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162096/original_5285097d9e743414a4b39580113d1411.png" alt="florero solera — registro 30" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.30</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.31">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162095/original_fc71b3fd81d45bb6961f7462906eb155.png" alt="florero solera — registro 31" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.31</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.32">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162094/original_ec5c25da09ae83424be3e4f639511488.png" alt="florero solera — registro 32" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.32</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.33">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162093/original_ad7cb62d946d489b0536587b313a30ca.png" alt="florero solera — registro 33" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.33</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.34">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162092/original_c2f4dc2be265a24b4b50fb0a3c691b09.png" alt="florero solera — registro 34" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.34</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.35">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162091/original_82f54ed188d773b5b0d60b29c85ed30b.png" alt="florero solera — registro 35" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.35</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.36">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162089/original_7da45b94fd26a4e7af794f1c93861641.png" alt="florero solera — registro 36" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.36</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.37">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162088/original_0e147bd9c23e912751aa83031eaa92fa.png" alt="florero solera — registro 37" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.37</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.38">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162087/original_b85135407610def1bb5d7d906b39d85f.png" alt="florero solera — registro 38" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.38</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.39">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162086/original_042a3eab70eb2c25cc5f5748c4bca9a1.png" alt="florero solera — registro 39" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.39</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.40">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162085/original_6e8b5f59c43aff235ece3b88d4637b46.png" alt="florero solera — registro 40" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.40</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card is-wide" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.41">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162084/original_c11385d4ce2dea358d35a768e6ba741b.png" alt="florero solera — registro 41" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.41</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir r.42">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49162083/original_d97630159812741a36eca69d6e1a69db.png" alt="florero solera — registro 42" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.42</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+          <p class="section-meta" data-i18n="section.document.meta">isométrico / planta / alzado / despiece / perforaciones</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">            <p>plano técnico fechado el 04.03.2026 con vista isométrica, planta, alzado lateral, dimensiones generales, despiece de soleras, diámetros de perforación, cuerdas y puntos de fijación.</p></div>
+          <div class="lang-block" data-lang-block="en">            <p>technical drawing dated 04.03.2026 with isometric view, plan, side elevation, general dimensions, flat-bar breakdown, perforation diameters, threads, and fixing points.</p></div>
+          <div class="lang-block" data-lang-block="fr">            <p>plan technique daté du 04.03.2026 comprenant vue isométrique, plan, élévation latérale, dimensions générales, détail des plats, diamètres de perforation, filetages et points de fixation.</p></div>
+          <div class="lang-block" data-lang-block="jp">            <p>04.03.2026付の技術図面。アイソメ図、平面図、側面図、全体寸法、平鋼の部材構成、穿孔径、ねじ、固定点を記載する。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head"><span data-i18n="pdf.label">plano general / 04.03.2026</span><a href="https://attachments.are.na/49162183/0db3f140da91f63b3e97a61feb0a7d32.pdf?1785648360" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div>
+          <object type="application/pdf" data-pdf-src="https://attachments.are.na/49162183/0db3f140da91f63b3e97a61feb0a7d32.pdf?1785648360#page=1&zoom=page-width&view=FitH&toolbar=1&navpanes=0&statusbar=0" aria-label="florero solera — plano general">
+            <a href="https://attachments.are.na/49162183/0db3f140da91f63b3e97a61feb0a7d32.pdf?1785648360" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano general</a>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">cerrar</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="previous" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="next" data-i18n-aria="action.next">›</button>
+  </div>
+
+  <script>
+    (function langSwitch(){
+      const switcher = document.getElementById('lang-switch');
+      if (!switcher) return;
+      const buttons = switcher.querySelectorAll('[data-lang-btn]');
+      const blocks = document.querySelectorAll('[data-lang-block]');
+      const staticText = {"es":{"pageTitle":"florero solera — xpan","metaDescription":"florero solera — sistema botánico estratificado desarrollado por xpan mediante soleras de aluminio perforadas, ocho tubos de vidrio y una conexión central roscada. marzo de 2026.","header.chip":"florero solera","plate.project":"florero solera / sistema botánico estratificado","plate.context":"xpan / 04.03.2026","aria.pageSections":"secciones de página","nav.system":"sistema","nav.construction":"construcción","nav.configurations":"configuraciones","nav.record":"registro","nav.document":"documento técnico","section.system.title":"sistema","section.system.meta":"estratificación / perforación / contención / composición","section.construction.title":"construcción","section.construction.meta":"21 soleras / 7 estratos / 8 tubos / aluminio + vidrio","section.configurations.title":"configuraciones","section.configurations.meta":"sobremesa / elevación / barra vertical / profundidad visible","section.record.title":"registro del sistema","section.record.meta":"42 imágenes / cuerpo / tubos / vegetación / configuraciones","section.document.title":"documento técnico","section.document.meta":"isométrico / planta / alzado / despiece / perforaciones","fact.type.label":"tipo","fact.type.value":"sistema botánico estratificado","fact.date.label":"fecha","fact.date.value":"04.03.2026","fact.operation.label":"operación","fact.operation.value":"apoyo / acoplamiento vertical","fact.status.label":"estado","fact.status.value":"fabricado / probado / documentado","fact.body.label":"cuerpo","fact.body.value":"21 soleras / 2.54 × 10 × 0.635 cm","fact.supports.label":"apoyos","fact.supports.value":"2 soleras / 1.905 × 7.62 × 0.635 cm","fact.dimensions.label":"dimensiones","fact.dimensions.value":"10 × 7.62 × 5.08 cm","fact.capacity.label":"capacidad","fact.capacity.value":"8 tubos / pasos Ø1.5 cm","fact.supported.label":"apoyada","fact.supported.value":"dos bases inferiores","fact.coupled.label":"acoplada","fact.coupled.value":"barra vertical desmontable","fact.central.label":"conexión central","fact.central.value":"rosca estándar 1/4”","fact.fastening.label":"fijación","fact.fastening.value":"puntos roscados 1/8”","caption.record":"registro del sistema","pdf.label":"plano general / 04.03.2026","pdf.fallback":"abrir plano general","action.open":"abrir","action.close":"cerrar","action.previous":"anterior","action.next":"siguiente"},"en":{"pageTitle":"florero solera — xpan","metaDescription":"florero solera — layered botanical system developed by xpan with perforated aluminum flat bars, eight glass tubes, and a central threaded connection. march 2026.","header.chip":"florero solera","plate.project":"florero solera / layered botanical system","plate.context":"xpan / 04.03.2026","aria.pageSections":"page sections","nav.system":"system","nav.construction":"construction","nav.configurations":"configurations","nav.record":"record","nav.document":"technical document","section.system.title":"system","section.system.meta":"layering / perforation / containment / composition","section.construction.title":"construction","section.construction.meta":"21 flat bars / 7 layers / 8 tubes / aluminum + glass","section.configurations.title":"configurations","section.configurations.meta":"tabletop / elevation / vertical bar / visible depth","section.record.title":"system record","section.record.meta":"42 images / body / tubes / vegetation / configurations","section.document.title":"technical document","section.document.meta":"isometric / plan / elevation / components / perforations","fact.type.label":"type","fact.type.value":"layered botanical system","fact.date.label":"date","fact.date.value":"04.03.2026","fact.operation.label":"operation","fact.operation.value":"support / vertical coupling","fact.status.label":"status","fact.status.value":"fabricated / tested / documented","fact.body.label":"body","fact.body.value":"21 flat bars / 2.54 × 10 × 0.635 cm","fact.supports.label":"supports","fact.supports.value":"2 flat bars / 1.905 × 7.62 × 0.635 cm","fact.dimensions.label":"dimensions","fact.dimensions.value":"10 × 7.62 × 5.08 cm","fact.capacity.label":"capacity","fact.capacity.value":"8 tubes / Ø1.5 cm passages","fact.supported.label":"supported","fact.supported.value":"two lower bases","fact.coupled.label":"coupled","fact.coupled.value":"removable vertical bar","fact.central.label":"central connection","fact.central.value":"standard 1/4-inch thread","fact.fastening.label":"fastening","fact.fastening.value":"1/8-inch threaded points","caption.record":"system record","pdf.label":"general drawing / 04.03.2026","pdf.fallback":"open general drawing","action.open":"open","action.close":"close","action.previous":"previous","action.next":"next"},"fr":{"pageTitle":"florero solera — xpan","metaDescription":"florero solera — système botanique stratifié développé par xpan avec des plats d’aluminium perforés, huit tubes de verre et une connexion filetée centrale. mars 2026.","header.chip":"florero solera","plate.project":"florero solera / système botanique stratifié","plate.context":"xpan / 04.03.2026","aria.pageSections":"sections de page","nav.system":"système","nav.construction":"construction","nav.configurations":"configurations","nav.record":"registre","nav.document":"document technique","section.system.title":"système","section.system.meta":"stratification / perforation / contenance / composition","section.construction.title":"construction","section.construction.meta":"21 plats / 7 strates / 8 tubes / aluminium + verre","section.configurations.title":"configurations","section.configurations.meta":"table / élévation / barre verticale / profondeur visible","section.record.title":"registre du système","section.record.meta":"42 images / corps / tubes / végétation / configurations","section.document.title":"document technique","section.document.meta":"isométrique / plan / élévation / pièces / perforations","fact.type.label":"type","fact.type.value":"système botanique stratifié","fact.date.label":"date","fact.date.value":"04.03.2026","fact.operation.label":"opération","fact.operation.value":"appui / couplage vertical","fact.status.label":"état","fact.status.value":"fabriqué / testé / documenté","fact.body.label":"corps","fact.body.value":"21 plats / 2,54 × 10 × 0,635 cm","fact.supports.label":"appuis","fact.supports.value":"2 plats / 1,905 × 7,62 × 0,635 cm","fact.dimensions.label":"dimensions","fact.dimensions.value":"10 × 7,62 × 5,08 cm","fact.capacity.label":"capacité","fact.capacity.value":"8 tubes / passages Ø1,5 cm","fact.supported.label":"posée","fact.supported.value":"deux bases inférieures","fact.coupled.label":"couplée","fact.coupled.value":"barre verticale démontable","fact.central.label":"connexion centrale","fact.central.value":"filetage standard 1/4 pouce","fact.fastening.label":"fixation","fact.fastening.value":"points filetés 1/8 pouce","caption.record":"registre du système","pdf.label":"plan général / 04.03.2026","pdf.fallback":"ouvrir le plan général","action.open":"ouvrir","action.close":"fermer","action.previous":"précédent","action.next":"suivant"},"jp":{"pageTitle":"florero solera — xpan","metaDescription":"florero solera — 穿孔アルミニウム平鋼、8本のガラス管、中央ねじ接続部で構成された xpan の積層ボタニカルシステム。2026年3月。","header.chip":"florero solera","plate.project":"florero solera / 積層ボタニカルシステム","plate.context":"xpan / 04.03.2026","aria.pageSections":"ページセクション","nav.system":"システム","nav.construction":"構築","nav.configurations":"構成","nav.record":"記録","nav.document":"技術資料","section.system.title":"システム","section.system.meta":"積層 / 穿孔 / 保持 / 構成","section.construction.title":"構築","section.construction.meta":"21枚の平鋼 / 7層 / 8本の管 / アルミニウム + ガラス","section.configurations.title":"構成","section.configurations.meta":"卓上 / 持上げ / 垂直バー / 可視化された深さ","section.record.title":"システム記録","section.record.meta":"42点 / 本体 / ガラス管 / 植物 / 構成","section.document.title":"技術資料","section.document.meta":"アイソメ / 平面 / 側面 / 部材 / 穿孔","fact.type.label":"形式","fact.type.value":"積層ボタニカルシステム","fact.date.label":"日付","fact.date.value":"04.03.2026","fact.operation.label":"機能","fact.operation.value":"支持 / 垂直接続","fact.status.label":"状態","fact.status.value":"製作 / 検証 / 記録済み","fact.body.label":"本体","fact.body.value":"21枚 / 2.54 × 10 × 0.635 cm","fact.supports.label":"支持部","fact.supports.value":"2枚 / 1.905 × 7.62 × 0.635 cm","fact.dimensions.label":"寸法","fact.dimensions.value":"10 × 7.62 × 5.08 cm","fact.capacity.label":"容量","fact.capacity.value":"8本 / Ø1.5 cm 貫通孔","fact.supported.label":"支持型","fact.supported.value":"二つの下部ベース","fact.coupled.label":"接続型","fact.coupled.value":"着脱式垂直バー","fact.central.label":"中央接続","fact.central.value":"標準1/4インチねじ","fact.fastening.label":"固定","fact.fastening.value":"1/8インチねじ切り点","caption.record":"システム記録","pdf.label":"全体図 / 04.03.2026","pdf.fallback":"全体図を開く","action.open":"開く","action.close":"閉じる","action.previous":"前へ","action.next":"次へ"}};
+      function applyStaticText(lang){
+        const dict = staticText[lang] || staticText.es;
+        document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
+        document.title = dict.pageTitle || staticText.es.pageTitle;
+        const meta = document.querySelector('meta[name="description"]');
+        if (meta && dict.metaDescription) meta.setAttribute('content', dict.metaDescription);
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.getAttribute('data-i18n');
+          if (Object.prototype.hasOwnProperty.call(dict, key)) el.textContent = dict[key];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+          const key = el.getAttribute('data-i18n-aria');
+          if (dict[key]) el.setAttribute('aria-label', dict[key]);
+        });
+      }
+      function setLang(lang){
+        if (!staticText[lang]) lang = 'es';
+        buttons.forEach((button) => {
+          const active = button.dataset.langBtn === lang;
+          button.classList.toggle('lang-active', active);
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        blocks.forEach((block) => block.classList.toggle('active', block.dataset.langBlock === lang));
+        applyStaticText(lang);
+        try{ localStorage.setItem('xpan.lang', lang); }catch(e){}
+      }
+      buttons.forEach((button) => button.addEventListener('click', () => setLang(button.dataset.langBtn)));
+      let initial = 'es';
+      try{ initial = localStorage.getItem('xpan.lang') || 'es'; }catch(e){}
+      setLang(initial);
+    })();
+
+    (function lazyMedia(){
+      const images = Array.from(document.querySelectorAll('img[data-src]'));
+      function load(image){
+        if (!image || !image.dataset.src) return;
+        image.src = image.dataset.src;
+        image.removeAttribute('data-src');
+        image.addEventListener('load', () => image.classList.add('loaded'), { once:true });
+        if (image.complete) image.classList.add('loaded');
+      }
+      if ('IntersectionObserver' in window){
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting){ load(entry.target); observer.unobserve(entry.target); }
+          });
+        }, { rootMargin:'700px 0px' });
+        images.forEach((image) => observer.observe(image));
+      } else { images.forEach(load); }
+    })();
+
+    (function lazyPdf(){
+      const pdf = document.querySelector('[data-pdf-src]');
+      if (!pdf) return;
+      const load = () => {
+        if (!pdf.dataset.pdfSrc) return;
+        pdf.data = pdf.dataset.pdfSrc;
+        pdf.removeAttribute('data-pdf-src');
+      };
+      if ('IntersectionObserver' in window){
+        const observer = new IntersectionObserver((entries) => {
+          if (entries.some((entry) => entry.isIntersecting)){ load(); observer.disconnect(); }
+        }, { rootMargin:'520px 0px', threshold:.01 });
+        observer.observe(pdf);
+      } else { load(); }
+    })();
+
+    (function lightbox(){
+      const lightbox = document.getElementById('xpan-lightbox');
+      const sheet = lightbox.querySelector('.sheet');
+      const items = Array.from(document.querySelectorAll('[data-media-item] img'));
+      let index = -1;
+      function sourceOf(image){ return image.getAttribute('src') || image.getAttribute('data-src'); }
+      function open(nextIndex){
+        if (nextIndex < 0 || nextIndex >= items.length) return;
+        index = nextIndex;
+        sheet.innerHTML = '';
+        const image = document.createElement('img');
+        image.src = sourceOf(items[index]);
+        image.alt = items[index].alt || '';
+        image.decoding = 'async';
+        sheet.appendChild(image);
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        sheet.innerHTML = '';
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+        index = -1;
+      }
+      function step(delta){
+        if (index < 0 || !items.length) return;
+        open((index + delta + items.length) % items.length);
+      }
+      document.querySelectorAll('.media-open').forEach((button, buttonIndex) => button.addEventListener('click', () => open(buttonIndex)));
+      lightbox.querySelector('[data-lb-close]').addEventListener('click', close);
+      lightbox.querySelector('[data-dir="prev"]').addEventListener('click', () => step(-1));
+      lightbox.querySelector('[data-dir="next"]').addEventListener('click', () => step(1));
+      lightbox.addEventListener('click', (event) => { if (event.target === lightbox) close(); });
+      window.addEventListener('keydown', (event) => {
+        if (!lightbox.classList.contains('open')) return;
+        if (event.key === 'Escape') close();
+        if (event.key === 'ArrowRight' || event.key === 'l') step(1);
+        if (event.key === 'ArrowLeft' || event.key === 'h') step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>
