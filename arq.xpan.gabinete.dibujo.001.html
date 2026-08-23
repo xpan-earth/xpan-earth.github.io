@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>gabinete de dibujo 001 — xpan</title>
+  <meta name="description" content="gabinete de dibujo 001 — unidad de trabajo compacta desarrollada por xpan y construida en aluminio con porta lápices, porta incienso, iluminación integrada y soporte botánico mediante tubos de ensayo. abril de 2026."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+  <link rel="dns-prefetch" href="https://images.weserv.nl">
+
+  <style>
+    :root{
+      --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
+      --line:#2A2E31; --grid:#181B1F; --panel:#101316; --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media (prefers-color-scheme:light){
+      :root{--bg:#FFFFFF;--fg:#0B0D0F;--fg-dim:#4A525A;--line:#D7DDE2;--grid:#EBEEF2;--panel:#F7F8FA;}
+      header{mix-blend-mode:normal;color:var(--fg);}
+      header img{mix-blend-mode:normal;filter:none;}
+      .chip{border-color:var(--line);color:var(--fg-dim);}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent);}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg);}
+      .hero-shell,.media-card{background:#F6F7F8;}
+      .pdf-card object{background:#F3F5F7;}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);color:var(--fg);font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);height:var(--header-h);
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      z-index:50;pointer-events:auto;mix-blend-mode:difference;color:#fff;
+    }
+    header img{width:50px;height:auto;display:block;mix-blend-mode:difference;filter:invert(1) saturate(100%);-webkit-user-drag:none;user-select:none}
+    .stack{display:flex;align-items:center;gap:12px}
+    .chip{
+      appearance:none;display:inline-flex;align-items:center;gap:10px;
+      font:600 12px/1 var(--ui);text-transform:lowercase;padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);color:rgba(255,255,255,.74);
+      background:transparent;user-select:none;cursor:default;border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+
+    .bg-grid{
+      position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.18;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+    }
+    .grain{
+      position:fixed;inset:-40%;z-index:0;pointer-events:none;
+      background:
+        repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
+        repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
+      mix-blend-mode:overlay;opacity:.12;filter:blur(1px);
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 22px)}
+    .section{
+      max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;
+      border-top:1px solid var(--line);content-visibility:auto;contain-intrinsic-size:760px;
+      scroll-margin-top:96px;
+    }
+
+    .hero-section{
+      max-width:var(--maxw);margin:0 auto;padding:6px var(--pad-x) 58px;
+      display:flex;justify-content:center;
+    }
+    .hero-shell{
+      position:relative;width:min(820px,72vw);aspect-ratio:3/2;
+      max-height:none;min-height:0;overflow:hidden;border:1px solid var(--line);background:#050608;
+    }
+    .hero-frame{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+      opacity:0;transform:scale(1.008);transition:opacity 145ms linear,transform 260ms cubic-bezier(.2,.8,.2,1);
+      will-change:opacity,transform;
+    }
+    .hero-frame.is-active{opacity:1;transform:scale(1)}
+    .hero-progress{
+      position:absolute;left:10px;bottom:10px;display:flex;gap:5px;z-index:3;pointer-events:none;
+    }
+    .hero-progress span{width:18px;height:2px;background:rgba(255,255,255,.28);transition:background .18s ease}
+    .hero-progress span.active{background:rgba(255,255,255,.9)}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .plate{
+      display:grid;gap:4px;width:fit-content;max-width:100%;border:1px solid var(--line);
+      padding:8px 10px;color:var(--fg-dim);font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:5;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:820px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);padding:7px 9px;font:600 11px/1 var(--mono);
+      text-transform:lowercase;color:var(--fg-dim);background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);margin-top:28px}
+    .fact{padding:13px 14px;border-right:1px solid var(--line);min-height:78px;background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .fact:last-child{border-right:0}
+    .fact b{display:block;margin-bottom:8px;font:600 10px/1 var(--mono);color:var(--fg-dim);text-transform:uppercase;letter-spacing:.14em}
+    .fact span{display:block;font:500 13px/1.35 var(--ui);color:var(--fg)}
+
+    .function-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);margin-top:28px}
+    .function{padding:16px;min-height:154px;border-right:1px solid var(--line);display:grid;align-content:space-between;gap:22px;background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .function:last-child{border-right:0}
+    .function-code{font:600 10px/1 var(--mono);letter-spacing:.12em;color:var(--fg-dim)}
+    .function strong{display:block;margin-bottom:7px;font:500 20px/1.05 var(--ui);letter-spacing:-.035em;text-transform:lowercase}
+    .function p{margin:0;font:400 12px/1.5 var(--ui);color:var(--fg-dim)}
+
+    .media-section{padding-bottom:54px}
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid + .media-grid{margin-top:34px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;width:100%;height:auto;min-height:160px;max-height:74vh;object-fit:contain;background:#050608;
+      opacity:0;transform:translateY(4px);transition:opacity .28s ease,transform .28s ease;
+    }
+    .media-card img.loaded,.media-card img[data-proxied]{opacity:1;transform:translateY(0)}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{
+      display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);
+      font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim);
+    }
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+      background:rgba(5,7,10,.82);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{
+      width:min(96vw,1800px);height:min(94vh,1200px);
+      display:grid;place-items:center;border:1px solid var(--line);background:#000;padding:6px;
+      box-shadow:0 18px 45px rgba(0,0,0,.8);overflow:hidden;touch-action:pan-y;
+    }
+    #xpan-lightbox img{
+      display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+      user-select:none;-webkit-user-drag:none;
+    }
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;top:16px;right:18px;border:1px solid var(--line);
+      background:color-mix(in oklab,var(--bg) 90%,#050608 10%);color:var(--fg-dim);
+      font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.14em;padding:6px 10px;cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;top:50%;transform:translateY(-50%);border:1px solid var(--line);
+      background:rgba(5,7,10,.78);color:var(--fg-dim);width:40px;height:40px;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 16px/1 var(--mono);padding:0;user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media(max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .fact:nth-child(2){border-right:0}
+      .fact:nth-child(-n+2){border-bottom:1px solid var(--line)}
+      .function-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .function{border-bottom:1px solid var(--line)}
+      .function:nth-child(2){border-right:0}
+      .function:nth-last-child(-n+2){border-bottom:0}
+      .media-card{grid-column:span 6}
+      .hero-shell{width:min(760px,82vw);min-height:0}
+    }
+    @media(max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px;content-visibility:visible}
+      .hero-section{padding:4px var(--pad-x) 42px}
+      .hero-shell{width:100%;aspect-ratio:3/2;min-height:0;max-height:none}
+      .facts{grid-template-columns:1fr}
+      .fact,.fact:nth-child(2){border-right:0;border-bottom:1px solid var(--line)}
+      .fact:last-child{border-bottom:0}
+      .function-grid{grid-template-columns:1fr}
+      .function,.function:nth-child(2){border-right:0;border-bottom:1px solid var(--line)}
+      .function:last-child{border-bottom:0}
+      .media-grid{gap:10px}
+      .media-grid + .media-grid{margin-top:24px}
+      .media-card{grid-column:span 12}
+      .media-card img{min-height:100px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .sheet{width:100vw;height:100dvh;max-width:none;max-height:none;border:0;padding:0}
+      #xpan-lightbox img{max-width:100vw;max-height:100dvh}
+      #xpan-lightbox [data-lb-close]{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:3}
+      #xpan-lightbox .nav-btn{width:36px;height:44px;font-size:16px;z-index:3}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:max(8px,env(safe-area-inset-left))}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:max(8px,env(safe-area-inset-right))}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      .hero-frame{display:none}
+      .hero-frame:first-child{display:block;opacity:1;transform:none}
+      .hero-progress{display:none}
+    }
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan"/></a>
+      <div class="chip">gabinete de dibujo 001</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
+    </div>
+  </header>
+
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate">
+          <span>gabinete de dibujo 001 / unidad de trabajo integrada</span>
+          <span>xpan / abril 2026</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">dibujo / iluminación / organización / botánica</p>
+          <h1>gabinete de dibujo 001</h1>
+          <p class="subtitle">unidad compacta de aluminio que integra superficie de dibujo, herramientas, iluminación, incienso y soporte botánico.</p>
+          <div class="intro-text">
+            <p>gabinete de dibujo 001 es una unidad de trabajo compacta desarrollada por xpan y construida en aluminio. dos planos ortogonales de 30 × 30 cm forman una superficie horizontal y un respaldo vertical, definiendo un campo de trabajo sobre el que se integran directamente las funciones necesarias para dibujo, iluminación y organización de objetos.</p>
+            <p>dos bloques de aluminio sólido maquinado incorporan porta lápices y porta incienso sobre la superficie inferior. en la parte superior, un volumen plegado contiene la iluminación y proyecta la fuente de luz sobre el área de trabajo. en el canto superior derecho, un soporte perforado recibe cinco tubos de ensayo de vidrio para incorporar material botánico.</p>
+            <p>la pieza concentra estas funciones dentro de una misma estructura y las distribuye alrededor de un área central libre. herramientas, iluminación, incienso y vegetación dejan de operar como accesorios independientes y pasan a formar parte del propio gabinete.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">drawing / lighting / organization / botanical support</p>
+          <h1>gabinete de dibujo 001</h1>
+          <p class="subtitle">compact aluminum unit integrating a drawing surface, tools, lighting, incense and botanical support.</p>
+          <div class="intro-text">
+            <p>gabinete de dibujo 001 is a compact work unit developed by xpan and built in aluminum. two orthogonal 30 × 30 cm planes form a horizontal surface and a vertical back plane, defining a work field into which the functions required for drawing, lighting and object organization are integrated directly.</p>
+            <p>two machined solid-aluminum blocks incorporate a pencil holder and incense holder on the lower surface. above, a folded volume contains the lighting and projects the light source over the work area. along the upper-right edge, a perforated support receives five glass test tubes for botanical material.</p>
+            <p>the piece concentrates these functions within a single structure and distributes them around an open central area. tools, lighting, incense and vegetation cease to operate as independent accessories and become part of the cabinet itself.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">dessin / éclairage / organisation / support botanique</p>
+          <h1>gabinete de dibujo 001</h1>
+          <p class="subtitle">unité compacte en aluminium intégrant surface de dessin, outils, éclairage, encens et support botanique.</p>
+          <div class="intro-text">
+            <p>gabinete de dibujo 001 est une unité de travail compacte développée par xpan et construite en aluminium. deux plans orthogonaux de 30 × 30 cm forment une surface horizontale et un plan vertical, définissant un champ de travail dans lequel sont directement intégrées les fonctions nécessaires au dessin, à l’éclairage et à l’organisation des objets.</p>
+            <p>deux blocs d’aluminium massif usinés intègrent un porte-crayons et un porte-encens sur la surface inférieure. dans la partie supérieure, un volume plié contient l’éclairage et projette la source lumineuse sur la zone de travail. sur le bord supérieur droit, un support perforé reçoit cinq tubes à essai en verre pour accueillir du matériau botanique.</p>
+            <p>la pièce concentre ces fonctions dans une même structure et les distribue autour d’une zone centrale libre. outils, éclairage, encens et végétation cessent d’agir comme accessoires indépendants et deviennent partie intégrante du cabinet.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">ドローイング / 照明 / 整理 / 植物支持</p>
+          <h1>gabinete de dibujo 001</h1>
+          <p class="subtitle">ドローイング面、道具、照明、香、植物支持を一体化したコンパクトなアルミニウム製作業ユニット。</p>
+          <div class="intro-text">
+            <p>gabinete de dibujo 001 は xpan が開発したコンパクトな作業ユニットで、アルミニウムによって構成される。30 × 30 cm の二つの直交面が水平の作業面と垂直の背面を形成し、ドローイング、照明、物品整理に必要な機能を直接組み込むための作業領域をつくる。</p>
+            <p>下部の作業面には、無垢アルミニウムを切削した二つのブロックが配置され、鉛筆立てと香立てとして機能する。上部の折り曲げられたボリュームには照明が組み込まれ、作業領域へ光を落とす。右上端の穿孔支持部には、植物素材を挿入するための五本のガラス試験管が収まる。</p>
+            <p>これらの機能は一つの構造体に集約され、中央の自由な領域を囲むように配置される。道具、光、香、植物は独立した付属品ではなく、キャビネットそのものの一部として統合される。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="page sections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#funciones" data-i18n="nav.functions">funciones integradas</a>
+          <a href="#operacion" data-i18n="nav.operation">operación</a>
+          <a href="#registro" data-i18n="nav.record">registro</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="hero-section" aria-label="gabinete de dibujo 001 — configuraciones">
+      <div class="hero-shell" id="hero-loop">
+        <img class="hero-frame is-active" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750957/original_1a0c590f0b70563bfb2863802fe6942e.png" data-sizes="100vw" alt="gabinete de dibujo 001 — configuración 1" decoding="async" fetchpriority="high"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750956/original_be117d4ddcebd6b6fd8495fa0c0ad6cb.png" data-sizes="100vw" alt="gabinete de dibujo 001 — configuración 2" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750955/original_b47a28bf137d47ca328fd46034600048.png" data-sizes="100vw" alt="gabinete de dibujo 001 — configuración 3" decoding="async"/>
+        <div class="hero-progress" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="system.title">sistema</h2>
+          <p class="section-meta" data-i18n="system.meta">dos planos / campo central / funciones integradas</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el gabinete se organiza a partir de un plano horizontal y uno vertical que comparten borde y construyen una condición ortogonal de trabajo. la superficie inferior recibe papel, herramientas y objetos de uso inmediato; el plano posterior eleva iluminación, soporte botánico y componentes superiores sin ocupar el área central.</p>
+            <p>la distribución mantiene libre la zona principal de dibujo y desplaza las funciones auxiliares hacia los bordes. de esta manera, estructura, superficie y equipamiento forman una sola unidad en lugar de resolverse como objetos independientes colocados sobre una mesa.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the cabinet is organized around one horizontal and one vertical plane sharing an edge and forming an orthogonal working condition. the lower surface receives paper, tools and immediate-use objects; the rear plane raises lighting, botanical support and upper components without occupying the central area.</p>
+            <p>the layout keeps the main drawing zone open and moves auxiliary functions toward the edges. structure, surface and equipment therefore operate as a single unit rather than as independent objects placed on a desk.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le cabinet s’organise à partir d’un plan horizontal et d’un plan vertical partageant un même bord et formant une condition de travail orthogonale. la surface inférieure reçoit papier, outils et objets d’usage immédiat ; le plan arrière élève l’éclairage, le support botanique et les composants supérieurs sans occuper la zone centrale.</p>
+            <p>la distribution maintient libre la zone principale de dessin et déplace les fonctions auxiliaires vers les bords. structure, surface et équipement forment ainsi une seule unité plutôt que des objets indépendants posés sur une table.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>キャビネットは、一つの水平面と一つの垂直面が辺を共有する直交構成によって組織される。下部の面は紙、道具、使用中の物品を受け、背面は中央の領域を塞ぐことなく、照明、植物支持、上部部材を持ち上げる。</p>
+            <p>主要なドローイング領域を空けたまま、補助機能を周縁へ移動させる配置である。構造、作業面、設備は机の上に置かれた独立物ではなく、一つのユニットとして機能する。</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.type.label">tipo</b><span data-i18n="fact.type.value">unidad de trabajo</span></div>
+        <div class="fact"><b data-i18n="fact.material.label">material</b><span data-i18n="fact.material.value">aluminio + vidrio</span></div>
+        <div class="fact"><b data-i18n="fact.structure.label">estructura</b><span data-i18n="fact.structure.value">plano horizontal + vertical</span></div>
+        <div class="fact"><b data-i18n="fact.status.label">estado</b><span data-i18n="fact.status.value">fabricado / documentado</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="construction.title">construcción</h2>
+          <p class="section-meta" data-i18n="construction.meta">placas / barra sólida / lámina plegada / tornillería</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el cuerpo principal utiliza dos placas de aluminio de 30 × 30 cm y 1/4” de espesor. las piezas funcionales inferiores se mecanizan a partir de barra sólida de aluminio de sección 2.54 × 3.81 cm, incorporando perforaciones, cuerdas y una ranura longitudinal según su operación.</p>
+            <p>los componentes superiores se resuelven mediante piezas de aluminio plegado y perforado. la tornillería queda registrada en los propios planos y bloques, manteniendo visibles los puntos de unión y permitiendo que la lógica de fabricación permanezca legible en el objeto terminado.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the main body uses two 30 × 30 cm aluminum plates, 1/4 inch thick. the lower functional elements are machined from solid aluminum bar with a 2.54 × 3.81 cm section, incorporating bores, threads and a longitudinal slot according to their operation.</p>
+            <p>the upper components are resolved through folded and perforated aluminum pieces. fasteners are registered directly in the planes and blocks, keeping connection points visible and allowing the fabrication logic to remain legible in the finished object.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le corps principal utilise deux plaques d’aluminium de 30 × 30 cm et de 1/4 pouce d’épaisseur. les éléments fonctionnels inférieurs sont usinés dans une barre d’aluminium massif de section 2,54 × 3,81 cm, avec perçages, filetages et rainure longitudinale selon leur fonction.</p>
+            <p>les composants supérieurs sont réalisés en pièces d’aluminium pliées et perforées. la visserie est enregistrée directement dans les plans et les blocs, maintenant visibles les points d’assemblage et rendant lisible la logique de fabrication dans l’objet final.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>本体は 30 × 30 cm、厚さ 1/4 インチのアルミニウム板二枚で構成される。下部の機能部材は断面 2.54 × 3.81 cm の無垢アルミニウム棒材から切削され、用途に応じて穴、ねじ部、長手方向の溝が加工される。</p>
+            <p>上部の部材は、折り曲げ・穿孔したアルミニウム部品によって構成される。締結点は面やブロックそのものに記録され、完成した物体でも製作と組立の論理が読み取れる。</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.plates.label">placas principales</b><span data-i18n="fact.plates.value">2 × 30 × 30 cm</span></div>
+        <div class="fact"><b data-i18n="fact.thickness.label">espesor</b><span data-i18n="fact.thickness.value">1/4”</span></div>
+        <div class="fact"><b data-i18n="fact.solid.label">barra sólida</b><span data-i18n="fact.solid.value">2.54 × 3.81 cm</span></div>
+        <div class="fact"><b data-i18n="fact.assembly.label">ensamble</b><span data-i18n="fact.assembly.value">mecanizado + tornillería</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="funciones">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="functions.title">funciones integradas</h2>
+          <p class="section-meta" data-i18n="functions.meta">porta lápices / porta incienso / iluminación / soporte botánico</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>cada función ocupa una posición específica dentro del gabinete y se resuelve como parte de su construcción. los bloques maquinados organizan herramientas e incienso en la superficie inferior; la iluminación se desplaza hacia la parte superior izquierda; el soporte botánico ocupa el canto superior derecho mediante una secuencia de cinco tubos de ensayo.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>each function occupies a specific position within the cabinet and is resolved as part of its construction. machined blocks organize tools and incense on the lower surface; lighting is displaced toward the upper left; botanical support occupies the upper-right edge through a sequence of five test tubes.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>chaque fonction occupe une position précise dans le cabinet et est résolue comme partie de sa construction. les blocs usinés organisent outils et encens sur la surface inférieure ; l’éclairage est déplacé vers la partie supérieure gauche ; le support botanique occupe le bord supérieur droit au moyen d’une séquence de cinq tubes à essai.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>各機能はキャビネット内の特定の位置を占め、構造そのものの一部として解決される。切削ブロックは下部面で道具と香を整理し、照明は左上へ配置され、植物支持は右上端の五本の試験管によって構成される。</p></div>
+        </div>
+      </div>
+
+      <div class="function-grid neg-shell">
+        <div class="function">
+          <div class="function-code">f.01</div>
+          <div><strong data-i18n="fn.pencil.title">porta lápices</strong><p data-i18n="fn.pencil.copy">bloque sólido perforado para organizar herramientas de dibujo en posición vertical.</p></div>
+        </div>
+        <div class="function">
+          <div class="function-code">f.02</div>
+          <div><strong data-i18n="fn.incense.title">porta incienso</strong><p data-i18n="fn.incense.copy">bloque maquinado con perforación y ranura longitudinal integrado a la superficie de trabajo.</p></div>
+        </div>
+        <div class="function">
+          <div class="function-code">f.03</div>
+          <div><strong data-i18n="fn.light.title">iluminación</strong><p data-i18n="fn.light.copy">volumen superior plegado que contiene y posiciona la fuente de luz sobre el área de dibujo.</p></div>
+        </div>
+        <div class="function">
+          <div class="function-code">f.04</div>
+          <div><strong data-i18n="fn.botanical.title">soporte botánico</strong><p data-i18n="fn.botanical.copy">cinco tubos de ensayo de vidrio alojados sobre el canto superior derecho.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="operacion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="operation.title">operación</h2>
+          <p class="section-meta" data-i18n="operation.meta">ocupación / dibujo / luz / objetos / vegetación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>en uso, el plano inferior permanece disponible para hojas, tarjetas y herramientas mientras los componentes permanentes se concentran en los bordes. los lápices y el incienso se insertan verticalmente en los bloques mecanizados; la fuente de luz queda suspendida desde el volumen superior y el material botánico emerge por encima del plano vertical.</p>
+            <p>la ocupación puede variar sin modificar la estructura: el área central admite distintas cantidades y posiciones de papel y objetos, mientras las funciones integradas conservan una localización fija dentro del conjunto.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>in use, the lower plane remains available for sheets, cards and tools while permanent components are concentrated along the edges. pencils and incense are inserted vertically into the machined blocks; the light source is suspended from the upper volume and botanical material rises above the vertical plane.</p>
+            <p>occupation can vary without modifying the structure: the central area receives different quantities and positions of paper and objects while the integrated functions retain fixed locations within the assembly.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>en usage, le plan inférieur reste disponible pour feuilles, cartes et outils tandis que les composants permanents se concentrent sur les bords. crayons et encens s’insèrent verticalement dans les blocs usinés ; la source lumineuse est suspendue depuis le volume supérieur et la matière botanique émerge au-dessus du plan vertical.</p>
+            <p>l’occupation peut varier sans modifier la structure : la zone centrale accueille différentes quantités et positions de papier et d’objets, tandis que les fonctions intégrées conservent une position fixe dans l’ensemble.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>使用時、下部面は紙、カード、道具のために開かれたまま、恒常的な部材は周縁に集約される。鉛筆と香は切削ブロックへ垂直に挿入され、光源は上部ボリュームから吊られ、植物素材は垂直面の上へ立ち上がる。</p>
+            <p>構造を変更せずに占有状態を変えることができる。中央領域には紙や物品を異なる量と位置で置くことができ、統合された機能はユニット内で固定された位置を保つ。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section media-section" id="registro">
+      <div class="media-grid">
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 1">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750922/original_bdc318bc0aba79d90701b8a3eae02ba2.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 01" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 2">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750918/original_df6b7d756d43bd90380a9e4bf1715b0c.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 02" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 3">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750910/original_c5d997af7dfbe577590f89eb06ce5451.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 03" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 4">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750904/original_99bb47253f9f36bc34e4974b2ebd5a7a.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 04" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 5">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750901/original_dcf2c3ef20bea0e0d8f06b3f116a6e5d.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 05" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 6">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750907/original_10f080405ea44006a889da94e8ae718c.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 06" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 7">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750924/original_d79c68e3d78757249896c4d922dffd91.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 07" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 8">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750923/original_de0ac828cb1f0bc20ea540ab0ac11a2f.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 08" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 9">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750921/original_da56cc51d160d69518dad8e04fe9aa3e.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 09" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750920/original_e78f03384440695ee8906a2fd7ac4e75.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 10" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750919/original_3a1657b223d1bb34b02b15109bb1d657.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 11" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750917/original_7c33ca8c78076d9bc8defa2774029c1a.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 12" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750916/original_98d28e2626ec7ddded17bc2ee0cd73d2.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 13" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750915/original_4efa3eed37cff46a3ad77242ae3854fc.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 14" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 15">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750914/original_d40caa6cf141ba8797f6af2350e9484c.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 15" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 16">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750913/original_34ca7d73db3af1e95f418d0ef3d9d120.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 16" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 17">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750912/original_2eb3b0bee41614c9e6cb7c9bedaf57a9.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 17" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 18">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750911/original_7b23a0a6dc67662064d1d479d9c4e274.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 18" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 19">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750909/original_58f7dda45814e43b9ae239adf3e70dd5.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 19" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 20">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750908/original_eba4bb7c0ea7edc97b8cdcefa494476e.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 20" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 21">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750906/original_dd60b899d8fdd26f47c09cf754bdf36d.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 21" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 22">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750905/original_eed883133ce662222543aed85493ae29.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 22" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 23">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750903/original_2211ae7cee3532b86291280b22e7b596.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 23" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 24">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750902/original_d591fa136e123d47d9d5062ccd7d6bdc.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 24" decoding="async"/>
+          </button>
+        </figure>
+      </div>
+
+      <div class="media-grid">
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 1">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750832/original_eca12b28e376908c1c8da51e4b33359d.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 01" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 2">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750831/original_1413463ccf11ddc09960135734e6a873.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 02" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 3">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750830/original_0fbb1a050b6869f514cdbdcc3b52ec0d.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 03" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 4">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750829/original_fcf3a718023344a2500e940d00a8cd82.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 04" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 5">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750828/original_506c87ea777f3fe85b2e5d9b4be77f0f.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 05" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 6">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750827/original_792b8c42f1d2bdaa500ad21c9769efbc.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 06" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 7">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750825/original_dce4b47e0bce2325c0f969fc2737db71.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 07" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 8">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750824/original_5d345ed025f0ac0827a44178468aab62.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 08" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-secondary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 9">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49750823/original_9370a770ae5197de97171e8708f2c2b8.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="gabinete de dibujo 001 — registro 09" decoding="async"/>
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="document.title">documento técnico</h2>
+          <p class="section-meta">abril 2026 / cotas cm / fabricación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano de fabricación del gabinete, con vistas isométricas, plantas, alzados, dimensiones, perforaciones, roscas, ranuras, piezas plegadas y especificaciones de aluminio.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>fabrication drawing for the cabinet, including isometric views, plans, elevations, dimensions, bores, threads, slots, folded pieces and aluminum specifications.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan de fabrication du cabinet comprenant vues isométriques, plans, élévations, dimensions, perçages, filetages, rainures, pièces pliées et spécifications d’aluminium.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>等角図、平面図、立面図、寸法、穴加工、ねじ加工、溝、曲げ部材、アルミニウム仕様を含むキャビネットの製作図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head">
+            <span>gabinete de dibujo 001 / plano</span>
+            <a href="https://attachments.are.na/49750807/a122a3b066b0891ec739cf5c7027cdd5.pdf" target="_blank" rel="noopener" data-i18n="document.open">abrir original ↗</a>
+          </div>
+          <object data="https://attachments.are.na/49750807/a122a3b066b0891ec739cf5c7027cdd5.pdf" type="application/pdf">
+            <p><a href="https://attachments.are.na/49750807/a122a3b066b0891ec739cf5c7027cdd5.pdf" target="_blank" rel="noopener">PDF</a></p>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="lightbox.close">cerrar</button>
+    <button class="nav-btn" type="button" data-dir="prev" aria-label="anterior">←</button>
+    <div class="sheet"><img alt=""/></div>
+    <button class="nav-btn" type="button" data-dir="next" aria-label="siguiente">→</button>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const dictionaries = {
+      es: {
+        'nav.system':'sistema','nav.construction':'construcción','nav.functions':'funciones integradas','nav.operation':'operación','nav.record':'registro','nav.document':'documento técnico',
+        'system.title':'sistema','system.meta':'dos planos / campo central / funciones integradas',
+        'construction.title':'construcción','construction.meta':'placas / barra sólida / lámina plegada / tornillería',
+        'functions.title':'funciones integradas','functions.meta':'porta lápices / porta incienso / iluminación / soporte botánico',
+        'operation.title':'operación','operation.meta':'ocupación / dibujo / luz / objetos / vegetación',
+        'document.title':'documento técnico','document.open':'abrir original ↗',
+        'fact.type.label':'tipo','fact.type.value':'unidad de trabajo','fact.material.label':'material','fact.material.value':'aluminio + vidrio',
+        'fact.structure.label':'estructura','fact.structure.value':'plano horizontal + vertical','fact.status.label':'estado','fact.status.value':'fabricado / documentado',
+        'fact.plates.label':'placas principales','fact.plates.value':'2 × 30 × 30 cm','fact.thickness.label':'espesor','fact.thickness.value':'1/4”',
+        'fact.solid.label':'barra sólida','fact.solid.value':'2.54 × 3.81 cm','fact.assembly.label':'ensamble','fact.assembly.value':'mecanizado + tornillería',
+        'fn.pencil.title':'porta lápices','fn.pencil.copy':'bloque sólido perforado para organizar herramientas de dibujo en posición vertical.',
+        'fn.incense.title':'porta incienso','fn.incense.copy':'bloque maquinado con perforación y ranura longitudinal integrado a la superficie de trabajo.',
+        'fn.light.title':'iluminación','fn.light.copy':'volumen superior plegado que contiene y posiciona la fuente de luz sobre el área de dibujo.',
+        'fn.botanical.title':'soporte botánico','fn.botanical.copy':'cinco tubos de ensayo de vidrio alojados sobre el canto superior derecho.',
+        'lightbox.close':'cerrar'
+      },
+      en: {
+        'nav.system':'system','nav.construction':'construction','nav.functions':'integrated functions','nav.operation':'operation','nav.record':'record','nav.document':'technical document',
+        'system.title':'system','system.meta':'two planes / central field / integrated functions',
+        'construction.title':'construction','construction.meta':'plates / solid bar / folded sheet / fasteners',
+        'functions.title':'integrated functions','functions.meta':'pencil holder / incense holder / lighting / botanical support',
+        'operation.title':'operation','operation.meta':'occupation / drawing / light / objects / vegetation',
+        'document.title':'technical document','document.open':'open original ↗',
+        'fact.type.label':'type','fact.type.value':'work unit','fact.material.label':'material','fact.material.value':'aluminum + glass',
+        'fact.structure.label':'structure','fact.structure.value':'horizontal + vertical plane','fact.status.label':'status','fact.status.value':'fabricated / documented',
+        'fact.plates.label':'main plates','fact.plates.value':'2 × 30 × 30 cm','fact.thickness.label':'thickness','fact.thickness.value':'1/4”',
+        'fact.solid.label':'solid bar','fact.solid.value':'2.54 × 3.81 cm','fact.assembly.label':'assembly','fact.assembly.value':'machining + fasteners',
+        'fn.pencil.title':'pencil holder','fn.pencil.copy':'perforated solid block for organizing drawing tools vertically.',
+        'fn.incense.title':'incense holder','fn.incense.copy':'machined block with a bore and longitudinal slot integrated into the work surface.',
+        'fn.light.title':'lighting','fn.light.copy':'folded upper volume containing and positioning the light source over the drawing area.',
+        'fn.botanical.title':'botanical support','fn.botanical.copy':'five glass test tubes housed along the upper-right edge.',
+        'lightbox.close':'close'
+      },
+      fr: {
+        'nav.system':'système','nav.construction':'construction','nav.functions':'fonctions intégrées','nav.operation':'opération','nav.record':'registre','nav.document':'document technique',
+        'system.title':'système','system.meta':'deux plans / champ central / fonctions intégrées',
+        'construction.title':'construction','construction.meta':'plaques / barre massive / tôle pliée / visserie',
+        'functions.title':'fonctions intégrées','functions.meta':'porte-crayons / porte-encens / éclairage / support botanique',
+        'operation.title':'opération','operation.meta':'occupation / dessin / lumière / objets / végétation',
+        'document.title':'document technique','document.open':'ouvrir l’original ↗',
+        'fact.type.label':'type','fact.type.value':'unité de travail','fact.material.label':'matériau','fact.material.value':'aluminium + verre',
+        'fact.structure.label':'structure','fact.structure.value':'plan horizontal + vertical','fact.status.label':'état','fact.status.value':'fabriqué / documenté',
+        'fact.plates.label':'plaques principales','fact.plates.value':'2 × 30 × 30 cm','fact.thickness.label':'épaisseur','fact.thickness.value':'1/4”',
+        'fact.solid.label':'barre massive','fact.solid.value':'2.54 × 3.81 cm','fact.assembly.label':'assemblage','fact.assembly.value':'usinage + visserie',
+        'fn.pencil.title':'porte-crayons','fn.pencil.copy':'bloc massif perforé pour organiser verticalement les outils de dessin.',
+        'fn.incense.title':'porte-encens','fn.incense.copy':'bloc usiné avec perçage et rainure longitudinale intégré à la surface de travail.',
+        'fn.light.title':'éclairage','fn.light.copy':'volume supérieur plié contenant et positionnant la source lumineuse au-dessus de la zone de dessin.',
+        'fn.botanical.title':'support botanique','fn.botanical.copy':'cinq tubes à essai en verre logés sur le bord supérieur droit.',
+        'lightbox.close':'fermer'
+      },
+      jp: {
+        'nav.system':'システム','nav.construction':'構造','nav.functions':'統合機能','nav.operation':'運用','nav.record':'記録','nav.document':'技術資料',
+        'system.title':'システム','system.meta':'二つの面 / 中央領域 / 統合機能',
+        'construction.title':'構造','construction.meta':'板材 / 無垢棒材 / 曲げ板 / 締結',
+        'functions.title':'統合機能','functions.meta':'鉛筆立て / 香立て / 照明 / 植物支持',
+        'operation.title':'運用','operation.meta':'占有 / ドローイング / 光 / 物品 / 植物',
+        'document.title':'技術資料','document.open':'原本を開く ↗',
+        'fact.type.label':'種別','fact.type.value':'作業ユニット','fact.material.label':'素材','fact.material.value':'アルミニウム + ガラス',
+        'fact.structure.label':'構造','fact.structure.value':'水平面 + 垂直面','fact.status.label':'状態','fact.status.value':'製作済み / 記録済み',
+        'fact.plates.label':'主要板','fact.plates.value':'2 × 30 × 30 cm','fact.thickness.label':'厚さ','fact.thickness.value':'1/4”',
+        'fact.solid.label':'無垢棒材','fact.solid.value':'2.54 × 3.81 cm','fact.assembly.label':'組立','fact.assembly.value':'切削 + 締結',
+        'fn.pencil.title':'鉛筆立て','fn.pencil.copy':'ドローイング道具を垂直に整理するための穿孔された無垢ブロック。',
+        'fn.incense.title':'香立て','fn.incense.copy':'穴と長手方向の溝を持ち、作業面へ一体化された切削ブロック。',
+        'fn.light.title':'照明','fn.light.copy':'光源を保持し、ドローイング領域の上へ配置する折り曲げられた上部ボリューム。',
+        'fn.botanical.title':'植物支持','fn.botanical.copy':'右上端に収められた五本のガラス試験管。',
+        'lightbox.close':'閉じる'
+      }
+    };
+
+    const langButtons = Array.from(document.querySelectorAll('[data-lang-btn]'));
+    const langBlocks = Array.from(document.querySelectorAll('[data-lang-block]'));
+
+    function setLanguage(lang) {
+      if (!dictionaries[lang]) lang = 'es';
+      document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
+      langButtons.forEach(btn => btn.classList.toggle('lang-active', btn.dataset.langBtn === lang));
+      langBlocks.forEach(block => block.classList.toggle('active', block.dataset.langBlock === lang));
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const value = dictionaries[lang][el.dataset.i18n];
+        if (value != null) el.textContent = value;
+      });
+      try { localStorage.setItem('xpan-lang', lang); } catch (_) {}
+    }
+
+    langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.langBtn)));
+    let savedLang = 'es';
+    try { savedLang = localStorage.getItem('xpan-lang') || 'es'; } catch (_) {}
+    setLanguage(savedLang);
+
+    const heroFrames = Array.from(document.querySelectorAll('.hero-frame'));
+    const heroDots = Array.from(document.querySelectorAll('.hero-progress span'));
+    let heroIndex = 0;
+    let heroTimer = null;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+
+    function showHero(index) {
+      heroIndex = (index + heroFrames.length) % heroFrames.length;
+      heroFrames.forEach((frame, i) => frame.classList.toggle('is-active', i === heroIndex));
+      heroDots.forEach((dot, i) => dot.classList.toggle('active', i === heroIndex));
+    }
+
+    function startHero() {
+      clearInterval(heroTimer);
+      if (reducedMotion?.matches || heroFrames.length < 2) return;
+      heroTimer = setInterval(() => showHero(heroIndex + 1), 720);
+    }
+
+    showHero(0);
+    startHero();
+    if (reducedMotion?.addEventListener) reducedMotion.addEventListener('change', startHero);
+
+    document.querySelectorAll('.media-card img, .hero-frame').forEach(img => {
+      const markLoaded = () => img.classList.add('loaded');
+      if (img.complete && img.currentSrc) markLoaded();
+      else img.addEventListener('load', markLoaded, { once:true });
+    });
+
+    const lightbox = document.getElementById('xpan-lightbox');
+    const lightboxImg = lightbox.querySelector('.sheet img');
+    const mediaButtons = Array.from(document.querySelectorAll('.media-open'));
+    let lbIndex = -1;
+
+    function originalUrl(img) {
+      return img.getAttribute('data-full') || img.getAttribute('data-src') || img.currentSrc || img.src || '';
+    }
+
+    function preloadLightbox(index) {
+      if (!mediaButtons.length) return;
+      [-1, 1].forEach(offset => {
+        const next = (index + offset + mediaButtons.length) % mediaButtons.length;
+        const img = mediaButtons[next].querySelector('img');
+        const url = originalUrl(img);
+        if (url) {
+          const pre = new Image();
+          pre.src = url;
+        }
+      });
+    }
+
+    function openLightbox(index) {
+      if (!mediaButtons.length) return;
+      lbIndex = (index + mediaButtons.length) % mediaButtons.length;
+      const img = mediaButtons[lbIndex].querySelector('img');
+      lightboxImg.src = originalUrl(img);
+      lightboxImg.alt = img.alt || '';
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden','false');
+      document.documentElement.classList.add('lb-open');
+      document.body.classList.add('lb-open');
+      preloadLightbox(lbIndex);
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden','true');
+      lightboxImg.removeAttribute('src');
+      document.documentElement.classList.remove('lb-open');
+      document.body.classList.remove('lb-open');
+    }
+
+    mediaButtons.forEach((button, index) => button.addEventListener('click', () => openLightbox(index)));
+    lightbox.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
+    lightbox.querySelector('[data-dir="prev"]').addEventListener('click', () => openLightbox(lbIndex - 1));
+    lightbox.querySelector('[data-dir="next"]').addEventListener('click', () => openLightbox(lbIndex + 1));
+    lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+
+    let swipeStartX = null;
+    let swipeStartY = null;
+    lightbox.addEventListener('touchstart', event => {
+      const t = event.touches[0];
+      if (!t) return;
+      swipeStartX = t.clientX;
+      swipeStartY = t.clientY;
+    }, { passive:true });
+
+    lightbox.addEventListener('touchend', event => {
+      if (swipeStartX == null || swipeStartY == null) return;
+      const t = event.changedTouches[0];
+      if (!t) return;
+      const dx = t.clientX - swipeStartX;
+      const dy = t.clientY - swipeStartY;
+      swipeStartX = swipeStartY = null;
+      if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
+      openLightbox(lbIndex + (dx < 0 ? 1 : -1));
+    }, { passive:true });
+
+    document.addEventListener('keydown', event => {
+      if (!lightbox.classList.contains('open')) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') openLightbox(lbIndex - 1);
+      if (event.key === 'ArrowRight') openLightbox(lbIndex + 1);
+    });
+  })();
+  </script>
+</body>
+</html>
