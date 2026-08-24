@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>mesa de poros — xpan</title>
+  <meta name="description" content="mesa de poros — mesa/matriz desarrollada por xpan a partir del sistema de poros. 170 puntos de acoplamiento distribuidos en cinco caras, estructura de acero soldado, policarbonato celular transparente e iluminación interna difuminada. marzo de 2026."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+  <link rel="dns-prefetch" href="https://images.weserv.nl">
+
+  <style>
+    :root{
+      --bg:#0B0D0F; --fg:#E1E4E7; --fg-dim:#A4ABB2;
+      --line:#2A2E31; --grid:#181B1F; --panel:#101316; --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px); --header-h:64px; --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media (prefers-color-scheme:light){
+      :root{--bg:#FFFFFF;--fg:#0B0D0F;--fg-dim:#4A525A;--line:#D7DDE2;--grid:#EBEEF2;--panel:#F7F8FA;}
+      header{mix-blend-mode:normal;color:var(--fg);}
+      header img{mix-blend-mode:normal;filter:none;}
+      .chip{border-color:var(--line);color:var(--fg-dim);}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent);}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg);}
+      .hero-shell,.media-card{background:#F6F7F8;}
+      .pdf-card object{background:#F3F5F7;}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);color:var(--fg);font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);height:var(--header-h);
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      z-index:50;mix-blend-mode:difference;color:#fff;
+    }
+    header img{width:50px;height:auto;display:block;mix-blend-mode:difference;filter:invert(1) saturate(100%);-webkit-user-drag:none;user-select:none}
+    .stack{display:flex;align-items:center;gap:12px}
+    .chip{
+      appearance:none;display:inline-flex;align-items:center;gap:10px;
+      font:600 12px/1 var(--ui);text-transform:lowercase;padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);color:rgba(255,255,255,.74);
+      background:transparent;user-select:none;cursor:default;border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+
+    .bg-grid{
+      position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.18;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+    }
+    .grain{
+      position:fixed;inset:-40%;z-index:0;pointer-events:none;
+      background:
+        repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px),
+        repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0 1px,transparent 1px 4px);
+      mix-blend-mode:overlay;opacity:.12;filter:blur(1px);
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 22px)}
+    .section{
+      max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;
+      border-top:1px solid var(--line);content-visibility:auto;contain-intrinsic-size:760px;
+      scroll-margin-top:96px;
+    }
+
+    .hero-section{
+      max-width:var(--maxw);margin:0 auto;padding:6px var(--pad-x) 58px;
+      display:flex;justify-content:center;
+    }
+    .hero-shell{
+      position:relative;width:min(820px,72vw);aspect-ratio:3/2;
+      max-height:none;min-height:0;overflow:hidden;border:1px solid var(--line);background:#050608;
+    }
+    .hero-frame{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+      opacity:0;transform:scale(1.008);transition:opacity 145ms linear,transform 260ms cubic-bezier(.2,.8,.2,1);
+      will-change:opacity,transform;
+    }
+    .hero-frame.is-active{opacity:1;transform:scale(1)}
+    .hero-progress{position:absolute;left:10px;bottom:10px;display:flex;gap:5px;z-index:3;pointer-events:none;}
+    .hero-progress span{width:18px;height:2px;background:rgba(255,255,255,.28);transition:background .18s ease}
+    .hero-progress span.active{background:rgba(255,255,255,.9)}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .plate{
+      display:grid;gap:4px;width:fit-content;max-width:100%;border:1px solid var(--line);
+      padding:8px 10px;color:var(--fg-dim);font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:5;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:840px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);padding:7px 9px;font:600 11px/1 var(--mono);
+      text-transform:lowercase;color:var(--fg-dim);background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);margin-top:28px}
+    .fact{padding:13px 14px;border-right:1px solid var(--line);min-height:78px;background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .fact:last-child{border-right:0}
+    .fact b{display:block;margin-bottom:8px;font:600 10px/1 var(--mono);color:var(--fg-dim);text-transform:uppercase;letter-spacing:.14em}
+    .fact span{display:block;font:500 13px/1.35 var(--ui);color:var(--fg)}
+
+    .function-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);margin-top:28px}
+    .function{padding:16px;min-height:154px;border-right:1px solid var(--line);display:grid;align-content:space-between;gap:22px;background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .function:last-child{border-right:0}
+    .function-code{font:600 10px/1 var(--mono);letter-spacing:.12em;color:var(--fg-dim)}
+    .function strong{display:block;margin-bottom:7px;font:500 20px/1.05 var(--ui);letter-spacing:-.035em;text-transform:lowercase}
+    .function p{margin:0;font:400 12px/1.5 var(--ui);color:var(--fg-dim)}
+
+    .media-section{padding-bottom:54px}
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;width:100%;height:auto;min-height:160px;max-height:74vh;object-fit:contain;background:#050608;
+      opacity:0;transform:translateY(4px);transition:opacity .28s ease,transform .28s ease;
+    }
+    .media-card img.loaded,.media-card img[data-proxied]{opacity:1;transform:translateY(0)}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{
+      display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);
+      font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim);
+    }
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+      background:rgba(5,7,10,.82);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{
+      width:min(96vw,1800px);height:min(94vh,1200px);
+      display:grid;place-items:center;border:1px solid var(--line);background:#000;padding:6px;
+      box-shadow:0 18px 45px rgba(0,0,0,.8);overflow:hidden;touch-action:pan-y;
+    }
+    #xpan-lightbox img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;top:16px;right:18px;border:1px solid var(--line);
+      background:color-mix(in oklab,var(--bg) 90%,#050608 10%);color:var(--fg-dim);
+      font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.14em;padding:6px 10px;cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;top:50%;transform:translateY(-50%);border:1px solid var(--line);
+      background:rgba(5,7,10,.78);color:var(--fg-dim);width:40px;height:40px;
+      display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 16px/1 var(--mono);padding:0;user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media(max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .fact:nth-child(2){border-right:0}
+      .fact:nth-child(-n+2){border-bottom:1px solid var(--line)}
+      .function-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .function{border-bottom:1px solid var(--line)}
+      .function:nth-child(2){border-right:0}
+      .function:nth-last-child(-n+2){border-bottom:0}
+      .media-card{grid-column:span 6}
+      .hero-shell{width:min(760px,82vw);min-height:0}
+    }
+    @media(max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px;content-visibility:visible}
+      .hero-section{padding:4px var(--pad-x) 42px}
+      .hero-shell{width:100%;aspect-ratio:3/2;min-height:0;max-height:none}
+      .facts{grid-template-columns:1fr}
+      .fact,.fact:nth-child(2){border-right:0;border-bottom:1px solid var(--line)}
+      .fact:last-child{border-bottom:0}
+      .function-grid{grid-template-columns:1fr}
+      .function,.function:nth-child(2){border-right:0;border-bottom:1px solid var(--line)}
+      .function:last-child{border-bottom:0}
+      .media-grid{gap:10px}
+      .media-card{grid-column:span 12}
+      .media-card img{min-height:100px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .sheet{width:100vw;height:100dvh;max-width:none;max-height:none;border:0;padding:0}
+      #xpan-lightbox img{max-width:100vw;max-height:100dvh}
+      #xpan-lightbox [data-lb-close]{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:3}
+      #xpan-lightbox .nav-btn{width:36px;height:44px;font-size:16px;z-index:3}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:max(8px,env(safe-area-inset-left))}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:max(8px,env(safe-area-inset-right))}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      .hero-frame{display:none}
+      .hero-frame:first-child{display:block;opacity:1;transform:none}
+      .hero-progress{display:none}
+    }
+  </style>
+
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan"/></a>
+      <div class="chip">mesa de poros</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
+    </div>
+  </header>
+
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate">
+          <span>mesa de poros / mesa-matriz operativa</span>
+          <span>xpan / marzo 2026</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros / acoplamientos / luz / superficie activa</p>
+          <h1>mesa de poros</h1>
+          <p class="subtitle">mesa/matriz desarrollada por xpan a partir del sistema de poros, donde superficie, soporte, infraestructura luminosa y montaje operan como una sola pieza.</p>
+          <div class="intro-text">
+            <p>mesa de poros es una mesa/matriz desarrollada por xpan a partir del sistema de poros. 170 puntos de acoplamiento distribuidos sobre cinco caras convierten la superficie superior y los cuatro costados en una infraestructura activa capaz de recibir dispositivos, barras, soportes y extensiones.</p>
+            <p>la pieza traslada la lógica del sistema de poros a la escala de un objeto autónomo. la mesa deja de funcionar únicamente como superficie horizontal y convierte prácticamente todo su volumen exterior en una matriz disponible para transformación. cada cara puede ser ocupada, equipada o modificada sin alterar la estructura principal, permitiendo que una misma pieza cambie de función a partir de los elementos que se conectan a ella. de esta manera, mobiliario e infraestructura dejan de operar como categorías separadas.</p>
+            <p>el cuerpo se construye mediante una retícula soldada de perfiles cuadrados de acero de 5/8”, organizada sobre un módulo repetitivo de 20.32 cm. la estructura se recubre con paneles de policarbonato celular transparente de 1/4”, permitiendo que una fuente de luz interior se difumine a través del volumen y convierta el propio cuerpo de la mesa en infraestructura luminosa.</p>
+            <p>cada poro funciona como un punto independiente de montaje con una capacidad aproximada de 10 kg. la distribución completa produce una capacidad teórica acumulada de 1.7 toneladas en acoplamientos distribuidos y permite que la pieza opere simultáneamente como superficie de trabajo, soporte técnico, sistema de montaje e infraestructura de luz.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system / couplings / light / active surface</p>
+          <h1>mesa de poros</h1>
+          <p class="subtitle">table/matrix developed by xpan from the poros system, where surface, support, luminous infrastructure and mounting operate as a single piece.</p>
+          <div class="intro-text">
+            <p>mesa de poros is a table/matrix developed by xpan from the poros system. 170 coupling points distributed across five faces turn the top surface and four sides into an active infrastructure capable of receiving devices, rods, supports and extensions.</p>
+            <p>the piece transfers the logic of the poros system to the scale of an autonomous object. the table stops functioning only as a horizontal surface and converts almost its entire exterior volume into a matrix available for transformation. each face can be occupied, equipped or modified without altering the main structure, allowing a single piece to shift function according to the elements connected to it. in this way, furniture and infrastructure cease to operate as separate categories.</p>
+            <p>the body is built through a welded grid of 5/8” square steel profiles, organized on a repeating 20.32 cm module. the structure is clad with 1/4” transparent cellular polycarbonate panels, allowing an internal light source to diffuse through the volume and turn the body of the table itself into luminous infrastructure.</p>
+            <p>each poro functions as an independent mounting point with an approximate capacity of 10 kg. the complete distribution produces a theoretical cumulative capacity of 1.7 tons in distributed couplings and allows the piece to operate simultaneously as a work surface, technical support, mounting system and light infrastructure.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système poros / accrochages / lumière / surface active</p>
+          <h1>mesa de poros</h1>
+          <p class="subtitle">table/matrice développée par xpan à partir du système poros, où surface, support, infrastructure lumineuse et montage fonctionnent comme une seule pièce.</p>
+          <div class="intro-text">
+            <p>mesa de poros est une table/matrice développée par xpan à partir du système poros. 170 points d’accrochage répartis sur cinq faces transforment la surface supérieure et les quatre côtés en une infrastructure active capable de recevoir dispositifs, tiges, supports et extensions.</p>
+            <p>la pièce transpose la logique du système poros à l’échelle d’un objet autonome. la table cesse de fonctionner uniquement comme surface horizontale et convertit presque tout son volume extérieur en matrice disponible pour la transformation. chaque face peut être occupée, équipée ou modifiée sans altérer la structure principale, permettant à une même pièce de changer de fonction selon les éléments qui s’y connectent. mobilier et infrastructure cessent ainsi d’être des catégories séparées.</p>
+            <p>le corps est construit à partir d’une trame soudée de profils carrés en acier de 5/8”, organisée sur un module répétitif de 20,32 cm. la structure est revêtue de panneaux de polycarbonate cellulaire transparent de 1/4”, permettant à une source lumineuse interne de se diffuser à travers le volume et de faire du corps même de la table une infrastructure lumineuse.</p>
+            <p>chaque poro fonctionne comme un point de montage indépendant avec une capacité approximative de 10 kg. la répartition complète produit une capacité théorique cumulée de 1,7 tonne en accrochages distribués et permet à la pièce d’opérer simultanément comme surface de travail, support technique, système de montage et infrastructure lumineuse.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros システム / 接続点 / 光 / アクティブな表面</p>
+          <h1>mesa de poros</h1>
+          <p class="subtitle">xpan の poros システムから展開されたテーブル／マトリクス。表面、支持、光のインフラ、取付機構が一つの物体として機能する。</p>
+          <div class="intro-text">
+            <p>mesa de poros は xpan の poros システムから展開されたテーブル／マトリクスである。五つの面に分布する 170 の接続点が、上面と四つの側面を、装置、バー、支持具、拡張要素を受け入れるアクティブなインフラへと変える。</p>
+            <p>この作品は poros システムの論理を自律したオブジェクトのスケールへ移し替える。テーブルは単なる水平面としての機能を超え、その外周ほぼ全体を変換可能なマトリクスへと変える。各面は主構造を変えずに占有・装備・変更でき、接続される要素に応じて一つの物体が機能を変える。こうして家具とインフラは別々のカテゴリではなくなる。</p>
+            <p>本体は 5/8 インチ角鋼材の溶接グリッドによって構成され、20.32 cm の反復モジュールで組織される。構造体は 1/4 インチ厚の透明中空ポリカーボネートで覆われ、内部光が体積全体に拡散し、テーブル自体を光のインフラへと変える。</p>
+            <p>各 poro はおよそ 10 kg の支持能力をもつ独立した取付点として機能する。全体では分散荷重として理論上 1.7 トンの累積支持能力を生み、作品は作業面、技術支持、取付システム、光のインフラとして同時に機能する。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="page sections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#poros" data-i18n="nav.poros">poros</a>
+          <a href="#operacion" data-i18n="nav.operation">operación</a>
+          <a href="#registro" data-i18n="nav.record">registro</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="hero-section" aria-label="mesa de poros — configuraciones">
+      <div class="hero-shell" id="hero-loop">
+        <img class="hero-frame is-active" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807438/original_dc74621640dde77448197fdc60a31717.png" data-sizes="100vw" alt="mesa de poros — configuración 1" decoding="async" fetchpriority="high"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807440/original_f77cf75ea226ddb732bc5bfcb81f365d.png" data-sizes="100vw" alt="mesa de poros — configuración 2" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807441/original_25e5f1a42cf52fe755c70c8f29697a4a.png" data-sizes="100vw" alt="mesa de poros — configuración 3" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807444/original_65b04af4838b8a1e08991b071cd77f6a.png" data-sizes="100vw" alt="mesa de poros — configuración 4" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807446/original_fa75ce2361787969dbd1177dec7f4a8c.png" data-sizes="100vw" alt="mesa de poros — configuración 5" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807449/original_2cfb2f227679422c703371a67b81cfbb.png" data-sizes="100vw" alt="mesa de poros — configuración 6" decoding="async"/>
+        <div class="hero-progress" aria-hidden="true"><span class="active"></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="system.title">sistema</h2>
+          <p class="section-meta" data-i18n="system.meta">objeto autónomo / infraestructura activa / cinco caras operativas</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>mesa de poros no parte de la idea de una mesa a la que se le agregan accesorios. parte de la lógica del sistema de poros: una superficie preparada para transformarse mediante puntos de conexión, fijación y activación.</p>
+            <p>al concentrar esa lógica en un volumen autónomo, la pieza convierte un objeto de mobiliario en una infraestructura operativa. la parte superior y los cuatro costados dejan de ser límites pasivos y pasan a funcionar como campos de montaje, soporte y conexión.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>mesa de poros does not begin from the idea of a table to which accessories are added. it begins from the logic of the poros system: a surface prepared to transform through points of connection, fixation and activation.</p>
+            <p>by concentrating that logic within an autonomous volume, the piece turns a furniture object into an operational infrastructure. the top and four sides cease to be passive limits and operate instead as fields for mounting, support and connection.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>mesa de poros ne part pas de l’idée d’une table à laquelle on ajoute des accessoires. elle part de la logique du système poros : une surface préparée à se transformer par des points de connexion, de fixation et d’activation.</p>
+            <p>en concentrant cette logique dans un volume autonome, la pièce transforme un objet de mobilier en infrastructure opérative. le dessus et les quatre côtés cessent d’être des limites passives et fonctionnent comme des champs de montage, de support et de connexion.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>mesa de poros は、付属品を追加しただけのテーブルという発想から始まらない。出発点は poros システムの論理であり、接続・固定・活性化の点によって変化するよう準備された表面である。</p>
+            <p>その論理を自律した体積に集約することで、この作品は家具を運用可能なインフラへと変える。上面と四つの側面は受動的な境界ではなく、取付・支持・接続の場として機能する。</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.type.label">tipo</b><span data-i18n="fact.type.value">mesa / matriz operativa</span></div>
+        <div class="fact"><b data-i18n="fact.material.label">material</b><span data-i18n="fact.material.value">acero + policarbonato + luz</span></div>
+        <div class="fact"><b data-i18n="fact.structure.label">estructura</b><span data-i18n="fact.structure.value">retícula de ptr 5/8”</span></div>
+        <div class="fact"><b data-i18n="fact.faces.label">caras activas</b><span data-i18n="fact.faces.value">superior + cuatro costados</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="construction.title">construcción</h2>
+          <p class="section-meta" data-i18n="construction.meta">ptr 5/8” / módulo 20.32 cm / policarbonato 1/4”</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el cuerpo principal se construye a partir de una retícula soldada de perfiles cuadrados de acero de 5/8”, organizada sobre un módulo repetitivo de 20.32 cm. el plano trabaja con una planta general de 152.4 × 91.44 cm y una matriz regular que hace coincidir estructura, recubrimiento y puntos de acoplamiento.</p>
+            <p>la estructura recibe paneles de policarbonato celular transparente de 1/4” y un sistema de sujeción mediante ángulos de acero de 3/4”, perforados y soldados a la retícula. esta combinación permite un cuerpo ligero, translúcido y técnicamente legible, donde la lógica de ensamble permanece visible.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the main body is constructed from a welded grid of 5/8” square steel profiles organized on a repeating 20.32 cm module. the drawing works with a general footprint of 152.4 × 91.44 cm and a regular matrix aligning structure, cladding and coupling points.</p>
+            <p>the structure receives 1/4” transparent cellular polycarbonate panels and a fixing system using 3/4” steel angles, perforated and welded to the grid. this combination allows a light, translucent and technically legible body in which the assembly logic remains visible.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le corps principal est construit à partir d’une trame soudée de profils carrés en acier de 5/8”, organisée sur un module répétitif de 20,32 cm. le plan travaille avec une emprise générale de 152,4 × 91,44 cm et une matrice régulière faisant coïncider structure, revêtement et points d’accrochage.</p>
+            <p>la structure reçoit des panneaux de polycarbonate cellulaire transparent de 1/4” et un système de fixation par équerres en acier de 3/4”, perforées et soudées à la trame. cette combinaison produit un corps léger, translucide et techniquement lisible, dont la logique d’assemblage reste visible.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>本体は 5/8 インチ角鋼材の溶接グリッドによって構成され、20.32 cm の反復モジュールで組織される。図面では 152.4 × 91.44 cm の平面寸法が与えられ、構造、外装、接続点が同じマトリクス上で一致する。</p>
+            <p>構造体には 1/4 インチ厚の透明中空ポリカーボネートと、穿孔されグリッドへ溶接された 3/4 インチのスチールアングルによる固定システムが組み合わされる。この組合せにより、軽く半透明で、組立論理が読み取れる身体が成立する。</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts neg-shell">
+        <div class="fact"><b data-i18n="fact.footprint.label">planta</b><span data-i18n="fact.footprint.value">152.4 × 91.44 cm</span></div>
+        <div class="fact"><b data-i18n="fact.module.label">módulo</b><span data-i18n="fact.module.value">20.32 cm / 8”</span></div>
+        <div class="fact"><b data-i18n="fact.skin.label">recubrimiento</b><span data-i18n="fact.skin.value">policarbonato celular 1/4”</span></div>
+        <div class="fact"><b data-i18n="fact.joint.label">sujeción</b><span data-i18n="fact.joint.value">ángulos de acero 3/4”</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="poros">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="poros.title">poros</h2>
+          <p class="section-meta" data-i18n="poros.meta">170 puntos / cinco caras / montaje distribuido</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>los 170 poros se distribuyen entre la superficie superior y los cuatro costados del volumen. cada uno funciona como un punto independiente de acoplamiento capaz de recibir dispositivos, barras, soportes, extensiones, cableado u otros elementos del sistema.</p>
+            <p>la condición clave no es sólo la cantidad de puntos, sino su distribución sobre cinco caras. esto permite que la mesa sea ocupada simultáneamente desde arriba y desde sus laterales, produciendo configuraciones técnicas, funcionales o expositivas sin cambiar la estructura de base.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the 170 poros are distributed across the top surface and the four sides of the volume. each functions as an independent coupling point capable of receiving devices, rods, supports, extensions, cabling or other system elements.</p>
+            <p>the key condition is not only the number of points but their distribution across five faces. this allows the table to be occupied simultaneously from above and from its sides, producing technical, functional or display configurations without changing the base structure.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>les 170 poros sont répartis entre la surface supérieure et les quatre côtés du volume. chacun fonctionne comme un point d’accrochage indépendant capable de recevoir dispositifs, tiges, supports, extensions, câblage ou autres éléments du système.</p>
+            <p>la condition essentielle n’est pas seulement le nombre de points, mais leur répartition sur cinq faces. cela permet d’occuper la table simultanément par le dessus et par ses côtés, produisant des configurations techniques, fonctionnelles ou d’exposition sans modifier la structure de base.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>170 の poros は、上面と四つの側面に分布している。各点は独立した接続点として機能し、装置、バー、支持具、延長部材、配線、その他のシステム要素を受け入れることができる。</p>
+            <p>重要なのは点の数だけでなく、それらが五つの面に分配されていることである。これによりテーブルは上方からも側面からも同時に占有でき、基礎構造を変えずに技術的・機能的・展示的な構成を生み出せる。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="function-grid neg-shell">
+        <div class="function">
+          <div class="function-code">p.01</div>
+          <div><strong data-i18n="fn.points.title">170 puntos</strong><p data-i18n="fn.points.copy">matriz de acoplamientos distribuida en cinco caras activas del volumen.</p></div>
+        </div>
+        <div class="function">
+          <div class="function-code">p.02</div>
+          <div><strong data-i18n="fn.capacity.title">10 kg por punto</strong><p data-i18n="fn.capacity.copy">capacidad aproximada de carga por poro para soportes y dispositivos.</p></div>
+        </div>
+        <div class="function">
+          <div class="function-code">p.03</div>
+          <div><strong data-i18n="fn.total.title">1.7 toneladas</strong><p data-i18n="fn.total.copy">capacidad teórica acumulada en acoplamientos distribuidos.</p></div>
+        </div>
+        <div class="function">
+          <div class="function-code">p.04</div>
+          <div><strong data-i18n="fn.elements.title">sistema abierto</strong><p data-i18n="fn.elements.copy">dispositivos, barras, soportes, cableado y extensiones intercambiables.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="operacion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="operation.title">operación</h2>
+          <p class="section-meta" data-i18n="operation.meta">superficie / soporte técnico / luz interna / transformación</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>en operación, la mesa funciona simultáneamente como superficie de trabajo, soporte técnico y cuerpo de iluminación. la envolvente translúcida permite que la luz interna se difumine a través del volumen, mientras que la matriz de poros mantiene disponibles las caras para configuraciones específicas de uso.</p>
+            <p>esta condición la vuelve apta para trabajo, exhibición, soporte de dispositivos, activaciones o configuraciones técnicas vinculadas al sistema de poros. más que fijar una sola función, la pieza establece una infraestructura capaz de recibir funciones variables.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>in operation, the table functions simultaneously as a work surface, technical support and luminous body. the translucent envelope allows internal light to diffuse through the volume while the matrix of poros keeps the faces available for specific use configurations.</p>
+            <p>this condition makes it suitable for work, display, device support, activations or technical configurations linked to the poros system. rather than fixing a single function, the piece establishes an infrastructure capable of receiving variable functions.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>en fonctionnement, la table agit simultanément comme surface de travail, support technique et corps lumineux. l’enveloppe translucide permet à la lumière interne de se diffuser à travers le volume, tandis que la matrice de poros maintient les faces disponibles pour des configurations d’usage spécifiques.</p>
+            <p>cette condition la rend apte au travail, à l’exposition, au support de dispositifs, aux activations ou à des configurations techniques liées au système poros. plutôt que de fixer une seule fonction, la pièce établit une infrastructure capable de recevoir des fonctions variables.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>運用時、このテーブルは作業面、技術支持体、発光する身体として同時に機能する。半透明の外装により内部光が体積全体へ拡散し、poros のマトリクスは各面を用途に応じた構成のために開いたままにする。</p>
+            <p>この条件によって、作業、展示、装置支持、アクティベーション、あるいは poros システムに結びつく技術構成に対応できる。一つの機能を固定するのではなく、可変的な機能を受け入れるインフラをつくるのである。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section media-section" id="registro">
+      <div class="media-grid">
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 1">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807601/original_fd74ac6966747569fbd7c333c5e7a792.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 01" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 2">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807603/original_63cc2cb8348bca916786cdcf1bc9fa0d.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 02" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 3">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807612/original_35373d6e994dfbf6d0b7cbc853fed346.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 03" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 4">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807613/original_6e8b38dc438616026fbd31260547c95e.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 04" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 5">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807614/original_298ddd83cdfce3ce88ce6bd969da8236.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 05" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 6">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807615/original_bfd8b362cdac218b2b3878e3004b88b5.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 06" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 7">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807616/original_9d1687dc462b06c3e2bee137933c4215.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 07" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 8">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807617/original_912f38b5f1925cf4aca8f9de755878d3.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 08" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 9">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807641/original_1edd9b1895bd8c92fae8b0f393bb6817.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 09" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 10">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807642/original_4b37e6a1888aa6a0349f2a8d74bbc6b7.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 10" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 11">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807643/original_e4d0610c059a6d8ea66d6f4faae6c494.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 11" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 12">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807644/original_e30812f7b1e9cf64cdb93fffcf8a32b9.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 12" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 13">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807645/original_63a151475fa6489108cbda95400d5d38.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 13" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 14">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807646/original_13d63c0d83079e20cb29ef916d524e73.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 14" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 15">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807647/original_b23033695113c0e94c8209ed99a493f0.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 15" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 16">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807648/original_f64c338707a6932a4065d247bcae5c4f.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 16" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 17">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807665/original_43c0d9e49658e417b179e08ea8b79134.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 17" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 18">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807666/original_11eaae27f4200619afd962cfb0c926c3.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 18" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 19">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807667/original_dd81026bd71ef1409de4acce65174af5.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 19" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 20">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807668/original_668934091e030d6c52613b3c4edfe9e4.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 20" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 21">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807669/original_a49c27ca1a96baee070c6d07b51c731a.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 21" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 22">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807670/original_f45451ca0666ce95938845f38512945a.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 22" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 23">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807671/original_41f5f752d607bc80550d8cfaee7ee422.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 23" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 24">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807672/original_9886b40e96b22c1c13737d0528f01870.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 24" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 25">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807673/original_f5031fba93e90bf88ff5967dda48282d.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 25" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 26">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807674/original_92aa4bc411b3a421125184aba42e9011.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 26" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 27">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807675/original_b54de048fe405b8c63f1068973ddbc94.jpeg" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 27" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 28">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807676/original_979203a53f744aa3addc929d5e2ad8fe.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 28" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 29">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807677/original_35f8f4cfd08a3b9135d2f7be200e563f.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 29" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 30">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807705/original_df27b848569a441ca504cfa644ca72f2.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 30" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 31">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807706/original_afb545d2b5840a59e47fdec26a860556.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 31" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 32">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807707/original_8cd3282c78d1fc42a30519eaa9577575.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 32" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 33">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807708/original_36a08bdeedba650d9cad7942364a4659.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 33" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 34">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807709/original_3cd000ebce98c3f30a44b9c5b69c6b96.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 34" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 35">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807710/original_3ce470367b077a0fc6905cd4ce5da65e.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 35" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 36">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807711/original_ce40deaa75feb379535f3d2ad3b326d9.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 36" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 37">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807712/original_cc097c939b7c469df28f3f4b91992716.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 37" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 38">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807713/original_d7f4c0274fac6d99bea7ea2a158b38ca.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 38" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 39">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807714/original_565468cdb8ff7070b086fde21d643c3c.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 39" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card media-primary" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 40">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/49807715/original_e9fc770c1ae192949fde4062b33cfa4e.png" data-sizes="(max-width:640px) 100vw, (max-width:980px) 50vw, 33vw" alt="mesa de poros — registro 40" decoding="async"/>
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="document.title">documento técnico</h2>
+          <p class="section-meta">24.03.2026 / cotas cm / estructura + recubrimiento + ensamble</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano técnico de la mesa de poros con isométricos, vistas en planta, alzados, cortes, detalle de ensamble, fijaciones de acero y recubrimientos de policarbonato celular transparente.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>technical drawing for mesa de poros including isometrics, plan views, elevations, sections, assembly detail, steel fixings and transparent cellular polycarbonate cladding.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan technique de mesa de poros comprenant isométriques, vues en plan, élévations, coupes, détail d’assemblage, fixations en acier et revêtements en polycarbonate cellulaire transparent.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>等角図、平面図、立面図、断面、組立詳細、鋼製固定具、透明中空ポリカーボネート被覆を含む mesa de poros の技術図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head">
+            <span>mesa de poros / plano</span>
+            <a href="https://attachments.are.na/49807430/017019d025b32399974a8e93d67885cf.pdf" target="_blank" rel="noopener" data-i18n="document.open">abrir original ↗</a>
+          </div>
+          <object data="https://attachments.are.na/49807430/017019d025b32399974a8e93d67885cf.pdf" type="application/pdf">
+            <p><a href="https://attachments.are.na/49807430/017019d025b32399974a8e93d67885cf.pdf" target="_blank" rel="noopener">PDF</a></p>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="lightbox.close">cerrar</button>
+    <button class="nav-btn" type="button" data-dir="prev" aria-label="anterior">←</button>
+    <div class="sheet"><img alt=""/></div>
+    <button class="nav-btn" type="button" data-dir="next" aria-label="siguiente">→</button>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const dictionaries = {
+      es: {
+        'nav.system':'sistema','nav.construction':'construcción','nav.poros':'poros','nav.operation':'operación','nav.record':'registro','nav.document':'documento técnico',
+        'system.title':'sistema','system.meta':'objeto autónomo / infraestructura activa / cinco caras operativas',
+        'construction.title':'construcción','construction.meta':'ptr 5/8” / módulo 20.32 cm / policarbonato 1/4”',
+        'poros.title':'poros','poros.meta':'170 puntos / cinco caras / montaje distribuido',
+        'operation.title':'operación','operation.meta':'superficie / soporte técnico / luz interna / transformación',
+        'document.title':'documento técnico','document.open':'abrir original ↗',
+        'fact.type.label':'tipo','fact.type.value':'mesa / matriz operativa',
+        'fact.material.label':'material','fact.material.value':'acero + policarbonato + luz',
+        'fact.structure.label':'estructura','fact.structure.value':'retícula de ptr 5/8”',
+        'fact.faces.label':'caras activas','fact.faces.value':'superior + cuatro costados',
+        'fact.footprint.label':'planta','fact.footprint.value':'152.4 × 91.44 cm',
+        'fact.module.label':'módulo','fact.module.value':'20.32 cm / 8”',
+        'fact.skin.label':'recubrimiento','fact.skin.value':'policarbonato celular 1/4”',
+        'fact.joint.label':'sujeción','fact.joint.value':'ángulos de acero 3/4”',
+        'fn.points.title':'170 puntos','fn.points.copy':'matriz de acoplamientos distribuida en cinco caras activas del volumen.',
+        'fn.capacity.title':'10 kg por punto','fn.capacity.copy':'capacidad aproximada de carga por poro para soportes y dispositivos.',
+        'fn.total.title':'1.7 toneladas','fn.total.copy':'capacidad teórica acumulada en acoplamientos distribuidos.',
+        'fn.elements.title':'sistema abierto','fn.elements.copy':'dispositivos, barras, soportes, cableado y extensiones intercambiables.',
+        'lightbox.close':'cerrar'
+      },
+      en: {
+        'nav.system':'system','nav.construction':'construction','nav.poros':'poros','nav.operation':'operation','nav.record':'record','nav.document':'technical document',
+        'system.title':'system','system.meta':'autonomous object / active infrastructure / five operative faces',
+        'construction.title':'construction','construction.meta':'5/8” steel tube / 20.32 cm module / 1/4” polycarbonate',
+        'poros.title':'poros','poros.meta':'170 points / five faces / distributed mounting',
+        'operation.title':'operation','operation.meta':'surface / technical support / internal light / transformation',
+        'document.title':'technical document','document.open':'open original ↗',
+        'fact.type.label':'type','fact.type.value':'table / operative matrix',
+        'fact.material.label':'material','fact.material.value':'steel + polycarbonate + light',
+        'fact.structure.label':'structure','fact.structure.value':'5/8” steel grid',
+        'fact.faces.label':'active faces','fact.faces.value':'top + four sides',
+        'fact.footprint.label':'footprint','fact.footprint.value':'152.4 × 91.44 cm',
+        'fact.module.label':'module','fact.module.value':'20.32 cm / 8”',
+        'fact.skin.label':'cladding','fact.skin.value':'1/4” cellular polycarbonate',
+        'fact.joint.label':'fixing','fact.joint.value':'3/4” steel angles',
+        'fn.points.title':'170 points','fn.points.copy':'coupling matrix distributed across five active faces of the volume.',
+        'fn.capacity.title':'10 kg per point','fn.capacity.copy':'approximate load capacity per poro for supports and devices.',
+        'fn.total.title':'1.7 tons','fn.total.copy':'theoretical cumulative capacity in distributed couplings.',
+        'fn.elements.title':'open system','fn.elements.copy':'interchangeable devices, rods, supports, cabling and extensions.',
+        'lightbox.close':'close'
+      },
+      fr: {
+        'nav.system':'système','nav.construction':'construction','nav.poros':'poros','nav.operation':'opération','nav.record':'registre','nav.document':'document technique',
+        'system.title':'système','system.meta':'objet autonome / infrastructure active / cinq faces opératives',
+        'construction.title':'construction','construction.meta':'ptr 5/8” / module 20,32 cm / polycarbonate 1/4”',
+        'poros.title':'poros','poros.meta':'170 points / cinq faces / montage distribué',
+        'operation.title':'opération','operation.meta':'surface / support technique / lumière interne / transformation',
+        'document.title':'document technique','document.open':'ouvrir l’original ↗',
+        'fact.type.label':'type','fact.type.value':'table / matrice opérative',
+        'fact.material.label':'matériau','fact.material.value':'acier + polycarbonate + lumière',
+        'fact.structure.label':'structure','fact.structure.value':'trame d’acier 5/8”',
+        'fact.faces.label':'faces actives','fact.faces.value':'dessus + quatre côtés',
+        'fact.footprint.label':'emprise','fact.footprint.value':'152,4 × 91,44 cm',
+        'fact.module.label':'module','fact.module.value':'20,32 cm / 8”',
+        'fact.skin.label':'revêtement','fact.skin.value':'polycarbonate cellulaire 1/4”',
+        'fact.joint.label':'fixation','fact.joint.value':'équerres en acier 3/4”',
+        'fn.points.title':'170 points','fn.points.copy':'matrice d’accrochages répartie sur cinq faces actives du volume.',
+        'fn.capacity.title':'10 kg par point','fn.capacity.copy':'capacité approximative par poro pour supports et dispositifs.',
+        'fn.total.title':'1,7 tonne','fn.total.copy':'capacité théorique cumulée en accrochages distribués.',
+        'fn.elements.title':'système ouvert','fn.elements.copy':'dispositifs, tiges, supports, câblage et extensions interchangeables.',
+        'lightbox.close':'fermer'
+      },
+      jp: {
+        'nav.system':'システム','nav.construction':'構造','nav.poros':'poros','nav.operation':'運用','nav.record':'記録','nav.document':'技術資料',
+        'system.title':'システム','system.meta':'自律した物体 / アクティブなインフラ / 五つの運用面',
+        'construction.title':'構造','construction.meta':'5/8” 角鋼材 / 20.32 cm モジュール / 1/4” ポリカーボネート',
+        'poros.title':'poros','poros.meta':'170 点 / 五面 / 分散取付',
+        'operation.title':'運用','operation.meta':'表面 / 技術支持 / 内部光 / 変換',
+        'document.title':'技術資料','document.open':'原本を開く ↗',
+        'fact.type.label':'種別','fact.type.value':'テーブル / 運用マトリクス',
+        'fact.material.label':'素材','fact.material.value':'鋼 + ポリカーボネート + 光',
+        'fact.structure.label':'構造','fact.structure.value':'5/8” 鋼グリッド',
+        'fact.faces.label':'アクティブな面','fact.faces.value':'上面 + 四側面',
+        'fact.footprint.label':'平面寸法','fact.footprint.value':'152.4 × 91.44 cm',
+        'fact.module.label':'モジュール','fact.module.value':'20.32 cm / 8”',
+        'fact.skin.label':'被覆','fact.skin.value':'1/4” 中空ポリカーボネート',
+        'fact.joint.label':'固定','fact.joint.value':'3/4” スチールアングル',
+        'fn.points.title':'170 点','fn.points.copy':'体積の五つのアクティブな面に分布する接続マトリクス。',
+        'fn.capacity.title':'1点あたり10 kg','fn.capacity.copy':'支持具や装置のための各 poro のおおよその荷重能力。',
+        'fn.total.title':'1.7 トン','fn.total.copy':'分散接続における理論上の累積支持能力。',
+        'fn.elements.title':'オープンシステム','fn.elements.copy':'交換可能な装置、バー、支持具、配線、拡張要素。',
+        'lightbox.close':'閉じる'
+      }
+    };
+
+    const langButtons = Array.from(document.querySelectorAll('[data-lang-btn]'));
+    const langBlocks = Array.from(document.querySelectorAll('[data-lang-block]'));
+
+    function setLanguage(lang) {
+      if (!dictionaries[lang]) lang = 'es';
+      document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
+      langButtons.forEach(btn => btn.classList.toggle('lang-active', btn.dataset.langBtn === lang));
+      langBlocks.forEach(block => block.classList.toggle('active', block.dataset.langBlock === lang));
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const value = dictionaries[lang][el.dataset.i18n];
+        if (value != null) el.textContent = value;
+      });
+      try { localStorage.setItem('xpan-lang', lang); } catch (_) {}
+    }
+
+    langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.langBtn)));
+    let savedLang = 'es';
+    try { savedLang = localStorage.getItem('xpan-lang') || 'es'; } catch (_) {}
+    setLanguage(savedLang);
+
+    const heroFrames = Array.from(document.querySelectorAll('.hero-frame'));
+    const heroDots = Array.from(document.querySelectorAll('.hero-progress span'));
+    let heroIndex = 0;
+    let heroTimer = null;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+
+    function showHero(index) {
+      heroIndex = (index + heroFrames.length) % heroFrames.length;
+      heroFrames.forEach((frame, i) => frame.classList.toggle('is-active', i === heroIndex));
+      heroDots.forEach((dot, i) => dot.classList.toggle('active', i === heroIndex));
+    }
+
+    function startHero() {
+      clearInterval(heroTimer);
+      if (reducedMotion?.matches || heroFrames.length < 2) return;
+      heroTimer = setInterval(() => showHero(heroIndex + 1), 720);
+    }
+
+    showHero(0);
+    startHero();
+    if (reducedMotion?.addEventListener) reducedMotion.addEventListener('change', startHero);
+
+    document.querySelectorAll('.media-card img, .hero-frame').forEach(img => {
+      const markLoaded = () => img.classList.add('loaded');
+      if (img.complete && img.currentSrc) markLoaded();
+      else img.addEventListener('load', markLoaded, { once:true });
+    });
+
+    const lightbox = document.getElementById('xpan-lightbox');
+    const lightboxImg = lightbox.querySelector('.sheet img');
+    const mediaButtons = Array.from(document.querySelectorAll('.media-open'));
+    let lbIndex = -1;
+
+    function originalUrl(img) {
+      return img.getAttribute('data-full') || img.getAttribute('data-src') || img.currentSrc || img.src || '';
+    }
+
+    const LB_WESERV = 'https://images.weserv.nl/?url=';
+    const LB_HOST_MATCH = /(?:cloudfront\.net|attachments\.are\.na)/i;
+    const LB_WIDTHS = [960, 1600, 2200];
+    const lbConnection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const lbSaveData = Boolean(lbConnection?.saveData);
+
+    function lightboxWidth() {
+      const cssWidth = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const wanted = cssWidth * dpr;
+      const ceiling = lbSaveData ? 960 : 2200;
+      return LB_WIDTHS.find(width => width >= wanted && width <= ceiling) || ceiling;
+    }
+
+    function optimizedLightboxUrl(img) {
+      const original = originalUrl(img);
+      if (!original || !/^https?:\/\//i.test(original)) return original;
+      if (!LB_HOST_MATCH.test(original)) return original;
+      const clean = original.replace(/^https?:\/\//, '');
+      const width = lightboxWidth();
+      return `${LB_WESERV}${encodeURIComponent(clean)}&w=${width}&q=78&we`;
+    }
+
+    function preloadLightbox(index) {
+      if (!mediaButtons.length || lbSaveData) return;
+      [-1, 1].forEach(offset => {
+        const next = (index + offset + mediaButtons.length) % mediaButtons.length;
+        const img = mediaButtons[next].querySelector('img');
+        const url = optimizedLightboxUrl(img);
+        if (url) {
+          const pre = new Image();
+          pre.decoding = 'async';
+          pre.src = url;
+        }
+      });
+    }
+
+    function openLightbox(index) {
+      if (!mediaButtons.length) return;
+      lbIndex = (index + mediaButtons.length) % mediaButtons.length;
+      const img = mediaButtons[lbIndex].querySelector('img');
+      lightboxImg.removeAttribute('src');
+      lightboxImg.alt = img.alt || '';
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden','false');
+      document.documentElement.classList.add('lb-open');
+      document.body.classList.add('lb-open');
+
+      requestAnimationFrame(() => {
+        lightboxImg.src = optimizedLightboxUrl(img);
+        preloadLightbox(lbIndex);
+      });
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden','true');
+      lightboxImg.removeAttribute('src');
+      document.documentElement.classList.remove('lb-open');
+      document.body.classList.remove('lb-open');
+    }
+
+    mediaButtons.forEach((button, index) => button.addEventListener('click', () => openLightbox(index)));
+    lightbox.querySelector('[data-lb-close]').addEventListener('click', closeLightbox);
+    lightbox.querySelector('[data-dir="prev"]').addEventListener('click', () => openLightbox(lbIndex - 1));
+    lightbox.querySelector('[data-dir="next"]').addEventListener('click', () => openLightbox(lbIndex + 1));
+    lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+
+    lightboxImg.addEventListener('click', event => {
+      if (!(event.altKey || event.ctrlKey || event.metaKey) || lbIndex < 0) return;
+      const img = mediaButtons[lbIndex].querySelector('img');
+      const original = originalUrl(img);
+      if (!original) return;
+      event.preventDefault();
+      event.stopPropagation();
+      window.open(original, '_blank', 'noopener,noreferrer');
+    });
+
+    let swipeStartX = null;
+    let swipeStartY = null;
+    lightbox.addEventListener('touchstart', event => {
+      const t = event.touches[0];
+      if (!t) return;
+      swipeStartX = t.clientX;
+      swipeStartY = t.clientY;
+    }, { passive:true });
+
+    lightbox.addEventListener('touchend', event => {
+      if (swipeStartX == null || swipeStartY == null) return;
+      const t = event.changedTouches[0];
+      if (!t) return;
+      const dx = t.clientX - swipeStartX;
+      const dy = t.clientY - swipeStartY;
+      swipeStartX = swipeStartY = null;
+      if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
+      openLightbox(lbIndex + (dx < 0 ? 1 : -1));
+    }, { passive:true });
+
+    document.addEventListener('keydown', event => {
+      if (!lightbox.classList.contains('open')) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') openLightbox(lbIndex - 1);
+      if (event.key === 'ArrowRight') openLightbox(lbIndex + 1);
+    });
+  })();
+  </script>
+</body>
+</html>
