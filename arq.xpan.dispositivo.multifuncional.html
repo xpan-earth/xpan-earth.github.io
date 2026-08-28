@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>dispositivo multifuncional — xpan</title>
+  <meta name="description" content="dispositivo multifuncional — interfaz del sistema de poros para integrar tablets, espejos, superficies reflejantes y superficies planas. pza.10 / octubre 2025."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preconnect" href="https://images.weserv.nl" crossorigin>
+  <link rel="dns-prefetch" href="https://images.weserv.nl">
+
+  <style>
+    :root{
+      --bg:#0B0D0F;--fg:#E1E4E7;--dim:#9DA4AB;--line:#292E33;--grid:#181B1F;--panel:#101316;
+      --accent:#1860FF;--pad-x:clamp(16px,4vw,52px);--header-h:64px;--maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+    @media(prefers-color-scheme:light){
+      :root{--bg:#fff;--fg:#0B0D0F;--dim:#505860;--line:#D8DEE3;--grid:#EDF0F3;--panel:#F7F8FA}
+      header{mix-blend-mode:normal;color:var(--fg)}header img{filter:none;mix-blend-mode:normal}
+      .chip{border-color:var(--line);color:var(--dim)}.chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg{mix-blend-mode:normal;color:var(--fg)}.study-card,.usage-stage,.pdf-card object{background:#F5F6F7}
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    html,body{margin:0;min-height:100%}
+    body{background:var(--bg);color:var(--fg);font-family:var(--ui);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    body.lb-open{overflow:hidden}
+    a{color:inherit;text-decoration:none}img,object{max-width:100%}button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;top:12px;left:var(--pad-x);right:var(--pad-x);height:var(--header-h);
+      display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:100;
+      mix-blend-mode:difference;color:#fff;
+    }
+    header img{width:50px;height:auto;display:block;mix-blend-mode:difference;filter:invert(1);-webkit-user-drag:none;user-select:none}
+    .stack{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .chip{
+      appearance:none;display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.38);
+      background:transparent;color:rgba(255,255,255,.72);padding:8px 10px;font:600 11px/1 var(--mono);
+      text-transform:lowercase;border-radius:0;cursor:default;
+    }
+    .chip[data-lang-btn]{cursor:pointer}.chip.lang-active{color:#fff;border-color:#fff}
+
+    .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+      linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px}
+    .crosshair{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.16;background:
+      linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+      linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px))}
+    .grain{position:fixed;inset:-35%;z-index:0;pointer-events:none;opacity:.075;mix-blend-mode:overlay;background:
+      repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 3px),
+      repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 1px,transparent 1px 4px)}
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 24px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:28px var(--pad-x) 82px;border-top:1px solid var(--line)}
+    .neg{position:relative;z-index:5;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}.lang-block.active{display:block}
+
+    .intro{padding-top:36px;padding-bottom:88px}
+    .plate{
+      display:grid;gap:4px;width:fit-content;max-width:100%;border:1px solid var(--line);padding:8px 10px;
+      color:var(--dim);font:600 11px/1.35 var(--mono);text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);margin-bottom:20px;
+    }
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--dim)}
+    h1{margin:0 0 14px;font:500 clamp(42px,8vw,112px)/.88 var(--ui);letter-spacing:-.07em;text-transform:lowercase}
+    .subtitle{margin:0 0 20px;max-width:900px;font:500 clamp(15px,2vw,22px)/1.28 var(--ui);letter-spacing:-.025em}
+    .intro-text{max-width:860px;display:grid;gap:11px;font:400 14px/1.67 var(--ui)}.intro-text p{margin:0}
+    .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);margin-top:34px}
+    .fact{padding:14px;min-height:90px;border-right:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .fact:last-child{border-right:0}.fact b{display:block;margin-bottom:9px;font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+    .fact span{display:block;font:500 13px/1.4 var(--ui)}
+
+    /* 18-image object study */
+    .study{max-width:var(--maxw);margin:0 auto;padding:12px var(--pad-x) 110px;border-top:1px solid var(--line)}
+    .study-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .study-card{margin:0;border:1px solid var(--line);background:transparent;overflow:hidden;min-height:0}
+    .study-card.hero{grid-column:1/-1}
+    .study-card.hero-narrow{grid-column:2/12}
+    .study-card.pair-left{grid-column:1/7}
+    .study-card.pair-right{grid-column:7/13}
+    .study-card.offset-left{grid-column:1/9}
+    .study-card.offset-right{grid-column:5/13}
+    .study-card.triplet{grid-column:span 4}
+    .media-open{display:block;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:pointer}
+    .study-card img{
+      display:block;width:100%;height:auto;min-height:0;max-height:none;object-fit:contain;background:transparent;
+      opacity:0;transform:translateY(5px);transition:opacity .28s ease,transform .28s ease;
+    }
+    .study-card img.loaded,.study-card img[data-proxied]{opacity:1;transform:none}
+
+    /* transition into the historical usage field */
+    .usage-lead{max-width:var(--maxw);margin:0 auto;padding:62px var(--pad-x) 48px;border-top:1px solid var(--line)}
+    .usage-lead-inner{display:flex;justify-content:space-between;gap:24px;align-items:flex-end}
+    .usage-lead p{margin:0;max-width:700px;font:500 clamp(18px,3vw,42px)/1.05 var(--ui);letter-spacing:-.045em;text-transform:lowercase}
+    .usage-lead .count{font:600 11px/1.45 var(--mono);letter-spacing:.1em;color:var(--dim);white-space:nowrap}
+
+    /* surface field — stable virtual depth corridor */
+    .usage-scroll{position:relative;max-width:none;border-top:1px solid var(--line);background:var(--bg)}
+    .usage-sticky{position:sticky;top:0;height:100svh;min-height:620px;overflow:hidden;background:var(--bg);isolation:isolate}
+    .usage-field{position:absolute;inset:0;overflow:hidden;background:var(--bg);contain:layout paint style}
+    .usage-field::before,.usage-field::after{content:"";position:absolute;z-index:0;pointer-events:none;background:var(--line);opacity:.32}
+    .usage-field::before{left:50%;top:0;bottom:0;width:1px}
+    .usage-field::after{top:50%;left:0;right:0;height:1px}
+    .usage-gates{position:absolute;inset:0;z-index:1;pointer-events:none}
+    .usage-gate{position:absolute;left:50%;top:50%;display:block;transform:translate(-50%,-50%);border:1px solid var(--line)}
+    .usage-gate.g1{width:min(14vw,210px);height:min(22vh,220px);opacity:.64}
+    .usage-gate.g2{width:min(42vw,640px);height:min(55vh,560px);opacity:.34}
+    .usage-gate.g3{width:min(78vw,1180px);height:min(82vh,820px);opacity:.17}
+    .usage-origin{position:absolute;left:50%;top:50%;z-index:3;width:9px;height:9px;transform:translate(-50%,-50%);border:1px solid var(--accent);pointer-events:none}
+    .usage-origin::before,.usage-origin::after{content:"";position:absolute;background:var(--accent);opacity:.74}
+    .usage-origin::before{left:3px;top:-22px;width:1px;height:51px}
+    .usage-origin::after{left:-22px;top:3px;width:51px;height:1px}
+    .usage-pool{position:absolute;inset:0;z-index:4;pointer-events:none}
+    .usage-plane{position:absolute;left:50%;top:50%;margin:0;width:var(--plane-w,44vw);opacity:0;pointer-events:none;transform-origin:center center;will-change:transform,opacity;contain:layout paint;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+    .usage-plane.ready{opacity:var(--plane-opacity,0)}
+    .usage-plane.interactive{pointer-events:auto}
+    .usage-plane button{display:block;width:100%;padding:0;margin:0;border:0;background:transparent;cursor:pointer;position:relative}
+    .usage-frame{display:block;width:100%;aspect-ratio:3/2;border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 93%,var(--panel));overflow:hidden;transition:border-color 120ms linear,box-shadow 120ms linear}
+    .usage-plane.ready .usage-frame{aspect-ratio:auto;background:transparent}
+    .usage-plane img{display:block;width:100%;height:auto;background:transparent;-webkit-user-drag:none;user-select:none}
+    .usage-plane.is-focus .usage-frame{border-color:color-mix(in oklab,var(--fg) 72%,var(--line));box-shadow:0 20px 62px rgba(0,0,0,.24)}
+    .usage-number{position:absolute;right:0;bottom:-15px;font:600 8px/1 var(--mono);letter-spacing:.1em;color:var(--dim);pointer-events:none}
+    .usage-plane.is-focus .usage-number{color:var(--fg)}
+    .usage-scan{position:absolute;left:0;right:0;top:50%;z-index:10;height:1px;background:linear-gradient(90deg,transparent,var(--accent) 25%,var(--accent) 75%,transparent);opacity:.23;pointer-events:none;will-change:transform}
+    .usage-meta{position:absolute;top:max(18px,env(safe-area-inset-top));left:var(--pad-x);right:var(--pad-x);z-index:20;display:flex;justify-content:space-between;gap:20px;mix-blend-mode:difference;color:#fff;pointer-events:none}
+    .usage-meta span{font:600 10px/1.4 var(--mono);letter-spacing:.11em;text-transform:lowercase}
+    .usage-progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--line);z-index:20;pointer-events:none}
+    .usage-progress span{display:block;height:100%;width:0;background:var(--fg);will-change:width}
+    /* plan */
+    .plan{max-width:var(--maxw);margin:0 auto;padding:78px var(--pad-x) 86px;border-top:1px solid var(--line)}
+    .plan-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:22px}
+    .plan-head h2{margin:0;font:500 clamp(22px,3vw,44px)/1 var(--ui);letter-spacing:-.045em;text-transform:lowercase}
+    .plan-head span{font:600 10px/1.45 var(--mono);color:var(--dim);letter-spacing:.1em;text-transform:lowercase}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:76vh;min-height:580px;display:block;background:#050608}
+
+    #xpan-lightbox{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(5,7,10,.88);backdrop-filter:blur(10px) saturate(120%);-webkit-backdrop-filter:blur(10px) saturate(120%)}
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{width:min(96vw,1800px);height:min(94vh,1200px);display:grid;place-items:center;border:1px solid var(--line);background:#000;padding:6px;overflow:hidden}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;user-select:none;-webkit-user-drag:none}
+    #xpan-lightbox [data-lb-close]{position:absolute;top:max(14px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));border:1px solid var(--line);background:rgba(5,7,10,.82);color:var(--dim);font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.14em;padding:7px 10px;cursor:pointer;z-index:3}
+    #xpan-lightbox .nav-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:3;border:1px solid var(--line);background:rgba(5,7,10,.76);color:var(--dim);width:40px;height:40px;display:grid;place-items:center;cursor:pointer;font:600 16px/1 var(--mono)}
+    #xpan-lightbox .prev{left:18px}#xpan-lightbox .next{right:18px}
+
+    @media(max-width:980px){
+      .facts{grid-template-columns:repeat(2,minmax(0,1fr))}.fact:nth-child(2){border-right:0}.fact:nth-child(-n+2){border-bottom:1px solid var(--line)}
+      .study-card.hero-narrow{grid-column:1/-1}
+      .study-card.offset-left{grid-column:1/8}.study-card.offset-right{grid-column:6/13}
+      .study-card.triplet{grid-column:span 6}
+    }
+    @media(max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}header img{width:44px}.chip{font-size:10px;padding:7px 8px}
+      main{padding-top:86px}.section{padding:22px var(--pad-x) 58px}
+      .facts{grid-template-columns:1fr}.fact,.fact:nth-child(2){border-right:0;border-bottom:1px solid var(--line)}.fact:last-child{border-bottom:0}
+      .study{padding:10px var(--pad-x) 72px}.study-grid{gap:10px}
+      .study-card.hero,.study-card.hero-narrow,.study-card.pair-left,.study-card.pair-right,.study-card.offset-left,.study-card.offset-right,.study-card.triplet{grid-column:1/-1}
+            .usage-lead{padding:46px var(--pad-x) 36px}.usage-lead-inner{align-items:flex-start;flex-direction:column}.usage-lead p{font-size:clamp(24px,9vw,42px)}
+      .usage-sticky{min-height:100svh}
+      .usage-gate.g1{width:22vw;height:16vh}
+      .usage-gate.g2{width:58vw;height:46vh}
+      .usage-gate.g3{width:90vw;height:76vh}
+      .plan{padding:58px var(--pad-x)}.plan-head{align-items:flex-start;flex-direction:column}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .sheet{width:100vw;height:100dvh;border:0;padding:0}#xpan-lightbox img{max-width:100vw;max-height:100dvh}
+      #xpan-lightbox .prev{left:max(8px,env(safe-area-inset-left))}#xpan-lightbox .next{right:max(8px,env(safe-area-inset-right))}
+    }
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan"/></a>
+      <div class="chip">dispositivo multifuncional</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="language selector">
+      <button class="chip lang-active" type="button" data-lang-btn="es">es</button>
+      <button class="chip" type="button" data-lang-btn="en">en</button>
+      <button class="chip" type="button" data-lang-btn="fr">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp">jp</button>
+    </div>
+  </header>
+  <div class="grain" aria-hidden="true"></div><div class="bg-grid" aria-hidden="true"></div><div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section intro">
+      <div class="neg">
+        <div class="plate">
+          <span>pza.10 / dispositivo multifuncional</span>
+          <span>xpan / octubre 2025</span>
+          <span>sistema de poros / interfaz para superficies planas</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros / interfaz / soporte / superficies</p>
+          <h1>dispositivo<br>multifuncional</h1>
+          <p class="subtitle">interfaz desarrollada para el sistema de poros que permite incorporar tablets, espejos, superficies reflejantes y superficies planas como componentes activos de la estructura.</p>
+          <div class="intro-text">
+            <p>dispositivo multifuncional es una interfaz desarrollada para el sistema de poros que permite incorporar superficies planas externas a su estructura. mediante dos brazos regulables, el dispositivo recibe y mantiene tablets, espejos, superficies reflejantes, paneles y otros planos, integrándolos directamente a la matriz de poros.</p>
+            <p>el dispositivo establece una transición entre la matriz de poros y elementos desarrollados como superficies independientes. cada plano puede ser posicionado, retirado, sustituido o reorientado sin modificar la estructura principal, ampliando el rango de funciones que pueden incorporarse al sistema.</p>
+            <p>su capacidad para recibir distintos formatos y funciones lo ha convertido en uno de los dispositivos de uso más recurrente dentro del sistema de poros. su presencia en múltiples proyectos permite observar una misma interfaz operando en escalas, contextos y configuraciones distintas.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system / interface / support / surfaces</p>
+          <h1>multifunctional<br>device</h1>
+          <p class="subtitle">an interface developed for the poros system that incorporates tablets, mirrors, reflective surfaces and flat surfaces as active components of the structure.</p>
+          <div class="intro-text">
+            <p>multifunctional device is an interface developed for the poros system to incorporate external flat surfaces into its structure. two adjustable arms receive and hold tablets, mirrors, reflective surfaces, panels and other planes, integrating them directly into the poros matrix.</p>
+            <p>the device establishes a transition between the poros matrix and elements developed as independent surfaces. each plane can be positioned, removed, replaced or reoriented while preserving the main structure, expanding the range of functions that can be incorporated into the system.</p>
+            <p>its ability to receive different formats and functions has made it one of the most recurrently used devices within the poros system. its presence across multiple projects shows the same interface operating at different scales, contexts and configurations.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système poros / interface / support / surfaces</p>
+          <h1>dispositif<br>multifonctionnel</h1>
+          <p class="subtitle">interface développée pour le système poros permettant d’intégrer tablettes, miroirs, surfaces réfléchissantes et surfaces planes comme composants actifs de la structure.</p>
+          <div class="intro-text">
+            <p>le dispositif multifonctionnel est une interface développée pour le système poros afin d’intégrer des surfaces planes externes à sa structure. deux bras réglables reçoivent et maintiennent tablettes, miroirs, surfaces réfléchissantes, panneaux et autres plans, en les intégrant directement à la matrice poros.</p>
+            <p>le dispositif établit une transition entre la matrice poros et des éléments développés comme surfaces indépendantes. chaque plan peut être positionné, retiré, remplacé ou réorienté tout en préservant la structure principale, élargissant ainsi l’éventail des fonctions intégrables au système.</p>
+            <p>sa capacité à recevoir différents formats et fonctions en a fait l’un des dispositifs les plus récurrents du système poros. sa présence dans de multiples projets permet d’observer une même interface opérant à différentes échelles, dans différents contextes et configurations.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros システム / インターフェース / 支持 / 平面</p>
+          <h1>multifunctional<br>device</h1>
+          <p class="subtitle">タブレット、鏡、反射面、各種の平面を構造の能動的な構成要素として組み込むために、poros システム用に開発されたインターフェース。</p>
+          <div class="intro-text">
+            <p>multifunctional device は、外部の平面を poros システムの構造へ組み込むために開発されたインターフェースである。二本の調整可能なアームがタブレット、鏡、反射面、パネルなどを保持し、それらを poros のマトリクスへ直接接続する。</p>
+            <p>このデバイスは、poros のマトリクスと独立した平面としてつくられた要素の間を接続する。各平面は主構造を保ったまま、位置変更、取り外し、交換、方向調整が可能であり、システムに組み込める機能の範囲を拡張する。</p>
+            <p>異なる形式と機能を受け入れる能力により、poros システムの中でも特に使用頻度の高いデバイスの一つとなっている。複数のプロジェクトに現れることで、同じインターフェースが異なるスケール、文脈、構成で機能する様子を確認できる。</p>
+          </div>
+        </div>
+
+        <div class="facts">
+          <div class="fact"><b data-i18n="fact.system.label">sistema</b><span data-i18n="fact.system.value">poros</span></div>
+          <div class="fact"><b data-i18n="fact.use.label">función</b><span data-i18n="fact.use.value">integración de superficies planas</span></div>
+          <div class="fact"><b data-i18n="fact.material.label">construcción</b><span data-i18n="fact.material.value">acero al carbón / varilla roscada</span></div>
+          <div class="fact"><b data-i18n="fact.date.label">plano</b><span data-i18n="fact.date.value">02.10.2025 / pza.10</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="study" aria-label="registro del dispositivo">
+      <div class="study-grid">
+
+        <figure class="study-card hero">
+          <button class="media-open" type="button" data-study-index="0" aria-label="abrir imagen 1">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910085/original_d67adde6fd02359faefdbb163015356a.jpeg"
+              data-sizes="100vw"
+              alt="dispositivo multifuncional — registro 01"
+              decoding="async"
+              loading="lazy" fetchpriority="high"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card pair-left">
+          <button class="media-open" type="button" data-study-index="1" aria-label="abrir imagen 2">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910084/original_c79e288b7d1781b3bc98478295bb4be1.jpeg"
+              data-sizes="(max-width:640px) 100vw, 50vw"
+              alt="dispositivo multifuncional — registro 02"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card pair-right">
+          <button class="media-open" type="button" data-study-index="2" aria-label="abrir imagen 3">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910083/original_53ace5401fa8945b546151bd40d181e2.jpeg"
+              data-sizes="(max-width:640px) 100vw, 50vw"
+              alt="dispositivo multifuncional — registro 03"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card offset-left">
+          <button class="media-open" type="button" data-study-index="3" aria-label="abrir imagen 4">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910082/original_29141af0a3a531419ac8735ce1f48c72.jpeg"
+              data-sizes="(max-width:640px) 100vw, 68vw"
+              alt="dispositivo multifuncional — registro 04"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card offset-right">
+          <button class="media-open" type="button" data-study-index="4" aria-label="abrir imagen 5">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910081/original_1758018aa0b410df47c17e985f7ed86e.jpeg"
+              data-sizes="(max-width:640px) 100vw, 68vw"
+              alt="dispositivo multifuncional — registro 05"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card triplet">
+          <button class="media-open" type="button" data-study-index="5" aria-label="abrir imagen 6">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910075/original_c064ac6660daf2fefef40fe9ea61495b.jpeg"
+              data-sizes="(max-width:640px) 100vw, 33vw"
+              alt="dispositivo multifuncional — registro 06"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card triplet">
+          <button class="media-open" type="button" data-study-index="6" aria-label="abrir imagen 7">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910074/original_8692f2e0f105c34719a8e3747e94f923.jpeg"
+              data-sizes="(max-width:640px) 100vw, 33vw"
+              alt="dispositivo multifuncional — registro 07"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card triplet">
+          <button class="media-open" type="button" data-study-index="7" aria-label="abrir imagen 8">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910073/original_777fc8a9c6c82b666e7dac066b6c6f96.jpeg"
+              data-sizes="(max-width:640px) 100vw, 33vw"
+              alt="dispositivo multifuncional — registro 08"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card hero">
+          <button class="media-open" type="button" data-study-index="8" aria-label="abrir imagen 9">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910072/original_a1054d4f4733a8de6a865d418ee828d0.jpeg"
+              data-sizes="100vw"
+              alt="dispositivo multifuncional — registro 09"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card pair-left">
+          <button class="media-open" type="button" data-study-index="9" aria-label="abrir imagen 10">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910071/original_8f0f677adc888eee06b9602f6bea5008.jpeg"
+              data-sizes="(max-width:640px) 100vw, 50vw"
+              alt="dispositivo multifuncional — registro 10"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card pair-right">
+          <button class="media-open" type="button" data-study-index="10" aria-label="abrir imagen 11">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910070/original_2cd7b3e510e295eba4abdbd6a8291c73.jpeg"
+              data-sizes="(max-width:640px) 100vw, 50vw"
+              alt="dispositivo multifuncional — registro 11"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card offset-right">
+          <button class="media-open" type="button" data-study-index="11" aria-label="abrir imagen 12">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910069/original_0fa24a6e87207d64419c7f4aae720c0e.jpeg"
+              data-sizes="(max-width:640px) 100vw, 68vw"
+              alt="dispositivo multifuncional — registro 12"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card offset-left">
+          <button class="media-open" type="button" data-study-index="12" aria-label="abrir imagen 13">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910068/original_bdecb5e67dfc4b199d527d528dd2b5ad.jpeg"
+              data-sizes="(max-width:640px) 100vw, 68vw"
+              alt="dispositivo multifuncional — registro 13"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card hero-narrow">
+          <button class="media-open" type="button" data-study-index="13" aria-label="abrir imagen 14">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910067/original_e9eff8b5134b4c70ff8cd8c30c8fb39a.jpeg"
+              data-sizes="(max-width:640px) 100vw, 76vw"
+              alt="dispositivo multifuncional — registro 14"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card triplet">
+          <button class="media-open" type="button" data-study-index="14" aria-label="abrir imagen 15">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910066/original_70a9b83bf1c3cad5d46ca0df96059570.jpeg"
+              data-sizes="(max-width:640px) 100vw, 33vw"
+              alt="dispositivo multifuncional — registro 15"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card triplet">
+          <button class="media-open" type="button" data-study-index="15" aria-label="abrir imagen 16">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910065/original_b4ae4412e9115436d96b64bdbe4c998d.jpeg"
+              data-sizes="(max-width:640px) 100vw, 33vw"
+              alt="dispositivo multifuncional — registro 16"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card triplet">
+          <button class="media-open" type="button" data-study-index="16" aria-label="abrir imagen 17">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910064/original_bc8dec7ad770afc917e9bbacb6a582e1.jpeg"
+              data-sizes="(max-width:640px) 100vw, 33vw"
+              alt="dispositivo multifuncional — registro 17"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+
+        <figure class="study-card hero">
+          <button class="media-open" type="button" data-study-index="17" aria-label="abrir imagen 18">
+            <img
+              data-src="https://d2w9rnfcy7mm78.cloudfront.net/49910063/original_a16d88ca265e8b01b9d1ee12e37f14b4.jpeg"
+              data-sizes="100vw"
+              alt="dispositivo multifuncional — registro 18"
+              decoding="async"
+              loading="lazy"
+            />
+          </button>
+        </figure>
+      </div>
+    </section>
+
+    <section class="usage-lead">
+      <div class="usage-lead-inner neg">
+        <p data-i18n="usage.lead">una misma interfaz operando dentro de múltiples sistemas, escalas y configuraciones.</p>
+        <span class="count" data-i18n="usage.count">319 registros</span>
+      </div>
+    </section>
+
+    <section class="usage-scroll" id="usageScroll" aria-label="registros del dispositivo en uso">
+      <div class="usage-sticky">
+        <div class="usage-field" id="usageField">
+          <div class="usage-gates" aria-hidden="true">
+            <i class="usage-gate g1"></i>
+            <i class="usage-gate g2"></i>
+            <i class="usage-gate g3"></i>
+          </div>
+          <div class="usage-origin" id="usageOrigin" aria-hidden="true"></div>
+          <div class="usage-pool" id="usagePool"></div>
+          <div class="usage-scan" id="usageScan" aria-hidden="true"></div>
+        </div>
+        <div class="usage-meta">
+          <span>pza.10 / poros</span>
+          <span id="usageCounter">001 / 319</span>
+        </div>
+        <div class="usage-progress"><span id="usageProgress"></span></div>
+      </div>
+    </section>
+
+    <section class="plan">
+      <div class="plan-head neg">
+        <h2 data-i18n="plan.title">pza.10 / plano técnico</h2>
+        <span>02.10.2025 / 4 páginas</span>
+      </div>
+      <article class="pdf-card">
+        <div class="pdf-head">
+          <span>dispositivo multifuncional / pza.10</span>
+          <a href="https://attachments.are.na/49908574/1d6a4d78804835d8539a4386aad8f9ec.pdf" target="_blank" rel="noopener" data-i18n="plan.open">abrir original ↗</a>
+        </div>
+        <object data="https://attachments.are.na/49908574/1d6a4d78804835d8539a4386aad8f9ec.pdf" type="application/pdf">
+          <p><a href="https://attachments.are.na/49908574/1d6a4d78804835d8539a4386aad8f9ec.pdf" target="_blank" rel="noopener">PDF</a></p>
+        </object>
+      </article>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="lightbox.close">cerrar</button>
+    <button class="nav-btn prev" type="button" data-dir="prev" aria-label="anterior">←</button>
+    <div class="sheet"><img alt=""/></div>
+    <button class="nav-btn next" type="button" data-dir="next" aria-label="siguiente">→</button>
+  </div>
+
+  <script>
+  (()=>{
+    'use strict';
+
+    const DICT={
+      es:{
+        'fact.system.label':'sistema','fact.system.value':'poros',
+        'fact.use.label':'función','fact.use.value':'integración de superficies planas',
+        'fact.material.label':'construcción','fact.material.value':'acero al carbón / varilla roscada',
+        'fact.date.label':'plano','fact.date.value':'02.10.2025 / pza.10',
+        'usage.lead':'una misma interfaz operando dentro de múltiples sistemas, escalas y configuraciones.',
+        'usage.count':'319 registros','usage.meta':'319 registros / múltiples proyectos',
+        'plan.title':'pza.10 / plano técnico','plan.open':'abrir original ↗','lightbox.close':'cerrar'
+      },
+      en:{
+        'fact.system.label':'system','fact.system.value':'poros',
+        'fact.use.label':'function','fact.use.value':'integration of flat surfaces',
+        'fact.material.label':'construction','fact.material.value':'carbon steel / threaded rod',
+        'fact.date.label':'drawing','fact.date.value':'02.10.2025 / pza.10',
+        'usage.lead':'the same interface operating across multiple systems, scales and configurations.',
+        'usage.count':'319 records','usage.meta':'319 records / multiple projects',
+        'plan.title':'pza.10 / technical drawing','plan.open':'open original ↗','lightbox.close':'close'
+      },
+      fr:{
+        'fact.system.label':'système','fact.system.value':'poros',
+        'fact.use.label':'fonction','fact.use.value':'intégration de surfaces planes',
+        'fact.material.label':'construction','fact.material.value':'acier au carbone / tige filetée',
+        'fact.date.label':'plan','fact.date.value':'02.10.2025 / pza.10',
+        'usage.lead':'une même interface opérant dans plusieurs systèmes, échelles et configurations.',
+        'usage.count':'319 enregistrements','usage.meta':'319 enregistrements / plusieurs projets',
+        'plan.title':'pza.10 / plan technique','plan.open':'ouvrir l’original ↗','lightbox.close':'fermer'
+      },
+      jp:{
+        'fact.system.label':'システム','fact.system.value':'poros',
+        'fact.use.label':'機能','fact.use.value':'平面の統合',
+        'fact.material.label':'構造','fact.material.value':'炭素鋼 / ねじ棒',
+        'fact.date.label':'図面','fact.date.value':'02.10.2025 / pza.10',
+        'usage.lead':'同じインターフェースが複数のシステム、スケール、構成の中で機能する。',
+        'usage.count':'319件','usage.meta':'319件 / 複数プロジェクト',
+        'plan.title':'pza.10 / 技術図面','plan.open':'原本を開く ↗','lightbox.close':'閉じる'
+      }
+    };
+
+    const langButtons=[...document.querySelectorAll('[data-lang-btn]')];
+    const langBlocks=[...document.querySelectorAll('[data-lang-block]')];
+    function setLang(lang){
+      if(!DICT[lang])lang='es';
+      document.documentElement.lang=lang==='jp'?'ja':lang;
+      langButtons.forEach(b=>b.classList.toggle('lang-active',b.dataset.langBtn===lang));
+      langBlocks.forEach(b=>b.classList.toggle('active',b.dataset.langBlock===lang));
+      document.querySelectorAll('[data-i18n]').forEach(el=>{const v=DICT[lang][el.dataset.i18n];if(v!=null)el.textContent=v});
+      try{localStorage.setItem('xpan-lang',lang)}catch(_e){}
+    }
+    langButtons.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.langBtn)));
+    let saved='es';try{saved=localStorage.getItem('xpan-lang')||'es'}catch(_e){}setLang(saved);
+
+    document.querySelectorAll('.study-card img').forEach(img=>{
+      const mark=()=>img.classList.add('loaded');
+      if(img.complete&&(img.currentSrc||img.src))mark();else img.addEventListener('load',mark,{once:true});
+    });
+
+    const USAGE=["https://d2w9rnfcy7mm78.cloudfront.net/49908718/original_de85ae843eeed1c2a5ae2f00635c5045.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908719/original_289ea42ebdc3e06e5b8f84eaa392c7dd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908720/original_bbdf5c9a8356e392acca26aacee6c289.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908721/original_cfc87e5cc66029a45f374a47da552745.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908722/original_dd04876283f8bc0d014322b493221750.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908723/original_43e444c4ed82c772370e4fc1ef5cc4c1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908724/original_d241fb50d1f87f622efe5e37726e85e4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908725/original_f202ab0e5fd31ad782b85d41f8146d04.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908726/original_9c622e68d9c7b1e3644d411f9090a50a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908727/original_d1981931ffbcc07b53defe75c7045403.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908728/original_9bef99134e6fb427bdcfc6888e9f5174.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908729/original_5ee4ef522d3640089c7347d1c0b8abfa.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908730/original_5f757e369fb19707a3464f0df18fb593.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908731/original_4362a34c20afc24f1eab5fa5bead1ac6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908732/original_206d306355929535e33b9606cc1dcae9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908733/original_11cbbe1932a9ebebf919638b807b740a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908734/original_a0204b0070ebfab2db4fd540654829ad.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908735/original_bfa4645deb73e47f20ce38df94672b0b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908736/original_c2fd547d0773d24f51524b35184201d6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908737/original_a563f21b5253560348a3aa1c18caa43b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908738/original_5e3dd81874794f202cad433c1c3bd488.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908739/original_318e94ad02d4722d1d805d3f63b264ef.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908740/original_da777f27e190f41e7103480572f07c2f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908741/original_1be5e400261c78beb81c731a43cf7c29.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908742/original_66f1214c4d0b5a4c597fbff4a8751e67.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908743/original_6d9ce27434ea77ff570b0296b7a110d8.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908744/original_14e9577f5b84e738109030018beadf2b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908745/original_d65487cf7b1591254b7bcd48c7a1292b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908746/original_2dadb20110c2420d49397b062ec2a05e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908747/original_3d5eb03a9e67ce2b583bdbcac83f2661.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908748/original_35200b9cc8d8ea60b79f56d11688eb1e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908749/original_f5ef8cea0ad2e02d9994f7137871965b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908750/original_5a796209b06f69673b153b142e261922.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908751/original_351d3ec669072f4e2c958c6d14e68f75.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908752/original_ca28a1acc67857c4c9c2e9760a867a27.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908753/original_a664b19e12d27ed7af54b73639d9f597.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908754/original_496ece5acd12474bf9e95384956d472e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908755/original_50b209c0b504b2b87fb75c99d9f7a92a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908756/original_78b866801e8371b2c31fbd69c8a29890.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908757/original_2a7a71a0d8a1bf4b86f55be975b344e5.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908758/original_f818f9d7927e9d61650aeda0186edd0b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908759/original_37bdff45dd907925f9e213ab6ba532a7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908760/original_26bcba43eaacff73a85bf39d693e0f5c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908761/original_2d78a04cb873cd01cccb077a1148c4c7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908762/original_f69d052ea776d87efe27856eb6f74f89.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908763/original_4b07143b60b4f92d7a837c3f8a66f075.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908764/original_be9afdcdceeca413f0d510d450f96a86.webp","https://d2w9rnfcy7mm78.cloudfront.net/49908765/original_50ec8044652425e5cde1cd7b47442df9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909003/original_c2798b19fa500cd87c31ae5888e473c7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909004/original_e0de1ae13c2993de6e05b4900ae85ee4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909005/original_557a011b56d5566b6a2af64ef5c33821.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909006/original_b6f18bc416200e1ecb025b1320a758a9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909007/original_7ee082a070f64f10b53f24a638a25e61.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909008/original_9d79abe6bf7171ad0f341a76e5c30f0c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909009/original_af885823f0f0318efdb520e6df37031e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909010/original_7fff39da554794e3c04bf829828503f9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909011/original_cd09afa34aedccb70776afa89a50bf4b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909012/original_d9f2f5e256b34cbe60b07091737dc2bf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909013/original_e536cad893fde4db15c58884c98c22a2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909014/original_6965671212d161c47e4b76ba3f1196ef.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909015/original_70f769f35f56aaff91d9dcd2e03b679e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909016/original_3abbfba8c41653085091fb70e88ce7c4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909017/original_7104217e55709cb586a1a740d7c9de00.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909018/original_722375989dd97ac3d48e29165c0025a9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909019/original_a20b5df01488d229202e55bf88c08d16.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909020/original_897e5e4d4fde08b7e7e6520c91662faf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909021/original_abe444ae535000e4dfeaac9b59721dca.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909022/original_ea5cfdf41e45e8a44d58ef9db114e664.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909023/original_69e3654fcfc46ac57ccf840b82f9d134.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909024/original_91107f9fe703995a160a1e44f465de0a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909025/original_59f62b43de9122e513771579d599f64f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909026/original_69fd6c9647939f736268f9ffb0156422.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909027/original_197a1f925545194828b0a64f9df37123.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909028/original_b8d6e5f64dce01d554642edaeeb0e091.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909029/original_3f4eaae1ca1a9d61f9e2ec13e329a9fd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909030/original_d40878078feecdf06e20be42907b2043.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909031/original_1cbfa6c98b97552be35a9a820b0a400a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909032/original_5b36beadecdeab90fa12dceaaed2c212.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909033/original_a518c627280b29f61c32b407aeaa8e82.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909034/original_b1913d82dc4a43a815ecd088fbc16260.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909035/original_6155c95d53d718e091aeb5e2cc875a9c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909036/original_277b6b6238c5590d3252f09aae3afb3e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909037/original_c5122783f1dbe5f69b0a1b8ff42b3808.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909038/original_b9ac69b2ddbf4c69696f013842b4935a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909039/original_882e39a7d329cd171ddfb8716d213781.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909040/original_9151ec3193bd78df9144c2bcdbadd156.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909041/original_97a9d9370ff62ce560294f1406d6d025.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909042/original_2a21c615ff75ecf5625536f02cc6433c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909043/original_0dd4f910d8cc93db06a9c8b49f2fd44f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909044/original_fc2242d8bf28e02510ce51deea2c2e2f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909045/original_2bc73c04f2b196d35d2abc3f95a16fdb.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909046/original_b09760970ce93186eb994a86b507d445.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909047/original_903ab8cf3b3b18f4944ac737577bfb3c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909048/original_a3d1a415414dc6385fec81efcfa92ca6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909049/original_ff7919df677351cd6be5bdfdfb082269.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909286/original_7c58482f9f36560f92da260e7ac9f689.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909287/original_ca230cd2caa243f32844b60a2a2cf57c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909288/original_4581e2d2cf5743d456e7c138a3eb40d6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909289/original_6a3736d18d75fbd9baab7f1317ab9d64.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909290/original_97cd7005965dbb21f9d2e7255445b1a3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909291/original_56cdf773be371ff074363f9bfb330d28.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909292/original_a94c51bce1d18ba0fbfffe2eb7211214.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909293/original_bc65f5c5afb005dd3c5ae576fcc4eb00.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909294/original_b8b107c4e1e1173f40d4ac53421396eb.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909297/original_56f2c54e0a988ad645887e12ccabf887.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909298/original_14928da4a8ed8abca96a6e039ab18cda.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909299/original_bd25bacf94a5e120806bf574ea715ba7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909301/original_8c40586b77c7c7324ea00f744a3ea56d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909302/original_35660896afae5f8f80c57b29aaea660c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909303/original_5378ca7a688aeae2dc8b042c02fc71c9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909304/original_6a4d314ea768a84faffb512648ed5ce5.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909305/original_4bb83acab1d94facb0af218cd1bcb090.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909306/original_d52fa205c8528784ac15b7f8f5e66e1e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909307/original_0e61680c0862dfa158c23ef90af4b90e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909308/original_9daf5b944a53e40dfb6e18e70b661392.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909309/original_bf43ec30b460556ee621694e69e96390.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909310/original_ecd842b728b60646284c3b31844dc3cf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909311/original_15df631f0e245a150825308b0f6d9ed7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909313/original_8a7f9d9b48066804b227da22fcbe56fc.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909315/original_d2dc2be939123e2ce6b3da98b479d61b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909316/original_1d5e2d3b744e918188e13cc0a55e5f83.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909317/original_af02cad1878754c3f278cb0f30c9efbc.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909318/original_58d6ad985ba93251acfc537ac267efed.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909319/original_7cb94d7a88d9eaeb96d0ff86e367d54e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909321/original_5971fc00be330677f06ba92ec13d7ce1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909322/original_16bb4465a986d7bc2a0f8accf2e51da7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909323/original_43199136de468d7a47be4571e09982ce.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909324/original_876a33edcf0899e9cf760f371758eadd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909325/original_71cb0323900918a5b3185523afd9e325.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909327/original_9387d2c4f7ae248ffcf3270b93e552ea.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909328/original_5b302cd71b8766f15595b145004ad2ac.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909330/original_93b00e9e8f724936a6424f72d7323474.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909332/original_1124537949553b3322d89d7d988805c8.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909333/original_ecc593028d83bd5802edc489a7aa3f33.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909334/original_69f55ce11be49183cbdef4e8bd1bc9e2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909335/original_fb206ff0646229a94ea50998df52d732.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909336/original_37f69ea70a6ae9d647d5184336f2428d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909337/original_4a8b398d3d4cea7e55c88c5eebf8dbf3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909338/original_908e2e8d668b514d89d7aa86e64fd3d5.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909339/original_265517e0e605eb767b329eb73097d1fa.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909340/original_734da03c14a020aa29b5c050d605dfd9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909341/original_494893f9436995ebe654d47a7e7cbcb5.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909466/original_2daf83ce8c87588593c5a391e9807465.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909468/original_4424776d3c7ff1651357095075852011.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909469/original_e415df66d43811a4f916cf3f4c100635.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909470/original_eeb41ab47800ffc7b50e515b5be557c9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909472/original_01f53d0e11af288b9b3aa8c4ea01ddb2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909474/original_8fef29b4545449620c427a519b0799b6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909476/original_69069cda6ad89b234a22335a544b3381.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909477/original_eeea7a00b072ebe1929345b461c579bf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909478/original_3e654b3d4d7b34637d2569a77ed43c48.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909479/original_7a0e2ae54ecaa00705440d3df7799473.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909481/original_357e9cf9c3c38da0985f888c607120f3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909482/original_b1df7dec6ebe8e6a3e9d92f4fd855282.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909483/original_69e3cd1e2e109c152a02c91a9eb60ca3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909484/original_552aea488b400097afa0615f0038ab0e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909485/original_fdd410474b597a5ac49e24f1d793d24d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909486/original_80e26348a920b4f6deffcc5f0f0df6ef.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909487/original_979575578a27df1c6a5d5713b1e7a90a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909488/original_32bc4a9cef87834d553f5d01e6f22726.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909491/original_2c99785a19db20bba0ec90bc8bf1a277.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909492/original_6748ddbda05f72a4ed812e2bc2dbe830.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909493/original_161818696a30a711460f7bab2fbcef2f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909494/original_c06b0d313004f41c25fca2152542072f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909495/original_459d59ae55b7fa83b969be8a18d007f2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909499/original_5217463ba027c06b94063b7f02091496.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909500/original_2d51e5b72bbc8df3927dce55925ce821.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909501/original_279976de9e4c1dc8e86565d8b59e06d0.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909503/original_cd41188b03fea8f507d7e23801cf217a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909504/original_66be5fd2b00f7320f6f41b6a2b832fd2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909505/original_67663099d35bfd291a5c5f052d4f8089.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909506/original_28063f5da4590c26e3ed9009d0baf2e2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909507/original_f52a5592aa8f17f048f9dde48a32f5ae.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909508/original_3480a7beb890abd9c7a20bbeafd5b768.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909509/original_3638927b146dc6fa1eea1bd41115e4dd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909510/original_9b657dc7b7511d3dbbcc3ce5584a1764.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909511/original_dc509549f115a35b653e48749dffe51d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909512/original_5134887fa4741027410a6b1062f7391c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909513/original_03628014552815490b1454feaf073453.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909516/original_1a6928b5f881b50907f342c7cb25d7f8.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909517/original_3bba57077c05b125980aecf6879e0b42.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909518/original_14f9ba29a8f979071c374092a2154c4c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909519/original_ad680029ee974c937d910aab6a9e35f6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909520/original_6cfb60607711a4b7ba5706b6fc4dbfa0.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909522/original_3dab56e03a611399e6e7d6a2e0105dff.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909524/original_36ade5636f97e7daa7e6e64577421c61.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909526/original_8c3714521c163392d7db1e52eb17d071.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909527/original_9ea7c07e3c3d8fa1ddd25ca08b3dc76f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909528/original_3386efea991d80efc31e9f17522a8727.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909530/original_338ae1bc932b3ca5a4d9b16ca307df81.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909531/original_d84470dcbbed6387630d66483ca5552b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909629/original_8da46b49c211e089376e2d21d39cbdb3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909630/original_7116d243f6ea39a859dfc750c64d3f2a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909631/original_472ffa2ca8f66bc443df219f03f624d1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909632/original_7fc31d0bd423778bf5ab289e43ed4458.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909634/original_137c17cc3499bc8d97ec82529a6a0ccf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909635/original_c8063a9666c86778d7c44be28bd16b21.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909636/original_b5593e9eb4491469b7878ae6542e3f34.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909637/original_43cafa88bd54c4866a9fde8d45389f99.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909638/original_693fa6fe9aaf539d6c348a5d625c52a8.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909639/original_0b07bff87555cbd1beebbebc79247288.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909640/original_c07a0a833f0068efb6e23ae98109b248.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909641/original_3ff8a18fee0b4647594d9bb8bbec0360.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909642/original_e63bbef2bf2be9a06d4d983f1cd4c078.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909643/original_9adf9f82d2f3450c4896cf099d20e398.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909644/original_d4a9545eb2832d3bbc0a3b4e5116c7ab.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909645/original_7167cc010bc4f62043a12f7f5da4583b.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909646/original_72f71882a1bf5968b9fd610d5bd49d73.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909647/original_b1825d0610e209ee818995ecb07925c1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909648/original_4b0c7168350494c177f0101a0d144d84.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909649/original_f31e2450e59d434e549fdb3a7773d513.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909650/original_5114011672603ba9b7daa90bf7b3ce3c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909651/original_976721e345222a26fb5d1c606e87295d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909652/original_0b57829057ae0565b2ba221fd0fabcc7.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909653/original_e1c8cd2d8ab24e8f6e4f1c438979600a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909654/original_e22ca4405a72c4ce27432e8d113ba3e9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909655/original_251e43803b790aac5ce55a4c5ab93cc2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909656/original_91d46bcef12414aaef9b88ec701081f3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909658/original_ff6e7d3ee8a8c530eea460775d1174ab.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909660/original_9d3cf14fa6196f9b44ed43efe1b5b1f1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909661/original_7af2dfd0e8628440a65e5b328af00acb.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909662/original_d2c997d25835381d2704ea9e310d0280.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909664/original_effc8a10a8c5aa317ffdff1b6e03ac1f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909665/original_cf6df7d8f37c203e35ed9fb57777e440.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909668/original_2466e3c61d31377986453948fd7e2bfc.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909670/original_bf0dd3d4cfd6206458ee7fd38e052dc4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909671/original_23baf4bd31458c6015cf2273adde88ee.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909672/original_7fe2d288fee75cbfac5f6ff9ac68bc07.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909673/original_4e327d56a24615e272e97e14bd4c190c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909674/original_d87ba4222466f9a77fc4ea6f40e631dc.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909675/original_e0fa114131c37b5cf93d3ab4406259c0.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909676/original_59456ca82be0063d37ed15450aa8d61c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909677/original_6aa1fb1c872f12b7cdcb650ee47d684e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909678/original_699c73fd2650297e53017a2a6eabe173.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909679/original_5e83461ad57c764ddb824c3a1219e252.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909680/original_fbc5f7e480d9b399c93112d2ed752e9e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909681/original_fcfa1c40d8e55bcdd4db0b738a16dfd6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909683/original_dc72a7275a1c15a06ac89a9007028c52.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909832/original_79089dbe2edd276e409b03b608d358a8.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909833/original_613cbac68e22481a985712667d8d947c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909834/original_e089f9eeda09b5d284670e2e93abf7dc.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909835/original_336d91b15d202af7cd5dbf7c9e53fafc.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909836/original_e19b4aa52a346d3bffdd9ebb33877bbd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909837/original_be91d61ffaaf831de4f83bc0d2b7aa41.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909838/original_2c4b700bb915d2f7420d1f6c5ff9358d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909839/original_4cf2c7dddc66f02dbcd6b140ac12e12f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909840/original_926debc54e52cc51dcc3529f4a9344d2.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909841/original_9863e1ba008e49262acf00297e099066.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909842/original_d1d108531dc1705f3c6cbeb68ddab230.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909843/original_76c1f2ef9a0490738f9d6f08d931a698.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909844/original_bec93a366299d4e05bc1d77470c2197f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909845/original_68f43b03ad20ad3341ae52c6cd7e9068.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909846/original_33eecb91c93e82ea6271a312c0adfa1e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909847/original_64d3395d6358f60b47dd939c6c0ca065.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909848/original_1255ab3ff138b898994a32b09aca6f5d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909849/original_06d533c77ae51a6859b8cbeaacebb250.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909850/original_42caeda0ba7dce0e39949ec0e7823246.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909851/original_50279587a99c347be2da0a0d99196ee6.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909852/original_253327ca78f622e49d7366e9664884eb.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909853/original_e599ac4989d3f6e11bf8714534cbb3c4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909854/original_6474507e6508c1027265266d575a5404.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909855/original_aa91349b63fdb3bc3746df5b15511c12.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909856/original_a5121ebb18f7622728aabf1802c2ac5c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909857/original_2b0cf0d818bd12f765f8fdc46b684a55.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909858/original_e7028977104a403a3837d4279a40daf9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909859/original_057846e7560558050312bbe1ac7f404a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909860/original_dfb6993c94224c842ab907c677737ef1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909861/original_6eb09ebc60a56b6535fb52ca3282c4d5.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909862/original_a050c0703828df63acb1199489e4cb88.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909863/original_7ac906ad8ee1bd4cee95e0284e7c3be3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909864/original_a11701acc214d67518cb251981d3ec48.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909865/original_9b36ecc55c0ef0ce3e25bea1a735edaf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909866/original_ceba8420f115ae215e77deca106779ac.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909867/original_23e7d799a4735684c6b15d7935bde6de.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909868/original_d989cfa42c53a14cdf4d21060ac8b1e1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909869/original_cdc2090e740bc59854100824cd188a31.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909870/original_af196111c467b833d33d5695fe068324.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909871/original_b68d249c1e2c3966fe8f91fa2c9a36a3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909872/original_fd2f249c34e35a0b5a44ffa3adb2aa28.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909873/original_e59bef5f20044588d5a7c23308517f5c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909874/original_760280e72895b0b0d1943edda64c4804.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909875/original_facb7c354ee0b9b065adc70dd74bf6ac.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909876/original_cc8e1af77bd7c237882686061ffba9c1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909877/original_81e89fa412b7dc2224b5cbdf74df019f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909878/original_550afadb1812977b984f141c988ad6dd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909946/original_524f9d40f8401ad6ef605a69ada9914e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909947/original_1df79b152111d8afd8520ab27871709f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909948/original_4a20507a4dcb53997da443f644e62dc5.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909949/original_cf328818bee1c0d340ba2f9e230a9dad.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909950/original_cee017f2c9b58cc2f2feb07d442a940c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909951/original_ff6d257fc2da8fd2c080184cad9fbb07.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909952/original_8386f954149cf82af474626ec4148134.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909953/original_8d898de4a6d3333f0991ca184749c690.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909954/original_e5b874bd6fe9d6be6038cdaf21300356.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909955/original_075920e9aef6fa343dddfe0dd2d4be40.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909956/original_4e597152623a9b9739d2fa871e0d3ef4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909957/original_311977c91850672dfcd4378e2b7c1988.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909958/original_2b16c286ecbdf5d2ee0e260931ad9b64.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909959/original_de75ab0abaa13804139dd8ac5903a5eb.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909960/original_3a81a4e51d3ecff84a152f2d20f15024.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909961/original_ac917b191e9a4cc37408bf04a74a87d9.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909962/original_126437edfc311c7e5a3c23c2140a4f3c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909963/original_a30387eb912ab9ff8cd7ffc7fa8eaa1d.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909964/original_228c105f1327d0b437c97e884047b7b4.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909965/original_1c4e51bf3bf97e9399e9ec033f60adaf.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909968/original_ae59c66d1e04a37fc2e3431fc17b4c75.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909969/original_ff5097502f589a38305a6ef5e84d683c.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909972/original_309269ae9a74de2879bd1effa511de44.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909975/original_ea4247539409a9e6de02622bad76ae2f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909977/original_e87424cea99dd49e62bb189bc7d98ca1.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909978/original_0a2d6eb70b2bc18e630d3629886fc451.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909979/original_ffa0bfdaf352972afd25446507cfc22e.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909980/original_0627a5b19513e4716ff9c171110169ab.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909981/original_b3ed927ecfa3ecf3039dc95993f551c3.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909982/original_270ac1c76233110dc58b3d55d9c9eb9a.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909983/original_9bc21d6fe3322fcdb52889a52b80449f.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909984/original_dd25495ed5e0be21b21a64869c7c3a96.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909985/original_7a0698e7b8bc144ca149cee10b9370dd.webp","https://d2w9rnfcy7mm78.cloudfront.net/49909986/original_68e0a27cded74a862084232444abfbf4.webp"];
+
+    const WESERV='https://images.weserv.nl/?url=';
+    const usageScroll=document.getElementById('usageScroll');
+    const usageField=document.getElementById('usageField');
+    const usagePool=document.getElementById('usagePool');
+    const usageCounter=document.getElementById('usageCounter');
+    const usageProgress=document.getElementById('usageProgress');
+    const usageOrigin=document.getElementById('usageOrigin');
+    const usageScan=document.getElementById('usageScan');
+    const coarse=window.matchMedia?.('(pointer: coarse)');
+    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+    const saveData=Boolean(connection?.saveData);
+
+    let fieldActive=false,fieldRAF=0;
+    let targetPosition=0,visualPosition=0,lastTime=performance.now();
+    let slots=[],slotKey='',windowStart=-999;
+    let viewportW=innerWidth,viewportH=innerHeight;
+    let hoverX=.5,hoverY=.5;
+    let fieldTop=0,fieldScrollable=1,targetDirty=true,lastScrollY=window.scrollY||window.pageYOffset||0,scrollDir=1;
+    let loadActive=0,queueSeq=0;
+    const records=new Map();
+    const loadQueue=[];
+
+    function proxify(url,w=840,q=78){
+      if(!/^https?:\/\//i.test(url||''))return url;
+      return `${WESERV}${encodeURIComponent(url.replace(/^https?:\/\//,''))}&w=${w}&q=${q}&we`;
+    }
+
+    function hash(n){
+      let x=(n+1)*2654435761;
+      x^=x>>>16;x=Math.imul(x,2246822519);x^=x>>>13;x=Math.imul(x,3266489917);x^=x>>>16;
+      return (x>>>0)/4294967295;
+    }
+
+    function profile(){
+      const mobile=innerWidth<=640,tablet=innerWidth>640&&innerWidth<=980;
+      const behind=mobile?1:2;
+      const ahead=saveData?(mobile?5:7):(mobile?7:tablet?9:12);
+      const concurrency=saveData?2:(mobile?3:4);
+      const pxPerItem=mobile?46:tablet?40:36;
+      return {mobile,tablet,behind,ahead,count:behind+ahead+1,concurrency,pxPerItem};
+    }
+
+    function setFieldHeight(){
+      const p=profile();
+      usageScroll.style.height=`${Math.round(innerHeight+USAGE.length*p.pxPerItem)}px`;
+    }
+
+
+    function usageImageWidth(){
+      const p=profile();
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      const cssW=p.mobile?innerWidth*.92:p.tablet?innerWidth*.72:innerWidth*.62;
+      const cap=p.mobile?960:p.tablet?1280:1600;
+      return Math.max(480,Math.min(cap,Math.round(cssW*dpr)));
+    }
+
+    function measureField(){
+      const y=window.scrollY||window.pageYOffset||0;
+      const rect=usageScroll.getBoundingClientRect();
+      fieldTop=y+rect.top;
+      fieldScrollable=Math.max(1,usageScroll.offsetHeight-innerHeight);
+      targetDirty=true;
+    }
+
+    function recordFor(index){
+      let rec=records.get(index);
+      if(rec)return rec;
+      rec={index,url:USAGE[index],state:'idle',img:null,fallback:false,priority:0,seq:0,last:performance.now()};
+      records.set(index,rec);
+      return rec;
+    }
+
+    function enqueue(index,priority=1){
+      if(index<0||index>=USAGE.length)return null;
+      const rec=recordFor(index);
+      rec.last=performance.now();
+      if(rec.state==='ready'||rec.state==='loading')return rec;
+      if(rec.state==='queued'){
+        rec.priority=Math.max(rec.priority,priority);
+        return rec;
+      }
+      rec.state='queued';rec.priority=priority;rec.seq=++queueSeq;
+      loadQueue.push(rec);
+      pump();
+      return rec;
+    }
+
+    function pump(){
+      const p=profile();
+      while(loadActive<p.concurrency&&loadQueue.length){
+        loadQueue.sort((a,b)=>b.priority-a.priority||a.seq-b.seq);
+        const rec=loadQueue.shift();
+        if(!rec||rec.state!=='queued')continue;
+        const nearTarget=Math.abs(rec.index-targetPosition)<38;
+        const nearVisual=Math.abs(rec.index-visualPosition)<28;
+        if(!nearTarget&&!nearVisual){rec.state='idle';continue;}
+        startLoad(rec);
+      }
+    }
+
+    function startLoad(rec){
+      rec.state='loading';loadActive++;
+      const im=new Image();
+      im.decoding='async';
+      im.loading='eager';
+      im.fetchPriority=rec.priority>=3?'high':'auto';
+      im.setAttribute('data-no-proxy','1');
+      rec.img=im;
+
+      let finished=false;
+      const finish=()=>{
+        if(finished)return;
+        finished=true;
+        loadActive=Math.max(0,loadActive-1);
+        pump();
+        requestField();
+      };
+      const ready=()=>{
+        if(rec.img!==im)return finish();
+        rec.state='ready';rec.last=performance.now();finish();
+      };
+      im.onload=()=>{
+        if(typeof im.decode==='function')im.decode().then(ready).catch(ready);
+        else ready();
+      };
+      im.onerror=()=>{
+        if(!rec.fallback){
+          rec.fallback=true;
+          im.src=rec.url;
+        }else{
+          rec.state='error';finish();
+        }
+      };
+      im.src=proxify(rec.url,usageImageWidth(),80);
+    }
+
+    function queueCorridor(position,strong=false){
+      const p=profile();
+      const c=Math.round(position);
+      const lead=strong?(p.mobile?11:p.tablet?14:18):p.ahead+5;
+      const trail=strong?(p.mobile?4:6):p.behind+3;
+      const back=scrollDir<0?lead:trail;
+      const forward=scrollDir>=0?lead:trail;
+      for(let i=c-back;i<=c+forward;i++){
+        const d=Math.abs(i-position);
+        enqueue(i,d<2?4:d<6?3:1);
+      }
+      pruneQueue();
+    }
+
+    function pruneQueue(){
+      for(let i=loadQueue.length-1;i>=0;i--){
+        const rec=loadQueue[i];
+        if(Math.abs(rec.index-targetPosition)>48&&Math.abs(rec.index-visualPosition)>36){
+          rec.state='idle';loadQueue.splice(i,1);
+        }
+      }
+      if(records.size>56){
+        const mounted=new Set(slots.map(s=>s.index));
+        const candidates=[...records.values()].filter(r=>r.state==='ready'&&!mounted.has(r.index));
+        candidates.sort((a,b)=>Math.min(Math.abs(b.index-targetPosition),Math.abs(b.index-visualPosition))-Math.min(Math.abs(a.index-targetPosition),Math.abs(a.index-visualPosition)));
+        while(records.size>44&&candidates.length){
+          const rec=candidates.shift();
+          if(rec.img?.parentNode)rec.img.remove();
+          records.delete(rec.index);
+        }
+      }
+    }
+
+    function makeSlot(){
+      const fig=document.createElement('figure');fig.className='usage-plane';
+      const btn=document.createElement('button');btn.type='button';
+      const frame=document.createElement('span');frame.className='usage-frame';
+      const number=document.createElement('span');number.className='usage-number';
+      btn.appendChild(frame);btn.appendChild(number);fig.appendChild(btn);usagePool.appendChild(fig);
+      const slot={fig,btn,frame,number,index:-1,mounted:-1};
+      btn.addEventListener('click',()=>{if(slot.index>=0)openUsage(slot.index)});
+      return slot;
+    }
+
+    function ensureSlots(){
+      const p=profile(),key=`${p.mobile}-${p.tablet}-${p.count}`;
+      if(key===slotKey&&slots.length===p.count)return p;
+      slots.forEach(s=>s.fig.remove());slots=[];
+      for(let i=0;i<p.count;i++)slots.push(makeSlot());
+      slotKey=key;windowStart=-999;setFieldHeight();return p;
+    }
+
+    function assignSlot(slot,index){
+      if(index<0||index>=USAGE.length){
+        slot.index=-1;slot.mounted=-1;slot.frame.replaceChildren();slot.fig.classList.remove('ready','interactive','is-focus');return;
+      }
+      if(slot.index!==index){
+        slot.index=index;slot.mounted=-1;slot.frame.replaceChildren();slot.fig.classList.remove('ready');
+        slot.number.textContent=String(index+1).padStart(3,'0');
+        slot.btn.setAttribute('aria-label',`abrir registro ${index+1}`);
+      }
+      enqueue(index,Math.abs(index-visualPosition)<2?4:2);
+    }
+
+    function mountIfReady(slot){
+      if(slot.index<0)return;
+      const rec=records.get(slot.index);
+      if(!rec||rec.state!=='ready'||!rec.img)return;
+      if(slot.mounted===slot.index&&slot.frame.firstChild===rec.img)return;
+      slot.frame.replaceChildren(rec.img);
+      slot.mounted=slot.index;
+      slot.fig.classList.add('ready');
+    }
+
+    function hydrate(position,p){
+      const start=Math.floor(position)-p.behind;
+      if(start!==windowStart){
+        windowStart=start;
+        slots.forEach((slot,i)=>assignSlot(slot,start+i));
+      }
+      slots.forEach(mountIfReady);
+    }
+
+    const lanes=[-.86,.62,-.42,.88,.18,-.70,.46,-.14,.76,-.54,.32,-.28,.92];
+    const bands=[-.22,.18,.04,-.16,.27,-.03,.13,-.29,.22,.07,-.10,.31,-.25];
+
+    function metrics(index,position,p){
+      const rel=index-position;
+      const abs=Math.abs(rel);
+      let scale,spread,opacity;
+      if(rel>=0){
+        const t=Math.min(1,rel/(p.ahead+.7));
+        scale=.96*(1-t)+.13*t;
+        spread=Math.pow(1-t,.72);
+        opacity=.12+(1-t)*.93;
+      }else{
+        const t=Math.min(1,(-rel)/(p.behind+.55));
+        scale=.96+t*(p.mobile?.36:.58);
+        spread=1+t*.16;
+        opacity=Math.max(0,1-t*.94);
+      }
+      const lane=lanes[index%lanes.length],band=bands[index%bands.length];
+      const px=coarse?.matches?0:(hoverX-.5)*(1-Math.min(1,abs/5))*24;
+      const py=coarse?.matches?0:(hoverY-.5)*(1-Math.min(1,abs/5))*14;
+      const x=lane*viewportW*(p.mobile?.39:.46)*spread+px;
+      const y=band*viewportH*(p.mobile?.38:.46)*spread+py;
+      const baseW=p.mobile?(76+hash(index*5+1)*12):p.tablet?(48+hash(index*5+1)*15):(34+hash(index*5+1)*18);
+      return {rel,abs,scale,spread,opacity,x,y,baseW};
+    }
+
+    function renderField(now=performance.now()){
+      fieldRAF=0;if(!fieldActive)return;
+      if(targetDirty){targetDirty=false;updateTarget()}
+      const p=ensureSlots();
+      viewportW=usageField.clientWidth||innerWidth;viewportH=usageField.clientHeight||innerHeight;
+      const dt=Math.min(50,now-lastTime||16);lastTime=now;
+      if(reduced?.matches){visualPosition=targetPosition}else{
+        const delta=targetPosition-visualPosition;
+        const ease=1-Math.exp(-dt*.0105);
+        const desired=delta*ease;
+        const maxStep=(p.mobile?.036:.052)*dt;
+        visualPosition+=Math.max(-maxStep,Math.min(maxStep,desired));
+      }
+      queueCorridor(targetPosition,true);queueCorridor(visualPosition,false);
+      hydrate(visualPosition,p);
+
+      let focus=null,best=Infinity;
+      slots.forEach(slot=>{
+        if(slot.index<0)return;
+        mountIfReady(slot);
+        const m=metrics(slot.index,visualPosition,p);
+        slot.fig.style.setProperty('--plane-w',`${m.baseW}vw`);
+        slot.fig.style.setProperty('--plane-opacity',String(Math.min(1,m.opacity)));
+        slot.fig.style.zIndex=String(20+Math.round((1/(.16+m.abs))*70));
+        slot.fig.style.transform=`translate3d(calc(-50% + ${m.x.toFixed(2)}px),calc(-50% + ${m.y.toFixed(2)}px),0) scale(${m.scale.toFixed(4)})`;
+        slot.fig.classList.toggle('interactive',m.opacity>.20);
+        slot.fig.style.pointerEvents=m.opacity>.20?'auto':'none';
+        if(m.abs<best){best=m.abs;focus=slot}
+      });
+      slots.forEach(s=>s.fig.classList.toggle('is-focus',s===focus));
+
+      const current=Math.max(0,Math.min(USAGE.length-1,Math.round(visualPosition)));
+      usageCounter.textContent=`${String(current+1).padStart(3,'0')} / ${String(USAGE.length).padStart(3,'0')}`;
+      const frac=visualPosition-Math.floor(visualPosition);
+      usageScan.style.transform=`translate3d(0,${((frac-.5)*viewportH*.16).toFixed(2)}px,0)`;
+      usageOrigin.style.transform=`translate(calc(-50% + ${coarse?.matches?0:(hoverX-.5)*8}px),calc(-50% + ${coarse?.matches?0:(hoverY-.5)*6}px))`;
+
+      if(Math.abs(targetPosition-visualPosition)>.002)requestField();
+    }
+
+    function updateTarget(){
+      const y=window.scrollY||window.pageYOffset||0;
+      const dy=y-lastScrollY;
+      if(Math.abs(dy)>.5)scrollDir=dy<0?-1:1;
+      lastScrollY=y;
+      const progress=Math.min(1,Math.max(0,(y-fieldTop)/fieldScrollable));
+      targetPosition=progress*(USAGE.length-1);
+      usageProgress.style.width=`${(progress*100).toFixed(3)}%`;
+      queueCorridor(targetPosition,true);
+    }
+
+    function requestField(){if(fieldActive&&!fieldRAF)fieldRAF=requestAnimationFrame(renderField)}
+
+    const fieldObserver=new IntersectionObserver(entries=>{
+      fieldActive=entries.some(e=>e.isIntersecting);
+      if(fieldActive){measureField();targetDirty=false;updateTarget();lastTime=performance.now();requestField()}
+      else if(fieldRAF){cancelAnimationFrame(fieldRAF);fieldRAF=0}
+    },{rootMargin:'1400px 0px',threshold:0});
+    fieldObserver.observe(usageScroll);
+
+    addEventListener('scroll',()=>{
+      if(fieldActive){targetDirty=true;requestField()}
+    },{passive:true});
+
+    addEventListener('resize',()=>{
+      slotKey='';viewportW=innerWidth;viewportH=innerHeight;ensureSlots();measureField();requestField();
+    },{passive:true});
+
+
+    if(!coarse?.matches){
+      usageField.addEventListener('pointermove',e=>{const r=usageField.getBoundingClientRect();hoverX=(e.clientX-r.left)/Math.max(1,r.width);hoverY=(e.clientY-r.top)/Math.max(1,r.height);requestField()},{passive:true});
+      usageField.addEventListener('pointerleave',()=>{hoverX=.5;hoverY=.5;requestField()},{passive:true});
+    }
+
+    const geometryObserver=typeof ResizeObserver!=='undefined'?new ResizeObserver(()=>{
+      measureField();
+      if(fieldActive)requestField();
+    }):null;
+    if(geometryObserver){
+      const study=document.querySelector('.study'),lead=document.querySelector('.usage-lead');
+      if(study)geometryObserver.observe(study);
+      if(lead)geometryObserver.observe(lead);
+      geometryObserver.observe(usageScroll);
+    }
+    addEventListener('load',()=>{measureField();if(fieldActive)requestField()},{once:true,passive:true});
+
+    ensureSlots();measureField();
+    const idle=window.requestIdleCallback||((cb)=>setTimeout(cb,700));
+    idle(()=>{for(let i=0;i<Math.min(14,USAGE.length);i++)enqueue(i,i<5?4:2)});
+    /* shared lightbox */
+    const lb=document.getElementById('xpan-lightbox'),lbImg=lb.querySelector('.sheet img');
+    const studyButtons=[...document.querySelectorAll('.study-card .media-open')];
+    let mode='study',lbIndex=0;
+    function studyUrl(i){const img=studyButtons[i]?.querySelector('img');return img?.getAttribute('data-full')||img?.getAttribute('data-src')||img?.currentSrc||img?.src||''}
+    function lightboxWidth(){
+      const wanted=Math.max(innerWidth||0,document.documentElement.clientWidth||0)*Math.min(devicePixelRatio||1,2),ceiling=saveData?960:2200;
+      return [960,1600,2200].find(w=>w>=wanted&&w<=ceiling)||ceiling;
+    }
+    function show(){
+      const url=mode==='usage'?USAGE[lbIndex]:studyUrl(lbIndex);if(!url)return;
+      lbImg.removeAttribute('src');lb.classList.add('open');lb.setAttribute('aria-hidden','false');
+      document.documentElement.classList.add('lb-open');document.body.classList.add('lb-open');
+      requestAnimationFrame(()=>lbImg.src=proxify(url,lightboxWidth(),78));
+    }
+    function openUsage(i){mode='usage';lbIndex=i;show()}
+    function openStudy(i){mode='study';lbIndex=i;show()}
+    function nav(dir){const total=mode==='usage'?USAGE.length:studyButtons.length;lbIndex=(lbIndex+dir+total)%total;show()}
+    function close(){lb.classList.remove('open');lb.setAttribute('aria-hidden','true');document.documentElement.classList.remove('lb-open');document.body.classList.remove('lb-open');lbImg.removeAttribute('src')}
+    studyButtons.forEach((b,i)=>b.addEventListener('click',()=>openStudy(i)));
+    lb.querySelector('[data-lb-close]').addEventListener('click',close);lb.querySelector('.prev').addEventListener('click',()=>nav(-1));lb.querySelector('.next').addEventListener('click',()=>nav(1));
+    lb.addEventListener('click',e=>{if(e.target===lb)close()});
+    document.addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')nav(-1);if(e.key==='ArrowRight')nav(1)});
+    let sx=null,sy=null;lb.addEventListener('touchstart',e=>{const t=e.touches[0];if(t){sx=t.clientX;sy=t.clientY}},{passive:true});
+    lb.addEventListener('touchend',e=>{if(sx==null||sy==null)return;const t=e.changedTouches[0];if(!t)return;const dx=t.clientX-sx,dy=t.clientY-sy;sx=sy=null;if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)*1.25)nav(dx<0?1:-1)},{passive:true});
+    lbImg.addEventListener('click',e=>{if(!(e.metaKey||e.ctrlKey||e.altKey))return;const url=mode==='usage'?USAGE[lbIndex]:studyUrl(lbIndex);if(url){e.preventDefault();e.stopPropagation();window.open(url,'_blank','noopener,noreferrer')}});
+  })();
+  </script>
+</body>
+</html>
