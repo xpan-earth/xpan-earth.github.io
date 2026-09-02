@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>dispositivo mac mini — xpan</title>
+  <meta name="description" content="dispositivo mac mini — gabinete abierto de aluminio que incorpora una computadora directamente al sistema de poros."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="dispositivo mac mini — xpan"/>
+  <meta property="og:description" content="gabinete abierto de aluminio para contener, hacer accesible e integrar una mac mini al sistema de poros."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/50040311/original_5b41031e444243ce100a47777f43d4f7.png" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:940px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:820px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:800px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:740px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-empty,.pdf-pending{
+      grid-column:1/-1;
+      min-height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px dashed var(--line);
+      color:var(--fg-dim);
+      font:600 11px/1.4 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.08em;
+      background:color-mix(in oklab,var(--bg) 94%,transparent);
+    }
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/50040311/original_5b41031e444243ce100a47777f43d4f7.png')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip" data-i18n="header.chip">dispositivo mac mini</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="selector de idioma">
+      <button class="chip lang-active" type="button" data-lang-btn="es" aria-pressed="true">es</button>
+      <button class="chip" type="button" data-lang-btn="en" aria-pressed="false">en</button>
+      <button class="chip" type="button" data-lang-btn="fr" aria-pressed="false">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp" aria-pressed="false">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate">
+          <span data-i18n="plate.project">dispositivo mac mini / pza.01</span>
+          <span data-i18n="plate.context">xpan / sistema de poros</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros / infraestructura digital / contención / acceso</p>
+          <h1>dispositivo mac mini</h1>
+          <p class="subtitle">un gabinete abierto de aluminio que incorpora una mac mini directamente al sistema de poros.</p>
+          <div class="intro-text">
+            <p>dispositivo mac mini resuelve el alojamiento físico de una computadora dentro del sistema de poros. en lugar de permanecer suelta sobre una superficie o escondida como equipo técnico, la mac mini ocupa una posición definida, visible y directamente vinculada con la estructura.</p>
+            <p>un marco abierto de aluminio contiene el equipo desde sus bordes y mantiene expuestas sus caras. las soleras construyen un gabinete ajustado a sus dimensiones, mientras un brazo lo separa de la matriz principal y permite acceder, insertar o retirar la computadora sin desmontar el sistema.</p>
+            <p>la pieza incorpora la infraestructura digital al mismo orden espacial que organiza soportes, superficies y dispositivos dentro del sistema de poros.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system / digital infrastructure / containment / access</p>
+          <h1>dispositivo mac mini</h1>
+          <p class="subtitle">an open aluminum housing that incorporates a mac mini directly into the poros system.</p>
+          <div class="intro-text">
+            <p>dispositivo mac mini resolves the physical housing of a computer within the poros system. instead of remaining loose on a surface or hidden as technical equipment, the mac mini occupies a defined, visible position directly linked to the structure.</p>
+            <p>an open aluminum frame contains the computer along its edges and keeps its faces exposed. aluminum flats form an enclosure fitted to its dimensions, while an extended arm separates it from the main matrix and allows the computer to be accessed, inserted, or removed without dismantling the system.</p>
+            <p>the piece incorporates digital infrastructure into the same spatial order that organizes supports, surfaces, and devices within the poros system.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système de poros / infrastructure numérique / maintien / accès</p>
+          <h1>dispositivo mac mini</h1>
+          <p class="subtitle">un boîtier ouvert en aluminium qui incorpore directement un mac mini au système de poros.</p>
+          <div class="intro-text">
+            <p>dispositivo mac mini résout le logement physique d'un ordinateur dans le système de poros. au lieu de rester posé sur une surface ou dissimulé comme équipement technique, le mac mini occupe une position définie, visible et directement liée à la structure.</p>
+            <p>un cadre ouvert en aluminium maintient l'ordinateur par ses bords et laisse ses faces exposées. les plats forment un boîtier ajusté à ses dimensions, tandis qu'un bras l'écarte de la matrice principale et permet d'accéder à l'ordinateur, de l'insérer ou de le retirer sans démonter le système.</p>
+            <p>la pièce incorpore l'infrastructure numérique au même ordre spatial qui organise supports, surfaces et dispositifs dans le système de poros.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros システム / デジタル基盤 / 収納 / アクセス</p>
+          <h1>dispositivo mac mini</h1>
+          <p class="subtitle">mac mini を poros システムへ直接組み込む、アルミニウム製の開放型筐体。</p>
+          <div class="intro-text">
+            <p>dispositivo mac mini は、コンピューターを poros システム内に物理的に収める。机上に置かれたまま、あるいは技術機器として隠されるのではなく、mac mini は構造へ直接結び付いた明確で可視的な位置を占める。</p>
+            <p>開放型のアルミニウムフレームが機器を縁から保持し、各面を露出させる。フラットバーが寸法に沿う筐体を形成し、伸長アームが本体を主要マトリクスから離すことで、システムを解体せずにアクセス、挿入、取り外しができる。</p>
+            <p>この部材は、支持体、面、装置を組織するのと同じ空間秩序の中へデジタル基盤を取り込む。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="secciones de la página" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#operacion" data-i18n="nav.operation">operación</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el punto de partida es la condición física de la computadora: un cuerpo compacto que normalmente queda separado de la arquitectura y depende de una mesa, repisa o gabinete auxiliar. el dispositivo le asigna una posición propia dentro de la matriz de poros.</p>
+            <p>al quedar expuesta y contenida por un marco específico, la mac mini puede reconocerse, manipularse y sustituirse como cualquier otro componente del sistema.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the point of departure is the physical condition of the computer: a compact body that normally remains separate from architecture and depends on a table, shelf, or auxiliary cabinet. the device assigns it a position of its own within the poros matrix.</p>
+            <p>held visibly within a dedicated frame, the mac mini can be identified, handled, and replaced like any other component of the system.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le point de départ est la condition physique de l'ordinateur : un corps compact qui reste habituellement séparé de l'architecture et dépend d'une table, d'une étagère ou d'un meuble auxiliaire. le dispositif lui attribue une position propre dans la matrice de poros.</p>
+            <p>visible et maintenu par un cadre spécifique, le mac mini peut être identifié, manipulé et remplacé comme tout autre composant du système.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>出発点はコンピューターの物理的条件である。通常は建築から切り離され、机、棚、補助キャビネットに依存する小型の物体に、poros のマトリクス内で固有の位置を与える。</p>
+            <p>専用フレームの中で露出したまま保持されることで、mac mini はシステムの他の構成要素と同様に識別、操作、交換できる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el gabinete se construye con barras cuadradas y soleras de aluminio cepillado dispuestas alrededor de las dimensiones de la mac mini. piezas de 15 y 15.87 cm forman un perímetro abierto que contiene el equipo desde sus bordes sin cubrir sus caras principales.</p>
+            <p>un brazo de aluminio prolonga el gabinete hacia la matriz de poros. perforaciones, ranuras y fijaciones se concentran en los bordes, dejando libre el volumen central ocupado por la computadora.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the enclosure is built from square bars and brushed-aluminum flats arranged around the dimensions of the mac mini. 15 and 15.87 cm pieces form an open perimeter that holds the computer by its edges without covering its principal faces.</p>
+            <p>an aluminum arm extends the enclosure toward the poros matrix. bores, slots, and fixings are concentrated along the edges, leaving the central volume occupied by the computer unobstructed.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le boîtier est construit avec des barres carrées et des plats en aluminium brossé disposés autour des dimensions du mac mini. des pièces de 15 et 15,87 cm forment un périmètre ouvert qui maintient l'ordinateur par ses bords sans couvrir ses faces principales.</p>
+            <p>un bras en aluminium prolonge le boîtier vers la matrice de poros. perçages, rainures et fixations se concentrent sur les bords et libèrent le volume central occupé par l'ordinateur.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>筐体は、mac mini の寸法を囲むように配置した角形バーとブラッシュ仕上げのアルミニウムフラットバーで構成される。15 cm と 15.87 cm の部材が、主要面を覆わずに縁から機器を保持する開放型の周囲枠を形成する。</p>
+            <p>アルミニウムアームが筐体を poros のマトリクスへ延長する。穴、スロット、固定部を縁へ集中させ、コンピューターが占める中央の容積を開放している。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="operacion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>la mac mini se introduce en el marco y queda contenida por las soleras superiores, inferiores y laterales. la construcción abierta mantiene el equipo visible y permite retirarlo sin desmontar el brazo conectado al sistema.</p>
+            <p>esta separación entre gabinete y matriz evita que la computadora dependa de una superficie horizontal y ordena su presencia junto con los demás dispositivos técnicos del espacio.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the mac mini is inserted into the frame and held by its upper, lower, and lateral flats. the open construction keeps the computer visible and allows it to be removed without dismantling the arm connected to the system.</p>
+            <p>this separation between enclosure and matrix removes the computer's dependence on a horizontal surface and orders its presence alongside the space's other technical devices.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le mac mini s'insère dans le cadre et reste maintenu par les plats supérieurs, inférieurs et latéraux. la construction ouverte garde l'ordinateur visible et permet de le retirer sans démonter le bras relié au système.</p>
+            <p>cette séparation entre boîtier et matrice libère l'ordinateur d'une surface horizontale et ordonne sa présence avec les autres dispositifs techniques de l'espace.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>mac mini をフレームへ挿入し、上部、下部、側部のフラットバーで保持する。開放型の構造は機器を見える状態に保ち、システムへ接続されたアームを解体せずに取り外せる。</p>
+            <p>筐体とマトリクスを分離することでコンピューターは水平面に依存せず、空間内の他の技術装置とともにその存在が秩序づけられる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section media-sequences" id="media">
+      <div class="media-grid" data-media-grid>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 1"><img class="loaded" src="https://d2w9rnfcy7mm78.cloudfront.net/50040311/original_5b41031e444243ce100a47777f43d4f7.png" alt="dispositivo mac mini — secuencia principal 01" decoding="async" fetchpriority="high"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 2"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040308/original_8a9027e14b5ad6bf1384f0d46299e309.png" alt="dispositivo mac mini — secuencia principal 02" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 3"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040303/original_c37c6847551c72f14c89a3d37d622092.png" alt="dispositivo mac mini — secuencia principal 03" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 4"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040297/original_cb7d55b4c958e80b0737c78474cf959d.png" alt="dispositivo mac mini — secuencia principal 04" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 5"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040290/original_aad6f62cc09cbba09f030df357ed03a6.png" alt="dispositivo mac mini — secuencia principal 05" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 6"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040289/original_b123b81bc77641178b50466684c0629a.png" alt="dispositivo mac mini — secuencia principal 06" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 7"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040281/original_ec0823770de12ac5dea19196966fa3f4.png" alt="dispositivo mac mini — secuencia principal 07" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 8"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040275/original_3ea2125f6abe6a61103cb50b1b7addb5.png" alt="dispositivo mac mini — secuencia principal 08" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 9"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040265/original_0d07fade9ca6adab536cfaec72e94085.png" alt="dispositivo mac mini — secuencia principal 09" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 10"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040258/original_88905a27da94fb3c7697394b2e18554c.png" alt="dispositivo mac mini — secuencia principal 10" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 11"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040252/original_775b20fccefed9281868bcceb702f27b.png" alt="dispositivo mac mini — secuencia principal 11" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 12"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040248/original_63fac1a87430d5e9f8d6808ac73c453b.png" alt="dispositivo mac mini — secuencia principal 12" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 13"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040184/original_26d0ba476880114ea18e1f55752a0433.png" alt="dispositivo mac mini — secuencia principal 13" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 14"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040180/original_3d66522856a2b4997d8227dc8442fd7a.png" alt="dispositivo mac mini — secuencia principal 14" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 15"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040174/original_7988b11a2efca95379f774ebd1d4ffd7.png" alt="dispositivo mac mini — secuencia principal 15" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 16"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040158/original_d357f6d76f5deaeeeaea0fffcfb82cc0.png" alt="dispositivo mac mini — secuencia principal 16" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 17"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040157/original_6b27b0260edc078bfa2fdaa3e412804e.png" alt="dispositivo mac mini — secuencia principal 17" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 18"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040153/original_8af0e9b18f2fc4564da3f4cee3699ed8.png" alt="dispositivo mac mini — secuencia principal 18" loading="lazy" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen principal 19"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040139/original_ef4308e386546970879c1dd89efe3c12.png" alt="dispositivo mac mini — secuencia principal 19" loading="lazy" decoding="async"/></button></figure>
+      
+      </div>
+      <div class="media-grid media-grid-secondary" data-media-grid>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 1">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040045/original_b34369820ff2d475ebff26802613b7e3.jpeg" alt="dispositivo mac mini — registro 01" loading="lazy" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 2">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040044/original_2cb863453e482fc5fbd7d3929715c25a.jpeg" alt="dispositivo mac mini — registro 02" loading="lazy" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 3">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040043/original_4eba4859fdabfc6968a9b06930313e5b.jpeg" alt="dispositivo mac mini — registro 03" loading="lazy" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 4">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040042/original_aee7d334327687c71727be6c643e67a8.jpeg" alt="dispositivo mac mini — registro 04" loading="lazy" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 5">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040041/original_833a7884196bf0bd81196ba1aeacfe0c.jpeg" alt="dispositivo mac mini — registro 05" loading="lazy" decoding="async"/>
+          </button>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 6">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040040/original_b9dca8b052f6f86217406bdae8b609a2.jpeg" alt="dispositivo mac mini — registro 06" loading="lazy" decoding="async"/>
+          </button>
+        </figure>
+      
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano técnico del dispositivo mac mini con vistas generales, despiece, dimensiones del gabinete, perforaciones y relaciones de ensamble.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>technical drawing of dispositivo mac mini with general views, exploded assembly, enclosure dimensions, bores, and assembly relations.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan technique de dispositivo mac mini avec vues générales, vue éclatée, dimensions du boîtier, perçages et relations d'assemblage.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>全体図、分解図、筐体寸法、穴加工、組立関係を示す dispositivo mac mini の技術図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head">
+            <span data-i18n="pdf.label">plano general / pza.01</span>
+            <a href="https://attachments.are.na/50040029/02794006f69482be7d7e9fe323d11712.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a>
+          </div>
+          <object type="application/pdf" data-pdf-src="https://attachments.are.na/50040029/02794006f69482be7d7e9fe323d11712.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="dispositivo mac mini — plano general">
+            <a href="https://attachments.are.na/50040029/02794006f69482be7d7e9fe323d11712.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano general</a>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">cerrar</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente" data-i18n-aria="action.next">›</button>
+  </div>
+
+  <script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        es:{
+          pageTitle:'dispositivo mac mini — xpan',
+          metaDescription:'dispositivo mac mini — gabinete abierto de aluminio que incorpora una computadora directamente al sistema de poros.',
+          'header.chip':'dispositivo mac mini','plate.project':'dispositivo mac mini / pza.01','plate.context':'xpan / sistema de poros',
+          'aria.pageSections':'secciones de la página','nav.system':'sistema','nav.construction':'construcción','nav.operation':'operación','nav.document':'documento técnico',
+          'section.system.title':'sistema','section.construction.title':'construcción','section.operation.title':'operación','section.document.title':'documento técnico',
+          'pdf.label':'plano general / pza.01','pdf.fallback':'abrir plano general','action.open':'abrir','action.close':'cerrar','action.previous':'anterior','action.next':'siguiente'
+        },
+        en:{
+          pageTitle:'dispositivo mac mini — xpan',
+          metaDescription:'dispositivo mac mini — an open aluminum housing that incorporates a computer directly into the poros system.',
+          'header.chip':'dispositivo mac mini','plate.project':'dispositivo mac mini / pza.01','plate.context':'xpan / poros system',
+          'aria.pageSections':'page sections','nav.system':'system','nav.construction':'construction','nav.operation':'operation','nav.document':'technical document',
+          'section.system.title':'system','section.construction.title':'construction','section.operation.title':'operation','section.document.title':'technical document',
+          'pdf.label':'general drawing / pza.01','pdf.fallback':'open general drawing','action.open':'open','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        fr:{
+          pageTitle:'dispositivo mac mini — xpan',
+          metaDescription:'dispositivo mac mini — boîtier ouvert en aluminium qui incorpore directement un ordinateur au système de poros.',
+          'header.chip':'dispositivo mac mini','plate.project':'dispositivo mac mini / pza.01','plate.context':'xpan / système de poros',
+          'aria.pageSections':'sections de la page','nav.system':'système','nav.construction':'construction','nav.operation':'fonctionnement','nav.document':'document technique',
+          'section.system.title':'système','section.construction.title':'construction','section.operation.title':'fonctionnement','section.document.title':'document technique',
+          'pdf.label':'plan général / pza.01','pdf.fallback':'ouvrir le plan général','action.open':'ouvrir','action.close':'fermer','action.previous':'précédent','action.next':'suivant'
+        },
+        jp:{
+          pageTitle:'dispositivo mac mini — xpan',
+          metaDescription:'dispositivo mac mini — コンピューターを poros システムへ直接組み込むアルミニウム製の開放型筐体。',
+          'header.chip':'dispositivo mac mini','plate.project':'dispositivo mac mini / pza.01','plate.context':'xpan / poros システム',
+          'aria.pageSections':'ページセクション','nav.system':'システム','nav.construction':'構造','nav.operation':'操作','nav.document':'技術資料',
+          'section.system.title':'システム','section.construction.title':'構造','section.operation.title':'操作','section.document.title':'技術資料',
+          'pdf.label':'全体図 / pza.01','pdf.fallback':'全体図を開く','action.open':'開く','action.close':'閉じる','action.previous':'前へ','action.next':'次へ'
+        }
+      };
+
+      function applyStaticText(lang){
+        const dict=staticText[lang]||staticText.es;
+        document.documentElement.lang=lang==='jp'?'ja':lang;
+        document.title=dict.pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta)meta.setAttribute('content',dict.metaDescription);
+        document.querySelectorAll('[data-i18n]').forEach((element)=>{
+          const key=element.getAttribute('data-i18n');
+          if(Object.prototype.hasOwnProperty.call(dict,key))element.textContent=dict[key];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach((element)=>{
+          const key=element.getAttribute('data-i18n-aria');
+          if(dict[key])element.setAttribute('aria-label',dict[key]);
+        });
+      }
+
+      function setLang(lang){
+        if(!staticText[lang])lang='es';
+        buttons.forEach((button)=>{
+          const active=button.dataset.langBtn===lang;
+          button.classList.toggle('lang-active',active);
+          button.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach((block)=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        applyStaticText(lang);
+        try{localStorage.setItem('xpan.lang',lang)}catch(error){}
+      }
+
+      buttons.forEach((button)=>button.addEventListener('click',()=>setLang(button.dataset.langBtn)));
+      let initial='es';
+      try{initial=localStorage.getItem('xpan.lang')||'es'}catch(error){}
+      setLang(initial);
+    })();
+
+    (function lazyMedia(){
+      const images=Array.from(document.querySelectorAll('img[data-src]'));
+      function load(image){
+        if(!image||!image.dataset.src)return;
+        image.addEventListener('load',()=>image.classList.add('loaded'),{once:true});
+        image.src=image.dataset.src;
+        image.removeAttribute('data-src');
+        if(image.complete)image.classList.add('loaded');
+      }
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          entries.forEach((entry)=>{
+            if(entry.isIntersecting){load(entry.target);observer.unobserve(entry.target)}
+          });
+        },{rootMargin:'1400px 0px'});
+        images.forEach((image)=>observer.observe(image));
+      }else{images.forEach(load)}
+    })();
+
+    (function lazyPdf(){
+      const pdf=document.querySelector('[data-pdf-src]');
+      if(!pdf)return;
+      function load(){
+        if(!pdf.dataset.pdfSrc)return;
+        pdf.data=pdf.dataset.pdfSrc;
+        pdf.removeAttribute('data-pdf-src');
+      }
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          if(entries.some((entry)=>entry.isIntersecting)){load();observer.disconnect()}
+        },{rootMargin:'800px 0px',threshold:.01});
+        observer.observe(pdf);
+      }else{load()}
+    })();
+
+    (function lightbox(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      const sheet=lightbox.querySelector('.sheet');
+      const items=Array.from(document.querySelectorAll('[data-media-item] img'));
+      const closeButton=lightbox.querySelector('[data-lb-close]');
+      let index=-1;
+      let touchStartX=0;
+
+      function sourceOf(image){return image.getAttribute('data-full')||image.currentSrc||image.getAttribute('src')||image.getAttribute('data-src')||''}
+      function open(nextIndex){
+        if(nextIndex<0||nextIndex>=items.length)return;
+        index=nextIndex;
+        sheet.replaceChildren();
+        const image=document.createElement('img');
+        image.src=sourceOf(items[index]);
+        image.alt=items[index].alt||'';
+        image.decoding='async';
+        sheet.appendChild(image);
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+        closeButton.focus({preventScroll:true});
+      }
+      function close(){
+        sheet.replaceChildren();
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+        index=-1;
+      }
+      function step(delta){
+        if(index<0||!items.length)return;
+        open((index+delta+items.length)%items.length);
+      }
+
+      document.querySelectorAll('.media-open').forEach((button,buttonIndex)=>button.addEventListener('click',()=>open(buttonIndex)));
+      closeButton.addEventListener('click',close);
+      lightbox.querySelector('[data-dir="prev"]').addEventListener('click',()=>step(-1));
+      lightbox.querySelector('[data-dir="next"]').addEventListener('click',()=>step(1));
+      lightbox.addEventListener('click',(event)=>{if(event.target===lightbox)close()});
+      lightbox.addEventListener('touchstart',(event)=>{touchStartX=event.changedTouches[0].clientX},{passive:true});
+      lightbox.addEventListener('touchend',(event)=>{
+        const distance=event.changedTouches[0].clientX-touchStartX;
+        if(Math.abs(distance)>54)step(distance<0?1:-1);
+      },{passive:true});
+      window.addEventListener('keydown',(event)=>{
+        if(!lightbox.classList.contains('open'))return;
+        if(event.key==='Escape')close();
+        if(event.key==='ArrowRight'||event.key==='l')step(1);
+        if(event.key==='ArrowLeft'||event.key==='h')step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>

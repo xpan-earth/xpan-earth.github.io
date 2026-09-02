@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>dispositivo cámara — xpan</title>
+  <meta name="description" content="dispositivo cámara — interfaz autoportable desarrollada por xpan para integrar cámaras, micrófonos, grabadoras y otros instrumentos de captación al sistema de poros."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="dispositivo cámara — xpan"/>
+  <meta property="og:description" content="interfaz autoportable para integrar instrumentos de captación al sistema de poros mediante un tornillo universal de montaje."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/50040016/original_d4d62ad74418b032e9ff17e8dba50e28.png" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .hero-section{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:6px var(--pad-x) 58px;
+      display:flex;
+      justify-content:center;
+    }
+    .hero-shell{
+      position:relative;
+      width:min(880px,74vw);
+      aspect-ratio:3/2;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#050608;
+    }
+    .hero-frame{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      opacity:0;
+      transform:scale(1.006);
+      transition:opacity 145ms linear,transform 260ms cubic-bezier(.2,.8,.2,1);
+      will-change:opacity,transform;
+    }
+    .hero-frame.is-active{opacity:1;transform:scale(1)}
+    .hero-progress{position:absolute;left:10px;bottom:10px;display:flex;gap:5px;z-index:3;pointer-events:none}
+    .hero-progress span{width:18px;height:2px;background:rgba(255,255,255,.28);transition:background .18s ease}
+    .hero-progress span.active{background:rgba(255,255,255,.9)}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:940px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:820px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:800px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:740px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);margin-top:28px}
+    .fact{padding:13px 14px;border-right:1px solid var(--line);min-height:78px;background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .fact:last-child{border-right:0}
+    .fact b{display:block;margin-bottom:8px;font:600 10px/1 var(--mono);color:var(--fg-dim);text-transform:uppercase;letter-spacing:.14em}
+    .fact span{display:block;font:500 13px/1.35 var(--ui);color:var(--fg)}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card figcaption{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:8px 9px;
+      border-top:1px solid var(--line);
+      font:600 10px/1.3 var(--mono);
+      color:var(--fg-dim);
+      text-transform:lowercase;
+      letter-spacing:.08em;
+      background:var(--bg);
+    }
+    .media-empty,.pdf-pending{
+      grid-column:1/-1;
+      min-height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px dashed var(--line);
+      color:var(--fg-dim);
+      font:600 11px/1.4 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.08em;
+      background:color-mix(in oklab,var(--bg) 94%,transparent);
+    }
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .fact:nth-child(2){border-right:0}
+      .fact:nth-child(-n+2){border-bottom:1px solid var(--line)}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+      .hero-shell{width:min(780px,84vw)}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .hero-section{padding:4px var(--pad-x) 46px}
+      .hero-shell{width:100%;aspect-ratio:3/2}
+      .facts{grid-template-columns:1fr}
+      .fact,.fact:nth-child(2){border-right:0;border-bottom:1px solid var(--line)}
+      .fact:last-child{border-bottom:0}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+      .hero-frame{display:none}
+      .hero-frame:first-child{display:block;opacity:1;transform:none}
+    }
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/50040016/original_d4d62ad74418b032e9ff17e8dba50e28.png')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip" data-i18n="header.chip">dispositivo cámara</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="selector de idioma">
+      <button class="chip lang-active" type="button" data-lang-btn="es" aria-pressed="true">es</button>
+      <button class="chip" type="button" data-lang-btn="en" aria-pressed="false">en</button>
+      <button class="chip" type="button" data-lang-btn="fr" aria-pressed="false">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp" aria-pressed="false">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate">
+          <span data-i18n="plate.project">dispositivo cámara / pza.03</span>
+          <span data-i18n="plate.context">xpan / sistema de poros</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros / captación / soporte / registro</p>
+          <h1>dispositivo cámara</h1>
+          <p class="subtitle">interfaz autoportable desarrollada por xpan para integrar instrumentos de captación al sistema de poros mediante un tornillo universal de montaje.</p>
+          <div class="intro-text">
+            <p>dispositivo cámara es una interfaz autoportable desarrollada por xpan para integrar instrumentos de captación al sistema de poros. cámaras, micrófonos, grabadoras y otros dispositivos compatibles se conectan mediante un tornillo universal de montaje y quedan sostenidos como parte de la estructura.</p>
+            <p>la pieza fue desarrollada y maquinada desde cero en aluminio. una base horizontal, un soporte vertical y un brazo extendido construyen una presencia material precisa; las uniones y fijaciones permanecen visibles como parte del propio dispositivo.</p>
+            <p>más que sostener una cámara, el sistema convierte la captación de imagen, sonido e información en una capacidad incorporable, desplazable e intercambiable dentro del sistema de poros.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system / capture / support / recording</p>
+          <h1>dispositivo cámara</h1>
+          <p class="subtitle">an auto-portable interface developed by xpan to integrate capture instruments into the poros system through a universal mounting screw.</p>
+          <div class="intro-text">
+            <p>dispositivo cámara is an auto-portable interface developed by xpan to integrate capture instruments into the poros system. cameras, microphones, recorders, and other compatible devices connect through a universal mounting screw and become supported as part of the structure.</p>
+            <p>the piece was developed and machined from scratch in aluminum. a horizontal base, a vertical support, and an extended arm build a precise material presence; joints and fixings remain visible as part of the device itself.</p>
+            <p>rather than only holding a camera, the system turns the capture of image, sound, and information into a capacity that can be incorporated, relocated, and interchanged within the poros system.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système de poros / captation / support / enregistrement</p>
+          <h1>dispositivo cámara</h1>
+          <p class="subtitle">interface autoportante développée par xpan pour intégrer des instruments de captation au système de poros au moyen d'une vis de montage universelle.</p>
+          <div class="intro-text">
+            <p>dispositivo cámara est une interface autoportante développée par xpan pour intégrer des instruments de captation au système de poros. caméras, microphones, enregistreurs et autres appareils compatibles se connectent au moyen d'une vis de montage universelle et sont soutenus comme une partie de la structure.</p>
+            <p>la pièce a été développée et usinée intégralement en aluminium. une base horizontale, un support vertical et un bras déployé construisent une présence matérielle précise ; les assemblages et les fixations restent visibles comme parties du dispositif.</p>
+            <p>au-delà du support d'une caméra, le système transforme la captation d'images, de sons et d'informations en une capacité intégrable, déplaçable et interchangeable au sein du système de poros.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros システム / 収録 / 支持 / 記録</p>
+          <h1>dispositivo cámara</h1>
+          <p class="subtitle">ユニバーサルマウントねじを介して収録機器を poros システムに統合するために、xpan が開発した自立型インターフェース。</p>
+          <div class="intro-text">
+            <p>dispositivo cámara は、収録機器を poros システムへ統合するために xpan が開発した自立型インターフェースである。カメラ、マイク、レコーダーをはじめとする互換機器は、ユニバーサルマウントねじを介して接続され、構造の一部として支持される。</p>
+            <p>この装置はアルミニウムから一から設計され、切削加工によって製作された。水平ベース、垂直支持部、伸長アームが明確な物質的存在をつくり、接合部と固定部も装置そのものの一部として露出する。</p>
+            <p>カメラを支えるだけでなく、画像、音、情報の収録を poros システムの内部に組み込み、移動し、交換できる機能へ変換する。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="secciones de la página" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#operacion" data-i18n="nav.operation">operación</a>
+          <a href="#registro" data-i18n="nav.record">registro</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="hero-section" aria-label="dispositivo cámara — secuencia principal">
+      <div class="hero-shell" id="hero-loop">
+        <img class="hero-frame is-active" src="https://d2w9rnfcy7mm78.cloudfront.net/50040016/original_d4d62ad74418b032e9ff17e8dba50e28.png" alt="dispositivo cámara — secuencia principal 01" decoding="async" fetchpriority="high"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040015/original_d1a6213ebd80443dfc287e5c75fb73c0.png" alt="dispositivo cámara — secuencia principal 02" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040014/original_6eeacda5ef5fde0f1dd138653981a92f.png" alt="dispositivo cámara — secuencia principal 03" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040013/original_cd2038b2bed6507588aca7a4cc66641d.png" alt="dispositivo cámara — secuencia principal 04" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040012/original_35525bcae2f9a7af9d2cc548bd94fb44.png" alt="dispositivo cámara — secuencia principal 05" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040011/original_a38265a4dc449fb0ad84f7da45aad8f2.png" alt="dispositivo cámara — secuencia principal 06" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040010/original_65a1472a57ff343db7e42a6ae1384361.png" alt="dispositivo cámara — secuencia principal 07" decoding="async"/>
+        <img class="hero-frame" data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040009/original_a5372c6a7ca1b9fe697d2f48824e0235.png" alt="dispositivo cámara — secuencia principal 08" decoding="async"/>
+        <div class="hero-progress" aria-hidden="true"><span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+          <p class="section-meta" data-i18n="section.system.meta">captación / soporte / compatibilidad / intercambio</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>aunque toma su nombre de la cámara, el dispositivo no está limitado a un solo instrumento. el tornillo universal de montaje permite incorporar cámaras, micrófonos, grabadoras y otros equipos compatibles como componentes intercambiables.</p>
+            <p>la interfaz integra estos instrumentos al sistema de poros y convierte la captación de imagen, sonido e información en una función disponible dentro de su infraestructura.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>although it takes its name from the camera, the device is not limited to a single instrument. the universal mounting screw allows cameras, microphones, recorders, and other compatible equipment to be incorporated as interchangeable components.</p>
+            <p>the interface integrates these instruments into the poros system and turns the capture of image, sound, and information into an available function within its infrastructure.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>bien qu'il prenne son nom de la caméra, le dispositif ne se limite pas à un seul instrument. la vis de montage universelle permet d'intégrer caméras, microphones, enregistreurs et autres équipements compatibles comme composants interchangeables.</p>
+            <p>l'interface intègre ces instruments au système de poros et transforme la captation d'images, de sons et d'informations en une fonction disponible dans son infrastructure.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>名称はカメラに由来するが、この装置は単一の機器に限定されない。ユニバーサルマウントねじによって、カメラ、マイク、レコーダーなどの互換機器を交換可能な構成要素として組み込むことができる。</p>
+            <p>このインターフェースは収録機器を poros システムへ統合し、画像、音、情報の収録をそのインフラストラクチャー内で利用可能な機能に変換する。</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact"><b data-i18n="fact.type.label">tipo</b><span data-i18n="fact.type.value">interfaz de captación</span></div>
+        <div class="fact"><b data-i18n="fact.compatibility.label">compatibilidad</b><span data-i18n="fact.compatibility.value">cámara / micrófono / grabadora</span></div>
+        <div class="fact"><b data-i18n="fact.operation.label">operación</b><span data-i18n="fact.operation.value">autoportable / intercambiable</span></div>
+        <div class="fact"><b data-i18n="fact.system.label">sistema</b><span data-i18n="fact.system.value">poros</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+          <p class="section-meta" data-i18n="section.construction.meta">aluminio maquinado / base / soporte / brazo</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el dispositivo se desarrolló como un ensamblaje completo de aluminio maquinado. una barra horizontal de 45 cm forma la base; sobre ella se elevan un soporte vertical de 15 cm y un brazo transversal de 20 cm que desplaza el punto de captación.</p>
+            <p>las barras cuadradas y redondas se encuentran mediante nodos cilíndricos desarrollados como parte de la pieza. el acabado cepillado y las fijaciones visibles mantienen legible la relación entre material, unión y soporte.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the device was developed as a complete machined-aluminum assembly. a 45 cm horizontal bar forms the base; from it rise a 15 cm vertical support and a 20 cm transverse arm that displaces the capture point.</p>
+            <p>square and round bars meet through cylindrical nodes developed as part of the piece. the brushed finish and visible fixings keep the relation between material, joint, and support legible.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le dispositif a été développé comme un assemblage complet en aluminium usiné. une barre horizontale de 45 cm forme la base ; un support vertical de 15 cm et un bras transversal de 20 cm déplacent le point de captation.</p>
+            <p>les barres carrées et rondes se rencontrent par des nœuds cylindriques développés comme parties de la pièce. la finition brossée et les fixations visibles rendent lisible la relation entre matière, assemblage et support.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>この装置は、切削アルミニウムによる一体的なアセンブリとして開発された。45 cm の水平バーがベースを形成し、そこから 15 cm の垂直支持部と 20 cm の横アームが立ち上がり、収録点を移動させる。</p>
+            <p>角形バーと丸形バーは、装置の一部として開発された円筒形ノードによって接続される。ブラッシュ仕上げと露出した固定部によって、素材、接合、支持の関係が明確に読める。</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact"><b data-i18n="fact.material.label">material</b><span data-i18n="fact.material.value">aluminio sólido maquinado</span></div>
+        <div class="fact"><b data-i18n="fact.base.label">base</b><span data-i18n="fact.base.value">45 cm / sección cuadrada 1/2”</span></div>
+        <div class="fact"><b data-i18n="fact.arm.label">brazo</b><span data-i18n="fact.arm.value">20 cm / sección redonda 1/2”</span></div>
+        <div class="fact"><b data-i18n="fact.drawing.label">plano</b><span data-i18n="fact.drawing.value">17.12.2025 / pza.03</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="operacion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+          <p class="section-meta" data-i18n="section.operation.meta">insertar / sostener / captar / sustituir</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el instrumento se fija al tornillo universal y queda incorporado al extremo del dispositivo. la base estabiliza el conjunto mientras el soporte vertical y el brazo extendido separan el punto de captación de la superficie de apoyo.</p>
+            <p>el equipo puede retirarse y sustituirse sin modificar el cuerpo principal. una misma estructura puede pasar de cámara a micrófono o grabadora, manteniendo constante la lógica de soporte.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the instrument attaches to the universal screw and becomes incorporated at the end of the device. the base stabilizes the assembly while the vertical support and extended arm separate the capture point from the supporting surface.</p>
+            <p>equipment can be removed and replaced without modifying the main body. the same structure can shift from camera to microphone or recorder while keeping the support logic constant.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>l'instrument se fixe à la vis universelle et s'intègre à l'extrémité du dispositif. la base stabilise l'ensemble tandis que le support vertical et le bras déployé éloignent le point de captation de la surface d'appui.</p>
+            <p>l'équipement peut être retiré et remplacé sans modifier le corps principal. une même structure peut passer de la caméra au microphone ou à l'enregistreur tout en conservant la même logique de support.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>機器はユニバーサルねじに固定され、装置の先端へ統合される。ベースが全体を安定させ、垂直支持部と伸長アームが収録点を支持面から離して配置する。</p>
+            <p>本体を変更することなく機器を取り外し、交換できる。同じ構造をカメラ、マイク、レコーダーへ切り替えながら、支持のロジックを維持できる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="registro">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.record.title">registro del sistema</h2>
+          <p class="section-meta" data-i18n="section.record.meta">pieza / ensamble / operación / contexto</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>secuencia visual del dispositivo, su construcción, sus puntos de montaje y su operación con distintos instrumentos de captación.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>visual sequence of the device, its construction, mounting points, and operation with different capture instruments.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>séquence visuelle du dispositif, de sa construction, de ses points de montage et de son fonctionnement avec différents instruments de captation.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>装置、その構造、取付点、異なる収録機器を用いた動作を示す視覚的記録。</p></div>
+        </div>
+      </div>
+      <div class="media-grid" data-media-grid>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 1">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039985/original_e62b7506bbbac8f25837a34497c99548.jpeg" alt="dispositivo cámara — registro 01" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.01</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 2">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039984/original_f35c7b2e081f2ad726e81b69a6e9a17d.jpeg" alt="dispositivo cámara — registro 02" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.02</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 3">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039983/original_39c4d691dc81fe560e6076612034608c.jpeg" alt="dispositivo cámara — registro 03" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.03</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 4">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039982/original_d783b7e3f1faf7ab417199183d6f7dcd.png" alt="dispositivo cámara — registro 04" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.04</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 5">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039980/original_cedd04e8bfcfb6c8b07e8c0a985345ed.png" alt="dispositivo cámara — registro 05" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.05</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 6">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039979/original_09a537e94805eb94a751dd9797f60c6f.png" alt="dispositivo cámara — registro 06" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.06</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 7">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039978/original_29514cff7510687c7066b9037f704d95.jpg" alt="dispositivo cámara — registro 07" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.07</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 8">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039977/original_98b0ad0f4e4ee3bd732c6df708ea75e0.png" alt="dispositivo cámara — registro 08" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.08</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+        <figure class="media-card" data-media-item>
+          <button class="media-open" type="button" aria-label="abrir imagen 9">
+            <img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50039976/original_ecd1a67cf86eb68c71f066f2b920f9fc.jpeg" alt="dispositivo cámara — registro 09" loading="lazy" decoding="async"/>
+          </button>
+          <figcaption><span>r.09</span><span data-i18n="caption.record">registro del sistema</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+          <p class="section-meta" data-i18n="section.document.meta">pza.03 / componentes / dimensiones / montaje</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano técnico del dispositivo cámara con vistas generales, despiece, dimensiones, barrenos, cuerdas y relaciones de ensamble.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>technical drawing of dispositivo cámara with general views, exploded assembly, dimensions, bores, threads, and assembly relations.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan technique de dispositivo cámara avec vues générales, vue éclatée, dimensions, perçages, filetages et relations d'assemblage.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>全体図、分解図、寸法、穴加工、ねじ、組立関係を示す dispositivo cámara の技術図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head">
+            <span data-i18n="pdf.label">plano general / pza.03</span>
+            <a href="https://attachments.are.na/50039965/a4fd5e785ff04f31dcc6b7dfc1e10326.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a>
+          </div>
+          <object type="application/pdf" data-pdf-src="https://attachments.are.na/50039965/a4fd5e785ff04f31dcc6b7dfc1e10326.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="dispositivo cámara — plano general">
+            <a href="https://attachments.are.na/50039965/a4fd5e785ff04f31dcc6b7dfc1e10326.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano general</a>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">cerrar</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente" data-i18n-aria="action.next">›</button>
+  </div>
+
+  <script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        es:{
+          pageTitle:'dispositivo cámara — xpan',
+          metaDescription:'dispositivo cámara — interfaz autoportable desarrollada por xpan para integrar cámaras, micrófonos, grabadoras y otros instrumentos de captación al sistema de poros.',
+          'header.chip':'dispositivo cámara','plate.project':'dispositivo cámara / pza.03','plate.context':'xpan / sistema de poros',
+          'aria.pageSections':'secciones de la página','nav.system':'sistema','nav.construction':'construcción','nav.operation':'operación','nav.record':'registro','nav.document':'documento técnico',
+          'section.system.title':'sistema','section.system.meta':'captación / soporte / compatibilidad / intercambio',
+          'section.construction.title':'construcción','section.construction.meta':'aluminio maquinado / base / soporte / brazo',
+          'section.operation.title':'operación','section.operation.meta':'insertar / sostener / captar / sustituir',
+          'section.record.title':'registro del sistema','section.record.meta':'pieza / ensamble / operación / contexto',
+          'section.document.title':'documento técnico','section.document.meta':'pza.03 / componentes / dimensiones / montaje',
+          'fact.type.label':'tipo','fact.type.value':'interfaz de captación','fact.compatibility.label':'compatibilidad','fact.compatibility.value':'cámara / micrófono / grabadora','fact.operation.label':'operación','fact.operation.value':'autoportable / intercambiable','fact.system.label':'sistema','fact.system.value':'poros',
+          'fact.material.label':'material','fact.material.value':'aluminio sólido maquinado','fact.base.label':'base','fact.base.value':'45 cm / sección cuadrada 1/2”','fact.arm.label':'brazo','fact.arm.value':'20 cm / sección redonda 1/2”','fact.drawing.label':'plano','fact.drawing.value':'17.12.2025 / pza.03',
+          'caption.record':'registro del sistema','pdf.label':'plano general / pza.03','pdf.fallback':'abrir plano general','action.open':'abrir','action.close':'cerrar','action.previous':'anterior','action.next':'siguiente'
+        },
+        en:{
+          pageTitle:'dispositivo cámara — xpan',
+          metaDescription:'dispositivo cámara — an auto-portable interface developed by xpan to integrate cameras, microphones, recorders, and other capture instruments into the poros system.',
+          'header.chip':'dispositivo cámara','plate.project':'dispositivo cámara / pza.03','plate.context':'xpan / poros system',
+          'aria.pageSections':'page sections','nav.system':'system','nav.construction':'construction','nav.operation':'operation','nav.record':'record','nav.document':'technical document',
+          'section.system.title':'system','section.system.meta':'capture / support / compatibility / interchange',
+          'section.construction.title':'construction','section.construction.meta':'machined aluminum / base / support / arm',
+          'section.operation.title':'operation','section.operation.meta':'insert / support / capture / replace',
+          'section.record.title':'system record','section.record.meta':'piece / assembly / operation / context',
+          'section.document.title':'technical document','section.document.meta':'pza.03 / components / dimensions / assembly',
+          'fact.type.label':'type','fact.type.value':'capture interface','fact.compatibility.label':'compatibility','fact.compatibility.value':'camera / microphone / recorder','fact.operation.label':'operation','fact.operation.value':'auto-portable / interchangeable','fact.system.label':'system','fact.system.value':'poros',
+          'fact.material.label':'material','fact.material.value':'solid machined aluminum','fact.base.label':'base','fact.base.value':'45 cm / 1/2” square section','fact.arm.label':'arm','fact.arm.value':'20 cm / 1/2” round section','fact.drawing.label':'drawing','fact.drawing.value':'17.12.2025 / pza.03',
+          'caption.record':'system record','pdf.label':'general drawing / pza.03','pdf.fallback':'open general drawing','action.open':'open','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        fr:{
+          pageTitle:'dispositivo cámara — xpan',
+          metaDescription:'dispositivo cámara — interface autoportante développée par xpan pour intégrer caméras, microphones, enregistreurs et autres instruments de captation au système de poros.',
+          'header.chip':'dispositivo cámara','plate.project':'dispositivo cámara / pza.03','plate.context':'xpan / système de poros',
+          'aria.pageSections':'sections de la page','nav.system':'système','nav.construction':'construction','nav.operation':'fonctionnement','nav.record':'registre','nav.document':'document technique',
+          'section.system.title':'système','section.system.meta':'captation / support / compatibilité / échange',
+          'section.construction.title':'construction','section.construction.meta':'aluminium usiné / base / support / bras',
+          'section.operation.title':'fonctionnement','section.operation.meta':'insérer / soutenir / capter / remplacer',
+          'section.record.title':'registre du système','section.record.meta':'pièce / assemblage / fonctionnement / contexte',
+          'section.document.title':'document technique','section.document.meta':'pza.03 / composants / dimensions / montage',
+          'fact.type.label':'type','fact.type.value':'interface de captation','fact.compatibility.label':'compatibilité','fact.compatibility.value':'caméra / microphone / enregistreur','fact.operation.label':'fonctionnement','fact.operation.value':'autoportante / interchangeable','fact.system.label':'système','fact.system.value':'poros',
+          'fact.material.label':'matériau','fact.material.value':'aluminium massif usiné','fact.base.label':'base','fact.base.value':'45 cm / section carrée 1/2”','fact.arm.label':'bras','fact.arm.value':'20 cm / section ronde 1/2”','fact.drawing.label':'plan','fact.drawing.value':'17.12.2025 / pza.03',
+          'caption.record':'registre du système','pdf.label':'plan général / pza.03','pdf.fallback':'ouvrir le plan général','action.open':'ouvrir','action.close':'fermer','action.previous':'précédent','action.next':'suivant'
+        },
+        jp:{
+          pageTitle:'dispositivo cámara — xpan',
+          metaDescription:'dispositivo cámara — カメラ、マイク、レコーダーなどの収録機器を poros システムへ統合するために xpan が開発した自立型インターフェース。',
+          'header.chip':'dispositivo cámara','plate.project':'dispositivo cámara / pza.03','plate.context':'xpan / poros システム',
+          'aria.pageSections':'ページセクション','nav.system':'システム','nav.construction':'構造','nav.operation':'操作','nav.record':'記録','nav.document':'技術資料',
+          'section.system.title':'システム','section.system.meta':'収録 / 支持 / 互換性 / 交換',
+          'section.construction.title':'構造','section.construction.meta':'切削アルミニウム / ベース / 支持部 / アーム',
+          'section.operation.title':'操作','section.operation.meta':'挿入 / 支持 / 収録 / 交換',
+          'section.record.title':'システム記録','section.record.meta':'装置 / 組立 / 操作 / 文脈',
+          'section.document.title':'技術資料','section.document.meta':'pza.03 / 部材 / 寸法 / 組立',
+          'fact.type.label':'形式','fact.type.value':'収録インターフェース','fact.compatibility.label':'互換性','fact.compatibility.value':'カメラ / マイク / レコーダー','fact.operation.label':'操作','fact.operation.value':'自立型 / 交換可能','fact.system.label':'システム','fact.system.value':'poros',
+          'fact.material.label':'素材','fact.material.value':'切削アルミニウム無垢材','fact.base.label':'ベース','fact.base.value':'45 cm / 1/2” 角形断面','fact.arm.label':'アーム','fact.arm.value':'20 cm / 1/2” 丸形断面','fact.drawing.label':'図面','fact.drawing.value':'17.12.2025 / pza.03',
+          'caption.record':'システム記録','pdf.label':'全体図 / pza.03','pdf.fallback':'全体図を開く','action.open':'開く','action.close':'閉じる','action.previous':'前へ','action.next':'次へ'
+        }
+      };
+
+      function applyStaticText(lang){
+        const dict=staticText[lang]||staticText.es;
+        document.documentElement.lang=lang==='jp'?'ja':lang;
+        document.title=dict.pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta)meta.setAttribute('content',dict.metaDescription);
+        document.querySelectorAll('[data-i18n]').forEach((element)=>{
+          const key=element.getAttribute('data-i18n');
+          if(Object.prototype.hasOwnProperty.call(dict,key))element.textContent=dict[key];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach((element)=>{
+          const key=element.getAttribute('data-i18n-aria');
+          if(dict[key])element.setAttribute('aria-label',dict[key]);
+        });
+      }
+
+      function setLang(lang){
+        if(!staticText[lang])lang='es';
+        buttons.forEach((button)=>{
+          const active=button.dataset.langBtn===lang;
+          button.classList.toggle('lang-active',active);
+          button.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach((block)=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        applyStaticText(lang);
+        try{localStorage.setItem('xpan.lang',lang)}catch(error){}
+      }
+
+      buttons.forEach((button)=>button.addEventListener('click',()=>setLang(button.dataset.langBtn)));
+      let initial='es';
+      try{initial=localStorage.getItem('xpan.lang')||'es'}catch(error){}
+      setLang(initial);
+    })();
+
+    (function heroLoop(){
+      const hero=document.getElementById('hero-loop');
+      if(!hero)return;
+      const frames=Array.from(hero.querySelectorAll('.hero-frame'));
+      const dots=Array.from(hero.querySelectorAll('.hero-progress span'));
+      const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+      let index=0;
+      let timer=null;
+      let visible=true;
+
+      function show(nextIndex){
+        index=(nextIndex+frames.length)%frames.length;
+        frames.forEach((frame,frameIndex)=>frame.classList.toggle('is-active',frameIndex===index));
+        dots.forEach((dot,dotIndex)=>dot.classList.toggle('active',dotIndex===index));
+      }
+      function stop(){
+        if(timer)window.clearInterval(timer);
+        timer=null;
+      }
+      function start(){
+        stop();
+        if(reducedMotion.matches||frames.length<2||document.hidden||!visible)return;
+        timer=window.setInterval(()=>show(index+1),850);
+      }
+
+      show(0);
+      start();
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          visible=entries[0]?.isIntersecting??true;
+          start();
+        },{threshold:.01});
+        observer.observe(hero);
+      }
+      document.addEventListener('visibilitychange',start);
+      reducedMotion.addEventListener?.('change',start);
+    })();
+
+    (function lazyMedia(){
+      const images=Array.from(document.querySelectorAll('img[data-src]'));
+      function load(image){
+        if(!image||!image.dataset.src)return;
+        image.addEventListener('load',()=>image.classList.add('loaded'),{once:true});
+        image.src=image.dataset.src;
+        image.removeAttribute('data-src');
+        if(image.complete)image.classList.add('loaded');
+      }
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          entries.forEach((entry)=>{
+            if(entry.isIntersecting){load(entry.target);observer.unobserve(entry.target)}
+          });
+        },{rootMargin:'1400px 0px'});
+        images.forEach((image)=>observer.observe(image));
+      }else{images.forEach(load)}
+    })();
+
+    (function lazyPdf(){
+      const pdf=document.querySelector('[data-pdf-src]');
+      if(!pdf)return;
+      function load(){
+        if(!pdf.dataset.pdfSrc)return;
+        pdf.data=pdf.dataset.pdfSrc;
+        pdf.removeAttribute('data-pdf-src');
+      }
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          if(entries.some((entry)=>entry.isIntersecting)){load();observer.disconnect()}
+        },{rootMargin:'800px 0px',threshold:.01});
+        observer.observe(pdf);
+      }else{load()}
+    })();
+
+    (function lightbox(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      const sheet=lightbox.querySelector('.sheet');
+      const items=Array.from(document.querySelectorAll('[data-media-item] img'));
+      const closeButton=lightbox.querySelector('[data-lb-close]');
+      let index=-1;
+      let touchStartX=0;
+
+      function sourceOf(image){return image.getAttribute('data-full')||image.currentSrc||image.getAttribute('src')||image.getAttribute('data-src')||''}
+      function open(nextIndex){
+        if(nextIndex<0||nextIndex>=items.length)return;
+        index=nextIndex;
+        sheet.replaceChildren();
+        const image=document.createElement('img');
+        image.src=sourceOf(items[index]);
+        image.alt=items[index].alt||'';
+        image.decoding='async';
+        sheet.appendChild(image);
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+        closeButton.focus({preventScroll:true});
+      }
+      function close(){
+        sheet.replaceChildren();
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+        index=-1;
+      }
+      function step(delta){
+        if(index<0||!items.length)return;
+        open((index+delta+items.length)%items.length);
+      }
+
+      document.querySelectorAll('.media-open').forEach((button,buttonIndex)=>button.addEventListener('click',()=>open(buttonIndex)));
+      closeButton.addEventListener('click',close);
+      lightbox.querySelector('[data-dir="prev"]').addEventListener('click',()=>step(-1));
+      lightbox.querySelector('[data-dir="next"]').addEventListener('click',()=>step(1));
+      lightbox.addEventListener('click',(event)=>{if(event.target===lightbox)close()});
+      lightbox.addEventListener('touchstart',(event)=>{touchStartX=event.changedTouches[0].clientX},{passive:true});
+      lightbox.addEventListener('touchend',(event)=>{
+        const distance=event.changedTouches[0].clientX-touchStartX;
+        if(Math.abs(distance)>54)step(distance<0?1:-1);
+      },{passive:true});
+      window.addEventListener('keydown',(event)=>{
+        if(!lightbox.classList.contains('open'))return;
+        if(event.key==='Escape')close();
+        if(event.key==='ArrowRight'||event.key==='l')step(1);
+        if(event.key==='ArrowLeft'||event.key==='h')step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>

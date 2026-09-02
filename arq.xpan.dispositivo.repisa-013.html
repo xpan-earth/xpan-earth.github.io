@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>dispositivo repisa 013 — xpan</title>
+  <meta name="description" content="dispositivo repisa 013 — repisa escultórica extraíble sostenida desde un solo brazo insertado al sistema de poros."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="dispositivo repisa 013 — xpan"/>
+  <meta property="og:description" content="repisa de aluminio proyectada desde un único punto de anclaje al sistema de poros."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/50040796/original_6e4184fffb5cc94bad063e74063dc5b1.png" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:940px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:820px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:800px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:740px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-grid-primary .media-card{grid-column:span 6}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card video{display:block;width:100%;height:auto;min-height:160px;max-height:82vh;object-fit:contain;background:#050608}
+    .media-empty,.pdf-pending{
+      grid-column:1/-1;
+      min-height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px dashed var(--line);
+      color:var(--fg-dim);
+      font:600 11px/1.4 var(--mono);
+      text-transform:lowercase;
+      letter-spacing:.08em;
+      background:color-mix(in oklab,var(--bg) 94%,transparent);
+    }
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-sequences .media-card{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/50040796/original_6e4184fffb5cc94bad063e74063dc5b1.png')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip" data-i18n="header.chip">dispositivo repisa 013</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="selector de idioma">
+      <button class="chip lang-active" type="button" data-lang-btn="es" aria-pressed="true">es</button>
+      <button class="chip" type="button" data-lang-btn="en" aria-pressed="false">en</button>
+      <button class="chip" type="button" data-lang-btn="fr" aria-pressed="false">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp" aria-pressed="false">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate">
+          <span data-i18n="plate.project">dispositivo repisa 013 / det.01</span>
+          <span data-i18n="plate.context">xpan / sistema de poros</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros</p>
+          <h1>dispositivo repisa 013</h1>
+          <p class="subtitle">repisa escultórica extraíble sostenida desde un solo brazo insertado al sistema de poros.</p>
+          <div class="intro-text">
+            <p>dispositivo repisa 013 es una repisa extraíble que se inserta al sistema de poros mediante un solo brazo. desde ese punto de anclaje, la pieza se proyecta hacia el espacio y sostiene una superficie aparentemente suspendida.</p>
+            <p>cinco soleras de aluminio construyen una geometría abierta, precisa y marcadamente escultórica. la concentración de toda la repisa en un único soporte define su equilibrio y vuelve visible la tensión entre peso, extensión y anclaje.</p>
+            <p>además de recibir objetos, la pieza funciona como una presencia espacial propia dentro del sistema de poros.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system</p>
+          <h1>dispositivo repisa 013</h1>
+          <p class="subtitle">a removable sculptural shelf supported by a single arm inserted into the poros system.</p>
+          <div class="intro-text">
+            <p>dispositivo repisa 013 is a removable shelf that inserts into the poros system through a single arm. from that anchoring point, the piece projects into space and holds an apparently suspended surface.</p>
+            <p>five aluminum flats build an open, precise, and distinctly sculptural geometry. concentrating the entire shelf on one support defines its balance and makes the tension between weight, extension, and anchorage visible.</p>
+            <p>beyond receiving objects, the piece operates as a spatial presence of its own within the poros system.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système de poros</p>
+          <h1>dispositivo repisa 013</h1>
+          <p class="subtitle">étagère sculpturale amovible portée par un seul bras inséré dans le système de poros.</p>
+          <div class="intro-text">
+            <p>dispositivo repisa 013 est une étagère amovible qui s'insère dans le système de poros au moyen d'un seul bras. depuis ce point d'ancrage, la pièce se projette dans l'espace et porte une surface apparemment suspendue.</p>
+            <p>cinq plats en aluminium construisent une géométrie ouverte, précise et nettement sculpturale. la concentration de toute l'étagère sur un seul support définit son équilibre et rend visible la tension entre poids, extension et ancrage.</p>
+            <p>au-delà de recevoir des objets, la pièce agit comme une présence spatiale propre au sein du système de poros.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros システム</p>
+          <h1>dispositivo repisa 013</h1>
+          <p class="subtitle">poros システムへ差し込む一本のアームだけで支えられる、取り外し可能な彫刻的棚。</p>
+          <div class="intro-text">
+            <p>dispositivo repisa 013 は、一本のアームによって poros システムへ差し込む取り外し可能な棚である。一つの固定点から空間へ張り出し、浮遊して見える面を支える。</p>
+            <p>五本のアルミニウムフラットバーが、開放的で精密かつ彫刻的な形態を構成する。棚全体を一つの支持部へ集中させることで均衡が定まり、重量、張り出し、固定の緊張関係が可視化される。</p>
+            <p>物を置く機能に加え、この部材自体が poros システム内で固有の空間的存在となる。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="secciones de la página" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#operacion" data-i18n="nav.operation">operación</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>la repisa concentra su relación con el sistema en un único brazo. el anclaje convierte un punto de la matriz en soporte para una superficie que se extiende libremente hacia el espacio.</p>
+            <p>la pieza puede retirarse y volver a insertarse en otros puntos compatibles sin permanecer fija a la arquitectura.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the shelf concentrates its relation with the system in a single arm. the anchorage turns one point in the matrix into support for a surface that extends freely into space.</p>
+            <p>the piece can be removed and inserted again at other compatible points without remaining fixed to the architecture.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>l'étagère concentre sa relation avec le système dans un seul bras. l'ancrage transforme un point de la matrice en support pour une surface qui se déploie librement dans l'espace.</p>
+            <p>la pièce peut être retirée puis réinsérée sur d'autres points compatibles sans rester fixée à l'architecture.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>棚とシステムの関係は一本のアームへ集約される。固定部がマトリクスの一点を支持点へ変え、そこから面が空間へ自由に張り出す。</p>
+            <p>建築へ恒久的に固定せず、部材を取り外して他の互換位置へ再び差し込める。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>cinco soleras de aluminio de 3.81 cm se disponen en paralelo para formar la superficie. su separación mantiene abierta la geometría y hace legible cada elemento de la repisa.</p>
+            <p>un brazo de barra sólida de aluminio se extiende 45 cm y reúne la superficie con el punto de anclaje. las uniones permanecen integradas a la composición de la pieza.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>five 3.81 cm aluminum flats are arranged in parallel to form the surface. their spacing keeps the geometry open and makes every element of the shelf legible.</p>
+            <p>a solid-aluminum bar extends 45 cm and joins the surface to the anchoring point. the connections remain integrated into the composition of the piece.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>cinq plats en aluminium de 3,81 cm sont disposés parallèlement pour former la surface. leur espacement maintient la géométrie ouverte et rend lisible chaque élément de l'étagère.</p>
+            <p>un bras en barre d'aluminium massif s'étend sur 45 cm et relie la surface au point d'ancrage. les assemblages restent intégrés à la composition de la pièce.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>幅 3.81 cm のアルミニウムフラットバー五本を平行に配置して面を形成する。間隔を設けることで形態を開放し、棚を構成する各要素を明確に見せる。</p>
+            <p>アルミニウム無垢バーのアームが 45 cm 伸び、面を固定点へ接続する。接合部も部材の構成へ組み込まれている。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="operacion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el brazo se inserta y asegura en un poro, desde donde sostiene la repisa en voladizo. la superficie queda disponible para recibir objetos mientras el soporte permanece concentrado en un solo punto.</p>
+            <p>al liberar la fijación, la pieza completa puede retirarse sin intervenir la estructura principal.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the arm inserts into and secures to one poro, supporting the shelf as a cantilever. the surface can receive objects while its support remains concentrated at a single point.</p>
+            <p>when the fixing is released, the complete piece can be removed without altering the main structure.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le bras s'insère et se fixe dans un poro, depuis lequel il soutient l'étagère en porte-à-faux. la surface peut recevoir des objets tandis que son support reste concentré sur un seul point.</p>
+            <p>lorsque la fixation est libérée, la pièce complète peut être retirée sans intervenir sur la structure principale.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>アームを一つの poro へ差し込み固定し、片持ちで棚を支える。支持を一点へ集中させたまま、面は物を置くために利用できる。</p>
+            <p>固定を解除すると、主要構造へ手を加えずに部材全体を取り外せる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section media-sequences" id="media">
+      <div class="media-grid media-grid-primary" data-media-grid>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 1"><img class="loaded" src="https://d2w9rnfcy7mm78.cloudfront.net/50040796/original_6e4184fffb5cc94bad063e74063dc5b1.png" fetchpriority="high" alt="dispositivo repisa 013 — imagen 01" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 2"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040795/original_a3ab48856300b9f17ec40c3a71db15fd.png" loading="lazy" alt="dispositivo repisa 013 — imagen 02" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 3"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040794/original_30c8a207ea12bc76cddfd7aee04ce7ac.png" loading="lazy" alt="dispositivo repisa 013 — imagen 03" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 4"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040793/original_b83687523139db8c560e499a0a68d254.png" loading="lazy" alt="dispositivo repisa 013 — imagen 04" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 5"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040792/original_ae881fa26e3f75f851915055de71edf3.png" loading="lazy" alt="dispositivo repisa 013 — imagen 05" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 6"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040791/original_863be0fba9083bb1c2c3be84ba6fd42e.png" loading="lazy" alt="dispositivo repisa 013 — imagen 06" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 7"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040790/original_c7a31d1f4644b9858ac6336f9b0982b9.png" loading="lazy" alt="dispositivo repisa 013 — imagen 07" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 8"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040789/original_64ec3f6eac7e2d37cc8429334cb97b80.png" loading="lazy" alt="dispositivo repisa 013 — imagen 08" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 9"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040788/original_34db42cb6deb5cab5a9462f4008a0632.png" loading="lazy" alt="dispositivo repisa 013 — imagen 09" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 10"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040787/original_7b99190b9d657f8515b9fff97e9d47c2.png" loading="lazy" alt="dispositivo repisa 013 — imagen 10" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 11"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040786/original_7211c29035f31dd25a6d15a60a16b0cc.png" loading="lazy" alt="dispositivo repisa 013 — imagen 11" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 12"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040785/original_b1e63a1a960905aa39b897eec2477fa3.png" loading="lazy" alt="dispositivo repisa 013 — imagen 12" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 13"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040784/original_356c57e3d56b670a0e2786f8a106394c.png" loading="lazy" alt="dispositivo repisa 013 — imagen 13" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 14"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040783/original_0e849c9f2b01fcde0810d207a8248e6f.png" loading="lazy" alt="dispositivo repisa 013 — imagen 14" decoding="async"/></button></figure>
+      </div>
+      <div class="media-grid media-grid-secondary" data-media-grid>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 1"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040773/original_1beb0abe10a37fd6abd335dae4c3a417.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 01" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 2"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040770/original_00400e35b4dc24745078a6466ebd9a7b.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 02" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 3"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040769/original_ce3fcc3c0c2a5e1a4587e65de4e07651.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 03" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 4"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040768/original_f39c25329c1329dd6a3c6fd7554033f1.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 04" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 5"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040767/original_b54cc57c7231e9ad414c2227680f6390.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 05" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 6"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040766/original_9552f74605a0ac490cb4ec1efe932096.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 06" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 7"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040765/original_331c76dea9d59376cc5c273daad92104.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 07" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 8"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040764/original_9254ad3e12aafa8b8bbe72daf6a70002.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 08" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 9"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040763/original_0209f104c304035d771e6bfd9419ad5b.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 09" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 10"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040762/original_0be1cf8465fd77713b14ccb10eac24ac.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 10" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 11"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040761/original_e371815b9554de55d5a75710895e1155.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 11" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 12"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040760/original_c72ff65ee4c93fe14b504f398e6755c0.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 12" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 13"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040759/original_b3db145af7588ecfcd24ef2c21bfcf30.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 13" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 14"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040758/original_c225fe9bcfbc585066d69b69fd512cc5.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 14" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 15"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040757/original_2956f0e8b2831eadb982e589416f03b9.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 15" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 16"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040756/original_3649f6500256eac82e58f5b6562fce88.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 16" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 17"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040755/original_09fe1818fe6c6c6df9adcd596d0af437.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 17" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 18"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040754/original_d7b0dafa08307b7b26add0228485fdbd.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 18" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 19"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040753/original_bbf3f723737c9aa89c8c04b74c107392.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 19" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 20"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040752/original_494c799b82ef8f69a94fa5b17dac98f7.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 20" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 21"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040751/original_613b0d4f5830183c9bc088b35e8a47ad.jpg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 21" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 22"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040750/original_db30a5c049ed9683b65daaf112406faf.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 22" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 23"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040749/original_9b504f8b180011e6598631842bf74fce.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 23" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 24"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040748/original_479c464e5bc076a7680b05eb5169f6df.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 24" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 25"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040747/original_a49bc654ec92598a2ab182a299294cb5.jpeg" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 25" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 26"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040746/original_16be0e8b45a303bec6067d5aaccccbe6.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 26" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 27"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040745/original_2ce3a7540a62c975e10f91a92dbe58f5.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 27" decoding="async"/></button></figure>
+        <figure class="media-card"><video controls muted playsinline preload="metadata" aria-label="dispositivo repisa 013 — video"><source src="https://attachments.are.na/50040744/e0f0a3c01ab5d15bc01f82d5d166c86e.mp4" type="video/mp4"></video></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen secundaria 29"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/50040743/original_f0b83a562dcc4298ed6cae64c729ced9.png" loading="lazy" alt="dispositivo repisa 013 — imagen secundaria 29" decoding="async"/></button></figure>
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano técnico de la repisa con vistas generales, soleras, brazo, dimensiones, perforaciones y relaciones de ensamble.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>technical drawing of the shelf with general views, flats, arm, dimensions, bores, and assembly relations.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan technique de l'étagère avec vues générales, plats, bras, dimensions, perçages et relations d'assemblage.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>全体図、フラットバー、アーム、寸法、穴加工、組立関係を示す棚の技術図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head">
+            <span data-i18n="pdf.label">plano general / det.01</span>
+            <a href="https://attachments.are.na/50040736/f629cbec3361948face8b33c964a3f21.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a>
+          </div>
+          <object type="application/pdf" data-pdf-src="https://attachments.are.na/50040736/f629cbec3361948face8b33c964a3f21.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="dispositivo repisa 013 — plano general">
+            <a href="https://attachments.are.na/50040736/f629cbec3361948face8b33c964a3f21.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano general</a>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">cerrar</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente" data-i18n-aria="action.next">›</button>
+  </div>
+
+  <script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        es:{
+          pageTitle:'dispositivo repisa 013 — xpan',
+          metaDescription:'dispositivo repisa 013 — repisa escultórica extraíble sostenida desde un solo brazo insertado al sistema de poros.',
+          'header.chip':'dispositivo repisa 013','plate.project':'dispositivo repisa 013 / det.01','plate.context':'xpan / sistema de poros',
+          'aria.pageSections':'secciones de la página','nav.system':'sistema','nav.construction':'construcción','nav.operation':'operación','nav.document':'documento técnico',
+          'section.system.title':'sistema','section.construction.title':'construcción','section.operation.title':'operación','section.document.title':'documento técnico',
+          'pdf.label':'plano general / det.01','pdf.fallback':'abrir plano general','action.open':'abrir','action.close':'cerrar','action.previous':'anterior','action.next':'siguiente'
+        },
+        en:{
+          pageTitle:'dispositivo repisa 013 — xpan',
+          metaDescription:'dispositivo repisa 013 — a removable sculptural shelf supported by a single arm inserted into the poros system.',
+          'header.chip':'dispositivo repisa 013','plate.project':'dispositivo repisa 013 / det.01','plate.context':'xpan / poros system',
+          'aria.pageSections':'page sections','nav.system':'system','nav.construction':'construction','nav.operation':'operation','nav.document':'technical document',
+          'section.system.title':'system','section.construction.title':'construction','section.operation.title':'operation','section.document.title':'technical document',
+          'pdf.label':'general drawing / det.01','pdf.fallback':'open general drawing','action.open':'open','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        fr:{
+          pageTitle:'dispositivo repisa 013 — xpan',
+          metaDescription:'dispositivo repisa 013 — étagère sculpturale amovible portée par un seul bras inséré dans le système de poros.',
+          'header.chip':'dispositivo repisa 013','plate.project':'dispositivo repisa 013 / det.01','plate.context':'xpan / système de poros',
+          'aria.pageSections':'sections de la page','nav.system':'système','nav.construction':'construction','nav.operation':'fonctionnement','nav.document':'document technique',
+          'section.system.title':'système','section.construction.title':'construction','section.operation.title':'fonctionnement','section.document.title':'document technique',
+          'pdf.label':'plan général / det.01','pdf.fallback':'ouvrir le plan général','action.open':'ouvrir','action.close':'fermer','action.previous':'précédent','action.next':'suivant'
+        },
+        jp:{
+          pageTitle:'dispositivo repisa 013 — xpan',
+          metaDescription:'dispositivo repisa 013 — poros システムへ差し込む一本のアームで支えられる取り外し可能な彫刻的棚。',
+          'header.chip':'dispositivo repisa 013','plate.project':'dispositivo repisa 013 / det.01','plate.context':'xpan / poros システム',
+          'aria.pageSections':'ページセクション','nav.system':'システム','nav.construction':'構造','nav.operation':'操作','nav.document':'技術資料',
+          'section.system.title':'システム','section.construction.title':'構造','section.operation.title':'操作','section.document.title':'技術資料',
+          'pdf.label':'全体図 / det.01','pdf.fallback':'全体図を開く','action.open':'開く','action.close':'閉じる','action.previous':'前へ','action.next':'次へ'
+        }
+      };
+
+      function applyStaticText(lang){
+        const dict=staticText[lang]||staticText.es;
+        document.documentElement.lang=lang==='jp'?'ja':lang;
+        document.title=dict.pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta)meta.setAttribute('content',dict.metaDescription);
+        document.querySelectorAll('[data-i18n]').forEach((element)=>{
+          const key=element.getAttribute('data-i18n');
+          if(Object.prototype.hasOwnProperty.call(dict,key))element.textContent=dict[key];
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach((element)=>{
+          const key=element.getAttribute('data-i18n-aria');
+          if(dict[key])element.setAttribute('aria-label',dict[key]);
+        });
+      }
+
+      function setLang(lang){
+        if(!staticText[lang])lang='es';
+        buttons.forEach((button)=>{
+          const active=button.dataset.langBtn===lang;
+          button.classList.toggle('lang-active',active);
+          button.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach((block)=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        applyStaticText(lang);
+        try{localStorage.setItem('xpan.lang',lang)}catch(error){}
+      }
+
+      buttons.forEach((button)=>button.addEventListener('click',()=>setLang(button.dataset.langBtn)));
+      let initial='es';
+      try{initial=localStorage.getItem('xpan.lang')||'es'}catch(error){}
+      setLang(initial);
+    })();
+
+    (function lazyMedia(){
+      const images=Array.from(document.querySelectorAll('img[data-src]'));
+      function load(image){
+        if(!image||!image.dataset.src)return;
+        image.addEventListener('load',()=>image.classList.add('loaded'),{once:true});
+        image.src=image.dataset.src;
+        image.removeAttribute('data-src');
+        if(image.complete)image.classList.add('loaded');
+      }
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          entries.forEach((entry)=>{
+            if(entry.isIntersecting){load(entry.target);observer.unobserve(entry.target)}
+          });
+        },{rootMargin:'1400px 0px'});
+        images.forEach((image)=>observer.observe(image));
+      }else{images.forEach(load)}
+    })();
+
+    (function lazyPdf(){
+      const pdf=document.querySelector('[data-pdf-src]');
+      if(!pdf)return;
+      function load(){
+        if(!pdf.dataset.pdfSrc)return;
+        pdf.data=pdf.dataset.pdfSrc;
+        pdf.removeAttribute('data-pdf-src');
+      }
+      if('IntersectionObserver'in window){
+        const observer=new IntersectionObserver((entries)=>{
+          if(entries.some((entry)=>entry.isIntersecting)){load();observer.disconnect()}
+        },{rootMargin:'800px 0px',threshold:.01});
+        observer.observe(pdf);
+      }else{load()}
+    })();
+
+    (function lightbox(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      const sheet=lightbox.querySelector('.sheet');
+      const items=Array.from(document.querySelectorAll('[data-media-item] img'));
+      const closeButton=lightbox.querySelector('[data-lb-close]');
+      let index=-1;
+      let touchStartX=0;
+
+      function sourceOf(image){return image.getAttribute('data-full')||image.currentSrc||image.getAttribute('src')||image.getAttribute('data-src')||''}
+      function open(nextIndex){
+        if(nextIndex<0||nextIndex>=items.length)return;
+        index=nextIndex;
+        sheet.replaceChildren();
+        const image=document.createElement('img');
+        image.src=sourceOf(items[index]);
+        image.alt=items[index].alt||'';
+        image.decoding='async';
+        sheet.appendChild(image);
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+        closeButton.focus({preventScroll:true});
+      }
+      function close(){
+        sheet.replaceChildren();
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+        index=-1;
+      }
+      function step(delta){
+        if(index<0||!items.length)return;
+        open((index+delta+items.length)%items.length);
+      }
+
+      document.querySelectorAll('.media-open').forEach((button,buttonIndex)=>button.addEventListener('click',()=>open(buttonIndex)));
+      closeButton.addEventListener('click',close);
+      lightbox.querySelector('[data-dir="prev"]').addEventListener('click',()=>step(-1));
+      lightbox.querySelector('[data-dir="next"]').addEventListener('click',()=>step(1));
+      lightbox.addEventListener('click',(event)=>{if(event.target===lightbox)close()});
+      lightbox.addEventListener('touchstart',(event)=>{touchStartX=event.changedTouches[0].clientX},{passive:true});
+      lightbox.addEventListener('touchend',(event)=>{
+        const distance=event.changedTouches[0].clientX-touchStartX;
+        if(Math.abs(distance)>54)step(distance<0?1:-1);
+      },{passive:true});
+      window.addEventListener('keydown',(event)=>{
+        if(!lightbox.classList.contains('open'))return;
+        if(event.key==='Escape')close();
+        if(event.key==='ArrowRight'||event.key==='l')step(1);
+        if(event.key==='ArrowLeft'||event.key==='h')step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>
