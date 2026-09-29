@@ -46,398 +46,181 @@ html[data-theme=light]{color-scheme:light;--bg:#fafafa;--panel:#fff;--canvas:#f0
 <dialog id="modal"><header><h2 id="modalTitle"></h2><button id="modalClose" class="icon" title="Cerrar" aria-label="Cerrar" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header><div id="modalBody"></div><footer id="modalActions"></footer></dialog><div id="toast" role="status" hidden></div><input id="importFile" type="file" accept=".json,application/json" hidden>
 <input id="usbFolder" type="file" webkitdirectory directory multiple hidden><script>(() => {
 'use strict';
-
 const SYSTEM_META={"módulo atlas":{"title":"módulo atlas","year":2025,"tags":["publicación","archivo","display","lectura","acero","editorial"],"aliases":["atlas module","display atlas","archivo atlas","reading station"],"href":"arq.xpan.modulo.atlas.html","meta":"enero 2025 - estructura / librero"},"mueble monitor":{"title":"mueble para monitor","year":2025,"tags":["display","monitor","pantalla","soporte","estructura modular","acero"],"aliases":["monitor stand","display structure","soporte monitor"],"href":"arq.xpan.mueble.monitor.html","meta":"enero 2025 - estructura para dispositivos"},"florero solera":{"title":"florero solera, [sistema botánico estratificado]","year":2026,"tags":["objetual","espacial","arquitectura","dispositivo","modular"],"aliases":["florero solera","solera vase","vase solera","sistema botánico estratificado","layered botanical system","système botanique stratifié","積層ボタニカルシステム","soleras de aluminio","tubos de vidrio","configuración de apoyo","acoplamiento vertical"],"href":"arq.xpan.florero.solera.html","meta":"marzo 2026 — sistema botánico estratificado"},"s.e.a":{"title":"s.e.a., [silla de electrocución acústica]","year":2023,"tags":["objetual","sonoro","arquitectura","dispositivo","investigación"],"aliases":["silla de electrocución acústica"],"href":"arq.xpan.s.e.a.html","meta":"febrero 2023 — objeto / sistema de escucha individual"},"hex_666":{"title":"hex_666, [hexagrama suspendido + acción sonora]","year":2024,"tags":["espacial","sonoro","objetual","infraestructura","activación"],"aliases":[],"href":"arq.xpan.hex_666.html","meta":"febrero 2024 — desarrollo de estructura / sistema"},"c&c_s.e.e.v.s_12.etapa.2":{"title":"c&c_xpan.s.e.e.v.s_12 — etapa 2, [sistema espacial modular bilateral]","year":2026,"tags":["espacial","arquitectura","infraestructura","dispositivo","modular","sonoro","activación","colaboración"],"aliases":["s.e.e.v.s_12 etapa 2","c&c etapa 2","cucurucho etapa 2","sistema bilateral","sistema espacial bilateral","túnel de poros","bilateral poros system","stage 2","étape 2","両側型システム"],"href":"arq.xpan.s.e.e.v.s.12.etapa.2.html","meta":"mayo 2026 — reconfiguración bilateral / sistema de poros"},"estructura auxiliar nº4":{"title":"estructura auxiliar nº4","year":2025,"tags":["estructura","sonido","iluminación","textil","coaxial","exhibición"],"aliases":["auxiliar 4","verdor","ana neri","amd 2025"],"href":"arq.xpan.estructura_auxiliar_4.html","meta":"septiembre 2025 - dispositivo híbrido de sonido, luz y textil"},"12.e":{"title":"xpan.12.e, [sistema de escucha]","year":2022,"tags":["espacial","sonoro","infraestructura","escucha","multicanal"],"aliases":[],"href":"arq.xpan.12e.html","meta":"noviembre 2022 — desarrollo de espacio / sistema"},"x.6_A_V.f":{"title":"x.6_A/V.f, [xpan 6 mdl.1 audiovisual forum]","year":2024,"tags":["sonoro","espacial","infraestructura","portátil","dispositivo","multicanal"],"aliases":["x.6_a/v.f — 2024"],"href":"mdtc.xpan.x.6_A_V.f.html","meta":"febrero 2024 — infraestructura sonora /  espacial portátil"},"mdl.1":{"title":"xpan.mdl.1, [sistema completo]","year":2022,"tags":["sonoro","objetual","dispositivo","infraestructura","investigación"],"aliases":[],"href":"arq.xpan.mdl.1.html","meta":"junio 2022 — desarrollo de objeto / sistema"},"florero 2.0":{"title":"florero 2.0, [sistema botánico vertical]","year":2026,"tags":["objetual","espacial","arquitectura","dispositivo","modular"],"aliases":["florero 2.0","florero 2","sistema botánico vertical","vertical botanical system","système botanique vertical","垂直ボタニカルシステム","poro.brida"],"href":"arq.xpan.florero.2.0.html","meta":"2026 — sistema botánico vertical de muro"},"c&c_s.e.e.v.s_12":{"title":"s.e.e.v.s_12, [sistema escultórico estructural vórtice sináptico]","year":2025,"tags":["espacial","arquitectura","infraestructura","investigación"],"aliases":[],"href":"arq.xpan.s.e.e.v.s.12.html","meta":"noviembre 2025 — sistema escultórico estructural"},"6ch_r":{"title":"6ch_r, [sistema hexafónico suspendido]","year":2023,"tags":["sonoro","espacial","dispositivo","multicanal","infraestructura"],"aliases":[],"href":"arq.xpan.6ch_r.html","meta":"marzo 2023 — infraestructura sonora / objeto espacial"},"ep.1":{"title":"xpan.ep.1, [espacio público uno]","year":2024,"tags":["espacial","arquitectura","infraestructura","activación","programa"],"aliases":["xpan.ep.1 — activaciones"],"href":"mdtc.xpan.ep.1.html","meta":"octubre 2024 — desarrollo de espacio / sistema"},"espacio.gdl":{"title":"espacio.gdl","year":2025,"tags":["espacial","arquitectura","infraestructura"],"aliases":[],"href":"arq.xpan.espacio.gdl.html","meta":"junio 2025 — desarrollo de espacio / sistema"},"ep.2":{"title":"xpan.ep.2","year":2026,"tags":["espacial","arquitectura","infraestructura","activación","dispositivo","investigación","archivo","modular","lectura"],"aliases":["ep.2","xpan.ep.2","espacio público dos","sistema de captación","sistema de despliegue","sistema de poros"],"href":"ep.2.html","meta":"abril 2026 — sistema público de captación / lectura / despliegue"},"ep.t.paris.25":{"title":"xpan.ep.t, [espacio público temporal paris 2025]","year":2025,"tags":["espacial","arquitectura","infraestructura","temporal","activación"],"aliases":["xpan.ep.t [paris.25]"],"href":"mdtc.xpan.ep.t.paris.25.html","meta":"enero 2025 — desarrollo de espacio / sistema"},"ep.13":{"title":"dispositivo portátil 001, [sistema de poros transportable]","year":2026,"tags":["espacial","arquitectura","infraestructura","dispositivo","portátil","sonoro","archivo","publicación","modular","investigación"],"aliases":["dispositivo portátil","dispositivo portátil 001","ep.13","xpan.ep.13","portable device 001","sistema de poros transportable","unidad transportable"],"href":"arq.xpan.ep.13.html","meta":"abril–mayo 2026 — unidad transportable / sistema de poros"},"mdl.c_matos":{"title":"mdl.c — xpan × c. h. matos","year":2024,"tags":["sonoro","objetual","dispositivo","colaboración"],"aliases":[],"href":"mdtc.mdl.c_matos_sfmoma.html","meta":"2024 — san francisco, california — colección permanente del sfmoma"},"ls.33.3":{"title":"mdtc — ls.33.3","year":2025,"tags":["activación","sonoro","escucha","programa"],"aliases":[],"href":"mdtc.ls.33.3.html","meta":"16 julio 2025 — ciudad de méxico"},"xcv1":{"title":"xcv1 — xpan collaborations volume 1","year":2022,"tags":["colaboración","sonoro","objetual","investigación"],"aliases":[],"href":"mdtc.xcv1.html","meta":"noviembre 2022 — nueva york — studio guapo"},"dispositivo cámara":{"title":"dispositivo cámara","year":2026,"tags":["objetual","infraestructura","arquitectura","dispositivo","modular"],"aliases":["dispositivo camara","pza.03","interfaz de captación"],"href":"arq.xpan.dispositivo.camara.html","meta":"marzo 2026 — interfaz de captación / sistema de poros"},"s.g.r.c":{"title":"mdtc — [S.G.R.C.]","year":2024,"tags":["activación","investigación"],"aliases":[],"href":"mdtc.sgrc.html","meta":"agosto 2024 — ciudad de méxico"},"s+js23_infra":{"title":"s+js23 — infra","year":2023,"tags":["activación","infraestructura","espacial","colaboración"],"aliases":[],"href":"mdtc.s+js23.infra.html","meta":"2023 — ciudad de méxico — proyectos públicos"},"pjt.mdl.1":{"title":"mdtc.pjt.mdl.1","year":2022,"tags":["sonoro","espacial","dispositivo","activación","investigación"],"aliases":[],"href":"mdtc.pjt.mdl.1.html","meta":"junio 2022 — primera activación / dispositivo sonoro-espacial"},"atlas.1":{"title":"xpan.atlas.1","year":2024,"tags":["editorial","publicación","archivo","investigación"],"aliases":["atlas","atlas 1"],"href":"mdtc.atlas.1.html","meta":"17 octubre 2024 — publicación editorial"},"atlas.2":{"title":"xpan.atlas.2","year":2025,"tags":["editorial","publicación","archivo","investigación"],"aliases":["atlas","atlas 2"],"href":"mdtc.atlas.2.html","meta":"15 mayo 2025 — publicación editorial"},"atlas.3":{"title":"xpan.atlas.3","year":2026,"tags":["editorial","publicación","archivo","investigación"],"aliases":["atlas","atlas 3"],"href":"mdtc.atlas.3.html","meta":"05 febrero 2026 — publicación editorial"},"dispositivo mesa de trabajo":{"title":"dispositivo mesa de trabajo","year":2026,"tags":["objetual","infraestructura","arquitectura","dispositivo","modular","mobiliario"],"aliases":["mesa de trabajo","mob.01","dispositivo mesa"],"href":"arq.xpan.dispositivo.mesa-de-trabajo.html","meta":"marzo 2026 — mesa de trabajo extraíble / sistema de poros"},"bar nightingale <> xpan":{"title":"bar nightingale <> xpan","year":2026,"tags":["objetual","vestible","colaboración"],"aliases":["nightingale xpan","bar nightingale xpan","nightingale <> xpan"],"href":"mdtc.nightingale_xpan.html","meta":"junio 2026 — tshirt / colaboración méxico–japón"},"xcv2":{"title":"xcv2","year":2023,"tags":["sonoro","colaboración","dispositivo","activación","investigación"],"aliases":[],"href":"mdtc.xcv2.html","meta":"mayo 2023 — xpan collaborations volume 2"},"mdtc.5":{"title":"mdtc.5 — méxico ↔ japón · ruido como puente cultural","year":2025,"tags":["activación","sonoro","colaboración","programa"],"aliases":[],"href":"mdtc.5.html","meta":"marzo 2025 — tokyo — GATA <> xpan"},"xpan.studio.2025":{"title":"xpan.studio.2025, [espacio operativo desmontable para desarrollo y archivo]","year":2025,"tags":["espacial","arquitectura","infraestructura","archivo","modular"],"aliases":[],"href":"arq.xpan.studio.2025.html","meta":"febrero 2025 — intervención arquitectónica"},"dispositivo multifuncional":{"title":"dispositivo multifuncional","year":2025,"tags":["dispositivo","poros"],"aliases":["multifunctional device"],"href":"arq.xpan.dispositivo.multifuncional.html","meta":"octubre 2025 — interfaz / dispositivo del sistema de poros"},"dispositivo repisa 013":{"title":"dispositivo repisa 013","year":2026,"tags":["objetual","espacial","arquitectura","dispositivo","modular","mobiliario"],"aliases":["repisa 013","det.01","dispositivo repisa"],"href":"arq.xpan.dispositivo.repisa-013.html","meta":"abril 2026 — repisa extraíble / sistema de poros"},"xpan.estrella mdtc.4 [eden garden cinema]":{"title":"mdtc.4, [eden garden cinema]","year":2025,"tags":["espacial","sonoro","activación","infraestructura","investigación"],"aliases":[],"href":"arq.xpan.mdtc4.html","meta":"abril 2025 — desarrollo espacial / sistema"},"gabinete de dibujo 001":{"title":"gabinete de dibujo 001","year":2026,"tags":["objetual","arquitectura","dispositivo"],"aliases":["gabinete de dibujo","drawing cabinet 001"],"href":"arq.xpan.gabinete.dibujo.001.html","meta":"abril 2026 — unidad de trabajo / objeto"},"l.i.s.l.i":{"title":"lo intangible sobre lo inmutable","year":2025,"tags":["activación","investigación","expositivo"],"aliases":[],"href":"mdtc.lo-intangible.html","meta":"4–7 febrero 2025 — ciudad de méxico"},"mdtc.47 — xpan.estrella":{"title":"mdtc.47 — xpan.estrella","year":2026,"tags":["activación","espacial","infraestructura","archivo","investigación"],"aliases":["mdtc.47","xpan.estrella","estrella","xpan estrella"],"href":"mdtc.47.estrella.html","meta":"febrero 2026 — ciudad de méxico — activación"},"mesa de poros":{"title":"mesa de poros","year":2026,"tags":["mobiliario","poros","dispositivo"],"aliases":["mesa poros","table of poros","poros table"],"href":"xpan.mesa_de_poros.html","meta":"marzo 2026 — mesa / matriz operativa"},"desidia":{"title":"desidia, [sistema espacial + núcleo expositivo]","year":2024,"tags":["espacial","arquitectura","expositivo","infraestructura"],"aliases":[],"href":"arq.xpan.desidia.html","meta":"junio 2024 — instalación temporal"},"dispositivo mac mini":{"title":"dispositivo mac mini","year":2026,"tags":["objetual","infraestructura","arquitectura","dispositivo","modular"],"aliases":["mac mini","pza.01","gabinete mac mini"],"href":"arq.xpan.dispositivo.mac-mini.html","meta":"marzo 2026 — infraestructura digital / sistema de poros"},"dispositivo monitor-pantalla":{"title":"dispositivo monitor / pantalla","year":2026,"tags":["objetual","infraestructura","arquitectura","dispositivo","modular","monitor","pantalla","soporte"],"aliases":["monitor","pantalla","dispositivo monitor","ep.2"],"href":"arq.xpan.dispositivo.monitor-pantalla.html","meta":"marzo 2026 — soporte de visualización / sistema de poros"}};
-
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Number(n||0).toLocaleString('es-MX');
 const bytes=n=>{n=Number(n||0);if(n<1024)return n+' B';if(n<1048576)return(n/1024).toFixed(1)+' KB';if(n<1073741824)return(n/1048576).toFixed(1)+' MB';return(n/1073741824).toFixed(2)+' GB'};
 const ACTIVE=new Set(['.jpg','.jpeg','.png','.webp','.gif','.mp4','.m4v','.mov','.mp3','.m4a','.aac','.wav','.aif','.aiff','.pdf']);
-const STORAGE='xpan-usb-catalog-v3';
-
+const STORAGE='xpan-usb-web-v2';
 let assets=[], byPath=new Map(), systems=[], currentResults=[], currentPageItems=[];
 let route={view:'browse',system:'',board:''};
 let filters={q:'',type:'',year:'',tag:'',selected:'',published:'',rating:'',sort:'path'};
-let page=1,pageSize=96,grid=true,crop=false,catalogLoaded=false;
-let current=null, viewerSequence=[], viewerIndex=-1, viewerUrl=null, zoom=1, rotation=0;
+let page=1,pageSize=96,grid=true,crop=false,libraryConnected=false;
+let urls=new Set(), viewerUrl=null, current=null, viewerSequence=[], viewerIndex=-1, zoom=1, rotation=0;
+let selectedUI=new Set();
 let state={version:1,selected:[],assets:{},collections:[],threads:[]};
-let mounted=new Map(); // system -> Map(full portable path -> File)
-let pendingOpen=null, pendingSystem=null;
-let renderURLs=[];
+let workspaceFromUSB=null;
 
-function loadState(){try{const x=JSON.parse(localStorage.getItem(STORAGE)||'null');if(x&&x.version)state=x}catch(e){}}
-function saveState(){try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(e){}}
+function loadState(){try{const x=JSON.parse(localStorage.getItem(STORAGE)||'null');if(x&&x.version)state=x;}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE,JSON.stringify(state));}catch(e){}}
 loadState();
-
-function normalizePath(raw){return String(raw||'').replace(/\\/g,'/').normalize('NFC').replace(/^\/+/,'')}
-function ext(name){const i=name.lastIndexOf('.');return i>=0?name.slice(i).toLowerCase():''}
-function kindFor(path,e){if(['.jpg','.jpeg','.png','.webp','.gif'].includes(e))return /(^|\/)pdf\//i.test(path)?'pdf_page':'image';if(['.mp4','.m4v','.mov'].includes(e))return'video';if(['.mp3','.m4a','.aac','.wav','.aif','.aiff'].includes(e))return'audio';if(e==='.pdf')return'pdf';return'other'}
-function systemInfo(name){return SYSTEM_META[name]||{title:name,year:null,tags:[],aliases:[],href:'',meta:''}}
-function typeLabel(t){return({image:'imagen',pdf_page:'pdf',video:'video',audio:'audio',pdf:'pdf',other:'otro'})[t]||t}
 function starSet(){return new Set(state.selected||[])}
 function getMeta(p){return state.assets?.[p]||{}}
-function setMeta(p,changes){state.assets ||= {};const m={...(state.assets[p]||{}),...changes};if(!m.published&&!m.rating&&!(m.tags?.length)&&!m.note)delete state.assets[p];else state.assets[p]=m;saveState()}
-function toggleStar(p){const s=starSet();s.has(p)?s.delete(p):s.add(p);state.selected=[...s];saveState();render();if(current?.path===p)updateViewerHeader()}
-function setPublished(p,v){setMeta(p,{published:!!v});render()}
-function metadataFor(a){const m=getMeta(a.path), stars=starSet();return{...a,selected:stars.has(a.path),published:!!m.published,rating:Number(m.rating||0),user_tags:m.tags||[],note:m.note||''}}
+function setMeta(p,changes){state.assets ||= {};const m={...(state.assets[p]||{}),...changes};if(!m.published&&!m.rating&&!(m.tags?.length)&&!m.note)delete state.assets[p];else state.assets[p]=m;saveState();}
+function toggleStar(p){const s=starSet();s.has(p)?s.delete(p):s.add(p);state.selected=[...s];saveState();render();if(current?.path===p)updateViewerHeader();}
+function setPublished(p,v){setMeta(p,{published:!!v});render();}
 
-function revokeRenderURLs(){for(const u of renderURLs)URL.revokeObjectURL(u);renderURLs=[]}
-function thumbURL(file){if(!file)return null;const u=URL.createObjectURL(file);renderURLs.push(u);return u}
-function fileFor(a){return mounted.get(a.system)?.get(a.path)||null}
-function mountedCount(){return mounted.size}
-function connectionText(){return catalogLoaded?`catálogo · ${fmt(assets.length)} · ${mountedCount()}/${systems.length} sistemas conectados`:''}
+function clearURLs(){for(const u of urls)URL.revokeObjectURL(u);urls.clear();}
+function objectURL(file){const u=URL.createObjectURL(file);urls.add(u);return u;}
+function normalizePath(raw){return raw.replace(/\\/g,'/').normalize('NFC')}
+function ext(name){const i=name.lastIndexOf('.');return i>=0?name.slice(i).toLowerCase():''}
+function kindFor(path,e){if(['.jpg','.jpeg','.png','.webp','.gif'].includes(e))return /(^|\/)pdf\//i.test(path)?'pdf_page':'image';if(['.mp4','.m4v','.mov'].includes(e))return'video';if(['.mp3','.m4a','.aac','.wav','.aif','.aiff'].includes(e))return'audio';if(e==='.pdf')return'pdf';return'other'}
+function mediaRel(raw,selectedRoot){raw=normalizePath(raw);let mark='/xpan_media_normalizada/';let i=raw.indexOf(mark);if(i>=0)return raw.slice(i+mark.length);if(raw.startsWith('xpan_media_normalizada/'))return raw.slice('xpan_media_normalizada/'.length);const parts=raw.split('/');if(parts[0]?.normalize('NFC')==='xpan_media_normalizada')return parts.slice(1).join('/');if(selectedRoot?.normalize('NFC')==='xpan_media_normalizada')return parts.slice(1).join('/');return null}
+function systemInfo(name){return SYSTEM_META[name]||{title:name,year:null,tags:[],aliases:[],href:'',meta:''}}
+function typeLabel(t){return({image:'imagen',pdf_page:'pdf',video:'video',audio:'audio',pdf:'pdf',other:'otro'})[t]||t}
 
-function makeInputs(){
-  const catalog=document.createElement('input');
-  catalog.type='file'; catalog.id='catalogFile'; catalog.accept='.tsv,text/tab-separated-values,text/plain'; catalog.hidden=true;
-  const folder=document.createElement('input');
-  folder.type='file'; folder.id='systemFolder'; folder.setAttribute('webkitdirectory',''); folder.setAttribute('directory',''); folder.multiple=true; folder.hidden=true;
-  document.body.append(catalog,folder);
-
-  catalog.addEventListener('change',async e=>{
-    const f=e.target.files?.[0]; if(!f)return;
-    await loadCatalog(f);
-    e.target.value='';
-  });
-
-  folder.addEventListener('change',async e=>{
-    const list=e.target.files; if(!list?.length){pendingOpen=null;pendingSystem=null;return}
-    await mountSystemFiles(pendingSystem,list);
-    const p=pendingOpen; pendingOpen=null; pendingSystem=null; e.target.value='';
-    if(p) openAsset(p);
-  });
-}
-makeInputs();
-
-async function loadCatalog(file){
-  $('#content').innerHTML='<div class="connect-card"><h2>leyendo catálogo</h2><p>Solo se lee el manifest. No se abren los 31 mil archivos.</p><div class="status" id="connectProgress">0</div></div>';
-  $('#connection').textContent='leyendo catálogo…';
-  let text;
-  try{text=await file.text()}catch(e){showFatal('No pude leer el manifest.');return}
-  const lines=text.split(/\r?\n/);
-  if(lines.length<2){showFatal('El manifest está vacío.');return}
-  const headers=lines[0].split('\t');
-  const pIdx=headers.indexOf('portable'), sIdx=headers.indexOf('status'), bIdx=headers.indexOf('portable_bytes');
-  if(pIdx<0){showFatal('No reconozco este manifest. Usa xpan_portable_manifest.tsv.');return}
-  const out=[];
-  for(let i=1;i<lines.length;i++){
-    const line=lines[i]; if(!line)continue;
-    const cols=line.split('\t');
-    if(sIdx>=0 && cols[sIdx]==='ERROR')continue;
-    const path=normalizePath(cols[pIdx]); if(!path)continue;
-    const parts=path.split('/'); if(parts.length<2)continue;
-    const name=parts.at(-1); if(name.startsWith('._')||name==='.DS_Store')continue;
-    const e=ext(name); if(!ACTIVE.has(e))continue;
-    const system=parts[0], sm=systemInfo(system);
-    out.push({
-      path,name,system,ext:e,type:kindFor(path,e),
-      size:Number(cols[bIdx]||0),mtime:0,year:sm.year,tags:sm.tags||[]
-    });
-    if(i%5000===0){
-      const p=$('#connectProgress'); if(p)p.textContent=fmt(out.length)+' medios';
-      await new Promise(r=>setTimeout(r,0));
-    }
-  }
-  if(!out.length){showFatal('No encontré medios en el manifest.');return}
-  out.sort((a,b)=>a.path.localeCompare(b.path,'es',{numeric:true,sensitivity:'base'}));
-  assets=out; byPath=new Map(out.map(x=>[x.path,x]));
-  systems=[...new Set(out.map(x=>x.system))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
-  catalogLoaded=true; mounted.clear(); route={view:'browse',system:'',board:''}; page=1;
-  updateShell(); render();
-}
-
-function showFatal(msg){
-  $('#connection').textContent='';
-  $('#content').innerHTML=`<div class="connect-card"><h2>no se pudo abrir</h2><p>${esc(msg)}</p><button id="again" class="strong">elegir manifest</button></div>`;
-  $('#again').onclick=()=>$('#catalogFile').click();
-}
-
-function requestSystem(system, openPath=null){
-  pendingSystem=system; pendingOpen=openPath;
-  notify(`Selecciona la carpeta “${system}” dentro de xpan_media_normalizada`);
-  $('#systemFolder').click();
-}
-
-async function mountSystemFiles(system,list){
-  if(!system)return;
-  $('#connection').textContent=`conectando ${system}…`;
-  const map=new Map();
-  let matched=0;
-  for(let i=0;i<list.length;i++){
-    const f=list[i];
-    const raw=normalizePath(f.webkitRelativePath||f.name);
-    const parts=raw.split('/');
-    const rel=parts.length>1?parts.slice(1).join('/'):parts[0];
-    const candidate=normalizePath(system+'/'+rel);
-    if(byPath.has(candidate)){map.set(candidate,f);matched++}
-    if(i%500===0)await new Promise(r=>setTimeout(r,0));
-  }
-  if(!matched){
-    $('#connection').textContent=connectionText();
-    notify(`Esa no parece ser la carpeta ${system}`,true);
-    return;
-  }
-  mounted.set(system,map);
-  $('#connection').textContent=connectionText();
-  notify(`${system}: ${fmt(matched)} archivos conectados`);
-  render();
+async function connectFiles(list){
+ const files=[...list]; if(!files.length)return;
+ $('#content').innerHTML='<div class="connect-card"><h2>leyendo 666</h2><p>No se está subiendo nada. Safari está indexando los archivos seleccionados directamente desde el USB.</p><div class="status" id="connectProgress">0 archivos</div></div>';
+ $('#connection').textContent='indexando USB…';
+ const root=normalizePath(files[0].webkitRelativePath||'').split('/')[0]||'';
+ let wsFile=files.find(f=>normalizePath(f.webkitRelativePath||'').endsWith('/xpan_visualizador_4/datos/workspace.json'));
+ workspaceFromUSB=null;
+ if(wsFile){try{workspaceFromUSB=JSON.parse(await wsFile.text())}catch(e){}}
+ const out=[]; let seen=0;
+ for(let idx=0;idx<files.length;idx++){
+   const f=files[idx], raw=normalizePath(f.webkitRelativePath||f.name), rel=mediaRel(raw,root);
+   if(!rel)continue; const name=rel.split('/').pop(); if(!name||name.startsWith('._')||name==='.DS_Store')continue;
+   const e=ext(name); if(!ACTIVE.has(e))continue;
+   const parts=rel.split('/'); if(parts.length<2)continue;
+   const system=parts[0], type=kindFor(rel,e), sm=systemInfo(system);
+   out.push({path:rel,name,system,type,ext:e,size:f.size,mtime:f.lastModified||0,file:f,year:sm.year,tags:sm.tags||[],search:(rel+' '+(sm.title||'')+' '+(sm.aliases||[]).join(' ')+' '+(sm.tags||[]).join(' ')).toLowerCase()});
+   seen++;
+   if(idx%2000===0){const p=$('#connectProgress');if(p)p.textContent=fmt(seen)+' medios encontrados';await new Promise(r=>setTimeout(r,0));}
+ }
+ if(!out.length){
+   $('#content').innerHTML='<div class="connect-card"><h2>no encontré la biblioteca</h2><p>Selecciona la carpeta <b>xpan_media_normalizada</b> o la raíz <b>666</b>.</p><button id="retryConnect" class="strong">seleccionar carpeta</button></div>';$('#retryConnect').onclick=()=>$('#usbFolder').click();$('#connection').textContent='sin biblioteca';return;
+ }
+ assets=out; assets.sort((a,b)=>a.path.localeCompare(b.path,'es',{numeric:true,sensitivity:'base'})); byPath=new Map(assets.map(x=>[x.path,x]));
+ systems=[...new Set(assets.map(x=>x.system))].sort((a,b)=>a.localeCompare(b,'es',{numeric:true,sensitivity:'base'}));
+ // Initial import from the Mac workspace if the whole USB was selected and this browser has no curation yet.
+ const localExisting=(state.selected?.length||Object.keys(state.assets||{}).length||state.collections?.length||state.threads?.length);
+ if(workspaceFromUSB&&!localExisting){state={version:1,selected:workspaceFromUSB.selected||[],assets:workspaceFromUSB.assets||{},collections:workspaceFromUSB.collections||[],threads:workspaceFromUSB.threads||[]};saveState();}
+ libraryConnected=true; route={view:'browse',system:'',board:''}; page=1;
+ $('#connection').textContent='USB · '+fmt(assets.length); updateShell(); render();
 }
 
 function updateShell(){
-  $('#totalCount').textContent=catalogLoaded?fmt(assets.length):'';
-  $('#systemCount').textContent=catalogLoaded?systems.length:'';
-  $('#boardCount').textContent=state.collections?.length||'';
-  $('#threadCount').textContent=state.threads?.length||'';
-  $('#sideSystemCount').textContent=catalogLoaded?systems.length:'';
-  $('#sideBytes').textContent=catalogLoaded?`${fmt(assets.length)} archivos / ${bytes(assets.reduce((s,x)=>s+x.size,0))}`:'';
-  $('#connection').textContent=connectionText();
-  const fs=$('#fSystem');
-  fs.innerHTML='<option value="">todos</option>'+systems.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
-  fs.value=filters.system||'';
-  const years=[...new Set(assets.map(x=>x.year).filter(Boolean))].sort((a,b)=>b-a);
-  $('#fYear').innerHTML='<option value="">todos</option>'+years.map(y=>`<option>${y}</option>`).join('');
-  const tags=[...new Set(assets.flatMap(x=>x.tags||[]))].sort((a,b)=>a.localeCompare(b,'es'));
-  $('#fTag').innerHTML='<option value="">todas</option>'+tags.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  renderSystemList();
+ $('#totalCount').textContent=libraryConnected?fmt(assets.length):''; $('#systemCount').textContent=libraryConnected?systems.length:''; $('#boardCount').textContent=state.collections?.length||''; $('#threadCount').textContent=state.threads?.length||'';
+ $('#sideSystemCount').textContent=libraryConnected?systems.length:''; $('#sideBytes').textContent=libraryConnected?`${fmt(assets.length)} archivos / ${bytes(assets.reduce((s,x)=>s+x.size,0))}`:'';
+ const fs=$('#fSystem');fs.innerHTML='<option value="">todos</option>'+systems.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');fs.value=filters.system||'';
+ const years=[...new Set(assets.map(x=>x.year).filter(Boolean))].sort((a,b)=>b-a);$('#fYear').innerHTML='<option value="">todos</option>'+years.map(y=>`<option>${y}</option>`).join('');
+ const tags=[...new Set(assets.flatMap(x=>x.tags||[]))].sort((a,b)=>a.localeCompare(b,'es'));$('#fTag').innerHTML='<option value="">todas</option>'+tags.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
+ renderSystemList();
 }
-
-function renderSystemList(){
-  const q=$('#systemSearch').value.trim().toLowerCase();
-  const counts=new Map(); for(const a of assets)counts.set(a.system,(counts.get(a.system)||0)+1);
-  $('#systemList').innerHTML=systems.filter(s=>!q||s.toLowerCase().includes(q)).map(s=>
-    `<button class="system-link ${route.system===s?'current':''}" data-system="${esc(s)}"><span>${mounted.has(s)?'● ':''}${esc(s)}</span><small>${fmt(counts.get(s))}</small></button>`
-  ).join('');
-}
+function renderSystemList(){const q=$('#systemSearch').value.trim().toLowerCase();const counts=new Map();for(const a of assets)counts.set(a.system,(counts.get(a.system)||0)+1);$('#systemList').innerHTML=systems.filter(s=>!q||s.toLowerCase().includes(q)).map(s=>`<button class="system-link ${route.system===s?'current':''}" data-system="${esc(s)}"><span>${esc(s)}</span><small>${fmt(counts.get(s))}</small></button>`).join('')}
+function metadataFor(a){const m=getMeta(a.path), stars=starSet();return{...a,selected:stars.has(a.path),published:!!m.published,rating:Number(m.rating||0),user_tags:m.tags||[],note:m.note||''}}
 
 function filteredAssets(){
-  let arr=assets;
-  if(route.view==='board'){
-    const c=state.collections.find(c=>c.id===route.board);
-    return (c?.items||[]).map(p=>byPath.get(p)).filter(Boolean);
-  }
-  const q=(filters.q||'').toLowerCase().trim(), sys=route.system||filters.system||'', stars=starSet();
-  arr=arr.filter(a=>{
-    const m=getMeta(a.path), sm=systemInfo(a.system);
-    if(sys&&a.system!==sys)return false;
-    if(q){
-      const hay=(a.path+' '+(sm.title||'')+' '+(sm.aliases||[]).join(' ')+' '+(sm.tags||[]).join(' ')).toLowerCase();
-      if(!hay.includes(q))return false;
-    }
-    if(filters.type&&a.type!==filters.type)return false;
-    if(filters.year&&String(a.year)!==String(filters.year))return false;
-    if(filters.tag&&!(a.tags||[]).includes(filters.tag)&&!(m.tags||[]).includes(filters.tag))return false;
-    if(filters.selected==='yes'&&!stars.has(a.path))return false;if(filters.selected==='no'&&stars.has(a.path))return false;
-    if(filters.published==='yes'&&!m.published)return false;if(filters.published==='no'&&m.published)return false;
-    if(filters.rating&&Number(m.rating||0)<Number(filters.rating))return false;
-    return true;
-  });
-  if(filters.sort==='recent')arr=[...arr].sort((a,b)=>b.mtime-a.mtime);
-  else if(filters.sort==='old')arr=[...arr].sort((a,b)=>a.mtime-b.mtime);
-  else if(filters.sort==='year')arr=[...arr].sort((a,b)=>(b.year||0)-(a.year||0)||a.path.localeCompare(b.path,'es',{numeric:true}));
-  else if(filters.sort==='rating')arr=[...arr].sort((a,b)=>Number(getMeta(b.path).rating||0)-Number(getMeta(a.path).rating||0));
-  else if(filters.sort==='random')arr=[...arr].sort(()=>Math.random()-.5);
-  else arr=[...arr].sort((a,b)=>a.path.localeCompare(b.path,'es',{numeric:true,sensitivity:'base'}));
-  return arr;
+ let arr=assets;
+ if(route.view==='board'){const c=state.collections.find(c=>c.id===route.board);arr=(c?.items||[]).map(p=>byPath.get(p)).filter(Boolean);return arr}
+ const q=(filters.q||'').toLowerCase().trim(), sys=route.system||filters.system||'';
+ const stars=starSet();
+ arr=arr.filter(a=>{
+   const m=getMeta(a.path);
+   if(sys&&a.system!==sys)return false;
+   if(q&&!a.search.includes(q))return false;
+   if(filters.type&&a.type!==filters.type)return false;
+   if(filters.year&&String(a.year)!==String(filters.year))return false;
+   if(filters.tag&&!(a.tags||[]).includes(filters.tag)&&!(m.tags||[]).includes(filters.tag))return false;
+   if(filters.selected==='yes'&&!stars.has(a.path))return false;if(filters.selected==='no'&&stars.has(a.path))return false;
+   if(filters.published==='yes'&&!m.published)return false;if(filters.published==='no'&&m.published)return false;
+   if(filters.rating&&Number(m.rating||0)<Number(filters.rating))return false;
+   return true;
+ });
+ if(filters.sort==='recent')arr=[...arr].sort((a,b)=>b.mtime-a.mtime);else if(filters.sort==='old')arr=[...arr].sort((a,b)=>a.mtime-b.mtime);else if(filters.sort==='year')arr=[...arr].sort((a,b)=>(b.year||0)-(a.year||0)||a.path.localeCompare(b.path,'es',{numeric:true}));else if(filters.sort==='rating')arr=[...arr].sort((a,b)=>Number(getMeta(b.path).rating||0)-Number(getMeta(a.path).rating||0));else if(filters.sort==='random')arr=[...arr].sort(()=>Math.random()-.5);else arr=[...arr].sort((a,b)=>a.path.localeCompare(b.path,'es',{numeric:true,sensitivity:'base'}));
+ return arr;
 }
-
 function render(){
-  revokeRenderURLs();
-  $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.view||(route.view==='board'&&b.dataset.nav==='boards')));
-  $('#searchPanel').hidden=!['browse','board'].includes(route.view);
-  $('#resultBar').hidden=!['browse','board'].includes(route.view);
-  $('#pager').hidden=!['browse','board'].includes(route.view);
-  $('#selectionTray').hidden=true;
-  if(!catalogLoaded){renderConnect();return}
-  if(route.view==='systems')return renderSystems();
-  if(route.view==='boards')return renderBoards();
-  if(route.view==='threads')return renderThreads();
-  renderBrowse();
+ clearURLs();
+ $$('.nav').forEach(b=>b.classList.toggle('active',b.dataset.nav===route.view||(route.view==='board'&&b.dataset.nav==='boards')));
+ $('#searchPanel').hidden=!['browse','board'].includes(route.view);$('#resultBar').hidden=!['browse','board'].includes(route.view);$('#pager').hidden=!['browse','board'].includes(route.view);
+ $('#selectionTray').hidden=true;
+ if(!libraryConnected){renderConnect();return}
+ if(route.view==='systems')return renderSystems();if(route.view==='boards')return renderBoards();if(route.view==='threads')return renderThreads();
+ renderBrowse();
 }
-
 function renderConnect(){
-  $('#title').textContent='archivo'; $('#pageActions').innerHTML=''; $('#resultCount').textContent='';
-  $('#content').innerHTML=`<div class="connect-card"><h2>archivo portable</h2><p>Esta versión no intenta abrir 31,113 archivos al mismo tiempo. Primero carga únicamente el catálogo del USB.</p><button id="connectBtn" class="strong">elegir xpan_portable_manifest.tsv</button><div class="status">Después conectas solo el sistema que quieras visualizar.</div></div>`;
-  $('#connectBtn').onclick=()=>$('#catalogFile').click();
+ $('#title').textContent='archivo';$('#pageActions').innerHTML='';$('#resultCount').textContent='';$('#content').innerHTML=`<div class="connect-card"><h2>archivo portable</h2><p>Conecta <b>666</b> al iPad y selecciona la raíz del USB o la carpeta <b>xpan_media_normalizada</b>. Los archivos permanecen en el dispositivo: esta página no los sube al servidor.</p><button id="connectBtn" class="strong">conectar USB</button><div class="status">iOS / iPadOS 18.4 o posterior · Safari</div></div>`;$('#connectBtn').onclick=()=>$('#usbFolder').click();
 }
-
-function cardHTML(a){
-  const x=metadataFor(a), f=fileFor(a); let media='';
-  if(f && ['image','pdf_page'].includes(a.type)){
-    media=`<img src="${thumbURL(f)}" alt="" loading="lazy" decoding="async">`;
-  }else if(f && a.type==='video'){
-    media=`<video src="${thumbURL(f)}#t=0.05" muted playsinline preload="metadata"></video>`;
-  }else{
-    media=`<span class="thumb-fallback">${mounted.has(a.system)?esc(typeLabel(a.type)):'conectar '+esc(a.system)}</span>`;
-  }
-  return `<article class="asset" data-path="${esc(a.path)}"><button class="asset-star ${x.selected?'starred':''}" data-star="${esc(a.path)}">${x.selected?'★':'☆'}</button><button class="asset-visual" data-open="${esc(a.path)}">${media}<span class="asset-type">${a.type==='video'?'▶':a.type==='audio'?'audio':a.type==='pdf'?'pdf':''}</span></button><div class="asset-info"><strong title="${esc(a.name)}">${esc(a.name)}</strong><p><span class="system-name">${esc(a.system)}</span><span class="flags">${mounted.has(a.system)?'USB ':''}${x.published?'P ':''}${x.rating?x.rating+'/5':''}</span></p></div></article>`;
-}
-
-function listHTML(items){
-  return `<table class="asset-table"><thead><tr><th>vista</th><th>archivo</th><th>sistema</th><th>tipo</th><th>tamaño</th><th>★</th></tr></thead><tbody>${items.map(a=>{
-    const x=metadataFor(a), f=fileFor(a), media=f&&['image','pdf_page'].includes(a.type)?`<img src="${thumbURL(f)}" alt="">`:`<span>${f?'●':'○'}</span>`;
-    return `<tr><td><button data-open="${esc(a.path)}">${media}</button></td><td><button class="file-open" data-open="${esc(a.path)}">${esc(a.name)}</button></td><td>${esc(a.system)}</td><td>${esc(typeLabel(a.type))}</td><td>${bytes(a.size)}</td><td><button data-star="${esc(a.path)}">${x.selected?'★':'☆'}</button></td></tr>`;
-  }).join('')}</tbody></table>`;
-}
-
+function cardHTML(a){a=metadataFor(a);let media='';if(['image','pdf_page'].includes(a.type)){media=`<img src="${objectURL(a.file)}" alt="" loading="lazy" decoding="async">`}else if(a.type==='video'){media=`<video src="${objectURL(a.file)}#t=0.05" muted playsinline preload="metadata"></video>`}else media=`<span class="thumb-fallback">${esc(typeLabel(a.type))}</span>`;return `<article class="asset" data-path="${esc(a.path)}"><button class="asset-star ${a.selected?'starred':''}" data-star="${esc(a.path)}">${a.selected?'★':'☆'}</button><button class="asset-visual" data-open="${esc(a.path)}">${media}<span class="asset-type">${a.type==='video'?'▶':a.type==='audio'?'audio':a.type==='pdf'?'pdf':''}</span></button><div class="asset-info"><strong title="${esc(a.name)}">${esc(a.name)}</strong><p><span class="system-name">${esc(a.system)}</span><span class="flags">${a.published?'P ':''}${a.rating?a.rating+'/5':''}</span></p></div></article>`}
+function listHTML(items){return `<table class="asset-table"><thead><tr><th>vista</th><th>archivo</th><th>sistema</th><th>tipo</th><th>tamaño</th><th>★</th></tr></thead><tbody>${items.map(a=>{const x=metadataFor(a),media=['image','pdf_page'].includes(a.type)?`<img src="${objectURL(a.file)}" alt="">`:`<span>${a.type==='video'?'▶':esc(typeLabel(a.type))}</span>`;return `<tr><td><button data-open="${esc(a.path)}">${media}</button></td><td><button class="file-open" data-open="${esc(a.path)}">${esc(a.name)}</button></td><td>${esc(a.system)}</td><td>${esc(typeLabel(a.type))}</td><td>${bytes(a.size)}</td><td><button data-star="${esc(a.path)}">${x.selected?'★':'☆'}</button></td></tr>`}).join('')}</tbody></table>`}
 function renderBrowse(){
-  const board=route.view==='board'?state.collections.find(c=>c.id===route.board):null;
-  $('#title').textContent=board?.name||route.system||'archivo';
-  let actions='';
-  if(route.system){
-    actions+=`<button id="mountCurrent" class="${mounted.has(route.system)?'':'strong'}">${mounted.has(route.system)?'reconectar carpeta':'conectar carpeta USB'}</button><button id="clearSystem">ver todo</button>`;
-  }
-  $('#pageActions').innerHTML=actions;
-  $('#clearSystem')?.addEventListener('click',()=>{route.system='';page=1;render()});
-  $('#mountCurrent')?.addEventListener('click',()=>requestSystem(route.system));
-
-  currentResults=filteredAssets();
-  const pages=Math.max(1,Math.ceil(currentResults.length/pageSize));
-  page=Math.min(Math.max(1,page),pages);
-  currentPageItems=currentResults.slice((page-1)*pageSize,page*pageSize);
-  $('#resultCount').textContent=fmt(currentResults.length)+' archivos';
-  $('#pageJump').value=page; $('#pageJump').max=pages; $('#pageTotal').textContent=' / '+pages; $('#pageSize').value=String(pageSize);
-  $('#content').classList.toggle('crop-grid',crop);
-  $('#content').innerHTML=grid?`<div class="grid">${currentPageItems.map(cardHTML).join('')}</div>`:listHTML(currentPageItems);
-  $('#prevPage').disabled=page<=1; $('#nextPage').disabled=page>=pages;
-  renderSystemList();
+ const board=route.view==='board'?state.collections.find(c=>c.id===route.board):null;$('#title').textContent=board?.name||route.system||'archivo';$('#pageActions').innerHTML=route.system?`<button id="clearSystem">ver todo</button>`:'';$('#clearSystem')?.addEventListener('click',()=>{route.system='';page=1;render()});
+ currentResults=filteredAssets();const pages=Math.max(1,Math.ceil(currentResults.length/pageSize));page=Math.min(Math.max(1,page),pages);currentPageItems=currentResults.slice((page-1)*pageSize,page*pageSize);
+ $('#resultCount').textContent=fmt(currentResults.length)+' archivos';$('#pageJump').value=page;$('#pageJump').max=pages;$('#pageTotal').textContent=' / '+pages;$('#pageSize').value=String(pageSize);
+ $('#content').classList.toggle('crop-grid',crop);$('#content').innerHTML=grid?`<div class="grid">${currentPageItems.map(cardHTML).join('')}</div>`:listHTML(currentPageItems);
+ $('#prevPage').disabled=page<=1;$('#nextPage').disabled=page>=pages;renderSystemList();
 }
-
 function renderSystems(){
-  $('#title').textContent='sistemas'; $('#pageActions').innerHTML='';
-  const counts=new Map();for(const a of assets)counts.set(a.system,(counts.get(a.system)||0)+1);
-  $('#content').innerHTML=`<div class="system-grid">${systems.map(s=>{
-    const connected=mounted.has(s);
-    return `<article class="system-card"><button data-system="${esc(s)}"><div class="cover"><span>${connected?'● conectado':'conectar al abrir'}</span></div><div class="info"><h2>${esc(s)}</h2><p>${fmt(counts.get(s))} archivos${systemInfo(s).year?' · '+systemInfo(s).year:''}</p></div></button></article>`;
-  }).join('')}</div>`;
+ $('#title').textContent='sistemas';$('#pageActions').innerHTML='';const counts=new Map();for(const a of assets)counts.set(a.system,(counts.get(a.system)||0)+1);
+ $('#content').innerHTML=`<div class="system-grid">${systems.map(s=>{const cover=assets.find(a=>a.system===s&&['image','pdf_page'].includes(a.type));return `<article class="system-card"><button data-system="${esc(s)}"><div class="cover">${cover?`<img src="${objectURL(cover.file)}" alt="" loading="lazy">`:'<span>sin portada</span>'}</div><div class="info"><h2>${esc(s)}</h2><p>${fmt(counts.get(s))} archivos${systemInfo(s).year?' · '+systemInfo(s).year:''}</p></div></button></article>`}).join('')}</div>`;
 }
-
 function renderBoards(){
-  $('#title').textContent='mesas';$('#pageActions').innerHTML='<button id="newBoard">crear mesa</button>';
-  $('#newBoard').onclick=()=>{const name=prompt('nombre de la mesa');if(!name)return;state.collections.push({id:crypto.randomUUID?.()||Date.now().toString(36),name,items:[]});saveState();updateShell();render()};
-  $('#content').innerHTML=state.collections.length?`<div class="simple-board-list">${state.collections.map(c=>`<div class="simple-row"><button data-board="${esc(c.id)}"><span><strong>${esc(c.name)}</strong><br><small>${fmt(c.items?.length||0)} piezas</small></span></button><button data-delete-board="${esc(c.id)}">eliminar</button></div>`).join('')}</div>`:'<div class="connect-card"><h2>sin mesas</h2></div>';
+ $('#title').textContent='mesas';$('#pageActions').innerHTML='<button id="newBoard">crear mesa</button>';$('#newBoard').onclick=()=>{const name=prompt('nombre de la mesa');if(!name)return;state.collections.push({id:crypto.randomUUID?.()||Date.now().toString(36),name,items:[]});saveState();updateShell();render()};
+ $('#content').innerHTML=state.collections.length?`<div class="simple-board-list">${state.collections.map(c=>`<div class="simple-row"><button data-board="${esc(c.id)}"><span><strong>${esc(c.name)}</strong><br><small>${fmt(c.items?.length||0)} piezas</small></span></button><button data-delete-board="${esc(c.id)}">eliminar</button></div>`).join('')}</div>`:'<div class="connect-card"><h2>sin mesas</h2><p>Las mesas del visualizador Mac se cargan automáticamente si seleccionas la raíz 666 y Safari incluye workspace.json.</p></div>';
 }
-
 function renderThreads(){
-  $('#title').textContent='hilos';$('#pageActions').innerHTML='';
-  $('#content').innerHTML=state.threads?.length?`<div class="simple-thread-list">${state.threads.map(t=>`<div class="simple-row"><button data-thread="${esc(t.id)}"><span><strong>${esc(t.name)}</strong><br><small>${esc(t.route?.filters?.q||t.route?.system||'consulta')}</small></span></button><button data-delete-thread="${esc(t.id)}">eliminar</button></div>`).join('')}</div>`:'<div class="connect-card"><h2>sin hilos</h2></div>';
+ $('#title').textContent='hilos';$('#pageActions').innerHTML='';$('#content').innerHTML=state.threads?.length?`<div class="simple-thread-list">${state.threads.map(t=>`<div class="simple-row"><button data-thread="${esc(t.id)}"><span><strong>${esc(t.name)}</strong><br><small>${esc(t.route?.filters?.q||t.route?.system||'consulta')}</small></span></button><button data-delete-thread="${esc(t.id)}">eliminar</button></div>`).join('')}</div>`:'<div class="connect-card"><h2>sin hilos</h2><p>Guarda una búsqueda con “guardar hilo”.</p></div>';
 }
 
-function openAsset(path){
-  const a=byPath.get(path); if(!a)return;
-  const f=fileFor(a);
-  if(!f){requestSystem(a.system,path);return}
-  currentResults=filteredAssets(); viewerSequence=currentResults; viewerIndex=Math.max(0,viewerSequence.findIndex(x=>x.path===path)); current=a;
-  $('#viewer').hidden=false; document.body.style.overflow='hidden'; renderViewer();
+function openAsset(path){const a=byPath.get(path);if(!a)return;currentResults=filteredAssets();viewerSequence=currentResults;viewerIndex=Math.max(0,viewerSequence.findIndex(x=>x.path===path));current=a;$('#viewer').hidden=false;document.body.style.overflow='hidden';renderViewer()}
+function renderViewer(){if(!current)return; if(viewerUrl)URL.revokeObjectURL(viewerUrl);viewerUrl=URL.createObjectURL(current.file);zoom=1;rotation=0;const x=metadataFor(current);$('#vTitle').textContent=x.name;$('#vContext').textContent=x.system+' · '+typeLabel(x.type);$('#vPosition').textContent=`${viewerIndex+1} / ${viewerSequence.length}`;$('#vPrev').disabled=viewerIndex<=0;$('#vNext').disabled=viewerIndex>=viewerSequence.length-1;updateViewerHeader();
+ const stage=$('#stage');stage.innerHTML='';const wrap=document.createElement('div');wrap.className='viewer-stage-local';let m;if(['image','pdf_page'].includes(x.type)){m=document.createElement('img');m.src=viewerUrl;m.alt='';m.id='localStageMedia'}else if(x.type==='video'){m=document.createElement('video');m.src=viewerUrl;m.controls=true;m.playsInline=true;m.id='localStageMedia'}else if(x.type==='audio'){m=document.createElement('audio');m.src=viewerUrl;m.controls=true;m.id='localStageMedia'}else if(x.type==='pdf'){m=document.createElement('iframe');m.src=viewerUrl;m.id='localStageMedia'}else{m=document.createElement('div');m.className='media-error';m.textContent='Vista no disponible'}wrap.appendChild(m);stage.appendChild(wrap);
+ $('#mediaStatus').textContent=bytes(x.size);$('#vQuickDownload').href=viewerUrl;$('#vQuickDownload').download=x.name;$('#vDownload').href=viewerUrl;$('#vDownload').download=x.name;$('#vMeta').innerHTML=`<dt>sistema</dt><dd>${esc(x.system)}</dd><dt>ruta</dt><dd>${esc(x.path)}</dd><dt>tipo</dt><dd>${esc(typeLabel(x.type))}</dd><dt>peso</dt><dd>${bytes(x.size)}</dd><dt>modificado</dt><dd>${x.mtime?new Date(x.mtime).toLocaleString('es-MX'):'—'}</dd>`;
+ $('#vPublished').checked=x.published;$('#vRating').value=String(x.rating||0);$('#vTags').value=(x.user_tags||[]).join(', ');$('#vNote').value=x.note||'';const sm=systemInfo(x.system);$('#vSite').hidden=!sm.href;if(sm.href)$('#vSite').href='https://xpan.earth/'+sm.href;$('#vFinder').hidden=true;$('#vNative').hidden=true;$('#vBoardActions').innerHTML='';
 }
-
-function renderViewer(){
-  if(!current)return;
-  const f=fileFor(current);
-  if(!f){closeViewer();requestSystem(current.system,current.path);return}
-  if(viewerUrl)URL.revokeObjectURL(viewerUrl);
-  viewerUrl=URL.createObjectURL(f);
-  zoom=1;rotation=0;
-  const x=metadataFor(current);
-  $('#vTitle').textContent=x.name; $('#vContext').textContent=x.system+' · '+typeLabel(x.type);
-  $('#vPosition').textContent=`${viewerIndex+1} / ${viewerSequence.length}`;
-  $('#vPrev').disabled=viewerIndex<=0; $('#vNext').disabled=viewerIndex>=viewerSequence.length-1; updateViewerHeader();
-
-  const stage=$('#stage'); stage.innerHTML='';
-  const wrap=document.createElement('div');wrap.className='viewer-stage-local';
-  let m;
-  if(['image','pdf_page'].includes(x.type)){m=document.createElement('img');m.src=viewerUrl;m.alt='';m.id='localStageMedia'}
-  else if(x.type==='video'){m=document.createElement('video');m.src=viewerUrl;m.controls=true;m.playsInline=true;m.id='localStageMedia'}
-  else if(x.type==='audio'){m=document.createElement('audio');m.src=viewerUrl;m.controls=true;m.id='localStageMedia'}
-  else if(x.type==='pdf'){m=document.createElement('iframe');m.src=viewerUrl;m.id='localStageMedia'}
-  else{m=document.createElement('div');m.className='media-error';m.textContent='Vista no disponible'}
-  wrap.appendChild(m);stage.appendChild(wrap);
-
-  $('#mediaStatus').textContent=bytes(x.size); $('#vQuickDownload').href=viewerUrl; $('#vQuickDownload').download=x.name;
-  $('#vDownload').href=viewerUrl; $('#vDownload').download=x.name;
-  $('#vMeta').innerHTML=`<dt>sistema</dt><dd>${esc(x.system)}</dd><dt>ruta</dt><dd>${esc(x.path)}</dd><dt>tipo</dt><dd>${esc(typeLabel(x.type))}</dd><dt>peso</dt><dd>${bytes(x.size)}</dd>`;
-  $('#vPublished').checked=x.published; $('#vRating').value=String(x.rating||0); $('#vTags').value=(x.user_tags||[]).join(', '); $('#vNote').value=x.note||'';
-  const sm=systemInfo(x.system); $('#vSite').hidden=!sm.href;if(sm.href)$('#vSite').href='https://xpan.earth/'+sm.href;
-  $('#vFinder').hidden=true;$('#vNative').hidden=true;$('#vBoardActions').innerHTML='';
-}
-
-function updateViewerHeader(){if(!current)return;const s=starSet();$('#vStar').textContent=s.has(current.path)?'★':'☆'}
-function stepViewer(d){
-  let i=viewerIndex+d;
-  while(i>=0&&i<viewerSequence.length){
-    const candidate=viewerSequence[i];
-    if(fileFor(candidate)){viewerIndex=i;current=candidate;renderViewer();return}
-    if(candidate.system!==current.system)break;
-    i+=d;
-  }
-  notify('Conecta la carpeta del siguiente sistema para continuar');
-}
+function updateViewerHeader(){if(!current)return;const s=starSet();$('#vStar').textContent=s.has(current.path)?'★':'☆';$('#vStar').title=s.has(current.path)?'Quitar guardado':'Guardar con estrella'}
+function stepViewer(d){const i=viewerIndex+d;if(i<0||i>=viewerSequence.length)return;viewerIndex=i;current=viewerSequence[i];renderViewer()}
 function closeViewer(){if(viewerUrl){URL.revokeObjectURL(viewerUrl);viewerUrl=null}$('#viewer').hidden=true;current=null;document.body.style.overflow=''}
 function applyTransform(){const m=$('#localStageMedia');if(m&&m.tagName==='IMG')m.style.transform=`scale(${zoom}) rotate(${rotation}deg)`}
-function showModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalActions').innerHTML='';$('#modal').showModal()}
-function notify(msg,err=false){const t=$('#toast');t.textContent=msg;t.className=err?'error':'';t.hidden=false;clearTimeout(notify._t);notify._t=setTimeout(()=>t.hidden=true,3000)}
 
+function showModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalActions').innerHTML='';$('#modal').showModal()}
+function notify(msg,err=false){const t=$('#toast');t.textContent=msg;t.className=err?'error':'';t.hidden=false;clearTimeout(notify._t);notify._t=setTimeout(()=>t.hidden=true,2600)}
+
+// file picker
+$('#usbFolder').addEventListener('change',e=>connectFiles(e.target.files));
+// top/nav
 $('#home').onclick=e=>{e.preventDefault();route={view:'browse',system:'',board:''};page=1;render()};
 $$('[data-nav]').forEach(b=>b.onclick=()=>{route={view:b.dataset.nav,system:'',board:''};page=1;render()});
 $('#mobileMenu').onclick=()=>$('#shell').classList.toggle('mobile-show');
 $('#theme').onclick=()=>{const h=document.documentElement;h.dataset.theme=h.dataset.theme==='light'?'dark':'light'};
-$('#settingsBtn').onclick=()=>showModal('ajustes',`<div class="option-buttons"><button id="reloadCatalog" class="strong">cambiar manifest</button></div><dl class="settings-dl"><dt>catálogo</dt><dd>${catalogLoaded?fmt(assets.length)+' medios · '+systems.length+' sistemas':'sin catálogo'}</dd><dt>USB</dt><dd>${mountedCount()} sistemas conectados en esta sesión</dd><dt>privacidad</dt><dd>la media permanece local</dd></dl>`);
-document.addEventListener('click',e=>{if(e.target?.id==='reloadCatalog'){e.preventDefault();$('#modal').close();$('#catalogFile').click()}});
-$('#helpBtn').onclick=()=>showModal('USB / iPad',`<p class="notice">1. carga <b>xpan_portable_manifest.tsv</b><br>2. navega el catálogo completo<br>3. al abrir un sistema, selecciona únicamente la carpeta de ese sistema dentro de xpan_media_normalizada<br><br>Así Safari nunca intenta retener 31 mil archivos locales a la vez.</p>`);
-$('#jobsBtn').hidden=true; $('#modalClose').onclick=()=>$('#modal').close();
+$('#settingsBtn').onclick=()=>showModal('ajustes',`<div class="option-buttons"><button id="modalReconnect" class="strong">conectar / cambiar USB</button></div><dl class="settings-dl"><dt>estado</dt><dd>${libraryConnected?fmt(assets.length)+' medios · '+systems.length+' sistemas':'sin biblioteca'}</dd><dt>privacidad</dt><dd>archivos locales; no se suben al servidor</dd><dt>sesión</dt><dd>Safari pide seleccionar la carpeta después de recargar la página</dd></dl>`);document.addEventListener('click',e=>{if(e.target?.id==='modalReconnect'){e.preventDefault();$('#modal').close();$('#usbFolder').click()}});
+$('#helpBtn').onclick=()=>showModal('USB / iPad',`<p class="notice">1. conecta 666<br>2. toca “conectar USB”<br>3. en Archivos selecciona 666 o xpan_media_normalizada y toca Abrir<br><br>La selección dura esta sesión. Ningún medio se sube a xpan.earth.</p>`);
+$('#jobsBtn').hidden=true;
+$('#modalClose').onclick=()=>$('#modal').close();
 
-$('#q').oninput=e=>{filters.q=e.target.value;page=1;render()};
-$('#fSystem').onchange=e=>{filters.system=e.target.value;route.system='';page=1;render()};
-$('#fType').onchange=e=>{filters.type=e.target.value;page=1;render()};
-$('#fYear').onchange=e=>{filters.year=e.target.value;page=1;render()};
-$('#fTag').onchange=e=>{filters.tag=e.target.value;page=1;render()};
-$('#fSelected').onchange=e=>{filters.selected=e.target.value;page=1;render()};
-$('#fPublished').onchange=e=>{filters.published=e.target.value;page=1;render()};
-$('#fRating').onchange=e=>{filters.rating=e.target.value;page=1;render()};
-$('#filtersBtn').onclick=()=>{const p=$('#filtersPanel');p.hidden=!p.hidden;$('#filtersBtn').setAttribute('aria-expanded',String(!p.hidden))};
-$('#clearFilters').onclick=()=>{filters={q:'',type:'',year:'',tag:'',selected:'',published:'',rating:'',sort:'path'};route.system='';$('#q').value='';updateShell();page=1;render()};
-$('#sort').onchange=e=>{filters.sort=e.target.value;page=1;render()};
-$('#pageSize').onchange=e=>{pageSize=Number(e.target.value);page=1;render()};
-$('#prevPage').onclick=()=>{if(page>1){page--;render();$('#main').scrollTop=0}};
-$('#nextPage').onclick=()=>{if(page*pageSize<currentResults.length){page++;render();$('#main').scrollTop=0}};
-$('#pageJump').onchange=e=>{page=Math.max(1,Number(e.target.value)||1);render();$('#main').scrollTop=0};
-$('#tileSize').oninput=e=>document.documentElement.style.setProperty('--tile',e.target.value+'px');
-$('#fitMode').onclick=()=>{crop=!crop;$('#fitMode').setAttribute('aria-pressed',String(crop));$('#fitMode').textContent=crop?'llenar':'completo';render()};
-$('#gridBtn').onclick=()=>{grid=true;$('#gridBtn').setAttribute('aria-pressed','true');$('#listBtn').setAttribute('aria-pressed','false');render()};
-$('#listBtn').onclick=()=>{grid=false;$('#gridBtn').setAttribute('aria-pressed','false');$('#listBtn').setAttribute('aria-pressed','true');render()};
+// search/filter controls
+$('#q').oninput=e=>{filters.q=e.target.value;page=1;render()};$('#fSystem').onchange=e=>{filters.system=e.target.value;route.system='';page=1;render()};$('#fType').onchange=e=>{filters.type=e.target.value;page=1;render()};$('#fYear').onchange=e=>{filters.year=e.target.value;page=1;render()};$('#fTag').onchange=e=>{filters.tag=e.target.value;page=1;render()};$('#fSelected').onchange=e=>{filters.selected=e.target.value;page=1;render()};$('#fPublished').onchange=e=>{filters.published=e.target.value;page=1;render()};$('#fRating').onchange=e=>{filters.rating=e.target.value;page=1;render()};
+$('#filtersBtn').onclick=()=>{const p=$('#filtersPanel');p.hidden=!p.hidden;$('#filtersBtn').setAttribute('aria-expanded',String(!p.hidden))};$('#clearFilters').onclick=()=>{filters={q:'',type:'',year:'',tag:'',selected:'',published:'',rating:'',sort:'path'};route.system='';$('#q').value='';updateShell();page=1;render()};
+$('#sort').onchange=e=>{filters.sort=e.target.value;page=1;render()};$('#pageSize').onchange=e=>{pageSize=Number(e.target.value);page=1;render()};$('#prevPage').onclick=()=>{if(page>1){page--;render();$('#main').scrollTop=0}};$('#nextPage').onclick=()=>{if(page*pageSize<currentResults.length){page++;render();$('#main').scrollTop=0}};$('#pageJump').onchange=e=>{page=Math.max(1,Number(e.target.value)||1);render();$('#main').scrollTop=0};
+$('#tileSize').oninput=e=>document.documentElement.style.setProperty('--tile',e.target.value+'px');$('#fitMode').onclick=()=>{crop=!crop;$('#fitMode').setAttribute('aria-pressed',String(crop));$('#fitMode').textContent=crop?'llenar':'completo';render()};$('#gridBtn').onclick=()=>{grid=true;$('#gridBtn').setAttribute('aria-pressed','true');$('#listBtn').setAttribute('aria-pressed','false');render()};$('#listBtn').onclick=()=>{grid=false;$('#gridBtn').setAttribute('aria-pressed','false');$('#listBtn').setAttribute('aria-pressed','true');render()};
 $('#selectMode').hidden=true;$('#activeFilters').hidden=true;
-$('#starsNav').onclick=()=>{route={view:'browse',system:'',board:''};filters.selected=filters.selected==='yes'?'':'yes';page=1;render()};
-$('#publishedNav').onclick=()=>{route={view:'browse',system:'',board:''};filters.published=filters.published==='yes'?'':'yes';page=1;render()};
-$('#randomBtn').onclick=()=>{if(!assets.length)return;openAsset(assets[Math.floor(Math.random()*assets.length)].path)};
-$('#systemSearch').oninput=renderSystemList;
-$('#saveThread').onclick=()=>{const name=prompt('nombre del hilo',filters.q||route.system||'nuevo hilo');if(!name)return;state.threads ||= [];state.threads.push({id:crypto.randomUUID?.()||Date.now().toString(36),name,route:{system:route.system,filters:{...filters}}});saveState();updateShell();notify('Hilo guardado')};
+$('#starsNav').onclick=()=>{route={view:'browse',system:'',board:''};filters.selected=filters.selected==='yes'?'':'yes';page=1;render()};$('#publishedNav').onclick=()=>{route={view:'browse',system:'',board:''};filters.published=filters.published==='yes'?'':'yes';page=1;render()};$('#randomBtn').onclick=()=>{if(!assets.length)return;openAsset(assets[Math.floor(Math.random()*assets.length)].path)};$('#systemSearch').oninput=renderSystemList;
+$('#saveThread').onclick=()=>{const name=prompt('nombre del hilo',filters.q||route.system||'nuevo hilo');if(!name)return;state.threads ||= [];state.threads.push({id:crypto.randomUUID?.()||Date.now().toString(36),name,route:{system:route.system,filters:{...filters}},created_at:new Date().toISOString()});saveState();updateShell();notify('Hilo guardado')};
 
-document.addEventListener('click',e=>{
-  const b=e.target.closest('button,a');if(!b)return;
-  if(b.dataset.open){openAsset(b.dataset.open);return}
-  if(b.dataset.star){toggleStar(b.dataset.star);return}
-  if(b.dataset.system){route={view:'browse',system:b.dataset.system,board:''};filters.system='';page=1;render();$('#shell').classList.remove('mobile-show');return}
-  if(b.dataset.board){route={view:'board',system:'',board:b.dataset.board};page=1;render();return}
-  if(b.dataset.deleteBoard){state.collections=state.collections.filter(c=>c.id!==b.dataset.deleteBoard);saveState();updateShell();render();return}
-  if(b.dataset.thread){const t=state.threads.find(x=>x.id===b.dataset.thread);if(t){route={view:'browse',system:t.route?.system||'',board:''};filters={...filters,...(t.route?.filters||{})};$('#q').value=filters.q||'';page=1;render()}return}
-  if(b.dataset.deleteThread){state.threads=state.threads.filter(t=>t.id!==b.dataset.deleteThread);saveState();updateShell();render();return}
-});
+// delegated interactions
+document.addEventListener('click',e=>{const b=e.target.closest('button,a');if(!b)return;if(b.dataset.open){openAsset(b.dataset.open);return}if(b.dataset.star){toggleStar(b.dataset.star);return}if(b.dataset.system){route={view:'browse',system:b.dataset.system,board:''};filters.system='';page=1;render();$('#shell').classList.remove('mobile-show');return}if(b.dataset.board){route={view:'board',system:'',board:b.dataset.board};page=1;render();return}if(b.dataset.deleteBoard){state.collections=state.collections.filter(c=>c.id!==b.dataset.deleteBoard);saveState();updateShell();render();return}if(b.dataset.thread){const t=state.threads.find(x=>x.id===b.dataset.thread);if(t){route={view:'browse',system:t.route?.system||'',board:''};filters={...filters,...(t.route?.filters||{})};$('#q').value=filters.q||'';page=1;render()}return}if(b.dataset.deleteThread){state.threads=state.threads.filter(t=>t.id!==b.dataset.deleteThread);saveState();updateShell();render();return}});
 
-$('#vClose').onclick=closeViewer;$('#vPrev').onclick=()=>stepViewer(-1);$('#vNext').onclick=()=>stepViewer(1);
-$('#vStar').onclick=()=>current&&toggleStar(current.path);
-$('#vInfo').onclick=()=>{const v=$('#viewer');v.classList.toggle('no-info');$('#vInfo').setAttribute('aria-pressed',String(!v.classList.contains('no-info')))};
-$('#vFullscreen').onclick=()=>$('#viewer').requestFullscreen?.();
-$('#vPublished').onchange=e=>current&&setPublished(current.path,e.target.checked);
-$('#vRating').onchange=e=>{if(current){setMeta(current.path,{rating:Number(e.target.value)});renderViewer()}};
-$('#vTags').onchange=e=>current&&setMeta(current.path,{tags:e.target.value.split(',').map(x=>x.trim()).filter(Boolean)});
-$('#vNote').onchange=e=>current&&setMeta(current.path,{note:e.target.value});
-$('#zoomIn').onclick=()=>{zoom=Math.min(5,zoom+.25);applyTransform()};$('#zoomOut').onclick=()=>{zoom=Math.max(.25,zoom-.25);applyTransform()};
-$('#zoomFit').onclick=()=>{zoom=1;rotation=0;applyTransform()};$('#rotate').onclick=()=>{rotation=(rotation+90)%360;applyTransform()};
-$('#originalView').hidden=true;$('#vFilm').hidden=true;$('#vSelect').hidden=true;
-$('#vBoard').onclick=()=>{if(!current)return;let names=state.collections.map((c,i)=>`${i+1}. ${c.name}`).join('\n');let r=prompt('mesa:\n'+names+'\n\nescribe número o nombre nuevo');if(!r)return;let c=state.collections[Number(r)-1];if(!c){c={id:crypto.randomUUID?.()||Date.now().toString(36),name:r,items:[]};state.collections.push(c)}if(!c.items.includes(current.path))c.items.push(current.path);saveState();updateShell();notify('Añadido a mesa')};
-$('#vFinder').hidden=true;$('#vNative').hidden=true;$('#vSaveThread').onclick=$('#saveThread').onclick;$('#vTrailBack').hidden=true;$('#rail').hidden=true;
+// viewer controls
+$('#vClose').onclick=closeViewer;$('#vPrev').onclick=()=>stepViewer(-1);$('#vNext').onclick=()=>stepViewer(1);$('#vStar').onclick=()=>current&&toggleStar(current.path);$('#vInfo').onclick=()=>{const v=$('#viewer');v.classList.toggle('no-info');$('#vInfo').setAttribute('aria-pressed',String(!v.classList.contains('no-info')))};$('#vFullscreen').onclick=()=>$('#viewer').requestFullscreen?.();$('#vPublished').onchange=e=>current&&setPublished(current.path,e.target.checked);$('#vRating').onchange=e=>{if(current){setMeta(current.path,{rating:Number(e.target.value)});renderViewer()}};$('#vTags').onchange=e=>current&&setMeta(current.path,{tags:e.target.value.split(',').map(x=>x.trim()).filter(Boolean)});$('#vNote').onchange=e=>current&&setMeta(current.path,{note:e.target.value});$('#zoomIn').onclick=()=>{zoom=Math.min(5,zoom+.25);applyTransform()};$('#zoomOut').onclick=()=>{zoom=Math.max(.25,zoom-.25);applyTransform()};$('#zoomFit').onclick=()=>{zoom=1;rotation=0;applyTransform()};$('#rotate').onclick=()=>{rotation=(rotation+90)%360;applyTransform()};$('#originalView').hidden=true;$('#vFilm').hidden=true;$('#vSelect').hidden=true;$('#vBoard').onclick=()=>{if(!current)return;let names=state.collections.map((c,i)=>`${i+1}. ${c.name}`).join('\n');let r=prompt('mesa:\n'+names+'\n\nescribe número o nombre nuevo');if(!r)return;let c=state.collections[Number(r)-1];if(!c){c={id:crypto.randomUUID?.()||Date.now().toString(36),name:r,items:[]};state.collections.push(c)}if(!c.items.includes(current.path))c.items.push(current.path);saveState();updateShell();notify('Añadido a mesa')};
+$('#vFinder').hidden=true;$('#vNative').hidden=true;$('#vSaveThread').onclick=$('#saveThread').onclick;
+$('#vTrailBack').hidden=true;$('#rail').hidden=true;
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#viewer').hidden)closeViewer();else if(!$('#viewer').hidden&&e.key==='ArrowLeft')stepViewer(-1);else if(!$('#viewer').hidden&&e.key==='ArrowRight')stepViewer(1);else if((e.key==='s'||e.key==='S')&&!$('#viewer').hidden&&current){e.preventDefault();toggleStar(current.path)}else if(e.key==='/'&&$('#viewer').hidden){e.preventDefault();$('#q').focus()}});
 
+// Browser support message
+if(!('webkitdirectory' in document.createElement('input'))){$('#connection').textContent='Safari sin selección de carpetas';}
 updateShell();render();
 })();</script></body></html>
