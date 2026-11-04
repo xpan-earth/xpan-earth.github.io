@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<meta name="theme-color" content="#0B0D0F"/>
+<meta name="format-detection" content="telephone=no, email=no, address=no"/>
+<title>[19.4300_99.1747] — xpan</title>
+<meta name="description" content="[19.4300_99.1747] — sistema espacial de xpan que integra poros de madera, gabinetes escultóricos, dispositivos y un programa compartido en ciudad de méxico."/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="[19.4300_99.1747] — xpan"/>
+<meta property="og:description" content="infraestructura espacial y nueva configuración de poros en madera desarrolladas por xpan en 2026."/>
+<link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+<link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+<link rel="preconnect" href="https://attachments.are.na" crossorigin>
+<link rel="dns-prefetch" href="https://attachments.are.na">
+<link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+
+<link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/52309437/original_fa18eac6c90deb31b67821f6a2dbf9cb.jpg" fetchpriority="high">
+<style>
+:root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:860px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:820px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-grid-primary .media-card{grid-column:span 6}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card video{display:block;width:100%;height:auto;min-height:160px;max-height:82vh;object-fit:contain;background:#050608}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+</style>
+<script src="/assets/js/media-proxy.js" defer></script>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/52309437/original_fa18eac6c90deb31b67821f6a2dbf9cb.jpg')">
+<header><div class="stack"><a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a><div class="chip" data-i18n="header.chip">[19.4300_99.1747]</div></div>
+<div class="stack" id="lang-switch" aria-label="selector de idioma"><button class="chip lang-active" type="button" data-lang-btn="es" aria-pressed="true">es</button><button class="chip" type="button" data-lang-btn="en" aria-pressed="false">en</button><button class="chip" type="button" data-lang-btn="fr" aria-pressed="false">fr</button><button class="chip" type="button" data-lang-btn="jp" aria-pressed="false">jp</button></div></header>
+<div class="bg-hero" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div><div class="bg-grid" aria-hidden="true"></div><div class="crosshair" aria-hidden="true"></div>
+<main>
+<section class="section" id="inicio"><div class="intro-wrap neg-shell"><div class="plate"><span data-i18n="plate.project">[19.4300_99.1747] / 2026</span><span data-i18n="plate.context">xpan / ciudad de méxico / poros</span><span data-i18n="plate.date">sistema espacial / infraestructura conectiva</span></div>
+<div class="lang-block active" data-lang-block="es"><p class="kicker">arquitectura experimental / poros / infraestructura / 2026</p><h1>[19.4300_<wbr>99.1747]</h1><p class="subtitle">sistema espacial que transforma un interior de uso compartido en una infraestructura de poros distribuida, mediante postes de madera, uniones de aluminio maquinado y dispositivos independientes.</p><div class="intro-text"><p>desarrollado por xpan en ciudad de méxico, [19.4300_99.1747] organiza en un mismo espacio los entornos de beibi beauty, agua, sokio y springtime wishes, junto con áreas compartidas de trabajo, exhibición y servicio. el proyecto articula arquitectura interior, mobiliario, iluminación y dispositivos de pequeña escala como partes relacionadas de una misma infraestructura experimental.</p><p>su principal desarrollo es una nueva configuración material de poros: postes realizados con dos listones de madera revestidos en nogal y separados mediante tacones de aluminio sólido. la separación de 1/2 pulgada permite insertar barras de aluminio de sección compatible a distintas alturas. distribuidos en el perímetro, los postes convierten las paredes de la sala en una interfaz continua para repisas, superficies, colgadores y otros dispositivos.</p><p>cuatro gabinetes escultóricos —gabinete.bb, gabinete.agua, gabinete.sokio y gabinete.stw— amplían ese sistema con funciones propias. junto a ellos se desarrollaron lámpara.03, lámpara.celosía, dispositivo candelabro, dispositivo de servicio_01 y diversas piezas de soporte. el conjunto es un sistema independiente construido a partir de múltiples sistemas autónomos y conectivos.</p></div></div>
+<div class="lang-block" data-lang-block="en"><p class="kicker">experimental architecture / poros / infrastructure / 2026</p><h1>[19.4300_<wbr>99.1747]</h1><p class="subtitle">a spatial system that turns a shared interior into distributed poros infrastructure through timber posts, machined aluminum joints and independent devices.</p><div class="intro-text"><p>developed by xpan in mexico city, [19.4300_99.1747] brings together environments for beibi beauty, agua, sokio and springtime wishes, alongside shared areas for work, display and service. the project connects interior architecture, furniture, lighting and small-scale devices as related parts of an experimental infrastructure.</p><p>its main development is a new material configuration of poros: posts built from two timber slats with a walnut finish, separated by solid aluminum spacers. the 1/2-inch gap receives compatible aluminum bars at different heights. distributed along the perimeter, the posts turn the walls into a continuous interface for shelves, surfaces, hanging rails and other devices.</p><p>four sculptural cabinets—gabinete.bb, gabinete.agua, gabinete.sokio and gabinete.stw—extend the infrastructure with specific functions. lamps, a candle device, a service tray and supporting components were developed alongside them. the whole is an independent system composed of multiple autonomous and interconnected systems.</p></div></div>
+<div class="lang-block" data-lang-block="fr"><p class="kicker">architecture expérimentale / poros / infrastructure / 2026</p><h1>[19.4300_<wbr>99.1747]</h1><p class="subtitle">un système spatial qui transforme un intérieur partagé en infrastructure poros distribuée, grâce à des montants en bois, des jonctions en aluminium usiné et des dispositifs indépendants.</p><div class="intro-text"><p>développé par xpan à mexico, [19.4300_99.1747] réunit les environnements de beibi beauty, agua, sokio et springtime wishes, ainsi que des espaces partagés de travail, d’exposition et de service. le projet relie architecture intérieure, mobilier, éclairage et dispositifs de petite échelle en une infrastructure expérimentale.</p><p>son développement central est une nouvelle configuration matérielle de poros : des montants constitués de deux tasseaux de bois finis en noyer, séparés par des entretoises en aluminium massif. l’écartement de 1/2 pouce reçoit des barres d’aluminium compatibles à différentes hauteurs. répartis en périphérie, ces montants transforment les murs en une interface continue pour étagères, surfaces, portants et autres dispositifs.</p><p>quatre cabinets sculpturaux —gabinete.bb, gabinete.agua, gabinete.sokio et gabinete.stw— prolongent l’infrastructure par des fonctions spécifiques. des lampes, un porte-bougies, un plateau de service et d’autres éléments ont été développés en parallèle. l’ensemble constitue un système indépendant composé de systèmes autonomes et connectés.</p></div></div>
+<div class="lang-block" data-lang-block="jp"><p class="kicker">実験的建築 / poros / インフラ / 2026</p><h1>[19.4300_<wbr>99.1747]</h1><p class="subtitle">木製の支柱、切削アルミニウム製の接続部、独立したデバイスによって、共有空間全体を分散型の poros インフラへ変換する空間システム。</p><div class="intro-text"><p>[19.4300_99.1747] は、xpan がメキシコシティで開発した空間システムである。beibi beauty、agua、sokio、springtime wishes の四つのプロジェクトと、共用の作業・展示・サービスの領域を一つの室内にまとめている。内装建築、家具、照明、小型デバイスを関連する実験的インフラとして構築する。</p><p>中心となる開発は poros の新しい素材構成である。ウォルナット仕上げの二本の木材を無垢アルミニウムのスペーサーで離し、1/2 インチの隙間をつくる。そこに対応する角形アルミニウムバーを異なる高さで差し込める。周縁部に配置された支柱が、壁全体を棚、面、衣類用バー、その他の装置を受ける連続したインターフェースへ変える。</p><p>四つの彫刻的なキャビネット — gabinete.bb、gabinete.agua、gabinete.sokio、gabinete.stw — は、それぞれの機能を備えてインフラを拡張する。lámpara.03、lámpara.celosía、dispositivo candelabro、dispositivo de servicio_01 なども共に開発された。全体は、複数の自律的かつ相互接続されたシステムからなる独立したシステムである。</p></div></div>
+<nav class="anchor-nav" aria-label="secciones de la página" data-i18n-aria="aria.pageSections">
+<a href="#sistema" data-i18n="nav.sistema">sistema de poros</a>
+<a href="#arquitectura" data-i18n="nav.arquitectura">programa espacial</a>
+<a href="#construccion" data-i18n="nav.construccion">construcción</a>
+<a href="#gabinetes" data-i18n="nav.gabinetes">cuatro gabinetes</a>
+<a href="#dispositivos" data-i18n="nav.dispositivos">sistemas derivados</a>
+<a href="#media" data-i18n="nav.registro">registro</a>
+<a href="#documento" data-i18n="nav.documento">documentación técnica</a>
+</nav></div></section>
+<section class="section" id="sistema"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.sistema">sistema de poros</h2><p class="section-meta">postes dobles / madera / aluminio maquinado / ranura de 1/2 pulgada</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>la transformación fundamental del proyecto está en la sustitución del soporte metálico habitual por postes con dos listones de madera y separadores de aluminio maquinado. cada poste, de 210 cm de altura según los planos, se concibe como una pieza repetible: el vacío central de 1/2 pulgada recibe barras cuadradas de aluminio que sobresalen para sostener repisas y dispositivos. los tacones convierten la distancia entre los listones en un patrón de inserción regular.</p>
+<p>el plano de postes especifica listones de 2.54 × 5.08 × 210 cm, terminación en nogal y refuerzos internos de 1.27 × 1.27 × 5.08 cm. las barras de 1/2 pulgada se incorporan a la ranura y pueden retirarse y reubicarse; en los extremos, rebajes reciben un perfil de acero para anclar el conjunto al soporte arquitectónico. el sistema introduce la madera como material estructural sin perder la lógica de conexiones desmontables de poros.</p>
+<p>la documentación de implantación desarrolla tres secciones lineales de postes y repisas a lo largo del perímetro. de esta manera, el proyecto desplaza la idea de mobiliario agregado hacia una arquitectura utilizable: cada punto del muro queda vinculado con una matriz abierta de capacidades de exhibición, almacenamiento y montaje.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the project’s key transformation is replacing the usual metal support with posts made of two wooden slats and machined aluminum spacers. each 210 cm-high post, as specified in the drawings, is a repeatable component: its 1/2-inch central gap accepts square aluminum bars projecting outward to support shelves and devices. the spacers turn the gap into a regular sequence of insertion points.</p>
+<p>the post drawings specify 2.54 × 5.08 × 210 cm slats with a walnut finish and internal 1.27 × 1.27 × 5.08 cm reinforcements. 1/2-inch bars fit within the slot and can be removed and repositioned; end cutouts receive a steel section for attachment to the architectural support. the system introduces wood as a primary material while preserving the removable connections characteristic of poros.</p>
+<p>the installation drawings develop three linear sections of posts and shelving around the perimeter. furniture thus becomes an operational architectural layer: the wall is connected to an open matrix of display, storage and mounting possibilities.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>la transformation fondamentale remplace le support métallique habituel par des montants faits de deux tasseaux de bois et d’entretoises en aluminium usiné. chaque montant de 210 cm, selon les dessins, est un élément répétable : sa fente centrale de 1/2 pouce reçoit des barres carrées en aluminium servant à soutenir étagères et dispositifs. les entretoises définissent des points d’insertion réguliers.</p>
+<p>les plans prescrivent des tasseaux de 2,54 × 5,08 × 210 cm avec une finition en noyer et des renforts internes de 1,27 × 1,27 × 5,08 cm. des barres de 1/2 pouce s’insèrent et peuvent être retirées ou déplacées ; aux extrémités, des évidements accueillent un profil d’acier assurant l’ancrage. le bois devient matériau principal tout en conservant les connexions amovibles propres à poros.</p>
+<p>les plans d’implantation développent trois sections linéaires de montants et d’étagères le long du périmètre. le mobilier devient ainsi une couche architecturale active : chaque mur se relie à une matrice ouverte d’exposition, de stockage et de montage.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>このプロジェクトの主要な変化は、従来の金属支持体を、二本の木材と機械加工したアルミニウム製スペーサーで構成する支柱へ置き換えた点にある。図面に記された各支柱の高さは 210 cm。中央の 1/2 インチの隙間に角形アルミニウムバーを差し込み、棚やデバイスを支持する。スペーサーが規則的な接続位置を形成する。</p>
+<p>図面は、2.54 × 5.08 × 210 cm のウォルナット仕上げ木材と、1.27 × 1.27 × 5.08 cm の内部補強部材を指定する。1/2 インチのバーは取り外しや位置変更ができ、支柱端部の切欠きには建築躯体との固定用鋼材が入る。木を主要素材に導入しながら、poros の着脱式接続の原理を保っている。</p>
+<p>配置図は、周縁部に沿った三つの直線状の支柱・棚セクションを示す。家具は追加物ではなく運用可能な建築層となり、各壁面が展示・保管・取付けのための開放的なマトリクスに接続される。</p></div></div></div></section>
+<section class="section" id="arquitectura"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.arquitectura">programa espacial</h2><p class="section-meta">arq.01–arq.02 / mayo 2026</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>el proyecto articula un programa heterogéneo dentro de un mismo interior. la planta arquitectónica registra sala, taller, oficina, probador, barra de café, mesa de exhibición, bodega, sanitario y zonas destinadas a beibi beauty, sokio y agua. la organización permite que actividades distintas compartan un lenguaje constructivo y se conecten mediante estructuras de poros.</p>
+<p>la intervención incorpora una red de estanterías perimetrales, soportes lineales para prendas, estructuras centrales de trabajo e iluminación, superficies metálicas de exhibición y zonas de descanso. los planos incluyen además el tratamiento del acceso con vidrio esmerilado y el recubrimiento reflectante de siete columnas existentes. estos recursos alteran la percepción de profundidad y continuidad sin borrar la lectura de la arquitectura previa.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the project brings different programs into a single interior. the architectural plan records a lounge, workshop, office, fitting room, coffee counter, display table, storage, restroom and zones for beibi beauty, sokio and agua. different activities share a constructive language and are connected through poros structures.</p>
+<p>the intervention combines perimeter shelving, linear clothing supports, central work and lighting structures, metal display surfaces and seating areas. the plans also include frosted glazing at the entrance and mirrored finishes for seven existing columns. these elements alter perceptions of depth and continuity while leaving the original architecture legible.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>le projet articule plusieurs programmes dans un même intérieur. le plan architectural indique salon, atelier, bureau, cabine d’essayage, comptoir de café, table d’exposition, réserve, sanitaires et espaces pour beibi beauty, sokio et agua. ces activités partagent un langage constructif et des structures poros.</p>
+<p>l’intervention associe étagères périphériques, portants linéaires, structures centrales de travail et d’éclairage, surfaces métalliques d’exposition et assises. les dessins prévoient également du vitrage dépoli à l’entrée et le revêtement en miroirs de sept colonnes existantes. ces éléments modifient la profondeur perçue tout en laissant l’architecture initiale lisible.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>建築平面には、ラウンジ、工房、オフィス、試着室、コーヒーカウンター、展示テーブル、倉庫、トイレ、beibi beauty・sokio・agua の各領域が記録されている。異なる活動を poros の構造でつなぎ、共通する建設言語のもとに共存させる。</p>
+<p>周縁部の棚、衣類用の水平支持具、中央の作業・照明構造、金属製展示面、座席を組み合わせる。図面には入口のすりガラス処理と、既存の七本の柱への鏡面仕上げも含まれる。既存建築を読み取れる状態のまま、奥行きと連続性の知覚を変える。</p></div></div></div></section>
+<section class="section" id="construccion"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.construccion">construcción</h2><p class="section-meta">postes / tacones / ptr / barras / superficies</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>la infraestructura se produce mediante piezas diferenciadas con un régimen de medidas compartido: postes dobles con acabado en nogal, tacones de aluminio sólido, barras cuadradas de 1/2 pulgada, perfiles de acero para anclaje, soportes metálicos y superficies en aluminio o lámina. la repetición de estos componentes permite extender las funciones a lo largo del espacio sin diseñar una fijación distinta para cada objeto.</p>
+<p>la serie de planos detalla desde la implantación de postes y sus anclajes a piso y muro hasta barras maquinadas, repisas individuales y lineales, gabinetes, luminarias, soportes de velas y dispositivos de servicio. el diseño hace visible una jerarquía entre soporte arquitectónico, interfaz de conexión y elemento de uso; cada capa puede estudiarse y mantenerse de manera diferenciada.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the infrastructure uses distinct components within a shared dimensional logic: double timber posts with a walnut finish, solid aluminum spacers, 1/2-inch square bars, steel anchoring profiles, metal supports and aluminum or sheet-metal surfaces. repetition extends functions throughout the space without requiring a new mounting system for each object.</p>
+<p>the technical documents cover post placement and connections to floor and wall, machined bars, individual and linear shelves, cabinets, lamps, candle supports and service devices. the design makes the hierarchy between architectural support, connecting interface and usable element legible; each layer can be studied and maintained separately.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>l’infrastructure repose sur une logique dimensionnelle commune : montants doubles en bois finition noyer, entretoises en aluminium massif, barres carrées de 1/2 pouce, profils d’acier d’ancrage, supports métalliques et surfaces en aluminium ou en tôle. leur répétition étend les usages sans créer de fixation particulière pour chaque objet.</p>
+<p>les documents détaillent l’implantation et l’ancrage des montants, les barres usinées, étagères individuelles et linéaires, cabinets, luminaires, supports de bougies et éléments de service. le projet rend lisible la hiérarchie entre support architectural, interface de connexion et élément d’usage ; chaque couche reste distincte.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>共通寸法に基づき、ウォルナット仕上げの二重木製支柱、無垢アルミニウムスペーサー、1/2 インチ角材、固定用鋼材、金属製支持具、アルミニウム板や鋼板の面を使い分ける。部品の反復によって、各オブジェクト専用の固定具を作り直すことなく空間へ機能を拡張できる。</p>
+<p>技術資料には支柱と床・壁との接続、切削バー、個別・連続棚、キャビネット、照明、ろうそく支持具、サービス装置が記録される。建築支持体、接続インターフェース、使用要素を区別し、各層を個別に検討・保守できる構成とする。</p></div></div></div></section>
+<section class="section" id="gabinetes"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.gabinetes">cuatro gabinetes</h2><p class="section-meta">4 sistemas / 4 programas</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>cuatro proyectos operan con gabinetes propios, diseñados como sistemas escultóricos y funcionales. comparten principios de ensamblaje, adaptación e integración con poros, aunque cada uno responde a una actividad y una organización espacial particular. las páginas de los cuatro gabinetes se encuentran enlazadas directamente a continuación.</p></div>
+<div class="lang-block" data-lang-block="en"><p>four projects operate through their own cabinets, conceived as sculptural and functional systems. they share principles of assembly, adaptation and integration with poros, while each responds to a distinct activity and spatial organization. their individual pages are directly linked below.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>quatre projets disposent de cabinets spécifiques, conçus comme systèmes à la fois sculpturaux et fonctionnels. ils partagent des principes d’assemblage, d’adaptation et d’intégration à poros, tout en répondant à des activités et organisations spatiales distinctes. leurs pages sont directement liées ci-dessous.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>四つのプロジェクトには固有のキャビネットがあり、彫刻的かつ機能的なシステムとして設計されている。組立・適応・poros との接続原理を共有しながら、それぞれ異なる活動と空間構成に対応する。各キャビネットのページへのリンクを以下に示す。</p></div></div></div>
+<nav class="anchor-nav" aria-label="gabinetes / enlaces">
+<a href="arq.xpan.gabinete.bb.html">gabinete.bb</a>
+<a href="arq.xpan.gabinete.agua.html">gabinete.agua</a>
+<a href="arq.xpan.gabinete.sokio.html">gabinete.sokio</a>
+<a href="arq.xpan.gabinete.stw.html">gabinete.stw</a>
+</nav>
+<div class="section-head neg-shell" id="gabinete.bb"><div><h2 class="section-title"><a href="arq.xpan.gabinete.bb.html" title="abrir gabinete.bb">gabinete.bb</a></h2><p class="section-meta" data-i18n="cabinet.bb.meta">beibi beauty / seis estaciones</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>desarrollado para beibi beauty, gabinete.bb organiza seis estaciones de producto y reflejo sobre una estructura lineal de acero al carbón. seis espejos circulares y seis repisas individuales se conectan a puntos de poros, de modo que cada módulo puede ajustarse, desmontarse o sustituirse. la pieza articula exhibición, preparación y uso de producto en una única secuencia espacial.</p></div>
+<div class="lang-block" data-lang-block="en"><p>developed for beibi beauty, gabinete.bb arranges six stations for product display and reflection along a linear carbon-steel structure. six circular mirrors and six individual shelves connect to poros mounting points, allowing components to be adjusted, removed or replaced. it brings presentation, preparation and product use into a single spatial sequence.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>développé pour beibi beauty, gabinete.bb organise six stations de présentation et de réflexion sur une structure linéaire en acier au carbone. six miroirs circulaires et six étagères individuelles se fixent aux points poros, ce qui permet de régler, retirer et remplacer chaque module.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>beibi beauty 用の gabinete.bb は、炭素鋼の線形構造に六つの展示・反射ステーションを組み込む。六枚の円形鏡と六つの個別棚が poros の接続点に固定され、調整、取外し、交換が可能となる。</p></div></div></div>
+<div class="section-head neg-shell" id="gabinete.agua"><div><h2 class="section-title"><a href="arq.xpan.gabinete.agua.html" title="abrir gabinete.agua">gabinete.agua</a></h2><p class="section-meta" data-i18n="cabinet.agua.meta">agua / superficie vibratoria</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>gabinete.agua construye una mesa activa de exhibición en la que una bandeja de agua recibe vibraciones transmitidas por transductores desarrollados por xpan. sobre ella se distribuyen 33 placas elevadas mediante 132 varillas metálicas; la superficie líquida produce patrones de cimática que transforman reflejos y relaciones entre los objetos. cuatro postes de poros sostienen y extienden las posibilidades del sistema.</p></div>
+<div class="lang-block" data-lang-block="en"><p>gabinete.agua is an active display table in which a water tray receives vibrations from transducers developed by xpan. thirty-three elevated plates are held by 132 metal rods above the liquid surface, which forms cymatic patterns that alter reflections and the relation between objects. four poros posts support and extend the system.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>gabinete.agua est une table active : une cuve d’eau reçoit les vibrations de transducteurs développés par xpan. trente-trois plaques portées par 132 tiges métalliques émergent de la surface ; les figures cymatiques modifient les reflets et les relations entre objets. quatre montants poros soutiennent et prolongent le système.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>gabinete.agua は、xpan が開発したトランスデューサーによって水槽に振動を与える能動的な展示台である。132 本の金属棒で支えられた 33 枚の板が水面上に配置され、サイマティクスの模様が反射とオブジェクト間の関係を変える。四本の poros 支柱が支持と拡張を担う。</p></div></div></div>
+<div class="section-head neg-shell" id="gabinete.sokio"><div><h2 class="section-title"><a href="arq.xpan.gabinete.sokio.html" title="abrir gabinete.sokio">gabinete.sokio</a></h2><p class="section-meta" data-i18n="cabinet.sokio.meta">sokio / microporos e iluminación</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>gabinete.sokio desarrolla un sistema vertical de aluminio para exhibir piezas pequeñas. en el centro incorpora doce dispositivos de microporos desmontables, compatibles con barras de 1/4 pulgada, mientras luminarias articuladas con lupa permiten orientar la luz y acercar la observación. las distintas escalas de poros operan así en un mismo proyecto.</p></div>
+<div class="lang-block" data-lang-block="en"><p>gabinete.sokio is a vertical aluminum structure for displaying small objects. twelve removable microporos devices at its center accept 1/4-inch rods, while articulated luminaires with magnifying lenses direct light and enable close observation. multiple scales of poros thus operate within one project.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>gabinete.sokio propose une structure verticale en aluminium pour des objets de petite taille. douze dispositifs amovibles de microporos accueillent des barres de 1/4 pouce ; des luminaires articulés avec loupes permettent l’orientation de la lumière et l’observation rapprochée.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>gabinete.sokio は、小型作品の展示に用いるアルミニウム製の垂直構造である。中央の十二個の着脱式 microporos は 1/4 インチのバーを受け、拡大鏡付きの可動照明によって光の向きと近接観察を調整できる。</p></div></div></div>
+<div class="section-head neg-shell" id="gabinete.stw"><div><h2 class="section-title"><a href="arq.xpan.gabinete.stw.html" title="abrir gabinete.stw">gabinete.stw</a></h2><p class="section-meta" data-i18n="cabinet.stw.meta">springtime wishes / exhibición de prendas</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>gabinete.stw, desarrollado para springtime wishes, configura una estructura abierta de exhibición y almacenamiento de prendas con accesos desde el exterior y el interior. postes de acero del sistema de poros admiten barras horizontales y brazos para colgar piezas, y permiten sustituir dispositivos conforme cambian las condiciones de uso.</p></div>
+<div class="lang-block" data-lang-block="en"><p>developed for springtime wishes, gabinete.stw forms an open display and storage structure for clothing, accessible from outside and inside. steel poros posts accept horizontal hanging bars and projecting arms, allowing components to be exchanged as use changes.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>développé pour springtime wishes, gabinete.stw forme une structure ouverte de présentation et de rangement des vêtements, accessible de l’intérieur comme de l’extérieur. ses montants poros en acier accueillent des tringles horizontales et des bras amovibles, adaptés à de nouvelles configurations.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>springtime wishes 用の gabinete.stw は、内外からアクセスできる衣類のための開放型展示・収納構造である。鋼製 poros 支柱に水平バーや張り出しアームを取り付け、用途に合わせて交換できる。</p></div></div></div>
+</section>
+<section class="section" id="dispositivos"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.dispositivos">sistemas derivados</h2><p class="section-meta">lámparas / candelabro / servicio / repisas / interfaces</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>lámpara.03 utiliza un cuerpo de aluminio y un sistema de fijación para membranas, telas y pantallas sustituibles que modifican la difusión de la luz. lámpara.celosía reúne barras verticales de aluminio dentro de una envolvente cuadrada suspendida; un foco central produce una emisión estriada a través de sus vacíos. dispositivo candelabro integra tres velas en plataformas metálicas a diferentes alturas, conectando la luz de llama con la estructura de poros.</p>
+<p>dispositivo de servicio_01 fue desarrollado conjuntamente con springtime wishes, con diseño y construcción por xpan. una placa de aluminio maquinado organiza zonas para recipientes, incienso, flores y objetos pequeños. la familia se completa con repisas individuales, charolas lineales, soportes de producto, barras de colgado, sistemas de espejo y dispositivos de iluminación de trabajo.</p>
+<p>en el espacio, las piezas pueden observarse en relación: lámparas y candelabros junto a estanterías, estructuras de trabajo en el área central, gabinetes asociados a cada programa y soportes insertados a la matriz perimetral. su funcionamiento no depende de una única configuración final: la arquitectura actúa como una infraestructura capaz de recibir otros elementos.</p></div>
+<div class="lang-block" data-lang-block="en"><p>lámpara.03 uses an aluminum body and replaceable membranes, textiles and screens to modulate light diffusion. lámpara.celosía assembles vertical aluminum bars into a suspended square enclosure; a central bulb sends striped light through its openings. dispositivo candelabro places three candles on metal platforms at different heights, integrating open-flame lighting with poros.</p>
+<p>dispositivo de servicio_01 was jointly developed with springtime wishes and designed and built by xpan. its machined aluminum plate organizes areas for vessels, incense, flowers and small objects. the family also includes individual shelves, linear trays, product supports, hanging rails, mirrors and work-lighting devices.</p>
+<p>in the space, these pieces operate in relation to one another: lamps and candle supports alongside shelving, central work structures, cabinets assigned to each program and supporting elements inserted into the perimeter matrix. the architecture remains able to receive additional components rather than locking its use into one final arrangement.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>lámpara.03 emploie un corps en aluminium avec des membranes, tissus et écrans remplaçables qui modulent la diffusion lumineuse. lámpara.celosía assemble des barres verticales en une cage carrée suspendue autour d’une ampoule centrale. dispositivo candelabro présente trois bougies sur des plateformes métalliques à différentes hauteurs.</p>
+<p>dispositivo de servicio_01 a été développé conjointement avec springtime wishes, puis dessiné et construit par xpan. son plateau en aluminium usiné organise les récipients, l’encens, les fleurs et de petits objets. s’y ajoutent étagères individuelles, plateaux linéaires, supports de produits, portants, miroirs et éclairages de travail.</p>
+<p>les dispositifs fonctionnent les uns avec les autres : lampes et bougies près des étagères, structures de travail centrales, cabinets propres à chaque activité et supports insérés dans la matrice périphérique. l’architecture demeure capable de recevoir de nouveaux éléments.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>lámpara.03 は交換可能な膜、布、スクリーンをアルミニウム製本体に固定し、光の拡散を調整する。lámpara.celosía は垂直アルミニウムバーによる吊り下げ格子の中央に光源を置く。dispositivo candelabro は異なる高さの金属面に三本のろうそくを配置する。</p>
+<p>dispositivo de servicio_01 は springtime wishes と共同開発され、xpan が設計・製作した。切削アルミニウム板に器、香、花、小物を配置する領域を組み込む。この系列には個別棚、線形トレイ、製品支持具、衣類用バー、鏡、作業照明も含まれる。</p>
+<p>これらは相互に関係して機能する。棚の近くの照明やろうそく、中央の作業構造、各用途のキャビネット、周縁部マトリクスへ挿入される支持具が一体となり、建築は新たな要素を受け続けられる。</p></div></div></div></section>
+<section class="section media-sequences" id="media"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.registro">registro</h2><p class="section-meta">27 fotografías / 2026</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>registro fotográfico de la instalación y sus componentes en uso: espacio completo, sistema perimetral de postes, estanterías, puntos de unión, gabinetes, estructuras de trabajo, luminarias y dispositivos integrados.</p></div>
+<div class="lang-block" data-lang-block="en"><p>photographic record of the installation and its components in use: the complete interior, perimeter post system, shelves, connection points, cabinets, work structures, luminaires and integrated devices.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>documentation photographique de l’installation et de ses composants en usage : espace complet, montants périphériques, étagères, jonctions, cabinets, structures de travail, luminaires et dispositifs intégrés.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>室内全体、周縁部の支柱システム、棚、接続箇所、キャビネット、作業構造、照明、統合されたデバイスの使用状態を記録する写真群。</p></div></div></div>
+<div class="media-grid media-grid-primary" data-media-grid>
+<figure class="media-card is-full" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 1"><img class="loaded" src="https://d2w9rnfcy7mm78.cloudfront.net/52309437/original_fa18eac6c90deb31b67821f6a2dbf9cb.jpg" fetchpriority="high" alt="[19.4300_99.1747] — registro 01" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 2"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309438/original_fd02d0c914e7f80ae54e28179c89dfc6.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 02" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 3"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309439/original_fec001920935e171097f3240d3e0269b.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 03" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 4"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309440/original_6e33fda4cbbefbaf9781bd49ea838207.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 04" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 5"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309441/original_42dc7adea648abba9c3f3d2a147a2d18.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 05" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 6"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309442/original_9d9a27b3fe625d78f0c89b95019be20c.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 06" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 7"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309443/original_66654986e3429c77414d320a17dd6418.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 07" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 8"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309444/original_0a4c7e62936fa31ed8ec770f2822dd00.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 08" decoding="async"/></button></figure>
+</div><div class="media-grid media-grid-secondary" data-media-grid>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 9"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309445/original_ac3b9cc7c42975062714eb5c6f82bc6b.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 09" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 10"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309446/original_d49be8d94be24cb406aa39116d89bba4.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 10" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 11"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309447/original_85c06e07495407bbea5113f7c3fcfde1.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 11" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 12"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309448/original_390b8b29ada555e9ccb73828fbbfb54d.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 12" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 13"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309449/original_fe305fab9d05712dfa20bafd6c89238b.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 13" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 14"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309450/original_aed40427d929dd2788cdf4d9ef518ba3.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 14" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 15"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309451/original_a32e9e83f8c2b2fc2b8a579b604a827d.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 15" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 16"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309452/original_8a58bd07a991e517ee34c1b2a6a78309.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 16" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 17"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309453/original_5c99ffe95dd66ce4775ad4a0fcae0cac.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 17" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 18"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309454/original_4061c0d9c89c8f866f5bbdc350252639.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 18" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 19"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309455/original_7c342dbc89184b14de64365da1cbebdd.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 19" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 20"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309456/original_a389725b0fe32debd9ea0e2807104486.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 20" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 21"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309457/original_cb1e66b404e268316b1556e8223317fe.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 21" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 22"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309458/original_dd0a95fe6b09ce1bd31f0e0d7ac95dfa.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 22" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 23"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309459/original_93bc00d97310648eda4ee6f4b4891e69.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 23" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 24"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309460/original_de6665ed3201dcef3339d141e74e97ea.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 24" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 25"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309461/original_0be3784c5923374e60f972c2c5b42ceb.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 25" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 26"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309462/original_952da0c04be2ea11dea02289eca313d2.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 26" decoding="async"/></button></figure>
+<figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 27"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309463/original_7e58673665cb7e442e12b6013f8657bc.jpg" loading="lazy" alt="[19.4300_99.1747] — registro 27" decoding="async"/></button></figure>
+</div></section>
+<section class="section" id="documento"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="heading.documento">documentación técnica</h2><p class="section-meta">20 archivos / familias de sistemas</p></div><div class="section-copy"><div class="lang-block active" data-lang-block="es"><p>los documentos técnicos se presentan por familias para mantener juntas las escalas del proyecto: arquitectura y acabados; estructura de poros en madera; gabinetes y sistemas de exhibición; y dispositivos complementarios. cada archivo conserva un acceso al pdf original y un visor integrado.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the technical documents are grouped by system family: architecture and finishes; timber poros and its connections; cabinets and display structures; and complementary devices. each file includes a link to its original pdf and an embedded viewer.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>les documents techniques sont regroupés par familles : architecture et finitions ; poros en bois et connexions ; cabinets et mobilier ; dispositifs complémentaires. chaque fichier conserve un lien vers le pdf original et un visualiseur intégré.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>技術資料は建築と仕上げ、木製 poros と接続、キャビネットと展示構造、関連デバイスの四系列に分類した。各ファイルは元の PDF へのリンクと埋め込みビューアを備える。</p></div></div></div></section>
+<section class="section" id="planos-arquitectura"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="docs.group.arquitectura">arquitectura y acabados</h2><p class="section-meta">4 documentos / pdf</p></div></div><div class="pdf-grid">
+<article class="pdf-card"><div class="pdf-head"><span>arq.02 / planta arquitectónica / 1 página</span><a href="https://attachments.are.na/52309378/a96ba36f3f4c63de1d1f7d4c02348862.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309378/a96ba36f3f4c63de1d1f7d4c02348862.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="arq.02 / planta arquitectónica"><a href="https://attachments.are.na/52309378/a96ba36f3f4c63de1d1f7d4c02348862.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>arq.01 / estado previo / 1 página</span><a href="https://attachments.are.na/52309379/2aa96d86105d677b04a5ef0e5092a5c4.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309379/2aa96d86105d677b04a5ef0e5092a5c4.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="arq.01 / estado previo"><a href="https://attachments.are.na/52309379/2aa96d86105d677b04a5ef0e5092a5c4.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>aca.02–04 / revestimiento de espejos / 3 páginas</span><a href="https://attachments.are.na/52309380/68f072f179ecbad5a45b1c1bfaba7dd3.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309380/68f072f179ecbad5a45b1c1bfaba7dd3.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="aca.02–04 / revestimiento de espejos"><a href="https://attachments.are.na/52309380/68f072f179ecbad5a45b1c1bfaba7dd3.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>aca.01 / cristal esmerilado en acceso / 1 página</span><a href="https://attachments.are.na/52309381/0321f04315231d51b9dd216b4e03de9d.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309381/0321f04315231d51b9dd216b4e03de9d.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="aca.01 / cristal esmerilado en acceso"><a href="https://attachments.are.na/52309381/0321f04315231d51b9dd216b4e03de9d.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+</div></section>
+<section class="section" id="planos-madera"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="docs.group.madera">poros en madera y conexiones</h2><p class="section-meta">3 documentos / pdf</p></div></div><div class="pdf-grid">
+<article class="pdf-card"><div class="pdf-head"><span>arq.01–03 / postes perimetrales / 10 páginas</span><a href="https://attachments.are.na/52309423/3403509c4853891967865877b632b2b1.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309423/3403509c4853891967865877b632b2b1.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="arq.01–03 / postes perimetrales"><a href="https://attachments.are.na/52309423/3403509c4853891967865877b632b2b1.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.01–02 / postes de madera / 2 páginas</span><a href="https://attachments.are.na/52309428/7205ae52335f86b9b057f7f1c67accdc.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309428/7205ae52335f86b9b057f7f1c67accdc.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.01–02 / postes de madera"><a href="https://attachments.are.na/52309428/7205ae52335f86b9b057f7f1c67accdc.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.01 / tacón de aluminio / 1 página</span><a href="https://attachments.are.na/52309432/3f98d19e2d92ce17176a0931d9fe92d8.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309432/3f98d19e2d92ce17176a0931d9fe92d8.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.01 / tacón de aluminio"><a href="https://attachments.are.na/52309432/3f98d19e2d92ce17176a0931d9fe92d8.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+</div></section>
+<section class="section" id="planos-gabinetes"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="docs.group.gabinetes">gabinetes y mobiliario</h2><p class="section-meta">5 documentos / pdf</p></div></div><div class="pdf-grid">
+<article class="pdf-card"><div class="pdf-head"><span>det.21–37 / gabinete.bb / 17 páginas</span><a href="https://attachments.are.na/52309389/c044f981c10c4afbc0395ca50ef7c5f8.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309389/c044f981c10c4afbc0395ca50ef7c5f8.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.21–37 / gabinete.bb"><a href="https://attachments.are.na/52309389/c044f981c10c4afbc0395ca50ef7c5f8.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.38–40 / gabinete.stw / 3 páginas</span><a href="https://attachments.are.na/52309391/c5bc95e243ebbf7d020719f15f31cba0.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309391/c5bc95e243ebbf7d020719f15f31cba0.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.38–40 / gabinete.stw"><a href="https://attachments.are.na/52309391/c5bc95e243ebbf7d020719f15f31cba0.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.01–07 / gabinete.agua / 7 páginas</span><a href="https://attachments.are.na/52309393/d55d92646220ff735540c1ec06e10739.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309393/d55d92646220ff735540c1ec06e10739.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.01–07 / gabinete.agua"><a href="https://attachments.are.na/52309393/d55d92646220ff735540c1ec06e10739.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>gral.01–03 / rack de prendas / 3 páginas</span><a href="https://attachments.are.na/52309410/3e09b79eedac977fc818cb7f8b59dc59.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309410/3e09b79eedac977fc818cb7f8b59dc59.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="gral.01–03 / rack de prendas"><a href="https://attachments.are.na/52309410/3e09b79eedac977fc818cb7f8b59dc59.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.01–08 / gabinete.sokio / 8 páginas</span><a href="https://attachments.are.na/52309421/9c8c75c66547f5a3f6184cbc73bd2f09.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309421/9c8c75c66547f5a3f6184cbc73bd2f09.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.01–08 / gabinete.sokio"><a href="https://attachments.are.na/52309421/9c8c75c66547f5a3f6184cbc73bd2f09.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+</div></section>
+<section class="section" id="planos-dispositivos"><div class="section-head neg-shell"><div><h2 class="section-title" data-i18n="docs.group.dispositivos">dispositivos y repisas</h2><p class="section-meta">8 documentos / pdf</p></div></div><div class="pdf-grid">
+<article class="pdf-card"><div class="pdf-head"><span>det.06 / barra maquinada de aluminio / 1 página</span><a href="https://attachments.are.na/52309383/1c2a4dbc510ba3b2ce8565081ec57a8a.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309383/1c2a4dbc510ba3b2ce8565081ec57a8a.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.06 / barra maquinada de aluminio"><a href="https://attachments.are.na/52309383/1c2a4dbc510ba3b2ce8565081ec57a8a.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.41–52 / dispositivo de servicio_01 / 12 páginas</span><a href="https://attachments.are.na/52309385/ddc016f31997ec2fc8524bbd106d4770.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309385/ddc016f31997ec2fc8524bbd106d4770.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.41–52 / dispositivo de servicio_01"><a href="https://attachments.are.na/52309385/ddc016f31997ec2fc8524bbd106d4770.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.12–20 / lámpara.03 / 9 páginas</span><a href="https://attachments.are.na/52309386/bd78bca877211da8a70282378f6c9306.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309386/bd78bca877211da8a70282378f6c9306.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.12–20 / lámpara.03"><a href="https://attachments.are.na/52309386/bd78bca877211da8a70282378f6c9306.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.07–11 / dispositivo candelabro / 5 páginas</span><a href="https://attachments.are.na/52309388/07cd53b042694f89aab154c4659c71eb.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309388/07cd53b042694f89aab154c4659c71eb.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.07–11 / dispositivo candelabro"><a href="https://attachments.are.na/52309388/07cd53b042694f89aab154c4659c71eb.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.53 / placa metálica / 1 página</span><a href="https://attachments.are.na/52309397/d2cbdfdc1175cd2adb6d1ab4e18fe0d3.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309397/d2cbdfdc1175cd2adb6d1ab4e18fe0d3.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.53 / placa metálica"><a href="https://attachments.are.na/52309397/d2cbdfdc1175cd2adb6d1ab4e18fe0d3.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.01–04 / repisa individual / 4 páginas</span><a href="https://attachments.are.na/52309400/b8bfbed57dbef232611d078cecb2a387.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309400/b8bfbed57dbef232611d078cecb2a387.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.01–04 / repisa individual"><a href="https://attachments.are.na/52309400/b8bfbed57dbef232611d078cecb2a387.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>det.05 / repisa lineal / 1 página</span><a href="https://attachments.are.na/52309402/705e07d2f25cf54cbf1528f0b8925211.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309402/705e07d2f25cf54cbf1528f0b8925211.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="det.05 / repisa lineal"><a href="https://attachments.are.na/52309402/705e07d2f25cf54cbf1528f0b8925211.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+<article class="pdf-card"><div class="pdf-head"><span>gral.01–expl.01 / lámpara.celosía / 7 páginas</span><a href="https://attachments.are.na/52309411/b84ec55c4daafab8eff437345be74eea.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a></div><object type="application/pdf" data-pdf-src="https://attachments.are.na/52309411/b84ec55c4daafab8eff437345be74eea.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="gral.01–expl.01 / lámpara.celosía"><a href="https://attachments.are.na/52309411/b84ec55c4daafab8eff437345be74eea.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano original</a></object></article>
+</div></section>
+</main>
+<div id="xpan-lightbox" aria-hidden="true"><button type="button" data-lb-close data-i18n="action.close">cerrar</button><button type="button" class="nav-btn" data-dir="prev" aria-label="anterior" data-i18n-aria="action.previous">‹</button><div class="sheet" role="dialog" aria-modal="true"></div><button type="button" class="nav-btn" data-dir="next" aria-label="siguiente" data-i18n-aria="action.next">›</button></div>
+<script>
+(function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+      "es": {
+            "pageTitle": "[19.4300_99.1747] — xpan",
+            "metaDescription": "[19.4300_99.1747] — sistema espacial de xpan que integra poros de madera, gabinetes escultóricos, dispositivos y un programa compartido en ciudad de méxico.",
+            "header.chip": "[19.4300_99.1747]",
+            "plate.project": "[19.4300_99.1747] / 2026",
+            "plate.context": "xpan / ciudad de méxico / poros",
+            "plate.date": "sistema espacial / infraestructura conectiva",
+            "aria.pageSections": "secciones de la página",
+            "action.open": "abrir",
+            "action.close": "cerrar",
+            "action.previous": "anterior",
+            "action.next": "siguiente",
+            "pdf.fallback": "abrir plano original",
+            "heading.sistema": "sistema de poros",
+            "nav.sistema": "sistema de poros",
+            "heading.arquitectura": "programa espacial",
+            "nav.arquitectura": "programa espacial",
+            "heading.construccion": "construcción",
+            "nav.construccion": "construcción",
+            "heading.gabinetes": "cuatro gabinetes",
+            "nav.gabinetes": "cuatro gabinetes",
+            "heading.dispositivos": "sistemas derivados",
+            "nav.dispositivos": "sistemas derivados",
+            "heading.registro": "registro",
+            "nav.registro": "registro",
+            "heading.documento": "documentación técnica",
+            "nav.documento": "documentación técnica",
+            "heading.madera": "poros de madera",
+            "nav.madera": "poros de madera",
+            "cabinet.bb.meta": "beibi beauty / seis estaciones",
+            "cabinet.agua.meta": "agua / superficie vibratoria",
+            "cabinet.sokio.meta": "sokio / microporos e iluminación",
+            "cabinet.stw.meta": "springtime wishes / exhibición de prendas",
+            "docs.group.arquitectura": "arquitectura y acabados",
+            "docs.group.madera": "poros en madera y conexiones",
+            "docs.group.gabinetes": "gabinetes y mobiliario",
+            "docs.group.dispositivos": "dispositivos y repisas"
+      },
+      "en": {
+            "pageTitle": "[19.4300_99.1747] — xpan",
+            "metaDescription": "[19.4300_99.1747] — spatial system by xpan bringing together timber poros, sculptural cabinets, devices and shared programs in mexico city.",
+            "header.chip": "[19.4300_99.1747]",
+            "plate.project": "[19.4300_99.1747] / 2026",
+            "plate.context": "xpan / mexico city / poros",
+            "plate.date": "spatial system / connective infrastructure",
+            "aria.pageSections": "page sections",
+            "action.open": "open",
+            "action.close": "close",
+            "action.previous": "previous",
+            "action.next": "next",
+            "pdf.fallback": "open original drawing",
+            "heading.sistema": "poros system",
+            "nav.sistema": "poros system",
+            "heading.arquitectura": "spatial program",
+            "nav.arquitectura": "spatial program",
+            "heading.construccion": "construction",
+            "nav.construccion": "construction",
+            "heading.gabinetes": "four cabinets",
+            "nav.gabinetes": "four cabinets",
+            "heading.dispositivos": "derived systems",
+            "nav.dispositivos": "derived systems",
+            "heading.registro": "record",
+            "nav.registro": "record",
+            "heading.documento": "technical documentation",
+            "nav.documento": "technical documentation",
+            "heading.madera": "timber poros",
+            "nav.madera": "timber poros",
+            "cabinet.bb.meta": "beibi beauty / six stations",
+            "cabinet.agua.meta": "agua / vibrating surface",
+            "cabinet.sokio.meta": "sokio / microporos and lighting",
+            "cabinet.stw.meta": "springtime wishes / clothing display",
+            "docs.group.arquitectura": "architecture and finishes",
+            "docs.group.madera": "timber poros and connections",
+            "docs.group.gabinetes": "cabinets and furniture",
+            "docs.group.dispositivos": "devices and shelves"
+      },
+      "fr": {
+            "pageTitle": "[19.4300_99.1747] — xpan",
+            "metaDescription": "[19.4300_99.1747] — système spatial de xpan réunissant poros en bois, cabinets sculpturaux, dispositifs et programmes partagés à mexico.",
+            "header.chip": "[19.4300_99.1747]",
+            "plate.project": "[19.4300_99.1747] / 2026",
+            "plate.context": "xpan / mexico / poros",
+            "plate.date": "système spatial / infrastructure connective",
+            "aria.pageSections": "sections de la page",
+            "action.open": "ouvrir",
+            "action.close": "fermer",
+            "action.previous": "précédent",
+            "action.next": "suivant",
+            "pdf.fallback": "ouvrir le plan original",
+            "heading.sistema": "système poros",
+            "nav.sistema": "système poros",
+            "heading.arquitectura": "programme spatial",
+            "nav.arquitectura": "programme spatial",
+            "heading.construccion": "construction",
+            "nav.construccion": "construction",
+            "heading.gabinetes": "quatre cabinets",
+            "nav.gabinetes": "quatre cabinets",
+            "heading.dispositivos": "systèmes dérivés",
+            "nav.dispositivos": "systèmes dérivés",
+            "heading.registro": "documentation",
+            "nav.registro": "documentation",
+            "heading.documento": "documentation technique",
+            "nav.documento": "documentation technique",
+            "heading.madera": "poros en bois",
+            "nav.madera": "poros en bois",
+            "cabinet.bb.meta": "beibi beauty / six stations",
+            "cabinet.agua.meta": "agua / surface vibratoire",
+            "cabinet.sokio.meta": "sokio / microporos et éclairage",
+            "cabinet.stw.meta": "springtime wishes / vêtements",
+            "docs.group.arquitectura": "architecture et finitions",
+            "docs.group.madera": "poros en bois et connexions",
+            "docs.group.gabinetes": "cabinets et mobilier",
+            "docs.group.dispositivos": "dispositifs et étagères"
+      },
+      "jp": {
+            "pageTitle": "[19.4300_99.1747] — xpan",
+            "metaDescription": "[19.4300_99.1747] — xpan がメキシコシティで開発した木製 poros、彫刻的キャビネット、装置と共有空間のシステム。",
+            "header.chip": "[19.4300_99.1747]",
+            "plate.project": "[19.4300_99.1747] / 2026",
+            "plate.context": "xpan / メキシコシティ / poros",
+            "plate.date": "空間システム / 接続インフラ",
+            "aria.pageSections": "ページセクション",
+            "action.open": "開く",
+            "action.close": "閉じる",
+            "action.previous": "前へ",
+            "action.next": "次へ",
+            "pdf.fallback": "元図面を開く",
+            "heading.sistema": "poros システム",
+            "nav.sistema": "poros システム",
+            "heading.arquitectura": "空間プログラム",
+            "nav.arquitectura": "空間プログラム",
+            "heading.construccion": "構造",
+            "nav.construccion": "構造",
+            "heading.gabinetes": "四つのキャビネット",
+            "nav.gabinetes": "四つのキャビネット",
+            "heading.dispositivos": "派生システム",
+            "nav.dispositivos": "派生システム",
+            "heading.registro": "記録",
+            "nav.registro": "記録",
+            "heading.documento": "技術資料",
+            "nav.documento": "技術資料",
+            "heading.madera": "木製 poros",
+            "nav.madera": "木製 poros",
+            "cabinet.bb.meta": "beibi beauty / 六つのステーション",
+            "cabinet.agua.meta": "agua / 振動する水面",
+            "cabinet.sokio.meta": "sokio / microporos・照明",
+            "cabinet.stw.meta": "springtime wishes / 衣類展示",
+            "docs.group.arquitectura": "建築・仕上げ",
+            "docs.group.madera": "木製 poros・接続",
+            "docs.group.gabinetes": "キャビネット・家具",
+            "docs.group.dispositivos": "デバイス・棚"
+      }
+};
+
+      function setLang(lang){
+        if(!staticText[lang]) lang='es';
+        document.documentElement.lang = lang==='jp' ? 'ja' : lang;
+        buttons.forEach(btn=>{
+          const active=btn.dataset.langBtn===lang;
+          btn.classList.toggle('lang-active',active);
+          btn.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach(block=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18n];
+          if(value!=null) el.textContent=value;
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18nAria];
+          if(value!=null){
+            if(el.hasAttribute('aria-label')) el.setAttribute('aria-label',value);
+            else el.setAttribute(el.dataset.i18nAriaTarget || 'aria-label', value);
+          }
+        });
+        document.title=staticText[lang].pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta) meta.setAttribute('content',staticText[lang].metaDescription);
+        try{localStorage.setItem('xpan-lang',lang)}catch(_e){}
+      }
+
+      buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.langBtn)));
+      let saved='es';
+      try{saved=localStorage.getItem('xpan-lang')||'es'}catch(_e){}
+      setLang(saved);
+    })();
+
+    (function lazyImages(){
+      const images=[...document.querySelectorAll('img[data-src]')];
+      const loadImage=(img)=>{
+        if(img.dataset.src && !img.src) img.src=img.dataset.src;
+        const mark=()=>img.classList.add('loaded');
+        if(img.complete) mark();
+        else img.addEventListener('load',mark,{once:true});
+      };
+      document.querySelectorAll('img.loaded').forEach(img=>{ if(img.complete) img.classList.add('loaded'); else img.addEventListener('load',()=>img.classList.add('loaded'),{once:true}); });
+      if(!('IntersectionObserver' in window)){ images.forEach(loadImage); return; }
+      const observer=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            loadImage(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      },{rootMargin:'240px 0px'});
+      images.forEach(img=>observer.observe(img));
+    })();
+
+    (function pdfProxy(){
+      const objects=[...document.querySelectorAll('object[data-pdf-src]')];
+      const activate=(el)=>{ if(!el.data) el.data=el.getAttribute('data-pdf-src'); };
+      if(!('IntersectionObserver' in window)){ objects.forEach(activate); return; }
+      const observer=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){activate(entry.target);observer.unobserve(entry.target);}
+        });
+      },{rootMargin:'350px 0px'});
+      objects.forEach(el=>observer.observe(el));
+    })();
+
+    (function lightboxSystem(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      if(!lightbox) return;
+      const sheet=lightbox.querySelector('.sheet');
+      const closeBtn=lightbox.querySelector('[data-lb-close]');
+      const navButtons=Array.from(lightbox.querySelectorAll('.nav-btn'));
+      const triggers=Array.from(document.querySelectorAll('[data-media-item] .media-open'));
+      const items=triggers.map(btn=>btn.querySelector('img')).filter(Boolean);
+      let index=0;
+
+      function render(){
+        const current=items[index];
+        if(!current) return;
+        const img=document.createElement('img');
+        img.src=current.currentSrc || current.src || current.dataset.src;
+        img.alt=current.alt || '';
+        sheet.innerHTML='';
+        sheet.appendChild(img);
+      }
+      function openAt(i){
+        index=i;
+        render();
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+      }
+      function step(dir){
+        index=(index+dir+items.length)%items.length;
+        render();
+      }
+
+      triggers.forEach((btn,i)=>btn.addEventListener('click',()=>openAt(i)));
+      closeBtn.addEventListener('click',close);
+      navButtons.forEach(btn=>btn.addEventListener('click',()=>step(btn.dataset.dir==='next'?1:-1)));
+      lightbox.addEventListener('click',(e)=>{ if(e.target===lightbox) close(); });
+      document.addEventListener('keydown',(e)=>{
+        if(!lightbox.classList.contains('open')) return;
+        if(e.key==='Escape') close();
+        if(e.key==='ArrowRight') step(1);
+        if(e.key==='ArrowLeft') step(-1);
+      });
+    })();
+</script>
+</body>
+</html>

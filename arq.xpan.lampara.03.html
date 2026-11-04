@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es" data-xpan>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="theme-color" content="#0B0D0F"/>
+  <meta name="format-detection" content="telephone=no, email=no, address=no"/>
+  <title>lámpara.03 — xpan</title>
+  <meta name="description" content="lámpara.03 — dispositivo lumínico del sistema de poros desarrollado para [19.4300_99.1747], con membranas y pantallas intercambiables para modular la difusión de la luz."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="lámpara.03 — xpan"/>
+  <meta property="og:description" content="dispositivo lumínico de aluminio con membranas intercambiables desarrollado para [19.4300_99.1747]."/>
+
+  <link rel="preconnect" href="https://d2w9rnfcy7mm78.cloudfront.net" crossorigin>
+  <link rel="dns-prefetch" href="https://d2w9rnfcy7mm78.cloudfront.net">
+  <link rel="preconnect" href="https://attachments.are.na" crossorigin>
+  <link rel="dns-prefetch" href="https://attachments.are.na">
+  <link rel="preload" as="image" href="xpan.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="https://d2w9rnfcy7mm78.cloudfront.net/52309310/original_7054833cf438c3dd069ecb3bb6ef3491.jpg" fetchpriority="high">
+
+  <style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:860px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:820px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-grid-primary .media-card{grid-column:span 6}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card video{display:block;width:100%;height:auto;min-height:160px;max-height:82vh;object-fit:contain;background:#050608}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+  </style>
+  <script src="/assets/js/media-proxy.js" defer></script>
+</head>
+
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/52309310/original_7054833cf438c3dd069ecb3bb6ef3491.jpg')">
+  <header>
+    <div class="stack">
+      <a href="https://xpan.earth" target="_blank" rel="noopener"><img src="xpan.svg" alt="xpan" fetchpriority="high"/></a>
+      <div class="chip" data-i18n="header.chip">lámpara.03</div>
+    </div>
+    <div class="stack" id="lang-switch" aria-label="selector de idioma">
+      <button class="chip lang-active" type="button" data-lang-btn="es" aria-pressed="true">es</button>
+      <button class="chip" type="button" data-lang-btn="en" aria-pressed="false">en</button>
+      <button class="chip" type="button" data-lang-btn="fr" aria-pressed="false">fr</button>
+      <button class="chip" type="button" data-lang-btn="jp" aria-pressed="false">jp</button>
+    </div>
+  </header>
+
+  <div class="bg-hero" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="crosshair" aria-hidden="true"></div>
+
+  <main>
+    <section class="section" id="inicio">
+      <div class="intro-wrap neg-shell">
+        <div class="plate">
+          <span data-i18n="plate.project">lámpara.03 / det.12</span>
+          <span data-i18n="plate.context">xpan / [19.4300_99.1747]</span>
+          <span data-i18n="plate.date">julio 2026 / sistema de poros</span>
+        </div>
+
+        <div class="lang-block active" data-lang-block="es">
+          <p class="kicker">sistema de poros / dispositivo lumínico / [19.4300_99.1747]</p>
+          <h1>lámpara.03</h1>
+          <p class="subtitle">dispositivo lumínico del sistema de poros desarrollado para [19.4300_99.1747], compuesto por una estructura de aluminio y un sistema de fijación para membranas, telas y pantallas intercambiables que modulan la difusión de la luz.</p>
+          <div class="intro-text">
+            <p>lámpara.03 es una lámpara desarrollada como parte del sistema de poros para [19.4300_99.1747]. su estructura define un volumen luminoso compacto que integra iluminación, marco, fijación y superficie difusora en una sola pieza.</p>
+            <p>el dispositivo parte de un cuerpo rectangular de aluminio que recibe paneles textiles o membranas tensadas en sus caras. estos elementos pueden sustituirse y cambiarse según las necesidades de intensidad, opacidad, textura o temperatura visual que requiere el espacio.</p>
+            <p>más que una luminaria aislada, la pieza opera como un módulo lumínico dentro del sistema: produce luz, construye presencia espacial y permite ajustar la relación entre soporte, material difusor y ambiente mediante un ensamblaje claro, desmontable y preciso.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="en">
+          <p class="kicker">poros system / lighting device / [19.4300_99.1747]</p>
+          <h1>lámpara.03</h1>
+          <p class="subtitle">a lighting device of the poros system developed for [19.4300_99.1747], built from an aluminum structure and a fixing system for interchangeable membranes, textiles and screens that modulate light diffusion.</p>
+          <div class="intro-text">
+            <p>lámpara.03 is a lamp developed as part of the poros system for [19.4300_99.1747]. its structure defines a compact luminous volume that integrates lighting, frame, fixation and diffusing surface into a single piece.</p>
+            <p>the device is based on a rectangular aluminum body that receives textile panels or tensioned membranes on its faces. these elements can be replaced and exchanged according to the intensity, opacity, texture or visual temperature required by the space.</p>
+            <p>rather than an isolated luminaire, the piece operates as a lighting module within the system: it emits light, builds spatial presence, and allows the relation between support, diffusing material and atmosphere to be adjusted through a clear, demountable and precise assembly.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="fr">
+          <p class="kicker">système de poros / dispositif lumineux / [19.4300_99.1747]</p>
+          <h1>lámpara.03</h1>
+          <p class="subtitle">dispositif lumineux du système de poros développé pour [19.4300_99.1747], composé d'une structure en aluminium et d'un système de fixation pour membranes, textiles et écrans interchangeables qui modulent la diffusion de la lumière.</p>
+          <div class="intro-text">
+            <p>lámpara.03 est une lampe développée comme partie du système de poros pour [19.4300_99.1747]. sa structure définit un volume lumineux compact qui intègre éclairage, cadre, fixation et surface diffusante en une seule pièce.</p>
+            <p>le dispositif se compose d'un corps rectangulaire en aluminium qui reçoit sur ses faces des panneaux textiles ou des membranes tendues. ces éléments peuvent être remplacés et échangés selon l'intensité, l'opacité, la texture ou la température visuelle requises par l'espace.</p>
+            <p>plus qu'un luminaire isolé, la pièce fonctionne comme un module lumineux au sein du système : elle produit de la lumière, construit une présence spatiale et permet d'ajuster la relation entre support, matériau diffusant et ambiance au moyen d'un assemblage clair, démontable et précis.</p>
+          </div>
+        </div>
+
+        <div class="lang-block" data-lang-block="jp">
+          <p class="kicker">poros システム / 照明デバイス / [19.4300_99.1747]</p>
+          <h1>lámpara.03</h1>
+          <p class="subtitle">[19.4300_99.1747] のために開発された poros システムの照明デバイス。アルミニウム構造と、光の拡散を調整する交換可能な膜、布、スクリーンの固定システムによって構成される。</p>
+          <div class="intro-text">
+            <p>lámpara.03 は、[19.4300_99.1747] のために poros システムの一部として開発されたランプである。照明、フレーム、固定、拡散面を一体化した、コンパクトな発光体として構成されている。</p>
+            <p>このデバイスは長方形のアルミニウム躯体を基礎とし、その面にテキスタイルパネルや張られた膜を受ける。これらの要素は、空間が求める光量、不透明度、質感、視覚的な温度に応じて交換できる。</p>
+            <p>独立した照明器具というより、この部材はシステム内部の照明モジュールとして機能する。光を発し、空間的な存在を形成し、支持体・拡散材・環境の関係を、明快で分解可能かつ精密な組立によって調整できる。</p>
+          </div>
+        </div>
+
+        <nav class="anchor-nav" aria-label="secciones de la página" data-i18n-aria="aria.pageSections">
+          <a href="#sistema" data-i18n="nav.system">sistema</a>
+          <a href="#construccion" data-i18n="nav.construction">construcción</a>
+          <a href="#operacion" data-i18n="nav.operation">operación</a>
+          <a href="#media" data-i18n="nav.media">registro</a>
+          <a href="#documento" data-i18n="nav.document">documento técnico</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section" id="sistema">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+          <p class="section-meta" data-i18n="section.system.meta">poros / [19.4300_99.1747]</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>lámpara.03 se incorpora al sistema de poros como un dispositivo lumínico específico para [19.4300_99.1747]. no sólo ilumina; también introduce una superficie activa que construye atmósfera, escala y presencia dentro de la estructura general del proyecto.</p>
+            <p>su lógica sistémica reside en que la lámpara no depende de una única apariencia fija. el soporte permanece constante, mientras que las membranas y pantallas pueden variar para modificar la calidad de la luz y el comportamiento visual de la pieza.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>lámpara.03 is incorporated into the poros system as a lighting device specific to [19.4300_99.1747]. it does not only illuminate; it also introduces an active surface that constructs atmosphere, scale and presence within the project's broader structure.</p>
+            <p>its systemic logic lies in the fact that the lamp does not depend on a single fixed appearance. the support remains constant, while the membranes and screens can vary to modify the quality of the light and the visual behavior of the piece.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>lámpara.03 s'intègre au système de poros comme un dispositif lumineux spécifique à [19.4300_99.1747]. elle ne sert pas seulement à éclairer ; elle introduit aussi une surface active qui construit l'atmosphère, l'échelle et la présence au sein de la structure générale du projet.</p>
+            <p>sa logique systémique tient au fait que la lampe ne dépend pas d'une apparence unique et fixe. le support reste constant, tandis que les membranes et les écrans peuvent varier afin de modifier la qualité de la lumière et le comportement visuel de la pièce.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>lámpara.03 は、[19.4300_99.1747] に固有の照明デバイスとして poros システムへ組み込まれる。単に照らすだけでなく、プロジェクト全体の中で雰囲気、スケール、存在感を構成する能動的な面を導入する。</p>
+            <p>このランプのシステム的な論理は、単一の固定された見え方に依存しない点にある。支持体は一定のまま、膜やスクリーンを変えることで、光の質と視覚的な振る舞いを調整できる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="construccion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+          <p class="section-meta" data-i18n="section.construction.meta">det.12–det.20 / julio 02, 2026</p>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>el plano técnico desarrolla la pieza mediante barras cuadradas de aluminio de 1/2", soleras de aluminio de 2" x 3 mm y tornillería allen de acero inoxidable de 3/16". la estructura principal se compone de marcos, travesaños y piezas de unión que construyen el volumen portante de la lámpara.</p>
+            <p>las soleras de cerramiento organizan y aseguran las superficies difusoras, mientras que una pieza doblada en 90° completa la lógica de fijación del conjunto. el resultado es un ensamblaje limpio y desmontable que deja explícita la relación entre soporte, cerramiento y emisión lumínica.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the technical drawing develops the piece through 1/2" square aluminum bars, 2" x 3 mm aluminum flats, and 3/16" stainless steel allen fasteners. the main structure is composed of frames, cross members and joining pieces that build the lamp's supporting volume.</p>
+            <p>closing flats organize and secure the diffusing surfaces, while a 90° bent piece completes the fixing logic of the assembly. the result is a clean, demountable construction that makes the relation between support, enclosure and light emission explicit.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>le plan technique développe la pièce à partir de barres carrées en aluminium de 1/2", de plats en aluminium de 2" x 3 mm et d'une visserie allen en acier inoxydable de 3/16". la structure principale se compose de cadres, de traverses et de pièces de liaison qui construisent le volume porteur de la lampe.</p>
+            <p>les plats de fermeture organisent et maintiennent les surfaces diffusantes, tandis qu'une pièce pliée à 90° complète la logique de fixation de l'ensemble. le résultat est un assemblage propre et démontable qui rend explicite la relation entre support, fermeture et émission lumineuse.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>技術図面では、1/2" のアルミニウム角棒、2" x 3 mm のアルミニウムフラットバー、3/16" のステンレス製六角穴付きボルトによって構成が展開されている。主構造はフレーム、横材、接続部材によってつくられ、ランプの支持体積を形成する。</p>
+            <p>閉じ材となるフラットバーが拡散面を整理・固定し、90° に曲げられた部材が全体の固定ロジックを補完する。その結果、支持・閉じ・発光の関係を明快に示す、清潔で分解可能なアセンブリが成立している。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="operacion">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es">
+            <p>la lámpara recibe membranas, telas o pantallas sobre su estructura y convierte esos materiales en superficies de difusión. al encenderse, la luz atraviesa el material tensado y produce una emisión suave, homogénea y modulable.</p>
+            <p>el sistema de fijación permite desmontar y reemplazar las superficies sin rehacer el cuerpo de la lámpara. así, un mismo dispositivo puede pasar de una difusión más opaca y densa a otra más translúcida y abierta, adaptándose a distintos usos y atmósferas dentro del proyecto.</p>
+          </div>
+          <div class="lang-block" data-lang-block="en">
+            <p>the lamp receives membranes, textiles or screens onto its structure and turns those materials into diffusing surfaces. once switched on, light passes through the tensioned material and produces a soft, even and adjustable emission.</p>
+            <p>the fixing system allows the surfaces to be disassembled and replaced without rebuilding the body of the lamp. the same device can therefore move from a denser, more opaque diffusion to a more translucent and open one, adapting to different uses and atmospheres within the project.</p>
+          </div>
+          <div class="lang-block" data-lang-block="fr">
+            <p>la lampe reçoit des membranes, des textiles ou des écrans sur sa structure et transforme ces matériaux en surfaces diffusantes. lorsqu'elle est allumée, la lumière traverse le matériau tendu et produit une émission douce, homogène et modulable.</p>
+            <p>le système de fixation permet de démonter et de remplacer les surfaces sans refaire le corps de la lampe. un même dispositif peut ainsi passer d'une diffusion plus dense et opaque à une autre plus translucide et ouverte, en s'adaptant à différents usages et atmosphères du projet.</p>
+          </div>
+          <div class="lang-block" data-lang-block="jp">
+            <p>このランプは膜、布、スクリーンを躯体へ受け、それらを拡散面へ変換する。点灯すると、光は張られた素材を通過し、柔らかく均質で調整可能な発光を生み出す。</p>
+            <p>固定システムにより、ランプ本体を作り直すことなく拡散面を取り外して交換できる。そのため、同じデバイスでも、より不透明で密度の高い拡散から、より透過的で開いた拡散へ移行でき、プロジェクト内の異なる用途や雰囲気へ適応できる。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section media-sequences" id="media">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.media.title">registro</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>registro fotográfico y audiovisual del dispositivo, incluyendo vistas frontales, laterales, detalles constructivos y comportamiento lumínico encendido y apagado.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>photographic and audiovisual record of the device, including frontal and lateral views, construction details, and its lighting behavior on and off.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>enregistrement photographique et audiovisuel du dispositif, comprenant des vues frontales et latérales, des détails constructifs et son comportement lumineux allumé et éteint.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>正面・側面のビュー、構成ディテール、点灯時と消灯時の振る舞いを含む、装置の写真および映像記録。</p></div>
+        </div>
+      </div>
+      <div class="media-grid media-grid-primary" data-media-grid>
+        <figure class="media-card is-full" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 1"><img class="loaded" src="https://d2w9rnfcy7mm78.cloudfront.net/52309310/original_7054833cf438c3dd069ecb3bb6ef3491.jpg" fetchpriority="high" alt="lámpara.03 — imagen 01" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 2"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309311/original_10cdddc4c2e4bb4263d11bc823107401.jpg" loading="lazy" alt="lámpara.03 — imagen 02" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 3"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309312/original_39820cb9a1ef59bd8eb471cffed6b4ac.jpg" loading="lazy" alt="lámpara.03 — imagen 03" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 4"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309313/original_6b2c7ea5b72f388ea96a1c07279ad063.jpg" loading="lazy" alt="lámpara.03 — imagen 04" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 5"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309314/original_17726b45f85abb0dde107c27cc6cc370.jpg" loading="lazy" alt="lámpara.03 — imagen 05" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 6"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309315/original_1efb079a2c04d7aa78c1245fa24748b0.jpg" loading="lazy" alt="lámpara.03 — imagen 06" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 7"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309316/original_19fc95d6089c81bd68dc9baa041d4b15.jpg" loading="lazy" alt="lámpara.03 — imagen 07" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 8"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309317/original_7ba31f2ab7a0a00f897e6b78b14319bb.jpg" loading="lazy" alt="lámpara.03 — imagen 08" decoding="async"/></button></figure>
+      </div>
+      <div class="media-grid media-grid-secondary" data-media-grid>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 9"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309318/original_f2c44ee2e5b78fc6a06108e428fc3dd6.jpg" loading="lazy" alt="lámpara.03 — imagen 09" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 10"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309319/original_068fa45b5c3a250618159f4a63958886.jpg" loading="lazy" alt="lámpara.03 — imagen 10" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 11"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309320/original_af5093e3a18b5a49467523a778a51b0e.jpg" loading="lazy" alt="lámpara.03 — imagen 11" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 12"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309321/original_ef7e07c6288ccc9862fe51a671bd7d52.jpg" loading="lazy" alt="lámpara.03 — imagen 12" decoding="async"/></button></figure>
+        <figure class="media-card is-wide"><video controls muted playsinline preload="metadata" aria-label="lámpara.03 — video"><source src="https://attachments.are.na/52309309/67e90dffb3246210d1462383eb8ada3b.mp4" type="video/mp4"></video></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 13"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309322/original_788ad41cae58a489146282e048195b73.jpg" loading="lazy" alt="lámpara.03 — imagen 13" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 14"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309323/original_63b3a748a2b645119aa24ae474bba493.jpg" loading="lazy" alt="lámpara.03 — imagen 14" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 15"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309324/original_793775431861332ff6ee4b0c24d4c1e2.jpg" loading="lazy" alt="lámpara.03 — imagen 15" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 16"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309325/original_c1ee9ca70fe7284c5b19fd218778fc62.jpg" loading="lazy" alt="lámpara.03 — imagen 16" decoding="async"/></button></figure>
+        <figure class="media-card" data-media-item><button class="media-open" type="button" aria-label="abrir imagen 17"><img data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309326/original_5c03f5181241591b42039a52273442e7.jpg" loading="lazy" alt="lámpara.03 — imagen 17" decoding="async"/></button></figure>
+      </div>
+    </section>
+
+    <section class="section" id="documento">
+      <div class="section-head neg-shell">
+        <div>
+          <h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+        </div>
+        <div class="section-copy">
+          <div class="lang-block active" data-lang-block="es"><p>plano técnico completo del dispositivo con isométrico general, despiece, piezas estructurales, soleras de cerramiento y sistema de fijación.</p></div>
+          <div class="lang-block" data-lang-block="en"><p>complete technical drawing of the device with general isometric view, exploded parts, structural elements, closing flats and fixing system.</p></div>
+          <div class="lang-block" data-lang-block="fr"><p>plan technique complet du dispositif avec isométrie générale, éclaté, pièces structurelles, plats de fermeture et système de fixation.</p></div>
+          <div class="lang-block" data-lang-block="jp"><p>全体アイソメ図、分解図、構造部材、閉じ材、固定システムを含む装置の完全な技術図面。</p></div>
+        </div>
+      </div>
+      <div class="pdf-grid">
+        <article class="pdf-card">
+          <div class="pdf-head">
+            <span data-i18n="pdf.label">plano general / det.12–det.20</span>
+            <a href="https://attachments.are.na/52309265/d0c7c55302d82204a3449ee6e4121b22.pdf" target="_blank" rel="noopener" data-i18n="action.open">abrir</a>
+          </div>
+          <object type="application/pdf" data-pdf-src="https://attachments.are.na/52309265/d0c7c55302d82204a3449ee6e4121b22.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" aria-label="lámpara.03 — plano general">
+            <a href="https://attachments.are.na/52309265/d0c7c55302d82204a3449ee6e4121b22.pdf" target="_blank" rel="noopener" data-i18n="pdf.fallback">abrir plano general</a>
+          </object>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="xpan-lightbox" aria-hidden="true">
+    <button type="button" data-lb-close data-i18n="action.close">cerrar</button>
+    <button type="button" class="nav-btn" data-dir="prev" aria-label="anterior" data-i18n-aria="action.previous">‹</button>
+    <div class="sheet" role="dialog" aria-modal="true"></div>
+    <button type="button" class="nav-btn" data-dir="next" aria-label="siguiente" data-i18n-aria="action.next">›</button>
+  </div>
+
+  <script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        es:{
+          pageTitle:'lámpara.03 — xpan',
+          metaDescription:'lámpara.03 — dispositivo lumínico del sistema de poros desarrollado para [19.4300_99.1747], con membranas y pantallas intercambiables para modular la difusión de la luz.',
+          'header.chip':'lámpara.03','plate.project':'lámpara.03 / det.12','plate.context':'xpan / [19.4300_99.1747]','plate.date':'julio 2026 / sistema de poros',
+          'aria.pageSections':'secciones de la página','nav.system':'sistema','nav.construction':'construcción','nav.operation':'operación','nav.media':'registro','nav.document':'documento técnico',
+          'section.system.title':'sistema','section.system.meta':'poros / [19.4300_99.1747]','section.construction.title':'construcción','section.construction.meta':'det.12–det.20 / julio 02, 2026','section.operation.title':'operación','section.media.title':'registro','section.document.title':'documento técnico',
+          'pdf.label':'plano general / det.12–det.20','pdf.fallback':'abrir plano general','action.open':'abrir','action.close':'cerrar','action.previous':'anterior','action.next':'siguiente'
+        },
+        en:{
+          pageTitle:'lámpara.03 — xpan',
+          metaDescription:'lámpara.03 — lighting device of the poros system developed for [19.4300_99.1747], with interchangeable membranes and screens to modulate light diffusion.',
+          'header.chip':'lámpara.03','plate.project':'lámpara.03 / det.12','plate.context':'xpan / [19.4300_99.1747]','plate.date':'july 2026 / poros system',
+          'aria.pageSections':'page sections','nav.system':'system','nav.construction':'construction','nav.operation':'operation','nav.media':'record','nav.document':'technical document',
+          'section.system.title':'system','section.system.meta':'poros / [19.4300_99.1747]','section.construction.title':'construction','section.construction.meta':'det.12–det.20 / july 02, 2026','section.operation.title':'operation','section.media.title':'record','section.document.title':'technical document',
+          'pdf.label':'general drawing / det.12–det.20','pdf.fallback':'open general drawing','action.open':'open','action.close':'close','action.previous':'previous','action.next':'next'
+        },
+        fr:{
+          pageTitle:'lámpara.03 — xpan',
+          metaDescription:'lámpara.03 — dispositif lumineux du système de poros développé pour [19.4300_99.1747], avec membranes et écrans interchangeables pour moduler la diffusion de la lumière.',
+          'header.chip':'lámpara.03','plate.project':'lámpara.03 / det.12','plate.context':'xpan / [19.4300_99.1747]','plate.date':'juillet 2026 / système de poros',
+          'aria.pageSections':'sections de la page','nav.system':'système','nav.construction':'construction','nav.operation':'opération','nav.media':'registre','nav.document':'document technique',
+          'section.system.title':'système','section.system.meta':'poros / [19.4300_99.1747]','section.construction.title':'construction','section.construction.meta':'det.12–det.20 / 02 juillet 2026','section.operation.title':'opération','section.media.title':'registre','section.document.title':'document technique',
+          'pdf.label':'plan général / det.12–det.20','pdf.fallback':'ouvrir le plan général','action.open':'ouvrir','action.close':'fermer','action.previous':'précédent','action.next':'suivant'
+        },
+        jp:{
+          pageTitle:'lámpara.03 — xpan',
+          metaDescription:'lámpara.03 — [19.4300_99.1747] のために開発された poros システムの照明デバイス。交換可能な膜とスクリーンにより光の拡散を調整する。',
+          'header.chip':'lámpara.03','plate.project':'lámpara.03 / det.12','plate.context':'xpan / [19.4300_99.1747]','plate.date':'2026年7月 / poros システム',
+          'aria.pageSections':'ページセクション','nav.system':'システム','nav.construction':'構成','nav.operation':'運用','nav.media':'記録','nav.document':'技術資料',
+          'section.system.title':'システム','section.system.meta':'poros / [19.4300_99.1747]','section.construction.title':'構成','section.construction.meta':'det.12–det.20 / 2026年7月2日','section.operation.title':'運用','section.media.title':'記録','section.document.title':'技術資料',
+          'pdf.label':'全体図 / det.12–det.20','pdf.fallback':'全体図を開く','action.open':'開く','action.close':'閉じる','action.previous':'前へ','action.next':'次へ'
+        }
+      };
+
+      function setLang(lang){
+        if(!staticText[lang]) lang='es';
+        document.documentElement.lang = lang==='jp' ? 'ja' : lang;
+        buttons.forEach(btn=>{
+          const active=btn.dataset.langBtn===lang;
+          btn.classList.toggle('lang-active',active);
+          btn.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach(block=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18n];
+          if(value!=null) el.textContent=value;
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18nAria];
+          if(value!=null){
+            if(el.hasAttribute('aria-label')) el.setAttribute('aria-label',value);
+            else el.setAttribute(el.dataset.i18nAriaTarget || 'aria-label', value);
+          }
+        });
+        document.title=staticText[lang].pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta) meta.setAttribute('content',staticText[lang].metaDescription);
+        try{localStorage.setItem('xpan-lang',lang)}catch(_e){}
+      }
+
+      buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.langBtn)));
+      let saved='es';
+      try{saved=localStorage.getItem('xpan-lang')||'es'}catch(_e){}
+      setLang(saved);
+    })();
+
+    (function lazyImages(){
+      const images=[...document.querySelectorAll('img[data-src]')];
+      const loadImage=(img)=>{
+        if(img.dataset.src && !img.src) img.src=img.dataset.src;
+        const mark=()=>img.classList.add('loaded');
+        if(img.complete) mark();
+        else img.addEventListener('load',mark,{once:true});
+      };
+      document.querySelectorAll('img.loaded').forEach(img=>{ if(img.complete) img.classList.add('loaded'); else img.addEventListener('load',()=>img.classList.add('loaded'),{once:true}); });
+      if(!('IntersectionObserver' in window)){ images.forEach(loadImage); return; }
+      const observer=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            loadImage(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      },{rootMargin:'240px 0px'});
+      images.forEach(img=>observer.observe(img));
+    })();
+
+    (function pdfProxy(){
+      document.querySelectorAll('object[data-pdf-src]').forEach(el=>{ el.data = el.getAttribute('data-pdf-src'); });
+    })();
+
+    (function lightboxSystem(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      if(!lightbox) return;
+      const sheet=lightbox.querySelector('.sheet');
+      const closeBtn=lightbox.querySelector('[data-lb-close]');
+      const navButtons=Array.from(lightbox.querySelectorAll('.nav-btn'));
+      const triggers=Array.from(document.querySelectorAll('[data-media-item] .media-open'));
+      const items=triggers.map(btn=>btn.querySelector('img')).filter(Boolean);
+      let index=0;
+
+      function render(){
+        const current=items[index];
+        if(!current) return;
+        const img=document.createElement('img');
+        img.src=current.currentSrc || current.src || current.dataset.src;
+        img.alt=current.alt || '';
+        sheet.innerHTML='';
+        sheet.appendChild(img);
+      }
+      function openAt(i){
+        index=i;
+        render();
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+      }
+      function step(dir){
+        index=(index+dir+items.length)%items.length;
+        render();
+      }
+
+      triggers.forEach((btn,i)=>btn.addEventListener('click',()=>openAt(i)));
+      closeBtn.addEventListener('click',close);
+      navButtons.forEach(btn=>btn.addEventListener('click',()=>step(btn.dataset.dir==='next'?1:-1)));
+      lightbox.addEventListener('click',(e)=>{ if(e.target===lightbox) close(); });
+      document.addEventListener('keydown',(e)=>{
+        if(!lightbox.classList.contains('open')) return;
+        if(e.key==='Escape') close();
+        if(e.key==='ArrowRight') step(1);
+        if(e.key==='ArrowLeft') step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>

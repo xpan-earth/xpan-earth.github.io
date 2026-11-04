@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+<html data-xpan="" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="light dark" name="color-scheme"/>
+<meta content="#0B0D0F" name="theme-color"/>
+<meta content="telephone=no, email=no, address=no" name="format-detection"/>
+<title>dispositivo de servicio_01 — xpan</title>
+<meta content="dispositivo de servicio_01 — pieza de servicio en aluminio desarrollada en colaboración con springtime wishes para [19.4300_99.1747]; diseñada y construida por xpan." name="description"/>
+<meta content="website" property="og:type"/>
+<meta content="dispositivo de servicio_01 — xpan" property="og:title"/>
+<meta content="springtime wishes × xpan / dispositivo de servicio_01 / aluminio / [19.4300_99.1747]." property="og:description"/>
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<link href="https://attachments.are.na" rel="dns-prefetch"/>
+<link as="image" fetchpriority="high" href="xpan.svg" rel="preload"/>
+<link as="image" fetchpriority="high" href="https://d2w9rnfcy7mm78.cloudfront.net/52309220/original_4ebb438b1d944a9cf6d778ba58cdd7dd.png" rel="preload"/>
+<style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:860px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:820px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-grid-primary .media-card{grid-column:span 6}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card video{display:block;width:100%;height:auto;min-height:160px;max-height:82vh;object-fit:contain;background:#050608}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+  </style>
+<script defer="" src="/assets/js/media-proxy.js"></script>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/52309220/original_4ebb438b1d944a9cf6d778ba58cdd7dd.png')">
+<header>
+<div class="stack">
+<a href="https://xpan.earth" rel="noopener" target="_blank"><img alt="xpan" fetchpriority="high" src="xpan.svg"/></a>
+<div class="chip" data-i18n="header.chip">dispositivo de servicio_01</div>
+</div>
+<div aria-label="selector de idioma" class="stack" id="lang-switch">
+<button aria-pressed="true" class="chip lang-active" data-lang-btn="es" type="button">es</button>
+<button aria-pressed="false" class="chip" data-lang-btn="en" type="button">en</button>
+<button aria-pressed="false" class="chip" data-lang-btn="fr" type="button">fr</button>
+<button aria-pressed="false" class="chip" data-lang-btn="jp" type="button">jp</button>
+</div>
+</header>
+<div aria-hidden="true" class="bg-hero"></div>
+<div aria-hidden="true" class="grain"></div>
+<div aria-hidden="true" class="bg-grid"></div>
+<div aria-hidden="true" class="crosshair"></div>
+<main>
+<section class="section" id="inicio">
+<div class="intro-wrap neg-shell">
+<div class="plate">
+<span data-i18n="plate.project">dispositivo de servicio_01 / det.41</span>
+<span data-i18n="plate.context">springtime wishes × xpan / [19.4300_99.1747]</span>
+<span data-i18n="plate.date">junio 2026 / aluminio maquinado</span>
+</div>
+<div class="lang-block active" data-lang-block="es">
+<p class="kicker">colaboración / aluminio / servicio / sistema de poros</p>
+<h1>dispositivo de servicio_01</h1>
+<p class="subtitle">superficie de servicio desarrollada en colaboración con springtime wishes para [19.4300_99.1747], diseñada y construida por xpan para organizar tazas, objetos, incienso, flores y otros elementos pequeños.</p>
+<div class="intro-text"><p>dispositivo de servicio_01 surge de una colaboración entre springtime wishes y xpan. el desarrollo se realizó en conjunto; xpan estuvo a cargo del diseño técnico y de la construcción del dispositivo. la pieza concentra distintas funciones de mesa en una charola compacta de aluminio maquinado, concebida para recibir objetos y organizar acciones de servicio y exhibición.</p><p>una placa rectangular de aluminio cepillado de 32.5 × 20 cm reúne tres zonas de uso: una superficie abierta para disponer recipientes y objetos, una estación reducida para incienso y un marco de servicio de mayor tamaño. los dos últimos están construidos como conjuntos mecánicos diferenciados, fijados sobre la misma placa. dos perfiles longitudinales completan el perímetro funcional de la charola.</p><p>la pieza hace visible la construcción de cada función: barras, marcos, cubos maquinados, perforaciones, tornillería y apoyos forman parte de su lenguaje. en su registro de uso, la charola aparece incorporada a la infraestructura del sistema de poros, vinculando el servicio cotidiano con el conjunto espacial de [19.4300_99.1747].</p></div>
+</div>
+<div class="lang-block" data-lang-block="en">
+<p class="kicker">collaboration / aluminum / service / poros system</p>
+<h1>dispositivo de servicio_01</h1>
+<p class="subtitle">service surface developed in collaboration with springtime wishes for [19.4300_99.1747], designed and built by xpan to organize cups, objects, incense, flowers and other small elements.</p>
+<div class="intro-text"><p>dispositivo de servicio_01 emerged from a collaboration between springtime wishes and xpan. the development was carried out jointly, with xpan responsible for the technical design and construction of the device. it concentrates several tabletop functions within a compact machined-aluminum tray, conceived to receive objects and organize acts of service and display.</p><p>a 32.5 × 20 cm brushed-aluminum rectangular plate brings together three areas of use: an open surface for vessels and objects, a smaller incense station and a larger service frame. the latter two are constructed as separate mechanical assemblies secured to the same plate. two longitudinal profiles complete the functional perimeter of the tray.</p><p>the piece makes the construction of each function visible: bars, frames, machined blocks, holes, fasteners and supports all form part of its material language. in its documented use, the tray is incorporated into the poros-system infrastructure, connecting everyday service to the spatial assembly of [19.4300_99.1747].</p></div>
+</div>
+<div class="lang-block" data-lang-block="fr">
+<p class="kicker">collaboration / aluminium / service / système de poros</p>
+<h1>dispositivo de servicio_01</h1>
+<p class="subtitle">surface de service développée en collaboration avec springtime wishes pour [19.4300_99.1747], conçue et fabriquée par xpan pour organiser tasses, objets, encens, fleurs et autres petits éléments.</p>
+<div class="intro-text"><p>dispositivo de servicio_01 est issu d’une collaboration entre springtime wishes et xpan. son développement a été mené conjointement, tandis que xpan a assuré la conception technique et la fabrication du dispositif. la pièce rassemble plusieurs fonctions de table dans un plateau compact en aluminium usiné, destiné à accueillir des objets et à organiser des gestes de service et de présentation.</p><p>une plaque rectangulaire en aluminium brossé de 32,5 × 20 cm réunit trois zones d’usage : une surface ouverte pour les récipients et les objets, une petite station pour l’encens et un cadre de service plus grand. ces deux derniers éléments constituent des assemblages mécaniques distincts fixés à la même plaque. deux profils longitudinaux complètent le périmètre fonctionnel du plateau.</p><p>la pièce rend visible la construction de chaque fonction : barres, cadres, blocs usinés, perçages, visserie et appuis participent à son langage matériel. dans les photographies d’usage, le plateau est intégré à l’infrastructure du système de poros, reliant les pratiques quotidiennes de service à l’ensemble spatial de [19.4300_99.1747].</p></div>
+</div>
+<div class="lang-block" data-lang-block="jp">
+<p class="kicker">共同開発 / アルミニウム / サービス / poros システム</p>
+<h1>dispositivo de servicio_01</h1>
+<p class="subtitle">[19.4300_99.1747] のために springtime wishes と共同開発し、xpan が技術設計と製作を担当したサービス用の装置。カップ、オブジェクト、香、花などの小さな要素を整理する。</p>
+<div class="intro-text"><p>dispositivo de servicio_01 は、springtime wishes と xpan の協働から生まれた。開発は共同で行われ、技術設計と製作は xpan が担当した。切削加工されたアルミニウムによるコンパクトなトレイに、複数の卓上機能をまとめ、物を受けることとサービスや展示の行為を組織する。</p><p>32.5 × 20 cm のブラッシュ仕上げアルミニウム板には、容器や物を置く開放面、香のための小さなステーション、より大きなサービス用フレームという三つの使用領域がある。後者二つは同じ板に機械的に固定された別個のアセンブリとして構成され、二本の長手方向の形材がトレイの機能的な縁を形成する。</p><p>バー、フレーム、切削ブロック、穴加工、ねじ、支持部など、各機能を成立させる構造はそのまま外部に現れる。使用記録ではトレイが poros システムのインフラに組み込まれ、日常的なサービス行為と [19.4300_99.1747] の空間構成を結びつけている。</p></div>
+</div>
+<nav aria-label="secciones de la página" class="anchor-nav" data-i18n-aria="aria.pageSections">
+<a data-i18n="nav.system" href="#sistema">sistema</a>
+<a data-i18n="nav.construction" href="#construccion">construcción</a>
+<a data-i18n="nav.operation" href="#operacion">operación</a>
+<a data-i18n="nav.media" href="#media">registro</a>
+<a data-i18n="nav.document" href="#documento">documento técnico</a>
+</nav>
+</div>
+</section>
+<section class="section" id="sistema">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+<p class="section-meta" data-i18n="section.system.meta">servicio / superficie / tres zonas de uso</p>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>el sistema parte de una sola superficie y distribuye distintas funciones sin convertirlas en objetos separados. el área abierta recibe tazas, vasos, flores y pequeñas piezas; la estación de incienso concentra un punto de inserción en un bloque maquinado; el marco cuadrangular establece otra zona de apoyo y organización.</p><p>esta división permite que los elementos de servicio convivan dentro de una composición estable y a la vez variable. en el montaje fotografiado, un brazo del sistema de poros sostiene la charola y la proyecta hacia el espacio como superficie incorporada a la infraestructura principal.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the system begins with a single surface and distributes distinct functions without turning them into separate objects. the open area accommodates cups, glasses, flowers and small pieces; the incense station concentrates an insertion point within a machined block; the rectangular frame establishes another area for support and organization.</p><p>this division allows service elements to coexist in a stable yet variable composition. in the photographed installation, a poros-system arm supports the tray and projects it into the space as a surface incorporated into the main infrastructure.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>le système part d’une seule surface et répartit différentes fonctions sans les transformer en objets séparés. la zone libre accueille tasses, verres, fleurs et petites pièces ; la station d’encens rassemble un point d’insertion dans un bloc usiné ; le cadre quadrangulaire établit une autre zone de support et d’organisation.</p><p>cette répartition permet à différents éléments de service de coexister dans une composition stable mais variable. dans l’installation photographiée, un bras du système de poros soutient le plateau et le projette dans l’espace comme une surface intégrée à l’infrastructure principale.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>一枚の面に異なる機能を割り当てることで、個別の器具に分割せずに卓上の行為をまとめる。開放面にはカップやグラス、花、小さな物を配置できる。香のステーションは切削ブロック内の挿入口を備え、四角形のフレームは支持と整理のための別の領域をつくる。</p><p>この区分によって、安定した構成を維持しながら、置かれる物を変えられる。写真に記録された設置では、poros システムのアームがトレイを支持し、主構造から空間へ張り出すサービス面として機能している。</p></div>
+</div>
+</div>
+</section>
+<section class="section" id="construccion">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+<p class="section-meta" data-i18n="section.construction.meta">det.41–det.52 / 16 junio 2026</p>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>el juego de planos det.41–det.52, fechado el 16 de junio de 2026, define una placa principal de aluminio de 6 mm con acabado cepillado, de 32.5 × 20 cm y una altura general indicada de 3.78 cm. dos soleras de aluminio de 2 pulgadas y 2 mm de espesor, dobladas a 90°, conforman los perfiles longitudinales y se unen a la placa mediante tornillería.</p><p>el área de incienso utiliza barras cuadradas de aluminio de 1/4 de pulgada y un bloque central de aluminio de 1 pulgada con perforación. el área de servicio forma un marco de aproximadamente 11.27 × 10 cm con barras cuadradas de aluminio de 1/4 de pulgada. cuatro dados inferiores de barra cuadrada de aluminio de 1/2 pulgada y las fijaciones roscadas completan el ensamblaje.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the det.41–det.52 technical drawing set, dated june 16, 2026, specifies a 6 mm brushed-aluminum main plate measuring 32.5 × 20 cm, with an indicated overall height of 3.78 cm. two 2-inch-wide, 2 mm thick aluminum flat bars, folded at 90°, form the longitudinal profiles and are mechanically fixed to the plate.</p><p>the incense area uses 1/4-inch square aluminum bars and a central 1-inch aluminum block with a hole. the service area forms a frame approximately 11.27 × 10 cm using 1/4-inch square aluminum bars. four underside feet made from 1/2-inch square aluminum stock and threaded fixings complete the assembly.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>le dossier technique det.41–det.52, daté du 16 juin 2026, définit une plaque principale en aluminium brossé de 6 mm, de 32,5 × 20 cm, avec une hauteur générale indiquée de 3,78 cm. deux plats d’aluminium de 2 pouces de large et 2 mm d’épaisseur, pliés à 90°, forment les profils longitudinaux et sont fixés mécaniquement à la plaque.</p><p>la zone d’encens utilise des barres carrées en aluminium de 1/4 de pouce et un bloc central en aluminium de 1 pouce percé. la zone de service forme un cadre d’environ 11,27 × 10 cm avec des barres carrées en aluminium de 1/4 de pouce. quatre dés d’appui inférieurs en barre carrée d’aluminium de 1/2 pouce et des fixations filetées complètent l’assemblage.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>2026年6月16日付の技術図面 det.41–det.52 には、32.5 × 20 cm、厚さ 6 mm のブラッシュ仕上げアルミニウム主板と、全高 3.78 cm が記載されている。幅 2 インチ、厚さ 2 mm のアルミニウム平鋼二本を 90° に曲げて長手方向の形材とし、ねじによって主板に固定する。</p><p>香の領域は 1/4 インチ角のアルミニウム棒と、穴をもつ 1 インチ角のアルミニウム中央ブロックから成る。サービス領域は、1/4 インチ角のアルミニウム棒による約 11.27 × 10 cm のフレームで構成される。裏面には 1/2 インチ角のアルミニウム材から作られた四つの支持ブロックがあり、ねじ接合とともに全体を組み立てる。</p></div>
+</div>
+</div>
+</section>
+<section class="section" id="operacion">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>la placa central permanece libre para colocar y reorganizar objetos de uso inmediato. las dos áreas ensambladas incorporan puntos de referencia distintos: una pieza perforada destinada al incienso y un marco para contener o delimitar elementos de servicio. esta distribución admite diferentes combinaciones de tazas, objetos, flores y pequeños recipientes.</p><p>los componentes se vinculan mediante uniones mecánicas visibles. pueden desmontarse para mantenimiento o sustitución sin alterar la geometría principal de la charola. en su uso dentro del proyecto, el dispositivo funciona como una superficie de servicio de pequeña escala integrada a un sistema espacial mayor.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the central plate remains open for placing and rearranging objects in immediate use. the two assembled areas introduce different points of reference: a perforated element intended for incense and a frame that contains or delineates service items. this arrangement accommodates different combinations of cups, objects, flowers and small vessels.</p><p>the components are joined through visible mechanical connections. they can be disassembled for maintenance or replacement while preserving the tray’s main geometry. within the project, the device operates as a small-scale service surface integrated into a larger spatial system.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>la plaque centrale reste libre pour accueillir et réorganiser les objets d’usage immédiat. les deux zones assemblées instaurent des repères distincts : un élément percé destiné à l’encens et un cadre délimitant les objets de service. cette disposition admet plusieurs combinaisons de tasses, objets, fleurs et petits récipients.</p><p>les éléments sont reliés par des assemblages mécaniques apparents. ils peuvent être démontés pour l’entretien ou le remplacement sans modifier la géométrie principale du plateau. dans le projet, le dispositif fonctionne comme une surface de service à petite échelle intégrée à un système spatial plus vaste.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>中央の板面は、使用する物を自由に置き換えるために開かれている。組み込まれた二つの領域には別々の役割があり、一方は香を差し込むための穴を備え、もう一方はサービス用品を囲み、位置づけるフレームとして機能する。カップ、物、花、小さな容器などを組み合わせられる。</p><p>各部材は外から見える機械的な接合によって固定され、主板の形状を保ちながら保守や交換のために取り外せる。プロジェクト内では、より大きな空間システムに統合された小規模なサービス面として機能する。</p></div>
+</div>
+</div>
+</section>
+<section class="section media-sequences" id="media">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.media.title">registro</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>registro de estudio y de uso del dispositivo: superficie, soportes, marco de servicio, punto para incienso, detalles de unión y montaje dentro del sistema de poros.</p></div>
+<div class="lang-block" data-lang-block="en"><p>studio and in-use record of the device: surface, supports, service frame, incense point, connection details and installation within the poros system.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>documentation en studio et en situation du dispositif : surface, supports, cadre de service, point d’encens, détails d’assemblage et installation dans le système de poros.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>面、支持部、サービス用フレーム、香の挿入口、接合部、poros システム内での設置を示す、スタジオおよび使用時の記録。</p></div>
+</div>
+</div>
+<div class="media-grid media-grid-primary" data-media-grid=""><figure class="media-card is-full" data-media-item=""><button aria-label="abrir imagen 1" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 01" class="loaded" decoding="async" fetchpriority="high" src="https://d2w9rnfcy7mm78.cloudfront.net/52309220/original_4ebb438b1d944a9cf6d778ba58cdd7dd.png"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 2" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 02" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309217/original_e49b1b98afe2cbaee14c9530fec561e1.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 3" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 03" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309218/original_7a2a1b3c23fc45781ad53cefc7c0c4b8.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 4" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 04" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309219/original_73083faffaa71555492ec52038c80b3a.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 5" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 05" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309221/original_04b23441e9a941f4f4f060c9bd741caa.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 6" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 06" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309222/original_e23e42b1f1a4c338d25a1c1e1aec9974.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 7" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 07" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309223/original_7ce06e814cdcf22180f254b70375d69b.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 8" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 08" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309224/original_1b6b592d8f2dcbcdecb062d2a507a084.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 9" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 09" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309225/original_67d088301698a6c3ab64e7da1a8f2bc0.png" decoding="async" loading="lazy"/></button></figure></div>
+<div class="media-grid media-grid-secondary" data-media-grid=""><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 10" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 10" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309226/original_a43ab21120b483fc16b38863abbc429e.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 11" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 11" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309227/original_4b9e5b5b5bc60e2500fe51a67e976dbb.png" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 12" class="media-open" type="button"><img alt="dispositivo de servicio_01 — registro 12" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309228/original_8d7ff5f2561b98628a53ce34a1a10b0f.jpg" decoding="async" loading="lazy"/></button></figure></div>
+</section>
+<section class="section" id="documento">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>documentación técnica completa de la charola, con vistas generales y despiece de la placa, perfiles de soporte, área de incienso, marco de servicio y dados inferiores.</p></div>
+<div class="lang-block" data-lang-block="en"><p>complete technical documentation of the tray, including general views and exploded assemblies of the plate, support profiles, incense area, service frame and underside feet.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>documentation technique complète du plateau avec vues générales et éclatés de la plaque, des profils de support, de la zone d’encens, du cadre de service et des dés inférieurs.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>主板、支持形材、香の領域、サービス用フレーム、下面の支持ブロックについて、全体図と分解図を含むトレイの技術資料。</p></div>
+</div>
+</div>
+<div class="pdf-grid">
+<article class="pdf-card">
+<div class="pdf-head">
+<span data-i18n="pdf.label">plano general / det.41–det.52</span>
+<a data-i18n="action.open" href="https://attachments.are.na/52309204/dd34759b1d3c7da993e81d6212e809d8.pdf" rel="noopener" target="_blank">abrir</a>
+</div>
+<object aria-label="dispositivo de servicio_01 — plano técnico" data-pdf-src="https://attachments.are.na/52309204/dd34759b1d3c7da993e81d6212e809d8.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" type="application/pdf">
+<a data-i18n="pdf.fallback" href="https://attachments.are.na/52309204/dd34759b1d3c7da993e81d6212e809d8.pdf" rel="noopener" target="_blank">abrir plano general</a>
+</object>
+</article>
+</div>
+</section>
+</main>
+<div aria-hidden="true" id="xpan-lightbox">
+<button data-i18n="action.close" data-lb-close="" type="button">cerrar</button>
+<button aria-label="anterior" class="nav-btn" data-dir="prev" data-i18n-aria="action.previous" type="button">‹</button>
+<div aria-modal="true" class="sheet" role="dialog"></div>
+<button aria-label="siguiente" class="nav-btn" data-dir="next" data-i18n-aria="action.next" type="button">›</button>
+</div>
+<script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        "es": {
+                "pageTitle": "dispositivo de servicio_01 — xpan",
+                "metaDescription": "dispositivo de servicio_01 — pieza de servicio en aluminio desarrollada en colaboración con springtime wishes para [19.4300_99.1747]; diseñada y construida por xpan.",
+                "header.chip": "dispositivo de servicio_01",
+                "plate.project": "dispositivo de servicio_01 / det.41",
+                "plate.context": "springtime wishes × xpan / [19.4300_99.1747]",
+                "plate.date": "junio 2026 / aluminio maquinado",
+                "aria.pageSections": "secciones de la página",
+                "nav.system": "sistema",
+                "nav.construction": "construcción",
+                "nav.operation": "operación",
+                "nav.media": "registro",
+                "nav.document": "documento técnico",
+                "section.system.title": "sistema",
+                "section.system.meta": "servicio / superficie / tres zonas de uso",
+                "section.construction.title": "construcción",
+                "section.construction.meta": "det.41–det.52 / 16 junio 2026",
+                "section.operation.title": "operación",
+                "section.media.title": "registro",
+                "section.document.title": "documento técnico",
+                "pdf.label": "plano general / det.41–det.52",
+                "pdf.fallback": "abrir plano general",
+                "action.open": "abrir",
+                "action.close": "cerrar",
+                "action.previous": "anterior",
+                "action.next": "siguiente"
+        },
+        "en": {
+                "pageTitle": "dispositivo de servicio_01 — xpan",
+                "metaDescription": "dispositivo de servicio_01 — collaborative springtime wishes × xpan service device designed and built by xpan for [19.4300_99.1747].",
+                "header.chip": "dispositivo de servicio_01",
+                "plate.project": "dispositivo de servicio_01 / det.41",
+                "plate.context": "springtime wishes × xpan / [19.4300_99.1747]",
+                "plate.date": "june 2026 / machined aluminum",
+                "aria.pageSections": "page sections",
+                "nav.system": "system",
+                "nav.construction": "construction",
+                "nav.operation": "operation",
+                "nav.media": "record",
+                "nav.document": "technical document",
+                "section.system.title": "system",
+                "section.system.meta": "service / surface / three use areas",
+                "section.construction.title": "construction",
+                "section.construction.meta": "det.41–det.52 / june 16, 2026",
+                "section.operation.title": "operation",
+                "section.media.title": "record",
+                "section.document.title": "technical document",
+                "pdf.label": "general drawing / det.41–det.52",
+                "pdf.fallback": "open general drawing",
+                "action.open": "open",
+                "action.close": "close",
+                "action.previous": "previous",
+                "action.next": "next"
+        },
+        "fr": {
+                "pageTitle": "dispositivo de servicio_01 — xpan",
+                "metaDescription": "dispositivo de servicio_01 — collaborative springtime wishes × xpan service device designed and built by xpan for [19.4300_99.1747].",
+                "header.chip": "dispositivo de servicio_01",
+                "plate.project": "dispositivo de servicio_01 / det.41",
+                "plate.context": "springtime wishes × xpan / [19.4300_99.1747]",
+                "plate.date": "juin 2026 / aluminium usiné",
+                "aria.pageSections": "sections de la page",
+                "nav.system": "système",
+                "nav.construction": "construction",
+                "nav.operation": "opération",
+                "nav.media": "registre",
+                "nav.document": "document technique",
+                "section.system.title": "système",
+                "section.system.meta": "service / surface / trois zones d’usage",
+                "section.construction.title": "construction",
+                "section.construction.meta": "det.41–det.52 / 16 juin 2026",
+                "section.operation.title": "opération",
+                "section.media.title": "registre",
+                "section.document.title": "document technique",
+                "pdf.label": "plan général / det.41–det.52",
+                "pdf.fallback": "ouvrir le plan général",
+                "action.open": "ouvrir",
+                "action.close": "fermer",
+                "action.previous": "précédent",
+                "action.next": "suivant"
+        },
+        "jp": {
+                "pageTitle": "dispositivo de servicio_01 — xpan",
+                "metaDescription": "dispositivo de servicio_01 — collaborative springtime wishes × xpan service device designed and built by xpan for [19.4300_99.1747].",
+                "header.chip": "dispositivo de servicio_01",
+                "plate.project": "dispositivo de servicio_01 / det.41",
+                "plate.context": "springtime wishes × xpan / [19.4300_99.1747]",
+                "plate.date": "2026年6月 / 切削アルミニウム",
+                "aria.pageSections": "ページセクション",
+                "nav.system": "システム",
+                "nav.construction": "構造",
+                "nav.operation": "運用",
+                "nav.media": "記録",
+                "nav.document": "技術資料",
+                "section.system.title": "システム",
+                "section.system.meta": "サービス / 表面 / 三つの使用領域",
+                "section.construction.title": "構造",
+                "section.construction.meta": "det.41–det.52 / 2026年6月16日",
+                "section.operation.title": "運用",
+                "section.media.title": "記録",
+                "section.document.title": "技術資料",
+                "pdf.label": "全体図 / det.41–det.52",
+                "pdf.fallback": "全体図を開く",
+                "action.open": "開く",
+                "action.close": "閉じる",
+                "action.previous": "前へ",
+                "action.next": "次へ"
+        }
+};
+
+      function setLang(lang){
+        if(!staticText[lang]) lang='es';
+        document.documentElement.lang = lang==='jp' ? 'ja' : lang;
+        buttons.forEach(btn=>{
+          const active=btn.dataset.langBtn===lang;
+          btn.classList.toggle('lang-active',active);
+          btn.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach(block=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18n];
+          if(value!=null) el.textContent=value;
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18nAria];
+          if(value!=null){
+            if(el.hasAttribute('aria-label')) el.setAttribute('aria-label',value);
+            else el.setAttribute(el.dataset.i18nAriaTarget || 'aria-label', value);
+          }
+        });
+        document.title=staticText[lang].pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta) meta.setAttribute('content',staticText[lang].metaDescription);
+        try{localStorage.setItem('xpan-lang',lang)}catch(_e){}
+      }
+
+      buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.langBtn)));
+      let saved='es';
+      try{saved=localStorage.getItem('xpan-lang')||'es'}catch(_e){}
+      setLang(saved);
+    })();
+
+    (function lazyImages(){
+      const images=[...document.querySelectorAll('img[data-src]')];
+      const loadImage=(img)=>{
+        if(img.dataset.src && !img.src) img.src=img.dataset.src;
+        const mark=()=>img.classList.add('loaded');
+        if(img.complete) mark();
+        else img.addEventListener('load',mark,{once:true});
+      };
+      document.querySelectorAll('img.loaded').forEach(img=>{ if(img.complete) img.classList.add('loaded'); else img.addEventListener('load',()=>img.classList.add('loaded'),{once:true}); });
+      if(!('IntersectionObserver' in window)){ images.forEach(loadImage); return; }
+      const observer=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            loadImage(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      },{rootMargin:'240px 0px'});
+      images.forEach(img=>observer.observe(img));
+    })();
+
+    (function pdfProxy(){
+      document.querySelectorAll('object[data-pdf-src]').forEach(el=>{ el.data = el.getAttribute('data-pdf-src'); });
+    })();
+
+    (function lightboxSystem(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      if(!lightbox) return;
+      const sheet=lightbox.querySelector('.sheet');
+      const closeBtn=lightbox.querySelector('[data-lb-close]');
+      const navButtons=Array.from(lightbox.querySelectorAll('.nav-btn'));
+      const triggers=Array.from(document.querySelectorAll('[data-media-item] .media-open'));
+      const items=triggers.map(btn=>btn.querySelector('img')).filter(Boolean);
+      let index=0;
+
+      function render(){
+        const current=items[index];
+        if(!current) return;
+        const img=document.createElement('img');
+        img.src=current.currentSrc || current.src || current.dataset.src;
+        img.alt=current.alt || '';
+        sheet.innerHTML='';
+        sheet.appendChild(img);
+      }
+      function openAt(i){
+        index=i;
+        render();
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+      }
+      function step(dir){
+        index=(index+dir+items.length)%items.length;
+        render();
+      }
+
+      triggers.forEach((btn,i)=>btn.addEventListener('click',()=>openAt(i)));
+      closeBtn.addEventListener('click',close);
+      navButtons.forEach(btn=>btn.addEventListener('click',()=>step(btn.dataset.dir==='next'?1:-1)));
+      lightbox.addEventListener('click',(e)=>{ if(e.target===lightbox) close(); });
+      document.addEventListener('keydown',(e)=>{
+        if(!lightbox.classList.contains('open')) return;
+        if(e.key==='Escape') close();
+        if(e.key==='ArrowRight') step(1);
+        if(e.key==='ArrowLeft') step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+<html data-xpan="" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="light dark" name="color-scheme"/>
+<meta content="#0B0D0F" name="theme-color"/>
+<meta content="telephone=no, email=no, address=no" name="format-detection"/>
+<title>dispositivo candelabro — xpan</title>
+<meta content="dispositivo candelabro — dispositivo del sistema de poros desarrollado para [19.4300_99.1747], con tres soportes de acero al carbón para incorporar luz de vela a la infraestructura." name="description"/>
+<meta content="website" property="og:type"/>
+<meta content="dispositivo candelabro — xpan" property="og:title"/>
+<meta content="dispositivo candelabro / tres plataformas para velas / sistema de poros / [19.4300_99.1747]." property="og:description"/>
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<link href="https://attachments.are.na" rel="dns-prefetch"/>
+<link as="image" fetchpriority="high" href="xpan.svg" rel="preload"/>
+<link as="image" fetchpriority="high" href="https://d2w9rnfcy7mm78.cloudfront.net/52309238/original_3f5511bac64be2fa980759cc0eb7f921.jpg" rel="preload"/>
+<style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:860px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:820px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-grid-primary .media-card{grid-column:span 6}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card video{display:block;width:100%;height:auto;min-height:160px;max-height:82vh;object-fit:contain;background:#050608}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+  </style>
+<script defer="" src="/assets/js/media-proxy.js"></script>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/52309238/original_3f5511bac64be2fa980759cc0eb7f921.jpg')">
+<header>
+<div class="stack">
+<a href="https://xpan.earth" rel="noopener" target="_blank"><img alt="xpan" fetchpriority="high" src="xpan.svg"/></a>
+<div class="chip" data-i18n="header.chip">dispositivo candelabro</div>
+</div>
+<div aria-label="selector de idioma" class="stack" id="lang-switch">
+<button aria-pressed="true" class="chip lang-active" data-lang-btn="es" type="button">es</button>
+<button aria-pressed="false" class="chip" data-lang-btn="en" type="button">en</button>
+<button aria-pressed="false" class="chip" data-lang-btn="fr" type="button">fr</button>
+<button aria-pressed="false" class="chip" data-lang-btn="jp" type="button">jp</button>
+</div>
+</header>
+<div aria-hidden="true" class="bg-hero"></div>
+<div aria-hidden="true" class="grain"></div>
+<div aria-hidden="true" class="bg-grid"></div>
+<div aria-hidden="true" class="crosshair"></div>
+<main>
+<section class="section" id="inicio">
+<div class="intro-wrap neg-shell">
+<div class="plate">
+<span data-i18n="plate.project">dispositivo candelabro / det.07</span>
+<span data-i18n="plate.context">xpan / [19.4300_99.1747]</span>
+<span data-i18n="plate.date">junio 2026 / sistema de poros</span>
+</div>
+<div class="lang-block active" data-lang-block="es">
+<p class="kicker">sistema de poros / luz de vela / soporte / [19.4300_99.1747]</p>
+<h1>dispositivo candelabro</h1>
+<p class="subtitle">dispositivo candelabro desarrollado para [19.4300_99.1747] como una interfaz desmontable del sistema de poros para incorporar tres velas a distintas alturas.</p>
+<div class="intro-text"><p>dispositivo candelabro introduce la luz de vela al sistema de poros mediante un componente insertable que puede integrarse a su infraestructura sin modificar los postes existentes. una barra horizontal de aluminio conecta la matriz con una pieza vertical de acero al carbón, desde la que se despliegan tres pequeñas plataformas para velas.</p><p>dos plataformas se proyectan hacia lados opuestos de la barra vertical a una misma altura y la tercera ocupa un nivel inferior, generando una composición asimétrica en tres direcciones. cada soporte incluye una espiga metálica que recibe la vela y la mantiene en posición. la separación entre las superficies deja visibles la estructura, sus uniones y la relación entre las distintas fuentes de luz.</p><p>la pieza combina la precisión de un ensamblaje mecánico desmontable con las uniones soldadas del cuerpo portavelas. una fuente lumínica de llama abierta queda así incorporada al sistema de poros como un dispositivo independiente, sustituible y capaz de cambiar la iluminación y la lectura espacial de cada montaje.</p></div>
+</div>
+<div class="lang-block" data-lang-block="en">
+<p class="kicker">poros system / candlelight / support / [19.4300_99.1747]</p>
+<h1>dispositivo candelabro</h1>
+<p class="subtitle">a candelabra device developed for [19.4300_99.1747] as a removable interface within the poros system, holding three candles at different heights.</p>
+<div class="intro-text"><p>dispositivo candelabro introduces candlelight into the poros system through an insertable component that integrates with its infrastructure without altering the existing posts. a horizontal aluminum bar connects the matrix to a vertical carbon-steel element, from which three small candle platforms extend.</p><p>two platforms project from opposite sides of the vertical bar at the same height, while the third occupies a lower level, forming an asymmetrical composition in three directions. each support includes a metal spike that receives and stabilizes a candle. the spaces between the surfaces keep the structure, its joints and the relationship between the light sources visible.</p><p>the piece combines the precision of a removable mechanical connection with the welded joints of the candle-holding body. an open-flame light source thus becomes part of the poros system as an independent, replaceable device that can transform the illumination and spatial reading of each installation.</p></div>
+</div>
+<div class="lang-block" data-lang-block="fr">
+<p class="kicker">système de poros / lumière de bougie / support / [19.4300_99.1747]</p>
+<h1>dispositivo candelabro</h1>
+<p class="subtitle">dispositif candélabre développé pour [19.4300_99.1747] comme interface amovible du système de poros, permettant d’accueillir trois bougies à différentes hauteurs.</p>
+<div class="intro-text"><p>dispositivo candelabro introduit la lumière des bougies dans le système de poros grâce à un composant insérable qui s’intègre à son infrastructure sans modifier les poteaux existants. une barre horizontale en aluminium relie la matrice à un élément vertical en acier au carbone, duquel se déploient trois petites plateformes pour bougies.</p><p>deux plateformes se projettent de part et d’autre de la barre verticale à la même hauteur, tandis que la troisième occupe un niveau inférieur, formant une composition asymétrique dans trois directions. chaque support comporte une pointe métallique qui reçoit et stabilise la bougie. les espaces entre les surfaces laissent visibles la structure, ses assemblages et les relations entre les sources lumineuses.</p><p>la pièce associe la précision d’une connexion mécanique démontable aux assemblages soudés du corps porte-bougies. une source de lumière à flamme nue s’intègre ainsi au système de poros comme un dispositif indépendant et remplaçable, capable de transformer l’éclairage et la perception spatiale de chaque installation.</p></div>
+</div>
+<div class="lang-block" data-lang-block="jp">
+<p class="kicker">poros システム / ろうそくの光 / 支持 / [19.4300_99.1747]</p>
+<h1>dispositivo candelabro</h1>
+<p class="subtitle">[19.4300_99.1747] のために開発された、異なる高さに三本のろうそくを配置する poros システム用の着脱式燭台装置。</p>
+<div class="intro-text"><p>dispositivo candelabro は、既存のポストを変更することなく poros システムのインフラに接続できる差し込み式の部材として、ろうそくの光を導入する。水平のアルミニウムバーがシステムのマトリクスと垂直の炭素鋼部材をつなぎ、そこから三つの小さな燭台用プラットフォームが張り出す。</p><p>二つのプラットフォームは垂直バーの左右に同じ高さで張り出し、三つ目はその下方に配置される。これによって三方向に展開する非対称な構成が生まれる。各支持面にはろうそくを差し込み固定する金属製のピンが設けられている。面と面の間に空間を残すことで、構造、接合、光源相互の関係が明確に見える。</p><p>この部材は、取り外し可能な機械的接合と、燭台本体の溶接接合を組み合わせている。裸火の光源が独立して交換可能な装置として poros システムに組み込まれ、設置ごとの照明と空間の見え方を変化させる。</p></div>
+</div>
+<nav aria-label="secciones de la página" class="anchor-nav" data-i18n-aria="aria.pageSections">
+<a data-i18n="nav.system" href="#sistema">sistema</a>
+<a data-i18n="nav.construction" href="#construccion">construcción</a>
+<a data-i18n="nav.operation" href="#operacion">operación</a>
+<a data-i18n="nav.media" href="#media">registro</a>
+<a data-i18n="nav.document" href="#documento">documento técnico</a>
+</nav>
+</div>
+</section>
+<section class="section" id="sistema">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+<p class="section-meta" data-i18n="section.system.meta">poros / tres velas / [19.4300_99.1747]</p>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>el sistema de poros proporciona el punto de conexión. a partir de él, la barra de aluminio de 37.62 cm desplaza el conjunto de velas fuera del eje del poste y lo mantiene integrado a la infraestructura espacial.</p><p>la disposición de las tres plataformas introduce diferentes posiciones y alturas para la luz. el candelabro puede retirarse como una unidad, mientras el soporte principal permanece disponible para otros dispositivos compatibles con el sistema.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the poros system provides the connection point. from there, the 37.62 cm aluminum bar offsets the candle assembly from the post axis while keeping it integrated into the spatial infrastructure.</p><p>the arrangement of the three platforms introduces different positions and heights for light. the candelabra can be removed as a single unit, while the main support remains available for other devices compatible with the system.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>le système de poros fournit le point de connexion. depuis celui-ci, la barre d’aluminium de 37,62 cm décale l’ensemble des bougies par rapport à l’axe du poteau tout en le maintenant intégré à l’infrastructure spatiale.</p><p>l’agencement des trois plateformes introduit différentes positions et hauteurs pour la lumière. le candélabre peut être retiré comme une seule unité, tandis que le support principal reste disponible pour d’autres dispositifs compatibles avec le système.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>poros システムが接続点を提供する。そこから長さ 37.62 cm のアルミニウムバーがろうそくの組立部をポストの軸から離して支持し、空間インフラに統合する。</p><p>三つのプラットフォームの配置が、光の位置と高さに変化を与える。燭台は一つのユニットとして取り外すことができ、主構造は他の互換装置を受け入れられる状態を保つ。</p></div>
+</div>
+</div>
+</section>
+<section class="section" id="construccion">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+<p class="section-meta" data-i18n="section.construction.meta">det.07–det.11 / junio 03, 2026</p>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>la pieza de conexión superior se fabrica con una barra cuadrada de aluminio de 1/2" y 37.62 cm de longitud, perforada para tornillería allen de 3/16". de ella desciende una barra vertical de acero al carbón de 1/2" y 45 cm de longitud, con acabado esmerilado.</p><p>las tres plataformas son soleras de acero al carbón de 10 × 4 cm y 3 mm de espesor, soldadas a la pieza vertical. cada una incorpora una espiga de acero al carbón de 1 mm de espesor y 2.5 cm de altura para encajar y estabilizar la vela. el plano técnico detalla las piezas 1-a, 1-b y 1-c, sus perforaciones, uniones y dimensiones.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the upper connecting element is made from a 1/2" square aluminum bar, 37.62 cm long, drilled for 3/16" allen fasteners. a 45 cm long, 1/2" square carbon-steel bar with a ground finish descends from it.</p><p>the three platforms are 10 × 4 cm carbon-steel flat plates, 3 mm thick, welded to the vertical element. each incorporates a carbon-steel spike 1 mm thick and 2.5 cm high to receive and stabilize the candle. the technical drawings document parts 1-a, 1-b and 1-c, their holes, joints and dimensions.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>l’élément de connexion supérieur est constitué d’une barre carrée en aluminium de 1/2" et de 37,62 cm de longueur, percée pour une visserie allen de 3/16". une barre verticale en acier au carbone de section carrée 1/2", longue de 45 cm et à finition meulée, descend de cet élément.</p><p>les trois plateformes sont des plats en acier au carbone de 10 × 4 cm et de 3 mm d’épaisseur, soudés à l’élément vertical. chacune incorpore une pointe en acier au carbone de 1 mm d’épaisseur et de 2,5 cm de hauteur pour recevoir et stabiliser la bougie. les plans techniques détaillent les pièces 1-a, 1-b et 1-c, leurs perçages, assemblages et dimensions.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>上部の接続部材には、長さ 37.62 cm、断面 1/2" の角形アルミニウムバーを使用し、3/16" の六角穴付きボルト用の穴を設ける。そこから長さ 45 cm、断面 1/2" の研磨仕上げ炭素鋼角棒が垂直に伸びる。</p><p>三つの支持面は 10 × 4 cm、厚さ 3 mm の炭素鋼フラットプレートで、垂直部材に溶接される。各プレートには、厚さ 1 mm、高さ 2.5 cm の炭素鋼製ピンがあり、ろうそくを差し込んで安定させる。技術図面には部材 1-a、1-b、1-c の寸法、穴加工、接合関係が記載されている。</p></div>
+</div>
+</div>
+</section>
+<section class="section" id="operacion">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>la barra horizontal se conecta a un punto del sistema de poros y sostiene el conjunto vertical. las tres plataformas reciben velas independientes que se fijan mediante sus espigas y pueden reemplazarse durante el uso sin desmontar la estructura.</p><p>las llamas producen tres focos de luz a diferentes posiciones dentro del mismo dispositivo. la cera, el tamaño de las velas y el estado de encendido modifican continuamente la composición, mientras la geometría del soporte se mantiene constante.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the horizontal bar connects to a point in the poros system and supports the vertical assembly. the three platforms receive individual candles secured by their spikes; each candle can be replaced during use without dismantling the structure.</p><p>the flames create three points of light at different positions within one device. the wax, candle dimensions and burning state continuously change the composition, while the geometry of the support remains constant.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>la barre horizontale se connecte à un point du système de poros et soutient l’ensemble vertical. les trois plateformes accueillent des bougies individuelles maintenues par leurs pointes ; chaque bougie peut être remplacée pendant l’utilisation sans démonter la structure.</p><p>les flammes produisent trois points lumineux à différentes positions au sein d’un même dispositif. la cire, les dimensions des bougies et leur état de combustion modifient continuellement la composition, tandis que la géométrie du support reste constante.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>水平バーを poros システムの接続点に取り付け、垂直の組立部を支持する。三つのプラットフォームにはそれぞれろうそくをピンで固定し、構造を分解せずに交換できる。</p><p>炎は一つの装置の異なる位置に三つの光点を形成する。ろうの形状、ろうそくの大きさ、燃焼の状態によって構成は変化し続ける一方、支持体の幾何学的構成は一定に保たれる。</p></div>
+</div>
+</div>
+</section>
+<section class="section media-sequences" id="media">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.media.title">registro</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>registro fotográfico del dispositivo dentro de [19.4300_99.1747]: relación con los postes del sistema de poros, soportes metálicos, detalles de fijación y configuración con tres velas.</p></div>
+<div class="lang-block" data-lang-block="en"><p>photographic documentation of the device within [19.4300_99.1747]: its relation to poros-system posts, metal supports, fixing details and configuration with three candles.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>documentation photographique du dispositif dans [19.4300_99.1747] : relation avec les poteaux du système de poros, supports métalliques, détails de fixation et configuration à trois bougies.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>[19.4300_99.1747] に設置された装置の写真記録。poros システムのポストとの接続、金属製支持部、固定部のディテール、三本のろうそくによる構成を示す。</p></div>
+</div>
+</div>
+<div class="media-grid media-grid-primary" data-media-grid=""><figure class="media-card is-full" data-media-item=""><button aria-label="abrir imagen 1" class="media-open" type="button"><img alt="dispositivo candelabro — registro 01" class="loaded" decoding="async" fetchpriority="high" src="https://d2w9rnfcy7mm78.cloudfront.net/52309238/original_3f5511bac64be2fa980759cc0eb7f921.jpg"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 2" class="media-open" type="button"><img alt="dispositivo candelabro — registro 02" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309239/original_642ddc014df2e9514fdf7b36a3b74657.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 3" class="media-open" type="button"><img alt="dispositivo candelabro — registro 03" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309240/original_ba892cb84292a0d1980f087006258450.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 4" class="media-open" type="button"><img alt="dispositivo candelabro — registro 04" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309241/original_eaacfb0eab796445a4e3ef274cb1fc76.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 5" class="media-open" type="button"><img alt="dispositivo candelabro — registro 05" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309242/original_c85c8aac3bb96af174e30d2e74959281.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 6" class="media-open" type="button"><img alt="dispositivo candelabro — registro 06" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309243/original_ff2a404287447e62353d33069838091a.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 7" class="media-open" type="button"><img alt="dispositivo candelabro — registro 07" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309244/original_9555dcde8e14b11245dcdc93f12fdd5e.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 8" class="media-open" type="button"><img alt="dispositivo candelabro — registro 08" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309245/original_a1ba019134d9564620643598b0cdf6ae.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 9" class="media-open" type="button"><img alt="dispositivo candelabro — registro 09" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309246/original_eb87e40c8ee78050b3f84f1991170fbe.jpg" decoding="async" loading="lazy"/></button></figure></div>
+<div class="media-grid media-grid-secondary" data-media-grid=""><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 10" class="media-open" type="button"><img alt="dispositivo candelabro — registro 10" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309247/original_688172a07ccff4ecdfc0b46e77f47f54.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 11" class="media-open" type="button"><img alt="dispositivo candelabro — registro 11" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309248/original_01d48ba59f4ca0cad4319912b888e633.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 12" class="media-open" type="button"><img alt="dispositivo candelabro — registro 12" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309249/original_fc2503f778eb2e9cff948ddc7ce5a1a2.jpg" decoding="async" loading="lazy"/></button></figure></div>
+</section>
+<section class="section" id="documento">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>planos técnicos det.07–det.11 con planta, alzados, isométricos, despiece y especificaciones de la barra de aluminio, el soporte vertical y las tres plataformas para velas.</p></div>
+<div class="lang-block" data-lang-block="en"><p>technical drawings det.07–det.11 with plan, elevations, isometric views, parts and specifications for the aluminum bar, vertical support and three candle platforms.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>plans techniques det.07–det.11 avec plan, élévations, vues isométriques, pièces et spécifications de la barre en aluminium, du support vertical et des trois plateformes pour bougies.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>アルミニウムバー、垂直支持部、三つのろうそく用プラットフォームの平面図、立面図、アイソメ図、部材、仕様を含む技術図面 det.07–det.11。</p></div>
+</div>
+</div>
+<div class="pdf-grid">
+<article class="pdf-card">
+<div class="pdf-head">
+<span data-i18n="pdf.label">plano general / det.07–det.11</span>
+<a data-i18n="action.open" href="https://attachments.are.na/52309235/9d94c1297d59990889425dc17d7c320b.pdf" rel="noopener" target="_blank">abrir</a>
+</div>
+<object aria-label="dispositivo candelabro — plano general" data-pdf-src="https://attachments.are.na/52309235/9d94c1297d59990889425dc17d7c320b.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" type="application/pdf">
+<a data-i18n="pdf.fallback" href="https://attachments.are.na/52309235/9d94c1297d59990889425dc17d7c320b.pdf" rel="noopener" target="_blank">abrir plano general</a>
+</object>
+</article>
+</div>
+</section>
+</main>
+<div aria-hidden="true" id="xpan-lightbox">
+<button data-i18n="action.close" data-lb-close="" type="button">cerrar</button>
+<button aria-label="anterior" class="nav-btn" data-dir="prev" data-i18n-aria="action.previous" type="button">‹</button>
+<div aria-modal="true" class="sheet" role="dialog"></div>
+<button aria-label="siguiente" class="nav-btn" data-dir="next" data-i18n-aria="action.next" type="button">›</button>
+</div>
+<script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        "es": {
+                "pageTitle": "dispositivo candelabro — xpan",
+                "metaDescription": "dispositivo candelabro — dispositivo del sistema de poros desarrollado para [19.4300_99.1747], con tres soportes de acero al carbón para incorporar luz de vela a la infraestructura.",
+                "header.chip": "dispositivo candelabro",
+                "plate.project": "dispositivo candelabro / det.07",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "junio 2026 / sistema de poros",
+                "aria.pageSections": "secciones de la página",
+                "nav.system": "sistema",
+                "nav.construction": "construcción",
+                "nav.operation": "operación",
+                "nav.media": "registro",
+                "nav.document": "documento técnico",
+                "section.system.title": "sistema",
+                "section.system.meta": "poros / tres velas / [19.4300_99.1747]",
+                "section.construction.title": "construcción",
+                "section.construction.meta": "det.07–det.11 / junio 03, 2026",
+                "section.operation.title": "operación",
+                "section.media.title": "registro",
+                "section.document.title": "documento técnico",
+                "pdf.label": "plano general / det.07–det.11",
+                "pdf.fallback": "abrir plano general",
+                "action.open": "abrir",
+                "action.close": "cerrar",
+                "action.previous": "anterior",
+                "action.next": "siguiente"
+        },
+        "en": {
+                "pageTitle": "dispositivo candelabro — xpan",
+                "metaDescription": "dispositivo candelabro — a poros-system device developed for [19.4300_99.1747], with three carbon-steel platforms for candlelight.",
+                "header.chip": "dispositivo candelabro",
+                "plate.project": "dispositivo candelabro / det.07",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "june 2026 / poros system",
+                "aria.pageSections": "page sections",
+                "nav.system": "system",
+                "nav.construction": "construction",
+                "nav.operation": "operation",
+                "nav.media": "record",
+                "nav.document": "technical document",
+                "section.system.title": "system",
+                "section.system.meta": "poros / three candles / [19.4300_99.1747]",
+                "section.construction.title": "construction",
+                "section.construction.meta": "det.07–det.11 / june 03, 2026",
+                "section.operation.title": "operation",
+                "section.media.title": "record",
+                "section.document.title": "technical document",
+                "pdf.label": "general drawing / det.07–det.11",
+                "pdf.fallback": "open general drawing",
+                "action.open": "open",
+                "action.close": "close",
+                "action.previous": "previous",
+                "action.next": "next"
+        },
+        "fr": {
+                "pageTitle": "dispositivo candelabro — xpan",
+                "metaDescription": "dispositivo candelabro — dispositif du système de poros développé pour [19.4300_99.1747], avec trois plateformes en acier au carbone pour bougies.",
+                "header.chip": "dispositivo candelabro",
+                "plate.project": "dispositivo candelabro / det.07",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "juin 2026 / système de poros",
+                "aria.pageSections": "sections de la page",
+                "nav.system": "système",
+                "nav.construction": "construction",
+                "nav.operation": "opération",
+                "nav.media": "registre",
+                "nav.document": "document technique",
+                "section.system.title": "système",
+                "section.system.meta": "poros / trois bougies / [19.4300_99.1747]",
+                "section.construction.title": "construction",
+                "section.construction.meta": "det.07–det.11 / 03 juin 2026",
+                "section.operation.title": "opération",
+                "section.media.title": "registre",
+                "section.document.title": "document technique",
+                "pdf.label": "plan général / det.07–det.11",
+                "pdf.fallback": "ouvrir le plan général",
+                "action.open": "ouvrir",
+                "action.close": "fermer",
+                "action.previous": "précédent",
+                "action.next": "suivant"
+        },
+        "jp": {
+                "pageTitle": "dispositivo candelabro — xpan",
+                "metaDescription": "dispositivo candelabro — [19.4300_99.1747] のために開発された、三つの炭素鋼製燭台を備えた poros システムの装置。",
+                "header.chip": "dispositivo candelabro",
+                "plate.project": "dispositivo candelabro / det.07",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "2026年6月 / poros システム",
+                "aria.pageSections": "ページセクション",
+                "nav.system": "システム",
+                "nav.construction": "構造",
+                "nav.operation": "運用",
+                "nav.media": "記録",
+                "nav.document": "技術資料",
+                "section.system.title": "システム",
+                "section.system.meta": "poros / 三本のろうそく / [19.4300_99.1747]",
+                "section.construction.title": "構造",
+                "section.construction.meta": "det.07–det.11 / 2026年6月3日",
+                "section.operation.title": "運用",
+                "section.media.title": "記録",
+                "section.document.title": "技術資料",
+                "pdf.label": "全体図 / det.07–det.11",
+                "pdf.fallback": "全体図を開く",
+                "action.open": "開く",
+                "action.close": "閉じる",
+                "action.previous": "前へ",
+                "action.next": "次へ"
+        }
+};
+
+      function setLang(lang){
+        if(!staticText[lang]) lang='es';
+        document.documentElement.lang = lang==='jp' ? 'ja' : lang;
+        buttons.forEach(btn=>{
+          const active=btn.dataset.langBtn===lang;
+          btn.classList.toggle('lang-active',active);
+          btn.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach(block=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18n];
+          if(value!=null) el.textContent=value;
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18nAria];
+          if(value!=null){
+            if(el.hasAttribute('aria-label')) el.setAttribute('aria-label',value);
+            else el.setAttribute(el.dataset.i18nAriaTarget || 'aria-label', value);
+          }
+        });
+        document.title=staticText[lang].pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta) meta.setAttribute('content',staticText[lang].metaDescription);
+        try{localStorage.setItem('xpan-lang',lang)}catch(_e){}
+      }
+
+      buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.langBtn)));
+      let saved='es';
+      try{saved=localStorage.getItem('xpan-lang')||'es'}catch(_e){}
+      setLang(saved);
+    })();
+
+    (function lazyImages(){
+      const images=[...document.querySelectorAll('img[data-src]')];
+      const loadImage=(img)=>{
+        if(img.dataset.src && !img.src) img.src=img.dataset.src;
+        const mark=()=>img.classList.add('loaded');
+        if(img.complete) mark();
+        else img.addEventListener('load',mark,{once:true});
+      };
+      document.querySelectorAll('img.loaded').forEach(img=>{ if(img.complete) img.classList.add('loaded'); else img.addEventListener('load',()=>img.classList.add('loaded'),{once:true}); });
+      if(!('IntersectionObserver' in window)){ images.forEach(loadImage); return; }
+      const observer=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            loadImage(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      },{rootMargin:'240px 0px'});
+      images.forEach(img=>observer.observe(img));
+    })();
+
+    (function pdfProxy(){
+      document.querySelectorAll('object[data-pdf-src]').forEach(el=>{ el.data = el.getAttribute('data-pdf-src'); });
+    })();
+
+    (function lightboxSystem(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      if(!lightbox) return;
+      const sheet=lightbox.querySelector('.sheet');
+      const closeBtn=lightbox.querySelector('[data-lb-close]');
+      const navButtons=Array.from(lightbox.querySelectorAll('.nav-btn'));
+      const triggers=Array.from(document.querySelectorAll('[data-media-item] .media-open'));
+      const items=triggers.map(btn=>btn.querySelector('img')).filter(Boolean);
+      let index=0;
+
+      function render(){
+        const current=items[index];
+        if(!current) return;
+        const img=document.createElement('img');
+        img.src=current.currentSrc || current.src || current.dataset.src;
+        img.alt=current.alt || '';
+        sheet.innerHTML='';
+        sheet.appendChild(img);
+      }
+      function openAt(i){
+        index=i;
+        render();
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+      }
+      function step(dir){
+        index=(index+dir+items.length)%items.length;
+        render();
+      }
+
+      triggers.forEach((btn,i)=>btn.addEventListener('click',()=>openAt(i)));
+      closeBtn.addEventListener('click',close);
+      navButtons.forEach(btn=>btn.addEventListener('click',()=>step(btn.dataset.dir==='next'?1:-1)));
+      lightbox.addEventListener('click',(e)=>{ if(e.target===lightbox) close(); });
+      document.addEventListener('keydown',(e)=>{
+        if(!lightbox.classList.contains('open')) return;
+        if(e.key==='Escape') close();
+        if(e.key==='ArrowRight') step(1);
+        if(e.key==='ArrowLeft') step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>

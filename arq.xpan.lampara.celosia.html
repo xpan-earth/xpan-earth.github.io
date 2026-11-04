@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+<html data-xpan="" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="light dark" name="color-scheme"/>
+<meta content="#0B0D0F" name="theme-color"/>
+<meta content="telephone=no, email=no, address=no" name="format-detection"/>
+<title>lámpara.celosía — xpan</title>
+<meta content="lámpara.celosía — dispositivo lumínico suspendido del sistema de poros desarrollado por xpan para [19.4300_99.1747]; celosía de aluminio con fuente central." name="description"/>
+<meta content="website" property="og:type"/>
+<meta content="lámpara.celosía — xpan" property="og:title"/>
+<meta content="celosía luminosa de aluminio suspendida dentro del sistema de poros / [19.4300_99.1747]." property="og:description"/>
+<link crossorigin="" href="https://d2w9rnfcy7mm78.cloudfront.net" rel="preconnect"/>
+<link href="https://d2w9rnfcy7mm78.cloudfront.net" rel="dns-prefetch"/>
+<link crossorigin="" href="https://attachments.are.na" rel="preconnect"/>
+<link href="https://attachments.are.na" rel="dns-prefetch"/>
+<link as="image" fetchpriority="high" href="xpan.svg" rel="preload"/>
+<link as="image" fetchpriority="high" href="https://d2w9rnfcy7mm78.cloudfront.net/52309181/original_ca22e6cfef923e92f2a54bbf96707d43.jpg" rel="preload"/>
+<style>
+    :root{
+      --bg:#0B0D0F;
+      --fg:#E1E4E7;
+      --fg-dim:#A4ABB2;
+      --line:#2A2E31;
+      --grid:#181B1F;
+      --panel:#101316;
+      --accent:#1860FF;
+      --pad-x:clamp(16px,4vw,52px);
+      --header-h:64px;
+      --maxw:1480px;
+      --ui:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,Monaco,monospace;
+    }
+
+    @media (prefers-color-scheme:light){
+      :root{
+        --bg:#FFFFFF;
+        --fg:#0B0D0F;
+        --fg-dim:#4A525A;
+        --line:#D7DDE2;
+        --grid:#EBEEF2;
+        --panel:#F7F8FA;
+      }
+      header{mix-blend-mode:normal;color:var(--fg)}
+      header img{mix-blend-mode:normal;filter:none}
+      .chip{border-color:var(--line);color:var(--fg-dim)}
+      .chip.lang-active{color:var(--fg);border-color:var(--accent)}
+      .neg-shell{mix-blend-mode:normal;color:var(--fg)}
+      .bg-hero::before{opacity:.10;filter:grayscale(1) contrast(1.25)}
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:96px}
+    html,body{min-height:100%;margin:0}
+    body{
+      background:var(--bg);
+      color:var(--fg);
+      font-family:var(--ui);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    img,object{max-width:100%}
+    button{font:inherit;color:inherit}
+    ::selection{background:rgba(24,96,255,.24)}
+
+    header{
+      position:fixed;
+      top:12px;
+      left:var(--pad-x);
+      right:var(--pad-x);
+      height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      z-index:40;
+      pointer-events:auto;
+      mix-blend-mode:difference;
+      color:#fff;
+    }
+    header img{
+      width:50px;
+      height:auto;
+      display:block;
+      mix-blend-mode:difference;
+      filter:invert(1) saturate(100%);
+      -webkit-user-drag:none;
+      user-select:none;
+    }
+    .stack{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .chip{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      font:600 12px/1 var(--ui);
+      text-transform:lowercase;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.42);
+      color:rgba(255,255,255,.74);
+      background:transparent;
+      user-select:none;
+      border-radius:0;
+    }
+    .chip[data-lang-btn]{cursor:pointer}
+    .chip.lang-active{color:#fff;border-color:#fff;background:rgba(24,96,255,.06)}
+    .chip:focus-visible,.anchor-nav a:focus-visible,.media-open:focus-visible,#xpan-lightbox button:focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px,
+        linear-gradient(0deg,var(--grid) 1px,transparent 1px) 0 0/64px 64px;
+    }
+    .crosshair{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),
+        linear-gradient(0deg,transparent calc(50% - .5px),var(--line) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px));
+      opacity:.18;
+    }
+    .bg-hero{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+    .bg-hero::before{
+      content:"";
+      width:min(82vw,1200px);
+      height:82vh;
+      background-image:var(--hero,none);
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      filter:grayscale(1) contrast(1.4) brightness(.34);
+      opacity:.13;
+    }
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);
+      mix-blend-mode:overlay;
+      opacity:.18;
+    }
+
+    main{position:relative;z-index:3;padding-top:calc(var(--header-h) + 28px)}
+    .section{max-width:var(--maxw);margin:0 auto;padding:26px var(--pad-x) 78px;border-top:1px solid var(--line)}
+    .section:first-of-type{border-top:0;padding-top:22px;min-height:78vh;display:flex;align-items:flex-end}
+    .plate{
+      display:grid;
+      gap:4px;
+      width:fit-content;
+      max-width:100%;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      color:var(--fg-dim);
+      font:600 11px/1.3 var(--mono);
+      text-transform:lowercase;
+      background:color-mix(in oklab,var(--bg) 92%,transparent);
+      user-select:none;
+      margin-bottom:18px;
+    }
+    .neg-shell{position:relative;z-index:3;mix-blend-mode:difference;color:var(--fg)}
+    .lang-block{display:none}
+    .lang-block.active{display:block}
+
+    .intro-wrap{width:100%;max-width:980px}
+    .kicker{margin:0 0 12px;font:600 11px/1.35 var(--mono);text-transform:lowercase;letter-spacing:.12em;color:var(--fg-dim)}
+    h1{margin:0 0 10px;font:500 clamp(38px,8vw,112px)/.9 var(--ui);letter-spacing:-.065em;text-transform:lowercase}
+    .subtitle{margin:0 0 18px;max-width:860px;font:500 clamp(15px,2vw,22px)/1.25 var(--ui);letter-spacing:-.02em;color:var(--fg)}
+    .intro-text{max-width:820px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .intro-text p{margin:0}
+
+    .anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+    .anchor-nav a{
+      border:1px solid var(--line);
+      padding:7px 9px;
+      font:600 11px/1 var(--mono);
+      text-transform:lowercase;
+      color:var(--fg-dim);
+      background:color-mix(in oklab,var(--bg) 88%,transparent);
+    }
+    .anchor-nav a:hover{color:var(--fg);border-color:var(--fg-dim)}
+
+    .section-head{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:clamp(18px,4vw,64px);margin-bottom:28px}
+    .section-title{margin:0;font:500 clamp(24px,4vw,56px)/.95 var(--ui);letter-spacing:-.055em;text-transform:lowercase}
+    .section-meta{margin:9px 0 0;font:600 11px/1.45 var(--mono);color:var(--fg-dim);text-transform:lowercase;letter-spacing:.08em}
+    .section-copy{max-width:760px;display:grid;gap:10px;font:400 14px/1.65 var(--ui);color:var(--fg)}
+    .section-copy p{margin:0}
+
+    .media-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;align-items:start}
+    .media-grid+.media-grid{margin-top:12px}
+    .media-card{grid-column:span 4;margin:0;border:1px solid var(--line);background:#050608;overflow:hidden}
+    .media-grid-primary .media-card{grid-column:span 6}
+    .media-card.is-wide{grid-column:span 8}
+    .media-card.is-full{grid-column:span 12}
+    .media-open{display:block;width:100%;border:0;padding:0;margin:0;background:transparent;cursor:pointer;color:inherit;border-radius:0}
+    .media-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:160px;
+      max-height:82vh;
+      object-fit:contain;
+      background:#050608;
+      opacity:0;
+      transform:translateY(3px);
+      transition:opacity .24s ease,transform .24s ease;
+    }
+    .media-card img.loaded{opacity:1;transform:none}
+    .media-card video{display:block;width:100%;height:auto;min-height:160px;max-height:82vh;object-fit:contain;background:#050608}
+
+    .pdf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+    .pdf-card{border:1px solid var(--line);background:color-mix(in oklab,var(--bg) 91%,transparent)}
+    .pdf-head{display:flex;justify-content:space-between;gap:16px;padding:9px 10px;border-bottom:1px solid var(--line);font:600 11px/1.2 var(--mono);text-transform:lowercase;color:var(--fg-dim)}
+    .pdf-head a{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .pdf-card object{width:100%;height:72vh;min-height:560px;display:block;background:#050608}
+
+    #xpan-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(5,7,10,.82);
+      backdrop-filter:blur(10px) saturate(120%);
+      -webkit-backdrop-filter:blur(10px) saturate(120%);
+    }
+    #xpan-lightbox.open{display:flex}
+    #xpan-lightbox .sheet{max-width:96vw;max-height:96vh;border:1px solid var(--line);background:#000;padding:6px;box-shadow:0 18px 45px rgba(0,0,0,.8)}
+    #xpan-lightbox img{display:block;max-width:100%;max-height:calc(96vh - 12px);width:auto;height:auto;object-fit:contain}
+    #xpan-lightbox [data-lb-close]{
+      position:absolute;
+      top:16px;
+      right:18px;
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      font:600 11px/1 var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      padding:7px 10px;
+      cursor:pointer;
+    }
+    #xpan-lightbox .nav-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background:rgba(5,7,10,.82);
+      color:#fff;
+      width:40px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font:600 16px/1 var(--mono);
+      padding:0;
+      user-select:none;
+    }
+    #xpan-lightbox .nav-btn[data-dir="prev"]{left:18px}
+    #xpan-lightbox .nav-btn[data-dir="next"]{right:18px}
+    html.lb-open,body.lb-open{overflow:hidden}
+
+    @media (max-width:980px){
+      .section-head{grid-template-columns:1fr;gap:16px}
+      .media-card,.media-card.is-wide{grid-column:span 6}
+      .media-card.is-full{grid-column:span 12}
+    }
+
+    @media (max-width:640px){
+      header{top:10px;align-items:flex-start;height:auto}
+      .stack{gap:7px;flex-wrap:wrap}
+      .chip{font-size:10px;padding:7px 8px}
+      header img{width:44px}
+      main{padding-top:86px}
+      .section{padding:22px var(--pad-x) 56px}
+      .section:first-of-type{min-height:72vh}
+      .media-grid{gap:10px}
+      .media-card,.media-card.is-wide,.media-card.is-full{grid-column:span 12}
+      .media-card img{min-height:110px;max-height:none}
+      .pdf-card object{height:auto;min-height:0;aspect-ratio:4/3}
+      #xpan-lightbox .nav-btn{width:32px;height:32px;font-size:14px}
+      #xpan-lightbox .nav-btn[data-dir="prev"]{left:8px}
+      #xpan-lightbox .nav-btn[data-dir="next"]{right:8px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+    }
+  </style>
+<script defer="" src="/assets/js/media-proxy.js"></script>
+</head>
+<body style="--hero:url('https://d2w9rnfcy7mm78.cloudfront.net/52309181/original_ca22e6cfef923e92f2a54bbf96707d43.jpg')">
+<header>
+<div class="stack">
+<a href="https://xpan.earth" rel="noopener" target="_blank"><img alt="xpan" fetchpriority="high" src="xpan.svg"/></a>
+<div class="chip" data-i18n="header.chip">lámpara.celosía</div>
+</div>
+<div aria-label="selector de idioma" class="stack" id="lang-switch">
+<button aria-pressed="true" class="chip lang-active" data-lang-btn="es" type="button">es</button>
+<button aria-pressed="false" class="chip" data-lang-btn="en" type="button">en</button>
+<button aria-pressed="false" class="chip" data-lang-btn="fr" type="button">fr</button>
+<button aria-pressed="false" class="chip" data-lang-btn="jp" type="button">jp</button>
+</div>
+</header>
+<div aria-hidden="true" class="bg-hero"></div>
+<div aria-hidden="true" class="grain"></div>
+<div aria-hidden="true" class="bg-grid"></div>
+<div aria-hidden="true" class="crosshair"></div>
+<main>
+<section class="section" id="inicio">
+<div class="intro-wrap neg-shell">
+<div class="plate">
+<span data-i18n="plate.project">lámpara.celosía / gral.01</span>
+<span data-i18n="plate.context">xpan / [19.4300_99.1747]</span>
+<span data-i18n="plate.date">junio 2026 / sistema de poros</span>
+</div>
+<div class="lang-block active" data-lang-block="es">
+<p class="kicker">sistema de poros / iluminación / celosía / suspensión</p>
+<h1>lámpara.celosía</h1>
+<p class="subtitle">dispositivo lumínico suspendido desarrollado por xpan para [19.4300_99.1747]. una envolvente de barras verticales de aluminio organiza la luz de una fuente central mediante una celosía abierta.</p>
+<div class="intro-text"><p>lámpara.celosía integra iluminación y estructura dentro del sistema de poros. se configura como un prisma suspendido cuyos cuatro costados se construyen con barras verticales de aluminio dispuestas a intervalos regulares. el vacío entre elementos mantiene visibles la fuente de luz, el interior y las uniones de la pieza.</p><p>el volumen se organiza entre marcos cuadrados superior e inferior, unidos por 56 barras de aluminio de 1/4” de sección cuadrada y cuatro piezas de esquina. una fuente eléctrica central queda alojada dentro de la envolvente; el sistema de suspensión la separa de las superficies de exhibición y la coloca en relación con los postes, repisas y otros dispositivos del proyecto.</p><p>la disposición repetida de las barras transforma una fuente puntual en una presencia luminosa de múltiples caras. la luz sale a través de la celosía y proyecta variaciones de intensidad y sombras lineales, mientras la construcción atornillada permanece expuesta y permite reconocer el funcionamiento del objeto.</p></div>
+</div>
+<div class="lang-block" data-lang-block="en">
+<p class="kicker">poros system / lighting / lattice / suspension</p>
+<h1>lámpara.celosía</h1>
+<p class="subtitle">a suspended lighting device developed by xpan for [19.4300_99.1747]. an envelope of vertical aluminum bars organizes light from a central source through an open lattice.</p>
+<div class="intro-text"><p>lámpara.celosía integrates lighting and structure within the poros system. it takes the form of a suspended prism whose four sides are built from vertical aluminum bars at regular intervals. the gaps between elements leave the light source, interior and connections of the piece visible.</p><p>the volume is organized between upper and lower square frames, joined by 56 square-section 1/4-inch aluminum bars and four corner elements. a central electric light source sits within the enclosure; the suspension system separates it from display surfaces and situates it in relation to the project’s posts, shelves and other devices.</p><p>the repeated arrangement of bars turns a point source into a luminous presence with multiple faces. light passes through the lattice, producing variations in intensity and linear shadows, while the bolted construction remains exposed and makes the object’s operation legible.</p></div>
+</div>
+<div class="lang-block" data-lang-block="fr">
+<p class="kicker">système de poros / éclairage / claustra / suspension</p>
+<h1>lámpara.celosía</h1>
+<p class="subtitle">dispositif lumineux suspendu développé par xpan pour [19.4300_99.1747]. une enveloppe de barres verticales en aluminium organise la lumière d’une source centrale au moyen d’une claustra ouverte.</p>
+<div class="intro-text"><p>lámpara.celosía intègre lumière et structure au système de poros. elle se présente comme un prisme suspendu dont les quatre côtés sont construits avec des barres verticales en aluminium disposées à intervalles réguliers. les vides entre les éléments laissent visibles la source lumineuse, l’intérieur et les assemblages de la pièce.</p><p>le volume est organisé entre deux cadres carrés, supérieur et inférieur, reliés par 56 barres d’aluminium de section carrée de 1/4 de pouce et quatre éléments d’angle. une source lumineuse électrique centrale est placée à l’intérieur ; le système de suspension l’éloigne des surfaces d’exposition et la met en relation avec les poteaux, les étagères et les autres dispositifs du projet.</p><p>la répétition des barres transforme une source ponctuelle en une présence lumineuse à plusieurs faces. la lumière traverse la claustra et produit des variations d’intensité ainsi que des ombres linéaires. les assemblages vissés restent visibles et rendent le fonctionnement de l’objet lisible.</p></div>
+</div>
+<div class="lang-block" data-lang-block="jp">
+<p class="kicker">poros システム / 照明 / 格子 / 吊り下げ</p>
+<h1>lámpara.celosía</h1>
+<p class="subtitle">[19.4300_99.1747] のために xpan が開発した吊り下げ式照明装置。アルミニウムの垂直バーからなる開放格子が、中央光源からの光を構成する。</p>
+<div class="intro-text"><p>lámpara.celosía は、poros システムに照明と構造を統合する装置である。四面は一定間隔に配置されたアルミニウムの垂直バーからなり、吊り下げられた直方体を構成する。部材間の隙間から、光源、内部構造、接合部を見ることができる。</p><p>上下の正方形フレームは、1/4 インチ角のアルミニウムバー 56 本と四隅の部材によって結ばれる。中央には電気光源が配置され、吊り下げ構造によって展示面から離れ、プロジェクト内のポスト、棚、その他の装置と関係を持つ。</p><p>反復するバーによって、点状の光源は四面を持つ発光体へ変換される。光は格子を抜けて明暗の変化と線状の影を生み、露出したボルト接合から装置の構造と動作を読み取ることができる。</p></div>
+</div>
+<nav aria-label="secciones de la página" class="anchor-nav" data-i18n-aria="aria.pageSections">
+<a data-i18n="nav.system" href="#sistema">sistema</a>
+<a data-i18n="nav.construction" href="#construccion">construcción</a>
+<a data-i18n="nav.operation" href="#operacion">operación</a>
+<a data-i18n="nav.media" href="#media">registro</a>
+<a data-i18n="nav.document" href="#documento">documento técnico</a>
+</nav>
+</div>
+</section>
+<section class="section" id="sistema">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.system.title">sistema</h2>
+<p class="section-meta" data-i18n="section.system.meta">poros / iluminación / celosía / suspensión</p>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>lámpara.celosía opera como un componente lumínico de [19.4300_99.1747]. la suspensión desde la infraestructura del sistema de poros permite ubicarla en el espacio junto a superficies de exhibición y otros dispositivos sin depender de una base propia.</p><p>su envolvente permeable articula tres escalas de lectura: el conjunto prismático a distancia, el ritmo de barras en aproximación y la bombilla central visible entre los elementos. la luz forma parte de la organización espacial y material del sistema.</p></div>
+<div class="lang-block" data-lang-block="en"><p>lámpara.celosía operates as a lighting component of [19.4300_99.1747]. suspension from the poros-system infrastructure allows it to occupy space alongside display surfaces and other devices without requiring its own base.</p><p>its permeable envelope offers three scales of reading: the overall prism from a distance, the rhythm of the bars up close, and the central bulb visible between the elements. light becomes part of the system’s spatial and material organization.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>lámpara.celosía fonctionne comme un composant lumineux de [19.4300_99.1747]. sa suspension depuis l’infrastructure du système de poros lui permet d’occuper l’espace aux côtés des surfaces d’exposition et d’autres dispositifs, sans socle indépendant.</p><p>son enveloppe perméable se lit à trois échelles : le prisme dans son ensemble à distance, le rythme des barres à proximité, et l’ampoule centrale visible entre les éléments. la lumière participe ainsi à l’organisation spatiale et matérielle du système.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>lámpara.celosía は、[19.4300_99.1747] の照明構成要素として機能する。poros システムのインフラから吊るすことで、独立した台座を使わずに、展示面や他の装置と並んで空間に配置できる。</p><p>透過性のある外皮は、遠くから見る立体の輪郭、近くで見るバーの反復、隙間から見える中央の電球という三つの尺度で読める。光そのものがシステムの空間的・物質的な編成に参加する。</p></div>
+</div>
+</div>
+</section>
+<section class="section" id="construccion">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.construction.title">construcción</h2>
+<p class="section-meta" data-i18n="section.construction.meta">gral.01–expl.01 / 09 junio 2026</p>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>la documentación técnica del 9 de junio de 2026 registra una planta cuadrada de 20.3 × 20.3 cm y una altura total de 32.4 cm. el cuerpo incorpora 56 barras verticales de aluminio de 1/4” con rebajes en ambos extremos y cuatro piezas de esquina de la misma familia. los marcos superior e inferior combinan barras de aluminio de 1/2” con soleras perforadas para posicionar y asegurar cada elemento.</p><p>el despiece distingue las piezas cc1, cc2, bs1, bs2, si1, si2, ss1 y ss2. cada vértice se resuelve con dos tornillos allen de 3/4” y un opresor allen de 1”, ambos de 1/8” de diámetro, según el detalle de ensamble. las uniones mecánicas facilitan el montaje de una geometría repetitiva y dejan visible la relación entre marco, barras y cerramiento.</p></div>
+<div class="lang-block" data-lang-block="en"><p>the technical documentation dated June 9, 2026 records a square footprint of 20.3 × 20.3 cm and an overall height of 32.4 cm. the body incorporates 56 vertical 1/4-inch aluminum bars with rebated ends and four corner pieces from the same family. upper and lower frames combine 1/2-inch aluminum bars with perforated flats that locate and secure each element.</p><p>the exploded drawing identifies parts cc1, cc2, bs1, bs2, si1, si2, ss1 and ss2. according to the assembly detail, each corner is secured with two 3/4-inch Allen-head screws and one 1-inch Allen set screw, all with a 1/8-inch diameter. the mechanical connections support assembly of the repeated geometry and expose the relationship between frame, bars and enclosure.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>la documentation technique du 9 juin 2026 indique un plan carré de 20,3 × 20,3 cm et une hauteur totale de 32,4 cm. le corps comprend 56 barres verticales d’aluminium de 1/4 de pouce, usinées aux deux extrémités, et quatre pièces d’angle de la même famille. les cadres supérieur et inférieur associent des barres d’aluminium de 1/2 pouce à des plats perforés qui positionnent et fixent chaque élément.</p><p>l’éclaté distingue les pièces cc1, cc2, bs1, bs2, si1, si2, ss1 et ss2. selon le détail d’assemblage, chaque angle est fixé par deux vis à tête Allen de 3/4 de pouce et une vis de pression Allen de 1 pouce, toutes de diamètre 1/8 de pouce. ces connexions mécaniques facilitent le montage de la géométrie répétitive et montrent le rapport entre cadre, barres et enveloppe.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>2026年6月9日付の技術図面には、平面寸法 20.3 × 20.3 cm、全高 32.4 cm と記載されている。本体は両端を段差加工した 1/4 インチ角のアルミニウム縦棒 56 本と、四隅の部材 4 本で構成される。上下のフレームには 1/2 インチのアルミニウム角棒と穴加工した平鋼が用いられ、各部材を位置決め・固定する。</p><p>分解図では cc1、cc2、bs1、bs2、si1、si2、ss1、ss2 の部材を確認できる。組立詳細によると、各角部は長さ 3/4 インチの六角穴付きボルト 2 本と、長さ 1 インチの六角穴付き止めねじ 1 本で固定され、いずれも直径 1/8 インチである。機械的な接合部を露出させることで、フレーム、バー、外皮の関係が明確になる。</p></div>
+</div>
+</div>
+</section>
+<section class="section" id="operacion">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.operation.title">operación</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>cables delgados suspenden el volumen desde un soporte conectado al sistema de poros. el foco instalado en el centro ilumina hacia las cuatro caras, y la separación entre barras permite que la luz alcance el entorno mientras mantiene legible la retícula metálica.</p><p>las vistas inferiores y laterales revelan la bombilla, el cableado y la cruceta interna. el resultado integra emisión directa, sombras lineales y una estructura abierta que puede observarse desde distintos ángulos dentro del espacio.</p></div>
+<div class="lang-block" data-lang-block="en"><p>thin cables suspend the volume from a support connected to the poros system. the centrally installed bulb emits light through all four faces, and the spacing between bars allows light to reach the surroundings while keeping the metal grid visually legible.</p><p>underside and side views reveal the bulb, wiring and internal crosspiece. the result combines direct emission, linear shadows and an open structure that can be viewed from different angles in the space.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>de fins câbles suspendent le volume à un support raccordé au système de poros. l’ampoule centrale émet de la lumière à travers les quatre faces, et l’espacement des barres laisse la lumière atteindre l’environnement tout en gardant la grille métallique lisible.</p><p>les vues de dessous et latérales montrent l’ampoule, le câblage et la traverse intérieure. l’ensemble associe émission directe, ombres linéaires et structure ouverte, observable sous différents angles dans l’espace.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>細いケーブルによって本体は poros システムに接続された支持部から吊られる。中央の電球からの光は四面を通り、バーの間隔によって周囲を照らしながら金属格子の輪郭を保つ。</p><p>下面と側面からは電球、配線、内部の十字部材が確認できる。直接光と線状の影、異なる角度から観察できる開放構造が一体となっている。</p></div>
+</div>
+</div>
+</section>
+<section class="section media-sequences" id="media">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.media.title">registro</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>registro fotográfico y audiovisual del dispositivo instalado: suspensión, vistas generales, celosía de aluminio, fuente lumínica central y relación con los demás componentes del sistema de poros.</p></div>
+<div class="lang-block" data-lang-block="en"><p>photographic and audiovisual documentation of the installed device: suspension, overall views, aluminum lattice, central light source and relationship with other components of the poros system.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>documentation photographique et audiovisuelle du dispositif installé : suspension, vues d’ensemble, claustra en aluminium, source lumineuse centrale et relation avec les autres composants du système de poros.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>設置状態の写真・映像記録。吊り下げ方式、全景、アルミニウム格子、中央光源、poros システムの他の構成要素との関係を示す。</p></div>
+</div>
+</div>
+<div class="media-grid media-grid-primary" data-media-grid=""><figure class="media-card is-full" data-media-item=""><button aria-label="abrir imagen 1" class="media-open" type="button"><img alt="lámpara.celosía — registro 01" class="loaded" decoding="async" fetchpriority="high" src="https://d2w9rnfcy7mm78.cloudfront.net/52309181/original_ca22e6cfef923e92f2a54bbf96707d43.jpg"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 2" class="media-open" type="button"><img alt="lámpara.celosía — registro 02" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309182/original_df8e56253f26578ff4913fd1240ba945.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 3" class="media-open" type="button"><img alt="lámpara.celosía — registro 03" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309183/original_f01deb7d197dd6712aa241c7d4d93ba4.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 4" class="media-open" type="button"><img alt="lámpara.celosía — registro 04" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309184/original_7138904ffe0db3a46b2b43485a0b2798.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 5" class="media-open" type="button"><img alt="lámpara.celosía — registro 05" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309185/original_ba42ab351e23c58b46835989e89bff51.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 6" class="media-open" type="button"><img alt="lámpara.celosía — registro 06" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309186/original_3daa936e72e6a6d0c5855682cca48d4e.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 7" class="media-open" type="button"><img alt="lámpara.celosía — registro 07" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309187/original_69faff9f73db4adae85dd1dab79838e6.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 8" class="media-open" type="button"><img alt="lámpara.celosía — registro 08" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309188/original_bb26982272e4cd18a26189e0c1a253e2.jpg" decoding="async" loading="lazy"/></button></figure></div>
+<div class="media-grid media-grid-secondary" data-media-grid=""><figure class="media-card is-wide"><video aria-label="lámpara.celosía — video" controls="" muted="" playsinline="" preload="metadata"><source src="https://attachments.are.na/52309191/ec653ff8d3dab7c43e15cddc8e0c5f7f.mp4" type="video/mp4"/></video></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 9" class="media-open" type="button"><img alt="lámpara.celosía — registro 09" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309192/original_007259defc28e53c66c64474d1624d24.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 10" class="media-open" type="button"><img alt="lámpara.celosía — registro 10" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309193/original_4f1e3228313af4496179be32306b7376.jpg" decoding="async" loading="lazy"/></button></figure><figure class="media-card" data-media-item=""><button aria-label="abrir imagen 11" class="media-open" type="button"><img alt="lámpara.celosía — registro 11" data-src="https://d2w9rnfcy7mm78.cloudfront.net/52309194/original_3626d08edb868f744d3b7d6cc77baeb9.jpg" decoding="async" loading="lazy"/></button></figure></div>
+</section>
+<section class="section" id="documento">
+<div class="section-head neg-shell">
+<div>
+<h2 class="section-title" data-i18n="section.document.title">documento técnico</h2>
+</div>
+<div class="section-copy">
+<div class="lang-block active" data-lang-block="es"><p>documentación técnica en siete láminas: vistas generales, cotas, barras y soleras individuales, detalle de las fijaciones, isométrico de ensamble y despiece completo.</p></div>
+<div class="lang-block" data-lang-block="en"><p>technical documentation across seven sheets: general views, dimensions, individual bars and flats, fixing details, assembly isometric and complete exploded drawing.</p></div>
+<div class="lang-block" data-lang-block="fr"><p>documentation technique en sept planches : vues générales, dimensions, barres et plats individuels, détails de fixation, isométrie d’assemblage et éclaté complet.</p></div>
+<div class="lang-block" data-lang-block="jp"><p>全 7 枚の技術図面。全体図、寸法、各バーと平鋼、締結詳細、組立アイソメ図、全体の分解図を含む。</p></div>
+</div>
+</div>
+<div class="pdf-grid">
+<article class="pdf-card">
+<div class="pdf-head">
+<span data-i18n="pdf.label">plano general / gral.01–expl.01</span>
+<a data-i18n="action.open" href="https://attachments.are.na/52309175/0594b9c3353efabc1d68abc1a9334832.pdf" rel="noopener" target="_blank">abrir</a>
+</div>
+<object aria-label="lámpara.celosía — plano técnico" data-pdf-src="https://attachments.are.na/52309175/0594b9c3353efabc1d68abc1a9334832.pdf#page=1&amp;zoom=page-width&amp;view=FitH&amp;toolbar=1&amp;navpanes=0&amp;statusbar=0" type="application/pdf">
+<a data-i18n="pdf.fallback" href="https://attachments.are.na/52309175/0594b9c3353efabc1d68abc1a9334832.pdf" rel="noopener" target="_blank">abrir plano general</a>
+</object>
+</article>
+</div>
+</section>
+</main>
+<div aria-hidden="true" id="xpan-lightbox">
+<button data-i18n="action.close" data-lb-close="" type="button">cerrar</button>
+<button aria-label="anterior" class="nav-btn" data-dir="prev" data-i18n-aria="action.previous" type="button">‹</button>
+<div aria-modal="true" class="sheet" role="dialog"></div>
+<button aria-label="siguiente" class="nav-btn" data-dir="next" data-i18n-aria="action.next" type="button">›</button>
+</div>
+<script>
+    (function languageSystem(){
+      const switcher=document.getElementById('lang-switch');
+      if(!switcher)return;
+      const buttons=Array.from(switcher.querySelectorAll('[data-lang-btn]'));
+      const blocks=Array.from(document.querySelectorAll('[data-lang-block]'));
+      const staticText={
+        "es": {
+                "pageTitle": "lámpara.celosía — xpan",
+                "metaDescription": "lámpara.celosía — dispositivo lumínico suspendido del sistema de poros desarrollado por xpan para [19.4300_99.1747]; celosía de aluminio con fuente central.",
+                "header.chip": "lámpara.celosía",
+                "plate.project": "lámpara.celosía / gral.01",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "junio 2026 / sistema de poros",
+                "aria.pageSections": "secciones de la página",
+                "nav.system": "sistema",
+                "nav.construction": "construcción",
+                "nav.operation": "operación",
+                "nav.media": "registro",
+                "nav.document": "documento técnico",
+                "section.system.title": "sistema",
+                "section.system.meta": "poros / iluminación / celosía / suspensión",
+                "section.construction.title": "construcción",
+                "section.construction.meta": "gral.01–expl.01 / 09 junio 2026",
+                "section.operation.title": "operación",
+                "section.media.title": "registro",
+                "section.document.title": "documento técnico",
+                "pdf.label": "plano general / gral.01–expl.01",
+                "pdf.fallback": "abrir plano general",
+                "action.open": "abrir",
+                "action.close": "cerrar",
+                "action.previous": "anterior",
+                "action.next": "siguiente"
+        },
+        "en": {
+                "pageTitle": "lámpara.celosía — xpan",
+                "metaDescription": "a suspended lighting device developed by xpan for [19.4300_99.1747]. an envelope of vertical aluminum bars organizes light from a central source through an open lattice.",
+                "header.chip": "lámpara.celosía",
+                "plate.project": "lámpara.celosía / gral.01",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "june 2026 / poros system",
+                "aria.pageSections": "page sections",
+                "nav.system": "system",
+                "nav.construction": "construction",
+                "nav.operation": "operation",
+                "nav.media": "record",
+                "nav.document": "technical document",
+                "section.system.title": "system",
+                "section.system.meta": "poros / lighting / lattice / suspension",
+                "section.construction.title": "construction",
+                "section.construction.meta": "gral.01–expl.01 / june 9, 2026",
+                "section.operation.title": "operation",
+                "section.media.title": "record",
+                "section.document.title": "technical document",
+                "pdf.label": "general drawing / gral.01–expl.01",
+                "pdf.fallback": "open general drawing",
+                "action.open": "open",
+                "action.close": "close",
+                "action.previous": "previous",
+                "action.next": "next"
+        },
+        "fr": {
+                "pageTitle": "lámpara.celosía — xpan",
+                "metaDescription": "dispositif lumineux suspendu développé par xpan pour [19.4300_99.1747]. une enveloppe de barres verticales en aluminium organise la lumière d’une source centrale au moyen d’une claustra ouverte.",
+                "header.chip": "lámpara.celosía",
+                "plate.project": "lámpara.celosía / gral.01",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "juin 2026 / système de poros",
+                "aria.pageSections": "sections de la page",
+                "nav.system": "système",
+                "nav.construction": "construction",
+                "nav.operation": "opération",
+                "nav.media": "registre",
+                "nav.document": "document technique",
+                "section.system.title": "système",
+                "section.system.meta": "poros / éclairage / claustra / suspension",
+                "section.construction.title": "construction",
+                "section.construction.meta": "gral.01–expl.01 / 9 juin 2026",
+                "section.operation.title": "opération",
+                "section.media.title": "registre",
+                "section.document.title": "document technique",
+                "pdf.label": "plan général / gral.01–expl.01",
+                "pdf.fallback": "ouvrir le plan général",
+                "action.open": "ouvrir",
+                "action.close": "fermer",
+                "action.previous": "précédent",
+                "action.next": "suivant"
+        },
+        "jp": {
+                "pageTitle": "lámpara.celosía — xpan",
+                "metaDescription": "[19.4300_99.1747] のために xpan が開発した吊り下げ式照明装置。アルミニウムの垂直バーからなる開放格子が、中央光源からの光を構成する。",
+                "header.chip": "lámpara.celosía",
+                "plate.project": "lámpara.celosía / gral.01",
+                "plate.context": "xpan / [19.4300_99.1747]",
+                "plate.date": "2026年6月 / poros システム",
+                "aria.pageSections": "ページセクション",
+                "nav.system": "システム",
+                "nav.construction": "構造",
+                "nav.operation": "運用",
+                "nav.media": "記録",
+                "nav.document": "技術資料",
+                "section.system.title": "システム",
+                "section.system.meta": "poros / 照明 / 格子 / 吊り下げ",
+                "section.construction.title": "構造",
+                "section.construction.meta": "gral.01–expl.01 / 2026年6月9日",
+                "section.operation.title": "運用",
+                "section.media.title": "記録",
+                "section.document.title": "技術資料",
+                "pdf.label": "全体図 / gral.01–expl.01",
+                "pdf.fallback": "全体図を開く",
+                "action.open": "開く",
+                "action.close": "閉じる",
+                "action.previous": "前へ",
+                "action.next": "次へ"
+        }
+};
+
+      function setLang(lang){
+        if(!staticText[lang]) lang='es';
+        document.documentElement.lang = lang==='jp' ? 'ja' : lang;
+        buttons.forEach(btn=>{
+          const active=btn.dataset.langBtn===lang;
+          btn.classList.toggle('lang-active',active);
+          btn.setAttribute('aria-pressed',active?'true':'false');
+        });
+        blocks.forEach(block=>block.classList.toggle('active',block.dataset.langBlock===lang));
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18n];
+          if(value!=null) el.textContent=value;
+        });
+        document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+          const value=staticText[lang][el.dataset.i18nAria];
+          if(value!=null){
+            if(el.hasAttribute('aria-label')) el.setAttribute('aria-label',value);
+            else el.setAttribute(el.dataset.i18nAriaTarget || 'aria-label', value);
+          }
+        });
+        document.title=staticText[lang].pageTitle;
+        const meta=document.querySelector('meta[name="description"]');
+        if(meta) meta.setAttribute('content',staticText[lang].metaDescription);
+        try{localStorage.setItem('xpan-lang',lang)}catch(_e){}
+      }
+
+      buttons.forEach(btn=>btn.addEventListener('click',()=>setLang(btn.dataset.langBtn)));
+      let saved='es';
+      try{saved=localStorage.getItem('xpan-lang')||'es'}catch(_e){}
+      setLang(saved);
+    })();
+
+    (function lazyImages(){
+      const images=[...document.querySelectorAll('img[data-src]')];
+      const loadImage=(img)=>{
+        if(img.dataset.src && !img.src) img.src=img.dataset.src;
+        const mark=()=>img.classList.add('loaded');
+        if(img.complete) mark();
+        else img.addEventListener('load',mark,{once:true});
+      };
+      document.querySelectorAll('img.loaded').forEach(img=>{ if(img.complete) img.classList.add('loaded'); else img.addEventListener('load',()=>img.classList.add('loaded'),{once:true}); });
+      if(!('IntersectionObserver' in window)){ images.forEach(loadImage); return; }
+      const observer=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            loadImage(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      },{rootMargin:'240px 0px'});
+      images.forEach(img=>observer.observe(img));
+    })();
+
+    (function pdfProxy(){
+      document.querySelectorAll('object[data-pdf-src]').forEach(el=>{ el.data = el.getAttribute('data-pdf-src'); });
+    })();
+
+    (function lightboxSystem(){
+      const lightbox=document.getElementById('xpan-lightbox');
+      if(!lightbox) return;
+      const sheet=lightbox.querySelector('.sheet');
+      const closeBtn=lightbox.querySelector('[data-lb-close]');
+      const navButtons=Array.from(lightbox.querySelectorAll('.nav-btn'));
+      const triggers=Array.from(document.querySelectorAll('[data-media-item] .media-open'));
+      const items=triggers.map(btn=>btn.querySelector('img')).filter(Boolean);
+      let index=0;
+
+      function render(){
+        const current=items[index];
+        if(!current) return;
+        const img=document.createElement('img');
+        img.src=current.currentSrc || current.src || current.dataset.src;
+        img.alt=current.alt || '';
+        sheet.innerHTML='';
+        sheet.appendChild(img);
+      }
+      function openAt(i){
+        index=i;
+        render();
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden','false');
+        document.documentElement.classList.add('lb-open');
+        document.body.classList.add('lb-open');
+      }
+      function close(){
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden','true');
+        document.documentElement.classList.remove('lb-open');
+        document.body.classList.remove('lb-open');
+      }
+      function step(dir){
+        index=(index+dir+items.length)%items.length;
+        render();
+      }
+
+      triggers.forEach((btn,i)=>btn.addEventListener('click',()=>openAt(i)));
+      closeBtn.addEventListener('click',close);
+      navButtons.forEach(btn=>btn.addEventListener('click',()=>step(btn.dataset.dir==='next'?1:-1)));
+      lightbox.addEventListener('click',(e)=>{ if(e.target===lightbox) close(); });
+      document.addEventListener('keydown',(e)=>{
+        if(!lightbox.classList.contains('open')) return;
+        if(e.key==='Escape') close();
+        if(e.key==='ArrowRight') step(1);
+        if(e.key==='ArrowLeft') step(-1);
+      });
+    })();
+  </script>
+</body>
+</html>
